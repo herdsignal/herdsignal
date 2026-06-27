@@ -297,7 +297,8 @@ def print_strategy_result(ticker: str,
     print(f"    매매 횟수  : {b.trade_count}회")
 
     # 전략 C
-    mdd_diff = c.mdd() - a.mdd()   # 음수일수록 MDD 개선
+    # MDD는 음수 → C - A 가 양수면 C의 낙폭이 더 작음 = 개선
+    mdd_diff = c.mdd() - a.mdd()
     print()
     print("  전략 C (HERD 부분 익절) ← 우리 서비스 전략")
     print(f"    최종 자산  : {fmt_money(c.final_value())}")
@@ -309,7 +310,7 @@ def print_strategy_result(ticker: str,
     # 핵심 지표
     print()
     print("  ─── 핵심 지표 ───────────────────────────────")
-    direction = "개선 ▼" if mdd_diff < 0 else "악화 ▲"
+    direction = "개선 ▼" if mdd_diff > 0 else "악화 ▲"
     print(f"    전략 C vs Buy & Hold MDD 차이: "
           f"{fmt_pct(mdd_diff)} ({direction})")
     ret_diff = c.total_return_pct() - a.total_return_pct()
