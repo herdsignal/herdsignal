@@ -1,4 +1,7 @@
-.header {
+/* Dashboard.module.css — 와이어프레임 wireframe-home-v4.html 기반 */
+
+/* ── 페이지 헤더 ── */
+.pageHeader {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -7,14 +10,14 @@
   border-bottom: 1px solid var(--border);
 }
 
-.date {
+.pageDate {
   font-size: 12px;
   color: var(--text-3);
   margin-bottom: 6px;
   letter-spacing: 0.02em;
 }
 
-.title {
+.pageTitle {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 28px;
   font-weight: 700;
@@ -37,7 +40,364 @@
 }
 .btnPrimary:hover { opacity: 0.8; }
 
-.empty {
+/* ────────────────────────────
+   S&P500 HERD 배너
+   ──────────────────────────── */
+.marketBanner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 48px;
+  display: grid;
+  grid-template-columns: 280px 1fr 200px;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+/* 좌: 점수 블록 */
+.bannerScoreBlock {
+  padding: 32px 36px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 배경 글로우 */
+.bannerScoreBlock::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 20% 50%,
+    rgba(249, 115, 22, 0.06) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.bannerEyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+
+.bannerScore {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 80px;
+  font-weight: 700;
+  letter-spacing: -4px;
+  line-height: 0.9;
+  margin-bottom: 10px;
+}
+
+.bannerStage {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+
+.bannerDesc {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* 중: 무리 애니메이션 블록 */
+.bannerAnimBlock {
+  position: relative;
+  background: var(--surface2);
+  /* overflow: hidden 제거 — 스펙트럼 thumb 클리핑 방지 */
+}
+
+/* Flee / Rush 라벨 (HerdDots 위에 z-index로 올림) */
+.bannerAnimLabel {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 하단 스펙트럼 바 오버레이 */
+.bannerSpectrumOverlay {
+  position: absolute;
+  /* thumb 위아래 공간 확보를 위해 bottom: 5px */
+  bottom: 5px;
+  left: 16px;
+  right: 16px;
+  z-index: 1;
+}
+
+/* 우: 통계 블록 */
+.bannerStatsBlock {
+  padding: 32px 28px;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.bannerStatLabel {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+
+.bannerStatValue {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.bannerStatUpdate {
+  font-size: 13px;
+  color: var(--text-3);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+/* ────────────────────────────
+   종목 섹션 헤더
+   ──────────────────────────── */
+.sectionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ────────────────────────────
+   종목 테이블
+   (가격/등락 열 없음 — 현재 DB 미지원)
+   ──────────────────────────── */
+.stockTable {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* 헤더 + 행 공통 그리드: 스트라이프|종목|HERD|시그널|화살표 */
+.tableHeader,
+.tableRow {
+  display: grid;
+  grid-template-columns: 28px 240px 1fr 90px 40px;
+  gap: 16px;
+  padding: 0 24px;
+}
+
+.tableHeader {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+
+.th {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.thRight { text-align: right; }
+
+.tableRow {
+  border-bottom: 1px solid var(--border);
+  align-items: stretch;
+  cursor: pointer;
+  transition: background 0.1s;
+  min-height: 72px;
+}
+.tableRow:last-child { border-bottom: none; }
+.tableRow:hover { background: var(--surface2); }
+
+/* 컬러 스트라이프 */
+.rowStripeWrap {
+  display: flex;
+  align-items: center;
+}
+
+.rowStripe {
+  width: 2px;
+  height: 28px;
+  border-radius: 99px;
+}
+
+/* 티커 블록 */
+.rowTickerBlock {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* 티커 배지 (HERD 단계 색상 기반) */
+.tickerBadge {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  flex-shrink: 0;
+}
+
+.rowTicker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  margin-bottom: 2px;
+}
+
+.rowName {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* ── HERD 열 ── */
+.rowHerd {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+}
+
+/* 상단: 점수 숫자 + 미니 HerdDots */
+.rowHerdTop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0 8px;
+}
+
+.herdNum {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+.herdStageName {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* 미니 HerdDots 컨테이너 — fill 모드의 canvas가 이 영역을 채움 */
+.rowAnimWrap {
+  flex: 1;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--surface2);
+  overflow: hidden;
+  position: relative;
+}
+
+/* 하단: 미니 스펙트럼 바 */
+.rowHerdBottom {
+  padding: 0 0 10px;
+}
+
+/* ── 시그널 배지 ── */
+.signalCell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.signalBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* 화살표 */
+.rowAction {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 12px;
+  color: var(--text-3);
+  transition: color 0.1s;
+}
+.tableRow:hover .rowAction { color: var(--text-2); }
+
+/* ────────────────────────────
+   로딩 / 에러 / 빈 상태
+   ──────────────────────────── */
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+}
+.loadingText {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 0;
+  gap: 16px;
+}
+.errorText {
+  font-size: 14px;
+  color: var(--text-2);
+  text-align: center;
+  line-height: 1.6;
+}
+.retryBtn {
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 13px;
+  color: var(--text-1);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.15s;
+}
+.retryBtn:hover { border-color: var(--text-3); }
+
+.emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,78 +405,15 @@
   padding: 80px 0;
   gap: 8px;
 }
-.emptyText {
+.emptyTitle {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 16px;
   font-weight: 500;
   color: var(--text-2);
+  margin-bottom: 4px;
 }
-.emptyHint {
+.emptyDesc {
   font-size: 13px;
   color: var(--text-3);
-}
-
-/* ── [임시] 컴포넌트 테스트 섹션 ── */
-.testSection {
-  margin-top: 40px;
-}
-
-.testLabel {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 20px;
-}
-
-.testRow {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.testCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px 24px;
-  min-width: 300px;
-}
-
-.testCardHeader {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 2px;
-}
-
-.testTicker {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-}
-
-.testScore {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -1px;
-}
-
-.testCardLabel {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 14px;
-}
-
-.dotsWrap {
-  background: var(--bg);
-  border-radius: 8px;
-  overflow: hidden;
   margin-bottom: 16px;
-}
-
-.spectrumWrap {
-  padding: 0 2px;
 }
