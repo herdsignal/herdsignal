@@ -20,3 +20,6 @@ python-dotenv>=1.0.0
 # DB 연결 (ORM + 드라이버)
 sqlalchemy>=2.0.0
 pymysql>=1.1.0
+
+# 스케줄러 (장 마감 후 자동 실행)
+APScheduler>=3.10.0
