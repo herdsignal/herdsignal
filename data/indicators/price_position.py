@@ -6,6 +6,7 @@ indicators/price_position.py — 가격 위치 지표 계산기
 import logging
 
 import pandas as pd
+from scipy.stats import percentileofscore
 
 logger = logging.getLogger(__name__)
 
@@ -49,20 +50,24 @@ def calc_52w_position(df: pd.DataFrame) -> float:
             f"52주 위치 계산에 최소 {TRADING_DAYS_1Y}거래일 필요, 현재 {len(df)}일"
         )
 
-    # 최근 252거래일 기준으로 고점/저점 산출
-    recent = df.tail(TRADING_DAYS_1Y)
-    high_52w = float(recent["High"].max())
-    low_52w = float(recent["Low"].min())
-    current = _get_latest_close(df)
+    # 전체 기간에 걸쳐 매일의 52주 고저 위치 비율 시리즈 산출
+    rolling_high = df["High"].rolling(window=TRADING_DAYS_1Y).max()
+    rolling_low  = df["Low"].rolling(window=TRADING_DAYS_1Y).min()
+    price_range  = rolling_high - rolling_low
 
-    price_range = high_52w - low_52w
-    if price_range == 0:
-        raise ValueError("52주 고점과 저점이 동일합니다 — 계산 불가 (거래 정지 가능성)")
+    # 범위가 0인 시점(거래 정지 등) 제거
+    valid = price_range[price_range > 0]
+    position_series = (
+        (df["Close"][valid.index] - rolling_low[valid.index]) / price_range[valid.index] * 100.0
+    ).dropna()
 
-    raw = (current - low_52w) / price_range * 100.0
-    result = float(max(0.0, min(100.0, raw)))
+    if position_series.empty:
+        raise ValueError("52주 고저 위치 시리즈가 비어있습니다.")
 
-    logger.debug(f"52주 고저 위치: {result:.2f} (현재가 {current:.2f}, 저 {low_52w:.2f}, 고 {high_52w:.2f})")
+    current = float(position_series.iloc[-1])
+    result  = float(percentileofscore(position_series.values, current, kind="weak"))
+
+    logger.debug(f"52주 고저 위치: raw={current:.2f} → 백분위={result:.2f}")
     return result
 
 
@@ -92,22 +97,22 @@ def calc_ma200_deviation(df: pd.DataFrame) -> float:
             f"MA{MA_PERIOD} 계산에 최소 {MA_PERIOD}거래일 필요, 현재 {len(df)}일"
         )
 
-    ma200 = float(df["Close"].rolling(window=MA_PERIOD).mean().iloc[-1])
+    close    = df["Close"]
+    ma200    = close.rolling(window=MA_PERIOD).mean()
 
-    if ma200 == 0:
-        raise ValueError("MA200이 0입니다 — 계산 불가")
+    # MA200이 존재하는 구간의 전체 이격도 시리즈 산출
+    valid_ma = ma200[ma200 > 0].dropna()
+    deviation_series = (
+        (close[valid_ma.index] - valid_ma) / valid_ma * 100.0
+    ).dropna()
 
-    current = _get_latest_close(df)
+    if deviation_series.empty:
+        raise ValueError("MA200 이격도 시리즈가 비어있습니다.")
 
-    # 원시 이격도 (%)
-    raw_deviation = (current - ma200) / ma200 * 100.0
-
-    # [-CLIP, +CLIP] 범위로 클리핑 후 [0, 100]으로 선형 변환
-    clipped = max(-DEVIATION_CLIP, min(DEVIATION_CLIP, raw_deviation))
-    result = (clipped + DEVIATION_CLIP) / (2 * DEVIATION_CLIP) * 100.0
+    current = float(deviation_series.iloc[-1])
+    result  = float(percentileofscore(deviation_series.values, current, kind="weak"))
 
     logger.debug(
-        f"MA{MA_PERIOD} 이격도: raw={raw_deviation:.2f}%, 정규화={result:.2f} "
-        f"(현재가 {current:.2f}, MA{MA_PERIOD} {ma200:.2f})"
+        f"MA{MA_PERIOD} 이격도: raw={current:.2f}% → 백분위={result:.2f}"
     )
     return result

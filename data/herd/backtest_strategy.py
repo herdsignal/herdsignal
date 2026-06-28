@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 import pandas as pd
 
 from collectors.stock_collector import collect
+from config.settings import HERD_THRESHOLDS
 from herd.backtest import _build_herd_series
 
 logger = logging.getLogger(__name__)
@@ -19,17 +20,17 @@ logger = logging.getLogger(__name__)
 INITIAL_CASH     = 10_000.0   # 초기 자금 (달러)
 FEE_RATE         = 0.001      # 매수/매도 수수료 각 0.1%
 
-# 전략 C 부분 익절/매수 비율
+# 전략 C 부분 익절/매수 비율 (그리드 서치 최적값)
 RUSH_SELL_RATIO     = 0.30   # Rush → 보유 주식의 30% 매도
-DRIFT_SELL_RATIO    = 0.10   # Drift → 보유 주식의 10% 매도
-FLEE_BUY_RATIO      = 0.30   # Flee → 보유 현금의 30%로 매수
-SCATTER_BUY_RATIO   = 0.10   # Scatter → 보유 현금의 10%로 매수
+DRIFT_SELL_RATIO    = 0.05   # Drift → 보유 주식의 5% 매도
+FLEE_BUY_RATIO      = 0.10   # Flee → 보유 현금의 10%로 매수
+SCATTER_BUY_RATIO   = 0.15   # Scatter → 보유 현금의 15%로 매수
 
-# 전략 B/C HERD 임계값
-RUSH_THRESHOLD    = 80.0
-FLEE_THRESHOLD    = 20.0
-DRIFT_LOWER       = 60.0     # Drift: 60~80
-SCATTER_UPPER     = 40.0     # Scatter: 20~40
+# 전략 B/C HERD 임계값 (settings.py에서 관리)
+RUSH_THRESHOLD    = HERD_THRESHOLDS["rush"]   # 75.0 (백분위수 정규화 기준 최적값)
+FLEE_THRESHOLD    = HERD_THRESHOLDS["flee"]   # 15.0
+DRIFT_LOWER       = 60.0                       # Drift: 60~75
+SCATTER_UPPER     = 40.0                       # Scatter: 15~40
 
 # 전략 C 중복 신호 쿨다운 (거래일)
 SIGNAL_COOLDOWN_C = 20

@@ -11,6 +11,9 @@ numpy>=1.26.0
 # 기술 지표 계산 (RSI, MA 등)
 pandas-ta>=0.3.14b0
 
+# 백분위수 정규화 (percentileofscore)
+scipy>=1.13.0
+
 # 환경변수 관리
 python-dotenv>=1.0.0
 

@@ -7,6 +7,7 @@ import logging
 
 import pandas as pd
 import pandas_ta as ta
+from scipy.stats import percentileofscore
 
 logger = logging.getLogger(__name__)
 
@@ -47,11 +48,12 @@ def _calc_rsi(series: pd.Series, period: int = RSI_PERIOD) -> pd.Series:
     return rsi
 
 
-def _normalize_rsi(value: float) -> float:
+def _percentile_normalize(series_values: pd.Series, current: float) -> float:
     """
-    RSI는 정의상 0~100 범위이나, 수치 오차로 범위를 벗어날 수 있어 클리핑한다.
+    현재값이 역사적 분포에서 몇 번째 백분위에 있는지 반환한다.
+    kind='weak': 현재값 이하인 값의 비율 (0~100).
     """
-    return float(max(0.0, min(100.0, value)))
+    return float(percentileofscore(series_values, current, kind="weak"))
 
 
 def calc_weekly_rsi(df: pd.DataFrame, period: int = RSI_PERIOD) -> float:
@@ -82,8 +84,9 @@ def calc_weekly_rsi(df: pd.DataFrame, period: int = RSI_PERIOD) -> float:
     if rsi_valid.empty:
         raise ValueError("주봉 RSI 계산 결과가 모두 NaN입니다.")
 
-    result = _normalize_rsi(rsi_valid.iloc[-1])
-    logger.debug(f"주봉 RSI({period}): {result:.2f}")
+    current = float(rsi_valid.iloc[-1])
+    result = _percentile_normalize(rsi_valid.values, current)
+    logger.debug(f"주봉 RSI({period}) raw={current:.2f} → 백분위={result:.2f}")
     return result
 
 
@@ -115,6 +118,7 @@ def calc_monthly_rsi(df: pd.DataFrame, period: int = RSI_PERIOD) -> float:
     if rsi_valid.empty:
         raise ValueError("월봉 RSI 계산 결과가 모두 NaN입니다.")
 
-    result = _normalize_rsi(rsi_valid.iloc[-1])
-    logger.debug(f"월봉 RSI({period}): {result:.2f}")
+    current = float(rsi_valid.iloc[-1])
+    result = _percentile_normalize(rsi_valid.values, current)
+    logger.debug(f"월봉 RSI({period}) raw={current:.2f} → 백분위={result:.2f}")
     return result
