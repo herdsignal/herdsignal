@@ -69,8 +69,22 @@ public class HerdService {
     }
 
     /**
+     * 티커 목록을 받아 HERD 데이터가 있는 종목만 응답 목록으로 반환.
+     * 관심종목·포트폴리오 등 여러 곳에서 재사용.
+     * HERD 데이터가 없는 종목은 결과에서 자동 제외 (예외 없음).
+     *
+     * @param tickers 조회할 티커 심볼 목록
+     */
+    public List<HerdScoreResponse> getHerdByTickers(List<String> tickers) {
+        return tickers.stream()
+                .map(this::buildHerdScoreResponse)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    /**
      * 단일 종목의 최신 HerdScoreResponse 생성.
-     * 점수 데이터가 없으면 null 반환 (포트폴리오 전체 조회에서 필터링).
+     * 점수 데이터가 없으면 null 반환 (호출부에서 필터링).
      */
     private HerdScoreResponse buildHerdScoreResponse(String ticker) {
         Optional<HerdScore> score = herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker);
