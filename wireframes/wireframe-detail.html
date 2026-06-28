@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HerdSignal — 종목 상세</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  --bg:       #09090B;
+  --surface:  #111113;
+  --surface2: #18181B;
+  --border:   #27272A;
+  --border2:  #3F3F46;
+  --text-1:   #FAFAFA;
+  --text-2:   #A1A1AA;
+  --text-3:   #52525B;
+  --flee:    #3B82F6;
+  --scatter: #60A5FA;
+  --calm:    #71717A;
+  --drift:   #F97316;
+  --rush:    #EF4444;
+  --sidebar: 200px;
+}
+
+.light {
+  --bg:      #F8F8F9;
+  --surface: #FFFFFF;
+  --surface2:#F1F1F3;
+  --border:  #E4E4E7;
+  --border2: #D4D4D8;
+  --text-1:  #09090B;
+  --text-2:  #71717A;
+  --text-3:  #A1A1AA;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
+  display: flex;
+  font-size: 14px;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ── 사이드바 ── */
+.sidebar {
+  width: var(--sidebar);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top:0; left:0; bottom:0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  z-index: 10;
+}
+
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 40px; padding: 0 4px;
+}
+.logo em { font-style:normal; color: var(--flee); }
+
+.nav-group { margin-bottom: 28px; }
+.nav-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-3); padding: 0 4px; margin-bottom: 4px;
+}
+.nav-item {
+  display: flex; align-items: center;
+  padding: 8px; border-radius: 6px;
+  font-size: 13px; color: var(--text-2);
+  cursor: pointer; margin-bottom: 1px;
+  transition: background 0.1s, color 0.1s;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text-1); }
+.nav-item.active { background: var(--surface2); color: var(--text-1); font-weight: 500; }
+
+.sidebar-bottom { margin-top: auto; }
+.theme-btn {
+  width: 100%; text-align: left; padding: 8px;
+  border-radius: 6px; font-size: 12px; color: var(--text-3);
+  cursor: pointer; background: none; border: none;
+  font-family: 'Inter', sans-serif; transition: color 0.1s;
+}
+.theme-btn:hover { color: var(--text-2); }
+
+/* ── 메인 ── */
+.main {
+  margin-left: var(--sidebar);
+  flex: 1; padding: 40px 56px;
+  min-width: 0;
+}
+
+/* ── 브레드크럼 + 헤더 ── */
+.breadcrumb {
+  font-size: 12px; color: var(--text-3);
+  margin-bottom: 20px; display: flex;
+  align-items: center; gap: 8px;
+}
+.breadcrumb span { cursor: pointer; }
+.breadcrumb span:hover { color: var(--text-2); }
+.breadcrumb .sep { color: var(--text-3); }
+.breadcrumb .current { color: var(--text-2); }
+
+.stock-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.stock-header-left { display: flex; align-items: center; gap: 20px; }
+
+.stock-logo {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 700;
+  background: #FEF3C7; color: #92400E;
+}
+
+.stock-name-block {}
+.stock-ticker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px; font-weight: 700;
+  letter-spacing: -0.8px; margin-bottom: 2px;
+}
+.stock-fullname { font-size: 13px; color: var(--text-2); }
+
+.stock-header-right { display: flex; align-items: center; gap: 12px; }
+
+.btn-watchlist {
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px 16px;
+  font-size: 13px; color: var(--text-2);
+  cursor: pointer; font-family: 'Inter', sans-serif;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-watchlist:hover { border-color: var(--text-3); color: var(--text-1); }
+
+.btn-primary {
+  background: var(--text-1); color: var(--bg);
+  border: none; border-radius: 8px;
+  padding: 8px 16px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: 'Inter', sans-serif;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.8; }
+
+/* ── 그리드 레이아웃 ── */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+}
+
+.col-main { min-width: 0; }
+.col-side { min-width: 0; }
+
+/* ── 공통 카드 ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  padding: 18px 24px 0;
+  display: flex; align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.card-body { padding: 20px 24px 24px; }
+
+/* ── HERD 섹션 ── */
+.herd-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 200px;
+}
+
+/* 왼쪽 점수 */
+.herd-score-side {
+  padding: 28px 32px;
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  justify-content: center;
+  position: relative; overflow: hidden;
+}
+
+.herd-score-side::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(239,68,68,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.herd-eyebrow {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 12px;
+}
+
+.herd-big-score {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 72px; font-weight: 700;
+  letter-spacing: -4px; line-height: 0.9;
+  margin-bottom: 10px;
+}
+
+.herd-big-stage {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 600;
+  letter-spacing: -0.3px; margin-bottom: 8px;
+}
+
+.timing-signal {
+  display: inline-flex; align-items: center;
+  gap: 6px; padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px; font-weight: 500;
+  margin-top: 4px;
+}
+
+/* 오른쪽 애니메이션 */
+.herd-anim-side {
+  position: relative; overflow: hidden;
+  background: var(--surface2);
+}
+
+.herd-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+}
+
+.herd-anim-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+}
+
+.spectrum-track {
+  height: 3px;
+  background: linear-gradient(to right,
+    var(--flee) 0%, var(--scatter) 25%,
+    var(--calm) 50%, var(--drift) 75%, var(--rush) 100%
+  );
+  position: relative;
+}
+
+.spectrum-thumb {
+  position: absolute; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px; height: 12px;
+  background: var(--surface); border-radius: 50%;
+  border: 2px solid; box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
+}
+
+.spectrum-labels {
+  display: flex; justify-content: space-between;
+  padding: 6px 16px 12px;
+  font-size: 10px; color: var(--text-3);
+}
+
+/* ── 가격 차트 ── */
+.chart-tabs {
+  display: flex; gap: 2px;
+}
+
+.chart-tab {
+  padding: 5px 12px; border-radius: 6px;
+  font-size: 12px; font-weight: 500;
+  color: var(--text-3); cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.chart-tab:hover { color: var(--text-2); }
+.chart-tab.active { background: var(--surface2); color: var(--text-1); }
+
+.chart-area {
+  height: 200px; position: relative;
+  margin: 0 -24px;
+}
+
+.chart-area canvas { width: 100%; height: 100%; }
+
+.chart-summary {
+  display: flex; gap: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+}
+
+.chart-stat {}
+.chart-stat-label { font-size: 11px; color: var(--text-3); margin-bottom: 3px; }
+.chart-stat-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 600; letter-spacing: -0.3px;
+}
+
+/* ── 재무 정보 그리드 ── */
+.finance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.finance-item {
+  background: var(--surface2);
+  padding: 14px 16px;
+}
+
+.finance-label {
+  font-size: 11px; color: var(--text-3);
+  margin-bottom: 4px;
+}
+
+.finance-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.finance-sub {
+  font-size: 11px; color: var(--text-3);
+  margin-top: 2px;
+}
+
+/* ── 뉴스 ── */
+.news-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.news-item:last-child { border-bottom: none; }
+.news-item:hover { opacity: 0.75; }
+
+.news-source-row {
+  display: flex; align-items: center;
+  gap: 8px; margin-bottom: 6px;
+}
+
+.news-source {
+  font-size: 11px; font-weight: 500;
+  color: var(--text-3); letter-spacing: 0.02em;
+}
+
+.news-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--text-3); }
+
+.news-time { font-size: 11px; color: var(--text-3); }
+
+.news-headline {
+  font-size: 13px; font-weight: 500;
+  line-height: 1.5; color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.news-sentiment {
+  display: inline-block;
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ── 사이드: 애널리스트 목표가 ── */
+.analyst-score {
+  text-align: center;
+  padding: 20px 0 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.analyst-avg {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 36px; font-weight: 700;
+  letter-spacing: -2px; margin-bottom: 4px;
+}
+
+.analyst-current {
+  font-size: 12px; color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.analyst-upside {
+  display: inline-block;
+  padding: 4px 12px; border-radius: 99px;
+  font-size: 12px; font-weight: 600;
+  background: rgba(34,197,94,0.1); color: #22C55E;
+}
+
+.consensus-bar {
+  margin-bottom: 16px;
+}
+
+.consensus-label-row {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.consensus-track {
+  height: 6px; border-radius: 99px;
+  background: var(--surface2);
+  overflow: hidden; display: flex;
+}
+
+.consensus-buy  { background: #22C55E; }
+.consensus-hold { background: var(--calm); }
+.consensus-sell { background: var(--rush); }
+
+.consensus-counts {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--text-3);
+  margin-top: 6px;
+}
+
+/* ── 사이드: 내부자 거래 ── */
+.insider-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.insider-item:last-child { border-bottom: none; }
+
+.insider-row {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 12px;
+}
+
+.insider-left {}
+.insider-name {
+  font-size: 13px; font-weight: 500;
+  margin-bottom: 2px;
+}
+.insider-role { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+
+.insider-badge {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 4px; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.insider-right { text-align: right; flex-shrink: 0; }
+.insider-amount {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 2px;
+}
+.insider-date { font-size: 11px; color: var(--text-3); }
+
+/* 색상 유틸 */
+.c-rush    { color: var(--rush); }
+.c-drift   { color: var(--drift); }
+.c-calm    { color: var(--calm); }
+.c-scatter { color: var(--scatter); }
+.c-flee    { color: var(--flee); }
+.pos { color: #22C55E; }
+.neg { color: var(--rush); }
+</style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<aside class="sidebar">
+  <div class="logo">Herd<em>Signal</em></div>
+  <div class="nav-group">
+    <div class="nav-label">포트폴리오</div>
+    <div class="nav-item active">대시보드</div>
+    <div class="nav-item">관심 종목</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">분석</div>
+    <div class="nav-item">AI 리밸런싱</div>
+    <div class="nav-item">백테스트</div>
+  </div>
+  <div class="sidebar-bottom">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">라이트 모드</button>
+  </div>
+</aside>
+
+<!-- 메인 -->
+<main class="main">
+
+  <!-- 브레드크럼 -->
+  <div class="breadcrumb">
+    <span>포트폴리오</span>
+    <span class="sep">/</span>
+    <span class="current">TSLA</span>
+  </div>
+
+  <!-- 종목 헤더 -->
+  <div class="stock-header">
+    <div class="stock-header-left">
+      <div class="stock-logo">TSLA</div>
+      <div class="stock-name-block">
+        <div class="stock-ticker">TSLA</div>
+        <div class="stock-fullname">Tesla, Inc. · NASDAQ</div>
+      </div>
+    </div>
+    <div class="stock-header-right">
+      <button class="btn-watchlist">관심종목 추가</button>
+      <button class="btn-primary">포트폴리오 추가</button>
+    </div>
+  </div>
+
+  <!-- 2컬럼 그리드 -->
+  <div class="content-grid">
+
+    <!-- 왼쪽 메인 -->
+    <div class="col-main">
+
+      <!-- HERD 카드 -->
+      <div class="herd-card">
+        <div class="herd-score-side">
+          <div class="herd-eyebrow">HERD Index</div>
+          <div class="herd-big-score c-rush">83</div>
+          <div class="herd-big-stage c-rush">Herd Rush</div>
+          <div class="timing-signal" style="background:rgba(239,68,68,0.1);color:var(--rush)">
+            보유량의 30% 익절 고려 구간
+          </div>
+        </div>
+
+        <div class="herd-anim-side">
+          <canvas class="herd-canvas" id="herd-canvas"></canvas>
+          <div class="herd-anim-bottom">
+            <div class="spectrum-track">
+              <div class="spectrum-thumb" style="left:83%;border-color:var(--rush)"></div>
+            </div>
+            <div class="spectrum-labels">
+              <span>Flee</span>
+              <span>Scatter</span>
+              <span>Calm</span>
+              <span>Drift</span>
+              <span>Rush</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 가격 차트 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">가격 차트</div>
+          <div class="chart-tabs">
+            <div class="chart-tab">1M</div>
+            <div class="chart-tab active">3M</div>
+            <div class="chart-tab">1Y</div>
+            <div class="chart-tab">5Y</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-area">
+            <canvas id="price-chart"></canvas>
+          </div>
+          <div class="chart-summary">
+            <div class="chart-stat">
+              <div class="chart-stat-label">현재가</div>
+              <div class="chart-stat-value">$328.5</div>
+            </div>
+            <div class="chart-stat">
+              <div class="chart-stat-label">3개월 변화</div>
+              <div class="chart-stat-value pos">+18.4%</div>
+            </div>
+            <div class="chart-stat">
+              <div class="chart-stat-label">52주 고가</div>
+              <div class="chart-stat-value">$414.5</div>
+            </div>
+            <div class="chart-stat">
+              <div class="chart-stat-label">52주 저가</div>
+              <div class="chart-stat-value">$138.8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 재무 정보 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">재무 정보</div>
+        </div>
+        <div class="card-body">
+          <div class="finance-grid">
+            <div class="finance-item">
+              <div class="finance-label">시가총액</div>
+              <div class="finance-value">$1.05T</div>
+            </div>
+            <div class="finance-item">
+              <div class="finance-label">P/E Ratio</div>
+              <div class="finance-value">172.4</div>
+              <div class="finance-sub">업종 평균 28.3</div>
+            </div>
+            <div class="finance-item">
+              <div class="finance-label">영업이익률</div>
+              <div class="finance-value">6.3%</div>
+              <div class="finance-sub">전년 동기 8.2%</div>
+            </div>
+            <div class="finance-item">
+              <div class="finance-label">EPS (TTM)</div>
+              <div class="finance-value">$1.91</div>
+            </div>
+            <div class="finance-item">
+              <div class="finance-label">매출 (TTM)</div>
+              <div class="finance-value">$97.7B</div>
+              <div class="finance-sub">YoY +1.1%</div>
+            </div>
+            <div class="finance-item">
+              <div class="finance-label">배당수익률</div>
+              <div class="finance-value">—</div>
+              <div class="finance-sub">무배당</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 뉴스 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">최근 뉴스</div>
+        </div>
+        <div class="card-body" style="padding-top:4px">
+          <div id="news-list"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 오른쪽 사이드 -->
+    <div class="col-side">
+
+      <!-- 애널리스트 목표가 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">애널리스트 목표가</div>
+        </div>
+        <div class="card-body">
+          <div class="analyst-score">
+            <div class="analyst-avg">$298.4</div>
+            <div class="analyst-current">현재가 $328.5</div>
+            <div class="analyst-upside" style="background:rgba(239,68,68,0.1);color:var(--rush)">
+              목표가 대비 -9.2%
+            </div>
+          </div>
+
+          <div class="consensus-bar">
+            <div class="consensus-label-row">
+              <span>매수</span>
+              <span>중립</span>
+              <span>매도</span>
+            </div>
+            <div class="consensus-track">
+              <div class="consensus-buy" style="width:42%"></div>
+              <div class="consensus-hold" style="width:35%"></div>
+              <div class="consensus-sell" style="width:23%"></div>
+            </div>
+            <div class="consensus-counts">
+              <span>15명</span>
+              <span>12명</span>
+              <span>8명</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 내부자 거래 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">내부자 거래</div>
+        </div>
+        <div class="card-body" style="padding-top:4px" id="insider-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ── HERD 무리 애니메이션 ── */
+function createHerd(canvas, score, count) {
+  const ctx = canvas.getContext('2d');
+  function resize() {
+    canvas.width  = canvas.offsetWidth  * devicePixelRatio;
+    canvas.height = canvas.offsetHeight * devicePixelRatio;
+  }
+  resize();
+
+  const COLORS = { flee:'#3B82F6',scatter:'#60A5FA',calm:'#71717A',drift:'#F97316',rush:'#EF4444' };
+  const key = score>=75?'rush':score>=60?'drift':score>=40?'calm':score>=15?'scatter':'flee';
+  const color = COLORS[key];
+  const cluster = score / 100;
+
+  const dots = Array.from({length:count}, () => {
+    const cx = 0.12 + cluster*0.68;
+    const sp = 0.42 - cluster*0.30;
+    return {
+      x:  Math.max(0.02, Math.min(0.98, cx + (Math.random()-0.5)*sp*2)),
+      y:  Math.max(0.08, Math.min(0.92, 0.5 + (Math.random()-0.5)*0.7)),
+      vx: (Math.random()-0.5)*0.0022,
+      vy: (Math.random()-0.5)*0.0022,
+      r:  (1.5 + Math.random()*2.5) * devicePixelRatio,
+    };
+  });
+
+  let raf;
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const pull = cluster * 0.0005;
+    const cx   = 0.12 + cluster * 0.68;
+    const maxV = 0.0025 + cluster * 0.002;
+
+    dots.forEach(d => {
+      d.vx += (cx  - d.x) * pull;
+      d.vy += (0.5 - d.y) * pull * 0.4;
+      d.x  += d.vx; d.y += d.vy;
+      if (d.x<0.01||d.x>0.99) d.vx*=-1;
+      if (d.y<0.04||d.y>0.96) d.vy*=-1;
+      const spd=Math.hypot(d.vx,d.vy);
+      if(spd>maxV){d.vx=d.vx/spd*maxV;d.vy=d.vy/spd*maxV;}
+
+      ctx.beginPath();
+      ctx.arc(d.x*W, d.y*H, d.r, 0, Math.PI*2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.5 + cluster*0.35;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+    raf = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+setTimeout(() => {
+  const c = document.getElementById('herd-canvas');
+  if (c) createHerd(c, 83, 55);
+}, 100);
+
+/* ── 가격 차트 (모의) ── */
+setTimeout(() => {
+  const canvas = document.getElementById('price-chart');
+  if (!canvas) return;
+  const parent = canvas.parentElement;
+  canvas.width  = parent.offsetWidth  * devicePixelRatio;
+  canvas.height = parent.offsetHeight * devicePixelRatio;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const isDark = !document.body.classList.contains('light');
+
+  // 모의 가격 데이터 (3개월치)
+  const pts = [];
+  let price = 250;
+  for (let i = 0; i < 90; i++) {
+    price += (Math.random()-0.44)*8;
+    price = Math.max(200, Math.min(420, price));
+    pts.push(price);
+  }
+  pts[pts.length-1] = 328.5;
+
+  const minP = Math.min(...pts);
+  const maxP = Math.max(...pts);
+  const pad = { top:20, bottom:20, left:10, right:10 };
+
+  const toX = i => pad.left + (i/(pts.length-1))*(W - pad.left - pad.right);
+  const toY = p => pad.top + (1-(p-minP)/(maxP-minP))*(H - pad.top - pad.bottom);
+
+  // 그라데이션 채우기
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, 'rgba(239,68,68,0.15)');
+  grad.addColorStop(1, 'rgba(239,68,68,0)');
+
+  ctx.beginPath();
+  pts.forEach((p,i) => i===0 ? ctx.moveTo(toX(i),toY(p)) : ctx.lineTo(toX(i),toY(p)));
+  ctx.lineTo(toX(pts.length-1), H);
+  ctx.lineTo(toX(0), H);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // 라인
+  ctx.beginPath();
+  pts.forEach((p,i) => i===0 ? ctx.moveTo(toX(i),toY(p)) : ctx.lineTo(toX(i),toY(p)));
+  ctx.strokeStyle = '#EF4444';
+  ctx.lineWidth = 1.5 * devicePixelRatio;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // 마지막 점
+  const lx = toX(pts.length-1), ly = toY(pts[pts.length-1]);
+  ctx.beginPath();
+  ctx.arc(lx, ly, 4*devicePixelRatio, 0, Math.PI*2);
+  ctx.fillStyle = '#EF4444';
+  ctx.fill();
+}, 150);
+
+/* ── 뉴스 렌더 ── */
+const news = [
+  { source:'Reuters', time:'2시간 전', headline:'Tesla Q2 deliveries beat analyst estimates, shares rise premarket', sentiment:'positive', sc:'rgba(34,197,94,0.1)', cc:'#22C55E' },
+  { source:'Bloomberg', time:'5시간 전', headline:'Musk\'s pay package faces new legal challenge from shareholder group', sentiment:'negative', sc:'rgba(239,68,68,0.1)', cc:'#EF4444' },
+  { source:'CNBC', time:'1일 전', headline:'Tesla Cybertruck production ramp accelerating ahead of schedule', sentiment:'positive', sc:'rgba(34,197,94,0.1)', cc:'#22C55E' },
+  { source:'WSJ', time:'2일 전', headline:'EV price war intensifies as Chinese automakers expand to US market', sentiment:'negative', sc:'rgba(239,68,68,0.1)', cc:'#EF4444' },
+];
+
+const newsList = document.getElementById('news-list');
+news.forEach(n => {
+  const el = document.createElement('div');
+  el.className = 'news-item';
+  el.innerHTML = `
+    <div class="news-source-row">
+      <span class="news-source">${n.source}</span>
+      <div class="news-dot"></div>
+      <span class="news-time">${n.time}</span>
+    </div>
+    <div class="news-headline">${n.headline}</div>
+    <span class="news-sentiment" style="background:${n.sc};color:${n.cc}">${n.sentiment==='positive'?'호재':'악재'}</span>
+  `;
+  newsList.appendChild(el);
+});
+
+/* ── 내부자 거래 렌더 ── */
+const insiders = [
+  { name:'Elon Musk', role:'CEO', type:'SELL', amount:'$485M', date:'2026.06.10', sc:'rgba(239,68,68,0.1)', cc:'#EF4444' },
+  { name:'Robyn Denholm', role:'Chairman', type:'SELL', amount:'$12.3M', date:'2026.05.28', sc:'rgba(239,68,68,0.1)', cc:'#EF4444' },
+  { name:'James Murdoch', role:'Director', type:'BUY', amount:'$2.1M', date:'2026.05.15', sc:'rgba(34,197,94,0.1)', cc:'#22C55E' },
+];
+
+const insiderList = document.getElementById('insider-list');
+insiders.forEach(ins => {
+  const el = document.createElement('div');
+  el.className = 'insider-item';
+  el.innerHTML = `
+    <div class="insider-row">
+      <div class="insider-left">
+        <div class="insider-name">${ins.name}</div>
+        <div class="insider-role">${ins.role}</div>
+        <span class="insider-badge" style="background:${ins.sc};color:${ins.cc}">${ins.type}</span>
+      </div>
+      <div class="insider-right">
+        <div class="insider-amount" style="color:${ins.cc}">${ins.amount}</div>
+        <div class="insider-date">${ins.date}</div>
+      </div>
+    </div>
+  `;
+  insiderList.appendChild(el);
+});
+
+/* ── 테마 ── */
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('theme-btn').textContent = isDark ? '라이트 모드' : '다크 모드';
+}
+</script>
+</body>
+</html>

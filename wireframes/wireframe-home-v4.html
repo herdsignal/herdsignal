@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HerdSignal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  --bg:       #09090B;
+  --surface:  #111113;
+  --surface2: #18181B;
+  --border:   #27272A;
+  --border2:  #3F3F46;
+  --text-1:   #FAFAFA;
+  --text-2:   #A1A1AA;
+  --text-3:   #52525B;
+
+  --flee:    #3B82F6;
+  --scatter: #60A5FA;
+  --calm:    #71717A;
+  --drift:   #F97316;
+  --rush:    #EF4444;
+
+  --sidebar: 200px;
+}
+
+.light {
+  --bg:      #F8F8F9;
+  --surface: #FFFFFF;
+  --surface2:#F1F1F3;
+  --border:  #E4E4E7;
+  --border2: #D4D4D8;
+  --text-1:  #09090B;
+  --text-2:  #71717A;
+  --text-3:  #A1A1AA;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
+  display: flex;
+  font-size: 14px;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ── 사이드바 ── */
+.sidebar {
+  width: var(--sidebar);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top:0; left:0; bottom:0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  z-index: 10;
+}
+
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text-1);
+  margin-bottom: 40px;
+  padding: 0 4px;
+}
+.logo em { font-style:normal; color: var(--flee); }
+
+.nav-group { margin-bottom: 28px; }
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 4px;
+  margin-bottom: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-2);
+  cursor: pointer;
+  margin-bottom: 1px;
+  transition: background 0.1s, color 0.1s;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text-1); }
+.nav-item.active { background: var(--surface2); color: var(--text-1); font-weight: 500; }
+
+.sidebar-bottom { margin-top: auto; }
+
+.theme-btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-3);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.1s;
+}
+.theme-btn:hover { color: var(--text-2); }
+
+/* ── 메인 ── */
+.main {
+  margin-left: var(--sidebar);
+  flex: 1;
+  padding: 40px 56px;
+  min-width: 0;
+}
+
+/* ── 페이지 헤더 ── */
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-date {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.page-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: var(--text-1);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.1px;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.8; }
+
+/* ────────────────────────────
+   S&P500 HERD 배너
+   ──────────────────────────── */
+.market-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 48px;
+  display: grid;
+  grid-template-columns: 280px 1fr 200px;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+/* 왼쪽 — 점수 블록 */
+.banner-score-block {
+  padding: 32px 36px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 배경 글로우 */
+.banner-score-block::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(249,115,22,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.banner-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+
+.banner-score {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 80px;
+  font-weight: 700;
+  letter-spacing: -4px;
+  line-height: 0.9;
+  margin-bottom: 10px;
+}
+
+.banner-stage {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+
+.banner-desc {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* 가운데 — 무리 애니메이션 */
+.banner-anim-block {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface2);
+}
+
+.banner-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.banner-anim-label {
+  position: absolute;
+  bottom: 16px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+/* 스펙트럼 오버레이 */
+.banner-spectrum-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(to right,
+    var(--flee) 0%,
+    var(--scatter) 25%,
+    var(--calm) 50%,
+    var(--drift) 75%,
+    var(--rush) 100%
+  );
+}
+
+.banner-thumb {
+  position: absolute;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 13px; height: 13px;
+  background: var(--surface);
+  border: 2px solid var(--drift);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+}
+
+/* 오른쪽 — 통계 */
+.banner-stats-block {
+  padding: 32px 28px;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.banner-stat-item {}
+.banner-stat-label {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+.banner-stat-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* ────────────────────────────
+   종목 섹션
+   ──────────────────────────── */
+.section-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.section-sort {
+  font-size: 12px;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color 0.1s;
+}
+.section-sort:hover { color: var(--text-2); }
+
+/* ── 종목 테이블 ── */
+.stock-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 28px 240px 1fr 110px 110px 90px 60px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  align-items: center;
+}
+
+.th {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.th.right { text-align: right; }
+
+.table-row {
+  display: grid;
+  grid-template-columns: 28px 240px 1fr 110px 110px 90px 60px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  align-items: stretch;
+  cursor: pointer;
+  transition: background 0.1s;
+  gap: 16px;
+  min-height: 72px;
+}
+.table-row:last-child { border-bottom: none; }
+.table-row:hover { background: var(--surface2); }
+
+/* 스트라이프 */
+.row-stripe {
+  width: 2px;
+  height: 28px;
+  border-radius: 99px;
+}
+
+/* 종목 */
+.row-ticker-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ticker-badge {
+  width: 38px; height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  flex-shrink: 0;
+}
+
+.row-ticker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  margin-bottom: 2px;
+}
+.row-name { font-size: 11px; color: var(--text-3); }
+
+/* HERD 열 — S&P500 배너와 동일한 구조 */
+.row-herd {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 상단: 점수 + 애니메이션 */
+.row-herd-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0 8px;
+}
+
+.herd-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+.herd-stage {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* 애니메이션 영역 */
+.row-anim-wrap {
+  flex: 1;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--surface2);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.row-anim-wrap canvas { display: block; width: 100%; height: 100%; }
+
+/* 하단: 스펙트럼 바 */
+.row-herd-bottom {
+  padding: 0 0 10px;
+}
+
+.mini-spectrum-track {
+  width: 100%;
+  height: 2px;
+  border-radius: 99px;
+  background: linear-gradient(to right,
+    var(--flee) 0%,
+    var(--scatter) 25%,
+    var(--calm) 50%,
+    var(--drift) 75%,
+    var(--rush) 100%
+  );
+  position: relative;
+}
+
+.mini-spectrum-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px; height: 8px;
+  background: var(--surface);
+  border-radius: 50%;
+  border: 2px solid;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+/* 가격 */
+.row-price {
+  text-align: right;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+
+.row-chg {
+  text-align: right;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 시그널 */
+.signal-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  float: right;
+}
+
+/* 액션 */
+.row-action {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.table-row:hover .row-action { color: var(--text-2); }
+
+/* ── AI 리밸런싱 ── */
+.ai-section {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.ai-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.ai-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  margin-bottom: 6px;
+}
+
+.ai-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.65;
+  max-width: 520px;
+}
+
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text-1);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  transition: border-color 0.15s;
+  flex-shrink: 0;
+}
+.btn-secondary:hover { border-color: var(--text-3); }
+
+/* 유틸 */
+.c-flee    { color: var(--flee); }
+.c-scatter { color: var(--scatter); }
+.c-calm    { color: var(--calm); }
+.c-drift   { color: var(--drift); }
+.c-rush    { color: var(--rush); }
+.pos { color: #22C55E; }
+.neg { color: var(--rush); }
+.right { text-align: right; }
+
+.badge-nvda { background:#DCFCE7; color:#166534; }
+.badge-tsla { background:#FEF3C7; color:#92400E; }
+.badge-pltr { background:#EDE9FE; color:#4C1D95; }
+.badge-ionq { background:#DBEAFE; color:#1E3A5F; }
+.badge-aapl { background:#F4F4F5; color:#3F3F46; }
+</style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<aside class="sidebar">
+  <div class="logo">Herd<em>Signal</em></div>
+
+  <div class="nav-group">
+    <div class="nav-label">포트폴리오</div>
+    <div class="nav-item active">대시보드</div>
+    <div class="nav-item">관심 종목</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">분석</div>
+    <div class="nav-item">AI 리밸런싱</div>
+    <div class="nav-item">백테스트</div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">라이트 모드</button>
+  </div>
+</aside>
+
+<!-- 메인 -->
+<main class="main">
+
+  <!-- 페이지 헤더 -->
+  <div class="page-header">
+    <div>
+      <div class="page-date">2026년 6월 28일 토요일</div>
+      <div class="page-title">포트폴리오</div>
+    </div>
+    <button class="btn-primary">종목 추가</button>
+  </div>
+
+  <!-- S&P500 HERD 배너 -->
+  <div class="market-banner">
+
+    <!-- 왼쪽: 점수 -->
+    <div class="banner-score-block">
+      <div class="banner-eyebrow">S&P 500 HERD Index</div>
+      <div class="banner-score c-drift">67</div>
+      <div class="banner-stage c-drift">Herd Drift</div>
+      <div class="banner-desc">군중이 서서히 몰리는 중<br>익절 고려 구간</div>
+    </div>
+
+    <!-- 가운데: 무리 애니메이션 -->
+    <div class="banner-anim-block">
+      <canvas class="banner-canvas" id="banner-canvas"></canvas>
+      <div class="banner-anim-label">
+        <span>← Flee (매수)</span>
+        <span>Rush (익절) →</span>
+      </div>
+      <div class="banner-spectrum-overlay">
+        <div class="banner-thumb" id="banner-thumb" style="left:67%"></div>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 통계 -->
+    <div class="banner-stats-block">
+      <div class="banner-stat-item">
+        <div class="banner-stat-label">SPY 종가</div>
+        <div class="banner-stat-value">$592.4</div>
+      </div>
+      <div class="banner-stat-item">
+        <div class="banner-stat-label">1개월 수익률</div>
+        <div class="banner-stat-value pos">+4.2%</div>
+      </div>
+      <div class="banner-stat-item">
+        <div class="banner-stat-label">업데이트</div>
+        <div class="banner-stat-value" style="font-size:13px;color:var(--text-3);font-family:'Inter',sans-serif;font-weight:400">오늘 06:30</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 종목 섹션 -->
+  <div class="section-row">
+    <div class="section-title">보유 종목 · 5</div>
+    <div class="section-sort">HERD 높은순 ↓</div>
+  </div>
+
+  <div class="stock-table">
+    <div class="table-header">
+      <div class="th"></div>
+      <div class="th">종목</div>
+      <div class="th">HERD</div>
+      <div class="th right">현재가</div>
+      <div class="th right">등락</div>
+      <div class="th right">시그널</div>
+      <div class="th"></div>
+    </div>
+    <div id="tbody"></div>
+  </div>
+
+  <!-- AI 리밸런싱 -->
+  <div class="ai-section">
+    <div>
+      <div class="ai-eyebrow">Phase 2</div>
+      <div class="ai-title">AI 포트폴리오 리밸런싱</div>
+      <div class="ai-desc">
+        보유 종목의 HERD 점수를 분석해 지금 어떤 종목을 얼마나 조정할지 구체적인 금액으로 제안합니다.
+      </div>
+    </div>
+    <button class="btn-secondary">분석 요청</button>
+  </div>
+
+</main>
+
+<script>
+const COLORS = {
+  flee:'#3B82F6', scatter:'#60A5FA', calm:'#71717A', drift:'#F97316', rush:'#EF4444'
+};
+
+const stocks = [
+  { ticker:'TSLA', name:'Tesla, Inc.',          score:83, cls:'rush',    badge:'badge-tsla', price:'$328.5', chg:'+2.1%', pos:true,  signal:'SELL',   sBg:'rgba(239,68,68,0.1)',   sC:'#EF4444' },
+  { ticker:'NVDA', name:'NVIDIA Corporation',   score:72, cls:'drift',   badge:'badge-nvda', price:'$131.2', chg:'-1.4%', pos:false, signal:'REDUCE', sBg:'rgba(249,115,22,0.1)',  sC:'#F97316' },
+  { ticker:'AAPL', name:'Apple Inc.',            score:52, cls:'calm',    badge:'badge-aapl', price:'$283.8', chg:'+0.3%', pos:true,  signal:'HOLD',   sBg:'rgba(113,113,122,0.1)', sC:'#71717A' },
+  { ticker:'PLTR', name:'Palantir Technologies', score:37, cls:'scatter', badge:'badge-pltr', price:'$87.3',  chg:'-0.3%', pos:false, signal:'ADD',    sBg:'rgba(96,165,250,0.1)',  sC:'#60A5FA' },
+  { ticker:'IONQ', name:'IonQ, Inc.',            score:21, cls:'scatter', badge:'badge-ionq', price:'$24.1',  chg:'-4.2%', pos:false, signal:'ADD',    sBg:'rgba(96,165,250,0.1)',  sC:'#60A5FA' },
+];
+
+/* ── 공통: 무리 애니메이션 ── */
+function createHerd(canvas, score, count) {
+  const ctx = canvas.getContext('2d');
+  const isDarkMode = () => !document.body.classList.contains('light');
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth  * devicePixelRatio;
+    canvas.height = canvas.offsetHeight * devicePixelRatio;
+  }
+  resize();
+
+  const color   = COLORS[getKey(score)];
+  const cluster = score / 100;
+
+  const dots = Array.from({length: count}, () => initDot(cluster, canvas));
+
+  function initDot(cluster, canvas) {
+    const cx = 0.12 + cluster * 0.68;
+    const sp = 0.42 - cluster * 0.30;
+    return {
+      x:  Math.max(0.02, Math.min(0.98, cx + (Math.random()-0.5)*sp*2)),
+      y:  Math.max(0.08, Math.min(0.92, 0.5 + (Math.random()-0.5)*0.7)),
+      vx: (Math.random()-0.5)*0.0025,
+      vy: (Math.random()-0.5)*0.0025,
+      r:  (1.2 + Math.random()*2) * devicePixelRatio,
+    };
+  }
+
+  let raf;
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    const pull = cluster * 0.0005;
+    const cx   = 0.12 + cluster * 0.68;
+    const maxV = 0.0025 + cluster * 0.002;
+
+    dots.forEach(d => {
+      d.vx += (cx  - d.x) * pull;
+      d.vy += (0.5 - d.y) * pull * 0.4;
+      d.x  += d.vx; d.y += d.vy;
+      if (d.x < 0.01 || d.x > 0.99) d.vx *= -1;
+      if (d.y < 0.04 || d.y > 0.96) d.vy *= -1;
+      const spd = Math.hypot(d.vx,d.vy);
+      if (spd > maxV) { d.vx = d.vx/spd*maxV; d.vy = d.vy/spd*maxV; }
+
+      ctx.beginPath();
+      ctx.arc(d.x*W, d.y*H, d.r, 0, Math.PI*2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.5 + cluster*0.35;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+    raf = requestAnimationFrame(draw);
+  }
+  draw();
+  return { stop: () => cancelAnimationFrame(raf), resize };
+}
+
+function getKey(score) {
+  if (score >= 75) return 'rush';
+  if (score >= 60) return 'drift';
+  if (score >= 40) return 'calm';
+  if (score >= 15) return 'scatter';
+  return 'flee';
+}
+
+/* ── S&P500 배너 애니메이션 ── */
+setTimeout(() => {
+  const bc = document.getElementById('banner-canvas');
+  if (bc) createHerd(bc, 67, 60);
+}, 100);
+
+/* ── 테이블 렌더 ── */
+const tbody = document.getElementById('tbody');
+const miniAnims = [];
+
+stocks.forEach((s, i) => {
+  const color = COLORS[s.cls];
+  const row = document.createElement('div');
+  row.className = 'table-row';
+  row.innerHTML = `
+    <div style="display:flex;align-items:center"><div class="row-stripe" style="background:${color}"></div></div>
+
+    <div class="row-ticker-block">
+      <div class="ticker-badge ${s.badge}">${s.ticker}</div>
+      <div>
+        <div class="row-ticker">${s.ticker}</div>
+        <div class="row-name">${s.name}</div>
+      </div>
+    </div>
+
+    <div class="row-herd">
+      <div class="row-herd-top">
+        <div>
+          <div class="herd-num c-${s.cls}">${s.score}</div>
+          <div class="herd-stage">Herd ${getKey(s.score).charAt(0).toUpperCase()+getKey(s.score).slice(1)}</div>
+        </div>
+        <div class="row-anim-wrap">
+          <canvas id="mc-${i}"></canvas>
+        </div>
+      </div>
+      <div class="row-herd-bottom">
+        <div class="mini-spectrum-track">
+          <div class="mini-spectrum-thumb" style="left:${s.score}%;border-color:${color}"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-price right">${s.price}</div>
+    <div class="row-chg right ${s.pos?'pos':'neg'}">${s.chg}</div>
+    <div class="right">
+      <span class="signal-badge" style="background:${s.sBg};color:${s.sC}">${s.signal}</span>
+    </div>
+    <div class="row-action">→</div>
+  `;
+  tbody.appendChild(row);
+});
+
+setTimeout(() => {
+  stocks.forEach((s, i) => {
+    const c = document.getElementById(`mc-${i}`);
+    if (c) {
+      c.width  = c.offsetWidth  * devicePixelRatio;
+      c.height = c.offsetHeight * devicePixelRatio;
+      miniAnims.push(createHerd(c, s.score, 14));
+    }
+  });
+}, 150);
+
+/* ── 테마 ── */
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('theme-btn').textContent = isDark ? '라이트 모드' : '다크 모드';
+}
+</script>
+</body>
+</html>

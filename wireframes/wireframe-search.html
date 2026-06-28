@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HerdSignal — 종목 검색</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  --bg:       #09090B;
+  --surface:  #111113;
+  --surface2: #18181B;
+  --border:   #27272A;
+  --border2:  #3F3F46;
+  --text-1:   #FAFAFA;
+  --text-2:   #A1A1AA;
+  --text-3:   #52525B;
+  --flee:    #3B82F6;
+  --scatter: #60A5FA;
+  --calm:    #71717A;
+  --drift:   #F97316;
+  --rush:    #EF4444;
+  --sidebar: 200px;
+}
+
+.light {
+  --bg:      #F8F8F9;
+  --surface: #FFFFFF;
+  --surface2:#F1F1F3;
+  --border:  #E4E4E7;
+  --border2: #D4D4D8;
+  --text-1:  #09090B;
+  --text-2:  #71717A;
+  --text-3:  #A1A1AA;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
+  display: flex;
+  font-size: 14px;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ── 사이드바 ── */
+.sidebar {
+  width: var(--sidebar);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top:0; left:0; bottom:0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  z-index: 10;
+}
+
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 40px; padding: 0 4px;
+}
+.logo em { font-style:normal; color: var(--flee); }
+
+.nav-group { margin-bottom: 28px; }
+.nav-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-3); padding: 0 4px; margin-bottom: 4px;
+}
+.nav-item {
+  display: flex; align-items: center;
+  padding: 8px; border-radius: 6px;
+  font-size: 13px; color: var(--text-2);
+  cursor: pointer; margin-bottom: 1px;
+  transition: background 0.1s, color 0.1s;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text-1); }
+.nav-item.active { background: var(--surface2); color: var(--text-1); font-weight: 500; }
+
+.sidebar-bottom { margin-top: auto; }
+.theme-btn {
+  width: 100%; text-align: left; padding: 8px;
+  border-radius: 6px; font-size: 12px; color: var(--text-3);
+  cursor: pointer; background: none; border: none;
+  font-family: 'Inter', sans-serif; transition: color 0.1s;
+}
+.theme-btn:hover { color: var(--text-2); }
+
+/* ── 메인 ── */
+.main {
+  margin-left: var(--sidebar);
+  flex: 1; padding: 40px 56px;
+  min-width: 0;
+  max-width: 900px;
+}
+
+/* ── 페이지 헤더 ── */
+.page-header {
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-date {
+  font-size: 12px; color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.page-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px; font-weight: 700;
+  letter-spacing: -1px; line-height: 1;
+  margin-bottom: 6px;
+}
+
+.page-desc {
+  font-size: 13px; color: var(--text-2);
+}
+
+/* ── 검색 바 ── */
+.search-wrap {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.search-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 14px 48px 14px 18px;
+  font-size: 15px;
+  color: var(--text-1);
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.search-input:focus {
+  border-color: var(--text-3);
+}
+
+.search-input::placeholder { color: var(--text-3); }
+
+.search-icon {
+  position: absolute;
+  right: 16px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* ── 검색 결과 드롭다운 ── */
+.search-dropdown {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.dropdown-header {
+  padding: 10px 18px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: var(--surface2); }
+
+.result-left { display: flex; align-items: center; gap: 14px; }
+
+.result-badge {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+.result-ticker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 600;
+  letter-spacing: -0.3px; margin-bottom: 2px;
+}
+.result-name { font-size: 12px; color: var(--text-2); }
+
+.result-right { display: flex; align-items: center; gap: 16px; }
+
+.result-price {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 500;
+  text-align: right;
+}
+
+.result-herd {
+  text-align: right;
+  min-width: 80px;
+}
+
+.result-herd-score {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.result-herd-stage {
+  font-size: 10px; color: var(--text-3);
+  margin-top: 1px;
+}
+
+.result-add-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12px; font-weight: 500;
+  color: var(--text-2); cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.result-add-btn:hover {
+  background: var(--text-1);
+  color: var(--bg);
+  border-color: var(--text-1);
+}
+
+.result-add-btn.added {
+  background: rgba(34,197,94,0.1);
+  border-color: rgba(34,197,94,0.2);
+  color: #22C55E;
+}
+
+/* ── 섹션 구분 ── */
+.section-label {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 14px;
+}
+
+/* ── 인기 종목 그리드 ── */
+.popular-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.popular-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.popular-card:hover { background: var(--surface2); border-color: var(--border2); }
+
+.popular-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 15%; bottom: 15%;
+  width: 2px; border-radius: 0 2px 2px 0;
+}
+
+.popular-top {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 10px;
+}
+
+.popular-badge {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 9px; font-weight: 700;
+}
+
+.popular-score {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.popular-ticker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 1px;
+}
+
+.popular-name { font-size: 11px; color: var(--text-3); margin-bottom: 8px; }
+
+.popular-bottom {
+  display: flex; align-items: center;
+  justify-content: space-between;
+}
+
+.popular-price { font-size: 13px; font-weight: 500; }
+.popular-chg { font-size: 12px; font-weight: 500; }
+
+/* ── 최근 검색 ── */
+.recent-list { margin-bottom: 40px; }
+
+.recent-item {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.recent-item:last-child { border-bottom: none; }
+.recent-item:hover { opacity: 0.7; }
+
+.recent-left { display: flex; align-items: center; gap: 10px; }
+.recent-ticker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 600;
+}
+.recent-name { font-size: 12px; color: var(--text-3); }
+.recent-time { font-size: 11px; color: var(--text-3); }
+
+/* 색상 유틸 */
+.c-rush    { color: var(--rush); }
+.c-drift   { color: var(--drift); }
+.c-calm    { color: var(--calm); }
+.c-scatter { color: var(--scatter); }
+.c-flee    { color: var(--flee); }
+.pos { color: #22C55E; }
+.neg { color: var(--rush); }
+
+.b-nvda { background:#DCFCE7; color:#166534; }
+.b-tsla { background:#FEF3C7; color:#92400E; }
+.b-pltr { background:#EDE9FE; color:#4C1D95; }
+.b-ionq { background:#DBEAFE; color:#1E3A5F; }
+.b-aapl { background:#F4F4F5; color:#3F3F46; }
+.b-msft { background:#DBEAFE; color:#1E40AF; }
+.b-meta { background:#EDE9FE; color:#5B21B6; }
+.b-amzn { background:#FEF3C7; color:#92400E; }
+.b-spy  { background:#F4F4F5; color:#3F3F46; }
+</style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<aside class="sidebar">
+  <div class="logo">Herd<em>Signal</em></div>
+  <div class="nav-group">
+    <div class="nav-label">포트폴리오</div>
+    <div class="nav-item">대시보드</div>
+    <div class="nav-item">관심 종목</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">분석</div>
+    <div class="nav-item">AI 리밸런싱</div>
+    <div class="nav-item">백테스트</div>
+  </div>
+  <div class="sidebar-bottom">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">라이트 모드</button>
+  </div>
+</aside>
+
+<!-- 메인 -->
+<main class="main">
+
+  <!-- 헤더 -->
+  <div class="page-header">
+    <div class="page-date">2026년 6월 28일 토요일</div>
+    <div class="page-title">종목 검색</div>
+    <div class="page-desc">티커 또는 종목명으로 검색해 포트폴리오에 추가하세요</div>
+  </div>
+
+  <!-- 검색 바 -->
+  <div class="search-wrap">
+    <input
+      class="search-input"
+      type="text"
+      placeholder="티커 또는 종목명 입력 (예: AAPL, Tesla)"
+      id="search-input"
+      value="NV"
+      oninput="handleSearch(this.value)"
+    >
+    <div class="search-icon">⌕</div>
+  </div>
+
+  <!-- 검색 결과 드롭다운 (입력 시 표시) -->
+  <div class="search-dropdown" id="search-dropdown">
+    <div class="dropdown-header">검색 결과</div>
+    <div id="search-results"></div>
+  </div>
+
+  <!-- 인기 종목 -->
+  <div class="section-label">인기 종목 HERD</div>
+  <div class="popular-grid" id="popular-grid"></div>
+
+  <!-- 최근 검색 -->
+  <div class="section-label">최근 검색</div>
+  <div class="recent-list" id="recent-list"></div>
+
+</main>
+
+<script>
+const COLORS = {
+  flee:'#3B82F6', scatter:'#60A5FA', calm:'#71717A', drift:'#F97316', rush:'#EF4444'
+};
+
+function getKey(score) {
+  if (score>=75) return 'rush';
+  if (score>=60) return 'drift';
+  if (score>=40) return 'calm';
+  if (score>=15) return 'scatter';
+  return 'flee';
+}
+
+function getStageName(score) {
+  if (score>=75) return 'Herd Rush';
+  if (score>=60) return 'Herd Drift';
+  if (score>=40) return 'Herd Calm';
+  if (score>=15) return 'Herd Scatter';
+  return 'Herd Flee';
+}
+
+/* ── 검색 결과 데이터 ── */
+const searchResults = [
+  { ticker:'NVDA', name:'NVIDIA Corporation', badge:'b-nvda', price:'$131.2', chg:'-1.4%', pos:false, score:47, added:false },
+  { ticker:'NVO',  name:'Novo Nordisk A/S',   badge:'b-msft', price:'$87.4',  chg:'+0.8%', pos:true,  score:61, added:false },
+];
+
+function renderSearchResults() {
+  const container = document.getElementById('search-results');
+  container.innerHTML = searchResults.map((s,i) => {
+    const key = getKey(s.score);
+    const color = COLORS[key];
+    return `
+      <div class="search-result-item">
+        <div class="result-left">
+          <div class="result-badge ${s.badge}">${s.ticker}</div>
+          <div>
+            <div class="result-ticker">${s.ticker}</div>
+            <div class="result-name">${s.name}</div>
+          </div>
+        </div>
+        <div class="result-right">
+          <div class="result-price">
+            ${s.price}<br>
+            <span style="font-size:12px" class="${s.pos?'pos':'neg'}">${s.chg}</span>
+          </div>
+          <div class="result-herd">
+            <div class="result-herd-score" style="color:${color}">${s.score}</div>
+            <div class="result-herd-stage">${getStageName(s.score)}</div>
+          </div>
+          <button
+            class="result-add-btn ${s.added?'added':''}"
+            onclick="toggleAdd(${i}, this)"
+          >${s.added ? '추가됨 ✓' : '+ 추가'}</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleAdd(i, btn) {
+  searchResults[i].added = !searchResults[i].added;
+  btn.className = 'result-add-btn ' + (searchResults[i].added ? 'added' : '');
+  btn.textContent = searchResults[i].added ? '추가됨 ✓' : '+ 추가';
+}
+
+function handleSearch(val) {
+  const dd = document.getElementById('search-dropdown');
+  dd.style.display = val.length > 0 ? 'block' : 'none';
+  renderSearchResults();
+}
+
+// 초기 렌더
+renderSearchResults();
+
+/* ── 인기 종목 ── */
+const popular = [
+  { ticker:'NVDA', name:'NVIDIA',   badge:'b-nvda', score:47, cls:'calm',    price:'$131.2', chg:'-1.4%', pos:false },
+  { ticker:'AAPL', name:'Apple',    badge:'b-aapl', score:52, cls:'calm',    price:'$283.8', chg:'+0.3%', pos:true  },
+  { ticker:'MSFT', name:'Microsoft',badge:'b-msft', score:58, cls:'calm',    price:'$478.2', chg:'+0.5%', pos:true  },
+  { ticker:'META', name:'Meta',     badge:'b-meta', score:71, cls:'drift',   price:'$697.4', chg:'+1.2%', pos:true  },
+  { ticker:'AMZN', name:'Amazon',   badge:'b-amzn', score:64, cls:'drift',   price:'$229.8', chg:'+0.8%', pos:true  },
+  { ticker:'SPY',  name:'S&P 500 ETF', badge:'b-spy', score:67, cls:'drift', price:'$592.4', chg:'+0.4%', pos:true },
+];
+
+const grid = document.getElementById('popular-grid');
+popular.forEach(s => {
+  const color = COLORS[s.cls];
+  const card = document.createElement('div');
+  card.className = 'popular-card';
+  card.innerHTML = `
+    <div style="position:absolute;left:0;top:15%;bottom:15%;width:2px;border-radius:0 2px 2px 0;background:${color}"></div>
+    <div class="popular-top">
+      <div class="popular-badge ${s.badge}">${s.ticker}</div>
+      <div class="popular-score c-${s.cls}">${s.score}</div>
+    </div>
+    <div class="popular-ticker">${s.ticker}</div>
+    <div class="popular-name">${s.name}</div>
+    <div class="popular-bottom">
+      <div class="popular-price">${s.price}</div>
+      <div class="popular-chg ${s.pos?'pos':'neg'}">${s.chg}</div>
+    </div>
+  `;
+  card.onclick = () => {
+    document.getElementById('search-input').value = s.ticker;
+    handleSearch(s.ticker);
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+  grid.appendChild(card);
+});
+
+/* ── 최근 검색 ── */
+const recents = [
+  { ticker:'TSLA', name:'Tesla, Inc.',          time:'1시간 전' },
+  { ticker:'PLTR', name:'Palantir Technologies', time:'3시간 전' },
+  { ticker:'IONQ', name:'IonQ, Inc.',            time:'어제'    },
+  { ticker:'BTC-USD', name:'Bitcoin USD',        time:'2일 전'  },
+];
+
+const recentList = document.getElementById('recent-list');
+recents.forEach(r => {
+  const el = document.createElement('div');
+  el.className = 'recent-item';
+  el.innerHTML = `
+    <div class="recent-left">
+      <span style="color:var(--text-3);font-size:13px">↺</span>
+      <div>
+        <div class="recent-ticker">${r.ticker}</div>
+        <div class="recent-name">${r.name}</div>
+      </div>
+    </div>
+    <div class="recent-time">${r.time}</div>
+  `;
+  el.onclick = () => {
+    document.getElementById('search-input').value = r.ticker;
+    handleSearch(r.ticker);
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+  recentList.appendChild(el);
+});
+
+/* ── 테마 ── */
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('theme-btn').textContent = isDark ? '라이트 모드' : '다크 모드';
+}
+</script>
+</body>
+</html>

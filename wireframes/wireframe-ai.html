@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HerdSignal — AI 리밸런싱</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  --bg:       #09090B;
+  --surface:  #111113;
+  --surface2: #18181B;
+  --border:   #27272A;
+  --border2:  #3F3F46;
+  --text-1:   #FAFAFA;
+  --text-2:   #A1A1AA;
+  --text-3:   #52525B;
+  --flee:    #3B82F6;
+  --scatter: #60A5FA;
+  --calm:    #71717A;
+  --drift:   #F97316;
+  --rush:    #EF4444;
+  --sidebar: 200px;
+}
+
+.light {
+  --bg:      #F8F8F9;
+  --surface: #FFFFFF;
+  --surface2:#F1F1F3;
+  --border:  #E4E4E7;
+  --border2: #D4D4D8;
+  --text-1:  #09090B;
+  --text-2:  #71717A;
+  --text-3:  #A1A1AA;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
+  display: flex;
+  font-size: 14px;
+  transition: background 0.25s, color 0.25s;
+}
+
+.sidebar {
+  width: var(--sidebar);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top:0; left:0; bottom:0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  z-index: 10;
+}
+
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 40px; padding: 0 4px;
+}
+.logo em { font-style:normal; color: var(--flee); }
+
+.nav-group { margin-bottom: 28px; }
+.nav-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-3); padding: 0 4px; margin-bottom: 4px;
+}
+.nav-item {
+  padding: 8px; border-radius: 6px;
+  font-size: 13px; color: var(--text-2);
+  cursor: pointer; margin-bottom: 1px;
+  transition: background 0.1s, color 0.1s;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text-1); }
+.nav-item.active { background: var(--surface2); color: var(--text-1); font-weight: 500; }
+
+.sidebar-bottom { margin-top: auto; }
+.theme-btn {
+  width: 100%; text-align: left; padding: 8px;
+  border-radius: 6px; font-size: 12px; color: var(--text-3);
+  cursor: pointer; background: none; border: none;
+  font-family: 'Inter', sans-serif;
+}
+.theme-btn:hover { color: var(--text-2); }
+
+.main {
+  margin-left: var(--sidebar);
+  flex: 1; padding: 40px 56px;
+  min-width: 0;
+}
+
+.page-header {
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-date { font-size: 12px; color: var(--text-3); margin-bottom: 6px; }
+.page-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px; font-weight: 700;
+  letter-spacing: -1px; margin-bottom: 6px;
+}
+.page-desc { font-size: 13px; color: var(--text-2); }
+
+/* ── 2컬럼 ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.card-body { padding: 24px; }
+
+/* ── 포트폴리오 요약 ── */
+.portfolio-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.summary-item {
+  background: var(--surface2);
+  padding: 16px 18px;
+}
+
+.summary-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+.summary-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.8px;
+}
+.summary-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+/* ── 종목별 비중 바 ── */
+.allocation-list { display: flex; flex-direction: column; gap: 14px; }
+
+.allocation-item {}
+
+.alloc-top {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 6px;
+}
+
+.alloc-ticker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.alloc-herd {
+  font-size: 11px; padding: 2px 8px;
+  border-radius: 4px; font-weight: 600;
+}
+
+.alloc-pct {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-2);
+}
+
+.alloc-bar-track {
+  height: 5px; border-radius: 99px;
+  background: var(--surface2); overflow: hidden;
+}
+
+.alloc-bar-fill {
+  height: 100%; border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+/* ── AI 분석 결과 ── */
+.ai-status {
+  display: flex; align-items: center;
+  gap: 10px; margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--surface2);
+  border-radius: 8px;
+  font-size: 13px; color: var(--text-2);
+}
+
+.ai-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22C55E;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* 제안 카드 */
+.suggestion-list { display: flex; flex-direction: column; gap: 12px; }
+
+.suggestion-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  border-left: 3px solid;
+}
+
+.suggestion-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 12px;
+  margin-bottom: 8px;
+}
+
+.suggestion-ticker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.suggestion-action {
+  font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 4px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.suggestion-amount {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px; font-weight: 700;
+  letter-spacing: -0.5px;
+  text-align: right;
+}
+
+.suggestion-amount-sub {
+  font-size: 11px; color: var(--text-3);
+  text-align: right;
+}
+
+.suggestion-reason {
+  font-size: 12px; color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* ── AI 텍스트 분석 ── */
+.ai-analysis-text {
+  font-size: 13px; color: var(--text-2);
+  line-height: 1.8;
+  padding: 16px;
+  background: var(--surface2);
+  border-radius: 8px;
+  border-left: 2px solid var(--border2);
+  margin-bottom: 16px;
+}
+
+.ai-analysis-text strong {
+  color: var(--text-1);
+  font-weight: 500;
+}
+
+/* ── 사이드: 현금 확보 시뮬레이터 ── */
+.cash-result {
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.cash-amount {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 36px; font-weight: 700;
+  letter-spacing: -2px; margin-bottom: 4px;
+  color: #22C55E;
+}
+
+.cash-label { font-size: 12px; color: var(--text-3); }
+
+.scenario-list { display: flex; flex-direction: column; gap: 10px; }
+
+.scenario-item {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.1s;
+  border: 1px solid transparent;
+}
+.scenario-item:hover { border-color: var(--border2); }
+.scenario-item.active { border-color: var(--flee); }
+
+.scenario-label { font-size: 13px; }
+.scenario-cash {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 600;
+  color: #22C55E;
+}
+
+/* ── 사이드: 리스크 요약 ── */
+.risk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.risk-item {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.risk-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+.risk-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+/* 실행 버튼 */
+.execute-btn {
+  width: 100%;
+  background: var(--text-1);
+  color: var(--bg);
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  margin-top: 16px;
+  transition: opacity 0.15s;
+}
+.execute-btn:hover { opacity: 0.8; }
+
+.execute-note {
+  font-size: 11px; color: var(--text-3);
+  text-align: center; margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* 색상 */
+.c-rush    { color: var(--rush); }
+.c-drift   { color: var(--drift); }
+.c-calm    { color: var(--calm); }
+.c-scatter { color: var(--scatter); }
+.pos { color: #22C55E; }
+.neg { color: var(--rush); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">Herd<em>Signal</em></div>
+  <div class="nav-group">
+    <div class="nav-label">포트폴리오</div>
+    <div class="nav-item">대시보드</div>
+    <div class="nav-item">관심 종목</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">분석</div>
+    <div class="nav-item active">AI 리밸런싱</div>
+    <div class="nav-item">백테스트</div>
+  </div>
+  <div class="sidebar-bottom">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">라이트 모드</button>
+  </div>
+</aside>
+
+<main class="main">
+
+  <div class="page-header">
+    <div class="page-date">2026년 6월 28일 토요일</div>
+    <div class="page-title">AI 리밸런싱</div>
+    <div class="page-desc">HERD Index 기반으로 지금 포트폴리오를 어떻게 조정할지 제안합니다</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- 왼쪽 -->
+    <div>
+
+      <!-- 포트폴리오 현황 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">포트폴리오 현황</div>
+          <div style="font-size:12px;color:var(--text-3)">총 ₩21,340,000</div>
+        </div>
+        <div class="card-body">
+          <div class="portfolio-summary">
+            <div class="summary-item">
+              <div class="summary-label">평가금액</div>
+              <div class="summary-value">₩21.3M</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">현금 비중</div>
+              <div class="summary-value">0%</div>
+              <div class="summary-sub">현금 없음</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">평균 HERD</div>
+              <div class="summary-value c-drift">59.2</div>
+              <div class="summary-sub">Calm~Drift 경계</div>
+            </div>
+          </div>
+
+          <div class="allocation-list" id="alloc-list"></div>
+        </div>
+      </div>
+
+      <!-- AI 분석 결과 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">AI 분석 결과</div>
+          <div class="ai-status" style="margin:0;padding:6px 10px;font-size:11px">
+            <div class="ai-dot"></div>
+            Claude Sonnet 4.6
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="ai-analysis-text">
+            현재 포트폴리오에서 <strong>TSLA(83점, Herd Rush)</strong>가 가장 과열된 상태입니다. 역사적으로 HERD 75 이상 구간에서 30% 부분 익절 시 MDD를 평균 10%p 개선한 것으로 나타났습니다.<br><br>
+            <strong>NVDA(47점)</strong>와 <strong>PLTR(37점)</strong>은 Calm~Scatter 구간으로 보유를 유지하기 적절한 상태입니다. <strong>IONQ(21점)</strong>는 Scatter 구간 진입으로 분할 매수 신호가 발생했습니다.
+          </div>
+
+          <div class="suggestion-list" id="suggestion-list"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 오른쪽 사이드 -->
+    <div>
+
+      <!-- 현금 확보 시뮬레이터 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">익절 시 현금 확보</div>
+        </div>
+        <div class="card-body">
+          <div class="cash-result">
+            <div class="cash-amount">₩2,140,000</div>
+            <div class="cash-label">제안대로 실행 시 확보 가능 현금</div>
+          </div>
+
+          <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">시나리오 선택</div>
+          <div class="scenario-list">
+            <div class="scenario-item active">
+              <div class="scenario-label">AI 추천 (Rush만 익절)</div>
+              <div class="scenario-cash">+₩2,140,000</div>
+            </div>
+            <div class="scenario-item">
+              <div class="scenario-label">보수적 (Rush + Drift 익절)</div>
+              <div class="scenario-cash">+₩3,820,000</div>
+            </div>
+            <div class="scenario-item">
+              <div class="scenario-label">적극적 (전체 20% 익절)</div>
+              <div class="scenario-cash">+₩4,268,000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 리스크 요약 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">리스크 지표</div>
+        </div>
+        <div class="card-body">
+          <div class="risk-grid">
+            <div class="risk-item">
+              <div class="risk-label">현재 MDD 예상</div>
+              <div class="risk-value neg">-52.3%</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-label">조정 후 MDD</div>
+              <div class="risk-value pos">-43.1%</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-label">Rush 비중</div>
+              <div class="risk-value c-rush">23.4%</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-label">Flee/Scatter 비중</div>
+              <div class="risk-value c-scatter">31.2%</div>
+            </div>
+          </div>
+
+          <button class="execute-btn">토스증권 연동 후 실행</button>
+          <div class="execute-note">실제 매매는 토스증권 연동 후 가능합니다.<br>현재는 참고용 제안입니다.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+const COLORS = { flee:'#3B82F6',scatter:'#60A5FA',calm:'#71717A',drift:'#F97316',rush:'#EF4444' };
+function getKey(s){return s>=75?'rush':s>=60?'drift':s>=40?'calm':s>=15?'scatter':'flee';}
+
+const portfolio = [
+  { ticker:'TSLA', score:83, pct:32, color:'#EF4444' },
+  { ticker:'NVDA', score:47, pct:28, color:'#71717A' },
+  { ticker:'AAPL', score:52, pct:18, color:'#71717A' },
+  { ticker:'PLTR', score:37, pct:14, color:'#60A5FA' },
+  { ticker:'IONQ', score:21, pct:8,  color:'#3B82F6' },
+];
+
+// 비중 바
+const allocList = document.getElementById('alloc-list');
+portfolio.forEach(s => {
+  const el = document.createElement('div');
+  el.className = 'allocation-item';
+  el.innerHTML = `
+    <div class="alloc-top">
+      <div class="alloc-ticker">
+        ${s.ticker}
+        <span class="alloc-herd" style="background:${s.color}20;color:${s.color}">${s.score}</span>
+      </div>
+      <div class="alloc-pct">${s.pct}%</div>
+    </div>
+    <div class="alloc-bar-track">
+      <div class="alloc-bar-fill" style="width:${s.pct}%;background:${s.color}"></div>
+    </div>
+  `;
+  allocList.appendChild(el);
+});
+
+// AI 제안
+const suggestions = [
+  { ticker:'TSLA', action:'SELL 30%', amount:'₩2,140,000', sub:'보유 ₩7,130,000 → ₩4,990,000', reason:'Herd Rush(83) — 역사적 과열 구간. 부분 익절로 현금 확보 후 하락 시 재매수 기회 대기', borderColor:'#EF4444', actionBg:'rgba(239,68,68,0.1)', actionC:'#EF4444' },
+  { ticker:'IONQ', action:'ADD 10%', amount:'+₩214,000', sub:'현금 확보분 일부 투입', reason:'Herd Scatter(21) — 1단계 매수 신호. 소규모 분할 매수로 평균 단가 낮추기', borderColor:'#60A5FA', actionBg:'rgba(96,165,250,0.1)', actionC:'#60A5FA' },
+  { ticker:'NVDA', action:'HOLD', amount:'—', sub:'현재 비중 유지', reason:'Herd Calm(47) — 중립 구간. 특별한 액션 불필요', borderColor:'#71717A', actionBg:'rgba(113,113,122,0.1)', actionC:'#71717A' },
+];
+
+const suggList = document.getElementById('suggestion-list');
+suggestions.forEach(s => {
+  const el = document.createElement('div');
+  el.className = 'suggestion-card';
+  el.style.borderLeftColor = s.borderColor;
+  el.innerHTML = `
+    <div class="suggestion-top">
+      <div>
+        <div class="suggestion-ticker">${s.ticker}</div>
+      </div>
+      <div>
+        <div class="suggestion-amount" style="color:${s.actionC}">${s.amount}</div>
+        <div class="suggestion-amount-sub">${s.sub}</div>
+      </div>
+      <span class="suggestion-action" style="background:${s.actionBg};color:${s.actionC}">${s.action}</span>
+    </div>
+    <div class="suggestion-reason">${s.reason}</div>
+  `;
+  suggList.appendChild(el);
+});
+
+// 시나리오 클릭
+document.querySelectorAll('.scenario-item').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.scenario-item').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+  });
+});
+
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('theme-btn').textContent = isDark ? '라이트 모드' : '다크 모드';
+}
+</script>
+</body>
+</html>
