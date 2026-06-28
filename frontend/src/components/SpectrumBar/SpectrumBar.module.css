@@ -1,0 +1,44 @@
+/* SpectrumBar.module.css */
+
+.wrapper {
+  width: 100%;
+}
+
+/* 선택적 라벨 (Flee / Rush) */
+.labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.label {
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+
+/* Flee(파랑) → Scatter → Calm → Drift → Rush(레드) 그라데이션 */
+.track {
+  width: 100%;
+  border-radius: 99px;
+  background: linear-gradient(
+    to right,
+    var(--flee)    0%,
+    var(--scatter) 25%,
+    var(--calm)    50%,
+    var(--drift)   75%,
+    var(--rush)    100%
+  );
+  position: relative;
+}
+
+/* 현재 위치 thumb */
+.thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--surface);
+  border-radius: 50%;
+  border: 2px solid;    /* borderColor는 인라인으로 주입 */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  transition: left 0.4s ease;
+}
