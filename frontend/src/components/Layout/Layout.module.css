@@ -1,0 +1,126 @@
+/* Layout.module.css — 사이드바 + 메인 레이아웃 */
+
+/* 전역 리셋 */
+:global(*) {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:global(body) {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
+  font-size: 14px;
+  transition: background var(--t-base), color var(--t-base);
+}
+
+:global(a) {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── 최상위 래퍼 ── */
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── 사이드바 ── */
+.sidebar {
+  width: var(--sidebar);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  z-index: 10;
+  transition: background var(--t-base), border-color var(--t-base);
+}
+
+/* 로고 */
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text-1);
+  margin-bottom: 40px;
+  padding: 0 4px;
+}
+.logoEm {
+  font-style: normal;
+  color: var(--flee);
+}
+
+/* 네비 그룹 */
+.navGroup {
+  margin-bottom: 28px;
+}
+
+.navLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 4px;
+  margin-bottom: 4px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-2);
+  cursor: pointer;
+  margin-bottom: 1px;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.navItem:hover {
+  background: var(--surface2);
+  color: var(--text-1);
+}
+.active {
+  background: var(--surface2);
+  color: var(--text-1);
+  font-weight: 500;
+}
+
+/* 하단 테마 버튼 */
+.sidebarBottom {
+  margin-top: auto;
+}
+
+.themeBtn {
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-3);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  transition: color var(--t-fast);
+}
+.themeBtn:hover {
+  color: var(--text-2);
+}
+
+/* ── 메인 콘텐츠 ── */
+.main {
+  margin-left: var(--sidebar);
+  flex: 1;
+  padding: 40px 56px;
+  min-width: 0;
+}

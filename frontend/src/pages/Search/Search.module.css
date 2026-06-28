@@ -1,0 +1,29 @@
+.header {
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+.searchWrap { margin-bottom: 32px; }
+.searchInput {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 14px;
+  color: var(--text-1);
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color var(--t-fast);
+}
+.searchInput:focus { border-color: var(--text-3); }
+.searchInput::placeholder { color: var(--text-3); }
+.empty { padding: 40px 0; }
+.emptyText { font-size: 14px; color: var(--text-3); }
