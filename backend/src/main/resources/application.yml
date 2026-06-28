@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    # 환경변수 우선, 없으면 개발 기본값 사용
+    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:herdsignal}?characterEncoding=UTF-8&serverTimezone=UTC
+    username: ${DB_USER:herdsignal}
+    password: ${DB_PASSWORD:herdsignal1234}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # Python(init_db.py)이 생성한 테이블 구조를 그대로 사용 — 스키마 변경 금지
+      ddl-auto: validate
+    # View 렌더링 중 DB 쿼리 방지 (명시적 비활성화로 WARN 제거)
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        # Spring Boot 3.x에서 MariaDB는 dialect 자동 감지 — 명시 불필요
+        format_sql: true
+
+  # DevTools: 클래스 변경 시 자동 재시작 (개발 환경 전용)
+  devtools:
+    restart:
+      enabled: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.herdsignal: DEBUG
+    org.hibernate.SQL: WARN
