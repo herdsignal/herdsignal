@@ -18,7 +18,8 @@ public class CorsConfig implements WebMvcConfigurer {
                 // 개발: React 개발 서버, 프로덕션: 실제 도메인으로 교체 예정
                 .allowedOrigins(
                         "http://localhost:3000",
-                        "http://localhost:5173"
+                        "http://localhost:5173",
+                        "http://localhost:5174"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
