@@ -1,5 +1,6 @@
 package com.herdsignal.controller;
 
+import com.herdsignal.config.AppConstants;
 import com.herdsignal.domain.UserWatchlist;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.WatchlistAddRequest;
@@ -14,7 +15,7 @@ import java.util.List;
 
 /**
  * 관심 종목 CRUD + HERD 조회 API 컨트롤러.
- * MVP에서 userId는 모든 엔드포인트에서 "local" 고정.
+ * MVP에서 userId는 모든 엔드포인트에서 AppConstants.DEFAULT_USER_ID 고정.
  */
 @RestController
 @RequestMapping("/api/watchlist")
@@ -29,7 +30,7 @@ public class WatchlistController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserWatchlist>>> getWatchlist() {
-        List<UserWatchlist> watchlist = watchlistService.getWatchlist("local");
+        List<UserWatchlist> watchlist = watchlistService.getWatchlist(AppConstants.DEFAULT_USER_ID);
         return ResponseEntity.ok(ApiResponse.success(watchlist));
     }
 
@@ -40,7 +41,7 @@ public class WatchlistController {
      */
     @GetMapping("/herd")
     public ResponseEntity<ApiResponse<WatchlistHerdResponse>> getWatchlistHerd() {
-        WatchlistHerdResponse response = watchlistService.getWatchlistHerd("local");
+        WatchlistHerdResponse response = watchlistService.getWatchlistHerd(AppConstants.DEFAULT_USER_ID);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -52,7 +53,7 @@ public class WatchlistController {
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> addStock(
             @RequestBody WatchlistAddRequest request) {
-        watchlistService.addStock("local", request);
+        watchlistService.addStock(AppConstants.DEFAULT_USER_ID, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null));
     }
 
@@ -63,7 +64,7 @@ public class WatchlistController {
      */
     @DeleteMapping("/{ticker}")
     public ResponseEntity<Void> removeStock(@PathVariable String ticker) {
-        watchlistService.removeStock("local", ticker);
+        watchlistService.removeStock(AppConstants.DEFAULT_USER_ID, ticker);
         return ResponseEntity.noContent().build();
     }
 }

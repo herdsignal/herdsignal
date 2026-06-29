@@ -55,26 +55,38 @@ def calc_volume_strength(df: pd.DataFrame) -> float:
 
     Raises:
         ValueError: 데이터 부족 또는 거래량 데이터 없음
+        KeyError: 필수 컬럼(Volume 등) 누락 시
     """
-    if len(df) < MIN_ROWS:
-        raise ValueError(
-            f"거래량 강도 계산에 최소 {MIN_ROWS}거래일 필요, 현재 {len(df)}일"
-        )
+    try:
+        if len(df) < MIN_ROWS:
+            raise ValueError(
+                f"거래량 강도 계산에 최소 {MIN_ROWS}거래일 필요, 현재 {len(df)}일"
+            )
 
-    volume = df["Volume"].copy()
+        volume = df["Volume"].copy()
 
-    # 거래량이 전부 0이면 거래 정지 종목으로 판단
-    if volume.sum() == 0:
-        raise ValueError("거래량 데이터가 모두 0입니다 — 거래 정지 종목일 수 있습니다.")
+        # 거래량이 전부 0이면 거래 정지 종목으로 판단
+        if volume.sum() == 0:
+            raise ValueError("거래량 데이터가 모두 0입니다 — 거래 정지 종목일 수 있습니다.")
 
-    ratio_series = _calc_volume_ratio_series(volume)
+        ratio_series = _calc_volume_ratio_series(volume)
 
-    valid_ratios = ratio_series.dropna()
-    if valid_ratios.empty:
-        raise ValueError("유효한 거래량 비율 데이터가 없습니다.")
+        valid_ratios = ratio_series.dropna()
+        if valid_ratios.empty:
+            raise ValueError("유효한 거래량 비율 데이터가 없습니다.")
 
-    current_ratio = float(valid_ratios.iloc[-1])
-    result = float(percentileofscore(valid_ratios.values, current_ratio, kind="weak"))
+        current_ratio = float(valid_ratios.iloc[-1])
+        result = float(percentileofscore(valid_ratios.values, current_ratio, kind="weak"))
 
-    logger.debug(f"거래량 비율: 현재={current_ratio:.4f} → 백분위={result:.2f}")
-    return result
+        logger.debug(f"거래량 비율: 현재={current_ratio:.4f} → 백분위={result:.2f}")
+        return result
+
+    except ValueError as e:
+        logger.error(f"[calc_volume_strength] ValueError: {e}")
+        raise
+    except KeyError as e:
+        logger.error(f"[calc_volume_strength] 필수 컬럼 누락: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"[calc_volume_strength] 예상치 못한 오류: {type(e).__name__}: {e}")
+        raise

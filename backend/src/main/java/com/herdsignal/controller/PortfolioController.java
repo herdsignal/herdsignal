@@ -1,5 +1,6 @@
 package com.herdsignal.controller;
 
+import com.herdsignal.config.AppConstants;
 import com.herdsignal.domain.UserPortfolio;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.PortfolioAddRequest;
@@ -13,7 +14,7 @@ import java.util.List;
 
 /**
  * 포트폴리오 종목 CRUD API 컨트롤러.
- * MVP에서 userId는 모든 엔드포인트에서 "local" 고정.
+ * MVP에서 userId는 모든 엔드포인트에서 AppConstants.DEFAULT_USER_ID 고정.
  */
 @RestController
 @RequestMapping("/api/portfolio")
@@ -28,7 +29,7 @@ public class PortfolioController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserPortfolio>>> getPortfolio() {
-        List<UserPortfolio> portfolio = portfolioService.getPortfolio("local");
+        List<UserPortfolio> portfolio = portfolioService.getPortfolio(AppConstants.DEFAULT_USER_ID);
         return ResponseEntity.ok(ApiResponse.success(portfolio));
     }
 
@@ -40,7 +41,7 @@ public class PortfolioController {
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> addStock(
             @RequestBody PortfolioAddRequest request) {
-        portfolioService.addStock("local", request);
+        portfolioService.addStock(AppConstants.DEFAULT_USER_ID, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null));
     }
 
@@ -51,7 +52,7 @@ public class PortfolioController {
      */
     @DeleteMapping("/{ticker}")
     public ResponseEntity<Void> removeStock(@PathVariable String ticker) {
-        portfolioService.removeStock("local", ticker);
+        portfolioService.removeStock(AppConstants.DEFAULT_USER_ID, ticker);
         return ResponseEntity.noContent().build();
     }
 }

@@ -69,25 +69,37 @@ def calc_weekly_rsi(df: pd.DataFrame, period: int = RSI_PERIOD) -> float:
 
     Raises:
         ValueError: 데이터 부족으로 RSI 계산 불가 시
+        KeyError: 필수 컬럼(Close 등) 누락 시
     """
-    weekly = _resample_to_ohlcv(df, freq="W")
+    try:
+        weekly = _resample_to_ohlcv(df, freq="W")
 
-    if len(weekly) < MIN_CANDLES:
-        raise ValueError(
-            f"주봉 데이터 부족 — RSI 계산에 최소 {MIN_CANDLES}주 필요, 현재 {len(weekly)}주"
-        )
+        if len(weekly) < MIN_CANDLES:
+            raise ValueError(
+                f"주봉 데이터 부족 — RSI 계산에 최소 {MIN_CANDLES}주 필요, 현재 {len(weekly)}주"
+            )
 
-    rsi_series = _calc_rsi(weekly["Close"], period)
+        rsi_series = _calc_rsi(weekly["Close"], period)
 
-    # 유효한 마지막 값 추출 (NaN 제거 후)
-    rsi_valid = rsi_series.dropna()
-    if rsi_valid.empty:
-        raise ValueError("주봉 RSI 계산 결과가 모두 NaN입니다.")
+        # 유효한 마지막 값 추출 (NaN 제거 후)
+        rsi_valid = rsi_series.dropna()
+        if rsi_valid.empty:
+            raise ValueError("주봉 RSI 계산 결과가 모두 NaN입니다.")
 
-    current = float(rsi_valid.iloc[-1])
-    result = _percentile_normalize(rsi_valid.values, current)
-    logger.debug(f"주봉 RSI({period}) raw={current:.2f} → 백분위={result:.2f}")
-    return result
+        current = float(rsi_valid.iloc[-1])
+        result = _percentile_normalize(rsi_valid.values, current)
+        logger.debug(f"주봉 RSI({period}) raw={current:.2f} → 백분위={result:.2f}")
+        return result
+
+    except ValueError as e:
+        logger.error(f"[calc_weekly_rsi] ValueError: {e}")
+        raise
+    except KeyError as e:
+        logger.error(f"[calc_weekly_rsi] 필수 컬럼 누락: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"[calc_weekly_rsi] 예상치 못한 오류: {type(e).__name__}: {e}")
+        raise
 
 
 def calc_monthly_rsi(df: pd.DataFrame, period: int = RSI_PERIOD) -> float:
@@ -103,22 +115,34 @@ def calc_monthly_rsi(df: pd.DataFrame, period: int = RSI_PERIOD) -> float:
 
     Raises:
         ValueError: 데이터 부족으로 RSI 계산 불가 시
+        KeyError: 필수 컬럼(Close 등) 누락 시
     """
-    # ME: Month End (pandas 2.2+ 권장 별칭, 구버전의 'M'을 대체)
-    monthly = _resample_to_ohlcv(df, freq="ME")
+    try:
+        # ME: Month End (pandas 2.2+ 권장 별칭, 구버전의 'M'을 대체)
+        monthly = _resample_to_ohlcv(df, freq="ME")
 
-    if len(monthly) < MIN_CANDLES:
-        raise ValueError(
-            f"월봉 데이터 부족 — RSI 계산에 최소 {MIN_CANDLES}개월 필요, 현재 {len(monthly)}개월"
-        )
+        if len(monthly) < MIN_CANDLES:
+            raise ValueError(
+                f"월봉 데이터 부족 — RSI 계산에 최소 {MIN_CANDLES}개월 필요, 현재 {len(monthly)}개월"
+            )
 
-    rsi_series = _calc_rsi(monthly["Close"], period)
+        rsi_series = _calc_rsi(monthly["Close"], period)
 
-    rsi_valid = rsi_series.dropna()
-    if rsi_valid.empty:
-        raise ValueError("월봉 RSI 계산 결과가 모두 NaN입니다.")
+        rsi_valid = rsi_series.dropna()
+        if rsi_valid.empty:
+            raise ValueError("월봉 RSI 계산 결과가 모두 NaN입니다.")
 
-    current = float(rsi_valid.iloc[-1])
-    result = _percentile_normalize(rsi_valid.values, current)
-    logger.debug(f"월봉 RSI({period}) raw={current:.2f} → 백분위={result:.2f}")
-    return result
+        current = float(rsi_valid.iloc[-1])
+        result = _percentile_normalize(rsi_valid.values, current)
+        logger.debug(f"월봉 RSI({period}) raw={current:.2f} → 백분위={result:.2f}")
+        return result
+
+    except ValueError as e:
+        logger.error(f"[calc_monthly_rsi] ValueError: {e}")
+        raise
+    except KeyError as e:
+        logger.error(f"[calc_monthly_rsi] 필수 컬럼 누락: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"[calc_monthly_rsi] 예상치 못한 오류: {type(e).__name__}: {e}")
+        raise

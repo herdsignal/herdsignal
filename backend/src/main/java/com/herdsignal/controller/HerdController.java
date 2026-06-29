@@ -1,5 +1,6 @@
 package com.herdsignal.controller;
 
+import com.herdsignal.config.AppConstants;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.HerdScoreResponse;
 import com.herdsignal.dto.PortfolioHerdResponse;
@@ -22,11 +23,11 @@ public class HerdController {
     /**
      * GET /api/portfolio/herd
      * 포트폴리오 전체 종목의 최신 HERD 점수 조회.
-     * MVP에서 userId는 "local" 고정.
+     * MVP에서 userId는 AppConstants.DEFAULT_USER_ID 고정.
      */
     @GetMapping("/portfolio/herd")
     public ResponseEntity<ApiResponse<PortfolioHerdResponse>> getPortfolioHerd() {
-        PortfolioHerdResponse response = herdService.getPortfolioHerd("local");
+        PortfolioHerdResponse response = herdService.getPortfolioHerd(AppConstants.DEFAULT_USER_ID);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

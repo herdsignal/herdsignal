@@ -17,6 +17,10 @@ import HerdDots          from '../../components/HerdDots/HerdDots'
 import SpectrumBar       from '../../components/SpectrumBar/SpectrumBar'
 import styles            from './Dashboard.module.css'
 
+/* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
+const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
+  .replace(/^https?:\/\//, '')
+
 /* ── 유틸 ─────────────────────────────────── */
 
 /**
@@ -118,7 +122,7 @@ export default function Dashboard() {
         /* API 연결 실패 시 빈 목록 + 에러 메시지 */
         setPortfolio([])
         if (!spyRes || spyRes.status === 'rejected') {
-          setError('백엔드 서버에 연결할 수 없습니다. localhost:8080이 실행 중인지 확인해주세요.')
+          setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
         }
       }
 

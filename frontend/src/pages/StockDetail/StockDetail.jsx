@@ -18,6 +18,10 @@ import HerdDots    from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import styles      from './StockDetail.module.css'
 
+/* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
+const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
+  .replace(/^https?:\/\//, '')
+
 /* ── 지표 정의 ─────────────────────────────── */
 /* min/max: 바 너비 정규화 기준. ma200Deviation은 ±50% 기준 */
 const INDICATORS = [
@@ -144,7 +148,7 @@ export default function StockDetail() {
         )
       }
     } catch {
-      setError('백엔드 서버에 연결할 수 없습니다.\nlocalhost:8080이 실행 중인지 확인해주세요.')
+      setError(`백엔드 서버에 연결할 수 없습니다.\n${API_HOST}이 실행 중인지 확인해주세요.`)
     } finally {
       setLoading(false)
     }
