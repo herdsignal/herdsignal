@@ -1,5 +1,17 @@
 """
-scheduler/herd_scheduler.py — 장 마감 후 HERD 계산·저장 자동 스케줄러
+scheduler/herd_scheduler.py — HERD 계산 스케줄러 + on-demand 캐시
+
+────────────────────────────────────────────────────────
+Tier 1 — 매일 자동 업데이트 (run_herd_job)
+  대상: user_id = 'local', 'spy_benchmark'
+  → 유저 포트폴리오 + 관심종목 + SPY 벤치마크
+  → 매일 16:30 ET 자동 실행
+
+Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
+  대상: 검색/조회 요청이 들어온 임의의 티커
+  → 7일 이내 데이터가 있으면 캐시 반환 (재계산 없음)
+  → 없거나 만료됐으면 즉시 계산 후 user_id='cache'로 저장
+────────────────────────────────────────────────────────
 
 실행:
     cd data/
@@ -10,6 +22,7 @@ scheduler/herd_scheduler.py — 장 마감 후 HERD 계산·저장 자동 스케
 import argparse
 import logging
 import sys
+from datetime import date, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -21,12 +34,16 @@ _DATA_DIR = Path(__file__).resolve().parent.parent
 if str(_DATA_DIR) not in sys.path:
     sys.path.insert(0, str(_DATA_DIR))
 
-from collectors.stock_collector import collect        # noqa: E402
-from config.database import create_db_engine, get_session_factory  # noqa: E402
-from config.settings import SCHEDULER_HOUR_ET, SCHEDULER_MINUTE_ET  # noqa: E402
-from herd.calculator import run                       # noqa: E402
-from herd.saver import save_herd_result              # noqa: E402
-from init_db import UserPortfolio, UserWatchlist      # noqa: E402
+from collectors.stock_collector import collect                          # noqa: E402
+from config.database import create_db_engine, get_session_factory      # noqa: E402
+from config.settings import (                                           # noqa: E402
+    CACHE_DAYS,
+    SCHEDULER_HOUR_ET,
+    SCHEDULER_MINUTE_ET,
+)
+from herd.calculator import run                                         # noqa: E402
+from herd.saver import save_herd_result                                # noqa: E402
+from init_db import HerdIndicator, HerdScore, UserPortfolio, UserWatchlist  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -36,72 +53,71 @@ logger = logging.getLogger(__name__)
 _engine         = create_db_engine()
 _SessionFactory = get_session_factory(_engine)
 
-# HERD 계산 대상 user_id 목록
-# - 'local': 사용자 포트폴리오/관심종목
-# - 'spy_benchmark': S&P500 벤치마크 (항상 포함)
-# - 'market_all': S&P500 전종목 + 추가 종목 (setup_sp500_tickers.py로 등록)
-_TRACKED_USER_IDS = ("local", "spy_benchmark", "market_all")
+# Tier 1 자동 스케줄링 대상 user_id
+# - 'local'         : 유저 포트폴리오 + 관심종목
+# - 'spy_benchmark' : S&P500 벤치마크 (항상 포함)
+# ※ 'market_all'은 제거 — on-demand(Tier 2)로 처리
+_TIER1_USER_IDS = ("local", "spy_benchmark")
 
 # 미국 동부시간 타임존 (EDT/EST 자동 전환)
 _ET = ZoneInfo("America/New_York")
 
+# on-demand 캐시를 식별하는 user_id
+_CACHE_USER_ID = "cache"
 
-# ──────────────────────────────────────────────
-# 내부 헬퍼
-# ──────────────────────────────────────────────
-def _fetch_tickers() -> list[str]:
+
+# ══════════════════════════════════════════════
+# Tier 1 — 매일 자동 업데이트
+# ══════════════════════════════════════════════
+
+def _fetch_tier1_tickers() -> list[str]:
     """
-    user_portfolio + user_watchlist 테이블에서 추적 대상 티커를 조회한다.
-    두 테이블의 합집합을 사용하며 중복 제거 후 알파벳 오름차순 반환.
+    Tier 1 자동 스케줄링 대상 티커를 조회한다.
+    user_portfolio + user_watchlist에서 _TIER1_USER_IDS에 해당하는 종목의 합집합.
+    중복 제거 후 알파벳 오름차순 반환.
     """
     with _SessionFactory() as session:
-        # user_id 필터: local(사용자) + spy_benchmark(S&P500 벤치마크) 만 포함
         portfolio_tickers = {
             row.ticker
             for row in session.query(UserPortfolio)
-            .filter(UserPortfolio.user_id.in_(_TRACKED_USER_IDS))
+            .filter(UserPortfolio.user_id.in_(_TIER1_USER_IDS))
             .all()
         }
         watchlist_tickers = {
             row.ticker
             for row in session.query(UserWatchlist)
-            .filter(UserWatchlist.user_id.in_(_TRACKED_USER_IDS))
+            .filter(UserWatchlist.user_id.in_(_TIER1_USER_IDS))
             .all()
         }
 
     tickers = sorted(portfolio_tickers | watchlist_tickers)
     logger.info(
-        f"대상 티커 {len(tickers)}개 "
+        f"[Tier1] 대상 티커 {len(tickers)}개 "
         f"(포트폴리오 {len(portfolio_tickers)}개 + 관심종목 {len(watchlist_tickers)}개 → 합집합)"
     )
-    if tickers:
-        logger.info(f"  티커 목록: {tickers}")
     return tickers
 
 
-# ──────────────────────────────────────────────
-# 메인 잡
-# ──────────────────────────────────────────────
 def run_herd_job() -> None:
     """
-    전체 HERD 계산·저장 잡.
+    Tier 1 전체 HERD 계산·저장 잡.
     collect → calculator.run → saver.save_herd_result 순서로 티커별 실행.
     개별 종목이 실패해도 다음 종목 처리를 계속 진행.
     """
     logger.info("━" * 60)
-    logger.info("HERD 자동 계산 잡 시작")
+    logger.info("[Tier1] HERD 자동 계산 잡 시작")
     logger.info("━" * 60)
 
     # ── 1. 티커 목록 조회 ──────────────────────
     try:
-        tickers = _fetch_tickers()
+        tickers = _fetch_tier1_tickers()
     except Exception as e:
-        logger.error(f"티커 목록 조회 실패 — 잡 중단: {e}", exc_info=True)
+        logger.error(f"[Tier1] 티커 목록 조회 실패 — 잡 중단: {e}", exc_info=True)
         return
 
     if not tickers:
         logger.warning(
-            "처리할 종목이 없습니다. "
+            "[Tier1] 처리할 종목이 없습니다. "
             "user_portfolio 또는 user_watchlist에 종목을 추가하세요."
         )
         return
@@ -112,7 +128,7 @@ def run_herd_job() -> None:
     total = len(tickers)
 
     for idx, ticker in enumerate(tickers, start=1):
-        logger.info(f"[{ticker}] ─ 처리 시작 ({idx}/{total})")
+        logger.info(f"[Tier1][{ticker}] ─ 처리 시작 ({idx}/{total})")
         try:
             df          = collect(ticker)
             herd_result = run(ticker)
@@ -121,38 +137,153 @@ def run_herd_job() -> None:
             if ok:
                 success_list.append(ticker)
                 logger.info(
-                    f"[{ticker}] ✅ 완료 "
+                    f"[Tier1][{ticker}] ✅ 완료 "
                     f"score={herd_result['score']:.2f}  stage={herd_result['stage']}"
                 )
             else:
-                # save_herd_result가 False를 반환하면 저장 실패(롤백 완료)
                 failed_list.append(ticker)
-                logger.error(f"[{ticker}] ❌ DB 저장 실패")
+                logger.error(f"[Tier1][{ticker}] ❌ DB 저장 실패")
 
         except Exception as e:
-            # 수집·계산 중 예외 발생 — 스택트레이스 포함 기록
-            logger.error(f"[{ticker}] ❌ 처리 중 예외: {e}", exc_info=True)
+            logger.error(f"[Tier1][{ticker}] ❌ 처리 중 예외: {e}", exc_info=True)
             failed_list.append(ticker)
 
     # ── 3. 전체 결과 요약 ─────────────────────
     logger.info("━" * 60)
     logger.info(
-        f"HERD 잡 완료 | 전체 {total}개 | "
+        f"[Tier1] 잡 완료 | 전체 {total}개 | "
         f"성공 {len(success_list)}개 | 실패 {len(failed_list)}개"
     )
     if success_list:
-        logger.info(f"  ✅ 성공 종목: {success_list}")
+        logger.info(f"[Tier1]   ✅ 성공: {success_list}")
     if failed_list:
-        logger.error(f"  ❌ 실패 종목: {failed_list}")
+        logger.error(f"[Tier1]   ❌ 실패: {failed_list}")
     logger.info("━" * 60)
 
 
-# ──────────────────────────────────────────────
+# ══════════════════════════════════════════════
+# Tier 2 — on-demand 실시간 계산 + 캐싱
+# ══════════════════════════════════════════════
+
+def calculate_on_demand(ticker: str) -> dict:
+    """
+    Tier 2: 요청 시 실시간 HERD 계산 + 캐싱.
+
+    동작 흐름:
+      1. herd_scores 테이블에서 해당 ticker의 최신 데이터 조회
+      2. CACHE_DAYS(7일) 이내 데이터 있음 → 캐시에서 바로 반환 (재계산 없음)
+      3. 데이터 없거나 7일 이상 지남 → 즉시 계산 후 DB 저장
+         - user_portfolio에 user_id='cache'로 티커 등록 (없으면)
+         - herd_scores / herd_indicators / daily_prices / stocks 업데이트
+
+    Args:
+        ticker: 종목 티커 (예: "RKLB", "AAPL")
+
+    Returns:
+        {
+            "ticker":     str,    # 티커
+            "score":      float,  # HERD 점수 (0~100)
+            "stage":      str,    # 단계 (Flee/Scatter/Calm/Drift/Rush)
+            "signal":     str,    # 매매 신호 (BUY/ADD/HOLD/REDUCE/SELL)
+            "indicators": dict,   # 5개 지표 분해값
+            "score_date": str,    # 기준 날짜 (YYYY-MM-DD)
+            "from_cache": bool,   # True = 캐시 반환, False = 신규 계산
+        }
+    """
+    ticker = ticker.upper().strip()
+    cache_cutoff = date.today() - timedelta(days=CACHE_DAYS)
+
+    # ── 1. 캐시 확인 ──────────────────────────
+    with _SessionFactory() as session:
+        latest_score = (
+            session.query(HerdScore)
+            .filter(HerdScore.ticker == ticker)
+            .order_by(HerdScore.score_date.desc())
+            .first()
+        )
+
+        if latest_score and latest_score.score_date >= cache_cutoff:
+            # 캐시 히트 — 지표 분해값도 조회
+            ind_row = (
+                session.query(HerdIndicator)
+                .filter(
+                    HerdIndicator.ticker     == ticker,
+                    HerdIndicator.score_date == latest_score.score_date,
+                )
+                .first()
+            )
+
+            # Decimal 타입을 float으로 변환해 반환
+            indicators: dict = {}
+            if ind_row:
+                indicators = {
+                    "weekly_rsi":      float(ind_row.weekly_rsi or 0),
+                    "monthly_rsi":     float(ind_row.monthly_rsi or 0),
+                    "position_52w":    float(ind_row.position_52w or 0),
+                    "ma200_deviation": float(ind_row.ma200_deviation or 0),
+                    "volume_strength": float(ind_row.volume_strength or 0),
+                }
+
+            logger.info(
+                f"[Tier2][{ticker}] 캐시 히트 — "
+                f"score_date={latest_score.score_date}  "
+                f"score={float(latest_score.herd_score):.2f}"
+            )
+            return {
+                "ticker":     ticker,
+                "score":      float(latest_score.herd_score),
+                "stage":      latest_score.herd_stage,
+                "signal":     latest_score.signal or "HOLD",
+                "indicators": indicators,
+                "score_date": str(latest_score.score_date),
+                "from_cache": True,
+            }
+
+    # ── 2. 캐시 미스 또는 만료 → 즉시 계산 ──────
+    logger.info(
+        f"[Tier2][{ticker}] 캐시 미스 — "
+        f"(최신={latest_score.score_date if latest_score else '없음'}) "
+        f"실시간 계산 시작"
+    )
+
+    # user_portfolio에 cache 사용자로 티커 등록 (없으면 INSERT)
+    with _SessionFactory() as session:
+        cache_entry = session.query(UserPortfolio).filter_by(
+            user_id=_CACHE_USER_ID, ticker=ticker
+        ).first()
+        if not cache_entry:
+            session.add(UserPortfolio(user_id=_CACHE_USER_ID, ticker=ticker))
+            session.commit()
+            logger.info(f"[Tier2][{ticker}] user_portfolio에 캐시 티커 등록")
+
+    # 데이터 수집 + HERD 계산 + DB 저장
+    df          = collect(ticker)
+    herd_result = run(ticker)
+    save_herd_result(ticker, herd_result, df)
+
+    logger.info(
+        f"[Tier2][{ticker}] ✅ 계산 완료 — "
+        f"score={herd_result['score']:.2f}  stage={herd_result['stage']}"
+    )
+
+    return {
+        "ticker":     ticker,
+        "score":      herd_result["score"],
+        "stage":      herd_result["stage"],
+        "signal":     herd_result.get("signal", "HOLD"),
+        "indicators": herd_result["indicators"],
+        "score_date": str(date.today()),
+        "from_cache": False,
+    }
+
+
+# ══════════════════════════════════════════════
 # 스케줄러 데몬 진입점
-# ──────────────────────────────────────────────
+# ══════════════════════════════════════════════
+
 def run_scheduler() -> None:
     """
-    APScheduler BlockingScheduler로 데몬 실행.
+    APScheduler BlockingScheduler로 Tier 1 데몬 실행.
     미국 동부시간(ET) 기준 매일 SCHEDULER_HOUR_ET:SCHEDULER_MINUTE_ET에 run_herd_job 실행.
     - 여름(EDT) 16:30 ET = 다음날 05:30 KST
     - 겨울(EST) 16:30 ET = 다음날 06:30 KST
@@ -167,14 +298,15 @@ def run_scheduler() -> None:
             timezone = _ET,
         ),
         id                 = "herd_daily_job",
-        name               = "HERD 일일 계산 잡",
+        name               = "HERD Tier1 일일 계산 잡",
         replace_existing   = True,
-        max_instances      = 1,                  # 동시 실행 방지
-        misfire_grace_time = 30 * 60,            # 30분 내 미실행 시 재시도
+        max_instances      = 1,          # 동시 실행 방지
+        misfire_grace_time = 30 * 60,   # 30분 내 미실행 시 재시도
     )
 
     logger.info(
-        f"스케줄러 시작 — 매일 {SCHEDULER_HOUR_ET:02d}:{SCHEDULER_MINUTE_ET:02d} ET에 실행 "
+        f"[Tier1] 스케줄러 시작 — "
+        f"매일 {SCHEDULER_HOUR_ET:02d}:{SCHEDULER_MINUTE_ET:02d} ET에 실행 "
         f"(여름: 다음날 05:{SCHEDULER_MINUTE_ET:02d} KST | "
         f"겨울: 다음날 06:{SCHEDULER_MINUTE_ET:02d} KST)"
     )
@@ -183,7 +315,7 @@ def run_scheduler() -> None:
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
-        logger.info("스케줄러 종료 요청 — 정상 종료")
+        logger.info("[Tier1] 스케줄러 종료 요청 — 정상 종료")
         scheduler.shutdown(wait=False)
 
 
@@ -196,19 +328,19 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 사용 예:
-  python scheduler/herd_scheduler.py             스케줄러 데몬으로 실행
-  python scheduler/herd_scheduler.py --run-now   즉시 1회 실행 후 종료
+  python scheduler/herd_scheduler.py             Tier1 스케줄러 데몬으로 실행
+  python scheduler/herd_scheduler.py --run-now   Tier1 즉시 1회 실행 후 종료
 """,
     )
     parser.add_argument(
         "--run-now",
         action="store_true",
-        help="스케줄 대기 없이 즉시 전체 실행 후 종료",
+        help="스케줄 대기 없이 즉시 Tier1 전체 실행 후 종료",
     )
     args = parser.parse_args()
 
     if args.run_now:
-        logger.info("[--run-now] 즉시 실행 모드")
+        logger.info("[--run-now] Tier1 즉시 실행 모드")
         run_herd_job()
     else:
         run_scheduler()
