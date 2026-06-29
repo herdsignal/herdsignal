@@ -39,7 +39,8 @@ _SessionFactory = get_session_factory(_engine)
 # HERD 계산 대상 user_id 목록
 # - 'local': 사용자 포트폴리오/관심종목
 # - 'spy_benchmark': S&P500 벤치마크 (항상 포함)
-_TRACKED_USER_IDS = ("local", "spy_benchmark")
+# - 'market_all': S&P500 전종목 + 추가 종목 (setup_sp500_tickers.py로 등록)
+_TRACKED_USER_IDS = ("local", "spy_benchmark", "market_all")
 
 # 미국 동부시간 타임존 (EDT/EST 자동 전환)
 _ET = ZoneInfo("America/New_York")

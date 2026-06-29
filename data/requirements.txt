@@ -23,3 +23,7 @@ pymysql>=1.1.0
 
 # 스케줄러 (장 마감 후 자동 실행)
 APScheduler>=3.10.0
+
+# Wikipedia S&P500 목록 파싱 (setup_sp500_tickers.py)
+requests>=2.32.0
+lxml>=5.2.0
