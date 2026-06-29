@@ -38,15 +38,22 @@ MIN_HISTORY_YEARS = int(os.getenv("MIN_HISTORY_YEARS", "2"))
 
 
 # ──────────────────────────────────────────────
-# HERD Index 가중치 (5개 지표, 합계 = 1.0)
+# HERD Index 가중치 (6개 지표, 합계 = 1.0)
 # ──────────────────────────────────────────────
-# 각 지표를 동일 비중(20%)으로 초기화. 추후 백테스트 결과에 따라 조정 가능.
+# v2: 200주 MA 지표 추가 후 가중치 재분배
+#   월봉 RSI      20% — 장기 모멘텀 주축 유지
+#   주봉 RSI      18% — 중기 모멘텀
+#   52주 위치     18% — 연간 가격 위치
+#   200일 이격도  14% — 중기 추세 이탈
+#   거래량 강도   10% — 보조 확인 지표
+#   200주 MA      20% — 장기 구조적 저점/고점 (신규)
 HERD_WEIGHTS = {
-    "monthly_rsi":      float(os.getenv("WEIGHT_MONTHLY_RSI",   "0.2")),  # 월봉 RSI
-    "weekly_rsi":       float(os.getenv("WEIGHT_WEEKLY_RSI",    "0.2")),  # 주봉 RSI
-    "52w_position":     float(os.getenv("WEIGHT_52W_POSITION",  "0.2")),  # 52주 고저 위치
-    "ma200_deviation":  float(os.getenv("WEIGHT_MA200_DEV",     "0.2")),  # 200일 이동평균 이격도
-    "volume_strength":  float(os.getenv("WEIGHT_VOLUME",        "0.2")),  # 거래량 강도
+    "monthly_rsi":      float(os.getenv("WEIGHT_MONTHLY_RSI",   "0.20")),  # 월봉 RSI
+    "weekly_rsi":       float(os.getenv("WEIGHT_WEEKLY_RSI",    "0.18")),  # 주봉 RSI
+    "52w_position":     float(os.getenv("WEIGHT_52W_POSITION",  "0.18")),  # 52주 고저 위치
+    "ma200_deviation":  float(os.getenv("WEIGHT_MA200_DEV",     "0.14")),  # 200일 이동평균 이격도
+    "volume_strength":  float(os.getenv("WEIGHT_VOLUME",        "0.10")),  # 거래량 강도
+    "ma200_weekly":     float(os.getenv("WEIGHT_MA200_WEEKLY",  "0.20")),  # 200주 이동평균 위치
 }
 
 # 가중치 합계 검증 — 서버 기동 시 합이 1.0이 아니면 즉시 오류 발생

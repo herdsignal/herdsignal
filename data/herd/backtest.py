@@ -13,6 +13,7 @@ from collectors.stock_collector import collect
 from indicators.rsi import calc_weekly_rsi, calc_monthly_rsi
 from indicators.price_position import calc_52w_position, calc_ma200_deviation
 from indicators.volume import calc_volume_strength
+from indicators.ma200_weekly import calc_ma200_weekly
 from herd.calculator import calc_herd_score, get_stage, IndicatorValues
 
 logger = logging.getLogger(__name__)
@@ -106,6 +107,7 @@ def _build_herd_series(df: pd.DataFrame) -> pd.Series:
                 position_52w    = calc_52w_position(slice_df),
                 ma200_deviation = calc_ma200_deviation(slice_df),
                 volume_strength = calc_volume_strength(slice_df),
+                ma200_weekly    = calc_ma200_weekly(slice_df),
             )
             scores[date] = calc_herd_score(indicators)
         except Exception as e:

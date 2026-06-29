@@ -1,6 +1,6 @@
 """
 herd/calculator.py — HERD Index 합산 계산기
-5개 지표를 가중합산해 0~100 단일 점수를 산출하고 5단계를 판정한다.
+6개 지표를 가중합산해 0~100 단일 점수를 산출하고 5단계를 판정한다.
 티커 하나를 받으면 수집→계산→합산까지 전체 파이프라인을 자동 실행한다.
 """
 
@@ -12,6 +12,7 @@ from collectors.stock_collector import collect
 from indicators.rsi import calc_weekly_rsi, calc_monthly_rsi
 from indicators.price_position import calc_52w_position, calc_ma200_deviation
 from indicators.volume import calc_volume_strength
+from indicators.ma200_weekly import calc_ma200_weekly
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ class IndicatorValues(TypedDict):
     position_52w:    float
     ma200_deviation: float
     volume_strength: float
+    ma200_weekly:    float   # 200주 이동평균 위치 (v2 신규 추가)
 
 
 class HerdResult(TypedDict):
@@ -59,21 +61,23 @@ def get_stage(score: float) -> str:
 
 def calc_herd_score(indicators: IndicatorValues) -> float:
     """
-    5개 지표값을 HERD_WEIGHTS로 가중합산해 HERD 점수를 반환한다.
+    6개 지표값을 HERD_WEIGHTS로 가중합산해 HERD 점수를 반환한다.
 
     Args:
-        indicators: 5개 지표 딕셔너리
+        indicators: 6개 지표 딕셔너리
 
     Returns:
         HERD 점수 (0~100 float)
     """
-    # settings.py의 키 이름과 indicators 딕셔너리 키를 매핑
+    # settings.py 키 → indicators 딕셔너리 키 매핑
+    # (52w_position: settings 키명과 indicator 키명이 다름에 유의)
     key_map = {
         "monthly_rsi":     "monthly_rsi",
         "weekly_rsi":      "weekly_rsi",
         "52w_position":    "position_52w",
         "ma200_deviation": "ma200_deviation",
         "volume_strength": "volume_strength",
+        "ma200_weekly":    "ma200_weekly",    # 200주 MA 위치
     }
 
     score = 0.0
@@ -109,13 +113,14 @@ def run(ticker: str) -> HerdResult:
         logger.error(f"[{ticker}] 데이터 수집 실패: {e}")
         raise RuntimeError(f"[{ticker}] 데이터 수집 실패") from e
 
-    # 2. 5개 지표 계산 — 각각 개별 예외처리 후 한 번에 실패 판단
+    # 2. 6개 지표 계산 — 각각 개별 예외처리 후 한 번에 실패 판단
     indicator_funcs = {
         "weekly_rsi":      lambda: calc_weekly_rsi(df),
         "monthly_rsi":     lambda: calc_monthly_rsi(df),
         "position_52w":    lambda: calc_52w_position(df),
         "ma200_deviation": lambda: calc_ma200_deviation(df),
         "volume_strength": lambda: calc_volume_strength(df),
+        "ma200_weekly":    lambda: calc_ma200_weekly(df),   # 200주 MA 위치
     }
 
     values: dict[str, float] = {}
@@ -140,6 +145,7 @@ def run(ticker: str) -> HerdResult:
         position_52w    = values["position_52w"],
         ma200_deviation = values["ma200_deviation"],
         volume_strength = values["volume_strength"],
+        ma200_weekly    = values["ma200_weekly"],
     )
 
     # 3. 가중합산 및 단계 판정
