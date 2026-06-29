@@ -10,17 +10,26 @@ import com.herdsignal.repository.HerdIndicatorRepository;
 import com.herdsignal.repository.HerdScoreRepository;
 import com.herdsignal.repository.UserPortfolioRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * HERD Index 조회 비즈니스 로직.
  * Python이 계산·저장한 데이터를 읽어 응답 DTO로 변환한다.
+ *
+ * Tier 1 (스케줄러): 매일 자동 계산된 데이터를 DB에서 직접 조회.
+ * Tier 2 (on-demand): DB에 데이터 없으면 Python calculate_on_demand 즉시 실행.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -49,23 +58,129 @@ public class HerdService {
     }
 
     /**
-     * 특정 종목 HERD 조회.
-     * HERD 점수 데이터가 없으면 ResourceNotFoundException 발생 (HTTP 404).
+     * 특정 종목 HERD 조회 (Tier 1 + Tier 2 통합).
+     *
+     * DB에 데이터가 있으면 바로 반환 (Tier 1 경로).
+     * DB에 데이터가 없으면 Python calculate_on_demand를 ProcessBuilder로 실행 후
+     * DB에 저장된 결과를 재조회해 반환 (Tier 2 경로).
+     *
+     * NOT_SUPPORTED 사용 이유:
+     * Python 프로세스는 자체 커넥션으로 DB에 직접 커밋한다.
+     * Spring 트랜잭션(REPEATABLE READ)이 살아있으면 재조회 시 Python 커밋 전
+     * 스냅샷이 보여 데이터를 찾지 못한다 → 트랜잭션 없이 각 쿼리가
+     * 별도 커넥션을 사용하도록 NOT_SUPPORTED 적용.
      *
      * @param ticker 티커 심볼 (대문자)
      */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public HerdScoreResponse getStockHerd(String ticker) {
-        HerdScore score = herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        ticker + " 종목의 HERD 데이터가 없습니다. Python 스케줄러를 먼저 실행하세요."
-                ));
+        // ── 1. DB 조회 (Tier 1: 스케줄러가 미리 계산한 데이터) ────────────
+        Optional<HerdScore> scoreOpt =
+                herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker);
+
+        if (scoreOpt.isEmpty()) {
+            // ── 2. 데이터 없음 → Python on-demand 계산 (Tier 2) ───────────
+            log.info("[{}] DB에 HERD 데이터 없음 → Python on-demand 계산 시작", ticker);
+            try {
+                triggerPythonOnDemand(ticker);
+            } catch (Exception e) {
+                log.error("[{}] Python on-demand 실패: {}", ticker, e.getMessage());
+                throw new ResourceNotFoundException(
+                        ticker + " HERD 계산 실패: " + e.getMessage()
+                );
+            }
+
+            // ── 3. Python 커밋 후 DB 재조회 ──────────────────────────────
+            scoreOpt = herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker);
+            if (scoreOpt.isEmpty()) {
+                throw new ResourceNotFoundException(
+                        ticker + " on-demand 계산 완료 후에도 DB에 데이터가 없습니다."
+                );
+            }
+        }
 
         // 지표 분해값은 없어도 점수만 반환 (null 허용)
         HerdIndicator indicator = herdIndicatorRepository
                 .findTopByTickerOrderByScoreDateDesc(ticker)
                 .orElse(null);
 
-        return HerdScoreResponse.of(score, indicator);
+        return HerdScoreResponse.of(scoreOpt.get(), indicator);
+    }
+
+    /**
+     * ProcessBuilder로 Python calculate_on_demand(ticker)를 실행한다.
+     * 프로세스가 정상 종료(exit 0)되면 DB에 결과가 저장되어 있음.
+     *
+     * 프로젝트 루트 탐색: data/ 디렉토리가 있는 경로를 working directory로 설정.
+     * 타임아웃: 30초 초과 시 프로세스 강제 종료 후 예외 발생.
+     *
+     * @param ticker 유효성이 검증된 티커 심볼 (대문자, 영숫자/하이픈/점만 허용)
+     */
+    private void triggerPythonOnDemand(String ticker) throws IOException, InterruptedException {
+        // 티커 유효성 검사 — 영숫자·하이픈·점만 허용 (코드 주입 방지)
+        if (!ticker.matches("[A-Z0-9\\-\\.]+")) {
+            throw new IllegalArgumentException("유효하지 않은 티커 형식: " + ticker);
+        }
+
+        // 프로젝트 루트 탐색 (data/ 디렉토리가 있는 경로)
+        File cwd = new File("").getAbsoluteFile();
+        File projectRoot;
+        if (new File(cwd, "data").isDirectory()) {
+            projectRoot = cwd;                           // 프로젝트 루트에서 실행 중
+        } else if (cwd.getParentFile() != null
+                && new File(cwd.getParentFile(), "data").isDirectory()) {
+            projectRoot = cwd.getParentFile();           // backend/ 에서 실행 중
+        } else {
+            throw new IOException(
+                    "프로젝트 루트(data/ 포함)를 찾을 수 없습니다. 현재 경로: " + cwd
+            );
+        }
+
+        // Python 인라인 코드 (ticker는 이미 검증된 안전한 문자열)
+        String pythonCode = String.join("\n",
+                "import sys",
+                "sys.path.insert(0, 'data')",
+                "from scheduler.herd_scheduler import calculate_on_demand",
+                "import json",
+                "result = calculate_on_demand('" + ticker + "')",
+                "print(json.dumps(result))"
+        );
+
+        ProcessBuilder pb = new ProcessBuilder(
+                "data/.venv/bin/python3.12", "-c", pythonCode
+        );
+        pb.directory(projectRoot);
+        pb.redirectErrorStream(true); // stderr → stdout 병합 (로그 수집용)
+
+        log.info("[{}] ProcessBuilder 실행 — 루트: {}", ticker, projectRoot.getAbsolutePath());
+        Process process = pb.start();
+
+        // 출력을 별도 스레드에서 읽어 파이프 버퍼 데드락 방지
+        StringBuilder outputBuf = new StringBuilder();
+        Thread outputReader = new Thread(() -> {
+            try {
+                outputBuf.append(new String(process.getInputStream().readAllBytes()));
+            } catch (IOException ignored) { }
+        });
+        outputReader.start();
+
+        boolean finished = process.waitFor(30, TimeUnit.SECONDS);
+        outputReader.join(2_000); // 출력 스레드 최대 2초 대기
+        String output = outputBuf.toString().trim();
+
+        if (!finished) {
+            process.destroyForcibly();
+            throw new IOException("[" + ticker + "] Python on-demand 타임아웃 (30초)");
+        }
+
+        if (process.exitValue() != 0) {
+            throw new IOException(
+                    "[" + ticker + "] Python 프로세스 종료 코드=" + process.exitValue()
+                    + " / 출력: " + output
+            );
+        }
+
+        log.info("[{}] Python on-demand 완료: {}", ticker, output);
     }
 
     /**
