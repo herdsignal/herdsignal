@@ -3,8 +3,9 @@ scheduler/herd_scheduler.py — HERD 계산 스케줄러 + on-demand 캐시
 
 ────────────────────────────────────────────────────────
 Tier 1 — 매일 자동 업데이트 (run_herd_job)
-  대상: user_id = 'local', 'spy_benchmark'
-  → 유저 포트폴리오 + 관심종목 + SPY 벤치마크
+  대상: user_portfolio + user_watchlist 전체 (cache 제외) + SPY 고정
+  → 유저가 포트폴리오/관심종목에 추가한 모든 종목 자동 포함
+  → 새 종목 추가 시 다음날부터 자동 업데이트 시작
   → 매일 16:30 ET 자동 실행
 
 Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
@@ -53,12 +54,6 @@ logger = logging.getLogger(__name__)
 _engine         = create_db_engine()
 _SessionFactory = get_session_factory(_engine)
 
-# Tier 1 자동 스케줄링 대상 user_id
-# - 'local'         : 유저 포트폴리오 + 관심종목
-# - 'spy_benchmark' : S&P500 벤치마크 (항상 포함)
-# ※ 'market_all'은 제거 — on-demand(Tier 2)로 처리
-_TIER1_USER_IDS = ("local", "spy_benchmark")
-
 # 미국 동부시간 타임존 (EDT/EST 자동 전환)
 _ET = ZoneInfo("America/New_York")
 
@@ -72,28 +67,40 @@ _CACHE_USER_ID = "cache"
 
 def _fetch_tier1_tickers() -> list[str]:
     """
-    Tier 1 자동 스케줄링 대상 티커를 조회한다.
-    user_portfolio + user_watchlist에서 _TIER1_USER_IDS에 해당하는 종목의 합집합.
+    Tier 1 자동 스케줄링 대상 티커를 동적으로 조회한다.
+
+    수집 범위:
+      - user_portfolio 전체 (user_id = 'cache' 제외)
+      - user_watchlist 전체
+      - SPY 고정 포함 (벤치마크)
+
+    유저가 포트폴리오/관심종목에 종목을 추가하면
+    별도 설정 변경 없이 다음 스케줄 실행 시 자동으로 대상에 포함된다.
     중복 제거 후 알파벳 오름차순 반환.
     """
     with _SessionFactory() as session:
+        # user_portfolio: cache 사용자 제외한 전체
         portfolio_tickers = {
             row.ticker
             for row in session.query(UserPortfolio)
-            .filter(UserPortfolio.user_id.in_(_TIER1_USER_IDS))
+            .filter(UserPortfolio.user_id != _CACHE_USER_ID)
             .all()
         }
+        # user_watchlist: 전체 (user_id 구분 없이)
         watchlist_tickers = {
             row.ticker
             for row in session.query(UserWatchlist)
-            .filter(UserWatchlist.user_id.in_(_TIER1_USER_IDS))
             .all()
         }
 
-    tickers = sorted(portfolio_tickers | watchlist_tickers)
+    # SPY는 spy_benchmark로 이미 포함되지만 명시적으로 보장
+    all_tickers = portfolio_tickers | watchlist_tickers | {"SPY"}
+    tickers = sorted(all_tickers)
+
     logger.info(
         f"[Tier1] 대상 티커 {len(tickers)}개 "
-        f"(포트폴리오 {len(portfolio_tickers)}개 + 관심종목 {len(watchlist_tickers)}개 → 합집합)"
+        f"(포트폴리오 {len(portfolio_tickers)}개 + "
+        f"관심종목 {len(watchlist_tickers)}개 → 합집합 + SPY)"
     )
     return tickers
 
