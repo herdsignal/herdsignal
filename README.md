@@ -1,5 +1,7 @@
 # HerdSignal
 
+**[한국어](README.ko.md)** | English
+
 > A data-driven timing tool for long-term US equity investors
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
@@ -21,13 +23,13 @@ The HERD Index measures crowd sentiment for an individual stock on a **0–100 s
 
 ### Five Stages
 
-| Score | Stage | Color | Action |
-|-------|-------|-------|--------|
-| 0 – 15 | **Flee** | 🔵 Blue | Aggressive buy (30% add) |
-| 15 – 40 | **Scatter** | 🩵 Light blue | Start scaling in (10% add) |
-| 40 – 60 | **Calm** | ⚫ Gray | Hold current position |
-| 60 – 75 | **Drift** | 🟠 Orange | Partial trim (5% reduce) |
-| 75 – 100 | **Rush** | 🔴 Red | Significant trim (30% reduce) |
+| Score    | Stage       | Color         | Action                        |
+| -------- | ----------- | ------------- | ----------------------------- |
+| 0 – 15   | **Flee**    | 🔵 Blue       | Aggressive buy (30% add)      |
+| 15 – 40  | **Scatter** | 🩵 Light blue | Start scaling in (10% add)    |
+| 40 – 60  | **Calm**    | ⚫ Gray       | Hold current position         |
+| 60 – 75  | **Drift**   | 🟠 Orange     | Partial trim (5% reduce)      |
+| 75 – 100 | **Rush**    | 🔴 Red        | Significant trim (30% reduce) |
 
 > Signal cooldown: signals within 20 days of the same type are suppressed to prevent overtrading.
 
@@ -40,19 +42,19 @@ The HERD Index measures crowd sentiment for an individual stock on a **0–100 s
 - **Ticker Search** — Debounced live search with HERD preview, popular stocks grid, recent history
 - **Watchlist** — Separate tracked list with instant remove
 - **Daily Scheduler** — Auto-calculates HERD for all tracked tickers at 16:30 ET after market close
-- **AI Rebalancing** *(Phase 2)* — Claude API-powered portfolio analysis with specific $ action suggestions
+- **AI Rebalancing** _(Phase 2)_ — Claude API-powered portfolio analysis with specific $ action suggestions
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Role |
-|-------|-----------|------|
-| Data Engine | Python 3.12 + yfinance + pandas-ta | Collect → Calculate → Store |
-| REST API | Spring Boot 3.x + JPA + Lombok | Serve DB data to frontend |
-| Database | MariaDB 10.x | Single source of truth |
-| Frontend | React 18 + Vite 5 + react-router-dom | Dashboard & UI |
-| Scheduler | APScheduler (BlockingScheduler) | Daily HERD update at 16:30 ET |
+| Layer       | Technology                           | Role                          |
+| ----------- | ------------------------------------ | ----------------------------- |
+| Data Engine | Python 3.12 + yfinance + pandas-ta   | Collect → Calculate → Store   |
+| REST API    | Spring Boot 3.x + JPA + Lombok       | Serve DB data to frontend     |
+| Database    | MariaDB 10.x                         | Single source of truth        |
+| Frontend    | React 18 + Vite 5 + react-router-dom | Dashboard & UI                |
+| Scheduler   | APScheduler (BlockingScheduler)      | Daily HERD update at 16:30 ET |
 
 ---
 
@@ -107,13 +109,13 @@ The HERD Index measures crowd sentiment for an individual stock on a **0–100 s
 
 Five indicators are each normalized to 0–100 using **percentile rank against 10 years of the same stock's history**, then weighted-summed:
 
-| Indicator | Weight | What It Captures |
-|-----------|--------|-----------------|
-| Monthly RSI | 20% | Long-term momentum extremes |
-| Weekly RSI | 20% | Mid-term momentum extremes |
-| 52-Week Position | 20% | Where price sits in its annual range |
-| MA200 Deviation | 20% | Distance from the 200-day trend |
-| Volume Strength | 20% | Recent volume vs. 20-day average |
+| Indicator        | Weight | What It Captures                     |
+| ---------------- | ------ | ------------------------------------ |
+| Monthly RSI      | 20%    | Long-term momentum extremes          |
+| Weekly RSI       | 20%    | Mid-term momentum extremes           |
+| 52-Week Position | 20%    | Where price sits in its annual range |
+| MA200 Deviation  | 20%    | Distance from the 200-day trend      |
+| Volume Strength  | 20%    | Recent volume vs. 20-day average     |
 
 Percentile normalization means the same formula works for every ticker — a Rush in NVDA and a Rush in KO represent equivalent crowd-psychology extremes relative to their own histories.
 
@@ -123,13 +125,13 @@ Percentile normalization means the same formula works for every ticker — a Rus
 
 Backtested on 5 years of daily data. Strategy: hold normally during Calm/Scatter, trim 30% at Rush, add 30% at Flee.
 
-| Ticker | B&H Return | HERD Return | Return Preserved | MDD Improvement |
-|--------|-----------|-------------|-----------------|-----------------|
-| NVDA | +17,242% | +6,634% | 38.5% | **−10.3%p** |
-| AAPL | +186% | +143% | 76.9% | **−7.8%p** |
-| TSLA | +812% | +521% | 64.2% | **−9.4%p** |
-| META | +623% | +401% | 64.4% | **−8.1%p** |
-| **Average** | — | — | **59.3%** | **−8.9%p** |
+| Ticker      | B&H Return | HERD Return | Return Preserved | MDD Improvement |
+| ----------- | ---------- | ----------- | ---------------- | --------------- |
+| NVDA        | +17,242%   | +6,634%     | 38.5%            | **−10.3%p**     |
+| AAPL        | +186%      | +143%       | 76.9%            | **−7.8%p**      |
+| TSLA        | +812%      | +521%       | 64.2%            | **−9.4%p**      |
+| META        | +623%      | +401%       | 64.4%            | **−8.1%p**      |
+| **Average** | —          | —           | **59.3%**        | **−8.9%p**      |
 
 > **Key insight:** The strategy significantly reduces maximum drawdown at the cost of some upside — the right trade-off for long-term investors who want to hold through volatility without panic-selling or FOMO-buying.
 >
@@ -243,12 +245,12 @@ curl http://localhost:8080/api/stocks/SPY/herd
 
 These are understood trade-offs, not bugs:
 
-| Limitation | Impact | Planned Fix |
-|------------|--------|-------------|
-| All lagging indicators | Signal fires after price already moved | Phase 2: leading indicators |
-| No macro awareness | Misses rate hike / geopolitical shocks | Phase 3: VIX, DXY, yields |
-| Can't catch V-shaped recoveries | Short sharp crashes not flagged | Phase 2: Put/Call ratio |
-| No cross-ticker correlation | Treats each stock independently | Phase 2: correlation matrix |
+| Limitation                      | Impact                                 | Planned Fix                 |
+| ------------------------------- | -------------------------------------- | --------------------------- |
+| All lagging indicators          | Signal fires after price already moved | Phase 2: leading indicators |
+| No macro awareness              | Misses rate hike / geopolitical shocks | Phase 3: VIX, DXY, yields   |
+| Can't catch V-shaped recoveries | Short sharp crashes not flagged        | Phase 2: Put/Call ratio     |
+| No cross-ticker correlation     | Treats each stock independently        | Phase 2: correlation matrix |
 
 ---
 
