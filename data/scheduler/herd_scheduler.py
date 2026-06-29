@@ -36,6 +36,11 @@ logger = logging.getLogger(__name__)
 _engine         = create_db_engine()
 _SessionFactory = get_session_factory(_engine)
 
+# HERD 계산 대상 user_id 목록
+# - 'local': 사용자 포트폴리오/관심종목
+# - 'spy_benchmark': S&P500 벤치마크 (항상 포함)
+_TRACKED_USER_IDS = ("local", "spy_benchmark")
+
 # 미국 동부시간 타임존 (EDT/EST 자동 전환)
 _ET = ZoneInfo("America/New_York")
 
@@ -49,8 +54,19 @@ def _fetch_tickers() -> list[str]:
     두 테이블의 합집합을 사용하며 중복 제거 후 알파벳 오름차순 반환.
     """
     with _SessionFactory() as session:
-        portfolio_tickers = {row.ticker for row in session.query(UserPortfolio).all()}
-        watchlist_tickers = {row.ticker for row in session.query(UserWatchlist).all()}
+        # user_id 필터: local(사용자) + spy_benchmark(S&P500 벤치마크) 만 포함
+        portfolio_tickers = {
+            row.ticker
+            for row in session.query(UserPortfolio)
+            .filter(UserPortfolio.user_id.in_(_TRACKED_USER_IDS))
+            .all()
+        }
+        watchlist_tickers = {
+            row.ticker
+            for row in session.query(UserWatchlist)
+            .filter(UserWatchlist.user_id.in_(_TRACKED_USER_IDS))
+            .all()
+        }
 
     tickers = sorted(portfolio_tickers | watchlist_tickers)
     logger.info(
