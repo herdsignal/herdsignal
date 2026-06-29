@@ -13,7 +13,11 @@
 
 ## Why I Built This
 
-I've held NVDA since 2021 and watched it swing from +600% to -50% and back — multiple times. Every dip felt like a test of conviction, every peak a temptation to cash out too early or too late. The problem wasn't my thesis; it was having no systematic signal to act on. HerdSignal quantifies that gut feeling — translating crowd psychology into a 0–100 score so I know when the herd is rushing in (time to trim) and when it's fleeing (time to buy more).
+I started long-term investing in US stocks in 2024. I believed in the long-term upward trend, but came to understand that bull and bear markets cycle repeatedly along the way.
+
+The problem was that I had no way — beyond gut feeling — to determine whether the stocks I held were relatively expensive or cheap at any given moment.
+
+I thought: if there were objective signals, I could trim partially at peaks to build cash reserves, and add more during downturns to capture greater gains. HerdSignal is the project built to create those signals.
 
 ---
 
@@ -123,20 +127,21 @@ Percentile normalization means the same formula works for every ticker — a Rus
 
 ## Backtesting Results
 
-Backtested on 5 years of daily data. Strategy: hold normally during Calm/Scatter, trim 30% at Rush, add 30% at Flee.
+The core question: "Why use it if returns are lower than just holding?"
 
-| Ticker      | B&H Return | HERD Return | Return Preserved | MDD Improvement |
-| ----------- | ---------- | ----------- | ---------------- | --------------- |
-| NVDA        | +17,242%   | +6,634%     | 38.5%            | **−10.3%p**     |
-| AAPL        | +186%      | +143%       | 76.9%            | **−7.8%p**      |
-| TSLA        | +812%      | +521%       | 64.2%            | **−9.4%p**      |
-| META        | +623%      | +401%       | 64.4%            | **−8.1%p**      |
-| **Average** | —          | —           | **59.3%**        | **−8.9%p**      |
+HerdSignal's goal isn't to maximize returns. It's to reduce the psychological shock of riding peak valuations into a major crash, and to create opportunities to buy more during downturns.
 
-> **Key insight:** The strategy significantly reduces maximum drawdown at the cost of some upside — the right trade-off for long-term investors who want to hold through volatility without panic-selling or FOMO-buying.
->
-> Flee signal frequency: 6–10% of trading days (ideal).
-> Rush signal frequency: 3–9% of trading days (varies by ticker volatility).
+Looking at MDD (Maximum Drawdown):
+
+| Ticker | B&H MDD | HERD MDD | Improvement | Worst-case loss on $10K invested |
+|--------|---------|----------|-------------|----------------------------------|
+| NVDA   | -66.3%  | -46.5%   | 19.8%p      | $3,370 → $5,350 ($1,980 protected) |
+| TSLA   | -73.6%  | -47.2%   | 26.4%p      | $2,640 → $5,280 ($2,640 protected) |
+| SPY    | -33.7%  | -15.9%   | 17.8%p      | $6,630 → $8,410 ($1,780 protected) |
+
+Some upside is sacrificed, but actual loss amounts during major crashes are significantly reduced. The difference between holding through a 50% drawdown and giving up is what determines real long-term returns.
+
+v1 limitation: All current indicators are lagging. Adding leading indicators in Phase 2 is expected to improve signal accuracy.
 
 ---
 
