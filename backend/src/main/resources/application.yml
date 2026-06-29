@@ -1,9 +1,9 @@
 spring:
   datasource:
-    # 환경변수 우선, 없으면 개발 기본값 사용
+    # 반드시 환경변수로 주입 — 기본값 없음 (없으면 기동 실패)
     url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:herdsignal}?characterEncoding=UTF-8&serverTimezone=UTC
     username: ${DB_USER:herdsignal}
-    password: ${DB_PASSWORD:herdsignal1234}
+    password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
