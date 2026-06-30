@@ -324,16 +324,16 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.stockTable}>
-            {/* 헤더 */}
+            {/* 헤더 — 순서: 종목 → 재무정보(평단가·현재가·수익률·평가금액) → HERD → 시그널 */}
             <div className={styles.tableHeader}>
               <div className={styles.th} />
               <div className={styles.th}>종목</div>
-              <div className={styles.th}>HERD</div>
-              <div className={styles.th}>시그널</div>
               <div className={`${styles.th} ${styles.thRight}`}>평단가</div>
               <div className={`${styles.th} ${styles.thRight}`}>현재가</div>
               <div className={`${styles.th} ${styles.thRight}`}>수익률</div>
               <div className={`${styles.th} ${styles.thRight}`}>평가금액</div>
+              <div className={styles.th}>HERD</div>
+              <div className={styles.th}>시그널</div>
               <div className={styles.th} />
               <div className={styles.th} />
             </div>
@@ -381,7 +381,49 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* HERD 열 */}
+                  {/* 평단가 */}
+                  <div className={styles.priceCell}>
+                    {hasAvgPrice
+                      ? fmtUSD(item.avgPrice)
+                      : <span className={styles.dashCell}>—</span>}
+                  </div>
+
+                  {/* 현재가 + 일일 등락폭 (2줄 표시) */}
+                  <div className={styles.priceCell}>
+                    {price ? (
+                      <div className={styles.priceCellDouble}>
+                        <div>{fmtUSD(price.currentPrice)}</div>
+                        <div
+                          className={styles.priceSubText}
+                          style={{ color: pctColor(price.dailyChangePct) }}
+                        >
+                          {fmtPct(price.dailyChangePct)}
+                        </div>
+                      </div>
+                    ) : (
+                      <span className={styles.dashCell}>—</span>
+                    )}
+                  </div>
+
+                  {/* 수익률 */}
+                  <div className={styles.priceCell}>
+                    {price ? (
+                      <span style={{ color: pctColor(price.returnPct) }}>
+                        {fmtPct(price.returnPct)}
+                      </span>
+                    ) : (
+                      <span className={styles.dashCell}>—</span>
+                    )}
+                  </div>
+
+                  {/* 평가금액 */}
+                  <div className={styles.priceCell}>
+                    {price
+                      ? fmtUSD(price.marketValue)
+                      : <span className={styles.dashCell}>—</span>}
+                  </div>
+
+                  {/* HERD 열 — 재무정보 뒤에 배치 */}
                   <div className={styles.rowHerd}>
                     {herd ? (
                       <>
@@ -403,7 +445,7 @@ export default function Dashboard() {
                         </div>
                       </>
                     ) : (
-                      /* HERD 점수 미구현 — 준비 중 표시 */
+                      /* HERD 점수 미구현 시 — dashCell과 동일 스타일 */
                       <div className={styles.rowHerdEmpty}>—</div>
                     )}
                   </div>
@@ -420,32 +462,6 @@ export default function Dashboard() {
                     ) : (
                       <span className={styles.dashCell}>—</span>
                     )}
-                  </div>
-
-                  {/* 평단가 */}
-                  <div className={styles.priceCell}>
-                    {hasAvgPrice ? fmtUSD(item.avgPrice) : <span className={styles.dashCell}>—</span>}
-                  </div>
-
-                  {/* 현재가 */}
-                  <div className={styles.priceCell}>
-                    {price ? fmtUSD(price.currentPrice) : <span className={styles.dashCell}>—</span>}
-                  </div>
-
-                  {/* 수익률 */}
-                  <div className={styles.priceCell}>
-                    {price ? (
-                      <span style={{ color: pctColor(price.returnPct) }}>
-                        {fmtPct(price.returnPct)}
-                      </span>
-                    ) : (
-                      <span className={styles.dashCell}>—</span>
-                    )}
-                  </div>
-
-                  {/* 평가금액 */}
-                  <div className={styles.priceCell}>
-                    {price ? fmtUSD(price.marketValue) : <span className={styles.dashCell}>—</span>}
                   </div>
 
                   {/* 평단가 입력/수정 버튼 */}

@@ -216,14 +216,17 @@
 }
 .popularCard:hover { background: var(--surface2); border-color: var(--border2); }
 
-/* 왼쪽 컬러 스트라이프 (absolute div — CSS ::before는 동적 색상 적용 불가) */
+/*
+ * 왼쪽 컬러 스트라이프 (absolute div — CSS ::before는 동적 색상 적용 불가)
+ * top/bottom: 0으로 카드 전체 높이 커버, 상단/하단 모서리는
+ * 부모 overflow:hidden + border-radius가 자연스럽게 클리핑.
+ */
 .popularStripe {
   position: absolute;
   left: 0;
-  top: 15%;
-  bottom: 15%;
-  width: 2px;
-  border-radius: 0 2px 2px 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
 }
 
 .popularTop {

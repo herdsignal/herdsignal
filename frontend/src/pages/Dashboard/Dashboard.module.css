@@ -236,10 +236,14 @@
   overflow: hidden;
 }
 
+/*
+ * 컬럼 순서: stripe | 종목 | 평단가 | 현재가 | 수익률 | 평가금액 | HERD(1fr) | 시그널 | 버튼 | →
+ * 재무정보를 먼저 보고, HERD 시그널을 나중에 보는 자연스러운 읽기 흐름.
+ */
 .tableHeader,
 .tableRow {
   display: grid;
-  grid-template-columns: 24px 148px 1fr 68px 82px 82px 76px 90px 58px 36px;
+  grid-template-columns: 24px 148px 82px 82px 76px 90px 1fr 68px 58px 36px;
   gap: 12px;
   padding: 0 20px;
 }
@@ -358,13 +362,14 @@
   padding: 0 0 10px;
 }
 
-/* HERD 미구현 시 — 플레이스홀더 */
+/* HERD 미구현 시 — dashCell과 동일한 "—" 스타일 */
 .rowHerdEmpty {
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-3);
-  padding: 14px 0;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
 }
 
 /* ── 시그널 배지 ── */
@@ -393,6 +398,23 @@
   letter-spacing: -0.2px;
 }
 
+/* 현재가 셀: 상단에 현재가, 하단에 일일 등락폭 (2줄) */
+.priceCellDouble {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* 일일 등락폭 — 현재가 아래 보조 텍스트 */
+.priceSubText {
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* ── 데이터 없는 셀 ("—") — 모든 빈 셀에 동일 스타일 적용 ── */
 .dashCell {
   font-size: 13px;
   color: var(--text-3);
