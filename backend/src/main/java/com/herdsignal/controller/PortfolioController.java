@@ -2,8 +2,7 @@ package com.herdsignal.controller;
 
 import com.herdsignal.config.AppConstants;
 import com.herdsignal.domain.UserPortfolio;
-import com.herdsignal.dto.ApiResponse;
-import com.herdsignal.dto.PortfolioAddRequest;
+import com.herdsignal.dto.*;
 import com.herdsignal.service.PortfolioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 포트폴리오 종목 CRUD API 컨트롤러.
+ * 포트폴리오 종목 CRUD + 요약/히스토리 API 컨트롤러.
  * MVP에서 userId는 모든 엔드포인트에서 AppConstants.DEFAULT_USER_ID 고정.
  */
 @RestController
@@ -54,5 +53,43 @@ public class PortfolioController {
     public ResponseEntity<Void> removeStock(@PathVariable String ticker) {
         portfolioService.removeStock(AppConstants.DEFAULT_USER_ID, ticker);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * GET /api/portfolio/summary
+     * 포트폴리오 현재 평가 요약 조회.
+     * 총 평가금액·수익률·일일 등락률·종목별 상세 반환.
+     */
+    @GetMapping("/summary")
+    public ResponseEntity<ApiResponse<PortfolioSummaryResponse>> getPortfolioSummary() {
+        PortfolioSummaryResponse response =
+                portfolioService.getPortfolioSummary(AppConstants.DEFAULT_USER_ID);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * GET /api/portfolio/history?period=month
+     * 포트폴리오 히스토리 조회.
+     * period: "month"(기본, 최근 30일) / "year"(최근 365일)
+     */
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<PortfolioHistoryResponse>> getPortfolioHistory(
+            @RequestParam(defaultValue = "month") String period) {
+        PortfolioHistoryResponse response =
+                portfolioService.getPortfolioHistory(AppConstants.DEFAULT_USER_ID, period);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * PATCH /api/portfolio/{ticker}/avg-price
+     * 평균 매수가·보유 수량 수정.
+     * 존재하지 않는 종목이면 404 Not Found.
+     */
+    @PatchMapping("/{ticker}/avg-price")
+    public ResponseEntity<ApiResponse<Void>> updateAvgPrice(
+            @PathVariable String ticker,
+            @RequestBody AvgPriceUpdateRequest request) {
+        portfolioService.updateAvgPrice(AppConstants.DEFAULT_USER_ID, ticker, request);
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
