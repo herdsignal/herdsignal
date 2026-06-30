@@ -3,7 +3,7 @@
  *
  * Dashboard 구조 재사용. 주요 차이점:
  *   - API: getWatchlistHerd() (Portfolio 대신)
- *   - 테이블 행 우측: 시그널 배지 + 삭제 버튼
+ *   - 카드: 평단가/수익률 섹션 없이 HERD 점수 + 시그널 + 삭제만
  *   - 삭제: removeFromWatchlist(ticker) → 성공 시 로컬 상태에서 즉시 제거
  *   - 빈 상태: "관심 종목이 없습니다" + 종목 검색 버튼
  *
@@ -13,9 +13,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate }   from 'react-router-dom'
 import { getWatchlistHerd, getStockHerd, removeFromWatchlist } from '../../api/herdApi'
-import HerdDots          from '../../components/HerdDots/HerdDots'
-import SpectrumBar       from '../../components/SpectrumBar/SpectrumBar'
-import styles            from './Watchlist.module.css'
+import HerdDots  from '../../components/HerdDots/HerdDots'
+import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
+import styles    from './Watchlist.module.css'
 
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
 const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
@@ -54,12 +54,12 @@ function stageDesc(stage) {
 /** signal → 배지 배경색 + 텍스트 색 */
 function signalStyle(signal) {
   switch (signal) {
-    case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: 'var(--rush)' }
-    case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',   color: 'var(--drift)' }
-    case 'HOLD':   return { bg: 'rgba(113,113,122,0.1)',  color: 'var(--calm)' }
-    case 'ADD':    return { bg: 'rgba(96,165,250,0.1)',   color: 'var(--scatter)' }
-    case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
-    default:       return { bg: 'rgba(113,113,122,0.1)',  color: 'var(--calm)' }
+    case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: '#EF4444' }
+    case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',   color: '#F97316' }
+    case 'HOLD':   return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
+    case 'ADD':    return { bg: 'rgba(96,165,250,0.12)',  color: '#60A5FA' }
+    case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6' }
+    default:       return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
   }
 }
 
@@ -87,12 +87,11 @@ function formatDate(dateStr) {
 export default function Watchlist() {
   const navigate = useNavigate()
 
-  /* 상태 */
-  const [watchlist,      setWatchlist]      = useState([])   // 관심 종목 목록
-  const [spyData,        setSpyData]        = useState(null)  // SPY HERD 데이터
+  const [watchlist,      setWatchlist]      = useState([])
+  const [spyData,        setSpyData]        = useState(null)
   const [loading,        setLoading]        = useState(true)
   const [error,          setError]          = useState(null)
-  /* 삭제 중인 티커 (한 번에 하나만 허용) */
+  /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
@@ -132,23 +131,21 @@ export default function Watchlist() {
 
   useEffect(() => { fetchData() }, [fetchData])
 
-  /* 관심 종목 삭제 */
+  /* 관심 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 */
   async function handleDelete(e, ticker) {
-    e.stopPropagation()   /* 행 클릭(상세 페이지 이동) 이벤트 차단 */
-    if (deletingTicker) return   /* 삭제 중에는 중복 요청 방지 */
+    e.stopPropagation()
+    if (deletingTicker) return
     setDeletingTicker(ticker)
     try {
       await removeFromWatchlist(ticker)
-      /* API 성공 시 로컬 상태에서 즉시 제거 (재조회 없음) */
       setWatchlist(prev => prev.filter(item => item.ticker !== ticker))
     } catch {
-      /* 삭제 실패 시 목록 그대로 유지 (별도 알림 없음 — MVP) */
+      /* 삭제 실패 — 목록 그대로 유지 */
     } finally {
       setDeletingTicker(null)
     }
   }
 
-  /* SPY 기본값 */
   const spyScore = spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
 
@@ -168,8 +165,6 @@ export default function Watchlist() {
 
       {/* ── S&P500 HERD 배너 (Dashboard와 동일) ── */}
       <div className={styles.marketBanner}>
-
-        {/* 좌: 점수 블록 */}
         <div className={styles.bannerScoreBlock}>
           <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
           <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
@@ -181,7 +176,6 @@ export default function Watchlist() {
           <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
         </div>
 
-        {/* 중: 무리 애니메이션 */}
         <div className={styles.bannerAnimBlock}>
           <HerdDots score={spyScore} fill dotCount={60} />
           <div className={styles.bannerAnimLabel}>
@@ -193,7 +187,6 @@ export default function Watchlist() {
           </div>
         </div>
 
-        {/* 우: 통계 */}
         <div className={styles.bannerStatsBlock}>
           <div className={styles.bannerStatItem}>
             <div className={styles.bannerStatLabel}>SPY 종가</div>
@@ -227,99 +220,74 @@ export default function Watchlist() {
         </div>
       )}
 
-      {/* ── 관심 종목 테이블 ── */}
+      {/* ── 관심 종목 카드 그리드 — 2열 ── */}
       {!loading && !error && watchlist.length > 0 && (
         <>
           <div className={styles.sectionRow}>
-            <div className={styles.sectionTitle}>
-              관심 종목 · {watchlist.length}
-            </div>
+            <div className={styles.sectionTitle}>관심 종목 · {watchlist.length}</div>
           </div>
 
-          <div className={styles.stockTable}>
-            {/* 테이블 헤더 */}
-            <div className={styles.tableHeader}>
-              <div className={styles.th} />
-              <div className={styles.th}>종목</div>
-              <div className={styles.th}>HERD</div>
-              <div className={`${styles.th} ${styles.thRight}`}>시그널</div>
-              <div className={styles.th} />
-            </div>
-
-            {/* 종목 행 */}
+          <div className={styles.stockGrid}>
             {watchlist.map((item) => {
-              const color  = stageColor(item.herdStage)
-              const badge  = badgeStyle(item.herdStage)
-              const signal = signalStyle(item.signal)
+              const color      = stageColor(item.herdStage)
+              const badge      = badgeStyle(item.herdStage)
+              const signal     = signalStyle(item.signal)
+              const stageName  = item.herdStage.startsWith('Herd ')
+                ? item.herdStage.slice(5)
+                : item.herdStage
               const isDeleting = deletingTicker === item.ticker
 
               return (
                 <div
                   key={item.ticker}
-                  className={styles.tableRow}
+                  className={styles.stockCard}
                   onClick={() => navigate(`/stock/${item.ticker}`)}
+                  style={{ opacity: isDeleting ? 0.4 : 1 }}
                 >
-                  {/* 컬러 스트라이프 */}
-                  <div className={styles.rowStripeWrap}>
-                    <div className={styles.rowStripe} style={{ background: color }} />
-                  </div>
+                  {/* 좌측 HERD 단계 컬러 스트라이프 */}
+                  <div className={styles.cardStripe} style={{ background: color }} />
 
-                  {/* 티커 블록 */}
-                  <div className={styles.rowTickerBlock}>
-                    <div
-                      className={styles.tickerBadge}
-                      style={{ background: badge.bg, color: badge.color }}
-                    >
-                      {item.ticker.length <= 4 ? item.ticker : item.ticker.slice(0, 4)}
-                    </div>
-                    <div>
-                      <div className={styles.rowTicker}>{item.ticker}</div>
-                      <div className={styles.rowName}>{item.herdStage}</div>
-                    </div>
-                  </div>
+                  {/* 삭제 버튼 — 우상단, hover 시 표시 */}
+                  <button
+                    className={styles.cardDeleteBtn}
+                    onClick={e => handleDelete(e, item.ticker)}
+                    disabled={!!deletingTicker}
+                    title={`${item.ticker} 관심 종목에서 삭제`}
+                  >
+                    {isDeleting ? '…' : '✕'}
+                  </button>
 
-                  {/* HERD 열 */}
-                  <div className={styles.rowHerd}>
-                    <div className={styles.rowHerdTop}>
+                  {/* 카드 상단: 종목 (좌) + HERD (우) */}
+                  <div className={styles.cardTop}>
+                    <div className={styles.cardTickerBlock}>
+                      <div
+                        className={styles.cardTickerBadge}
+                        style={{ background: badge.bg, color: badge.color }}
+                      >
+                        {item.ticker.length <= 4 ? item.ticker : item.ticker.slice(0, 4)}
+                      </div>
                       <div>
-                        <div className={styles.herdNum} style={{ color }}>
-                          {Math.round(item.herdScore)}
-                        </div>
-                        <div className={styles.herdStageName}>
-                          {item.herdStage.startsWith('Herd ')
-                            ? item.herdStage.slice(5)
-                            : item.herdStage}
-                        </div>
-                      </div>
-                      <div className={styles.rowAnimWrap}>
-                        <HerdDots score={item.herdScore} fill dotCount={14} />
+                        <div className={styles.cardTicker}>{item.ticker}</div>
+                        <div className={styles.cardStageName}>{stageName}</div>
                       </div>
                     </div>
-                    <div className={styles.rowHerdBottom}>
-                      <SpectrumBar score={item.herdScore} height={2} />
+
+                    <div className={styles.cardHerd}>
+                      <div className={styles.cardHerdNum} style={{ color }}>
+                        {Math.round(item.herdScore)}
+                      </div>
+                      <div className={styles.cardHerdStage}>{stageName}</div>
                     </div>
                   </div>
 
-                  {/* 시그널 배지 */}
-                  <div className={styles.signalCell}>
+                  {/* 카드 하단: 시그널 배지만 (관심 종목은 재무 데이터 없음) */}
+                  <div className={styles.cardBottom}>
                     <span
-                      className={styles.signalBadge}
+                      className={styles.cardSignalBadge}
                       style={{ background: signal.bg, color: signal.color }}
                     >
                       {item.signal}
                     </span>
-                  </div>
-
-                  {/* 삭제 버튼 (이벤트 버블링 차단) */}
-                  <div className={styles.deleteCell} onClick={e => e.stopPropagation()}>
-                    <button
-                      className={styles.btnDelete}
-                      onClick={e => handleDelete(e, item.ticker)}
-                      disabled={!!deletingTicker}
-                      title={`${item.ticker} 관심 종목에서 삭제`}
-                    >
-                      {isDeleting ? '…' : '✕'}
-                    </button>
                   </div>
                 </div>
               )

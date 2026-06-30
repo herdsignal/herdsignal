@@ -4,15 +4,16 @@
  * 구성:
  *   1) 페이지 헤더
  *   2) 포트폴리오 평가금액 요약 카드 (총액·수익률·오늘 등락)
- *   3) S&P500 HERD 배너
- *   4) 보유 종목 테이블 (재무정보 + HERD)
+ *   3) S&P500 HERD 배너 (HerdDots + SpectrumBar 유지)
+ *   4) 보유 종목 2열 카드 그리드
+ *      카드: 좌 스트라이프 | 종목+HERD | 평가금액+수익률 | 시그널+현재가
  *   5) 빈 상태 UI
  *
  * 데이터 소스:
- *   - getPortfolio()        → 종목 목록 + avgPrice/quantity (항상 동작)
- *   - getPortfolioSummary() → 총액 집계 + 종목별 현재가      (항상 동작)
+ *   - getPortfolio()        → 종목 목록 + avgPrice/quantity
+ *   - getPortfolioSummary() → 총액 집계 + 종목별 현재가
  *   - getPortfolioHerd()    → HERD 점수 (backend 미구현 시 빈 결과)
- *   - getStockHerd('SPY')   → SPY 배너용 HERD
+ *   - getStockHerd('SPY')   → SPY 배너용 HERD (독립 useEffect)
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
@@ -22,11 +23,12 @@ import {
   getPortfolioSummary,
   getPortfolioHerd,
   getStockHerd,
+  removeFromPortfolio,
 } from '../../api/herdApi'
-import HerdDots          from '../../components/HerdDots/HerdDots'
-import SpectrumBar       from '../../components/SpectrumBar/SpectrumBar'
-import AvgPriceModal     from '../../components/AvgPriceModal/AvgPriceModal'
-import styles            from './Dashboard.module.css'
+import HerdDots      from '../../components/HerdDots/HerdDots'
+import SpectrumBar   from '../../components/SpectrumBar/SpectrumBar'
+import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
+import styles        from './Dashboard.module.css'
 
 const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
@@ -50,7 +52,7 @@ function stageColor(stage) {
   }
 }
 
-/** stage → 한국어 설명 */
+/** stage → 한국어 설명 (배너 하단) */
 function stageDesc(stage) {
   switch (normalizeStage(stage)) {
     case 'rush':    return '군중 과열 · 익절 구간'
@@ -61,19 +63,19 @@ function stageDesc(stage) {
   }
 }
 
-/** signal → 배지 스타일 */
+/** signal → 배지 배경·텍스트 색 */
 function signalStyle(signal) {
   switch (signal) {
-    case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: 'var(--rush)' }
-    case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',   color: 'var(--drift)' }
-    case 'HOLD':   return { bg: 'rgba(113,113,122,0.1)',  color: 'var(--calm)' }
-    case 'ADD':    return { bg: 'rgba(96,165,250,0.1)',   color: 'var(--scatter)' }
-    case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
-    default:       return { bg: 'rgba(113,113,122,0.1)',  color: 'var(--calm)' }
+    case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: '#EF4444' }
+    case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',   color: '#F97316' }
+    case 'HOLD':   return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
+    case 'ADD':    return { bg: 'rgba(96,165,250,0.12)',  color: '#60A5FA' }
+    case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6' }
+    default:       return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
   }
 }
 
-/** stage → 티커 배지 스타일 */
+/** stage → 티커 배지 배경·텍스트 색 */
 function badgeStyle(stage) {
   switch (normalizeStage(stage)) {
     case 'rush':    return { bg: 'rgba(239,68,68,0.12)',   color: 'var(--rush)' }
@@ -106,15 +108,12 @@ function fmtPct(value) {
   return `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`
 }
 
-/**
- * 수익률 색상
- * 양수 → 초록(#22C55E), 음수 → 빨강(--rush), 0 → 회색
- */
+/** 수익률 색상: 양수→초록, 음수→빨강, 0→회색 */
 function pctColor(value) {
   if (value == null) return 'var(--text-3)'
   const n = Number(value)
   if (n > 0)  return '#22C55E'
-  if (n < 0)  return 'var(--rush)'
+  if (n < 0)  return '#EF4444'
   return 'var(--text-3)'
 }
 
@@ -123,35 +122,32 @@ function pctColor(value) {
 export default function Dashboard() {
   const navigate = useNavigate()
 
-  /* 포트폴리오 목록 (ticker + avgPrice + quantity) */
-  const [portfolio,  setPortfolio]  = useState([])
-  /* 포트폴리오 평가금액 요약 (총액 집계 + 종목별 현재가) */
-  const [summary,    setSummary]    = useState(null)
-  /* HERD 점수 맵 (ticker → {herdScore, herdStage, signal}) — 미구현 시 빈 객체 */
-  const [herdMap,    setHerdMap]    = useState({})
-  /* SPY HERD 배너 */
-  const [spyData,    setSpyData]    = useState(null)
-  const [loading,    setLoading]    = useState(true)
-  const [error,      setError]      = useState(null)
-  /* 평단가 입력 모달 — 대상 ticker (null이면 닫힘) */
-  const [modalTicker, setModalTicker] = useState(null)
+  const [portfolio,      setPortfolio]      = useState([])
+  const [summary,        setSummary]        = useState(null)
+  const [herdMap,        setHerdMap]        = useState({})
+  const [spyData,        setSpyData]        = useState(null)
+  const [loading,        setLoading]        = useState(true)
+  const [error,          setError]          = useState(null)
+  /* 평단가 입력 모달 대상 ticker */
+  const [modalTicker,    setModalTicker]    = useState(null)
+  /* 삭제 중인 ticker — 중복 요청 방지 */
+  const [deletingTicker, setDeletingTicker] = useState(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
 
-  /* ── 포트폴리오 데이터 병렬 조회 (SPY 배너는 별도 처리) ── */
+  /* ── 포트폴리오 데이터 병렬 조회 ── */
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
       const [portfolioRes, summaryRes, herdRes] = await Promise.allSettled([
-        getPortfolio(),         // 종목 목록 (항상 동작)
-        getPortfolioSummary(),  // 재무 집계 + 현재가
-        getPortfolioHerd(),     // HERD 점수 (미구현 시 404)
+        getPortfolio(),
+        getPortfolioSummary(),
+        getPortfolioHerd(),
       ])
 
-      /* 포트폴리오 목록 */
       if (portfolioRes.status === 'fulfilled') {
         const raw = portfolioRes.value.data?.data
         setPortfolio(Array.isArray(raw) ? raw : [])
@@ -160,12 +156,10 @@ export default function Dashboard() {
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
       }
 
-      /* 포트폴리오 재무 요약 */
       if (summaryRes.status === 'fulfilled') {
         setSummary(summaryRes.value.data?.data ?? null)
       }
 
-      /* HERD 점수 (404 실패 정상 — backend 미구현) */
       const map = {}
       if (herdRes.status === 'fulfilled') {
         const herdStocks = herdRes.value?.data?.data?.stocks ?? []
@@ -180,9 +174,8 @@ export default function Dashboard() {
   useEffect(() => { fetchData() }, [fetchData])
 
   /*
-   * SPY 배너 데이터 — 포트폴리오 배치와 완전히 분리.
-   * Promise.allSettled 안에 묶으면 HMR 스테일 클로저 문제 발생 가능.
-   * 독립된 useEffect + .then()으로 처리해서 state 업데이트를 보장.
+   * SPY 배너 — 포트폴리오 배치와 완전히 분리.
+   * HMR 스테일 클로저 문제 방지를 위해 독립 useEffect로 처리.
    */
   useEffect(() => {
     getStockHerd('SPY')
@@ -190,17 +183,30 @@ export default function Dashboard() {
         const data = res.data?.data ?? null
         setSpyData(data)
       })
-      .catch(() => {
-        /* SPY 조회 실패 시 배너는 기본값(Calm/50)으로 표시 */
-      })
+      .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
   }, [])
 
-  /* ticker → 현재가 데이터 맵 (getPortfolioSummary 결과) */
+  /* ticker → 현재가 데이터 맵 */
   const priceMap = useMemo(() => {
     const map = {}
     summary?.stocks?.forEach((s) => { map[s.ticker] = s })
     return map
   }, [summary])
+
+  /* 포트폴리오 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 (낙관적 업데이트) */
+  async function handleDelete(e, ticker) {
+    e.stopPropagation()
+    if (deletingTicker) return
+    setDeletingTicker(ticker)
+    try {
+      await removeFromPortfolio(ticker)
+      setPortfolio(prev => prev.filter(item => item.ticker !== ticker))
+    } catch {
+      /* 삭제 실패 — 목록 그대로 유지 */
+    } finally {
+      setDeletingTicker(null)
+    }
+  }
 
   const spyScore = spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
@@ -211,7 +217,6 @@ export default function Dashboard() {
     await fetchData()
   }, [fetchData])
 
-  /* 찾고 있는 티커 종목의 modalTicker 정보 */
   const modalStock = portfolio.find((p) => p.ticker === modalTicker)
 
   return (
@@ -234,9 +239,7 @@ export default function Dashboard() {
           <div className={styles.summaryCard}>
             <div className={styles.summaryLabel}>총 평가금액</div>
             <div className={styles.summaryValue}>{fmtUSD(summary.totalValue)}</div>
-            <div className={styles.summarySub}>
-              매입 {fmtUSD(summary.totalCost)}
-            </div>
+            <div className={styles.summarySub}>매입 {fmtUSD(summary.totalCost)}</div>
           </div>
           <div className={styles.summaryCard}>
             <div className={styles.summaryLabel}>총 수익률</div>
@@ -263,10 +266,8 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── S&P500 HERD 배너 ── */}
+      {/* ── S&P500 HERD 배너 — HerdDots + SpectrumBar 유지 ── */}
       <div className={styles.marketBanner}>
-
-        {/* 좌: 점수 블록 */}
         <div className={styles.bannerScoreBlock}>
           <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
           <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
@@ -278,7 +279,6 @@ export default function Dashboard() {
           <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
         </div>
 
-        {/* 중: 무리 애니메이션 */}
         <div className={styles.bannerAnimBlock}>
           <HerdDots score={spyScore} fill dotCount={60} />
           <div className={styles.bannerAnimLabel}>
@@ -290,7 +290,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 우: 통계 */}
         <div className={styles.bannerStatsBlock}>
           <div className={styles.bannerStatItem}>
             <div className={styles.bannerStatLabel}>SPY 종가</div>
@@ -324,192 +323,146 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── 종목 테이블 ── */}
+      {/* ── 종목 카드 그리드 — 2열 ── */}
       {!loading && !error && portfolio.length > 0 && (
         <>
           <div className={styles.sectionRow}>
-            <div className={styles.sectionTitle}>
-              보유 종목 · {portfolio.length}
-            </div>
+            <div className={styles.sectionTitle}>보유 종목 · {portfolio.length}</div>
           </div>
 
-          <div className={styles.stockTable}>
-            {/*
-             * 헤더 — 컬럼 순서:
-             * stripe | 종목 | 평단가 | 현재가 | 수익률 | 평가금액 | HERD(1fr) | →
-             * 시그널 배지는 HERD 영역 내부에 스테이지 텍스트 옆에 배치.
-             * 버튼은 HERD 영역 내부에 배치.
-             */}
-            <div className={styles.tableHeader}>
-              <div className={styles.th} />
-              <div className={styles.th}>종목</div>
-              <div className={`${styles.th} ${styles.thRight}`}>평단가</div>
-              <div className={`${styles.th} ${styles.thRight}`}>현재가</div>
-              <div className={`${styles.th} ${styles.thRight}`}>수익률</div>
-              <div className={`${styles.th} ${styles.thRight}`}>평가금액</div>
-              <div className={styles.th}>HERD</div>
-              <div className={styles.th} />
-            </div>
-
-            {/* 종목 행 */}
+          <div className={styles.stockGrid}>
             {portfolio.map((item) => {
-              /* HERD 데이터 (optional) */
-              const herd   = herdMap[item.ticker]
-              const stage  = herd?.herdStage ?? 'Calm'
-              const color  = stageColor(stage)
-              const badge  = badgeStyle(stage)
-              const signal = signalStyle(herd?.signal)
-              /* 스테이지 표시명: "Herd Scatter" → "Scatter" */
+              const herd      = herdMap[item.ticker]
+              const stage     = herd?.herdStage ?? 'Calm'
+              const color     = stageColor(stage)
+              const badge     = badgeStyle(stage)
+              const signal    = signalStyle(herd?.signal)
+              /* "Herd Scatter" → "Scatter" */
               const stageName = stage.startsWith('Herd ') ? stage.slice(5) : stage
 
-              /* 재무 데이터 (summary map) */
-              const price = priceMap[item.ticker]
-
-              /* avgPrice는 포트폴리오 엔티티에서 직접 사용 */
+              const price       = priceMap[item.ticker]
               const hasAvgPrice = item.avgPrice != null && item.quantity != null
+              const isDeleting  = deletingTicker === item.ticker
 
               return (
                 <div
                   key={item.ticker}
-                  className={styles.tableRow}
+                  className={styles.stockCard}
                   onClick={() => navigate(`/stock/${item.ticker}`)}
+                  style={{ opacity: isDeleting ? 0.4 : 1 }}
                 >
-                  {/* 컬러 스트라이프 */}
-                  <div className={styles.rowStripeWrap}>
-                    <div
-                      className={styles.rowStripe}
-                      style={{ background: hasAvgPrice ? color : 'var(--border2)' }}
-                    />
-                  </div>
+                  {/* 좌측 HERD 단계 컬러 스트라이프 */}
+                  <div className={styles.cardStripe} style={{ background: color }} />
 
-                  {/* 티커 블록 */}
-                  <div className={styles.rowTickerBlock}>
-                    <div
-                      className={styles.tickerBadge}
-                      style={{ background: badge.bg, color: badge.color }}
-                    >
-                      {item.ticker.length <= 4 ? item.ticker : item.ticker.slice(0, 4)}
+                  {/* 삭제 버튼 — 우상단 절대 위치, hover 시 표시 */}
+                  <button
+                    className={styles.cardDeleteBtn}
+                    onClick={e => handleDelete(e, item.ticker)}
+                    disabled={!!deletingTicker}
+                    title={`${item.ticker} 포트폴리오에서 삭제`}
+                  >
+                    {isDeleting ? '…' : '✕'}
+                  </button>
+
+                  {/* 카드 상단: 종목 정보 (좌) + HERD 점수 (우) */}
+                  <div className={styles.cardTop}>
+                    <div className={styles.cardTickerBlock}>
+                      <div
+                        className={styles.cardTickerBadge}
+                        style={{ background: badge.bg, color: badge.color }}
+                      >
+                        {item.ticker.length <= 4 ? item.ticker : item.ticker.slice(0, 4)}
+                      </div>
+                      <div>
+                        <div className={styles.cardTicker}>{item.ticker}</div>
+                        <div className={styles.cardStageName}>{stageName}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className={styles.rowTicker}>{item.ticker}</div>
-                      <div className={styles.rowName}>{stageName}</div>
+
+                    <div className={styles.cardHerd}>
+                      {herd ? (
+                        <>
+                          <div className={styles.cardHerdNum} style={{ color }}>
+                            {Math.round(herd.herdScore)}
+                          </div>
+                          <div className={styles.cardHerdStage}>{stageName}</div>
+                        </>
+                      ) : (
+                        <span className={styles.cardDash}>—</span>
+                      )}
                     </div>
                   </div>
 
                   {/*
-                   * 평단가 미입력 시: 4개 셀(평단가·현재가·수익률·평가금액)을
-                   * grid-column span으로 하나로 합쳐 안내 텍스트 + 버튼 배치.
-                   * 평단가 입력 시: 각 셀에 데이터 표시.
+                   * 카드 중간: 재무 데이터
+                   * 평단가 입력 → 평가금액 + 수익률
+                   * 미입력 → 안내 텍스트 + 입력 버튼
                    */}
-                  {hasAvgPrice ? (
-                    <>
-                      {/* 평단가 */}
-                      <div className={styles.priceCell}>
-                        {fmtUSD(item.avgPrice)}
-                      </div>
-
-                      {/* 현재가 + 일일 등락폭 (2줄 표시) */}
-                      <div className={styles.priceCell}>
-                        {price ? (
-                          <div className={styles.priceCellDouble}>
-                            <div>{fmtUSD(price.currentPrice)}</div>
-                            <div
-                              className={styles.priceSubText}
-                              style={{ color: pctColor(price.dailyChangePct) }}
-                            >
-                              {fmtPct(price.dailyChangePct)}
-                            </div>
-                          </div>
-                        ) : (
-                          <span className={styles.dashCell}>—</span>
-                        )}
-                      </div>
-
-                      {/* 수익률 */}
-                      <div className={styles.priceCell}>
-                        {price ? (
-                          <span style={{ color: pctColor(price.returnPct) }}>
-                            {fmtPct(price.returnPct)}
-                          </span>
-                        ) : (
-                          <span className={styles.dashCell}>—</span>
-                        )}
-                      </div>
-
-                      {/* 평가금액 */}
-                      <div className={styles.priceCell}>
-                        {price
-                          ? fmtUSD(price.marketValue)
-                          : <span className={styles.dashCell}>—</span>}
-                      </div>
-                    </>
-                  ) : (
-                    /* 평단가 미입력: 4개 셀 병합 → 안내 텍스트 + 입력 버튼 */
-                    <div className={styles.noAvgPriceCell}>
-                      <span className={styles.noAvgPriceText}>
-                        평단가를 입력하면 수익률을 확인할 수 있어요
-                      </span>
-                      <button
-                        className={styles.inputBtn}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setModalTicker(item.ticker)
-                        }}
-                      >
-                        입력
-                      </button>
-                    </div>
-                  )}
-
-                  {/* HERD 영역: 숫자 + 도트 애니메이션 + 스테이지명 + 시그널 배지 + 수정 버튼 */}
-                  <div className={styles.rowHerd}>
-                    {herd ? (
-                      <>
-                        <div className={styles.rowHerdTop}>
-                          {/* 숫자 + 스테이지명·시그널 배지 */}
-                          <div className={styles.herdLeft}>
-                            <div className={styles.herdNum} style={{ color }}>
-                              {Math.round(herd.herdScore)}
-                            </div>
-                            <div className={styles.herdMeta}>
-                              <span className={styles.herdStageName}>{stageName}</span>
-                              <span
-                                className={styles.signalBadge}
-                                style={{ background: signal.bg, color: signal.color }}
-                              >
-                                {herd.signal}
-                              </span>
-                            </div>
-                          </div>
-                          {/* 도트 애니메이션 */}
-                          <div className={styles.rowAnimWrap}>
-                            <HerdDots score={herd.herdScore} fill dotCount={14} />
+                  <div className={styles.cardMiddle}>
+                    {hasAvgPrice ? (
+                      <div className={styles.cardFinance}>
+                        <div>
+                          <div className={styles.cardFinanceLabel}>평가금액</div>
+                          <div className={styles.cardFinanceValue}>
+                            {price ? fmtUSD(price.marketValue) : '—'}
                           </div>
                         </div>
-                        <div className={styles.rowHerdBottom}>
-                          <SpectrumBar score={herd.herdScore} height={2} />
+                        <div className={styles.cardFinanceRight}>
+                          <div className={styles.cardFinanceLabel}>수익률</div>
+                          <div
+                            className={styles.cardFinanceValue}
+                            style={{ color: price ? pctColor(price.returnPct) : 'var(--text-3)' }}
+                          >
+                            {price ? fmtPct(price.returnPct) : '—'}
+                          </div>
                         </div>
-                      </>
+                      </div>
                     ) : (
-                      /* HERD 미구현 상태 */
-                      <div className={styles.rowHerdEmpty}>—</div>
+                      <div className={styles.cardNoPrice}>
+                        <span className={styles.cardNoPriceText}>
+                          평단가를 입력하면 수익률을 확인할 수 있어요
+                        </span>
+                        <button
+                          className={styles.cardInputBtn}
+                          onClick={e => {
+                            e.stopPropagation()
+                            setModalTicker(item.ticker)
+                          }}
+                        >
+                          입력
+                        </button>
+                      </div>
                     )}
                   </div>
 
-                  {/* 이동 화살표 + (평단가 있을 때) 수정 버튼 */}
-                  <div className={styles.rowAction}>
-                    {hasAvgPrice && (
-                      <button
-                        className={styles.editBtn}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setModalTicker(item.ticker)
-                        }}
-                      >
-                        수정
-                      </button>
+                  {/* 카드 하단: 시그널 배지 (좌) + 현재가·등락 (우, 평단가 있을 때만) */}
+                  <div className={styles.cardBottom}>
+                    <div>
+                      {herd ? (
+                        <span
+                          className={styles.cardSignalBadge}
+                          style={{ background: signal.bg, color: signal.color }}
+                        >
+                          {herd.signal}
+                        </span>
+                      ) : (
+                        <span className={styles.cardDash}>—</span>
+                      )}
+                    </div>
+
+                    {hasAvgPrice && price && (
+                      <div className={styles.cardPriceInfo}>
+                        <span className={styles.cardCurrentPrice}>
+                          {fmtUSD(price.currentPrice)}
+                        </span>
+                        <span
+                          className={styles.cardDailyChange}
+                          style={{ color: pctColor(price.dailyChangePct) }}
+                        >
+                          {fmtPct(price.dailyChangePct)}
+                        </span>
+                      </div>
                     )}
-                    <span className={styles.rowArrow}>→</span>
                   </div>
                 </div>
               )

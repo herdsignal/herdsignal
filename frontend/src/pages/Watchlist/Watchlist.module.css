@@ -1,4 +1,4 @@
-/* Watchlist.module.css — Dashboard.module.css 기반, 삭제 버튼 열 추가 */
+/* Watchlist.module.css — Dashboard.module.css 기반, 재무 섹션 없는 단순 카드 */
 
 /* ── 페이지 헤더 ── */
 .pageHeader {
@@ -64,7 +64,6 @@
   overflow: hidden;
 }
 
-/* 배경 글로우 */
 .bannerScoreBlock::before {
   content: '';
   position: absolute;
@@ -112,7 +111,6 @@
 .bannerAnimBlock {
   position: relative;
   background: var(--surface2);
-  /* overflow:hidden 제거 — 스펙트럼 thumb 클리핑 방지 */
 }
 
 .bannerAnimLabel {
@@ -146,6 +144,8 @@
   justify-content: center;
   gap: 20px;
 }
+
+.bannerStatItem {}
 
 .bannerStatLabel {
   font-size: 11px;
@@ -185,193 +185,141 @@
 }
 
 /* ────────────────────────────
-   종목 테이블
-   Dashboard 대비: 마지막 열이 삭제 버튼 (화살표 없음)
-   grid: 스트라이프 | 종목 | HERD | 시그널 | 삭제
+   관심 종목 카드 그리드 — 2열
+   Dashboard와 동일 구조, 재무 섹션만 없음
    ──────────────────────────── */
-.stockTable {
+.stockGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stockCard {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
+  padding: 16px 18px;
+  position: relative;
   overflow: hidden;
-}
-
-.tableHeader,
-.tableRow {
-  display: grid;
-  grid-template-columns: 28px 240px 1fr 90px 48px;
-  gap: 16px;
-  padding: 0 24px;
-}
-
-.tableHeader {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-  align-items: center;
-}
-
-.th {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-3);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.thRight { text-align: right; }
-
-.tableRow {
-  border-bottom: 1px solid var(--border);
-  align-items: stretch;
   cursor: pointer;
-  transition: background 0.1s;
-  min-height: 72px;
+  transition: border-color 0.15s, opacity 0.15s;
 }
-.tableRow:last-child { border-bottom: none; }
-.tableRow:hover { background: var(--surface2); }
+.stockCard:hover { border-color: var(--border2); }
 
-/* 컬러 스트라이프 */
-.rowStripeWrap {
+/* 좌측 컬러 스트라이프 */
+.cardStripe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+}
+
+/* 삭제 버튼 — 우상단, hover 시 표시 */
+.cardDeleteBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-3);
+  font-size: 10px;
+  cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  opacity: 0.3;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s;
+}
+.stockCard:hover .cardDeleteBtn { opacity: 1; }
+.cardDeleteBtn:hover:not(:disabled) {
+  color: #EF4444;
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+}
+.cardDeleteBtn:disabled { opacity: 0.2; cursor: default; }
+
+/* 카드 상단: 종목 (좌) + HERD (우) */
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
 }
 
-.rowStripe {
-  width: 2px;
-  height: 28px;
-  border-radius: 99px;
-}
-
-/* 티커 블록 */
-.rowTickerBlock {
+.cardTickerBlock {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
-.tickerBadge {
-  width: 38px;
-  height: 38px;
-  border-radius: 9px;
+.cardTickerBadge {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: -0.2px;
   flex-shrink: 0;
 }
 
-.rowTicker {
+.cardTicker {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.3px;
   margin-bottom: 2px;
+  color: var(--text-1);
 }
 
-.rowName {
+.cardStageName {
   font-size: 11px;
   color: var(--text-3);
 }
 
-/* ── HERD 열 ── */
-.rowHerd {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  overflow: hidden;
+.cardHerd {
+  text-align: right;
+  flex-shrink: 0;
+  padding-right: 20px; /* 삭제 버튼 공간 확보 */
 }
 
-.rowHerdTop {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 0 8px;
-}
-
-.herdNum {
+.cardHerdNum {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -1.5px;
+  letter-spacing: -1px;
   line-height: 1;
-  min-width: 52px;
-  flex-shrink: 0;
+  margin-bottom: 3px;
 }
 
-.herdStageName {
-  font-size: 11px;
+.cardHerdStage {
+  font-size: 10px;
   color: var(--text-3);
 }
 
-.rowAnimWrap {
-  flex: 1;
-  height: 32px;
-  border-radius: 6px;
-  background: var(--surface2);
-  overflow: hidden;
-  position: relative;
-}
-
-.rowHerdBottom {
-  padding: 0 0 10px;
-}
-
-/* ── 시그널 배지 ── */
-.signalCell {
+/* 카드 하단: 시그널 배지 (관심 종목은 하단만) */
+.cardBottom {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
 }
 
-.signalBadge {
+.cardSignalBadge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 5px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.05em;
-}
-
-/* ── 데이터 없는 셀 ("—") — Dashboard와 동일 스타일 ── */
-.dashCell {
-  font-size: 13px;
-  color: var(--text-3);
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-}
-
-/* ── 삭제 버튼 열 ── */
-.deleteCell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btnDelete {
-  background: none;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: var(--text-3);
-  cursor: pointer;
-  transition: color 0.12s, border-color 0.12s, background 0.12s;
-  flex-shrink: 0;
-}
-.btnDelete:hover:not(:disabled) {
-  color: #EF4444;
-  border-color: rgba(239, 68, 68, 0.25);
-  background: rgba(239, 68, 68, 0.07);
-}
-.btnDelete:disabled {
-  opacity: 0.4;
-  cursor: default;
+  letter-spacing: 0.04em;
 }
 
 /* ────────────────────────────
