@@ -1,6 +1,6 @@
 """
 init_db.py — 테이블 초기화 스크립트
-HerdSignal 서비스에 필요한 6개 테이블을 생성한다.
+HerdSignal 서비스에 필요한 7개 테이블을 생성한다.
 이미 존재하는 테이블은 건드리지 않는다 (CREATE TABLE IF NOT EXISTS).
 
 실행:
@@ -150,11 +150,39 @@ class UserWatchlist(Base):
 
 
 # ──────────────────────────────────────────────
+# 7. 포트폴리오 일별 스냅샷 (portfolio_history)
+# ──────────────────────────────────────────────
+class PortfolioHistory(Base):
+    """
+    사용자 포트폴리오 일별 평가금액 스냅샷.
+    매일 스케줄러 실행 후 자동 저장. 수익률 추이 시각화에 사용.
+    (user_id, snapshot_date) 복합 UNIQUE → 날짜당 1개 레코드 보장.
+    """
+    __tablename__ = "portfolio_history"
+    __table_args__ = (
+        UniqueConstraint("user_id", "snapshot_date", name="uq_portfolio_history_user_date"),
+        {"comment": "포트폴리오 일별 평가금액 히스토리 (daily 스냅샷)"},
+    )
+
+    id               = Column(BigInteger,     primary_key=True, autoincrement=True, comment="PK")
+    user_id          = Column(String(50),     nullable=False,                        comment="사용자 ID")
+    snapshot_date    = Column(Date,           nullable=False,                        comment="스냅샷 기준일")
+    total_value      = Column(Decimal(15, 2), nullable=False,                        comment="총 평가금액 (USD)")
+    total_cost       = Column(Decimal(15, 2), nullable=False,                        comment="총 매입금액 (USD)")
+    total_return_pct = Column(Decimal(8, 4),  nullable=False,                        comment="총 수익률 (%)")
+    created_at       = Column(DateTime,       nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
+
+
+# ──────────────────────────────────────────────
 # 테이블 생성 실행
 # ──────────────────────────────────────────────
 SQLITE_PATH = "herdsignal_test.db"
 
-MODELS = [Stock, HerdScore, HerdIndicator, DailyPrice, UserPortfolio, UserWatchlist]
+MODELS = [
+    Stock, HerdScore, HerdIndicator, DailyPrice,
+    UserPortfolio, UserWatchlist, PortfolioHistory,
+]
+
 
 def init_tables(engine) -> None:
     """Base.metadata.create_all로 모든 테이블을 생성한다."""
@@ -195,7 +223,7 @@ if __name__ == "__main__":
         engine = create_db_engine(url)
         init_tables(engine)
         verify_tables(engine)
-        print("\n✅ 테이블 초기화 완료")
+        print("\n테이블 초기화 완료")
     except Exception as e:
-        print(f"\n❌ 실패: {e}", file=sys.stderr)
+        print(f"\n실패: {e}", file=sys.stderr)
         sys.exit(1)

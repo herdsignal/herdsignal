@@ -43,6 +43,7 @@ from config.settings import (                                           # noqa: 
     SCHEDULER_MINUTE_ET,
 )
 from herd.calculator import run                                         # noqa: E402
+from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
 from init_db import HerdIndicator, HerdScore, UserPortfolio, UserWatchlist  # noqa: E402
 
@@ -166,6 +167,23 @@ def run_herd_job() -> None:
     if failed_list:
         logger.error(f"[Tier1]   ❌ 실패: {failed_list}")
     logger.info("━" * 60)
+
+    # ── 4. 포트폴리오 스냅샷 저장 (local 사용자) ───────────────────
+    # HERD 잡 완료 후 오늘의 포트폴리오 평가금액을 portfolio_history에 기록
+    try:
+        result = calculate_portfolio_value("local")
+        if result["stocks"]:
+            logger.info(
+                f"[Tier1] 포트폴리오 스냅샷 저장 완료 — "
+                f"보유 {len(result['stocks'])}종목  "
+                f"총 평가 ${result['total_value']:,.2f}  "
+                f"수익률 {result['total_return_pct']:.2f}%"
+            )
+        else:
+            logger.info("[Tier1] 포트폴리오 보유 종목 없음 — 스냅샷 생략")
+    except Exception as e:
+        # 포트폴리오 저장 실패가 HERD 잡 전체를 중단시키지 않도록 예외 격리
+        logger.error(f"[Tier1] 포트폴리오 스냅샷 저장 실패: {e}", exc_info=True)
 
 
 # ══════════════════════════════════════════════
