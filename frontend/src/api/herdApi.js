@@ -6,7 +6,11 @@
 
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+/*
+ * 개발: Vite proxy(/api → localhost:8080)를 통해 같은 origin으로 요청 → CORS 불필요.
+ * 프로덕션: VITE_API_BASE_URL 환경변수에 실제 API 서버 URL 지정.
+ */
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 /** axios 인스턴스 — 공통 설정 적용 */
 const api = axios.create({

@@ -174,9 +174,14 @@ export default function Dashboard() {
       }
       setHerdMap(map)
 
-      /* SPY 배너 */
+      /* SPY 배너 — 응답 구조 디버깅 로그 (확인 후 제거 예정) */
+      console.log('[SPY] status:', spyRes.status)
       if (spyRes.status === 'fulfilled') {
-        setSpyData(spyRes.value.data?.data ?? null)
+        const inner = spyRes.value.data?.data ?? null
+        console.log('[SPY] 파싱 결과:', inner)
+        setSpyData(inner)
+      } else {
+        console.error('[SPY] 요청 실패:', spyRes.reason?.message, spyRes.reason)
       }
     } finally {
       setLoading(false)
