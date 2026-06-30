@@ -140,16 +140,15 @@ export default function Dashboard() {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
 
-  /* 모든 데이터 병렬 조회 */
+  /* ── 포트폴리오 데이터 병렬 조회 (SPY 배너는 별도 처리) ── */
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const [portfolioRes, summaryRes, herdRes, spyRes] = await Promise.allSettled([
+      const [portfolioRes, summaryRes, herdRes] = await Promise.allSettled([
         getPortfolio(),         // 종목 목록 (항상 동작)
         getPortfolioSummary(),  // 재무 집계 + 현재가
         getPortfolioHerd(),     // HERD 점수 (미구현 시 404)
-        getStockHerd('SPY'),    // SPY 배너
       ])
 
       /* 포트폴리오 목록 */
@@ -173,17 +172,28 @@ export default function Dashboard() {
         herdStocks.forEach((h) => { map[h.ticker] = h })
       }
       setHerdMap(map)
-
-      /* SPY 배너 */
-      if (spyRes.status === 'fulfilled') {
-        setSpyData(spyRes.value.data?.data ?? null)
-      }
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  /*
+   * SPY 배너 데이터 — 포트폴리오 배치와 완전히 분리.
+   * Promise.allSettled 안에 묶으면 HMR 스테일 클로저 문제 발생 가능.
+   * 독립된 useEffect + .then()으로 처리해서 state 업데이트를 보장.
+   */
+  useEffect(() => {
+    getStockHerd('SPY')
+      .then((res) => {
+        const data = res.data?.data ?? null
+        setSpyData(data)
+      })
+      .catch(() => {
+        /* SPY 조회 실패 시 배너는 기본값(Calm/50)으로 표시 */
+      })
+  }, [])
 
   /* ticker → 현재가 데이터 맵 (getPortfolioSummary 결과) */
   const priceMap = useMemo(() => {
