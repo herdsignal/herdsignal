@@ -4,11 +4,12 @@
  */
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Layout from './components/Layout/Layout'
-import Dashboard from './pages/Dashboard/Dashboard'
+import Layout     from './components/Layout/Layout'
+import Dashboard  from './pages/Dashboard/Dashboard'
 import StockDetail from './pages/StockDetail/StockDetail'
-import Search from './pages/Search/Search'
-import Watchlist from './pages/Watchlist/Watchlist'
+import Search     from './pages/Search/Search'
+import Watchlist  from './pages/Watchlist/Watchlist'
+import History    from './pages/History/History'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/stock/:ticker" element={<StockDetail />} />
           <Route path="/search"        element={<Search />} />
           <Route path="/watchlist"     element={<Watchlist />} />
+          <Route path="/history"       element={<History />} />
         </Route>
       </Routes>
     </BrowserRouter>

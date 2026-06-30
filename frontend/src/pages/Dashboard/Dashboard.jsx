@@ -2,32 +2,38 @@
  * Dashboard.jsx — 포트폴리오 대시보드 (/)
  *
  * 구성:
- *   1) 페이지 헤더 (날짜 + 제목 + 종목 추가 버튼)
- *   2) S&P500 HERD 배너 (SPY HERD 점수 + 무리 애니메이션 + 통계)
- *   3) 보유 종목 테이블 (HERD 점수 + 시그널)
- *   4) 빈 상태 UI
+ *   1) 페이지 헤더
+ *   2) 포트폴리오 평가금액 요약 카드 (총액·수익률·오늘 등락)  ← 신규
+ *   3) S&P500 HERD 배너
+ *   4) 보유 종목 테이블 (HERD + 평단가·현재가·수익률·평가금액)  ← 확장
+ *   5) 빈 상태 UI
  *
- * API: getPortfolioHerd() + getStockHerd('SPY') — 병렬 호출
+ * 데이터 소스:
+ *   - getPortfolio()        → 종목 목록 + avgPrice/quantity (항상 동작)
+ *   - getPortfolioSummary() → 총액 집계 + 종목별 현재가      (항상 동작)
+ *   - getPortfolioHerd()    → HERD 점수 (backend 미구현 시 빈 결과)
+ *   - getStockHerd('SPY')   → SPY 배너용 HERD
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import { useNavigate }   from 'react-router-dom'
-import { getPortfolioHerd, getStockHerd } from '../../api/herdApi'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  getPortfolio,
+  getPortfolioSummary,
+  getPortfolioHerd,
+  getStockHerd,
+} from '../../api/herdApi'
 import HerdDots          from '../../components/HerdDots/HerdDots'
 import SpectrumBar       from '../../components/SpectrumBar/SpectrumBar'
+import AvgPriceModal     from '../../components/AvgPriceModal/AvgPriceModal'
 import styles            from './Dashboard.module.css'
 
-/* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
 const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
 
 /* ── 유틸 ─────────────────────────────────── */
 
-/**
- * herdStage 소문자 정규화
- * API 응답: "Herd Scatter", "Herd Rush" 등 "Herd " 접두사 포함
- * → 접두사 제거 후 소문자: "scatter", "rush"
- */
+/** "Herd Scatter" → "scatter" */
 function normalizeStage(stage) {
   const s = (stage || '').toLowerCase()
   return s.startsWith('herd ') ? s.slice(5) : s
@@ -44,7 +50,7 @@ function stageColor(stage) {
   }
 }
 
-/** stage → 한국어 설명 (배너 하단) */
+/** stage → 한국어 설명 */
 function stageDesc(stage) {
   switch (normalizeStage(stage)) {
     case 'rush':    return '군중 과열 · 익절 구간'
@@ -55,7 +61,7 @@ function stageDesc(stage) {
   }
 }
 
-/** signal → 배지 배경색 + 텍스트 색 */
+/** signal → 배지 스타일 */
 function signalStyle(signal) {
   switch (signal) {
     case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: 'var(--rush)' }
@@ -67,7 +73,7 @@ function signalStyle(signal) {
   }
 }
 
-/** stage → 티커 배지 배경/텍스트 색 (HERD 단계 기반) */
+/** stage → 티커 배지 스타일 */
 function badgeStyle(stage) {
   switch (normalizeStage(stage)) {
     case 'rush':    return { bg: 'rgba(239,68,68,0.12)',   color: 'var(--rush)' }
@@ -78,12 +84,38 @@ function badgeStyle(stage) {
   }
 }
 
-/** scoreDate → 한국어 날짜 문자열 */
 function formatDate(dateStr) {
   if (!dateStr) return '—'
   const d = new Date(dateStr)
-  if (isNaN(d)) return dateStr
-  return d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
+  return isNaN(d) ? dateStr : d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
+}
+
+/** USD 금액 포맷: $1,234.56 */
+function fmtUSD(value) {
+  if (value == null) return '—'
+  return `$${Number(value).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`
+}
+
+/** 퍼센트 포맷: +12.34% / -3.98% */
+function fmtPct(value) {
+  if (value == null) return '—'
+  const n = Number(value)
+  return `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`
+}
+
+/**
+ * 수익률 색상
+ * 양수 → 초록(#22C55E), 음수 → 빨강(--rush), 0 → 회색
+ */
+function pctColor(value) {
+  if (value == null) return 'var(--text-3)'
+  const n = Number(value)
+  if (n > 0)  return '#22C55E'
+  if (n < 0)  return 'var(--rush)'
+  return 'var(--text-3)'
 }
 
 /* ── 컴포넌트 ─────────────────────────────── */
@@ -91,45 +123,61 @@ function formatDate(dateStr) {
 export default function Dashboard() {
   const navigate = useNavigate()
 
-  /* 상태 */
-  const [portfolio, setPortfolio] = useState([])   // 포트폴리오 HERD 목록
-  const [spyData,   setSpyData]   = useState(null)  // SPY HERD 데이터
-  const [loading,   setLoading]   = useState(true)
-  const [error,     setError]     = useState(null)
+  /* 포트폴리오 목록 (ticker + avgPrice + quantity) */
+  const [portfolio,  setPortfolio]  = useState([])
+  /* 포트폴리오 평가금액 요약 (총액 집계 + 종목별 현재가) */
+  const [summary,    setSummary]    = useState(null)
+  /* HERD 점수 맵 (ticker → {herdScore, herdStage, signal}) — 미구현 시 빈 객체 */
+  const [herdMap,    setHerdMap]    = useState({})
+  /* SPY HERD 배너 */
+  const [spyData,    setSpyData]    = useState(null)
+  const [loading,    setLoading]    = useState(true)
+  const [error,      setError]      = useState(null)
+  /* 평단가 입력 모달 — 대상 ticker (null이면 닫힘) */
+  const [modalTicker, setModalTicker] = useState(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
 
-  /* 포트폴리오 + SPY 병렬 호출 */
+  /* 모든 데이터 병렬 조회 */
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const [portfolioRes, spyRes] = await Promise.allSettled([
-        getPortfolioHerd(),
-        getStockHerd('SPY'),
+      const [portfolioRes, summaryRes, herdRes, spyRes] = await Promise.allSettled([
+        getPortfolio(),         // 종목 목록 (항상 동작)
+        getPortfolioSummary(),  // 재무 집계 + 현재가
+        getPortfolioHerd(),     // HERD 점수 (미구현 시 404)
+        getStockHerd('SPY'),    // SPY 배너
       ])
 
+      /* 포트폴리오 목록 */
       if (portfolioRes.status === 'fulfilled') {
-        const responseData = portfolioRes.value.data?.data
-        /* API 응답 구조: { stocks: [...], averageScore, totalCount }
-           또는 단순 배열 — 두 형태 모두 처리 */
-        const stocks = responseData?.stocks
-          ?? (Array.isArray(responseData) ? responseData : [])
-        setPortfolio(stocks)
+        const raw = portfolioRes.value.data?.data
+        setPortfolio(Array.isArray(raw) ? raw : [])
       } else {
-        /* API 연결 실패 시 빈 목록 + 에러 메시지 */
         setPortfolio([])
-        if (!spyRes || spyRes.status === 'rejected') {
-          setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
-        }
+        setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
       }
 
+      /* 포트폴리오 재무 요약 */
+      if (summaryRes.status === 'fulfilled') {
+        setSummary(summaryRes.value.data?.data ?? null)
+      }
+
+      /* HERD 점수 (404 실패 정상 — backend 미구현) */
+      const map = {}
+      if (herdRes.status === 'fulfilled') {
+        const herdStocks = herdRes.value?.data?.data?.stocks ?? []
+        herdStocks.forEach((h) => { map[h.ticker] = h })
+      }
+      setHerdMap(map)
+
+      /* SPY 배너 */
       if (spyRes.status === 'fulfilled') {
         setSpyData(spyRes.value.data?.data ?? null)
       }
-      /* SPY 실패는 배너에서 — 으로 처리하므로 에러 표시 안 함 */
     } finally {
       setLoading(false)
     }
@@ -137,9 +185,24 @@ export default function Dashboard() {
 
   useEffect(() => { fetchData() }, [fetchData])
 
-  /* SPY 점수 (DB에 SPY 없으면 기본값 50 / Calm) */
+  /* ticker → 현재가 데이터 맵 (getPortfolioSummary 결과) */
+  const priceMap = useMemo(() => {
+    const map = {}
+    summary?.stocks?.forEach((s) => { map[s.ticker] = s })
+    return map
+  }, [summary])
+
   const spyScore = spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
+
+  /* 모달 저장 완료 → 데이터 재조회 후 닫기 */
+  const handleModalSaved = useCallback(async () => {
+    setModalTicker(null)
+    await fetchData()
+  }, [fetchData])
+
+  /* 찾고 있는 티커 종목의 modalTicker 정보 */
+  const modalStock = portfolio.find((p) => p.ticker === modalTicker)
 
   return (
     <div>
@@ -155,23 +218,51 @@ export default function Dashboard() {
         </button>
       </div>
 
+      {/* ── 포트폴리오 평가금액 요약 카드 ── */}
+      {summary && (
+        <div className={styles.summarySection}>
+          <div className={styles.summaryCard}>
+            <div className={styles.summaryLabel}>총 평가금액</div>
+            <div className={styles.summaryValue}>{fmtUSD(summary.totalValue)}</div>
+            <div className={styles.summarySub}>
+              매입 {fmtUSD(summary.totalCost)}
+            </div>
+          </div>
+          <div className={styles.summaryCard}>
+            <div className={styles.summaryLabel}>총 수익률</div>
+            <div
+              className={styles.summaryValue}
+              style={{ color: pctColor(summary.totalReturnPct) }}
+            >
+              {fmtPct(summary.totalReturnPct)}
+            </div>
+            <div className={styles.summarySub}>
+              {summary.totalReturnPct >= 0 ? '평가이익' : '평가손실'}
+            </div>
+          </div>
+          <div className={styles.summaryCard}>
+            <div className={styles.summaryLabel}>오늘 등락</div>
+            <div
+              className={styles.summaryValue}
+              style={{ color: pctColor(summary.dailyChangePct) }}
+            >
+              {fmtPct(summary.dailyChangePct)}
+            </div>
+            <div className={styles.summarySub}>전일 대비</div>
+          </div>
+        </div>
+      )}
+
       {/* ── S&P500 HERD 배너 ── */}
       <div className={styles.marketBanner}>
 
         {/* 좌: 점수 블록 */}
         <div className={styles.bannerScoreBlock}>
           <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
-          <div
-            className={styles.bannerScore}
-            style={{ color: stageColor(spyStage) }}
-          >
+          <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
             {spyData ? Math.round(spyScore) : '—'}
           </div>
-          <div
-            className={styles.bannerStage}
-            style={{ color: stageColor(spyStage) }}
-          >
-            {/* spyStage가 "Calm"이면 "Herd Calm", "Herd Drift"이면 그대로 */}
+          <div className={styles.bannerStage} style={{ color: stageColor(spyStage) }}>
             {spyStage.startsWith('Herd ') ? spyStage : `Herd ${spyStage}`}
           </div>
           <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
@@ -179,16 +270,11 @@ export default function Dashboard() {
 
         {/* 중: 무리 애니메이션 */}
         <div className={styles.bannerAnimBlock}>
-          {/* canvas가 position:absolute로 블록 전체를 채움 */}
           <HerdDots score={spyScore} fill dotCount={60} />
-
-          {/* ← Flee / Rush → 라벨 */}
           <div className={styles.bannerAnimLabel}>
             <span>← Flee (매수)</span>
             <span>Rush (익절) →</span>
           </div>
-
-          {/* 하단 스펙트럼 바 */}
           <div className={styles.bannerSpectrumOverlay}>
             <SpectrumBar score={spyScore} height={3} />
           </div>
@@ -213,20 +299,18 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── 로딩 상태 ── */}
+      {/* ── 로딩 ── */}
       {loading && (
         <div className={styles.loadingState}>
           <span className={styles.loadingText}>로딩 중…</span>
         </div>
       )}
 
-      {/* ── 에러 상태 ── */}
+      {/* ── 에러 ── */}
       {!loading && error && (
         <div className={styles.errorState}>
           <p className={styles.errorText}>{error}</p>
-          <button className={styles.retryBtn} onClick={fetchData}>
-            다시 시도
-          </button>
+          <button className={styles.retryBtn} onClick={fetchData}>다시 시도</button>
         </div>
       )}
 
@@ -240,20 +324,34 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.stockTable}>
-            {/* 테이블 헤더 */}
+            {/* 헤더 */}
             <div className={styles.tableHeader}>
               <div className={styles.th} />
               <div className={styles.th}>종목</div>
               <div className={styles.th}>HERD</div>
-              <div className={`${styles.th} ${styles.thRight}`}>시그널</div>
+              <div className={styles.th}>시그널</div>
+              <div className={`${styles.th} ${styles.thRight}`}>평단가</div>
+              <div className={`${styles.th} ${styles.thRight}`}>현재가</div>
+              <div className={`${styles.th} ${styles.thRight}`}>수익률</div>
+              <div className={`${styles.th} ${styles.thRight}`}>평가금액</div>
+              <div className={styles.th} />
               <div className={styles.th} />
             </div>
 
             {/* 종목 행 */}
             {portfolio.map((item) => {
-              const color  = stageColor(item.herdStage)
-              const badge  = badgeStyle(item.herdStage)
-              const signal = signalStyle(item.signal)
+              /* HERD 데이터 (optional) */
+              const herd   = herdMap[item.ticker]
+              const stage  = herd?.herdStage ?? 'Calm'
+              const color  = stageColor(stage)
+              const badge  = badgeStyle(stage)
+              const signal = signalStyle(herd?.signal)
+
+              /* 재무 데이터 (summary map) */
+              const price = priceMap[item.ticker]
+
+              /* avgPrice는 포트폴리오 엔티티에서 직접 사용 */
+              const hasAvgPrice = item.avgPrice != null && item.quantity != null
 
               return (
                 <div
@@ -265,7 +363,7 @@ export default function Dashboard() {
                   <div className={styles.rowStripeWrap}>
                     <div
                       className={styles.rowStripe}
-                      style={{ background: color }}
+                      style={{ background: hasAvgPrice ? color : 'var(--border2)' }}
                     />
                   </div>
 
@@ -275,61 +373,92 @@ export default function Dashboard() {
                       className={styles.tickerBadge}
                       style={{ background: badge.bg, color: badge.color }}
                     >
-                      {/* 4자 초과 티커는 앞 4자만 표시 */}
                       {item.ticker.length <= 4 ? item.ticker : item.ticker.slice(0, 4)}
                     </div>
                     <div>
                       <div className={styles.rowTicker}>{item.ticker}</div>
-                      {/* herdStage: "Herd Scatter" 형태 — 그대로 표시 */}
-                      <div className={styles.rowName}>{item.herdStage}</div>
+                      <div className={styles.rowName}>{stage}</div>
                     </div>
                   </div>
 
-                  {/* HERD 열 (점수 + 미니 애니메이션 + 스펙트럼 바) */}
+                  {/* HERD 열 */}
                   <div className={styles.rowHerd}>
-                    <div className={styles.rowHerdTop}>
-                      <div>
-                        <div
-                          className={styles.herdNum}
-                          style={{ color }}
-                        >
-                          {Math.round(item.herdScore)}
+                    {herd ? (
+                      <>
+                        <div className={styles.rowHerdTop}>
+                          <div>
+                            <div className={styles.herdNum} style={{ color }}>
+                              {Math.round(herd.herdScore)}
+                            </div>
+                            <div className={styles.herdStageName}>
+                              {stage.startsWith('Herd ') ? stage.slice(5) : stage}
+                            </div>
+                          </div>
+                          <div className={styles.rowAnimWrap}>
+                            <HerdDots score={herd.herdScore} fill dotCount={14} />
+                          </div>
                         </div>
-                        <div className={styles.herdStageName}>
-                          {/* "Herd Scatter" → "Scatter" 만 표시 (공간 절약) */}
-                          {item.herdStage.startsWith('Herd ')
-                            ? item.herdStage.slice(5)
-                            : item.herdStage}
+                        <div className={styles.rowHerdBottom}>
+                          <SpectrumBar score={herd.herdScore} height={2} />
                         </div>
-                      </div>
-
-                      {/* 미니 HerdDots — fill 모드로 rowAnimWrap을 채움 */}
-                      <div className={styles.rowAnimWrap}>
-                        <HerdDots
-                          score={item.herdScore}
-                          fill
-                          dotCount={14}
-                        />
-                      </div>
-                    </div>
-
-                    {/* 미니 스펙트럼 바 */}
-                    <div className={styles.rowHerdBottom}>
-                      <SpectrumBar score={item.herdScore} height={2} />
-                    </div>
+                      </>
+                    ) : (
+                      /* HERD 점수 미구현 — 준비 중 표시 */
+                      <div className={styles.rowHerdEmpty}>—</div>
+                    )}
                   </div>
 
                   {/* 시그널 배지 */}
                   <div className={styles.signalCell}>
-                    <span
-                      className={styles.signalBadge}
-                      style={{
-                        background: signal.bg,
-                        color:      signal.color,
+                    {herd ? (
+                      <span
+                        className={styles.signalBadge}
+                        style={{ background: signal.bg, color: signal.color }}
+                      >
+                        {herd.signal}
+                      </span>
+                    ) : (
+                      <span className={styles.dashCell}>—</span>
+                    )}
+                  </div>
+
+                  {/* 평단가 */}
+                  <div className={styles.priceCell}>
+                    {hasAvgPrice ? fmtUSD(item.avgPrice) : <span className={styles.dashCell}>—</span>}
+                  </div>
+
+                  {/* 현재가 */}
+                  <div className={styles.priceCell}>
+                    {price ? fmtUSD(price.currentPrice) : <span className={styles.dashCell}>—</span>}
+                  </div>
+
+                  {/* 수익률 */}
+                  <div className={styles.priceCell}>
+                    {price ? (
+                      <span style={{ color: pctColor(price.returnPct) }}>
+                        {fmtPct(price.returnPct)}
+                      </span>
+                    ) : (
+                      <span className={styles.dashCell}>—</span>
+                    )}
+                  </div>
+
+                  {/* 평가금액 */}
+                  <div className={styles.priceCell}>
+                    {price ? fmtUSD(price.marketValue) : <span className={styles.dashCell}>—</span>}
+                  </div>
+
+                  {/* 평단가 입력/수정 버튼 */}
+                  <div className={styles.avgPriceBtnCell}>
+                    <button
+                      className={hasAvgPrice ? styles.editBtn : styles.inputBtn}
+                      onClick={(e) => {
+                        e.stopPropagation()  /* 행 클릭(상세 이동) 방지 */
+                        setModalTicker(item.ticker)
                       }}
                     >
-                      {item.signal}
-                    </span>
+                      {hasAvgPrice ? '수정' : '입력'}
+                    </button>
                   </div>
 
                   {/* 이동 화살표 */}
@@ -341,18 +470,26 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* ── 빈 상태 UI ── */}
+      {/* ── 빈 상태 ── */}
       {!loading && !error && portfolio.length === 0 && (
         <div className={styles.emptyState}>
           <p className={styles.emptyTitle}>아직 종목이 없습니다.</p>
           <p className={styles.emptyDesc}>종목을 추가해보세요.</p>
-          <button
-            className={styles.btnPrimary}
-            onClick={() => navigate('/search')}
-          >
+          <button className={styles.btnPrimary} onClick={() => navigate('/search')}>
             종목 추가
           </button>
         </div>
+      )}
+
+      {/* ── 평단가 입력 모달 ── */}
+      {modalTicker && (
+        <AvgPriceModal
+          ticker={modalTicker}
+          currentAvgPrice={modalStock?.avgPrice ?? null}
+          currentQuantity={modalStock?.quantity ?? null}
+          onClose={() => setModalTicker(null)}
+          onSaved={handleModalSaved}
+        />
       )}
     </div>
   )

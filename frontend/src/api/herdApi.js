@@ -40,6 +40,19 @@ export const addToWatchlist = (ticker, memo) => api.post('/api/watchlist', { tic
 /** 관심 종목 삭제 */
 export const removeFromWatchlist = (ticker) => api.delete(`/api/watchlist/${ticker}`)
 
+/* ── 포트폴리오 평가금액 ─────────────────────── */
+
+/** 포트폴리오 현재 평가 요약 (총액·수익률·일일등락·종목별 현재가) */
+export const getPortfolioSummary = () => api.get('/api/portfolio/summary')
+
+/** 포트폴리오 자산 히스토리 시계열 */
+export const getPortfolioHistory = (period) =>
+  api.get(`/api/portfolio/history?period=${period}`)
+
+/** 보유 종목의 평균 매수가·수량 수정 */
+export const updateAvgPrice = (ticker, avgPrice, quantity) =>
+  api.patch(`/api/portfolio/${ticker}/avg-price`, { avgPrice, quantity })
+
 /* ── 개별 종목 ──────────────────────────────── */
 
 /** 특정 종목 HERD 점수 + 지표 분해값 조회 */

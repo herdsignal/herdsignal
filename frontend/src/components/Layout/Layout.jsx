@@ -47,6 +47,19 @@ export default function Layout() {
           </NavLink>
         </nav>
 
+        {/* 기록 섹션 */}
+        <nav className={styles.navGroup}>
+          <div className={styles.navLabel}>기록</div>
+          <NavLink
+            to="/history"
+            className={({ isActive }) =>
+              `${styles.navItem} ${isActive ? styles.active : ''}`
+            }
+          >
+            자산 기록
+          </NavLink>
+        </nav>
+
         {/* 분석 섹션 */}
         <nav className={styles.navGroup}>
           <div className={styles.navLabel}>분석</div>

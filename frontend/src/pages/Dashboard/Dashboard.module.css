@@ -1,4 +1,4 @@
-/* Dashboard.module.css — 와이어프레임 wireframe-home-v4.html 기반 */
+/* Dashboard.module.css */
 
 /* ── 페이지 헤더 ── */
 .pageHeader {
@@ -41,6 +41,47 @@
 .btnPrimary:hover { opacity: 0.8; }
 
 /* ────────────────────────────
+   포트폴리오 평가금액 요약 카드  ← 신규
+   ──────────────────────────── */
+.summarySection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.summaryCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 24px;
+}
+
+.summaryLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.summaryValue {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+
+.summarySub {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* ────────────────────────────
    S&P500 HERD 배너
    ──────────────────────────── */
 .marketBanner {
@@ -54,7 +95,6 @@
   min-height: 180px;
 }
 
-/* 좌: 점수 블록 */
 .bannerScoreBlock {
   padding: 32px 36px;
   border-right: 1px solid var(--border);
@@ -65,7 +105,6 @@
   overflow: hidden;
 }
 
-/* 배경 글로우 */
 .bannerScoreBlock::before {
   content: '';
   position: absolute;
@@ -110,14 +149,11 @@
   line-height: 1.5;
 }
 
-/* 중: 무리 애니메이션 블록 */
 .bannerAnimBlock {
   position: relative;
   background: var(--surface2);
-  /* overflow: hidden 제거 — 스펙트럼 thumb 클리핑 방지 */
 }
 
-/* Flee / Rush 라벨 (HerdDots 위에 z-index로 올림) */
 .bannerAnimLabel {
   position: absolute;
   bottom: 20px;
@@ -133,17 +169,14 @@
   z-index: 1;
 }
 
-/* 하단 스펙트럼 바 오버레이 */
 .bannerSpectrumOverlay {
   position: absolute;
-  /* thumb 위아래 공간 확보를 위해 bottom: 5px */
   bottom: 5px;
   left: 16px;
   right: 16px;
   z-index: 1;
 }
 
-/* 우: 통계 블록 */
 .bannerStatsBlock {
   padding: 32px 28px;
   border-left: 1px solid var(--border);
@@ -193,8 +226,8 @@
 }
 
 /* ────────────────────────────
-   종목 테이블
-   (가격/등락 열 없음 — 현재 DB 미지원)
+   종목 테이블 — 확장 그리드
+   stripe | 종목 | HERD | 시그널 | 평단가 | 현재가 | 수익률 | 평가금액 | 버튼 | →
    ──────────────────────────── */
 .stockTable {
   background: var(--surface);
@@ -203,13 +236,12 @@
   overflow: hidden;
 }
 
-/* 헤더 + 행 공통 그리드: 스트라이프|종목|HERD|시그널|화살표 */
 .tableHeader,
 .tableRow {
   display: grid;
-  grid-template-columns: 28px 240px 1fr 90px 40px;
-  gap: 16px;
-  padding: 0 24px;
+  grid-template-columns: 24px 148px 1fr 68px 82px 82px 76px 90px 58px 36px;
+  gap: 12px;
+  padding: 0 20px;
 }
 
 .tableHeader {
@@ -220,7 +252,7 @@
 }
 
 .th {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   color: var(--text-3);
   letter-spacing: 0.04em;
@@ -254,19 +286,18 @@
 .rowTickerBlock {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
-/* 티커 배지 (HERD 단계 색상 기반) */
 .tickerBadge {
-  width: 38px;
-  height: 38px;
-  border-radius: 9px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: -0.2px;
   flex-shrink: 0;
@@ -274,14 +305,14 @@
 
 .rowTicker {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.3px;
   margin-bottom: 2px;
 }
 
 .rowName {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-3);
 }
 
@@ -292,59 +323,120 @@
   overflow: hidden;
 }
 
-/* 상단: 점수 숫자 + 미니 HerdDots */
 .rowHerdTop {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   padding: 14px 0 8px;
 }
 
 .herdNum {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: -1.5px;
+  letter-spacing: -1.2px;
   line-height: 1;
-  min-width: 52px;
+  min-width: 44px;
   flex-shrink: 0;
 }
 
 .herdStageName {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-3);
 }
 
-/* 미니 HerdDots 컨테이너 — fill 모드의 canvas가 이 영역을 채움 */
 .rowAnimWrap {
   flex: 1;
-  height: 32px;
-  border-radius: 6px;
+  height: 28px;
+  border-radius: 5px;
   background: var(--surface2);
   overflow: hidden;
   position: relative;
 }
 
-/* 하단: 미니 스펙트럼 바 */
 .rowHerdBottom {
   padding: 0 0 10px;
+}
+
+/* HERD 미구현 시 — 플레이스홀더 */
+.rowHerdEmpty {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--text-3);
+  padding: 14px 0;
 }
 
 /* ── 시그널 배지 ── */
 .signalCell {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
 }
 
 .signalBadge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
 }
+
+/* ── 재무 데이터 열 (평단가·현재가·수익률·평가금액) ── */
+.priceCell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
+
+.dashCell {
+  font-size: 13px;
+  color: var(--text-3);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+/* ── 평단가 입력/수정 버튼 셀 ── */
+.avgPriceBtnCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* avgPrice 없는 경우 — 강조 버튼 */
+.inputBtn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--flee);
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--flee);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  transition: background var(--t-fast);
+}
+.inputBtn:hover { background: rgba(59, 130, 246, 0.15); }
+
+/* avgPrice 있는 경우 — 서브틀 버튼 */
+.editBtn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: none;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.editBtn:hover { color: var(--text-2); border-color: var(--text-3); }
 
 /* 화살표 */
 .rowAction {
