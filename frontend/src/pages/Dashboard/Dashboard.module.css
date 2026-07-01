@@ -81,6 +81,28 @@
   color: var(--text-3);
 }
 
+/* 총 평가금액 카드 — 달러 아래 원화 보조 표시 */
+.summaryKrw {
+  font-size: 13px;
+  color: var(--text-3);
+  letter-spacing: -0.2px;
+  margin-bottom: 6px;
+}
+
+/* 요약 카드 아래 환율 정보 한 줄 */
+.exchangeRateRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -16px;   /* summarySection margin-bottom: 28px과 간격 조정 */
+  margin-bottom: 24px;
+}
+
+.exchangeRateText {
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+}
+
 /* ────────────────────────────
    S&P500 HERD 배너
    ──────────────────────────── */

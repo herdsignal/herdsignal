@@ -25,6 +25,7 @@ import {
   getStockHerd,
   removeFromPortfolio,
 } from '../../api/herdApi'
+import { fetchExchangeRate, formatKRW } from '../../utils/currency'
 import HerdDots      from '../../components/HerdDots/HerdDots'
 import SpectrumBar   from '../../components/SpectrumBar/SpectrumBar'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
@@ -137,6 +138,8 @@ export default function Dashboard() {
   const [modalTicker,    setModalTicker]    = useState(null)
   /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
+  /* USD/KRW 환율 — null이면 로딩 중 (원화 표시 생략) */
+  const [exchangeRate,   setExchangeRate]   = useState(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -200,6 +203,11 @@ export default function Dashboard() {
         setSpyData(data)
       })
       .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
+  }, [])
+
+  /* USD/KRW 환율 — 마운트 시 1회 조회 */
+  useEffect(() => {
+    fetchExchangeRate().then(setExchangeRate)
   }, [])
 
   /* ticker → 현재가 데이터 맵 */
@@ -309,6 +317,12 @@ export default function Dashboard() {
           <div className={styles.summaryCard}>
             <div className={styles.summaryLabel}>총 평가금액</div>
             <div className={styles.summaryValue}>{fmtUSD(summary.total_value)}</div>
+            {/* 환율 로딩 완료 시 원화 표시 */}
+            {exchangeRate != null && (
+              <div className={styles.summaryKrw}>
+                {formatKRW(summary.total_value, exchangeRate)}
+              </div>
+            )}
             <div className={styles.summarySub}>매입 {fmtUSD(summary.total_cost)}</div>
           </div>
           <div className={styles.summaryCard}>
@@ -333,6 +347,18 @@ export default function Dashboard() {
             </div>
             <div className={styles.summarySub}>전일 대비</div>
           </div>
+        </div>
+      )}
+
+      {/* 환율 정보 — 요약 카드 아래 우측 정렬 */}
+      {summary && exchangeRate != null && (
+        <div className={styles.exchangeRateRow}>
+          <span className={styles.exchangeRateText}>
+            {`USD/KRW ${Number(exchangeRate).toLocaleString('ko-KR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })} · 15분 지연`}
+          </span>
         </div>
       )}
 
