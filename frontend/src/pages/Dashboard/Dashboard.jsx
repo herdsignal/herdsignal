@@ -86,7 +86,10 @@ function badgeStyle(stage) {
   }
 }
 
-/** USD 금액 포맷: $1,234.56 */
+/**
+ * USD 금액 포맷: $1,234.56
+ * 달러 모드에서 사용.
+ */
 function fmtUSD(value) {
   if (value == null) return '—'
   return `$${Number(value).toLocaleString('en-US', {
@@ -164,7 +167,7 @@ export default function Dashboard() {
   const [modalTicker,    setModalTicker]    = useState(null)
   /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
-  /* USD/KRW 환율 — null이면 로딩 중 (원화 표시 생략) */
+  /* USD/KRW 환율 — null이면 로딩 중 */
   const [exchangeRate,   setExchangeRate]   = useState(null)
   /* 새로고침 진행 중 여부 (초기 로딩 loading과 별도) */
   const [refreshing,     setRefreshing]     = useState(false)
@@ -226,7 +229,6 @@ export default function Dashboard() {
   useEffect(() => {
     /*
      * React 18 Strict Mode: effect가 mount → cleanup → remount 순서로 2번 실행됨.
-     * cleanup 사이에 state(spyData)는 null로 재설정될 수 있지만,
      * ref(spyDataCache)는 리셋되지 않으므로 두 번째 실행에서 캐시 값을 즉시 state에 반영.
      */
     if (spyDataCache.current) {
@@ -247,7 +249,7 @@ export default function Dashboard() {
     fetchExchangeRate().then(setExchangeRate)
   }, [])
 
-  /* ticker → 현재가 데이터 맵 */
+  /* ticker → 현재가 데이터 맵 (Python snake_case: current_price, market_value 등) */
   const priceMap = useMemo(() => {
     const map = {}
     summary?.stocks?.forEach((s) => { map[s.ticker] = s })
@@ -260,8 +262,9 @@ export default function Dashboard() {
     localStorage.setItem('herdsignal_currency', mode)
   }, [])
 
-  /*
-   * 통화 모드에 따른 금액 기본 표시.
+  /**
+   * USD 금액 → 현재 통화 모드에 맞게 표시.
+   * 원화: "22,515,837원" / 달러: "$14,518.01"
    * 환율 미로딩(null) 시에는 USD로 폴백.
    */
   const displayAmount = useCallback((usdValue) => {
@@ -272,10 +275,25 @@ export default function Dashboard() {
     return fmtUSD(usdValue)
   }, [currencyMode, exchangeRate])
 
-  /* 통화 모드에 따른 보조 금액 표시 (반대 통화). 환율 없으면 null. */
-  const displayAmountSub = useCallback((usdValue) => {
-    if (usdValue == null || exchangeRate == null) return null
-    return currencyMode === 'KRW' ? fmtUSD(usdValue) : formatKRW(usdValue, exchangeRate)
+  /**
+   * USD 손익 → 현재 통화 모드에 맞게 부호 포함 표시.
+   * 원화: "+3,139,172원" / "-1,234,567원"
+   * 달러: "+$1,234.56"  / "-$1,234.56"
+   */
+  const displayPnl = useCallback((usdPnl) => {
+    if (usdPnl == null) return '—'
+    const n    = Number(usdPnl)
+    const sign = n >= 0 ? '+' : ''
+    if (currencyMode === 'KRW' && exchangeRate != null) {
+      const krw = Math.round(n * exchangeRate)
+      return `${sign}${krw.toLocaleString('ko-KR')}원`
+    }
+    /* USD: 음수면 "-$1,234.56", 양수면 "+$1,234.56" */
+    const absStr = Math.abs(n).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+    return `${n < 0 ? '-' : '+'}$${absStr}`
   }, [currencyMode, exchangeRate])
 
   /*
@@ -334,7 +352,7 @@ export default function Dashboard() {
 
   /*
    * 모달 저장 완료 → 로컬 상태 즉시 업데이트 (API 재호출 없음).
-   * summary는 항상 USD 단위로 저장. displayAmount가 통화 변환 담당.
+   * summary는 항상 USD 단위로 저장. displayAmount/displayPnl이 통화 변환 담당.
    */
   const handleModalSaved = useCallback((newAvgPrice, newQty) => {
     const ticker = modalTicker
@@ -365,8 +383,8 @@ export default function Dashboard() {
         const newTotalValue  = (prev.total_value ?? 0) - oldMarketValue + newMarketValue
 
         /* 매입 총액 delta 업데이트 — portfolio는 getPortfolio() 결과라 camelCase 유지 */
-        const oldStock    = portfolio.find(p => p.ticker === ticker)
-        const oldCost     = (oldStock?.avgPrice ?? 0) * (oldStock?.quantity ?? 0)
+        const oldStock     = portfolio.find(p => p.ticker === ticker)
+        const oldCost      = (oldStock?.avgPrice ?? 0) * (oldStock?.quantity ?? 0)
         const newTotalCost = (prev.total_cost ?? 0) - oldCost + newAvgPrice * newQty
 
         const newTotalReturnPct = newTotalCost > 0
@@ -508,17 +526,25 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.summarySection}>
+            {/* 카드 1: 총 평가금액 + 손익금액·손익률 + 매입금액 */}
             <div className={styles.summaryCard}>
               <div className={styles.summaryLabel}>총 평가금액</div>
-              {/* 기본 통화(크게) + 보조 통화(작게) */}
-              <div className={styles.summaryValue}>{displayAmount(summary.total_value)}</div>
-              {displayAmountSub(summary.total_value) && (
-                <div className={styles.summaryKrw}>
-                  {displayAmountSub(summary.total_value)}
-                </div>
-              )}
-              <div className={styles.summarySub}>매입 {displayAmount(summary.total_cost)}</div>
+              <div className={styles.summaryValue}>
+                {displayAmount(summary.total_value)}
+              </div>
+              {/* 손익금액 + 손익률 한 줄 */}
+              <div
+                className={styles.summaryPnl}
+                style={{ color: pctColor(summary.total_return_pct) }}
+              >
+                {displayPnl(summary.total_value - summary.total_cost)} ({fmtPct(summary.total_return_pct)})
+              </div>
+              <div className={styles.summarySub}>
+                매입 {displayAmount(summary.total_cost)}
+              </div>
             </div>
+
+            {/* 카드 2: 총 수익률 */}
             <div className={styles.summaryCard}>
               <div className={styles.summaryLabel}>총 수익률</div>
               <div
@@ -531,6 +557,8 @@ export default function Dashboard() {
                 {summary.total_return_pct >= 0 ? '평가이익' : '평가손실'}
               </div>
             </div>
+
+            {/* 카드 3: 오늘 등락 */}
             <div className={styles.summaryCard}>
               <div className={styles.summaryLabel}>오늘 등락</div>
               <div
@@ -578,6 +606,11 @@ export default function Dashboard() {
               const hasAvgPrice = item.avgPrice != null && item.quantity != null
               const isDeleting  = deletingTicker === item.ticker
 
+              /* 종목 손익 = 평가금액 - 매입금액(평단가 × 수량) */
+              const pnlUsd = (hasAvgPrice && price)
+                ? price.market_value - item.avgPrice * item.quantity
+                : null
+
               return (
                 <div
                   key={item.ticker}
@@ -602,7 +635,7 @@ export default function Dashboard() {
                     </button>
                   )}
 
-                  {/* 카드 상단: 종목 정보 (좌) + HERD 점수 (우) */}
+                  {/* ─ 카드 상단: 종목 정보 (좌) + HERD점수·단계·시그널 (우) ─ */}
                   <div className={styles.cardTop}>
                     <div className={styles.cardTickerBlock}>
                       <div
@@ -617,7 +650,7 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    {/* 편집 모드 ON: 삭제 버튼 공간 확보 / OFF: 패딩 최소화 */}
+                    {/* 우측: HERD 점수 → 단계명 → 시그널 배지 (의미상 한 묶음) */}
                     <div className={styles.cardHerd} style={{ paddingRight: editMode ? '20px' : '4px' }}>
                       {herd ? (
                         <>
@@ -625,6 +658,13 @@ export default function Dashboard() {
                             {Math.round(herd.herdScore)}
                           </div>
                           <div className={styles.cardHerdStage}>{stageName}</div>
+                          {/* 시그널 배지 — HERD 점수와 의미상 연결되어 있어 같은 블록에 배치 */}
+                          <span
+                            className={styles.cardSignalBadge}
+                            style={{ background: signal.bg, color: signal.color }}
+                          >
+                            {herd.signal}
+                          </span>
                         </>
                       ) : (
                         <span className={styles.cardDash}>—</span>
@@ -632,33 +672,26 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/*
-                   * 카드 중간: 재무 데이터
-                   * 편집 모드 ON  → 수정/입력 버튼 표시
-                   * 편집 모드 OFF → 버튼 숨김, 카드 전체 클릭으로 상세 이동
-                   */}
+                  {/* ─ 카드 중간: 평가금액 + 손익 (또는 평단가 안내) ─ */}
                   <div className={styles.cardMiddle}>
                     {hasAvgPrice ? (
-                      /* 재무 데이터: 평가금액(좌) | 수익률 + "수정"버튼(우, 편집 모드만) */
-                      <div className={styles.cardFinance}>
-                        <div>
-                          <div className={styles.cardFinanceLabel}>평가금액</div>
-                          <div className={styles.cardFinanceValue}>
-                            {price ? displayAmount(price.market_value) : '—'}
-                          </div>
+                      <div>
+                        <div className={styles.cardValueLabel}>평가금액</div>
+                        <div className={styles.cardValueMain}>
+                          {price ? displayAmount(price.market_value) : '—'}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
-                          <div className={styles.cardFinanceRight}>
-                            <div className={styles.cardFinanceLabel}>수익률</div>
-                            <div
-                              className={styles.cardFinanceValue}
-                              style={{ color: price ? pctColor(price.return_pct) : 'var(--text-3)' }}
-                            >
-                              {price ? fmtPct(price.return_pct) : '—'}
-                            </div>
+                        {/* 손익금액 + 손익률 한 줄: "+694,587원 (+31.6%)" */}
+                        {pnlUsd != null && (
+                          <div
+                            className={styles.cardPnlRow}
+                            style={{ color: pctColor(price.return_pct) }}
+                          >
+                            {displayPnl(pnlUsd)} ({fmtPct(price.return_pct)})
                           </div>
-                          {/* 수정 버튼 — 편집 모드에서만 표시 */}
-                          {editMode && (
+                        )}
+                        {/* 수정 버튼 — 편집 모드에서만 표시 */}
+                        {editMode && (
+                          <div style={{ marginTop: '8px' }}>
                             <button
                               className={styles.cardInputBtn}
                               onClick={e => {
@@ -668,8 +701,8 @@ export default function Dashboard() {
                             >
                               수정
                             </button>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       /* 평단가 미입력 — 안내 텍스트 + 편집 모드에서만 입력 버튼 */
@@ -692,33 +725,22 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  {/* 카드 하단: 시그널 배지 (좌) + 현재가·등락 (우, 평단가 있을 때만) */}
+                  {/* ─ 카드 하단: 현재가 · 오늘 등락 (평단가 여부 무관하게 표시) ─ */}
                   <div className={styles.cardBottom}>
-                    <div>
-                      {herd ? (
-                        <span
-                          className={styles.cardSignalBadge}
-                          style={{ background: signal.bg, color: signal.color }}
-                        >
-                          {herd.signal}
-                        </span>
-                      ) : (
-                        <span className={styles.cardDash}>—</span>
-                      )}
-                    </div>
-
-                    {hasAvgPrice && price && (
+                    {price ? (
                       <div className={styles.cardPriceInfo}>
                         <span className={styles.cardCurrentPrice}>
-                          {displayAmount(price.current_price)}
+                          현재가 {displayAmount(price.current_price)}
                         </span>
                         <span
                           className={styles.cardDailyChange}
                           style={{ color: pctColor(price.daily_change_pct) }}
                         >
-                          {fmtPct(price.daily_change_pct)}
+                          오늘 {fmtPct(price.daily_change_pct)}
                         </span>
                       </div>
+                    ) : (
+                      <span className={styles.cardDash}>현재가 —</span>
                     )}
                   </div>
                 </div>

@@ -38,5 +38,5 @@ export async function fetchExchangeRate() {
 export function formatKRW(usdAmount, rate) {
   if (usdAmount == null || rate == null) return null
   const krw = Math.round(Number(usdAmount) * rate)
-  return `₩${krw.toLocaleString('ko-KR')}`
+  return `${krw.toLocaleString('ko-KR')}원`
 }

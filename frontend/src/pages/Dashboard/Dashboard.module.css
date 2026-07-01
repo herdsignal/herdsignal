@@ -183,12 +183,13 @@
   color: var(--text-3);
 }
 
-/* 총 평가금액 카드 — 달러 아래 원화 보조 표시 */
-.summaryKrw {
-  font-size: 13px;
-  color: var(--text-3);
-  letter-spacing: -0.2px;
+/* 총 평가금액 카드 — 손익금액 + 손익률 한 줄 표시 */
+.summaryPnl {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
   margin-bottom: 6px;
+  line-height: 1.3;
 }
 
 /* 요약 카드 아래 환율 정보 한 줄 */
@@ -546,11 +547,36 @@
 }
 .cardInputBtn:hover { background: rgba(59, 130, 246, 0.1); }
 
-/* ── 카드 하단: 시그널 배지 (좌) + 현재가 (우) ── */
+/* 카드 중간 — 평가금액 라벨 */
+.cardValueLabel {
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+  margin-bottom: 3px;
+}
+
+/* 카드 중간 — 평가금액 숫자 (크게) */
+.cardValueMain {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+/* 카드 중간 — 손익금액 + 손익률 한 줄 */
+.cardPnlRow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  line-height: 1.3;
+}
+
+/* ── 카드 하단: 현재가 · 오늘 등락 (평단가 여부 무관) ── */
 .cardBottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
   margin-top: 12px;
 }
 
