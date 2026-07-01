@@ -118,6 +118,12 @@ function pctColor(value) {
   return 'var(--text-3)'
 }
 
+/** "업데이트 · 오후 1:35" 형식의 시간 문자열 */
+function fmtTime(date) {
+  if (!date) return ''
+  return date.toLocaleTimeString('ko-KR', { hour: 'numeric', minute: '2-digit' })
+}
+
 /* ── 컴포넌트 ─────────────────────────────── */
 
 export default function Dashboard() {
@@ -140,6 +146,10 @@ export default function Dashboard() {
   const [deletingTicker, setDeletingTicker] = useState(null)
   /* USD/KRW 환율 — null이면 로딩 중 (원화 표시 생략) */
   const [exchangeRate,   setExchangeRate]   = useState(null)
+  /* 새로고침 진행 중 여부 (초기 로딩 loading과 별도) */
+  const [refreshing,     setRefreshing]     = useState(false)
+  /* 마지막 데이터 업데이트 시각 */
+  const [lastUpdated,    setLastUpdated]    = useState(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -175,6 +185,7 @@ export default function Dashboard() {
         herdStocks.forEach((h) => { map[h.ticker] = h })
       }
       setHerdMap(map)
+      setLastUpdated(new Date())
     } finally {
       setLoading(false)
     }
@@ -216,6 +227,42 @@ export default function Dashboard() {
     summary?.stocks?.forEach((s) => { map[s.ticker] = s })
     return map
   }, [summary])
+
+  /*
+   * 수동 새로고침 — getPortfolio() 제외하고 가격·HERD·SPY만 재조회.
+   * 종목 목록은 사용자가 직접 추가/삭제할 때만 바뀌므로 재호출 불필요.
+   */
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true)
+    try {
+      const [summaryRes, herdRes, spyRes] = await Promise.allSettled([
+        getPortfolioRealtime(),
+        getPortfolioHerd(),
+        getStockHerd('SPY'),
+      ])
+
+      if (summaryRes.status === 'fulfilled') {
+        setSummary(summaryRes.value.data?.data ?? null)
+      }
+
+      const map = {}
+      if (herdRes.status === 'fulfilled') {
+        const herdStocks = herdRes.value?.data?.data?.stocks ?? []
+        herdStocks.forEach((h) => { map[h.ticker] = h })
+      }
+      setHerdMap(map)
+
+      if (spyRes.status === 'fulfilled') {
+        const data = spyRes.value.data?.data ?? null
+        spyDataCache.current = data  // ref 캐시도 갱신 (Strict Mode 대응)
+        setSpyData(data)
+      }
+
+      setLastUpdated(new Date())
+    } finally {
+      setRefreshing(false)
+    }
+  }, [])
 
   /* 포트폴리오 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 (낙관적 업데이트) */
   async function handleDelete(e, ticker) {
@@ -306,9 +353,24 @@ export default function Dashboard() {
           <div className={styles.pageDate}>{today}</div>
           <h1 className={styles.pageTitle}>포트폴리오</h1>
         </div>
-        <button className={styles.btnPrimary} onClick={() => navigate('/search')}>
-          종목 추가
-        </button>
+        <div className={styles.headerActions}>
+          {/* 마지막 업데이트 시각 — 새로고침 후 표시 */}
+          {lastUpdated && (
+            <span className={styles.updateTime}>
+              업데이트 · {fmtTime(lastUpdated)}
+            </span>
+          )}
+          <button
+            className={styles.btnRefresh}
+            onClick={handleRefresh}
+            disabled={refreshing || loading}
+          >
+            {refreshing ? '새로고침 중…' : '↻ 새로고침'}
+          </button>
+          <button className={styles.btnPrimary} onClick={() => navigate('/search')}>
+            종목 추가
+          </button>
+        </div>
       </div>
 
       {/* ── 포트폴리오 평가금액 요약 카드 ── */}

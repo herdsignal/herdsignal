@@ -40,6 +40,45 @@
 }
 .btnPrimary:hover { opacity: 0.8; }
 
+/* 헤더 우측 — 업데이트 시간 + 버튼 묶음 */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 마지막 업데이트 시간 */
+.updateTime {
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* 새로고침 보조 버튼 — 종목 추가보다 덜 강조 */
+.btnRefresh {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text-2);
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.1px;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.btnRefresh:hover:not(:disabled) {
+  color: var(--text-1);
+  border-color: var(--text-3);
+}
+.btnRefresh:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 /* ────────────────────────────
    포트폴리오 평가금액 요약 카드
    ──────────────────────────── */
