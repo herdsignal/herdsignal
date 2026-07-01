@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 포트폴리오 종목 CRUD + 요약/히스토리 API 컨트롤러.
@@ -91,5 +92,17 @@ public class PortfolioController {
             @RequestBody AvgPriceUpdateRequest request) {
         portfolioService.updateAvgPrice(AppConstants.DEFAULT_USER_ID, ticker, request);
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    /**
+     * GET /api/portfolio/realtime
+     * yfinance 실시간 현재가 기반 포트폴리오 조회.
+     * Python calculate_current_portfolio()를 ProcessBuilder로 호출한다.
+     * 타임아웃 30초.
+     */
+    @GetMapping("/realtime")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getRealtimePortfolio() {
+        Map<String, Object> result = portfolioService.getRealtimePortfolio();
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 }

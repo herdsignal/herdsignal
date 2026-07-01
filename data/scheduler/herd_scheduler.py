@@ -35,6 +35,7 @@ _DATA_DIR = Path(__file__).resolve().parent.parent
 if str(_DATA_DIR) not in sys.path:
     sys.path.insert(0, str(_DATA_DIR))
 
+from collectors.price_collector import get_current_prices              # noqa: E402
 from collectors.stock_collector import collect                          # noqa: E402
 from config.database import create_db_engine, get_session_factory      # noqa: E402
 from config.settings import (                                           # noqa: E402
@@ -45,7 +46,13 @@ from config.settings import (                                           # noqa: 
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
-from init_db import HerdIndicator, HerdScore, UserPortfolio, UserWatchlist  # noqa: E402
+from init_db import (                                                   # noqa: E402
+    HerdIndicator,
+    HerdScore,
+    PortfolioHistory,
+    UserPortfolio,
+    UserWatchlist,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -299,6 +306,179 @@ def calculate_on_demand(ticker: str) -> dict:
         "indicators": herd_result["indicators"],
         "score_date": str(date.today()),
         "from_cache": False,
+    }
+
+
+# ══════════════════════════════════════════════
+# Tier 3 — on-demand 실시간 포트폴리오 계산
+# ══════════════════════════════════════════════
+
+def calculate_current_portfolio(user_id: str) -> dict:
+    """
+    yfinance 실시간 현재가(15분 지연)로 포트폴리오 평가금액을 즉시 계산한다.
+
+    daily_prices DB를 거치지 않으므로 장중에도 최신 가격 반영 가능.
+    계산 결과는 portfolio_history에 UPSERT (오늘 날짜 스냅샷 갱신).
+
+    동작 흐름:
+      1. user_portfolio에서 avg_price·quantity가 모두 있는 종목만 조회
+      2. get_current_prices()로 yfinance 현재가 일괄 조회
+      3. 종목별 market_value·return_pct·daily_change_pct 계산
+      4. 전체 합산 지표 산출
+      5. portfolio_history UPSERT 후 결과 반환
+
+    Args:
+        user_id: 사용자 ID (MVP 기본값 'local')
+
+    Returns:
+        {
+            "total_value":      float,  # 총 평가금액 (USD)
+            "total_cost":       float,  # 총 매입금액 (USD)
+            "total_return_pct": float,  # 총 수익률 (%)
+            "daily_change_pct": float,  # 포트폴리오 일일 등락률 (%)
+            "stocks": [
+                {
+                    "ticker":           str,
+                    "avg_price":        float,
+                    "quantity":         float,
+                    "current_price":    float,
+                    "market_value":     float,
+                    "return_pct":       float,
+                    "daily_change_pct": float,
+                }
+            ]
+        }
+    """
+    today = date.today()
+
+    # ── 1. 보유 종목 조회 (avg_price·quantity 모두 있는 것만) ──────────────
+    with _SessionFactory() as session:
+        holdings = (
+            session.query(UserPortfolio)
+            .filter(
+                UserPortfolio.user_id    == user_id,
+                UserPortfolio.avg_price.isnot(None),
+                UserPortfolio.quantity.isnot(None),
+            )
+            .order_by(UserPortfolio.ticker)
+            .all()
+        )
+        # 세션 종료 전 필요한 값 추출 (lazy loading 방지)
+        holdings_data = [
+            {
+                "ticker":    h.ticker,
+                "avg_price": float(h.avg_price),
+                "quantity":  float(h.quantity),
+            }
+            for h in holdings
+        ]
+
+    if not holdings_data:
+        logger.warning(f"[Tier3][{user_id}] avg_price·quantity가 있는 보유 종목 없음")
+        return {
+            "total_value":      0.0,
+            "total_cost":       0.0,
+            "total_return_pct": 0.0,
+            "daily_change_pct": 0.0,
+            "stocks":           [],
+        }
+
+    tickers = [h["ticker"] for h in holdings_data]
+    logger.info(f"[Tier3][{user_id}] 실시간 조회 대상: {tickers}")
+
+    # ── 2. yfinance 현재가 일괄 조회 ──────────────────────────────────────
+    prices = get_current_prices(tickers)
+
+    # ── 3. 종목별 계산 ────────────────────────────────────────────────────
+    stocks:         list  = []
+    total_value:    float = 0.0
+    total_cost:     float = 0.0
+    prev_total:     float = 0.0   # 전일 총액 (포트폴리오 일일 등락 계산용)
+    curr_for_daily: float = 0.0   # 현재 총액 (전일 데이터 있는 종목만)
+
+    for h in holdings_data:
+        ticker    = h["ticker"]
+        avg_price = h["avg_price"]
+        quantity  = h["quantity"]
+        price_data = prices.get(ticker)
+
+        if price_data is None:
+            logger.warning(f"[Tier3][{ticker}] 현재가 조회 실패 — 계산 제외")
+            continue
+
+        current_price    = price_data["price"]
+        prev_close       = price_data["prev_close"]
+        daily_change_pct = price_data["change_pct"]
+
+        market_value = current_price * quantity
+        cost         = avg_price * quantity
+        return_pct   = (current_price - avg_price) / avg_price * 100
+
+        total_value    += market_value
+        total_cost     += cost
+        prev_total     += prev_close * quantity
+        curr_for_daily += current_price * quantity
+
+        stocks.append({
+            "ticker":           ticker,
+            "avg_price":        avg_price,
+            "quantity":         quantity,
+            "current_price":    round(current_price,    4),
+            "market_value":     round(market_value,     2),
+            "return_pct":       round(return_pct,       4),
+            "daily_change_pct": round(daily_change_pct, 4),
+        })
+
+    if not stocks:
+        logger.warning(f"[Tier3][{user_id}] 유효한 현재가가 있는 종목 없음")
+        return {
+            "total_value":      0.0,
+            "total_cost":       0.0,
+            "total_return_pct": 0.0,
+            "daily_change_pct": 0.0,
+            "stocks":           [],
+        }
+
+    # ── 4. 전체 합산 지표 산출 ────────────────────────────────────────────
+    total_return_pct = (total_value - total_cost) / total_cost * 100 if total_cost > 0 else 0.0
+    portfolio_daily  = (
+        (curr_for_daily - prev_total) / prev_total * 100
+        if prev_total > 0 else 0.0
+    )
+
+    # ── 5. portfolio_history UPSERT (오늘 날짜) ───────────────────────────
+    with _SessionFactory() as session:
+        existing = (
+            session.query(PortfolioHistory)
+            .filter_by(user_id=user_id, snapshot_date=today)
+            .first()
+        )
+        if existing:
+            existing.total_value      = round(total_value, 2)
+            existing.total_cost       = round(total_cost,  2)
+            existing.total_return_pct = round(total_return_pct, 4)
+        else:
+            session.add(PortfolioHistory(
+                user_id          = user_id,
+                snapshot_date    = today,
+                total_value      = round(total_value, 2),
+                total_cost       = round(total_cost,  2),
+                total_return_pct = round(total_return_pct, 4),
+            ))
+        session.commit()
+
+    logger.info(
+        f"[Tier3][{user_id}] 실시간 계산 완료 — "
+        f"보유 {len(stocks)}종목  "
+        f"총 평가 ${total_value:,.2f}  수익률 {total_return_pct:.2f}%"
+    )
+
+    return {
+        "total_value":      round(total_value, 2),
+        "total_cost":       round(total_cost,  2),
+        "total_return_pct": round(total_return_pct, 4),
+        "daily_change_pct": round(portfolio_daily,  4),
+        "stocks":           stocks,
     }
 
 

@@ -1,5 +1,6 @@
 package com.herdsignal.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.domain.DailyPrice;
 import com.herdsignal.domain.PortfolioHistory;
 import com.herdsignal.domain.UserPortfolio;
@@ -13,13 +14,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -225,6 +233,110 @@ public class PortfolioService {
         portfolio.setQuantity(request.getQuantity());
         portfolio.setUpdatedAt(LocalDateTime.now());
         // @Transactional dirty checking — save() 불필요
+    }
+
+    /**
+     * 실시간 포트폴리오 조회.
+     *
+     * ProcessBuilder로 Python calculate_current_portfolio('local')를 호출하고
+     * JSON 결과를 파싱해 반환한다.
+     * 타임아웃 30초. 초과하면 프로세스를 강제 종료하고 예외를 던진다.
+     *
+     * @return Python이 반환한 포트폴리오 Map (total_value, stocks 등)
+     */
+    public Map<String, Object> getRealtimePortfolio() {
+        // 프로젝트 루트: backend/의 부모 디렉터리
+        Path projectRoot = Paths.get(System.getProperty("user.dir")).getParent();
+        Path pythonExe   = projectRoot.resolve("data/.venv/bin/python3.12");
+
+        // sys.path에 'data/'를 추가해 scheduler 패키지를 찾을 수 있도록 한다
+        String script = String.join("\n",
+            "import sys, json",
+            "sys.path.insert(0, 'data')",
+            "from scheduler.herd_scheduler import calculate_current_portfolio",
+            "print(json.dumps(calculate_current_portfolio('local')))"
+        );
+
+        ProcessBuilder pb = new ProcessBuilder(pythonExe.toString(), "-c", script);
+        pb.directory(projectRoot.toFile());  // 프로젝트 루트 기준으로 실행
+        // DB_PASSWORD에 '@'가 포함되어 있어 Python DB URL 파싱이 깨지므로 제거
+        pb.environment().remove("DB_PASSWORD");
+
+        try {
+            Process process = pb.start();
+
+            // stdout(JSON 결과)과 stderr(Python 로그)를 별도 스레드로 동시 읽기
+            // — 단일 스레드로 읽으면 버퍼 풀링으로 인한 데드락 가능
+            StringBuilder output = new StringBuilder();
+            StringBuilder stderr  = new StringBuilder();
+
+            Thread stdoutReader = new Thread(() -> {
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        output.append(line).append("\n");
+                    }
+                } catch (IOException e) {
+                    log.warn("[realtime] stdout 읽기 오류: {}", e.getMessage());
+                }
+            });
+
+            Thread stderrReader = new Thread(() -> {
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        stderr.append(line).append("\n");
+                    }
+                } catch (IOException e) {
+                    log.warn("[realtime] stderr 읽기 오류: {}", e.getMessage());
+                }
+            });
+
+            stdoutReader.start();
+            stderrReader.start();
+
+            boolean finished = process.waitFor(30, TimeUnit.SECONDS);
+
+            // 스레드 종료 대기 (최대 5초)
+            stdoutReader.join(5_000);
+            stderrReader.join(5_000);
+
+            if (!finished) {
+                process.destroyForcibly();
+                throw new RuntimeException("Python 스크립트 30초 타임아웃");
+            }
+
+            int exitCode = process.exitValue();
+            String stderrStr = stderr.toString().trim();
+
+            if (exitCode != 0) {
+                // 실패 시 stderr 전체를 ERROR 레벨로 출력해 원인 파악
+                log.error("[realtime] Python 스크립트 실패 (exit={}):\n{}", exitCode, stderrStr);
+                throw new RuntimeException("Python 스크립트 실패 (exit=" + exitCode + "):\n" + stderrStr);
+            }
+            if (!stderrStr.isEmpty()) {
+                log.debug("[realtime] Python 로그:\n{}", stderrStr);
+            }
+
+            String outputStr = output.toString().trim();
+            if (outputStr.isEmpty()) {
+                throw new RuntimeException("Python 스크립트 출력 없음 (exit=" + exitCode + ")");
+            }
+
+            // JSON → Map 변환
+            ObjectMapper mapper = new ObjectMapper();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> result = mapper.readValue(outputStr, Map.class);
+            return result;
+
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[realtime] Python 스크립트 실행 실패: {}", e.getMessage(), e);
+            throw new RuntimeException("실시간 포트폴리오 계산 실패: " + e.getMessage());
+        }
     }
 
     // ──────────────────────────────────────────────
