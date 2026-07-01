@@ -49,6 +49,10 @@ export const removeFromWatchlist = (ticker) => api.delete(`/api/watchlist/${tick
 /** 포트폴리오 현재 평가 요약 (총액·수익률·일일등락·종목별 현재가) */
 export const getPortfolioSummary = () => api.get('/api/portfolio/summary')
 
+/** yfinance 실시간 현재가 기반 포트폴리오 (Python ProcessBuilder 경유 — 약 3~5초) */
+export const getPortfolioRealtime = () =>
+  api.get('/api/portfolio/realtime', { timeout: 40_000 })
+
 /** 포트폴리오 자산 히스토리 시계열 */
 export const getPortfolioHistory = (period) =>
   api.get(`/api/portfolio/history?period=${period}`)

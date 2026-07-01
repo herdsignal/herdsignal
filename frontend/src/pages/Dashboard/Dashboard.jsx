@@ -10,17 +10,17 @@
  *   5) 빈 상태 UI
  *
  * 데이터 소스:
- *   - getPortfolio()        → 종목 목록 + avgPrice/quantity
- *   - getPortfolioSummary() → 총액 집계 + 종목별 현재가
- *   - getPortfolioHerd()    → HERD 점수 (backend 미구현 시 빈 결과)
- *   - getStockHerd('SPY')   → SPY 배너용 HERD (독립 useEffect)
+ *   - getPortfolio()          → 종목 목록 + avgPrice/quantity (Java camelCase)
+ *   - getPortfolioRealtime()  → yfinance 실시간 총액 + 종목별 현재가 (Python snake_case)
+ *   - getPortfolioHerd()      → HERD 점수 (backend 미구현 시 빈 결과)
+ *   - getStockHerd('SPY')     → SPY 배너용 HERD (독립 useEffect)
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   getPortfolio,
-  getPortfolioSummary,
+  getPortfolioRealtime,
   getPortfolioHerd,
   getStockHerd,
   removeFromPortfolio,
@@ -147,9 +147,10 @@ export default function Dashboard() {
     setLoading(true)
     setError(null)
     try {
+      /* getPortfolioRealtime: Python ProcessBuilder 경유 — 약 3~5초 소요 */
       const [portfolioRes, summaryRes, herdRes] = await Promise.allSettled([
         getPortfolio(),
-        getPortfolioSummary(),
+        getPortfolioRealtime(),
         getPortfolioHerd(),
       ])
 
@@ -241,7 +242,8 @@ export default function Dashboard() {
       p.ticker === ticker ? { ...p, avgPrice: newAvgPrice, quantity: newQty } : p
     ))
 
-    const currentPrice = priceMap[ticker]?.currentPrice
+    /* realtime 응답은 Python snake_case: current_price, market_value, return_pct 등 */
+    const currentPrice = priceMap[ticker]?.current_price
     if (currentPrice != null) {
       const newMarketValue = currentPrice * newQty
       const newReturnPct   = (currentPrice - newAvgPrice) / newAvgPrice * 100
@@ -252,18 +254,18 @@ export default function Dashboard() {
         /* stocks 배열에서 해당 ticker 재무 값 교체 */
         const updatedStocks = (prev.stocks ?? []).map(s =>
           s.ticker === ticker
-            ? { ...s, marketValue: newMarketValue, returnPct: newReturnPct }
+            ? { ...s, market_value: newMarketValue, return_pct: newReturnPct }
             : s
         )
 
         /* 총 평가금액 delta 업데이트 */
-        const oldMarketValue = priceMap[ticker]?.marketValue ?? 0
-        const newTotalValue  = (prev.totalValue ?? 0) - oldMarketValue + newMarketValue
+        const oldMarketValue = priceMap[ticker]?.market_value ?? 0
+        const newTotalValue  = (prev.total_value ?? 0) - oldMarketValue + newMarketValue
 
-        /* 매입 총액 delta 업데이트 (변경 전 portfolio 값 기준) */
+        /* 매입 총액 delta 업데이트 — portfolio는 getPortfolio() 결과라 camelCase 유지 */
         const oldStock    = portfolio.find(p => p.ticker === ticker)
         const oldCost     = (oldStock?.avgPrice ?? 0) * (oldStock?.quantity ?? 0)
-        const newTotalCost = (prev.totalCost ?? 0) - oldCost + newAvgPrice * newQty
+        const newTotalCost = (prev.total_cost ?? 0) - oldCost + newAvgPrice * newQty
 
         const newTotalReturnPct = newTotalCost > 0
           ? (newTotalValue - newTotalCost) / newTotalCost * 100
@@ -271,10 +273,10 @@ export default function Dashboard() {
 
         return {
           ...prev,
-          stocks:         updatedStocks,
-          totalValue:     newTotalValue,
-          totalCost:      newTotalCost,
-          totalReturnPct: newTotalReturnPct,
+          stocks:           updatedStocks,
+          total_value:      newTotalValue,
+          total_cost:       newTotalCost,
+          total_return_pct: newTotalReturnPct,
         }
       })
     } else {
@@ -306,28 +308,28 @@ export default function Dashboard() {
         <div className={styles.summarySection}>
           <div className={styles.summaryCard}>
             <div className={styles.summaryLabel}>총 평가금액</div>
-            <div className={styles.summaryValue}>{fmtUSD(summary.totalValue)}</div>
-            <div className={styles.summarySub}>매입 {fmtUSD(summary.totalCost)}</div>
+            <div className={styles.summaryValue}>{fmtUSD(summary.total_value)}</div>
+            <div className={styles.summarySub}>매입 {fmtUSD(summary.total_cost)}</div>
           </div>
           <div className={styles.summaryCard}>
             <div className={styles.summaryLabel}>총 수익률</div>
             <div
               className={styles.summaryValue}
-              style={{ color: pctColor(summary.totalReturnPct) }}
+              style={{ color: pctColor(summary.total_return_pct) }}
             >
-              {fmtPct(summary.totalReturnPct)}
+              {fmtPct(summary.total_return_pct)}
             </div>
             <div className={styles.summarySub}>
-              {summary.totalReturnPct >= 0 ? '평가이익' : '평가손실'}
+              {summary.total_return_pct >= 0 ? '평가이익' : '평가손실'}
             </div>
           </div>
           <div className={styles.summaryCard}>
             <div className={styles.summaryLabel}>오늘 등락</div>
             <div
               className={styles.summaryValue}
-              style={{ color: pctColor(summary.dailyChangePct) }}
+              style={{ color: pctColor(summary.daily_change_pct) }}
             >
-              {fmtPct(summary.dailyChangePct)}
+              {fmtPct(summary.daily_change_pct)}
             </div>
             <div className={styles.summarySub}>전일 대비</div>
           </div>
@@ -473,7 +475,7 @@ export default function Dashboard() {
                         <div>
                           <div className={styles.cardFinanceLabel}>평가금액</div>
                           <div className={styles.cardFinanceValue}>
-                            {price ? fmtUSD(price.marketValue) : '—'}
+                            {price ? fmtUSD(price.market_value) : '—'}
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
@@ -481,9 +483,9 @@ export default function Dashboard() {
                             <div className={styles.cardFinanceLabel}>수익률</div>
                             <div
                               className={styles.cardFinanceValue}
-                              style={{ color: price ? pctColor(price.returnPct) : 'var(--text-3)' }}
+                              style={{ color: price ? pctColor(price.return_pct) : 'var(--text-3)' }}
                             >
-                              {price ? fmtPct(price.returnPct) : '—'}
+                              {price ? fmtPct(price.return_pct) : '—'}
                             </div>
                           </div>
                           {/* 평단가 수정 버튼 — cardDeleteBtn과 중복 클릭 방지 */}
@@ -535,13 +537,13 @@ export default function Dashboard() {
                     {hasAvgPrice && price && (
                       <div className={styles.cardPriceInfo}>
                         <span className={styles.cardCurrentPrice}>
-                          {fmtUSD(price.currentPrice)}
+                          {fmtUSD(price.current_price)}
                         </span>
                         <span
                           className={styles.cardDailyChange}
-                          style={{ color: pctColor(price.dailyChangePct) }}
+                          style={{ color: pctColor(price.daily_change_pct) }}
                         >
-                          {fmtPct(price.dailyChangePct)}
+                          {fmtPct(price.daily_change_pct)}
                         </span>
                       </div>
                     )}
