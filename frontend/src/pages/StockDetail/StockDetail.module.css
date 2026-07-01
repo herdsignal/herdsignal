@@ -251,20 +251,40 @@
 /* ────────────────────────────
    지표 분해 카드
    ──────────────────────────── */
+
+/*
+ * 4컬럼: 지표명(120px) | 가중치(38px) | 바(1fr) | 수치(60px)
+ * 가중치 컬럼은 항상 우측 정렬로 "24%" 형태로 표시
+ */
 .indicatorRow {
   display: grid;
-  grid-template-columns: 110px 1fr 64px;
+  grid-template-columns: 120px 38px 1fr 60px;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   padding: 11px 0;
   border-bottom: 1px solid var(--border);
 }
 .indicatorRow:last-child { border-bottom: none; }
 
+/* 비활성 지표 (거래량 강도 등) — 흐리게 표시 */
+.indicatorRowDisabled {
+  opacity: 0.4;
+}
+
 .indicatorLabel {
   font-size: 13px;
   color: var(--text-2);
   white-space: nowrap;
+}
+
+/* 가중치 퍼센트 — 오른쪽 정렬, 회색 소형 텍스트 */
+.indicatorWeight {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  text-align: right;
+  white-space: nowrap;
+  letter-spacing: -0.1px;
 }
 
 /* 미니 바 트랙 */
