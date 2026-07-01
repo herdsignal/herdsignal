@@ -1,12 +1,11 @@
 /**
  * Dashboard.jsx — 포트폴리오 대시보드 (/)
  *
- * 구성:
- *   1) 페이지 헤더
- *   2) 포트폴리오 평가금액 요약 카드 (총액·수익률·오늘 등락)
- *   3) S&P500 HERD 배너 (HerdDots + SpectrumBar 유지)
- *   4) 보유 종목 2열 카드 그리드
- *      카드: 좌 스트라이프 | 종목+HERD | 평가금액+수익률 | 시그널+현재가
+ * 섹션 순서:
+ *   1) 페이지 헤더 (새로고침·편집·종목 추가 버튼)
+ *   2) S&P500 HERD 배너 — 시장 온도 먼저 파악
+ *   3) 포트폴리오 평가금액 요약 카드 (통화 토글 포함)
+ *   4) 보유 종목 2열 카드 그리드 (편집 모드 지원)
  *   5) 빈 상태 UI
  *
  * 데이터 소스:
@@ -87,12 +86,6 @@ function badgeStyle(stage) {
   }
 }
 
-function formatDate(dateStr) {
-  if (!dateStr) return '—'
-  const d = new Date(dateStr)
-  return isNaN(d) ? dateStr : d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
-}
-
 /** USD 금액 포맷: $1,234.56 */
 function fmtUSD(value) {
   if (value == null) return '—'
@@ -118,10 +111,37 @@ function pctColor(value) {
   return 'var(--text-3)'
 }
 
-/** "업데이트 · 오후 1:35" 형식의 시간 문자열 */
+/** 업데이트 완료 시간 포맷: "오후 1:35" */
 function fmtTime(date) {
   if (!date) return ''
   return date.toLocaleTimeString('ko-KR', { hour: 'numeric', minute: '2-digit' })
+}
+
+/**
+ * SPY scoreDate 스마트 포맷 (KST 기준).
+ * - 오늘: "오늘 HH:MM"  (fetchTime이 있으면 그 시각, 없으면 현재 시각)
+ * - 어제: "어제"
+ * - 그 이전: "MM월 DD일"
+ */
+function fmtScoreDate(dateStr, fetchTime) {
+  if (!dateStr) return '—'
+
+  /* KST 기준 오늘/어제 날짜 문자열 (YYYY-MM-DD) */
+  const nowKST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+  const pad    = (n) => String(n).padStart(2, '0')
+  const todayStr = `${nowKST.getFullYear()}-${pad(nowKST.getMonth() + 1)}-${pad(nowKST.getDate())}`
+  const ystKST   = new Date(nowKST)
+  ystKST.setDate(ystKST.getDate() - 1)
+  const ystStr = `${ystKST.getFullYear()}-${pad(ystKST.getMonth() + 1)}-${pad(ystKST.getDate())}`
+
+  if (dateStr === todayStr) {
+    const t = fetchTime ?? new Date()
+    return `오늘 ${t.toLocaleTimeString('ko-KR', { hour: 'numeric', minute: '2-digit' })}`
+  }
+  if (dateStr === ystStr) return '어제'
+
+  const d = new Date(dateStr)
+  return isNaN(d) ? dateStr : d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
 }
 
 /* ── 컴포넌트 ─────────────────────────────── */
@@ -150,6 +170,12 @@ export default function Dashboard() {
   const [refreshing,     setRefreshing]     = useState(false)
   /* 마지막 데이터 업데이트 시각 */
   const [lastUpdated,    setLastUpdated]    = useState(null)
+  /* 통화 표시 모드 — KRW(기본)/USD, localStorage에 유지 */
+  const [currencyMode,   setCurrencyMode]   = useState(
+    () => localStorage.getItem('herdsignal_currency') || 'KRW'
+  )
+  /* 편집 모드 — true 시 수정/삭제 버튼 노출, 카드 클릭 네비게이션 비활성 */
+  const [editMode,       setEditMode]       = useState(false)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -228,6 +254,30 @@ export default function Dashboard() {
     return map
   }, [summary])
 
+  /* 통화 모드 전환 — localStorage에 저장해 새로고침 후에도 유지 */
+  const handleCurrencyToggle = useCallback((mode) => {
+    setCurrencyMode(mode)
+    localStorage.setItem('herdsignal_currency', mode)
+  }, [])
+
+  /*
+   * 통화 모드에 따른 금액 기본 표시.
+   * 환율 미로딩(null) 시에는 USD로 폴백.
+   */
+  const displayAmount = useCallback((usdValue) => {
+    if (usdValue == null) return '—'
+    if (currencyMode === 'KRW' && exchangeRate != null) {
+      return formatKRW(usdValue, exchangeRate)
+    }
+    return fmtUSD(usdValue)
+  }, [currencyMode, exchangeRate])
+
+  /* 통화 모드에 따른 보조 금액 표시 (반대 통화). 환율 없으면 null. */
+  const displayAmountSub = useCallback((usdValue) => {
+    if (usdValue == null || exchangeRate == null) return null
+    return currencyMode === 'KRW' ? fmtUSD(usdValue) : formatKRW(usdValue, exchangeRate)
+  }, [currencyMode, exchangeRate])
+
   /*
    * 수동 새로고침 — getPortfolio() 제외하고 가격·HERD·SPY만 재조회.
    * 종목 목록은 사용자가 직접 추가/삭제할 때만 바뀌므로 재호출 불필요.
@@ -254,7 +304,7 @@ export default function Dashboard() {
 
       if (spyRes.status === 'fulfilled') {
         const data = spyRes.value.data?.data ?? null
-        spyDataCache.current = data  // ref 캐시도 갱신 (Strict Mode 대응)
+        spyDataCache.current = data  /* ref 캐시도 갱신 (Strict Mode 대응) */
         setSpyData(data)
       }
 
@@ -284,10 +334,7 @@ export default function Dashboard() {
 
   /*
    * 모달 저장 완료 → 로컬 상태 즉시 업데이트 (API 재호출 없음).
-   * 1) portfolio: 해당 ticker의 avgPrice/quantity 갱신 → hasAvgPrice 즉시 true
-   * 2) summary:  currentPrice * newQty로 marketValue/returnPct 재계산
-   *             총액(totalValue/totalCost/totalReturnPct)도 delta 방식으로 즉시 반영
-   * currentPrice 없는 경우(첫 입력 시 summary에 미포함)엔 fetchData() fallback.
+   * summary는 항상 USD 단위로 저장. displayAmount가 통화 변환 담당.
    */
   const handleModalSaved = useCallback((newAvgPrice, newQty) => {
     const ticker = modalTicker
@@ -367,64 +414,20 @@ export default function Dashboard() {
           >
             {refreshing ? '새로고침 중…' : '↻ 새로고침'}
           </button>
+          {/* 편집 모드 토글 — ON 시 "완료"로 표시 */}
+          <button
+            className={`${styles.btnEdit} ${editMode ? styles.btnEditActive : ''}`}
+            onClick={() => setEditMode(m => !m)}
+          >
+            {editMode ? '완료' : '편집'}
+          </button>
           <button className={styles.btnPrimary} onClick={() => navigate('/search')}>
             종목 추가
           </button>
         </div>
       </div>
 
-      {/* ── 포트폴리오 평가금액 요약 카드 ── */}
-      {summary && (
-        <div className={styles.summarySection}>
-          <div className={styles.summaryCard}>
-            <div className={styles.summaryLabel}>총 평가금액</div>
-            <div className={styles.summaryValue}>{fmtUSD(summary.total_value)}</div>
-            {/* 환율 로딩 완료 시 원화 표시 */}
-            {exchangeRate != null && (
-              <div className={styles.summaryKrw}>
-                {formatKRW(summary.total_value, exchangeRate)}
-              </div>
-            )}
-            <div className={styles.summarySub}>매입 {fmtUSD(summary.total_cost)}</div>
-          </div>
-          <div className={styles.summaryCard}>
-            <div className={styles.summaryLabel}>총 수익률</div>
-            <div
-              className={styles.summaryValue}
-              style={{ color: pctColor(summary.total_return_pct) }}
-            >
-              {fmtPct(summary.total_return_pct)}
-            </div>
-            <div className={styles.summarySub}>
-              {summary.total_return_pct >= 0 ? '평가이익' : '평가손실'}
-            </div>
-          </div>
-          <div className={styles.summaryCard}>
-            <div className={styles.summaryLabel}>오늘 등락</div>
-            <div
-              className={styles.summaryValue}
-              style={{ color: pctColor(summary.daily_change_pct) }}
-            >
-              {fmtPct(summary.daily_change_pct)}
-            </div>
-            <div className={styles.summarySub}>전일 대비</div>
-          </div>
-        </div>
-      )}
-
-      {/* 환율 정보 — 요약 카드 아래 우측 정렬 */}
-      {summary && exchangeRate != null && (
-        <div className={styles.exchangeRateRow}>
-          <span className={styles.exchangeRateText}>
-            {`USD/KRW ${Number(exchangeRate).toLocaleString('ko-KR', {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })} · 15분 지연`}
-          </span>
-        </div>
-      )}
-
-      {/* ── S&P500 HERD 배너 — HerdDots + SpectrumBar 유지 ── */}
+      {/* ── S&P500 HERD 배너 — 섹션 순서 1위: 시장 온도 먼저 파악 ── */}
       <div className={styles.marketBanner}>
         <div className={styles.bannerScoreBlock}>
           <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
@@ -460,7 +463,8 @@ export default function Dashboard() {
           <div className={styles.bannerStatItem}>
             <div className={styles.bannerStatLabel}>업데이트</div>
             <div className={styles.bannerStatUpdate}>
-              {spyData ? formatDate(spyData.scoreDate) : '—'}
+              {/* scoreDate 스마트 포맷 (KST): 오늘 HH:MM / 어제 / MM월 DD일 */}
+              {spyData ? fmtScoreDate(spyData.scoreDate, lastUpdated) : '—'}
             </div>
           </div>
         </div>
@@ -481,7 +485,79 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── 종목 카드 그리드 — 2열 ── */}
+      {/* ── 포트폴리오 평가금액 요약 카드 — 섹션 순서 2위 ── */}
+      {summary && (
+        <>
+          {/* 섹션 헤더: "포트폴리오 평가" 제목 + 통화 토글 */}
+          <div className={styles.summarySectionHeader}>
+            <div className={styles.sectionTitle}>포트폴리오 평가</div>
+            <div className={styles.currencyToggle}>
+              <button
+                className={`${styles.currencyBtn} ${currencyMode === 'KRW' ? styles.currencyBtnActive : ''}`}
+                onClick={() => handleCurrencyToggle('KRW')}
+              >
+                ₩ 원화
+              </button>
+              <button
+                className={`${styles.currencyBtn} ${currencyMode === 'USD' ? styles.currencyBtnActive : ''}`}
+                onClick={() => handleCurrencyToggle('USD')}
+              >
+                $ 달러
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.summarySection}>
+            <div className={styles.summaryCard}>
+              <div className={styles.summaryLabel}>총 평가금액</div>
+              {/* 기본 통화(크게) + 보조 통화(작게) */}
+              <div className={styles.summaryValue}>{displayAmount(summary.total_value)}</div>
+              {displayAmountSub(summary.total_value) && (
+                <div className={styles.summaryKrw}>
+                  {displayAmountSub(summary.total_value)}
+                </div>
+              )}
+              <div className={styles.summarySub}>매입 {displayAmount(summary.total_cost)}</div>
+            </div>
+            <div className={styles.summaryCard}>
+              <div className={styles.summaryLabel}>총 수익률</div>
+              <div
+                className={styles.summaryValue}
+                style={{ color: pctColor(summary.total_return_pct) }}
+              >
+                {fmtPct(summary.total_return_pct)}
+              </div>
+              <div className={styles.summarySub}>
+                {summary.total_return_pct >= 0 ? '평가이익' : '평가손실'}
+              </div>
+            </div>
+            <div className={styles.summaryCard}>
+              <div className={styles.summaryLabel}>오늘 등락</div>
+              <div
+                className={styles.summaryValue}
+                style={{ color: pctColor(summary.daily_change_pct) }}
+              >
+                {fmtPct(summary.daily_change_pct)}
+              </div>
+              <div className={styles.summarySub}>전일 대비</div>
+            </div>
+          </div>
+
+          {/* 환율 정보 — 요약 카드 아래 우측 정렬 */}
+          {exchangeRate != null && (
+            <div className={styles.exchangeRateRow}>
+              <span className={styles.exchangeRateText}>
+                {`USD/KRW ${Number(exchangeRate).toLocaleString('ko-KR', {
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1,
+                })} · 15분 지연`}
+              </span>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ── 종목 카드 그리드 — 섹션 순서 3위, 2열 ── */}
       {!loading && !error && portfolio.length > 0 && (
         <>
           <div className={styles.sectionRow}>
@@ -505,22 +581,26 @@ export default function Dashboard() {
               return (
                 <div
                   key={item.ticker}
-                  className={styles.stockCard}
-                  onClick={() => navigate(`/stock/${item.ticker}`)}
+                  className={`${styles.stockCard} ${editMode ? styles.stockCardEdit : ''}`}
+                  /* 편집 모드에서는 카드 클릭 네비게이션 비활성 */
+                  onClick={editMode ? undefined : () => navigate(`/stock/${item.ticker}`)}
                   style={{ opacity: isDeleting ? 0.4 : 1 }}
                 >
                   {/* 좌측 HERD 단계 컬러 스트라이프 */}
                   <div className={styles.cardStripe} style={{ background: color }} />
 
-                  {/* 삭제 버튼 — 우상단 절대 위치, hover 시 표시 */}
-                  <button
-                    className={styles.cardDeleteBtn}
-                    onClick={e => handleDelete(e, item.ticker)}
-                    disabled={!!deletingTicker}
-                    title={`${item.ticker} 포트폴리오에서 삭제`}
-                  >
-                    {isDeleting ? '…' : '✕'}
-                  </button>
+                  {/* 삭제 버튼 — 편집 모드에서만 렌더링 */}
+                  {editMode && (
+                    <button
+                      className={styles.cardDeleteBtn}
+                      style={{ opacity: 1 }}
+                      onClick={e => handleDelete(e, item.ticker)}
+                      disabled={!!deletingTicker}
+                      title={`${item.ticker} 포트폴리오에서 삭제`}
+                    >
+                      {isDeleting ? '…' : '✕'}
+                    </button>
+                  )}
 
                   {/* 카드 상단: 종목 정보 (좌) + HERD 점수 (우) */}
                   <div className={styles.cardTop}>
@@ -537,7 +617,8 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className={styles.cardHerd}>
+                    {/* 편집 모드 ON: 삭제 버튼 공간 확보 / OFF: 패딩 최소화 */}
+                    <div className={styles.cardHerd} style={{ paddingRight: editMode ? '20px' : '4px' }}>
                       {herd ? (
                         <>
                           <div className={styles.cardHerdNum} style={{ color }}>
@@ -553,17 +634,17 @@ export default function Dashboard() {
 
                   {/*
                    * 카드 중간: 재무 데이터
-                   * 평단가 입력 → 평가금액 + 수익률 + "수정" 버튼
-                   * 미입력    → 안내 텍스트 + "입력" 버튼
+                   * 편집 모드 ON  → 수정/입력 버튼 표시
+                   * 편집 모드 OFF → 버튼 숨김, 카드 전체 클릭으로 상세 이동
                    */}
                   <div className={styles.cardMiddle}>
                     {hasAvgPrice ? (
-                      /* 재무 데이터: 평가금액(좌) | 수익률+"수정"버튼(우) */
+                      /* 재무 데이터: 평가금액(좌) | 수익률 + "수정"버튼(우, 편집 모드만) */
                       <div className={styles.cardFinance}>
                         <div>
                           <div className={styles.cardFinanceLabel}>평가금액</div>
                           <div className={styles.cardFinanceValue}>
-                            {price ? fmtUSD(price.market_value) : '—'}
+                            {price ? displayAmount(price.market_value) : '—'}
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
@@ -576,7 +657,27 @@ export default function Dashboard() {
                               {price ? fmtPct(price.return_pct) : '—'}
                             </div>
                           </div>
-                          {/* 평단가 수정 버튼 — cardDeleteBtn과 중복 클릭 방지 */}
+                          {/* 수정 버튼 — 편집 모드에서만 표시 */}
+                          {editMode && (
+                            <button
+                              className={styles.cardInputBtn}
+                              onClick={e => {
+                                e.stopPropagation()
+                                setModalTicker(item.ticker)
+                              }}
+                            >
+                              수정
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      /* 평단가 미입력 — 안내 텍스트 + 편집 모드에서만 입력 버튼 */
+                      <div className={styles.cardNoPrice}>
+                        <span className={styles.cardNoPriceText}>
+                          평단가를 입력하면 수익률을 확인할 수 있어요
+                        </span>
+                        {editMode && (
                           <button
                             className={styles.cardInputBtn}
                             onClick={e => {
@@ -584,25 +685,9 @@ export default function Dashboard() {
                               setModalTicker(item.ticker)
                             }}
                           >
-                            수정
+                            입력
                           </button>
-                        </div>
-                      </div>
-                    ) : (
-                      /* 평단가 미입력 안내 + 입력 버튼 */
-                      <div className={styles.cardNoPrice}>
-                        <span className={styles.cardNoPriceText}>
-                          평단가를 입력하면 수익률을 확인할 수 있어요
-                        </span>
-                        <button
-                          className={styles.cardInputBtn}
-                          onClick={e => {
-                            e.stopPropagation()
-                            setModalTicker(item.ticker)
-                          }}
-                        >
-                          입력
-                        </button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -625,7 +710,7 @@ export default function Dashboard() {
                     {hasAvgPrice && price && (
                       <div className={styles.cardPriceInfo}>
                         <span className={styles.cardCurrentPrice}>
-                          {fmtUSD(price.current_price)}
+                          {displayAmount(price.current_price)}
                         </span>
                         <span
                           className={styles.cardDailyChange}
@@ -654,7 +739,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── 평단가 입력 모달 ── */}
+      {/* ── 평단가 입력/수정 모달 ── */}
       {modalTicker && (
         <AvgPriceModal
           ticker={modalTicker}

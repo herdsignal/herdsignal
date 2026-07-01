@@ -79,9 +79,72 @@
   cursor: default;
 }
 
+/* 편집 모드 토글 버튼 */
+.btnEdit {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text-2);
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.1px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.btnEdit:hover { color: var(--text-1); border-color: var(--text-3); }
+
+/* 편집 모드 활성 시 ("완료" 상태) */
+.btnEditActive {
+  border-color: var(--text-2);
+  color: var(--text-1);
+}
+
 /* ────────────────────────────
    포트폴리오 평가금액 요약 카드
    ──────────────────────────── */
+
+/* 요약 섹션 헤더 — 제목(좌) + 통화 토글(우) */
+.summarySectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+/* 통화 토글 버튼 묶음 */
+.currencyToggle {
+  display: flex;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.currencyBtn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text-3);
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.currencyBtn:hover { color: var(--text-1); }
+
+/* 선택된 통화 버튼 */
+.currencyBtnActive {
+  background: var(--text-1);
+  color: var(--bg);
+  font-weight: 600;
+}
+.currencyBtnActive:hover { color: var(--bg); }
+
 .summarySection {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -309,6 +372,13 @@
   transition: border-color 0.15s, opacity 0.15s;
 }
 .stockCard:hover { border-color: var(--border2); }
+
+/* 편집 모드 카드 — 테두리 강조, 클릭 커서 제거 */
+.stockCardEdit {
+  border-color: var(--border2);
+  cursor: default;
+}
+.stockCardEdit:hover { border-color: var(--border2); }
 
 /* 좌측 HERD 단계 컬러 스트라이프 */
 .cardStripe {
