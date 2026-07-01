@@ -226,11 +226,64 @@ export default function Dashboard() {
   const spyScore = spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
 
-  /* 모달 저장 완료 → 데이터 재조회 후 닫기 */
-  const handleModalSaved = useCallback(async () => {
+  /*
+   * 모달 저장 완료 → 로컬 상태 즉시 업데이트 (API 재호출 없음).
+   * 1) portfolio: 해당 ticker의 avgPrice/quantity 갱신 → hasAvgPrice 즉시 true
+   * 2) summary:  currentPrice * newQty로 marketValue/returnPct 재계산
+   *             총액(totalValue/totalCost/totalReturnPct)도 delta 방식으로 즉시 반영
+   * currentPrice 없는 경우(첫 입력 시 summary에 미포함)엔 fetchData() fallback.
+   */
+  const handleModalSaved = useCallback((newAvgPrice, newQty) => {
+    const ticker = modalTicker
+
+    /* 1. portfolio.avgPrice / quantity 즉시 반영 */
+    setPortfolio(prev => prev.map(p =>
+      p.ticker === ticker ? { ...p, avgPrice: newAvgPrice, quantity: newQty } : p
+    ))
+
+    const currentPrice = priceMap[ticker]?.currentPrice
+    if (currentPrice != null) {
+      const newMarketValue = currentPrice * newQty
+      const newReturnPct   = (currentPrice - newAvgPrice) / newAvgPrice * 100
+
+      setSummary(prev => {
+        if (!prev) return prev
+
+        /* stocks 배열에서 해당 ticker 재무 값 교체 */
+        const updatedStocks = (prev.stocks ?? []).map(s =>
+          s.ticker === ticker
+            ? { ...s, marketValue: newMarketValue, returnPct: newReturnPct }
+            : s
+        )
+
+        /* 총 평가금액 delta 업데이트 */
+        const oldMarketValue = priceMap[ticker]?.marketValue ?? 0
+        const newTotalValue  = (prev.totalValue ?? 0) - oldMarketValue + newMarketValue
+
+        /* 매입 총액 delta 업데이트 (변경 전 portfolio 값 기준) */
+        const oldStock    = portfolio.find(p => p.ticker === ticker)
+        const oldCost     = (oldStock?.avgPrice ?? 0) * (oldStock?.quantity ?? 0)
+        const newTotalCost = (prev.totalCost ?? 0) - oldCost + newAvgPrice * newQty
+
+        const newTotalReturnPct = newTotalCost > 0
+          ? (newTotalValue - newTotalCost) / newTotalCost * 100
+          : 0
+
+        return {
+          ...prev,
+          stocks:         updatedStocks,
+          totalValue:     newTotalValue,
+          totalCost:      newTotalCost,
+          totalReturnPct: newTotalReturnPct,
+        }
+      })
+    } else {
+      /* currentPrice 없으면 서버에서 재조회 (첫 입력 케이스) */
+      fetchData()
+    }
+
     setModalTicker(null)
-    await fetchData()
-  }, [fetchData])
+  }, [modalTicker, priceMap, portfolio, fetchData])
 
   const modalStock = portfolio.find((p) => p.ticker === modalTicker)
 
@@ -410,11 +463,12 @@ export default function Dashboard() {
 
                   {/*
                    * 카드 중간: 재무 데이터
-                   * 평단가 입력 → 평가금액 + 수익률
-                   * 미입력 → 안내 텍스트 + 입력 버튼
+                   * 평단가 입력 → 평가금액 + 수익률 + "수정" 버튼
+                   * 미입력    → 안내 텍스트 + "입력" 버튼
                    */}
                   <div className={styles.cardMiddle}>
                     {hasAvgPrice ? (
+                      /* 재무 데이터: 평가금액(좌) | 수익률+"수정"버튼(우) */
                       <div className={styles.cardFinance}>
                         <div>
                           <div className={styles.cardFinanceLabel}>평가금액</div>
@@ -422,17 +476,30 @@ export default function Dashboard() {
                             {price ? fmtUSD(price.marketValue) : '—'}
                           </div>
                         </div>
-                        <div className={styles.cardFinanceRight}>
-                          <div className={styles.cardFinanceLabel}>수익률</div>
-                          <div
-                            className={styles.cardFinanceValue}
-                            style={{ color: price ? pctColor(price.returnPct) : 'var(--text-3)' }}
-                          >
-                            {price ? fmtPct(price.returnPct) : '—'}
+                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
+                          <div className={styles.cardFinanceRight}>
+                            <div className={styles.cardFinanceLabel}>수익률</div>
+                            <div
+                              className={styles.cardFinanceValue}
+                              style={{ color: price ? pctColor(price.returnPct) : 'var(--text-3)' }}
+                            >
+                              {price ? fmtPct(price.returnPct) : '—'}
+                            </div>
                           </div>
+                          {/* 평단가 수정 버튼 — cardDeleteBtn과 중복 클릭 방지 */}
+                          <button
+                            className={styles.cardInputBtn}
+                            onClick={e => {
+                              e.stopPropagation()
+                              setModalTicker(item.ticker)
+                            }}
+                          >
+                            수정
+                          </button>
                         </div>
                       </div>
                     ) : (
+                      /* 평단가 미입력 안내 + 입력 버튼 */
                       <div className={styles.cardNoPrice}>
                         <span className={styles.cardNoPriceText}>
                           평단가를 입력하면 수익률을 확인할 수 있어요

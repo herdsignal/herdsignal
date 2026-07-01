@@ -41,8 +41,11 @@ export default function AvgPriceModal({
     setError(null)
     try {
       await updateAvgPrice(ticker, avg, qty)
-      onSaved()   /* 부모가 데이터 재조회 후 모달 닫음 */
+      /* 저장된 값을 부모에 전달 → 부모가 로컬 상태 즉시 업데이트 */
+      onSaved(avg, qty)
     } catch (e) {
+      /* 진단용 — 원인 파악 후 제거 */
+      console.error('[AvgPriceModal] 저장 에러:', e)
       setError('저장 중 오류가 발생했습니다. 다시 시도해주세요.')
     } finally {
       setSaving(false)
@@ -67,7 +70,8 @@ export default function AvgPriceModal({
         <div className={styles.header}>
           <span className={styles.title}>
             <span className={styles.ticker}>{ticker}</span>
-            {' '}평단가 입력
+            {/* 기존 평단가 여부에 따라 제목 구분 */}
+            {currentAvgPrice != null ? ' 평단가 수정' : ' 평단가 입력'}
           </span>
           <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
