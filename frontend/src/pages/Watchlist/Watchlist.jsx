@@ -10,7 +10,7 @@
  * API: getWatchlistHerd() + getStockHerd('SPY') — 병렬 호출
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate }   from 'react-router-dom'
 import { getWatchlistHerd, getStockHerd, removeFromWatchlist } from '../../api/herdApi'
 import HerdDots  from '../../components/HerdDots/HerdDots'
@@ -93,36 +93,29 @@ export default function Watchlist() {
   const [error,          setError]          = useState(null)
   /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
+  /* SPY 데이터 ref 캐시 — Dashboard와 동일한 StrictMode 대응 */
+  const spyDataCache = useRef(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
 
-  /* 관심 종목 + SPY 병렬 호출 */
+  /* 관심 종목 조회 (SPY와 분리) */
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const [watchlistRes, spyRes] = await Promise.allSettled([
-        getWatchlistHerd(),
-        getStockHerd('SPY'),
-      ])
+      const watchlistRes = await getWatchlistHerd().catch(() => null)
 
-      if (watchlistRes.status === 'fulfilled') {
-        const responseData = watchlistRes.value.data?.data
+      if (watchlistRes) {
+        const responseData = watchlistRes.data?.data
         /* API 응답: { stocks: [...], averageScore, totalCount } 또는 배열 */
         const stocks = responseData?.stocks
           ?? (Array.isArray(responseData) ? responseData : [])
         setWatchlist(stocks)
       } else {
         setWatchlist([])
-        if (!spyRes || spyRes.status === 'rejected') {
-          setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
-        }
-      }
-
-      if (spyRes.status === 'fulfilled') {
-        setSpyData(spyRes.value.data?.data ?? null)
+        setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
       }
     } finally {
       setLoading(false)
@@ -130,6 +123,24 @@ export default function Watchlist() {
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  /*
+   * SPY 배너 — Dashboard와 동일한 구조.
+   * ref 캐시로 StrictMode 이중 실행 시 state 재설정 문제 방지.
+   */
+  useEffect(() => {
+    if (spyDataCache.current) {
+      setSpyData(spyDataCache.current)
+      return
+    }
+    getStockHerd('SPY')
+      .then((res) => {
+        const data = res.data?.data ?? null
+        spyDataCache.current = data
+        setSpyData(data)
+      })
+      .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
+  }, [])
 
   /* 관심 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 */
   async function handleDelete(e, ticker) {

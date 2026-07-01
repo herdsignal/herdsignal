@@ -16,7 +16,7 @@
  *   - getStockHerd('SPY')   → SPY 배너용 HERD (독립 useEffect)
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   getPortfolio,
@@ -126,6 +126,11 @@ export default function Dashboard() {
   const [summary,        setSummary]        = useState(null)
   const [herdMap,        setHerdMap]        = useState({})
   const [spyData,        setSpyData]        = useState(null)
+  /*
+   * SPY 데이터 ref 캐시 — React 18 Strict Mode가 effect를 cleanup → 재실행할 때
+   * state는 초기화되지만 ref는 유지된다. 두 번째 실행에서 ref 값을 즉시 state에 반영.
+   */
+  const spyDataCache = useRef(null)
   const [loading,        setLoading]        = useState(true)
   const [error,          setError]          = useState(null)
   /* 평단가 입력 모달 대상 ticker */
@@ -178,9 +183,19 @@ export default function Dashboard() {
    * HMR 스테일 클로저 문제 방지를 위해 독립 useEffect로 처리.
    */
   useEffect(() => {
+    /*
+     * React 18 Strict Mode: effect가 mount → cleanup → remount 순서로 2번 실행됨.
+     * cleanup 사이에 state(spyData)는 null로 재설정될 수 있지만,
+     * ref(spyDataCache)는 리셋되지 않으므로 두 번째 실행에서 캐시 값을 즉시 state에 반영.
+     */
+    if (spyDataCache.current) {
+      setSpyData(spyDataCache.current)
+      return
+    }
     getStockHerd('SPY')
       .then((res) => {
         const data = res.data?.data ?? null
+        spyDataCache.current = data
         setSpyData(data)
       })
       .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
