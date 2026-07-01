@@ -9,10 +9,15 @@
  *   5) 빈 상태 UI
  *
  * 데이터 소스:
- *   - getPortfolio()          → 종목 목록 + avgPrice/quantity (Java camelCase)
- *   - getPortfolioRealtime()  → yfinance 실시간 총액 + 종목별 현재가 (Python snake_case)
- *   - getPortfolioHerd()      → HERD 점수 (backend 미구현 시 빈 결과)
- *   - getStockHerd('SPY')     → SPY 배너용 HERD (독립 useEffect)
+ *   - getPortfolio()          → 종목 목록 + avgPrice/quantity (항상 최신 호출)
+ *   - getPortfolioRealtime()  → yfinance 실시간 총액 (캐시 우선 — 약 3~5초 소요)
+ *   - getPortfolioHerd()      → HERD 점수 (캐시 우선)
+ *   - getStockHerd('SPY')     → SPY 배너용 HERD (캐시 우선)
+ *
+ * 캐시 정책:
+ *   최초 진입 → localStorage 캐시 있으면 즉시 표시 (realtime/herd API 호출 없음)
+ *             → 캐시 없으면 API 호출 후 캐시 저장
+ *   새로고침 버튼 → API 강제 호출 → 결과 캐시 저장
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
@@ -32,6 +37,36 @@ import styles        from './Dashboard.module.css'
 
 const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
+
+/* ── localStorage 캐시 키 ──────────────────── */
+const CACHE_KEY_REALTIME  = 'hs_portfolio_realtime'
+const CACHE_KEY_HERD      = 'hs_portfolio_herd'
+const CACHE_KEY_SPY       = 'hs_spy_herd'
+const CACHE_KEY_TIME      = 'hs_cache_time'
+
+/** localStorage에서 JSON 파싱. 실패 시 null 반환 */
+function readCache(key) {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+/** localStorage에 JSON 저장. 실패 시 조용히 무시 */
+function writeCache(key, data) {
+  try {
+    localStorage.setItem(key, JSON.stringify(data))
+  } catch { /* 용량 초과 등 무시 */ }
+}
+
+/** 캐시 저장 시각을 ISO string으로 기록하고 Date 객체 반환 */
+function saveCacheTime() {
+  const now = new Date()
+  localStorage.setItem(CACHE_KEY_TIME, now.toISOString())
+  return now
+}
 
 /* ── 유틸 ─────────────────────────────────── */
 
@@ -86,10 +121,7 @@ function badgeStyle(stage) {
   }
 }
 
-/**
- * USD 금액 포맷: $1,234.56
- * 달러 모드에서 사용.
- */
+/** USD 금액 포맷: $1,234.56 */
 function fmtUSD(value) {
   if (value == null) return '—'
   return `$${Number(value).toLocaleString('en-US', {
@@ -129,7 +161,6 @@ function fmtTime(date) {
 function fmtScoreDate(dateStr, fetchTime) {
   if (!dateStr) return '—'
 
-  /* KST 기준 오늘/어제 날짜 문자열 (YYYY-MM-DD) */
   const nowKST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
   const pad    = (n) => String(n).padStart(2, '0')
   const todayStr = `${nowKST.getFullYear()}-${pad(nowKST.getMonth() + 1)}-${pad(nowKST.getDate())}`
@@ -163,58 +194,84 @@ export default function Dashboard() {
   const spyDataCache = useRef(null)
   const [loading,        setLoading]        = useState(true)
   const [error,          setError]          = useState(null)
-  /* 평단가 입력 모달 대상 ticker */
   const [modalTicker,    setModalTicker]    = useState(null)
-  /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
-  /* USD/KRW 환율 — null이면 로딩 중 */
   const [exchangeRate,   setExchangeRate]   = useState(null)
-  /* 새로고침 진행 중 여부 (초기 로딩 loading과 별도) */
   const [refreshing,     setRefreshing]     = useState(false)
-  /* 마지막 데이터 업데이트 시각 */
-  const [lastUpdated,    setLastUpdated]    = useState(null)
-  /* 통화 표시 모드 — KRW(기본)/USD, localStorage에 유지 */
+  /*
+   * 마지막 캐시 저장 시각 — localStorage 'hs_cache_time'에서 초기화.
+   * 캐시 없으면 null (헤더에 업데이트 시각 미표시).
+   */
+  const [lastUpdated,    setLastUpdated]    = useState(() => {
+    const t = localStorage.getItem(CACHE_KEY_TIME)
+    return t ? new Date(t) : null
+  })
   const [currencyMode,   setCurrencyMode]   = useState(
     () => localStorage.getItem('herdsignal_currency') || 'KRW'
   )
-  /* 편집 모드 — true 시 수정/삭제 버튼 노출, 카드 클릭 네비게이션 비활성 */
   const [editMode,       setEditMode]       = useState(false)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
 
-  /* ── 포트폴리오 데이터 병렬 조회 ── */
+  /* ── 포트폴리오 데이터 로딩 (캐시 우선) ── */
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      /* getPortfolioRealtime: Python ProcessBuilder 경유 — 약 3~5초 소요 */
-      const [portfolioRes, summaryRes, herdRes] = await Promise.allSettled([
-        getPortfolio(),
-        getPortfolioRealtime(),
-        getPortfolioHerd(),
-      ])
-
-      if (portfolioRes.status === 'fulfilled') {
-        const raw = portfolioRes.value.data?.data
+      /*
+       * (1) 종목 목록 — 항상 최신 조회.
+       *     avgPrice/quantity는 사용자가 언제든 변경할 수 있으므로 캐시 사용 안 함.
+       */
+      const portfolioRes = await getPortfolio().catch(() => null)
+      if (portfolioRes) {
+        const raw = portfolioRes.data?.data
         setPortfolio(Array.isArray(raw) ? raw : [])
       } else {
         setPortfolio([])
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
+        return
       }
 
-      if (summaryRes.status === 'fulfilled') {
-        setSummary(summaryRes.value.data?.data ?? null)
-      }
+      /*
+       * (2) 실시간 가격 / HERD 점수 — localStorage 캐시 우선.
+       *     캐시 있으면 API 호출 없이 즉시 세팅 (새로고침 버튼으로만 갱신 가능).
+       *     캐시 없으면 API 호출 후 저장.
+       */
+      const cachedSummary = readCache(CACHE_KEY_REALTIME)
+      const cachedHerd    = readCache(CACHE_KEY_HERD)
 
-      const map = {}
-      if (herdRes.status === 'fulfilled') {
-        const herdStocks = herdRes.value?.data?.data?.stocks ?? []
-        herdStocks.forEach((h) => { map[h.ticker] = h })
+      if (cachedSummary) {
+        /* 캐시 히트 — 즉시 세팅 */
+        setSummary(cachedSummary)
+        const map = {}
+        if (cachedHerd?.stocks) {
+          cachedHerd.stocks.forEach((h) => { map[h.ticker] = h })
+        }
+        setHerdMap(map)
+        /* lastUpdated는 state 초기화 시 hs_cache_time에서 이미 읽음 */
+      } else {
+        /* 캐시 미스 — API 호출 (첫 방문 케이스) */
+        const [summaryRes, herdRes] = await Promise.allSettled([
+          getPortfolioRealtime(),
+          getPortfolioHerd(),
+        ])
+        if (summaryRes.status === 'fulfilled') {
+          const data = summaryRes.value.data?.data ?? null
+          setSummary(data)
+          writeCache(CACHE_KEY_REALTIME, data)
+        }
+        const map = {}
+        if (herdRes.status === 'fulfilled') {
+          const herdData = herdRes.value?.data?.data ?? null
+          const herdStocks = herdData?.stocks ?? []
+          herdStocks.forEach((h) => { map[h.ticker] = h })
+          writeCache(CACHE_KEY_HERD, herdData)
+        }
+        setHerdMap(map)
+        setLastUpdated(saveCacheTime())
       }
-      setHerdMap(map)
-      setLastUpdated(new Date())
     } finally {
       setLoading(false)
     }
@@ -224,22 +281,30 @@ export default function Dashboard() {
 
   /*
    * SPY 배너 — 포트폴리오 배치와 완전히 분리.
-   * HMR 스테일 클로저 문제 방지를 위해 독립 useEffect로 처리.
+   * localStorage 캐시 우선 → ref 캐시(Strict Mode 대응) → API 호출.
    */
   useEffect(() => {
-    /*
-     * React 18 Strict Mode: effect가 mount → cleanup → remount 순서로 2번 실행됨.
-     * ref(spyDataCache)는 리셋되지 않으므로 두 번째 실행에서 캐시 값을 즉시 state에 반영.
-     */
+    /* React 18 Strict Mode 대응 — ref는 unmount에도 유지됨 */
     if (spyDataCache.current) {
       setSpyData(spyDataCache.current)
       return
     }
+
+    /* localStorage 캐시 확인 */
+    const cachedSpy = readCache(CACHE_KEY_SPY)
+    if (cachedSpy) {
+      spyDataCache.current = cachedSpy
+      setSpyData(cachedSpy)
+      return
+    }
+
+    /* 캐시 없음 — API 호출 후 저장 */
     getStockHerd('SPY')
       .then((res) => {
         const data = res.data?.data ?? null
         spyDataCache.current = data
         setSpyData(data)
+        writeCache(CACHE_KEY_SPY, data)
       })
       .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
   }, [])
@@ -249,23 +314,22 @@ export default function Dashboard() {
     fetchExchangeRate().then(setExchangeRate)
   }, [])
 
-  /* ticker → 현재가 데이터 맵 (Python snake_case: current_price, market_value 등) */
+  /* ticker → 현재가 데이터 맵 (Python snake_case) */
   const priceMap = useMemo(() => {
     const map = {}
     summary?.stocks?.forEach((s) => { map[s.ticker] = s })
     return map
   }, [summary])
 
-  /* 통화 모드 전환 — localStorage에 저장해 새로고침 후에도 유지 */
+  /* 통화 모드 전환 — localStorage에 저장 */
   const handleCurrencyToggle = useCallback((mode) => {
     setCurrencyMode(mode)
     localStorage.setItem('herdsignal_currency', mode)
   }, [])
 
   /**
-   * USD 금액 → 현재 통화 모드에 맞게 표시.
+   * USD 금액 → 통화 모드에 맞게 표시.
    * 원화: "22,515,837원" / 달러: "$14,518.01"
-   * 환율 미로딩(null) 시에는 USD로 폴백.
    */
   const displayAmount = useCallback((usdValue) => {
     if (usdValue == null) return '—'
@@ -276,9 +340,8 @@ export default function Dashboard() {
   }, [currencyMode, exchangeRate])
 
   /**
-   * USD 손익 → 현재 통화 모드에 맞게 부호 포함 표시.
-   * 원화: "+3,139,172원" / "-1,234,567원"
-   * 달러: "+$1,234.56"  / "-$1,234.56"
+   * USD 손익 → 통화 모드에 맞게 부호 포함 표시.
+   * 원화: "+3,139,172원" / 달러: "+$1,234.56"
    */
   const displayPnl = useCallback((usdPnl) => {
     if (usdPnl == null) return '—'
@@ -288,7 +351,6 @@ export default function Dashboard() {
       const krw = Math.round(n * exchangeRate)
       return `${sign}${krw.toLocaleString('ko-KR')}원`
     }
-    /* USD: 음수면 "-$1,234.56", 양수면 "+$1,234.56" */
     const absStr = Math.abs(n).toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -297,8 +359,8 @@ export default function Dashboard() {
   }, [currencyMode, exchangeRate])
 
   /*
-   * 수동 새로고침 — getPortfolio() 제외하고 가격·HERD·SPY만 재조회.
-   * 종목 목록은 사용자가 직접 추가/삭제할 때만 바뀌므로 재호출 불필요.
+   * 수동 새로고침 — API 강제 호출 후 localStorage 캐시 갱신.
+   * getPortfolio() 제외 (종목 목록은 추가/삭제 시에만 변경됨).
    */
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
@@ -310,23 +372,29 @@ export default function Dashboard() {
       ])
 
       if (summaryRes.status === 'fulfilled') {
-        setSummary(summaryRes.value.data?.data ?? null)
+        const data = summaryRes.value.data?.data ?? null
+        setSummary(data)
+        writeCache(CACHE_KEY_REALTIME, data)
       }
 
       const map = {}
       if (herdRes.status === 'fulfilled') {
-        const herdStocks = herdRes.value?.data?.data?.stocks ?? []
+        const herdData = herdRes.value?.data?.data ?? null
+        const herdStocks = herdData?.stocks ?? []
         herdStocks.forEach((h) => { map[h.ticker] = h })
+        writeCache(CACHE_KEY_HERD, herdData)
       }
       setHerdMap(map)
 
       if (spyRes.status === 'fulfilled') {
         const data = spyRes.value.data?.data ?? null
-        spyDataCache.current = data  /* ref 캐시도 갱신 (Strict Mode 대응) */
+        spyDataCache.current = data
         setSpyData(data)
+        writeCache(CACHE_KEY_SPY, data)
       }
 
-      setLastUpdated(new Date())
+      /* 캐시 저장 시각 갱신 — 헤더 "업데이트 · 오후 X:XX" 기준 */
+      setLastUpdated(saveCacheTime())
     } finally {
       setRefreshing(false)
     }
@@ -351,18 +419,16 @@ export default function Dashboard() {
   const spyStage = spyData?.herdStage ?? 'Calm'
 
   /*
-   * 모달 저장 완료 → 로컬 상태 즉시 업데이트 (API 재호출 없음).
+   * 모달 저장 완료 → 로컬 상태 즉시 업데이트 + localStorage 캐시 갱신.
    * summary는 항상 USD 단위로 저장. displayAmount/displayPnl이 통화 변환 담당.
    */
   const handleModalSaved = useCallback((newAvgPrice, newQty) => {
     const ticker = modalTicker
 
-    /* 1. portfolio.avgPrice / quantity 즉시 반영 */
     setPortfolio(prev => prev.map(p =>
       p.ticker === ticker ? { ...p, avgPrice: newAvgPrice, quantity: newQty } : p
     ))
 
-    /* realtime 응답은 Python snake_case: current_price, market_value, return_pct 등 */
     const currentPrice = priceMap[ticker]?.current_price
     if (currentPrice != null) {
       const newMarketValue = currentPrice * newQty
@@ -371,36 +437,32 @@ export default function Dashboard() {
       setSummary(prev => {
         if (!prev) return prev
 
-        /* stocks 배열에서 해당 ticker 재무 값 교체 */
         const updatedStocks = (prev.stocks ?? []).map(s =>
           s.ticker === ticker
             ? { ...s, market_value: newMarketValue, return_pct: newReturnPct }
             : s
         )
-
-        /* 총 평가금액 delta 업데이트 */
         const oldMarketValue = priceMap[ticker]?.market_value ?? 0
         const newTotalValue  = (prev.total_value ?? 0) - oldMarketValue + newMarketValue
-
-        /* 매입 총액 delta 업데이트 — portfolio는 getPortfolio() 결과라 camelCase 유지 */
-        const oldStock     = portfolio.find(p => p.ticker === ticker)
-        const oldCost      = (oldStock?.avgPrice ?? 0) * (oldStock?.quantity ?? 0)
-        const newTotalCost = (prev.total_cost ?? 0) - oldCost + newAvgPrice * newQty
-
+        const oldStock       = portfolio.find(p => p.ticker === ticker)
+        const oldCost        = (oldStock?.avgPrice ?? 0) * (oldStock?.quantity ?? 0)
+        const newTotalCost   = (prev.total_cost ?? 0) - oldCost + newAvgPrice * newQty
         const newTotalReturnPct = newTotalCost > 0
           ? (newTotalValue - newTotalCost) / newTotalCost * 100
           : 0
 
-        return {
+        const next = {
           ...prev,
           stocks:           updatedStocks,
           total_value:      newTotalValue,
           total_cost:       newTotalCost,
           total_return_pct: newTotalReturnPct,
         }
+        /* 캐시도 함께 갱신 — 다음 방문 시 수정된 수익률 표시 */
+        writeCache(CACHE_KEY_REALTIME, next)
+        return next
       })
     } else {
-      /* currentPrice 없으면 서버에서 재조회 (첫 입력 케이스) */
       fetchData()
     }
 
@@ -419,7 +481,7 @@ export default function Dashboard() {
           <h1 className={styles.pageTitle}>포트폴리오</h1>
         </div>
         <div className={styles.headerActions}>
-          {/* 마지막 업데이트 시각 — 새로고침 후 표시 */}
+          {/* 마지막 캐시 저장 시각 — localStorage 'hs_cache_time' 기준 */}
           {lastUpdated && (
             <span className={styles.updateTime}>
               업데이트 · {fmtTime(lastUpdated)}
@@ -432,7 +494,6 @@ export default function Dashboard() {
           >
             {refreshing ? '새로고침 중…' : '↻ 새로고침'}
           </button>
-          {/* 편집 모드 토글 — ON 시 "완료"로 표시 */}
           <button
             className={`${styles.btnEdit} ${editMode ? styles.btnEditActive : ''}`}
             onClick={() => setEditMode(m => !m)}
@@ -445,7 +506,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── S&P500 HERD 배너 — 섹션 순서 1위: 시장 온도 먼저 파악 ── */}
+      {/* ── S&P500 HERD 배너 ── */}
       <div className={styles.marketBanner}>
         <div className={styles.bannerScoreBlock}>
           <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
@@ -481,7 +542,6 @@ export default function Dashboard() {
           <div className={styles.bannerStatItem}>
             <div className={styles.bannerStatLabel}>업데이트</div>
             <div className={styles.bannerStatUpdate}>
-              {/* scoreDate 스마트 포맷 (KST): 오늘 HH:MM / 어제 / MM월 DD일 */}
               {spyData ? fmtScoreDate(spyData.scoreDate, lastUpdated) : '—'}
             </div>
           </div>
@@ -503,10 +563,9 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── 포트폴리오 평가금액 요약 카드 — 섹션 순서 2위 ── */}
+      {/* ── 포트폴리오 평가금액 요약 카드 ── */}
       {summary && (
         <>
-          {/* 섹션 헤더: "포트폴리오 평가" 제목 + 통화 토글 */}
           <div className={styles.summarySectionHeader}>
             <div className={styles.sectionTitle}>포트폴리오 평가</div>
             <div className={styles.currencyToggle}>
@@ -526,13 +585,11 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.summarySection}>
-            {/* 카드 1: 총 평가금액 + 손익금액·손익률 + 매입금액 */}
             <div className={styles.summaryCard}>
               <div className={styles.summaryLabel}>총 평가금액</div>
               <div className={styles.summaryValue}>
                 {displayAmount(summary.total_value)}
               </div>
-              {/* 손익금액 + 손익률 한 줄 */}
               <div
                 className={styles.summaryPnl}
                 style={{ color: pctColor(summary.total_return_pct) }}
@@ -544,7 +601,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* 카드 2: 총 수익률 */}
             <div className={styles.summaryCard}>
               <div className={styles.summaryLabel}>총 수익률</div>
               <div
@@ -558,7 +614,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* 카드 3: 오늘 등락 */}
             <div className={styles.summaryCard}>
               <div className={styles.summaryLabel}>오늘 등락</div>
               <div
@@ -571,7 +626,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* 환율 정보 — 요약 카드 아래 우측 정렬 */}
           {exchangeRate != null && (
             <div className={styles.exchangeRateRow}>
               <span className={styles.exchangeRateText}>
@@ -585,7 +639,7 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* ── 종목 카드 그리드 — 섹션 순서 3위, 2열 ── */}
+      {/* ── 종목 카드 그리드 ── */}
       {!loading && !error && portfolio.length > 0 && (
         <>
           <div className={styles.sectionRow}>
@@ -599,7 +653,6 @@ export default function Dashboard() {
               const color     = stageColor(stage)
               const badge     = badgeStyle(stage)
               const signal    = signalStyle(herd?.signal)
-              /* "Herd Scatter" → "Scatter" */
               const stageName = stage.startsWith('Herd ') ? stage.slice(5) : stage
 
               const price       = priceMap[item.ticker]
@@ -615,14 +668,11 @@ export default function Dashboard() {
                 <div
                   key={item.ticker}
                   className={`${styles.stockCard} ${editMode ? styles.stockCardEdit : ''}`}
-                  /* 편집 모드에서는 카드 클릭 네비게이션 비활성 */
                   onClick={editMode ? undefined : () => navigate(`/stock/${item.ticker}`)}
                   style={{ opacity: isDeleting ? 0.4 : 1 }}
                 >
-                  {/* 좌측 HERD 단계 컬러 스트라이프 */}
                   <div className={styles.cardStripe} style={{ background: color }} />
 
-                  {/* 삭제 버튼 — 편집 모드에서만 렌더링 */}
                   {editMode && (
                     <button
                       className={styles.cardDeleteBtn}
@@ -635,7 +685,7 @@ export default function Dashboard() {
                     </button>
                   )}
 
-                  {/* ─ 카드 상단: 종목 정보 (좌) + HERD점수·단계·시그널 (우) ─ */}
+                  {/* ─ 상단: 종목명(좌) / HERD점수·단계명·시그널(우) ─ */}
                   <div className={styles.cardTop}>
                     <div className={styles.cardTickerBlock}>
                       <div
@@ -658,7 +708,7 @@ export default function Dashboard() {
                             {Math.round(herd.herdScore)}
                           </div>
                           <div className={styles.cardHerdStage}>{stageName}</div>
-                          {/* 시그널 배지 — HERD 점수와 의미상 연결되어 있어 같은 블록에 배치 */}
+                          {/* 시그널 배지 — HERD 점수와 의미상 연결되어 같은 블록에 배치 */}
                           <span
                             className={styles.cardSignalBadge}
                             style={{ background: signal.bg, color: signal.color }}
@@ -672,7 +722,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* ─ 카드 중간: 평가금액 + 손익 (또는 평단가 안내) ─ */}
+                  {/* ─ 중간: 평가금액 + 손익 (또는 평단가 안내) ─ */}
                   <div className={styles.cardMiddle}>
                     {hasAvgPrice ? (
                       <div>
@@ -680,7 +730,6 @@ export default function Dashboard() {
                         <div className={styles.cardValueMain}>
                           {price ? displayAmount(price.market_value) : '—'}
                         </div>
-                        {/* 손익금액 + 손익률 한 줄: "+694,587원 (+31.6%)" */}
                         {pnlUsd != null && (
                           <div
                             className={styles.cardPnlRow}
@@ -689,7 +738,6 @@ export default function Dashboard() {
                             {displayPnl(pnlUsd)} ({fmtPct(price.return_pct)})
                           </div>
                         )}
-                        {/* 수정 버튼 — 편집 모드에서만 표시 */}
                         {editMode && (
                           <div style={{ marginTop: '8px' }}>
                             <button
@@ -705,7 +753,6 @@ export default function Dashboard() {
                         )}
                       </div>
                     ) : (
-                      /* 평단가 미입력 — 안내 텍스트 + 편집 모드에서만 입력 버튼 */
                       <div className={styles.cardNoPrice}>
                         <span className={styles.cardNoPriceText}>
                           평단가를 입력하면 수익률을 확인할 수 있어요
@@ -725,7 +772,7 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  {/* ─ 카드 하단: 현재가 · 오늘 등락 (평단가 여부 무관하게 표시) ─ */}
+                  {/* ─ 하단: 현재가 · 오늘 등락 (평단가 여부 무관) ─ */}
                   <div className={styles.cardBottom}>
                     {price ? (
                       <div className={styles.cardPriceInfo}>
