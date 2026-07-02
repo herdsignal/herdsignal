@@ -23,7 +23,7 @@ I thought: if there were objective signals, I could trim partially at peaks to b
 
 ## What Is the HERD Index?
 
-The HERD Index measures crowd sentiment for an individual stock on a **0–100 scale**, updated daily after market close. It combines five technical indicators, normalized against each stock's own 10-year history — so an NVDA score of 80 and a KO score of 80 carry the same relative meaning.
+The HERD Index measures crowd sentiment for an individual stock on a **0–100 scale**, updated daily after market close. It combines six technical indicators, normalized against each stock's own 5-year history using percentile rank — so an NVDA score of 80 and a KO score of 80 carry the same relative meaning.
 
 ### Five Stages
 
@@ -41,12 +41,14 @@ The HERD Index measures crowd sentiment for an individual stock on a **0–100 s
 
 ## Core Features
 
-- **Portfolio Dashboard** — S&P 500 HERD banner + per-stock scores with live particle animation
-- **Stock Detail** — Full indicator breakdown (5 metrics), timing signal, analyst targets (Phase 2)
+- **Portfolio Dashboard** — S&P 500 HERD banner + per-stock scores with live particle animation, KRW/USD currency toggle
+- **Realtime Portfolio Valuation** — Live market price fetched via yfinance for instant P&L
+- **Stock Detail** — Full indicator breakdown (6 metrics with weights), timing signal
 - **Ticker Search** — Debounced live search with HERD preview, popular stocks grid, recent history
 - **Watchlist** — Separate tracked list with instant remove
+- **Portfolio History** — recharts-based chart of total portfolio value over time (month/year toggle)
 - **Daily Scheduler** — Auto-calculates HERD for all tracked tickers at 16:30 ET after market close
-- **AI Rebalancing** _(Phase 2)_ — Claude API-powered portfolio analysis with specific $ action suggestions
+- **On-Demand Calculation** — Search/detail pages trigger instant HERD calculation if no recent data (7-day cache)
 
 ---
 
@@ -75,15 +77,16 @@ The HERD Index measures crowd sentiment for an individual stock on a **0–100 s
 └───────────────────────────────────────────────────┼─────────┘
                                                     │ INSERT
                                                     ▼
-                                              ┌──────────┐
-                                              │  MariaDB  │
-                                              │           │
-                                              │ herd_scores│
-                                              │ herd_ind.. │
-                                              │ daily_prices│
-                                              │ user_port. │
-                                              │ user_watch.│
-                                              └─────┬──────┘
+                                              ┌──────────────┐
+                                              │   MariaDB    │
+                                              │              │
+                                              │ herd_scores  │
+                                              │ herd_ind..   │
+                                              │ daily_prices │
+                                              │ user_port.   │
+                                              │ user_watch.  │
+                                              │ port_history │
+                                              └─────┬────────┘
                                                     │ SELECT
                                                     ▼
 ┌─────────────────────────────────────────────────────────────┐
@@ -91,6 +94,8 @@ The HERD Index measures crowd sentiment for an individual stock on a **0–100 s
 │                                                             │
 │  GET /api/stocks/{ticker}/herd                              │
 │  GET /api/portfolio/herd                                    │
+│  GET /api/portfolio/realtime                                │
+│  GET /api/portfolio/history                                 │
 │  GET /api/watchlist/herd                                    │
 │  POST|DELETE /api/portfolio                                 │
 │  POST|DELETE /api/watchlist                                 │
@@ -104,6 +109,7 @@ The HERD Index measures crowd sentiment for an individual stock on a **0–100 s
 │  /stock/:id   HERD card + indicator breakdown               │
 │  /search      Live ticker search + watchlist add            │
 │  /watchlist   Watched stocks + remove                       │
+│  /history     Portfolio value chart over time               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -111,15 +117,16 @@ The HERD Index measures crowd sentiment for an individual stock on a **0–100 s
 
 ## HERD Algorithm
 
-Five indicators are each normalized to 0–100 using **percentile rank against 10 years of the same stock's history**, then weighted-summed:
+Six indicators are each normalized to 0–100 using **percentile rank against 5 years of the same stock's history**, then weighted-summed:
 
-| Indicator        | Weight | What It Captures                     |
-| ---------------- | ------ | ------------------------------------ |
-| Monthly RSI      | 20%    | Long-term momentum extremes          |
-| Weekly RSI       | 20%    | Mid-term momentum extremes           |
-| 52-Week Position | 20%    | Where price sits in its annual range |
-| MA200 Deviation  | 20%    | Distance from the 200-day trend      |
-| Volume Strength  | 20%    | Recent volume vs. 20-day average     |
+| Indicator           | Weight | What It Captures                        |
+| ------------------- | ------ | --------------------------------------- |
+| Monthly RSI         | 24%    | Long-term momentum extremes             |
+| 200-Week MA Position| 20%    | Long-term trend position                |
+| Weekly RSI          | 19%    | Mid-term momentum extremes              |
+| 52-Week Position    | 19%    | Where price sits in its annual range    |
+| MA200 Deviation     | 18%    | Distance from the 200-day trend         |
+| Volume Strength     |  0%    | Recent volume vs. 20-day avg (computed, currently inactive) |
 
 Percentile normalization means the same formula works for every ticker — a Rush in NVDA and a Rush in KO represent equivalent crowd-psychology extremes relative to their own histories.
 
@@ -140,8 +147,6 @@ Looking at MDD (Maximum Drawdown):
 | SPY    | -33.7%  | -15.9%   | 17.8%p      | $6,630 → $8,410 ($1,780 protected) |
 
 Some upside is sacrificed, but actual loss amounts during major crashes are significantly reduced. The difference between holding through a 50% drawdown and giving up is what determines real long-term returns.
-
-v1 limitation: All current indicators are lagging. Adding leading indicators in Phase 2 is expected to improve signal accuracy.
 
 ---
 
@@ -220,18 +225,19 @@ curl http://localhost:8080/api/stocks/SPY/herd
 
 ### Phase 1 — Technical Indicators (Current) ✅
 
-- [x] HERD Index algorithm (5 indicators, percentile normalization)
+- [x] HERD Index algorithm (6 indicators, percentile normalization)
 - [x] Daily scheduler with APScheduler
 - [x] Spring Boot REST API (portfolio + watchlist + per-stock HERD)
-- [x] React dashboard (portfolio, detail, search, watchlist pages)
+- [x] React dashboard (portfolio, detail, search, watchlist, history pages)
 - [x] S&P 500 benchmark (SPY) as market-wide HERD signal
+- [x] On-demand HERD calculation with 7-day cache
+- [x] Realtime portfolio valuation via yfinance
 
 ### Phase 2 — Leading Indicators
 
 - [ ] Options Put/Call ratio integration
 - [ ] Short interest ratio
 - [ ] Cross-ticker correlation weighting
-- [ ] **AI Rebalancing** — Claude API analyzes portfolio and suggests specific $ amounts to buy/sell
 
 ### Phase 3 — Macro Overlay
 
@@ -246,7 +252,7 @@ curl http://localhost:8080/api/stocks/SPY/herd
 
 ---
 
-## Known Limitations (v1)
+## Current Limitations
 
 These are understood trade-offs, not bugs:
 
