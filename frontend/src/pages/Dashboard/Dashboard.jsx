@@ -27,6 +27,7 @@ import {
   getPortfolioRealtime,
   getPortfolioHerd,
   getStockHerd,
+  getSpyMarket,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
@@ -39,10 +40,11 @@ const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
 
 /* ── localStorage 캐시 키 ──────────────────── */
-const CACHE_KEY_REALTIME  = 'hs_portfolio_realtime'
-const CACHE_KEY_HERD      = 'hs_portfolio_herd'
-const CACHE_KEY_SPY       = 'hs_spy_herd'
-const CACHE_KEY_TIME      = 'hs_cache_time'
+const CACHE_KEY_REALTIME   = 'hs_portfolio_realtime'
+const CACHE_KEY_HERD       = 'hs_portfolio_herd'
+const CACHE_KEY_SPY        = 'hs_spy_herd'
+const CACHE_KEY_SPY_MARKET = 'hs_spy_market'
+const CACHE_KEY_TIME       = 'hs_cache_time'
 
 /** localStorage에서 JSON 파싱. 실패 시 null 반환 */
 function readCache(key) {
@@ -187,11 +189,13 @@ export default function Dashboard() {
   const [summary,        setSummary]        = useState(null)
   const [herdMap,        setHerdMap]        = useState({})
   const [spyData,        setSpyData]        = useState(null)
+  const [spyMarket,      setSpyMarket]      = useState(null)
   /*
    * SPY 데이터 ref 캐시 — React 18 Strict Mode가 effect를 cleanup → 재실행할 때
    * state는 초기화되지만 ref는 유지된다. 두 번째 실행에서 ref 값을 즉시 state에 반영.
    */
-  const spyDataCache = useRef(null)
+  const spyDataCache   = useRef(null)
+  const spyMarketCache = useRef(null)
   const [loading,        setLoading]        = useState(true)
   const [error,          setError]          = useState(null)
   const [modalTicker,    setModalTicker]    = useState(null)
@@ -280,33 +284,49 @@ export default function Dashboard() {
   useEffect(() => { fetchData() }, [fetchData])
 
   /*
-   * SPY 배너 — 포트폴리오 배치와 완전히 분리.
-   * localStorage 캐시 우선 → ref 캐시(Strict Mode 대응) → API 호출.
+   * SPY 배너 — 포트폴리오 로딩과 완전히 분리.
+   * HERD 데이터(getStockHerd)와 시장 데이터(getSpyMarket)를 병렬로 로드한다.
+   * 각각 ref 캐시(Strict Mode 대응) → localStorage 캐시 → API 호출 순서로 처리.
    */
   useEffect(() => {
-    /* React 18 Strict Mode 대응 — ref는 unmount에도 유지됨 */
-    if (spyDataCache.current) {
-      setSpyData(spyDataCache.current)
-      return
+    /* ref 캐시 히트 (Strict Mode 두 번째 실행) */
+    const herdCached   = spyDataCache.current   ?? readCache(CACHE_KEY_SPY)
+    const marketCached = spyMarketCache.current ?? readCache(CACHE_KEY_SPY_MARKET)
+
+    if (herdCached) {
+      spyDataCache.current = herdCached
+      setSpyData(herdCached)
+    }
+    if (marketCached) {
+      spyMarketCache.current = marketCached
+      setSpyMarket(marketCached)
     }
 
-    /* localStorage 캐시 확인 */
-    const cachedSpy = readCache(CACHE_KEY_SPY)
-    if (cachedSpy) {
-      spyDataCache.current = cachedSpy
-      setSpyData(cachedSpy)
-      return
+    /* 두 데이터 모두 캐시에 있으면 API 호출 생략 */
+    if (herdCached && marketCached) return
+
+    /* 캐시에 없는 데이터만 API 호출 */
+    if (!herdCached) {
+      getStockHerd('SPY')
+        .then((res) => {
+          const data = res.data?.data ?? null
+          spyDataCache.current = data
+          setSpyData(data)
+          writeCache(CACHE_KEY_SPY, data)
+        })
+        .catch(() => { /* SPY HERD 실패 시 배너 기본값(Calm/50) 유지 */ })
     }
 
-    /* 캐시 없음 — API 호출 후 저장 */
-    getStockHerd('SPY')
-      .then((res) => {
-        const data = res.data?.data ?? null
-        spyDataCache.current = data
-        setSpyData(data)
-        writeCache(CACHE_KEY_SPY, data)
-      })
-      .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
+    if (!marketCached) {
+      getSpyMarket()
+        .then((res) => {
+          const data = res.data?.data ?? null
+          spyMarketCache.current = data
+          setSpyMarket(data)
+          writeCache(CACHE_KEY_SPY_MARKET, data)
+        })
+        .catch(() => { /* 시장 데이터 실패 시 종가·수익률 "—" 유지 */ })
+    }
   }, [])
 
   /* USD/KRW 환율 — 마운트 시 1회 조회 */
@@ -365,10 +385,11 @@ export default function Dashboard() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     try {
-      const [summaryRes, herdRes, spyRes] = await Promise.allSettled([
+      const [summaryRes, herdRes, spyRes, spyMarketRes] = await Promise.allSettled([
         getPortfolioRealtime(),
         getPortfolioHerd(),
         getStockHerd('SPY'),
+        getSpyMarket(),
       ])
 
       if (summaryRes.status === 'fulfilled') {
@@ -391,6 +412,13 @@ export default function Dashboard() {
         spyDataCache.current = data
         setSpyData(data)
         writeCache(CACHE_KEY_SPY, data)
+      }
+
+      if (spyMarketRes.status === 'fulfilled') {
+        const data = spyMarketRes.value.data?.data ?? null
+        spyMarketCache.current = data
+        setSpyMarket(data)
+        writeCache(CACHE_KEY_SPY_MARKET, data)
       }
 
       /* 캐시 저장 시각 갱신 — 헤더 "업데이트 · 오후 X:XX" 기준 */
@@ -533,11 +561,18 @@ export default function Dashboard() {
         <div className={styles.bannerStatsBlock}>
           <div className={styles.bannerStatItem}>
             <div className={styles.bannerStatLabel}>SPY 종가</div>
-            <div className={styles.bannerStatValue}>—</div>
+            <div className={styles.bannerStatValue}>
+              {spyMarket ? `$${Number(spyMarket.currentPrice).toFixed(2)}` : '—'}
+            </div>
           </div>
           <div className={styles.bannerStatItem}>
             <div className={styles.bannerStatLabel}>1개월 수익률</div>
-            <div className={styles.bannerStatValue}>—</div>
+            <div
+              className={styles.bannerStatValue}
+              style={{ color: spyMarket ? pctColor(spyMarket.return1mPct) : 'inherit' }}
+            >
+              {spyMarket ? fmtPct(spyMarket.return1mPct) : '—'}
+            </div>
           </div>
           <div className={styles.bannerStatItem}>
             <div className={styles.bannerStatLabel}>업데이트</div>

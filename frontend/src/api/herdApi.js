@@ -66,4 +66,9 @@ export const updateAvgPrice = (ticker, avgPrice, quantity) =>
 /** 특정 종목 HERD 점수 + 지표 분해값 조회 */
 export const getStockHerd = (ticker) => api.get(`/api/stocks/${ticker}/herd`)
 
+/* ── 시장 레퍼런스 ───────────────────────────── */
+
+/** SPY 현재가 + 1개월 수익률 조회 */
+export const getSpyMarket = () => api.get('/api/market/spy')
+
 export default api
