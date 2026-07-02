@@ -101,10 +101,10 @@ function stageColor(stage) {
 /** stage → 한국어 설명 (배너 하단) */
 function stageDesc(stage) {
   switch (normalizeStage(stage)) {
-    case 'rush':    return '군중 과열 · 익절 구간'
-    case 'drift':   return '군중 유입 · 익절 고려'
-    case 'scatter': return '관심 분산 · 추가매수 고려'
-    case 'flee':    return '공포 · 매수 구간'
+    case 'rush':    return '극단적 과열 · 적극 익절'
+    case 'drift':   return '탐욕 · 일부 익절 고려'
+    case 'scatter': return '공포 · 분할 매수'
+    case 'flee':    return '극단적 공포 · 적극 매수'
     default:        return '중립 · 보유 유지'
   }
 }
@@ -206,7 +206,10 @@ function findScoreAt(points, targetDate) {
   let closest = null
   let minDiff = Infinity
   for (const p of points) {
-    const diff = Math.abs(new Date(p.date + 'T00:00:00').getTime() - target)
+    const pointDate = new Date(`${p.date}T00:00:00`)
+    const pointTime = pointDate.getTime()
+    if (Number.isNaN(pointTime)) continue
+    const diff = Math.abs(pointTime - target)
     if (diff < minDiff) { minDiff = diff; closest = p }
   }
   return closest
@@ -503,16 +506,16 @@ export default function Dashboard() {
   const spyStage = spyData?.herdStage ?? 'Calm'
 
   /* 히스토리 기준 통계 포인트 (Overview 탭) */
-  const ystPoint = useMemo(
-    () => spyHistory.length > 0 ? spyHistory[spyHistory.length - 1] : null,
-    [spyHistory]
-  )
+  const ystPoint = useMemo(() => {
+    const t = new Date(); t.setDate(t.getDate() - 1)
+    return findScoreAt(spyHistory, t)
+  }, [spyHistory])
   const m1Point = useMemo(() => {
     const t = new Date(); t.setDate(t.getDate() - 30)
     return findScoreAt(spyHistory, t)
   }, [spyHistory])
   const y1Point = useMemo(() => {
-    const t = new Date(); t.setFullYear(t.getFullYear() - 1)
+    const t = new Date(); t.setDate(t.getDate() - 365)
     return findScoreAt(spyHistory, t)
   }, [spyHistory])
 
