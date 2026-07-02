@@ -91,13 +91,47 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - frontend/ 작업 시 data/, backend/ 파일 읽지 말 것
 - 각 폴더의 CLAUDE.md만 추가로 참조할 것
 
-## 현재 개발 단계
-- [x] 기획 완료
-- [x] GitHub 세팅 완료
-- [x] data/ HERD Index 계산·DB 저장·스케줄러 구현
-- [x] backend/ Spring Boot REST API 구현
-- [x] frontend/ React 대시보드 구현
-- [ ] 지표/API 정합성 보완 및 문서 최신화 ← 현재
+## 현재 상태
+
+### 완료
+
+**data/**
+- HERD Index v3 계산 (6개 지표, 불균등 가중치, 백분위수 정규화)
+- MariaDB 저장 (stocks / herd_scores / herd_indicators / daily_prices — 4개 테이블 UPSERT)
+- 3-Tier 스케줄러
+  - Tier 1: 매일 16:30 ET 자동 계산 (user_portfolio + user_watchlist + SPY)
+  - Tier 2: on-demand 계산 + 7일 캐시 (검색·상세 조회 시)
+  - Tier 3: yfinance 실시간 포트폴리오 평가 + portfolio_history UPSERT
+- 백테스트 코드 (backtest_v3.py 기반, 실적 서프라이즈 필터·트레일링 스탑)
+
+**backend/**
+- HERD 조회 API (`GET /api/stocks/{ticker}/herd`, `GET /api/portfolio/herd`)
+- 포트폴리오 전체 API (CRUD + summary + history + realtime + 평단가 수정)
+- 관심 종목 전체 API (CRUD + HERD 조회)
+- Python on-demand 계산 연동 (ProcessBuilder)
+- 전역 예외 처리 (404 / 409 / 500)
+
+**frontend/**
+- Dashboard: S&P 500 배너, 포트폴리오 카드, KRW/USD 통화 토글, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 수동 새로고침
+- StockDetail: HERD 점수·단계·신호, HERD v3 지표 분해 UI (6개 지표·가중치 표시)
+- Search: 디바운스 검색, HERD 미리보기, 인기 종목 그리드, 최근 검색
+- Watchlist: HERD 카드, 삭제
+- History: 월/년 토글, recharts 자산 기록 차트
+
+**문서**
+- data/CLAUDE.md 최신화
+- README.md 최신화
+- 루트 CLAUDE.md 최신화
+
+### 진행 중
+
+없음
+
+### 다음 단계
+
+- **200주 MA DB/API 반영 여부 결정** — 운영 계산에는 포함되지만 `herd_indicators` DB 저장 및 `HerdScoreResponse` API 응답에 미포함. 반영 시 `data/saver.py` + `backend/HerdScoreResponse` 수정 필요
+- **SPY 배너 실제 데이터 연동** — 종가·1개월 수익률 현재 `—` placeholder
+- **StockDetail placeholder 연동 여부 결정** — 재무 정보, 뉴스, 애널리스트 목표가, 내부자 거래 (UI 자리만 존재)
 
 ---
 
@@ -260,21 +294,3 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ---
 
-## 개발 현황
-
-### 완료
-- [x] data/ HERD Index 계산 및 백테스트 코드
-- [x] data/ DB 저장 로직
-- [x] data/ 일일 스케줄러
-- [x] backend/ Spring Boot REST API
-- [x] frontend/ Dashboard
-- [x] frontend/ StockDetail
-- [x] frontend/ Search
-- [x] frontend/ Watchlist
-- [x] frontend/ History
-- [x] frontend/ localStorage 캐시
-
-### 진행 중
-- [ ] CLAUDE.md / README 최신화
-- [ ] 200주 MA 지표의 DB/API 응답 반영 여부 결정
-- [ ] placeholder 데이터 영역 실제 연동 여부 결정
