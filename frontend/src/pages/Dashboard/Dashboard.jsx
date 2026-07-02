@@ -478,7 +478,7 @@ export default function Dashboard() {
       <div className={styles.pageHeader}>
         <div>
           <div className={styles.pageDate}>{today}</div>
-          <h1 className={styles.pageTitle}>포트폴리오</h1>
+          <h1 className={styles.pageTitle}>내 포트폴리오</h1>
         </div>
         <div className={styles.headerActions}>
           {/* 마지막 캐시 저장 시각 — localStorage 'hs_cache_time' 기준 */}
