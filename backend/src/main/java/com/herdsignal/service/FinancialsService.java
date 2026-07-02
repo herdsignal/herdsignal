@@ -49,7 +49,6 @@ public class FinancialsService {
 
         ProcessBuilder pb = new ProcessBuilder(pythonExe.toString(), "-c", script);
         pb.directory(projectRoot.toFile());
-        pb.environment().remove("DB_PASSWORD");
 
         try {
             Process process = pb.start();

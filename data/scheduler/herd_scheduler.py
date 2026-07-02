@@ -310,6 +310,27 @@ def calculate_on_demand(ticker: str, force: bool = False) -> dict:
     }
 
 
+def calculate_many_on_demand(tickers: list[str], force: bool = False) -> dict:
+    """
+    여러 티커의 HERD를 한 Python 프로세스 안에서 순차 갱신한다.
+    Spring Boot 수동 새로고침에서 종목마다 프로세스를 새로 띄우는 비용을 줄이기 위한 배치 경로.
+    """
+    results: list[dict] = []
+    errors:  list[dict] = []
+
+    for ticker in dict.fromkeys(t.upper().strip() for t in tickers if t and t.strip()):
+        try:
+            results.append(calculate_on_demand(ticker, force=force))
+        except Exception as e:
+            logger.error(f"[Tier2][{ticker}] 배치 갱신 실패: {e}", exc_info=True)
+            errors.append({"ticker": ticker, "error": str(e)})
+
+    return {
+        "results": results,
+        "errors":  errors,
+    }
+
+
 # ══════════════════════════════════════════════
 # Tier 3 — on-demand 실시간 포트폴리오 계산
 # ══════════════════════════════════════════════

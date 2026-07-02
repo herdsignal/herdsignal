@@ -259,8 +259,6 @@ public class PortfolioService {
 
         ProcessBuilder pb = new ProcessBuilder(pythonExe.toString(), "-c", script);
         pb.directory(projectRoot.toFile());  // 프로젝트 루트 기준으로 실행
-        // DB_PASSWORD에 '@'가 포함되어 있어 Python DB URL 파싱이 깨지므로 제거
-        pb.environment().remove("DB_PASSWORD");
 
         try {
             Process process = pb.start();

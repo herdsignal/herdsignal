@@ -76,8 +76,11 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 
 ## Python 연동
 - HERD 데이터가 없을 때 `HerdService`가 Python `calculate_on_demand(ticker)`를 실행한다.
+- 포트폴리오 HERD 강제 갱신은 `calculate_many_on_demand(tickers, force=True)`를 한 Python 프로세스에서 실행한다.
+- HERD 강제 갱신 실패는 오래된 DB 값을 조용히 반환하지 않고 API 오류로 노출한다.
 - `/api/portfolio/realtime` 호출 시 `PortfolioService`가 Python `calculate_current_portfolio('local')`를 실행한다.
 - Python 실행은 `ProcessBuilder` 기반이며 기본 타임아웃은 30초다.
+- 포트폴리오 HERD 배치 갱신 타임아웃은 120초다.
 - Python 실행 경로는 `data/.venv/bin/python3.12`를 사용한다.
 
 ## 예외 처리

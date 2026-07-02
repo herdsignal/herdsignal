@@ -5,10 +5,14 @@ config/settings.py — 전역 설정값 관리
 
 import os
 import logging
+from pathlib import Path
+from urllib.parse import quote_plus
 from dotenv import load_dotenv
 
-# 프로젝트 루트의 .env 파일 로드 (data/ 기준 상위 폴더 탐색 없이 현재 위치 우선)
-load_dotenv()
+# settings.py 기준 상위(data/)의 .env 로드 — CWD에 무관하게 항상 data/.env를 참조.
+# ProcessBuilder가 프로젝트 루트에서 Python을 실행해도 키를 올바르게 주입받는다.
+_ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(_ENV_PATH)
 
 
 # ──────────────────────────────────────────────
@@ -22,7 +26,8 @@ DB_NAME = os.getenv("DB_NAME", "herdsignal")
 
 # SQLAlchemy 커넥션 URL (pymysql 드라이버 사용)
 DATABASE_URL = (
-    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    f"mysql+pymysql://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}@"
+    f"{DB_HOST}:{DB_PORT}/{quote_plus(DB_NAME)}"
     "?charset=utf8mb4"
 )
 

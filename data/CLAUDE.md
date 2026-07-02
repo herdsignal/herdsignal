@@ -78,6 +78,9 @@ data/
 | `SCHEDULER_MINUTE_ET` | `30` | Tier1 실행 분 (ET) |
 | `FINNHUB_API_KEY` | — | Finnhub 키 (운영 미연결) |
 
+DB URL은 `settings.py`에서 DB 사용자명/비밀번호를 URL 인코딩해 생성한다.
+비밀번호에 `@` 같은 특수문자가 있어도 SQLAlchemy URL 파싱이 깨지지 않아야 한다.
+
 ## DB 저장 테이블 (init_db.py 정의)
 `saver.py`는 HERD 계산 결과를 4개 테이블에 트랜잭션으로 저장:
 - `stocks` — 종목 메타
@@ -101,6 +104,7 @@ data/
 - 검색/상세 조회 시 Spring Boot가 ProcessBuilder로 호출
 - `CACHE_DAYS=7` 이내 데이터 있으면 DB 캐시 반환 (재계산 없음)
 - 수동 새로고침 경로는 `force=True`로 호출해 캐시를 무시하고 재계산
+- 포트폴리오 수동 새로고침은 `calculate_many_on_demand`로 여러 티커를 한 Python 프로세스에서 순차 갱신
 - 캐시 미스 시 즉시 계산 → `user_id='cache'`로 저장
 
 **Tier 3 — 실시간 포트폴리오 계산 (`calculate_current_portfolio`)**

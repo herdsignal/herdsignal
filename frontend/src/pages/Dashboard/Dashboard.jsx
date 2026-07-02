@@ -491,14 +491,14 @@ export default function Dashboard() {
         writeCache(CACHE_KEY_REALTIME, data)
       }
 
-      const map = {}
       if (herdRes.status === 'fulfilled') {
+        const map = {}
         const herdData = herdRes.value?.data?.data ?? null
         const herdStocks = herdData?.stocks ?? []
         herdStocks.forEach((h) => { map[h.ticker] = h })
         writeCache(CACHE_KEY_HERD, herdData)
+        setHerdMap(map)
       }
-      setHerdMap(map)
 
       if (spyRes.status === 'fulfilled') {
         const data = spyRes.value.data?.data ?? null
