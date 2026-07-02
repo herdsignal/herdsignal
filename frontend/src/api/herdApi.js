@@ -70,6 +70,19 @@ export const getStockHerd = (ticker) => api.get(`/api/stocks/${ticker}/herd`)
 export const getSpyHerdHistory = (period = '3y') =>
   api.get(`/api/stocks/SPY/herd/history?period=${period}`)
 
+/** 종목 일별 종가 히스토리 조회 (1M|3M|1Y|5Y) */
+export const getStockPrices = (ticker, period = '1M') =>
+  api.get(`/api/stocks/${ticker}/prices?period=${period}`)
+
+/** 최근 30일 뉴스 최대 5건 조회 (Finnhub) */
+export const getStockNews = (ticker) => api.get(`/api/stocks/${ticker}/news`)
+
+/** 최신 1개월 애널리스트 컨센서스 조회 (Finnhub) */
+export const getStockAnalyst = (ticker) => api.get(`/api/stocks/${ticker}/analyst`)
+
+/** 최근 내부자 거래 최대 10건 조회 (Finnhub) */
+export const getStockInsider = (ticker) => api.get(`/api/stocks/${ticker}/insider`)
+
 /* ── 종목 재무정보 ───────────────────────────── */
 
 /** 종목 재무정보 조회 (시가총액·PER·EPS·영업이익률·매출·배당수익률) */

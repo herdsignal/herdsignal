@@ -11,9 +11,15 @@
  * 래퍼런스: wireframes/wireframe-detail.html
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import { useParams, useNavigate }            from 'react-router-dom'
-import { getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials } from '../../api/herdApi'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useParams, useNavigate }                    from 'react-router-dom'
+import {
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
+} from 'recharts'
+import {
+  getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials,
+  getStockPrices, getStockNews, getStockAnalyst, getStockInsider,
+} from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import styles      from './StockDetail.module.css'
@@ -149,6 +155,17 @@ function formatIndicator(value, unit, signed) {
   return signed && value > 0 ? `+${fixed}${unit}` : `${fixed}${unit}`
 }
 
+/** 가격 차트 커스텀 툴팁 */
+function PriceTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null
+  return (
+    <div className={styles.priceTooltip}>
+      <div className={styles.priceTooltipDate}>{label}</div>
+      <div className={styles.priceTooltipVal}>${Number(payload[0]?.value).toFixed(2)}</div>
+    </div>
+  )
+}
+
 /* ── 버튼 레이블 매핑 ─────────────────────── */
 const BTN_LABELS = {
   portfolio: {
@@ -178,6 +195,15 @@ export default function StockDetail() {
   const [portfolioStatus,  setPortfolioStatus]   = useState('idle')
   const [watchlistStatus,  setWatchlistStatus]   = useState('idle')
   const [financials,       setFinancials]        = useState(null)
+  const [pricePoints,      setPricePoints]       = useState([])
+  const [priceTab,         setPriceTab]          = useState('1M')
+  const [priceLoading,     setPriceLoading]      = useState(false)
+  const [news,             setNews]              = useState([])
+  const [newsLoading,      setNewsLoading]       = useState(false)
+  const [analyst,          setAnalyst]           = useState(null)
+  const [analystLoading,   setAnalystLoading]    = useState(false)
+  const [insider,          setInsider]           = useState([])
+  const [insiderLoading,   setInsiderLoading]    = useState(false)
 
   /* HERD 데이터 조회 */
   const fetchData = useCallback(async () => {
@@ -214,6 +240,46 @@ export default function StockDetail() {
       .catch(() => { /* 재무정보 실패 시 "—" 유지 */ })
   }, [ticker])
 
+  /* 가격 차트 — ticker 또는 탭 변경 시 재조회 */
+  useEffect(() => {
+    setPriceLoading(true)
+    setPricePoints([])
+    getStockPrices(ticker.toUpperCase(), priceTab)
+      .then((res) => { setPricePoints(res.data?.data?.points ?? []) })
+      .catch(() => { setPricePoints([]) })
+      .finally(() => { setPriceLoading(false) })
+  }, [ticker, priceTab])
+
+  /* 뉴스 — ticker 변경 시 재조회 */
+  useEffect(() => {
+    setNewsLoading(true)
+    setNews([])
+    getStockNews(ticker.toUpperCase())
+      .then((res) => { setNews(res.data?.data?.news ?? []) })
+      .catch(() => { setNews([]) })
+      .finally(() => { setNewsLoading(false) })
+  }, [ticker])
+
+  /* 애널리스트 컨센서스 — ticker 변경 시 재조회 */
+  useEffect(() => {
+    setAnalystLoading(true)
+    setAnalyst(null)
+    getStockAnalyst(ticker.toUpperCase())
+      .then((res) => { setAnalyst(res.data?.data ?? null) })
+      .catch(() => { setAnalyst(null) })
+      .finally(() => { setAnalystLoading(false) })
+  }, [ticker])
+
+  /* 내부자 거래 — ticker 변경 시 재조회 */
+  useEffect(() => {
+    setInsiderLoading(true)
+    setInsider([])
+    getStockInsider(ticker.toUpperCase())
+      .then((res) => { setInsider(res.data?.data?.transactions ?? []) })
+      .catch(() => { setInsider([]) })
+      .finally(() => { setInsiderLoading(false) })
+  }, [ticker])
+
   /* 포트폴리오 추가 */
   async function handleAddPortfolio() {
     if (portfolioStatus !== 'idle') return
@@ -245,6 +311,21 @@ export default function StockDetail() {
   const stageDisp  = herdStage.startsWith('Herd ') ? herdStage : `Herd ${herdStage}`
   const color      = stageColor(herdStage)
   const sigStyle   = signalStyle(herdData?.signal)
+
+  /* 가격 차트 색상 — 기간 첫날 대비 마지막날 방향 */
+  const priceColor = useMemo(() => {
+    if (pricePoints.length < 2) return '#3B82F6'
+    return pricePoints[pricePoints.length - 1].close >= pricePoints[0].close
+      ? '#3B82F6' : '#EF4444'
+  }, [pricePoints])
+
+  /* X축 날짜 포맷 — 단기(1M/3M)는 M/D, 장기(1Y/5Y)는 YY.MM */
+  const fmtPriceDate = useCallback((dateStr) => {
+    const d = new Date(dateStr + 'T00:00:00')
+    return (priceTab === '1M' || priceTab === '3M')
+      ? `${d.getMonth() + 1}/${d.getDate()}`
+      : `${String(d.getFullYear()).slice(2)}.${String(d.getMonth() + 1).padStart(2, '0')}`
+  }, [priceTab])
 
   return (
     <div>
@@ -406,6 +487,67 @@ export default function StockDetail() {
               </div>
             </div>
 
+            {/* 가격 차트 카드 */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div className={styles.cardTitle}>가격 차트</div>
+                <div className={styles.priceTabs}>
+                  {['1M', '3M', '1Y', '5Y'].map((p) => (
+                    <button
+                      key={p}
+                      className={`${styles.priceTab} ${priceTab === p ? styles.priceTabActive : ''}`}
+                      onClick={() => setPriceTab(p)}
+                    >{p}</button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.cardBody}>
+                {priceLoading ? (
+                  <div className={styles.chartEmpty}>로딩 중…</div>
+                ) : pricePoints.length === 0 ? (
+                  <div className={styles.chartEmpty}>데이터 없음</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart data={pricePoints} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={priceColor} stopOpacity={0.25} />
+                          <stop offset="100%" stopColor={priceColor} stopOpacity={0.02} />
+                        </linearGradient>
+                      </defs>
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={fmtPriceDate}
+                        interval="preserveStartEnd"
+                        tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
+                        axisLine={false}
+                        tickLine={false}
+                        tickMargin={6}
+                      />
+                      <YAxis
+                        domain={['auto', 'auto']}
+                        tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
+                        axisLine={false}
+                        tickLine={false}
+                        width={44}
+                        tickFormatter={(v) => `$${v.toFixed(0)}`}
+                      />
+                      <Tooltip content={<PriceTooltip />} />
+                      <Area
+                        type="monotone"
+                        dataKey="close"
+                        stroke={priceColor}
+                        strokeWidth={1.5}
+                        fill="url(#priceGrad)"
+                        dot={false}
+                        activeDot={{ r: 3, fill: priceColor, strokeWidth: 0 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+            </div>
+
             {/* 재무 정보 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
@@ -428,13 +570,33 @@ export default function StockDetail() {
               </div>
             </div>
 
-            {/* 뉴스 카드 (Finnhub API 연동 예정) */}
+            {/* 뉴스 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <div className={styles.cardTitle}>최근 뉴스</div>
+                <div className={styles.cardMeta}>Finnhub · 최근 30일</div>
               </div>
-              <div className={styles.cardBodySmall}>
-                <p className={styles.placeholderText}>뉴스 연동 예정 (Finnhub API)</p>
+              <div className={styles.cardBody}>
+                {newsLoading ? (
+                  <p className={styles.placeholderText}>로딩 중…</p>
+                ) : news.length === 0 ? (
+                  <p className={styles.placeholderText}>데이터 없음</p>
+                ) : (
+                  <div className={styles.newsList}>
+                    {news.map((n, i) => (
+                      <a
+                        key={i}
+                        href={n.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.newsItem}
+                      >
+                        <div className={styles.newsHeadline}>{n.headline}</div>
+                        <div className={styles.newsMeta}>{n.source} · {n.date}</div>
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -442,23 +604,79 @@ export default function StockDetail() {
           {/* ─── 오른쪽 사이드 ─── */}
           <div className={styles.colSide}>
 
-            {/* 애널리스트 목표가 (레이아웃 확보) */}
+            {/* 애널리스트 컨센서스 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>애널리스트 목표가</div>
+                <div className={styles.cardTitle}>애널리스트 컨센서스</div>
+                <div className={styles.cardMeta}>Finnhub</div>
               </div>
               <div className={styles.cardBodySmall}>
-                <p className={styles.placeholderText}>데이터 연동 예정</p>
+                {analystLoading ? (
+                  <p className={styles.placeholderText}>로딩 중…</p>
+                ) : !analyst || analyst.total === 0 ? (
+                  <p className={styles.placeholderText}>데이터 없음</p>
+                ) : (
+                  <div className={styles.analystWrap}>
+                    <div className={styles.analystConsensus}>
+                      {analyst.consensus} · {analyst.total}명
+                    </div>
+                    {[
+                      { key: 'strongBuy',  label: 'Strong Buy',  color: '#2563EB' },
+                      { key: 'buy',        label: 'Buy',         color: '#60A5FA' },
+                      { key: 'hold',       label: 'Hold',        color: '#9CA3AF' },
+                      { key: 'sell',       label: 'Sell',        color: '#FB923C' },
+                      { key: 'strongSell', label: 'Strong Sell', color: '#EF4444' },
+                    ].map(({ key, label, color: barColor }) => {
+                      const count = analyst[key] ?? 0
+                      const pct   = analyst.total > 0 ? (count / analyst.total) * 100 : 0
+                      return (
+                        <div key={key} className={styles.analystRow}>
+                          <div className={styles.analystLabel}>{label}</div>
+                          <div className={styles.analystTrack}>
+                            <div
+                              className={styles.analystFill}
+                              style={{ width: `${pct}%`, background: barColor }}
+                            />
+                          </div>
+                          <div className={styles.analystCount}>{count}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* 내부자 거래 (레이아웃 확보) */}
+            {/* 내부자 거래 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <div className={styles.cardTitle}>내부자 거래</div>
+                <div className={styles.cardMeta}>Finnhub · 최근 10건</div>
               </div>
               <div className={styles.cardBodySmall}>
-                <p className={styles.placeholderText}>데이터 연동 예정</p>
+                {insiderLoading ? (
+                  <p className={styles.placeholderText}>로딩 중…</p>
+                ) : insider.length === 0 ? (
+                  <p className={styles.placeholderText}>데이터 없음</p>
+                ) : (
+                  <div className={styles.insiderTable}>
+                    {insider.map((tx, i) => (
+                      <div key={i} className={styles.insiderRow}>
+                        <div className={styles.insiderName}>{tx.name}</div>
+                        <div
+                          className={styles.insiderCode}
+                          style={{ color: tx.transactionCode === 'P' ? '#60A5FA' : '#EF4444' }}
+                        >
+                          {tx.transactionCode === 'P' ? '매수' : tx.transactionCode === 'S' ? '매도' : tx.transactionCode}
+                        </div>
+                        <div className={styles.insiderShare}>
+                          {Number(tx.share ?? 0).toLocaleString()}주
+                        </div>
+                        <div className={styles.insiderDate}>{tx.date}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
