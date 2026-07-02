@@ -4,13 +4,15 @@ import com.herdsignal.config.AppConstants;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.HerdScoreResponse;
 import com.herdsignal.dto.PortfolioHerdResponse;
+import com.herdsignal.dto.StockFinancialsResponse;
+import com.herdsignal.service.FinancialsService;
 import com.herdsignal.service.HerdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * HERD Index 조회 API 컨트롤러.
+ * HERD Index 및 종목 데이터 조회 API 컨트롤러.
  * 요청 파라미터 수신 → Service 위임 → ApiResponse 반환만 담당.
  */
 @RestController
@@ -18,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class HerdController {
 
-    private final HerdService herdService;
+    private final HerdService        herdService;
+    private final FinancialsService  financialsService;
 
     /**
      * GET /api/portfolio/herd
@@ -40,6 +43,18 @@ public class HerdController {
     public ResponseEntity<ApiResponse<HerdScoreResponse>> getStockHerd(
             @PathVariable String ticker) {
         HerdScoreResponse response = herdService.getStockHerd(ticker.toUpperCase());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * GET /api/stocks/{ticker}/financials
+     * 종목 재무정보 조회 (시가총액·PER·EPS·영업이익률·매출·배당수익률).
+     * yfinance .info 기반 on-demand 조회 (Python ProcessBuilder).
+     */
+    @GetMapping("/stocks/{ticker}/financials")
+    public ResponseEntity<ApiResponse<StockFinancialsResponse>> getStockFinancials(
+            @PathVariable String ticker) {
+        StockFinancialsResponse response = financialsService.getFinancials(ticker.toUpperCase());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

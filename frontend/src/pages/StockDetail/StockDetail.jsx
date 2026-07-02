@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate }            from 'react-router-dom'
-import { getStockHerd, addToPortfolio, addToWatchlist } from '../../api/herdApi'
+import { getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials } from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import styles      from './StockDetail.module.css'
@@ -39,14 +39,52 @@ const INDICATORS = [
   { key: 'volumeStrength', label: '거래량 강도',    weight:  0, min: 0,   max: 100, unit: '',  signed: false, disabled: true },
 ]
 
-/* 재무 정보 레이아웃 (데이터 없음 → — 표시) */
+/* ── 재무정보 포맷 함수 ──────────────────────── */
+
+/** 시가총액·매출 → "$X.XXT / $X.XXB / $X.XXM" */
+function fmtCap(v) {
+  if (v == null) return '—'
+  const n = Number(v)
+  if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
+  if (n >= 1e9)  return `$${(n / 1e9).toFixed(2)}B`
+  if (n >= 1e6)  return `$${(n / 1e6).toFixed(2)}M`
+  return `$${n.toLocaleString('en-US')}`
+}
+
+/** PER → 소수점 1자리 */
+function fmtNum1(v) {
+  if (v == null) return '—'
+  return Number(v).toFixed(1)
+}
+
+/** 영업이익률 → "+X.X%" / "-X.X%" */
+function fmtPct1(v) {
+  if (v == null) return '—'
+  const n = Number(v)
+  return `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
+}
+
+/** EPS → "$X.XX" (음수 허용) */
+function fmtDollar2(v) {
+  if (v == null) return '—'
+  const n = Number(v)
+  return `${n < 0 ? '-$' : '$'}${Math.abs(n).toFixed(2)}`
+}
+
+/** 배당수익률 → "X.XX%" */
+function fmtPct2(v) {
+  if (v == null) return '—'
+  return `${Number(v).toFixed(2)}%`
+}
+
+/* 재무 정보 항목 정의 — key: API 응답 camelCase 키, fmt: 포맷 함수 */
 const FINANCE_ITEMS = [
-  { label: '시가총액',   sub: null },
-  { label: 'P/E Ratio',  sub: '업종 평균' },
-  { label: '영업이익률', sub: '전년 동기' },
-  { label: 'EPS (TTM)',  sub: null },
-  { label: '매출 (TTM)', sub: 'YoY' },
-  { label: '배당수익률', sub: null },
+  { key: 'marketCap',       label: '시가총액',   sub: null,   fmt: fmtCap     },
+  { key: 'trailingPe',      label: 'P/E Ratio',  sub: null,   fmt: fmtNum1    },
+  { key: 'operatingMargin', label: '영업이익률', sub: null,   fmt: fmtPct1    },
+  { key: 'eps',             label: 'EPS (TTM)',  sub: null,   fmt: fmtDollar2 },
+  { key: 'totalRevenue',    label: '매출 (TTM)', sub: null,   fmt: fmtCap     },
+  { key: 'dividendYield',   label: '배당수익률', sub: null,   fmt: fmtPct2    },
 ]
 
 /* ── 유틸 ─────────────────────────────────── */
@@ -139,6 +177,7 @@ export default function StockDetail() {
   const [error,            setError]             = useState(null)
   const [portfolioStatus,  setPortfolioStatus]   = useState('idle')
   const [watchlistStatus,  setWatchlistStatus]   = useState('idle')
+  const [financials,       setFinancials]        = useState(null)
 
   /* HERD 데이터 조회 */
   const fetchData = useCallback(async () => {
@@ -162,6 +201,18 @@ export default function StockDetail() {
   }, [ticker])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  /*
+   * 재무정보 — HERD 로딩과 독립적으로 실행.
+   * ProcessBuilder 경유로 3~10초 소요될 수 있으므로 별도 effect로 분리.
+   * 성공 전까지 FINANCE_ITEMS는 "—"로 표시됨.
+   */
+  useEffect(() => {
+    setFinancials(null)
+    getStockFinancials(ticker.toUpperCase())
+      .then((res) => { setFinancials(res.data?.data ?? null) })
+      .catch(() => { /* 재무정보 실패 시 "—" 유지 */ })
+  }, [ticker])
 
   /* 포트폴리오 추가 */
   async function handleAddPortfolio() {
@@ -355,20 +406,22 @@ export default function StockDetail() {
               </div>
             </div>
 
-            {/* 재무 정보 카드 (레이아웃 확보, yfinance 연동 예정) */}
+            {/* 재무 정보 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <div className={styles.cardTitle}>재무 정보</div>
+                <div className={styles.cardMeta}>
+                  {financials ? 'yfinance · 15분 지연' : '로딩 중…'}
+                </div>
               </div>
               <div className={styles.cardBody}>
                 <div className={styles.financeGrid}>
                   {FINANCE_ITEMS.map((item) => (
-                    <div key={item.label} className={styles.financeItem}>
+                    <div key={item.key} className={styles.financeItem}>
                       <div className={styles.financeLabel}>{item.label}</div>
-                      <div className={styles.financeValue}>—</div>
-                      {item.sub && (
-                        <div className={styles.financeSub}>{item.sub} —</div>
-                      )}
+                      <div className={styles.financeValue}>
+                        {item.fmt(financials ? financials[item.key] : null)}
+                      </div>
                     </div>
                   ))}
                 </div>

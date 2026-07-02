@@ -71,4 +71,9 @@ export const getStockHerd = (ticker) => api.get(`/api/stocks/${ticker}/herd`)
 /** SPY 현재가 + 1개월 수익률 조회 */
 export const getSpyMarket = () => api.get('/api/market/spy')
 
+/* ── 종목 재무정보 ───────────────────────────── */
+
+/** 종목 재무정보 조회 (시가총액·PER·EPS·영업이익률·매출·배당수익률) */
+export const getStockFinancials = (ticker) => api.get(`/api/stocks/${ticker}/financials`)
+
 export default api
