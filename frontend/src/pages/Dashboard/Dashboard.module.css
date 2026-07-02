@@ -333,14 +333,14 @@
 
 /* 히스토리 통계 패널 */
 .bannerHistStats {
-  width: 148px;
+  width: 198px;
   flex-shrink: 0;
-  padding: 20px 24px;
+  padding: 48px 24px 16px;
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 14px;
+  justify-content: flex-start;
+  gap: 10px;
 }
 
 /* Timeline 탭 */
@@ -413,11 +413,35 @@
   letter-spacing: 0.02em;
 }
 
+.bannerStatMain {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+
 .bannerStatValue {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.5px;
+}
+
+.bannerStatStage {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+.bannerStatDesc {
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--text-3);
+  line-height: 1.3;
+  white-space: nowrap;
 }
 
 .bannerStatUpdate {

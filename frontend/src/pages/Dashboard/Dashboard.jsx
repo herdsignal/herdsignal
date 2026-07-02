@@ -199,6 +199,16 @@ function scoreToColor(score) {
   return 'var(--rush)'
 }
 
+/** HERD 점수 → 단계명 (히스토리 통계용) */
+function scoreToStage(score) {
+  if (score == null) return null
+  if (score < 20) return 'Herd Flee'
+  if (score < 40) return 'Herd Scatter'
+  if (score < 60) return 'Herd Calm'
+  if (score < 80) return 'Herd Drift'
+  return 'Herd Rush'
+}
+
 /** points 배열에서 targetDate에 가장 가까운 포인트 반환 */
 function findScoreAt(points, targetDate) {
   if (!points?.length) return null
@@ -237,6 +247,29 @@ function HistTooltip({ active, payload, label }) {
       <div style={{ color: scoreToColor(score), fontFamily: 'Space Grotesk', fontWeight: 600 }}>
         HERD {score != null ? Math.round(score) : '—'}
       </div>
+    </div>
+  )
+}
+
+function BannerStat({ label, point }) {
+  const stage = scoreToStage(point?.score)
+
+  return (
+    <div className={styles.bannerStatItem}>
+      <div className={styles.bannerStatLabel}>{label}</div>
+      {point && stage ? (
+        <>
+          <div className={styles.bannerStatMain}>
+            <span className={styles.bannerStatValue} style={{ color: scoreToColor(point.score) }}>
+              {Math.round(point.score)}
+            </span>
+            <span className={styles.bannerStatStage}>{stage}</span>
+          </div>
+          <div className={styles.bannerStatDesc}>{stageDesc(stage)}</div>
+        </>
+      ) : (
+        <div className={styles.bannerStatValue}>—</div>
+      )}
     </div>
   )
 }
@@ -649,24 +682,9 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className={styles.bannerHistStats}>
-                <div className={styles.bannerStatItem}>
-                  <div className={styles.bannerStatLabel}>어제</div>
-                  <div className={styles.bannerStatValue} style={{ color: scoreToColor(ystPoint?.score) }}>
-                    {ystPoint ? Math.round(ystPoint.score) : '—'}
-                  </div>
-                </div>
-                <div className={styles.bannerStatItem}>
-                  <div className={styles.bannerStatLabel}>1달 전</div>
-                  <div className={styles.bannerStatValue} style={{ color: scoreToColor(m1Point?.score) }}>
-                    {m1Point ? Math.round(m1Point.score) : '—'}
-                  </div>
-                </div>
-                <div className={styles.bannerStatItem}>
-                  <div className={styles.bannerStatLabel}>1년 전</div>
-                  <div className={styles.bannerStatValue} style={{ color: scoreToColor(y1Point?.score) }}>
-                    {y1Point ? Math.round(y1Point.score) : '—'}
-                  </div>
-                </div>
+                <BannerStat label="어제" point={ystPoint} />
+                <BannerStat label="1달 전" point={m1Point} />
+                <BannerStat label="1년 전" point={y1Point} />
                 <div className={styles.bannerStatItem}>
                   <div className={styles.bannerStatLabel}>업데이트</div>
                   <div className={styles.bannerStatUpdate}>
