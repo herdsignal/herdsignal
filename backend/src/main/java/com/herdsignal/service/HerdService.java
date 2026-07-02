@@ -61,6 +61,34 @@ public class HerdService {
     }
 
     /**
+     * 포트폴리오 전체 HERD 강제 갱신.
+     * 수동 새로고침 전용 경로로, 보유 종목마다 Python on-demand 계산을 캐시 무시로 실행한 뒤
+     * 최신 DB 값을 다시 읽어 반환한다. 일부 종목 실패는 로그만 남기고 나머지 종목 응답은 유지한다.
+     *
+     * @param userId 사용자 ID (MVP: "local")
+     */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public PortfolioHerdResponse refreshPortfolioHerd(String userId) {
+        List<UserPortfolio> portfolio = portfolioRepository.findByUserId(userId);
+
+        for (UserPortfolio item : portfolio) {
+            String ticker = item.getTicker();
+            try {
+                triggerPythonOnDemand(ticker, true);
+            } catch (Exception e) {
+                log.warn("[{}] 포트폴리오 HERD 강제 갱신 실패: {}", ticker, e.getMessage());
+            }
+        }
+
+        List<HerdScoreResponse> herdScores = portfolio.stream()
+                .map(p -> buildHerdScoreResponse(p.getTicker()))
+                .filter(Objects::nonNull)
+                .toList();
+
+        return PortfolioHerdResponse.of(herdScores);
+    }
+
+    /**
      * 특정 종목 HERD 조회 (Tier 1 + Tier 2 통합).
      *
      * DB에 데이터가 있으면 바로 반환 (Tier 1 경로).
@@ -111,6 +139,38 @@ public class HerdService {
     }
 
     /**
+     * 특정 종목 HERD 강제 갱신.
+     * 캐시가 있어도 Python calculate_on_demand(..., force=True)를 실행한 뒤 DB 최신값을 반환한다.
+     *
+     * @param ticker 티커 심볼 (대문자)
+     */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public HerdScoreResponse refreshStockHerd(String ticker) {
+        try {
+            triggerPythonOnDemand(ticker, true);
+        } catch (Exception e) {
+            log.error("[{}] Python on-demand 강제 갱신 실패: {}", ticker, e.getMessage());
+            throw new ResourceNotFoundException(
+                    ticker + " HERD 강제 갱신 실패: " + e.getMessage()
+            );
+        }
+
+        Optional<HerdScore> scoreOpt =
+                herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker);
+        if (scoreOpt.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    ticker + " 강제 갱신 완료 후에도 DB에 데이터가 없습니다."
+            );
+        }
+
+        HerdIndicator indicator = herdIndicatorRepository
+                .findTopByTickerOrderByScoreDateDesc(ticker)
+                .orElse(null);
+
+        return HerdScoreResponse.of(scoreOpt.get(), indicator);
+    }
+
+    /**
      * ProcessBuilder로 Python calculate_on_demand(ticker)를 실행한다.
      * 프로세스가 정상 종료(exit 0)되면 DB에 결과가 저장되어 있음.
      *
@@ -120,6 +180,16 @@ public class HerdService {
      * @param ticker 유효성이 검증된 티커 심볼 (대문자, 영숫자/하이픈/점만 허용)
      */
     private void triggerPythonOnDemand(String ticker) throws IOException, InterruptedException {
+        triggerPythonOnDemand(ticker, false);
+    }
+
+    /**
+     * ProcessBuilder로 Python calculate_on_demand(ticker, force)를 실행한다.
+     *
+     * @param ticker 유효성이 검증된 티커 심볼 (대문자, 영숫자/하이픈/점만 허용)
+     * @param force 캐시 무시 여부
+     */
+    private void triggerPythonOnDemand(String ticker, boolean force) throws IOException, InterruptedException {
         // 티커 유효성 검사 — 영숫자·하이픈·점만 허용 (코드 주입 방지)
         if (!ticker.matches("[A-Z0-9\\-\\.]+")) {
             throw new IllegalArgumentException("유효하지 않은 티커 형식: " + ticker);
@@ -145,7 +215,7 @@ public class HerdService {
                 "sys.path.insert(0, 'data')",
                 "from scheduler.herd_scheduler import calculate_on_demand",
                 "import json",
-                "result = calculate_on_demand('" + ticker + "')",
+                "result = calculate_on_demand('" + ticker + "', force=" + (force ? "True" : "False") + ")",
                 "print(json.dumps(result))"
         );
 

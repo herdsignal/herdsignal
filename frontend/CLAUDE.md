@@ -88,10 +88,10 @@ Rush    #EF4444  (레드)
 프로덕션 또는 명시 설정이 필요하면 `VITE_API_BASE_URL` 환경변수를 사용한다.
 
 현재 herdApi.js에서 관리하는 호출:
-- getPortfolio / getPortfolioHerd / getPortfolioRealtime / getPortfolioSummary / getPortfolioHistory
+- getPortfolio / getPortfolioHerd / refreshPortfolioHerd / getPortfolioRealtime / getPortfolioSummary / getPortfolioHistory
 - addToPortfolio / removeFromPortfolio / updateAvgPrice
 - getWatchlistHerd / addToWatchlist / removeFromWatchlist
-- getStockHerd
+- getStockHerd / refreshStockHerd
 
 ## localStorage 사용
 - `hs_portfolio_realtime`: 포트폴리오 실시간 평가 캐시

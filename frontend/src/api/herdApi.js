@@ -24,6 +24,10 @@ const api = axios.create({
 /** 포트폴리오 전체 HERD 점수 조회 */
 export const getPortfolioHerd = () => api.get('/api/portfolio/herd')
 
+/** 포트폴리오 전체 HERD 점수 강제 갱신 */
+export const refreshPortfolioHerd = () =>
+  api.post('/api/portfolio/herd/refresh', null, { timeout: 180_000 })
+
 /** 포트폴리오 종목 추가 */
 export const addToPortfolio = (ticker) => api.post('/api/portfolio', { ticker })
 
@@ -65,6 +69,10 @@ export const updateAvgPrice = (ticker, avgPrice, quantity) =>
 
 /** 특정 종목 HERD 점수 + 지표 분해값 조회 */
 export const getStockHerd = (ticker) => api.get(`/api/stocks/${ticker}/herd`)
+
+/** 특정 종목 HERD 점수 강제 갱신 */
+export const refreshStockHerd = (ticker) =>
+  api.post(`/api/stocks/${ticker}/herd/refresh`, null, { timeout: 60_000 })
 
 /** 특정 종목 HERD 히스토리 조회 (기본 3y) */
 export const getSpyHerdHistory = (period = '3y') =>

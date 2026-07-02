@@ -1,43 +1,52 @@
 # HerdSignal — 프로젝트 공통 지침
 
-최종 업데이트: 2026-07-02
+최종 업데이트: 2026-07-03
 
 ## 서비스 개요
+
 미국주식 장기투자자를 위한 데이터 기반 타이밍 도구.
 개별 주식마다 HERD Index(0~100)를 산출해 고점 익절 / 저점 추가매수 타이밍을 제안.
 
 ## 문서 역할
+
 - README: 사용자/포트폴리오 문서. 프로젝트 소개, 실행 방법, 외부 공개용 설명을 담당.
 - CLAUDE.md: AI 개발 문서. 실제 코드 기준 개발 상태, 작업 원칙, 구현 범위를 담당.
 
 ## 핵심 개념
+
 - **HERD Index**: 개별주 군중심리 지표 (0~100)
 - **5단계**: Flee(0~20) → Scatter(20~40) → Calm(40~60) → Drift(60~80) → Rush(80~100)
-- **버핏 철학**: Rush일 때 익절, Flee일 때 매수
+- **서비스 철학**: Rush일 때 익절, Flee일 때 매수
 
 ## 모노레포 구조
+
 ```
 herdsignal/
 ├── data/       Python 데이터 엔진
 ├── backend/    Spring Boot REST API
 └── frontend/   React 대시보드
 ```
+
 - `data/`: yfinance 수집, HERD 계산, MariaDB 저장, 스케줄러.
 - `backend/`: MariaDB 데이터를 읽어 React에 제공하는 REST API.
 - `frontend/`: Spring Boot API를 호출해 포트폴리오/종목/HERD 데이터를 시각화.
 
 ## 데이터 흐름
+
 ```
 yfinance → Python(HERD 계산) → MariaDB → Spring Boot API → React
 ```
+
 Python은 계산 + 저장만. Spring Boot는 서빙만. 역할 분리 엄수.
 
 ## 기술 스택
+
 - Python 3.11+ / yfinance / pandas / pandas-ta / scipy / SQLAlchemy / PyMySQL / APScheduler
 - Spring Boot 3.5.3 / Java 17 / Gradle / JPA / MariaDB
 - React 18.3 / Vite 5 / react-router-dom / axios / recharts
 
 ## AI 작업 원칙
+
 - 실제 코드 기준으로 판단한다.
 - 구현되지 않은 기능은 완료 처리하지 않는다.
 - README보다 실제 코드를 우선한다.
@@ -45,6 +54,7 @@ Python은 계산 + 저장만. Spring Boot는 서빙만. 역할 분리 엄수.
 - 작업 범위를 벗어난 파일은 수정하지 않는다.
 
 ## 공통 코드 원칙
+
 - 함수/클래스 단위 역할 분리
 - 예외처리 필수
 - 하드코딩 금지 (설정값은 config 분리)
@@ -52,12 +62,15 @@ Python은 계산 + 저장만. Spring Boot는 서빙만. 역할 분리 엄수.
 - 한 번에 하나씩 — 파일 구조 먼저 제안 후 코드 작성
 
 ## 커밋 메시지 규칙
+
 형식:
+
 ```
 git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 ```
 
 type 종류:
+
 - `feat`: 새 기능 추가
 - `fix`: 버그 수정
 - `chore`: 설정, 패키지 등 기타 작업
@@ -65,16 +78,19 @@ type 종류:
 - `docs`: 문서 수정
 
 예시:
+
 ```
 git commit -m "feat: RSI 계산 함수 구현" -m "- 월봉/주봉 RSI 계산 로직 추가" -m "- pandas_ta 라이브러리 활용" -m "- 종목별 역사적 상대값 정규화 적용"
 ```
 
 규칙:
+
 - 제목은 50자 이내
 - 세부사항은 실제 변경된 내용 구체적으로
 - 세부사항 2~4개 권장
 
 ### 언급 방식
+
 커밋 타이밍이 되면 아래 형식으로 먼저 알려줄 것.
 
 ```
@@ -86,6 +102,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 ```
 
 ## 토큰 절약 규칙
+
 - data/ 작업 시 backend/, frontend/ 파일 읽지 말 것
 - backend/ 작업 시 data/, frontend/ 파일 읽지 말 것
 - frontend/ 작업 시 data/, backend/ 파일 읽지 말 것
@@ -96,6 +113,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 ### 완료
 
 **data/**
+
 - HERD Index v3 계산 (6개 지표, 불균등 가중치, 백분위수 정규화)
 - MariaDB 저장 (stocks / herd_scores / herd_indicators / daily_prices — 4개 테이블 UPSERT)
 - 3-Tier 스케줄러
@@ -105,20 +123,26 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - 백테스트 코드 (backtest_v3.py 기반, 실적 서프라이즈 필터·트레일링 스탑)
 
 **backend/**
+
 - HERD 조회 API (`GET /api/stocks/{ticker}/herd`, `GET /api/portfolio/herd`)
+- HERD 강제 갱신 API (`POST /api/stocks/{ticker}/herd/refresh`, `POST /api/portfolio/herd/refresh`)
 - 포트폴리오 전체 API (CRUD + summary + history + realtime + 평단가 수정)
 - 관심 종목 전체 API (CRUD + HERD 조회)
+- 시장 데이터 API (`GET /api/market/spy` — SPY 종가·1개월 수익률)
+- 재무정보 API (`GET /api/stocks/{ticker}/financials` — 시가총액·PER·EPS 등)
 - Python on-demand 계산 연동 (ProcessBuilder)
 - 전역 예외 처리 (404 / 409 / 500)
 
 **frontend/**
-- Dashboard: S&P 500 배너, 포트폴리오 카드, KRW/USD 통화 토글, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 수동 새로고침
-- StockDetail: HERD 점수·단계·신호, HERD v3 지표 분해 UI (6개 지표·가중치 표시)
+
+- Dashboard: S&P 500 배너(HERD + 종가·1개월 수익률 실데이터), 포트폴리오 카드, KRW/USD 통화 토글, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 수동 새로고침
+- StockDetail: HERD 점수·단계·신호, HERD v3 지표 분해 UI, 재무정보 카드 실데이터 (시가총액·PER·EPS·영업이익률·매출·배당수익률)
 - Search: 디바운스 검색, HERD 미리보기, 인기 종목 그리드, 최근 검색
 - Watchlist: HERD 카드, 삭제
 - History: 월/년 토글, recharts 자산 기록 차트
 
 **문서**
+
 - data/CLAUDE.md 최신화
 - README.md 최신화
 - 루트 CLAUDE.md 최신화
@@ -130,14 +154,14 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 ### 다음 단계
 
 - **200주 MA DB/API 반영 여부 결정** — 운영 계산에는 포함되지만 `herd_indicators` DB 저장 및 `HerdScoreResponse` API 응답에 미포함. 반영 시 `data/saver.py` + `backend/HerdScoreResponse` 수정 필요
-- **SPY 배너 실제 데이터 연동** — 종가·1개월 수익률 현재 `—` placeholder
-- **StockDetail placeholder 연동 여부 결정** — 재무 정보, 뉴스, 애널리스트 목표가, 내부자 거래 (UI 자리만 존재)
+- **StockDetail 미연동 영역** — 뉴스(Finnhub), 애널리스트 목표가, 내부자 거래, 가격 차트 (UI 자리만 존재)
 
 ---
 
 ## HERD Index 현재 버전 (운영 계산 기준)
 
 ### 알고리즘
+
 - 정규화 방식: 백분위수 (scipy.stats.percentileofscore)
 - 데이터 기간: 기본 5년 (`YFINANCE_PERIOD=5y`)
 - 운영 계산: 6개 지표를 계산해 가중합산
@@ -151,13 +175,15 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - 주의: `herd_indicators` DB 테이블과 `HerdScoreResponse` API 응답은 아직 200주 MA 컬럼을 포함하지 않음. 따라서 화면의 지표 분해는 5개 저장 지표 중심으로 표시됨.
 
 ### 임계값
-- Rush  ≥ 75  → 30% 익절
+
+- Rush ≥ 75 → 30% 익절
 - Drift 60~75 → 5% 익절
-- Calm  40~60 → 보유 유지
+- Calm 40~60 → 보유 유지
 - Scatter 15~40 → 10% 추가매수 (1단계 신호)
-- Flee  ≤ 15  → 30% 추가매수 (2단계 신호)
+- Flee ≤ 15 → 30% 추가매수 (2단계 신호)
 
 ### 신호 규칙
+
 - 신호 중복 제거: 20일 이내 재발생 무시
 - `saver.py` 기준 신호 파생:
   - score >= 75: SELL
@@ -168,6 +194,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - `backtest_v3.py`의 실적 서프라이즈 필터·트레일링 스탑은 백테스트 전략이며, 현재 운영 계산 경로에는 연결되어 있지 않음.
 
 ### 백테스트 검증 결과
+
 - 평균 MDD 8.9%p 개선
 - 평균 수익률 59.3% 보존
 - Flee 신호 분포 6~10% (이상적)
@@ -178,6 +205,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 ## 현재 구현 완료 기능
 
 ### data/
+
 - [x] yfinance 기반 가격 수집
 - [x] HERD Index 계산 (`herd/calculator.py`)
 - [x] MariaDB 저장 (`herd/saver.py`)
@@ -201,6 +229,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - portfolio_history 오늘 스냅샷 UPSERT
 
 ### backend/
+
 - [x] HERD 조회 API
   - GET `/api/stocks/{ticker}/herd`
   - GET `/api/portfolio/herd`
@@ -224,6 +253,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - 409 DuplicateResource
 
 ### frontend/
+
 - [x] Dashboard (`/`)
   - S&P 500 HERD 배너
   - 포트폴리오 평가금액 요약
@@ -254,6 +284,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - portfolio_history 시계열 표시
 
 ### frontend localStorage
+
 - `hs_portfolio_realtime`: 포트폴리오 실시간 평가 캐시
 - `hs_portfolio_herd`: 포트폴리오 HERD 캐시
 - `hs_spy_herd`: SPY HERD 캐시
@@ -293,4 +324,3 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - Python과 Spring Boot는 DB 중심으로 통신하지만, on-demand 계산과 실시간 포트폴리오 평가에서는 Spring Boot가 ProcessBuilder로 Python을 실행한다.
 
 ---
-

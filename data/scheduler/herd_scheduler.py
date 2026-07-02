@@ -197,19 +197,20 @@ def run_herd_job() -> None:
 # Tier 2 — on-demand 실시간 계산 + 캐싱
 # ══════════════════════════════════════════════
 
-def calculate_on_demand(ticker: str) -> dict:
+def calculate_on_demand(ticker: str, force: bool = False) -> dict:
     """
     Tier 2: 요청 시 실시간 HERD 계산 + 캐싱.
 
     동작 흐름:
       1. herd_scores 테이블에서 해당 ticker의 최신 데이터 조회
-      2. CACHE_DAYS(7일) 이내 데이터 있음 → 캐시에서 바로 반환 (재계산 없음)
-      3. 데이터 없거나 7일 이상 지남 → 즉시 계산 후 DB 저장
+      2. force=False이고 CACHE_DAYS(7일) 이내 데이터 있음 → 캐시에서 바로 반환
+      3. force=True이거나 데이터 없거나 7일 이상 지남 → 즉시 계산 후 DB 저장
          - user_portfolio에 user_id='cache'로 티커 등록 (없으면)
          - herd_scores / herd_indicators / daily_prices / stocks 업데이트
 
     Args:
         ticker: 종목 티커 (예: "RKLB", "AAPL")
+        force: True면 캐시가 있어도 재계산
 
     Returns:
         {
@@ -234,7 +235,7 @@ def calculate_on_demand(ticker: str) -> dict:
             .first()
         )
 
-        if latest_score and latest_score.score_date >= cache_cutoff:
+        if not force and latest_score and latest_score.score_date >= cache_cutoff:
             # 캐시 히트 — 지표 분해값도 조회
             ind_row = (
                 session.query(HerdIndicator)
@@ -271,9 +272,9 @@ def calculate_on_demand(ticker: str) -> dict:
                 "from_cache": True,
             }
 
-    # ── 2. 캐시 미스 또는 만료 → 즉시 계산 ──────
+    # ── 2. 캐시 미스/만료 또는 강제 갱신 → 즉시 계산 ──────
     logger.info(
-        f"[Tier2][{ticker}] 캐시 미스 — "
+        f"[Tier2][{ticker}] {'강제 갱신' if force else '캐시 미스'} — "
         f"(최신={latest_score.score_date if latest_score else '없음'}) "
         f"실시간 계산 시작"
     )

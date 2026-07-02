@@ -13,7 +13,6 @@ data/
 ├── collectors/             yfinance 데이터 수집
 │   ├── stock_collector.py      주가 데이터 수집 (yfinance)
 │   ├── price_collector.py      현재가 실시간 조회 (Tier3 사용)
-│   ├── market_collector.py     SPY 종가 + 1개월 수익률 (ProcessBuilder 경유)
 │   ├── stock_info_collector.py 종목 재무정보 on-demand (yfinance .info)
 │   └── finnhub_collector.py    Finnhub 수집기 (운영 미연결)
 ├── indicators/             개별 지표 계산
@@ -101,6 +100,7 @@ data/
 **Tier 2 — on-demand 실시간 계산 + 캐싱 (`calculate_on_demand`)**
 - 검색/상세 조회 시 Spring Boot가 ProcessBuilder로 호출
 - `CACHE_DAYS=7` 이내 데이터 있으면 DB 캐시 반환 (재계산 없음)
+- 수동 새로고침 경로는 `force=True`로 호출해 캐시를 무시하고 재계산
 - 캐시 미스 시 즉시 계산 → `user_id='cache'`로 저장
 
 **Tier 3 — 실시간 포트폴리오 계산 (`calculate_current_portfolio`)**

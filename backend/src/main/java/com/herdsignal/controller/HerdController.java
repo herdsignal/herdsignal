@@ -44,6 +44,17 @@ public class HerdController {
     }
 
     /**
+     * POST /api/portfolio/herd/refresh
+     * 포트폴리오 전체 종목의 HERD 점수를 강제 재계산 후 조회.
+     * 수동 새로고침 전용이며 MVP에서 userId는 AppConstants.DEFAULT_USER_ID 고정.
+     */
+    @PostMapping("/portfolio/herd/refresh")
+    public ResponseEntity<ApiResponse<PortfolioHerdResponse>> refreshPortfolioHerd() {
+        PortfolioHerdResponse response = herdService.refreshPortfolioHerd(AppConstants.DEFAULT_USER_ID);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
      * GET /api/stocks/{ticker}/herd
      * 특정 종목의 최신 HERD 점수 + 지표 분해값 조회.
      * 데이터가 없으면 404 반환.
@@ -52,6 +63,17 @@ public class HerdController {
     public ResponseEntity<ApiResponse<HerdScoreResponse>> getStockHerd(
             @PathVariable String ticker) {
         HerdScoreResponse response = herdService.getStockHerd(ticker.toUpperCase());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * POST /api/stocks/{ticker}/herd/refresh
+     * 특정 종목의 HERD 점수를 강제 재계산 후 조회.
+     */
+    @PostMapping("/stocks/{ticker}/herd/refresh")
+    public ResponseEntity<ApiResponse<HerdScoreResponse>> refreshStockHerd(
+            @PathVariable String ticker) {
+        HerdScoreResponse response = herdService.refreshStockHerd(ticker.toUpperCase());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

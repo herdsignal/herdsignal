@@ -37,6 +37,8 @@ import {
   getPortfolioHerd,
   getStockHerd,
   getSpyHerdHistory,
+  refreshPortfolioHerd,
+  refreshStockHerd,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
@@ -477,11 +479,10 @@ export default function Dashboard() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     try {
-      const [summaryRes, herdRes, spyRes, spyHistoryRes] = await Promise.allSettled([
+      const [summaryRes, herdRes, spyRes] = await Promise.allSettled([
         getPortfolioRealtime(),
-        getPortfolioHerd(),
-        getStockHerd('SPY'),
-        getSpyHerdHistory('3y'),
+        refreshPortfolioHerd(),
+        refreshStockHerd('SPY'),
       ])
 
       if (summaryRes.status === 'fulfilled') {
@@ -505,6 +506,10 @@ export default function Dashboard() {
         setSpyData(data)
         writeCache(CACHE_KEY_SPY, data)
       }
+
+      const spyHistoryRes = await getSpyHerdHistory('3y')
+        .then(res => ({ status: 'fulfilled', value: res }))
+        .catch(error => ({ status: 'rejected', reason: error }))
 
       if (spyHistoryRes.status === 'fulfilled') {
         const points = spyHistoryRes.value.data?.data?.points ?? []
