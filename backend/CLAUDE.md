@@ -1,6 +1,6 @@
 # backend/ — Spring Boot REST API
 
-최종 업데이트: 2026-07-02
+최종 업데이트: 2026-07-03
 
 ## 이 폴더의 역할
 MariaDB에 저장된 HERD Index 데이터를 React에 서빙.
@@ -22,6 +22,7 @@ src/main/java/com/herdsignal/
 ## 주요 API 엔드포인트
 ```
 GET    /api/stocks/{ticker}/herd              종목 HERD Index + 지표 분해 조회
+GET    /api/stocks/{ticker}/financials        종목 재무정보 조회 (yfinance .info)
 GET    /api/portfolio/herd                    포트폴리오 전체 HERD 조회
 
 GET    /api/portfolio                         포트폴리오 목록 조회
@@ -36,6 +37,8 @@ GET    /api/watchlist                         관심 종목 목록 조회
 GET    /api/watchlist/herd                    관심 종목 전체 HERD 조회
 POST   /api/watchlist                         관심 종목 추가
 DELETE /api/watchlist/{ticker}                관심 종목 삭제
+
+GET    /api/market/spy                        SPY 종가 + 1개월 수익률 (yfinance)
 ```
 
 ## 기술 스택
@@ -60,6 +63,12 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - WatchlistService
   - 관심 종목 CRUD
   - HerdService를 재사용한 관심 종목 HERD 조회
+- MarketService
+  - Python market_collector.get_spy_market_data() 호출
+  - SPY 종가·1개월 수익률 반환 (ProcessBuilder)
+- FinancialsService
+  - Python stock_info_collector.get_stock_financials(ticker) 호출
+  - 종목 재무정보 반환 (ProcessBuilder, 티커 정규식 검증 포함)
 
 ## DB/JPA 원칙
 - Python `init_db.py`가 생성한 테이블 스키마를 기준으로 한다.

@@ -1,6 +1,6 @@
 # data/ — Python 데이터 엔진
 
-최종 업데이트: 2026-07-02
+최종 업데이트: 2026-07-03
 
 ## 이 폴더의 역할
 yfinance로 주가 데이터 수집 + HERD Index 계산 + MariaDB 저장.
@@ -11,9 +11,11 @@ Spring Boot나 React와 직접 통신하지 않음. DB만 바라봄.
 ```
 data/
 ├── collectors/             yfinance 데이터 수집
-│   ├── stock_collector.py  주가 데이터 수집 (yfinance)
-│   ├── price_collector.py  현재가 실시간 조회 (Tier3 사용)
-│   └── finnhub_collector.py  Finnhub 수집기 (운영 미연결)
+│   ├── stock_collector.py      주가 데이터 수집 (yfinance)
+│   ├── price_collector.py      현재가 실시간 조회 (Tier3 사용)
+│   ├── market_collector.py     SPY 종가 + 1개월 수익률 (ProcessBuilder 경유)
+│   ├── stock_info_collector.py 종목 재무정보 on-demand (yfinance .info)
+│   └── finnhub_collector.py    Finnhub 수집기 (운영 미연결)
 ├── indicators/             개별 지표 계산
 │   ├── rsi.py              RSI 계산 (주봉/월봉)
 │   ├── ma.py               이동평균 계산
