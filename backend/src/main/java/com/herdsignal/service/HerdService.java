@@ -3,6 +3,8 @@ package com.herdsignal.service;
 import com.herdsignal.domain.HerdIndicator;
 import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.UserPortfolio;
+import com.herdsignal.dto.HerdHistoryPoint;
+import com.herdsignal.dto.HerdHistoryResponse;
 import com.herdsignal.dto.HerdScoreResponse;
 import com.herdsignal.dto.PortfolioHerdResponse;
 import com.herdsignal.exception.ResourceNotFoundException;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -195,6 +198,39 @@ public class HerdService {
                 .map(this::buildHerdScoreResponse)
                 .filter(Objects::nonNull)
                 .toList();
+    }
+
+    /**
+     * 특정 종목의 HERD 점수 히스토리 조회.
+     * period 문자열을 파싱해 기준일을 산출하고 그 이후 데이터를 날짜 오름차순으로 반환.
+     *
+     * @param ticker 티커 심볼 (대문자)
+     * @param period "3y" / "1y" / "6m" 등 — 미지원 형식은 기본값 3y 적용
+     */
+    public HerdHistoryResponse getHerdHistory(String ticker, String period) {
+        LocalDate cutoff = parsePeriod(period);
+        List<HerdScore> scores = herdScoreRepository.findHistoryByTickerSince(ticker, cutoff);
+        List<HerdHistoryPoint> points = scores.stream()
+                .map(s -> HerdHistoryPoint.builder()
+                        .date(s.getScoreDate().toString())
+                        .score(s.getHerdScore().doubleValue())
+                        .build())
+                .toList();
+        return HerdHistoryResponse.builder().points(points).build();
+    }
+
+    /** "3y" → today-3년, "1y" → today-1년, "6m" → today-6개월, 그 외 기본 3년 */
+    private LocalDate parsePeriod(String period) {
+        if (period == null || period.isBlank()) return LocalDate.now().minusYears(3);
+        try {
+            if (period.endsWith("y")) {
+                return LocalDate.now().minusYears(Long.parseLong(period.replace("y", "")));
+            }
+            if (period.endsWith("m")) {
+                return LocalDate.now().minusMonths(Long.parseLong(period.replace("m", "")));
+            }
+        } catch (NumberFormatException ignored) { }
+        return LocalDate.now().minusYears(3);
     }
 
     /**

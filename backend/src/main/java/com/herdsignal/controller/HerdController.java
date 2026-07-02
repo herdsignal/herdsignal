@@ -2,6 +2,7 @@ package com.herdsignal.controller;
 
 import com.herdsignal.config.AppConstants;
 import com.herdsignal.dto.ApiResponse;
+import com.herdsignal.dto.HerdHistoryResponse;
 import com.herdsignal.dto.HerdScoreResponse;
 import com.herdsignal.dto.PortfolioHerdResponse;
 import com.herdsignal.dto.StockFinancialsResponse;
@@ -55,6 +56,19 @@ public class HerdController {
     public ResponseEntity<ApiResponse<StockFinancialsResponse>> getStockFinancials(
             @PathVariable String ticker) {
         StockFinancialsResponse response = financialsService.getFinancials(ticker.toUpperCase());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * GET /api/stocks/{ticker}/herd/history?period=3y
+     * HERD 점수 히스토리 조회. period 기본값 3y.
+     * 지원 형식: 숫자 + y(년) 또는 m(월) — 예: 3y, 1y, 6m.
+     */
+    @GetMapping("/stocks/{ticker}/herd/history")
+    public ResponseEntity<ApiResponse<HerdHistoryResponse>> getStockHerdHistory(
+            @PathVariable String ticker,
+            @RequestParam(defaultValue = "3y") String period) {
+        HerdHistoryResponse response = herdService.getHerdHistory(ticker.toUpperCase(), period);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

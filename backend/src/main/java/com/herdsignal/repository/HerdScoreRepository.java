@@ -2,7 +2,10 @@ package com.herdsignal.repository;
 
 import com.herdsignal.domain.HerdScore;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +20,8 @@ public interface HerdScoreRepository extends JpaRepository<HerdScore, Long> {
 
     /** 티커의 전체 HERD 점수 히스토리 조회 (최신순) */
     List<HerdScore> findByTickerOrderByScoreDateDesc(String ticker);
+
+    /** 티커의 특정 날짜 이후 HERD 점수 히스토리 조회 (날짜 오름차순) */
+    @Query("SELECT h FROM HerdScore h WHERE h.ticker = :ticker AND h.scoreDate >= :cutoff ORDER BY h.scoreDate ASC")
+    List<HerdScore> findHistoryByTickerSince(@Param("ticker") String ticker, @Param("cutoff") LocalDate cutoff);
 }

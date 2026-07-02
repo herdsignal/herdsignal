@@ -23,11 +23,20 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceArea,
+} from 'recharts'
+import {
   getPortfolio,
   getPortfolioRealtime,
   getPortfolioHerd,
   getStockHerd,
-  getSpyMarket,
+  getSpyHerdHistory,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
@@ -40,11 +49,11 @@ const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
 
 /* ── localStorage 캐시 키 ──────────────────── */
-const CACHE_KEY_REALTIME   = 'hs_portfolio_realtime'
-const CACHE_KEY_HERD       = 'hs_portfolio_herd'
-const CACHE_KEY_SPY        = 'hs_spy_herd'
-const CACHE_KEY_SPY_MARKET = 'hs_spy_market'
-const CACHE_KEY_TIME       = 'hs_cache_time'
+const CACHE_KEY_REALTIME    = 'hs_portfolio_realtime'
+const CACHE_KEY_HERD        = 'hs_portfolio_herd'
+const CACHE_KEY_SPY         = 'hs_spy_herd'
+const CACHE_KEY_SPY_HISTORY = 'hs_spy_history'
+const CACHE_KEY_TIME        = 'hs_cache_time'
 
 /** localStorage에서 JSON 파싱. 실패 시 null 반환 */
 function readCache(key) {
@@ -180,6 +189,55 @@ function fmtScoreDate(dateStr, fetchTime) {
   return isNaN(d) ? dateStr : d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
 }
 
+/** HERD 점수 → 단계 색상 (히스토리 통계용) */
+function scoreToColor(score) {
+  if (score == null) return 'var(--text-1)'
+  if (score < 20) return 'var(--flee)'
+  if (score < 40) return 'var(--scatter)'
+  if (score < 60) return 'var(--calm)'
+  if (score < 80) return 'var(--drift)'
+  return 'var(--rush)'
+}
+
+/** points 배열에서 targetDate에 가장 가까운 포인트 반환 */
+function findScoreAt(points, targetDate) {
+  if (!points?.length) return null
+  const target = targetDate.getTime()
+  let closest = null
+  let minDiff = Infinity
+  for (const p of points) {
+    const diff = Math.abs(new Date(p.date + 'T00:00:00').getTime() - target)
+    if (diff < minDiff) { minDiff = diff; closest = p }
+  }
+  return closest
+}
+
+/** "2023-07-01" → "2023.07" (X축 눈금 포맷) */
+function fmtHistAxisDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00')
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+/** Timeline 차트 커스텀 툴팁 */
+function HistTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null
+  const score = payload[0]?.value
+  return (
+    <div className={styles.histTooltip}>
+      <div className={styles.histTooltipDate}>
+        {label
+          ? new Date(label + 'T00:00:00').toLocaleDateString('ko-KR', {
+              year: 'numeric', month: 'long', day: 'numeric',
+            })
+          : ''}
+      </div>
+      <div style={{ color: scoreToColor(score), fontFamily: 'Space Grotesk', fontWeight: 600 }}>
+        HERD {score != null ? Math.round(score) : '—'}
+      </div>
+    </div>
+  )
+}
+
 /* ── 컴포넌트 ─────────────────────────────── */
 
 export default function Dashboard() {
@@ -189,13 +247,14 @@ export default function Dashboard() {
   const [summary,        setSummary]        = useState(null)
   const [herdMap,        setHerdMap]        = useState({})
   const [spyData,        setSpyData]        = useState(null)
-  const [spyMarket,      setSpyMarket]      = useState(null)
+  const [spyHistory,     setSpyHistory]     = useState([])
+  const [spyTab,         setSpyTab]         = useState('overview')
   /*
    * SPY 데이터 ref 캐시 — React 18 Strict Mode가 effect를 cleanup → 재실행할 때
    * state는 초기화되지만 ref는 유지된다. 두 번째 실행에서 ref 값을 즉시 state에 반영.
    */
-  const spyDataCache   = useRef(null)
-  const spyMarketCache = useRef(null)
+  const spyDataCache    = useRef(null)
+  const spyHistoryCache = useRef(null)
   const [loading,        setLoading]        = useState(true)
   const [error,          setError]          = useState(null)
   const [modalTicker,    setModalTicker]    = useState(null)
@@ -285,27 +344,24 @@ export default function Dashboard() {
 
   /*
    * SPY 배너 — 포트폴리오 로딩과 완전히 분리.
-   * HERD 데이터(getStockHerd)와 시장 데이터(getSpyMarket)를 병렬로 로드한다.
-   * 각각 ref 캐시(Strict Mode 대응) → localStorage 캐시 → API 호출 순서로 처리.
+   * ref 캐시(Strict Mode 대응) → localStorage 캐시 → API 호출 순서로 처리.
+   * HERD 점수 + 3년 히스토리 동시 로딩.
    */
   useEffect(() => {
-    /* ref 캐시 히트 (Strict Mode 두 번째 실행) */
-    const herdCached   = spyDataCache.current   ?? readCache(CACHE_KEY_SPY)
-    const marketCached = spyMarketCache.current ?? readCache(CACHE_KEY_SPY_MARKET)
+    const herdCached    = spyDataCache.current    ?? readCache(CACHE_KEY_SPY)
+    const historyCached = spyHistoryCache.current ?? readCache(CACHE_KEY_SPY_HISTORY)
 
     if (herdCached) {
       spyDataCache.current = herdCached
       setSpyData(herdCached)
     }
-    if (marketCached) {
-      spyMarketCache.current = marketCached
-      setSpyMarket(marketCached)
+    if (historyCached) {
+      spyHistoryCache.current = historyCached
+      setSpyHistory(historyCached)
     }
 
-    /* 두 데이터 모두 캐시에 있으면 API 호출 생략 */
-    if (herdCached && marketCached) return
+    if (herdCached && historyCached) return
 
-    /* 캐시에 없는 데이터만 API 호출 */
     if (!herdCached) {
       getStockHerd('SPY')
         .then((res) => {
@@ -317,15 +373,15 @@ export default function Dashboard() {
         .catch(() => { /* SPY HERD 실패 시 배너 기본값(Calm/50) 유지 */ })
     }
 
-    if (!marketCached) {
-      getSpyMarket()
+    if (!historyCached) {
+      getSpyHerdHistory('3y')
         .then((res) => {
-          const data = res.data?.data ?? null
-          spyMarketCache.current = data
-          setSpyMarket(data)
-          writeCache(CACHE_KEY_SPY_MARKET, data)
+          const points = res.data?.data?.points ?? []
+          spyHistoryCache.current = points
+          setSpyHistory(points)
+          writeCache(CACHE_KEY_SPY_HISTORY, points)
         })
-        .catch(() => { /* 시장 데이터 실패 시 종가·수익률 "—" 유지 */ })
+        .catch(() => { /* 히스토리 실패 시 Timeline 탭 빈 상태 유지 */ })
     }
   }, [])
 
@@ -385,11 +441,11 @@ export default function Dashboard() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     try {
-      const [summaryRes, herdRes, spyRes, spyMarketRes] = await Promise.allSettled([
+      const [summaryRes, herdRes, spyRes, spyHistoryRes] = await Promise.allSettled([
         getPortfolioRealtime(),
         getPortfolioHerd(),
         getStockHerd('SPY'),
-        getSpyMarket(),
+        getSpyHerdHistory('3y'),
       ])
 
       if (summaryRes.status === 'fulfilled') {
@@ -414,11 +470,11 @@ export default function Dashboard() {
         writeCache(CACHE_KEY_SPY, data)
       }
 
-      if (spyMarketRes.status === 'fulfilled') {
-        const data = spyMarketRes.value.data?.data ?? null
-        spyMarketCache.current = data
-        setSpyMarket(data)
-        writeCache(CACHE_KEY_SPY_MARKET, data)
+      if (spyHistoryRes.status === 'fulfilled') {
+        const points = spyHistoryRes.value.data?.data?.points ?? []
+        spyHistoryCache.current = points
+        setSpyHistory(points)
+        writeCache(CACHE_KEY_SPY_HISTORY, points)
       }
 
       /* 캐시 저장 시각 갱신 — 헤더 "업데이트 · 오후 X:XX" 기준 */
@@ -445,6 +501,20 @@ export default function Dashboard() {
 
   const spyScore = spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
+
+  /* 히스토리 기준 통계 포인트 (Overview 탭) */
+  const ystPoint = useMemo(
+    () => spyHistory.length > 0 ? spyHistory[spyHistory.length - 1] : null,
+    [spyHistory]
+  )
+  const m1Point = useMemo(() => {
+    const t = new Date(); t.setDate(t.getDate() - 30)
+    return findScoreAt(spyHistory, t)
+  }, [spyHistory])
+  const y1Point = useMemo(() => {
+    const t = new Date(); t.setFullYear(t.getFullYear() - 1)
+    return findScoreAt(spyHistory, t)
+  }, [spyHistory])
 
   /*
    * 모달 저장 완료 → 로컬 상태 즉시 업데이트 + localStorage 캐시 갱신.
@@ -536,6 +606,7 @@ export default function Dashboard() {
 
       {/* ── S&P500 HERD 배너 ── */}
       <div className={styles.marketBanner}>
+        {/* 좌: 점수·단계 블록 */}
         <div className={styles.bannerScoreBlock}>
           <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
           <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
@@ -547,39 +618,106 @@ export default function Dashboard() {
           <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
         </div>
 
-        <div className={styles.bannerAnimBlock}>
-          <HerdDots score={spyScore} fill dotCount={60} />
-          <div className={styles.bannerAnimLabel}>
-            <span>← Flee (매수)</span>
-            <span>Rush (익절) →</span>
+        {/* 우: 탭 + 컨텐츠 */}
+        <div className={styles.bannerRight}>
+          {/* 탭 버튼 */}
+          <div className={styles.bannerTabs}>
+            <button
+              className={`${styles.bannerTab} ${spyTab === 'overview' ? styles.bannerTabActive : ''}`}
+              onClick={() => setSpyTab('overview')}
+            >Overview</button>
+            <button
+              className={`${styles.bannerTab} ${spyTab === 'timeline' ? styles.bannerTabActive : ''}`}
+              onClick={() => setSpyTab('timeline')}
+            >Timeline</button>
           </div>
-          <div className={styles.bannerSpectrumOverlay}>
-            <SpectrumBar score={spyScore} height={3} />
-          </div>
-        </div>
 
-        <div className={styles.bannerStatsBlock}>
-          <div className={styles.bannerStatItem}>
-            <div className={styles.bannerStatLabel}>SPY 종가</div>
-            <div className={styles.bannerStatValue}>
-              {spyMarket ? `$${Number(spyMarket.currentPrice).toFixed(2)}` : '—'}
+          {/* Overview 탭 */}
+          {spyTab === 'overview' && (
+            <div className={styles.bannerOverview}>
+              <div className={styles.bannerAnimBlock}>
+                <HerdDots score={spyScore} fill dotCount={60} />
+                <div className={styles.bannerAnimLabel}>
+                  <span>← Flee (매수)</span>
+                  <span>Rush (익절) →</span>
+                </div>
+                <div className={styles.bannerSpectrumOverlay}>
+                  <SpectrumBar score={spyScore} height={3} />
+                </div>
+              </div>
+              <div className={styles.bannerHistStats}>
+                <div className={styles.bannerStatItem}>
+                  <div className={styles.bannerStatLabel}>어제</div>
+                  <div className={styles.bannerStatValue} style={{ color: scoreToColor(ystPoint?.score) }}>
+                    {ystPoint ? Math.round(ystPoint.score) : '—'}
+                  </div>
+                </div>
+                <div className={styles.bannerStatItem}>
+                  <div className={styles.bannerStatLabel}>1달 전</div>
+                  <div className={styles.bannerStatValue} style={{ color: scoreToColor(m1Point?.score) }}>
+                    {m1Point ? Math.round(m1Point.score) : '—'}
+                  </div>
+                </div>
+                <div className={styles.bannerStatItem}>
+                  <div className={styles.bannerStatLabel}>1년 전</div>
+                  <div className={styles.bannerStatValue} style={{ color: scoreToColor(y1Point?.score) }}>
+                    {y1Point ? Math.round(y1Point.score) : '—'}
+                  </div>
+                </div>
+                <div className={styles.bannerStatItem}>
+                  <div className={styles.bannerStatLabel}>업데이트</div>
+                  <div className={styles.bannerStatUpdate}>
+                    {spyData ? fmtScoreDate(spyData.scoreDate, lastUpdated) : '—'}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className={styles.bannerStatItem}>
-            <div className={styles.bannerStatLabel}>1개월 수익률</div>
-            <div
-              className={styles.bannerStatValue}
-              style={{ color: spyMarket ? pctColor(spyMarket.return1mPct) : 'inherit' }}
-            >
-              {spyMarket ? fmtPct(spyMarket.return1mPct) : '—'}
+          )}
+
+          {/* Timeline 탭 */}
+          {spyTab === 'timeline' && (
+            <div className={styles.bannerTimeline}>
+              {spyHistory.length === 0 ? (
+                <div className={styles.bannerTimelineEmpty}>데이터 없음</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={190}>
+                  <LineChart data={spyHistory} margin={{ top: 8, right: 20, left: 0, bottom: 4 }}>
+                    <ReferenceArea y1={0}  y2={20}  fill="#3B82F6" fillOpacity={0.08} />
+                    <ReferenceArea y1={20} y2={40}  fill="#93C5FD" fillOpacity={0.08} />
+                    <ReferenceArea y1={40} y2={60}  fill="#9CA3AF" fillOpacity={0.05} />
+                    <ReferenceArea y1={60} y2={80}  fill="#FB923C" fillOpacity={0.08} />
+                    <ReferenceArea y1={80} y2={100} fill="#EF4444" fillOpacity={0.08} />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={fmtHistAxisDate}
+                      interval={Math.max(0, Math.floor(spyHistory.length / 6) - 1)}
+                      tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
+                      axisLine={false}
+                      tickLine={false}
+                      tickMargin={6}
+                    />
+                    <YAxis
+                      domain={[0, 100]}
+                      ticks={[0, 20, 40, 60, 80, 100]}
+                      tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
+                      axisLine={false}
+                      tickLine={false}
+                      width={28}
+                    />
+                    <Tooltip content={<HistTooltip />} />
+                    <Line
+                      type="monotone"
+                      dataKey="score"
+                      stroke="rgba(255,255,255,0.65)"
+                      strokeWidth={1.5}
+                      dot={false}
+                      activeDot={{ r: 3, fill: 'rgba(255,255,255,0.9)', strokeWidth: 0 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
             </div>
-          </div>
-          <div className={styles.bannerStatItem}>
-            <div className={styles.bannerStatLabel}>업데이트</div>
-            <div className={styles.bannerStatUpdate}>
-              {spyData ? fmtScoreDate(spyData.scoreDate, lastUpdated) : '—'}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
