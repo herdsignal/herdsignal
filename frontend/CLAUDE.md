@@ -79,7 +79,7 @@ Rush    #EF4444  (레드)
 
 ## 부분 구현 / 미구현
 - StockDetail의 재무 정보, 뉴스, 애널리스트 목표가, 내부자 거래는 placeholder UI만 있음.
-- StockDetail의 `ma200Weekly` 지표는 UI 정의가 있으나 API 응답에 아직 없음.
+- StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - Dashboard/Watchlist의 SPY 배너에서 SPY 종가, 1개월 수익률은 아직 `—` placeholder.
 
 ## API 연동

@@ -33,8 +33,6 @@ const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
  *
  * weight: HERD 점수 산출 시 반영 비율 (%)
  * min/max: 바 너비 정규화 기준. ma200Deviation은 ±50% 기준
- * disabled: true → 현재 비활성 지표 (가중치 0%, 흐리게 표시)
- * ma200Weekly: HerdScoreResponse에 아직 없음 → API 응답에 필드 추가 시 자동 표시
  */
 const INDICATORS = [
   { key: 'monthlyRsi',     label: '월봉 RSI',       weight: 24, min: 0,   max: 100, unit: '',  signed: false },
@@ -42,7 +40,6 @@ const INDICATORS = [
   { key: 'weeklyRsi',      label: '주봉 RSI',       weight: 19, min: 0,   max: 100, unit: '',  signed: false },
   { key: 'position52w',    label: '52주 위치',      weight: 19, min: 0,   max: 100, unit: '%', signed: false },
   { key: 'ma200Deviation', label: 'MA200 이격도',   weight: 18, min: -50, max: 50,  unit: '%', signed: true  },
-  { key: 'volumeStrength', label: '거래량 강도',    weight:  0, min: 0,   max: 100, unit: '',  signed: false, disabled: true },
 ]
 
 /* ── 재무정보 포맷 함수 ──────────────────────── */
@@ -448,28 +445,27 @@ export default function StockDetail() {
               <div className={styles.cardBody}>
                 {INDICATORS.map((ind) => {
                   /*
-                   * API 응답에 없는 필드(ma200Weekly 등)는 undefined → null로 처리.
-                   * 비활성 지표(disabled)는 값이 있어도 바를 그리지 않음.
+                   * API 응답에 없는 필드는 undefined → null로 처리.
                    */
                   const raw    = herdData[ind.key] ?? null
-                  const hasVal = raw != null && !ind.disabled
+                  const hasVal = raw != null
                   const pct    = hasVal ? normalizeBar(raw, ind.min, ind.max) : 0
                   const disp   = raw != null ? formatIndicator(raw, ind.unit, ind.signed) : '—'
 
                   return (
                     <div
                       key={ind.key}
-                      className={`${styles.indicatorRow} ${ind.disabled ? styles.indicatorRowDisabled : ''}`}
+                      className={styles.indicatorRow}
                     >
                       {/* 지표명 */}
                       <div className={styles.indicatorLabel}>{ind.label}</div>
 
                       {/* 가중치 — 비활성 항목은 "비활성" 텍스트 */}
                       <div className={styles.indicatorWeight}>
-                        {ind.disabled ? '비활성' : `${ind.weight}%`}
+                        {ind.weight}%
                       </div>
 
-                      {/* 프로그레스 바 — 값 없거나 비활성이면 빈 트랙만 */}
+                      {/* 프로그레스 바 — 값 없으면 빈 트랙만 */}
                       <div className={styles.indicatorTrack}>
                         {hasVal && (
                           <div

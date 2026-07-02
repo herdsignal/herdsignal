@@ -68,7 +68,7 @@ class HerdScore(Base):
 # 3. 지표 분해값 (herd_indicators)
 # ──────────────────────────────────────────────
 class HerdIndicator(Base):
-    """HERD 점수를 구성하는 5개 지표의 날짜별 개별 값."""
+    """HERD 점수를 구성하는 지표의 날짜별 개별 값."""
     __tablename__ = "herd_indicators"
     __table_args__ = (
         UniqueConstraint("ticker", "score_date", name="uq_herd_indicators_ticker_date"),
@@ -83,6 +83,7 @@ class HerdIndicator(Base):
     position_52w     = Column(Decimal(5, 2), nullable=True,                         comment="52주 고저 위치 정규화값 (0~100)")
     ma200_deviation  = Column(Decimal(5, 2), nullable=True,                         comment="MA200 이격도 정규화값 (0~100)")
     volume_strength  = Column(Decimal(5, 2), nullable=True,                         comment="거래량 강도 정규화값 (0~100)")
+    ma200_weekly     = Column(Decimal(5, 2), nullable=True,                         comment="200주 MA 위치 정규화값 (0~100)")
     created_at       = Column(DateTime,      nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
 
 

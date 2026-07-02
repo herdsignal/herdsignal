@@ -153,7 +153,6 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ### 다음 단계
 
-- **200주 MA DB/API 반영 여부 결정** — 운영 계산에는 포함되지만 `herd_indicators` DB 저장 및 `HerdScoreResponse` API 응답에 미포함. 반영 시 `data/saver.py` + `backend/HerdScoreResponse` 수정 필요
 - **StockDetail 미연동 영역** — 뉴스(Finnhub), 애널리스트 목표가, 내부자 거래, 가격 차트 (UI 자리만 존재)
 
 ---
@@ -172,7 +171,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - MA200 이격도 18%
   - 거래량 강도 0% (계산 코드는 유지, 운영 가중치 비활성)
   - 200주 MA 위치 20%
-- 주의: `herd_indicators` DB 테이블과 `HerdScoreResponse` API 응답은 아직 200주 MA 컬럼을 포함하지 않음. 따라서 화면의 지표 분해는 5개 저장 지표 중심으로 표시됨.
+- `herd_indicators` DB 테이블과 `HerdScoreResponse` API 응답은 200주 MA 위치(`ma200_weekly`)를 포함함.
 
 ### 임계값
 

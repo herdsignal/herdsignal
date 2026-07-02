@@ -66,6 +66,10 @@ public class HerdIndicator {
     @Column(name = "volume_strength", precision = 5, scale = 2)
     private BigDecimal volumeStrength;
 
+    /** 200주 MA 위치 백분위 정규화값 (0~100) */
+    @Column(name = "ma200_weekly", precision = 5, scale = 2)
+    private BigDecimal ma200Weekly;
+
     /** 레코드 생성 시각 (UTC) — Python이 관리, Spring은 읽기 전용 */
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

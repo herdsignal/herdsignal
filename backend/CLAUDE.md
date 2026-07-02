@@ -91,7 +91,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 
 ## 부분 구현 / 미구현
 - 별도 `GET /api/stocks/{ticker}/indicators` 엔드포인트는 없음. 지표 분해값은 `/api/stocks/{ticker}/herd` 응답에 포함된다.
-- 200주 MA 지표는 현재 `HerdScoreResponse`에 포함되어 있지 않다.
+- 200주 MA 위치는 `HerdScoreResponse.ma200Weekly`로 응답한다.
 - 로그인/인증/멀티유저 API는 없음. 현재는 `local` 사용자 고정.
 - 증권사 API 추상화는 구현되어 있지 않다.
 

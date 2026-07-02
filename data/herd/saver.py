@@ -112,7 +112,7 @@ def _upsert_herd_indicators(session, ticker: str,
                              indicators: dict, score_date: date) -> None:
     """
     herd_indicators 테이블에 (ticker, score_date) 기준으로 UPSERT.
-    5개 지표값을 소수점 2자리로 반올림해 저장.
+    HERD 지표값을 소수점 2자리로 반올림해 저장.
     """
     obj = (session.query(HerdIndicator)
            .filter_by(ticker=ticker, score_date=score_date)
@@ -126,6 +126,7 @@ def _upsert_herd_indicators(session, ticker: str,
         "position_52w"   : round(float(indicators["position_52w"]),    2),
         "ma200_deviation": round(float(indicators["ma200_deviation"]), 2),
         "volume_strength": round(float(indicators["volume_strength"]), 2),
+        "ma200_weekly"   : round(float(indicators["ma200_weekly"]),    2),
     }
 
     if obj is None:
