@@ -231,3 +231,41 @@ def save_herd_result(ticker: str, herd_result: dict, df: pd.DataFrame) -> bool:
             session.rollback()
             logger.error(f"[{ticker}] DB 저장 실패 — 롤백 처리: {e}")
             return False
+
+
+def save_herd_for_date(ticker: str, herd_result: dict, score_date: date) -> bool:
+    """
+    백필용 — score_date를 외부에서 지정해 herd_scores + herd_indicators에 UPSERT.
+    daily_prices는 운영 스케줄러가 관리하므로 포함하지 않는다.
+
+    Args:
+        ticker:      티커 심볼 (예: "SPY")
+        herd_result: calculator 결과 딕셔너리 (score / stage / indicators)
+        score_date:  저장할 날짜
+
+    Returns:
+        저장 성공 여부 (True / False)
+    """
+    logger.debug(f"[{ticker}] 백필 저장  날짜={score_date}")
+
+    with _SessionFactory() as session:
+        try:
+            _upsert_stock(session, ticker)
+            _upsert_herd_score(
+                session, ticker,
+                herd_result["score"],
+                herd_result["stage"],
+                score_date,
+            )
+            _upsert_herd_indicators(
+                session, ticker,
+                herd_result["indicators"],
+                score_date,
+            )
+            session.commit()
+            return True
+
+        except SQLAlchemyError as e:
+            session.rollback()
+            logger.error(f"[{ticker}] 백필 저장 실패 — 롤백 처리 ({score_date}): {e}")
+            return False
