@@ -84,11 +84,11 @@ function stageDisplay(stage) {
 
 function stageDesc(stage) {
   switch (normalizeStage(stage)) {
-    case 'rush':    return '극단적 과열 · 적극 익절'
-    case 'drift':   return '탐욕 · 일부 익절 고려'
-    case 'scatter': return '공포 · 분할 매수'
-    case 'flee':    return '극단적 공포 · 적극 매수'
-    default:        return '중립 · 보유 유지'
+    case 'rush':    return '군중 밀집 · 적극 익절'
+    case 'drift':   return '쏠림 진행 · 일부 익절 고려'
+    case 'scatter': return '무리 흩어짐 · 분할 매수'
+    case 'flee':    return '무리 이탈 · 적극 매수'
+    default:        return '차분한 균형 · 보유 유지'
   }
 }
 
@@ -298,7 +298,7 @@ export default function Search() {
     return [
       { title: '저점 후보', desc: '분할매수 관찰', rows: low },
       { title: '중립 후보', desc: '보유·대기', rows: calm },
-      { title: '과열 후보', desc: '익절 관찰', rows: hot },
+      { title: '밀집 후보', desc: '익절 관찰', rows: hot },
     ]
   }, [popularData])
 

@@ -1,8 +1,8 @@
 /**
  * HerdDots.jsx — HERD 무리 점 애니메이션 컴포넌트
  *
- * score에 따라 점들이 오른쪽(Rush=몰림) 또는 왼쪽(Flee=흩어짐)으로 이동.
- * 래퍼런스: wireframes/wireframe-home-v4.html createHerd() 함수 기반.
+ * score에 따라 군중의 흐름을 다르게 표현한다.
+ * Flee=무리 이탈, Scatter=흩어짐, Calm=균형, Drift=쏠림, Rush=밀집.
  *
  * fill=true: 부모 컨테이너를 꽉 채우는 모드 (배너, 테이블 행에서 사용)
  * fill=false: 고정 width/height 모드 (기본값)
@@ -17,6 +17,77 @@ function getColor(score) {
   if (score >= 40) return '#71717A'  // Calm  — 회색
   if (score >= 15) return '#60A5FA'  // Scatter — 연파랑
   return '#3B82F6'                   // Flee  — 파랑
+}
+
+function getFlowProfile(score) {
+  if (score >= 75) {
+    return {
+      anchorX: 0.82,
+      anchorY: 0.5,
+      spreadX: 0.12,
+      spreadY: 0.32,
+      pull: 0.00135,
+      drift: 0.00042,
+      jitter: 0.00008,
+      maxV: 0.0056,
+      alpha: 0.86,
+      trail: 0.16,
+    }
+  }
+  if (score >= 60) {
+    return {
+      anchorX: 0.66,
+      anchorY: 0.5,
+      spreadX: 0.24,
+      spreadY: 0.42,
+      pull: 0.00078,
+      drift: 0.00022,
+      jitter: 0.00012,
+      maxV: 0.0042,
+      alpha: 0.72,
+      trail: 0.1,
+    }
+  }
+  if (score >= 40) {
+    return {
+      anchorX: 0.5,
+      anchorY: 0.5,
+      spreadX: 0.34,
+      spreadY: 0.48,
+      pull: 0.0005,
+      drift: 0,
+      jitter: 0.00012,
+      maxV: 0.0026,
+      alpha: 0.56,
+      trail: 0,
+    }
+  }
+  if (score >= 15) {
+    return {
+      anchorX: 0.36,
+      anchorY: 0.5,
+      spreadX: 0.48,
+      spreadY: 0.62,
+      pull: 0.00042,
+      drift: -0.00016,
+      jitter: 0.00028,
+      maxV: 0.0038,
+      alpha: 0.62,
+      trail: 0.04,
+    }
+  }
+  return {
+    anchorX: 0.18,
+    anchorY: 0.5,
+    spreadX: 0.62,
+    spreadY: 0.74,
+    pull: 0.00035,
+    drift: -0.00036,
+    jitter: 0.00038,
+    maxV: 0.0048,
+    alpha: 0.68,
+    trail: 0.1,
+  }
 }
 
 /**
@@ -42,25 +113,24 @@ export default function HerdDots({
     const ctx     = canvas.getContext('2d')
     const dpr     = window.devicePixelRatio || 1
     const color   = getColor(score)
+    const profile = getFlowProfile(score)
     const cluster = score / 100          // 0(Flee) → 1(Rush)
-    const pull    = cluster * 0.0005     // 중심 인력 계수
-    const cx      = 0.12 + cluster * 0.68  // 중심 X
-    const maxV    = 0.0025 + cluster * 0.002  // 최대 속도
 
     let dots = []
     let rafId
+    let tick = 0
 
     /* 점 배열 초기화 */
     function initDots() {
-      const initCx = 0.12 + cluster * 0.68
-      const initSp = 0.42 - cluster * 0.30
       return Array.from({ length: dotCount }, () => ({
-        x:  Math.max(0.02, Math.min(0.98, initCx + (Math.random() - 0.5) * initSp * 2)),
-        y:  Math.max(0.08, Math.min(0.92, 0.5   + (Math.random() - 0.5) * 0.7)),
+        x:  Math.max(0.02, Math.min(0.98, profile.anchorX + (Math.random() - 0.5) * profile.spreadX)),
+        y:  Math.max(0.08, Math.min(0.92, profile.anchorY + (Math.random() - 0.5) * profile.spreadY)),
         vx: (Math.random() - 0.5) * 0.0025,
         vy: (Math.random() - 0.5) * 0.0025,
+        phase: Math.random() * Math.PI * 2,
+        orbit: 0.4 + Math.random() * 0.8,
         /* 물리 픽셀 기준 반지름 */
-        r:  (1.2 + Math.random() * 2) * dpr,
+        r:  (1.1 + Math.random() * (score >= 75 ? 2.6 : 2)) * dpr,
       }))
     }
 
@@ -79,34 +149,62 @@ export default function HerdDots({
 
     /* 애니메이션 루프 */
     function draw() {
+      tick += 1
       const W = canvas.width
       const H = canvas.height
       ctx.clearRect(0, 0, W, H)
 
       dots.forEach(d => {
-        /* 중심 인력 적용 */
-        d.vx += (cx  - d.x) * pull
-        d.vy += (0.5 - d.y) * pull * 0.4  // Y축 인력은 약하게
+        const waveX = Math.sin(tick * 0.012 + d.phase) * 0.018 * d.orbit
+        const waveY = Math.cos(tick * 0.01 + d.phase) * 0.028 * d.orbit
+        const targetX = profile.anchorX + waveX
+        const targetY = profile.anchorY + waveY
+        const noiseX = (Math.random() - 0.5) * profile.jitter
+        const noiseY = (Math.random() - 0.5) * profile.jitter
+
+        d.prevX = d.x
+        d.prevY = d.y
+
+        /* Flee는 바깥으로 이탈, Rush는 한쪽으로 밀집되는 흐름을 더한다. */
+        d.vx += (targetX - d.x) * profile.pull + profile.drift + noiseX
+        d.vy += (targetY - d.y) * profile.pull * 0.72 + noiseY
 
         d.x += d.vx
         d.y += d.vy
 
-        /* 경계 반사 */
-        if (d.x < 0.01 || d.x > 0.99) d.vx *= -1
-        if (d.y < 0.04 || d.y > 0.96) d.vy *= -1
+        /* 경계 처리: Flee는 화면 가장자리에서 다시 흩어지고, Rush는 밀집권 안으로 되돌아온다. */
+        if (d.x < 0.01) {
+          d.x = 0.01
+          d.vx = Math.abs(d.vx) * (score < 40 ? 0.25 : 0.55)
+        }
+        if (d.x > 0.99) {
+          d.x = 0.99
+          d.vx = -Math.abs(d.vx) * (score >= 60 ? 0.35 : 0.55)
+        }
+        if (d.y < 0.04 || d.y > 0.96) d.vy *= -0.65
 
         /* 최대 속도 제한 */
         const spd = Math.hypot(d.vx, d.vy)
-        if (spd > maxV) {
-          d.vx = (d.vx / spd) * maxV
-          d.vy = (d.vy / spd) * maxV
+        if (spd > profile.maxV) {
+          d.vx = (d.vx / spd) * profile.maxV
+          d.vy = (d.vy / spd) * profile.maxV
+        }
+
+        if (profile.trail > 0 && d.prevX != null) {
+          ctx.beginPath()
+          ctx.moveTo(d.prevX * W, d.prevY * H)
+          ctx.lineTo(d.x * W, d.y * H)
+          ctx.strokeStyle = color
+          ctx.globalAlpha = profile.trail
+          ctx.lineWidth = Math.max(1, d.r * 0.45)
+          ctx.stroke()
+          ctx.globalAlpha = 1
         }
 
         ctx.beginPath()
         ctx.arc(d.x * W, d.y * H, d.r, 0, Math.PI * 2)
         ctx.fillStyle   = color
-        /* score 높을수록 불투명하게 */
-        ctx.globalAlpha = 0.5 + cluster * 0.35
+        ctx.globalAlpha = profile.alpha + cluster * 0.08
         ctx.fill()
         ctx.globalAlpha = 1
       })

@@ -177,7 +177,7 @@ export function opportunityRows(watchlist) {
           ? '매수 대기 우선순위 높음'
           : signal === 'HOLD'
             ? '가격 식을 때까지 관찰'
-            : '과열 해소 전까지 대기',
+            : '군중 밀집이 풀릴 때까지 대기',
       }
     })
     .sort((a, b) => b.opportunityScore - a.opportunityScore)
@@ -214,7 +214,7 @@ export function buildRebalancePlan(rows, options = {}) {
         amount: driftUsd * bias * intensity,
         reason: row.drift > 5
           ? '목표 비중보다 높아 일부 비중 조정이 필요합니다.'
-          : '목표 비중 근처지만 HERD 신호가 과열권입니다.',
+          : '목표 비중 근처지만 HERD 신호가 군중 밀집권입니다.',
       })
     } else {
       holds.push({

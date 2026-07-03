@@ -139,7 +139,7 @@ export default function AiRebalance() {
 
   const summaryLines = [
     plan.sells.length > 0
-      ? `${plan.sells[0].ticker}는 목표보다 높고 HERD 신호가 과열권이라 우선 조정 대상입니다.`
+      ? `${plan.sells[0].ticker}는 목표보다 높고 HERD 신호가 군중 밀집권이라 우선 조정 대상입니다.`
       : '강한 매도/익절 우선 대상은 없습니다.',
     plan.buys.length > 0
       ? `${plan.buys[0].ticker}는 목표보다 부족하고 HERD 신호가 우호적이라 분할매수 후보입니다.`

@@ -11,7 +11,7 @@ Spring Boot API를 호출해서 HERD Index 데이터를 시각화.
 ```
 src/
 ├── components/     재사용 컴포넌트
-│   ├── HerdDots/   무리 점 애니메이션
+│   ├── HerdDots/   Herd Flow 점 애니메이션
 │   ├── SpectrumBar/ Flee~Rush 스펙트럼 바
 │   ├── Layout/     사이드바 + Outlet 레이아웃
 │   └── AvgPriceModal/ 평균 매수가·수량 수정 모달
@@ -46,7 +46,7 @@ Rush    #EF4444  (레드)
 ```
 
 ## 핵심 UI 컴포넌트
-- HerdDots: 무리 점 애니메이션 (Rush=오른쪽 뭉침, Flee=흩어짐)
+- HerdDots: Herd Flow 점 애니메이션 (Flee=무리 이탈, Scatter=흩어짐, Calm=균형, Drift=쏠림, Rush=군중 밀집)
 - SpectrumBar: Flee~Rush 스펙트럼 바
 - Layout: 공통 사이드바 + 페이지 Outlet
 - AvgPriceModal: 평균 매수가·수량 수정 모달

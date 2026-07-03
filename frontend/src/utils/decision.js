@@ -23,22 +23,22 @@ export function signalDesc(signal) {
 
 export function signalLongDesc(signal) {
   switch (signal) {
-    case 'BUY':    return '극단적 공포 구간입니다. 품질 훼손이 없다면 적극 추가매수를 검토합니다.'
-    case 'ADD':    return '공포 구간입니다. 한 번에 들어가기보다 분할매수 관점이 적합합니다.'
-    case 'HOLD':   return '중립 구간입니다. 새 행동보다 기존 계획을 유지하는 구간입니다.'
-    case 'REDUCE': return '탐욕 구간입니다. 과도한 비중이라면 일부 익절을 검토합니다.'
-    case 'SELL':   return '과열 구간입니다. 장기 보유분 일부를 현금화할 수 있는 구간입니다.'
+    case 'BUY':    return '무리가 크게 이탈한 구간입니다. 품질 훼손이 없다면 적극 추가매수를 검토합니다.'
+    case 'ADD':    return '무리가 흩어진 구간입니다. 한 번에 들어가기보다 분할매수 관점이 적합합니다.'
+    case 'HOLD':   return '차분한 균형 구간입니다. 새 행동보다 기존 계획을 유지하는 구간입니다.'
+    case 'REDUCE': return '군중 쏠림이 진행 중입니다. 과도한 비중이라면 일부 익절을 검토합니다.'
+    case 'SELL':   return '군중이 한쪽으로 밀집한 구간입니다. 장기 보유분 일부를 현금화할 수 있는 구간입니다.'
     default:       return '현재는 추가 판단 데이터가 제한적입니다.'
   }
 }
 
 export function stageDesc(stage) {
   switch (normalizeStage(stage)) {
-    case 'rush':    return '극단적 과열 · 적극 익절'
-    case 'drift':   return '탐욕 · 일부 익절 고려'
-    case 'scatter': return '공포 · 분할 매수'
-    case 'flee':    return '극단적 공포 · 적극 매수'
-    default:        return '중립 · 보유 유지'
+    case 'rush':    return '군중 밀집 · 적극 익절'
+    case 'drift':   return '쏠림 진행 · 일부 익절 고려'
+    case 'scatter': return '무리 흩어짐 · 분할 매수'
+    case 'flee':    return '무리 이탈 · 적극 매수'
+    default:        return '차분한 균형 · 보유 유지'
   }
 }
 
@@ -76,7 +76,7 @@ function qualityNotes(financials) {
 
   if (eps != null && eps < 0) notes.push('EPS가 적자라 저점 매수 신호를 보수적으로 봐야 합니다.')
   if (margin != null && margin < 0) notes.push('영업이익률이 음수라 실적 회복 확인이 필요합니다.')
-  if (pe != null && pe > 80) notes.push('PER이 높아 과열 구간에서는 익절 우선순위가 올라갑니다.')
+  if (pe != null && pe > 80) notes.push('PER이 높아 군중 밀집 구간에서는 익절 우선순위가 올라갑니다.')
   if (revenue != null && revenue > 0 && notes.length === 0) {
     notes.push('기본 재무 데이터상 즉시 차단할 품질 경고는 없습니다.')
   }
@@ -123,7 +123,7 @@ export function buildDecision({ herdData, financials, holding, summary }) {
     priority = '주의'
   } else if ((signal === 'SELL' || signal === 'REDUCE') && !hasHolding) {
     title = '신규매수 보류'
-    subtitle = '과열권 신호입니다. 보유자가 아니라면 가격이 식을 때까지 기다리는 편이 낫습니다.'
+    subtitle = '군중 밀집 신호입니다. 보유자가 아니라면 가격이 식을 때까지 기다리는 편이 낫습니다.'
     priority = '주의'
   } else if (signal === 'BUY' || signal === 'SELL') {
     priority = '높음'

@@ -243,9 +243,10 @@
   display: flex;
   justify-content: space-between;
   padding: 6px 0 10px;
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-3);
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 /* ────────────────────────────
