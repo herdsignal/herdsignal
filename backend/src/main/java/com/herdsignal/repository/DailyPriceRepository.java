@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * daily_prices 테이블 읽기 전용 접근 인터페이스.
@@ -21,6 +22,24 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
      * 결과: price_date DESC 정렬 — [0]=최신, [1]=전일
      */
     List<DailyPrice> findTop2ByTickerOrderByPriceDateDesc(String ticker);
+
+    /**
+     * 특정 기준일 이하의 최신 종가 조회.
+     * KST 22:30 미국장 시작 기준 "오늘" 가격 계산에 사용.
+     */
+    Optional<DailyPrice> findTopByTickerAndPriceDateLessThanEqualAndClosePriceIsNotNullOrderByPriceDateDesc(
+            String ticker,
+            LocalDate priceDate
+    );
+
+    /**
+     * 특정 거래일 이전의 최신 종가 조회.
+     * KST 22:30 미국장 시작 기준 전 거래일 비교에 사용.
+     */
+    Optional<DailyPrice> findTopByTickerAndPriceDateLessThanAndClosePriceIsNotNullOrderByPriceDateDesc(
+            String ticker,
+            LocalDate priceDate
+    );
 
     /** 특정 날짜 이후 종가 히스토리 조회 (날짜 오름차순) — 가격 차트용 */
     @Query("SELECT d FROM DailyPrice d WHERE d.ticker = :ticker AND d.priceDate >= :cutoff ORDER BY d.priceDate ASC")

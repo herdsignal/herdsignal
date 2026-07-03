@@ -121,6 +121,7 @@ Rush    #EF4444  (레드)
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 표시하며, frontend에서 별도 점수 계산을 하지 않는다.
 - Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 표시하며, frontend에서 별도 행동 점수 계산을 하지 않는다.
+- Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 하루 경계는 backend에서 KST 22:30 기준으로 계산한다.
 - Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.
 - Dashboard/Watchlist의 SPY 배너에서 SPY 종가, 1개월 수익률은 아직 `—` placeholder.
 

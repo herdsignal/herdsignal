@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,6 +41,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PortfolioService {
+
+    private static final ZoneId KST_ZONE = ZoneId.of("Asia/Seoul");
+    private static final LocalTime US_MARKET_DAY_START_KST = LocalTime.of(22, 30);
 
     private final UserPortfolioRepository     portfolioRepository;
     private final PortfolioHistoryRepository  historyRepository;
@@ -114,6 +119,8 @@ public class PortfolioService {
      */
     @Transactional(readOnly = true)
     public PortfolioSummaryResponse getPortfolioSummary(String userId) {
+        LocalDate marketSessionDate = currentMarketSessionDateKst();
+
         // avg_price·quantity 모두 존재하는 보유 종목만 조회 (관심종목 제외)
         List<UserPortfolio> holdings = portfolioRepository.findByUserId(userId)
                 .stream()
@@ -122,7 +129,7 @@ public class PortfolioService {
 
         // 종목별 현재가 + 등락률 계산
         List<StockHoldingResponse> stocks = holdings.stream()
-                .map(holding -> buildStockHolding(holding))
+                .map(holding -> buildStockHolding(holding, marketSessionDate))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
@@ -342,19 +349,33 @@ public class PortfolioService {
     // ──────────────────────────────────────────────
 
     /**
+     * KST 22:30 미국장 시작 기준 현재 세션 날짜.
+     * 22:30 전에는 직전 미국장 세션을 오늘로 유지한다.
+     */
+    private LocalDate currentMarketSessionDateKst() {
+        LocalDate today = LocalDate.now(KST_ZONE);
+        LocalTime now = LocalTime.now(KST_ZONE);
+        return now.isBefore(US_MARKET_DAY_START_KST) ? today.minusDays(1) : today;
+    }
+
+    /**
      * 보유 종목 1개의 현재가·평가금액·등락률을 계산해 DTO로 반환.
      * daily_prices가 없거나 종가가 null이면 null 반환 (스트림에서 제외됨).
      */
-    private StockHoldingResponse buildStockHolding(UserPortfolio holding) {
-        List<DailyPrice> prices =
-                dailyPriceRepository.findTop2ByTickerOrderByPriceDateDesc(holding.getTicker());
+    private StockHoldingResponse buildStockHolding(UserPortfolio holding, LocalDate marketSessionDate) {
+        Optional<DailyPrice> currentPriceOpt =
+                dailyPriceRepository.findTopByTickerAndPriceDateLessThanEqualAndClosePriceIsNotNullOrderByPriceDateDesc(
+                        holding.getTicker(),
+                        marketSessionDate
+                );
 
-        if (prices.isEmpty() || prices.get(0).getClosePrice() == null) {
+        if (currentPriceOpt.isEmpty()) {
             log.warn("[{}] daily_prices 종가 없음 — 종목 제외", holding.getTicker());
             return null;
         }
 
-        BigDecimal currentPrice = prices.get(0).getClosePrice();
+        DailyPrice currentDailyPrice = currentPriceOpt.get();
+        BigDecimal currentPrice = currentDailyPrice.getClosePrice();
         BigDecimal avgPrice     = holding.getAvgPrice();
         BigDecimal quantity     = holding.getQuantity();
 
@@ -363,13 +384,20 @@ public class PortfolioService {
                 .divide(avgPrice, 4, RoundingMode.HALF_UP)
                 .multiply(BigDecimal.valueOf(100));
 
-        // 전일 종가가 있으면 일일 등락률 계산, 없으면 0.0
+        // 새 미국장 세션 가격이 아직 없으면 0.0으로 초기화 상태 유지
         BigDecimal dailyChangePct = BigDecimal.ZERO;
-        if (prices.size() >= 2 && prices.get(1).getClosePrice() != null) {
-            BigDecimal prevPrice = prices.get(1).getClosePrice();
-            dailyChangePct = currentPrice.subtract(prevPrice)
-                    .divide(prevPrice, 4, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100));
+        if (!currentDailyPrice.getPriceDate().isBefore(marketSessionDate)) {
+            Optional<DailyPrice> prevPriceOpt =
+                    dailyPriceRepository.findTopByTickerAndPriceDateLessThanAndClosePriceIsNotNullOrderByPriceDateDesc(
+                            holding.getTicker(),
+                            currentDailyPrice.getPriceDate()
+                    );
+            if (prevPriceOpt.isPresent()) {
+                BigDecimal prevPrice = prevPriceOpt.get().getClosePrice();
+                dailyChangePct = currentPrice.subtract(prevPrice)
+                        .divide(prevPrice, 4, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100));
+            }
         }
 
         return StockHoldingResponse.builder()
