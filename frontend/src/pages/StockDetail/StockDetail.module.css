@@ -249,6 +249,77 @@
 }
 
 /* ────────────────────────────
+   장기투자 판단 카드
+   ──────────────────────────── */
+.decisionHero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.decisionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.decisionTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+
+.decisionSubtitle {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.decisionPill {
+  flex-shrink: 0;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.decisionList {
+  display: grid;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+.decisionItem {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-2);
+  padding-left: 12px;
+  position: relative;
+}
+
+.decisionItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-3);
+}
+
+/* ────────────────────────────
    지표 분해 카드
    ──────────────────────────── */
 

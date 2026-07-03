@@ -40,6 +40,7 @@ import {
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
+import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import HerdDots      from '../../components/HerdDots/HerdDots'
 import SpectrumBar   from '../../components/SpectrumBar/SpectrumBar'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
@@ -138,17 +139,6 @@ function signalStyle(signal) {
     case 'ADD':    return { bg: 'rgba(96,165,250,0.12)',  color: '#60A5FA' }
     case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6' }
     default:       return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
-  }
-}
-
-function signalDesc(signal) {
-  switch (signal) {
-    case 'BUY':    return '적극 매수'
-    case 'ADD':    return '추가 매수 고려'
-    case 'HOLD':   return '보유 유지'
-    case 'REDUCE': return '일부 익절 고려'
-    case 'SELL':   return '적극 익절'
-    default:       return '보유 유지'
   }
 }
 
@@ -942,7 +932,7 @@ export default function Dashboard() {
                               {herd.signal}
                             </span>
                             <span className={styles.cardSignalDesc}>
-                              {signalDesc(herd.signal)}
+                              {decisionSignalDesc(herd.signal)}
                             </span>
                           </div>
                         </>

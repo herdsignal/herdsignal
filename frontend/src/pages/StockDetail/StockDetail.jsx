@@ -19,9 +19,11 @@ import {
 import {
   getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials,
   getStockPrices, getStockNews, getStockAnalyst, getStockInsider,
+  getPortfolio, getPortfolioSummary,
 } from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
+import { buildDecision } from '../../utils/decision'
 import styles      from './StockDetail.module.css'
 
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
@@ -226,6 +228,8 @@ export default function StockDetail() {
   const [analystLoading,   setAnalystLoading]    = useState(false)
   const [insider,          setInsider]           = useState([])
   const [insiderLoading,   setInsiderLoading]    = useState(false)
+  const [portfolio,        setPortfolio]         = useState([])
+  const [portfolioSummary, setPortfolioSummary]  = useState(null)
 
   /* HERD 데이터 조회 */
   const fetchData = useCallback(async () => {
@@ -249,6 +253,20 @@ export default function StockDetail() {
   }, [ticker])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  /* 포트폴리오 컨텍스트 — 장기투자 판단 패널용. 실패해도 상세 화면은 유지. */
+  useEffect(() => {
+    Promise.allSettled([getPortfolio(), getPortfolioSummary()])
+      .then(([portfolioRes, summaryRes]) => {
+        if (portfolioRes.status === 'fulfilled') {
+          const data = portfolioRes.value.data?.data
+          setPortfolio(Array.isArray(data) ? data : [])
+        }
+        if (summaryRes.status === 'fulfilled') {
+          setPortfolioSummary(summaryRes.value.data?.data ?? null)
+        }
+      })
+  }, [])
 
   /*
    * 재무정보 — HERD 로딩과 독립적으로 실행.
@@ -333,6 +351,13 @@ export default function StockDetail() {
   const stageDisp  = herdStage.startsWith('Herd ') ? herdStage : `Herd ${herdStage}`
   const color      = stageColor(herdStage)
   const sigStyle   = signalStyle(herdData?.signal)
+  const holding    = portfolio.find((item) => item.ticker === ticker.toUpperCase()) ?? null
+  const decision   = useMemo(() => buildDecision({
+    herdData: { ...herdData, ticker: ticker.toUpperCase() },
+    financials,
+    holding,
+    summary: portfolioSummary,
+  }), [herdData, financials, holding, portfolioSummary, ticker])
 
   /* 가격 차트 색상 — 기간 첫날 대비 마지막날 방향 */
   const priceColor = useMemo(() => {
@@ -455,6 +480,31 @@ export default function StockDetail() {
                     <span>Drift</span>
                     <span>Rush</span>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 장기투자 판단 카드 */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div className={styles.cardTitle}>장기투자 판단</div>
+                <div className={styles.cardMeta}>HERD + 보유 비중 + 재무 컨텍스트</div>
+              </div>
+              <div className={styles.cardBody}>
+                <div className={styles.decisionHero}>
+                  <div>
+                    <div className={styles.decisionLabel}>추천 행동</div>
+                    <div className={styles.decisionTitle}>{decision.title}</div>
+                    <div className={styles.decisionSubtitle}>{decision.subtitle}</div>
+                  </div>
+                  <div className={styles.decisionPill} style={{ color, borderColor: color }}>
+                    {decision.priority}
+                  </div>
+                </div>
+                <div className={styles.decisionList}>
+                  {decision.notes.map((note) => (
+                    <div key={note} className={styles.decisionItem}>{note}</div>
+                  ))}
                 </div>
               </div>
             </div>
