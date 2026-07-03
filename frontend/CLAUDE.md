@@ -20,6 +20,7 @@ src/
 │   ├── StockDetail/ 종목 상세
 │   ├── Search/     종목 검색 & 추가
 │   ├── Watchlist/  관심 종목
+│   ├── HerdLab/    HERD 검증과 방법론
 │   ├── AiRebalance/ 리밸런싱 플랜
 │   ├── HerdFlowPreview/ Herd Flow 확인용
 │   └── History/    자산 기록
@@ -92,6 +93,10 @@ Rush    #EF4444  (레드)
   - 빠른 새로고침
   - 관심 종목 삭제
   - S&P 500 HERD 배너
+- HerdLab (`/herd-lab`)
+  - 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드
+  - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
+  - HERD 5단계 행동 매트릭스와 v4 가중치 표시
 - AiRebalance (`/ai`)
   - 목표 비중·현금 목표·리밸런싱 예산 설정
   - 보수적/표준/공격적 리밸런싱 강도 선택

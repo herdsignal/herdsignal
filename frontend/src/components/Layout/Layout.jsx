@@ -64,6 +64,14 @@ export default function Layout() {
         <nav className={styles.navGroup}>
           <div className={styles.navLabel}>분석</div>
           <NavLink
+            to="/herd-lab"
+            className={({ isActive }) =>
+              `${styles.navItem} ${isActive ? styles.active : ''}`
+            }
+          >
+            HERD Lab
+          </NavLink>
+          <NavLink
             to="/ai"
             className={({ isActive }) =>
               `${styles.navItem} ${isActive ? styles.active : ''}`

@@ -141,6 +141,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionScore/actionLabel/actionRatio/actionRegime 응답 제공. DB 저장 없이 backend 응답 시점에 계산한다.
 - Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, 타이밍 후보, 대표 종목 그리드, 최근 검색, 포트폴리오/관심종목 추가
 - Watchlist: S&P 500 Herd Flow 배너, 관심 종목 HERD 카드, 기회 대기열, 매수/중립/익절 후보 요약, 정렬, 삭제
+- HERD Lab: 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드, Action Layer 백테스트, 5단계 행동 매트릭스
 - AiRebalance: Claude API 연결 전 규칙 기반 리밸런싱 플랜, 목표 비중·현금 목표·예산·강도 설정, 매수/매도/보류 실행안
 - History: 월/년 토글, recharts 자산 기록 차트, 시작 대비·고점 대비·점검 포인트 자산 진단
 - HerdFlowPreview: `/herd-flow` 확인용 라우트, 실제 데이터와 무관한 HerdDots 5단계 애니메이션 비교
@@ -298,6 +299,10 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - 매수/중립/익절 후보 요약
   - 기회·HERD 점수·최신일·티커 정렬
   - 관심 종목 삭제
+- [x] HERD Lab (`/herd-lab`)
+  - 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드
+  - Action Layer 백테스트 요약
+  - 5단계 행동 매트릭스
 - [x] AiRebalance (`/ai`)
   - 목표 비중·현금 목표·리밸런싱 예산 설정
   - 보수적/표준/공격적 리밸런싱 강도 선택

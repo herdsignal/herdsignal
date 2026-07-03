@@ -21,6 +21,10 @@ public class ActionDecisionService {
     private static final double SCATTER_UPPER = 40.0;
     private static final double DRIFT_LOWER = 60.0;
     private static final double RUSH_THRESHOLD = 75.0;
+    private static final String ACTION_MODEL_VERSION = "HERD_v5";
+    private static final String ACTION_MODEL_NAME = "Balanced Action Layer";
+    private static final String BASE_MODEL_VERSION = "HERD_v4";
+    private static final String ACTION_MODEL_STATUS = "MVP_VALIDATION";
 
     public ActionDecision decide(HerdScore score, HerdIndicator indicator, Integer qualityScore) {
         double herdScore = score.getHerdScore().doubleValue();
@@ -45,6 +49,10 @@ public class ActionDecisionService {
         }
 
         return ActionDecision.builder()
+                .actionModelVersion(ACTION_MODEL_VERSION)
+                .actionModelName(ACTION_MODEL_NAME)
+                .baseModelVersion(BASE_MODEL_VERSION)
+                .actionModelStatus(ACTION_MODEL_STATUS)
                 .actionScore(actionScore)
                 .actionGrade(actionGrade(actionScore, regime.ratio()))
                 .actionLabel(regime.label())

@@ -14,6 +14,18 @@ import java.util.List;
 @Builder
 public class ActionDecision {
 
+    /** 행동 모델 버전 (HERD_v5 등) */
+    private String actionModelVersion;
+
+    /** 행동 모델명 */
+    private String actionModelName;
+
+    /** 기반 점수 모델 버전 */
+    private String baseModelVersion;
+
+    /** 행동 모델 검증 상태 */
+    private String actionModelStatus;
+
     /** 행동 점수 (0~100) */
     private Integer actionScore;
 

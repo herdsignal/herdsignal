@@ -62,6 +62,18 @@ public class HerdScoreResponse {
     /** HERD 신뢰도 산출 근거 */
     private List<String> qualityReasons;
 
+    /** 행동 모델 버전 (HERD_v5 등) */
+    private String actionModelVersion;
+
+    /** 행동 모델명 */
+    private String actionModelName;
+
+    /** 기반 점수 모델 버전 */
+    private String baseModelVersion;
+
+    /** 행동 모델 검증 상태 */
+    private String actionModelStatus;
+
     /** 행동 점수 (0~100) */
     private Integer actionScore;
 
@@ -147,7 +159,11 @@ public class HerdScoreResponse {
                 .qualityReasons(qualityReasons);
 
         if (actionDecision != null) {
-            builder.actionScore(actionDecision.getActionScore())
+            builder.actionModelVersion(actionDecision.getActionModelVersion())
+                   .actionModelName(actionDecision.getActionModelName())
+                   .baseModelVersion(actionDecision.getBaseModelVersion())
+                   .actionModelStatus(actionDecision.getActionModelStatus())
+                   .actionScore(actionDecision.getActionScore())
                    .actionGrade(actionDecision.getActionGrade())
                    .actionLabel(actionDecision.getActionLabel())
                    .actionRatio(actionDecision.getActionRatio())
