@@ -42,13 +42,11 @@ HERD Index는 개별 주식의 군중심리를 **0-100 점수**로 나타내는 
 
 ## 핵심 기능
 
-- **Dashboard**: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, KRW/USD 토글, 목표 비중 기반 리밸런싱 추천, HERD 변화 요약, 자산 진단
-- **StockDetail**: HERD v4 점수, 장기투자 판단, 지표 분해, EPS/섹터 보정 승수, 가격 차트, 재무정보, 판단 요약
-- **Search**: 대표 종목 검색, HERD 미리보기, 타이밍 후보, 최근 검색
-- **Watchlist**: 관심 종목 HERD 카드, 기회 대기열, 매수/중립/익절 후보 요약, 정렬, 삭제
-- **History**: portfolio_history 기반 자산 차트, 시작 대비/고점 대비/점검 포인트
-- **Rebalance Plan**: Claude API 연결 전 규칙 기반 리밸런싱 플랜, 목표 비중/현금 목표/예산/강도 설정
-- **Herd Flow Preview**: `/herd-flow`에서 5단계 애니메이션 비교
+- **Dashboard**: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, 핵심 리밸런싱 체크, 보유 종목 HERD 행동 카드
+- **Watchlist**: 장기 추가매수/익절 우선순위 기반 기회 대기열과 관심 종목 HERD 카드
+- **Search**: 티커/회사명 검색, HERD 미리보기, 최근 검색, 포트폴리오/관심종목 추가
+- **StockDetail**: HERD v4 점수, HERD_v5 Action Layer 판단, 지표 분해, 가격 차트, 재무정보
+- **HERD Lab**: 모델 버전, 백테스트 요약, Action Matrix, HERD 방법론 검증 데이터
 
 ---
 
@@ -181,9 +179,9 @@ npm run dev
 
 ## 현재 한계
 
-- 리밸런싱 플랜은 아직 Claude API를 호출하지 않는 규칙 기반 MVP입니다.
-- 목표 비중과 리밸런싱 설정은 localStorage에 저장되며 DB 저장은 아직 없습니다.
-- Dashboard의 자산 진단은 실제 HERD 전략 백테스트가 아니라 portfolio_history 기반 수익률/MDD 요약입니다.
+- MVP는 전체 포트폴리오 관리가 아니라 HERD 기반 추가매수/보유/익절 타이밍 판단에 집중합니다.
+- 리밸런싱 플랜, 자산 기록, Herd Flow Preview 라우트는 존재하지만 메인 사이드바에서는 숨겨져 있습니다.
+- 목표 비중은 localStorage에 저장되며 DB 저장은 아직 없습니다.
 - 로그인, 멀티유저, 증권사 연동, 배포는 아직 구현되지 않았습니다.
 - 공식 증권사 API 연동 전까지는 수동 입력과 CSV/엑셀 import UX를 우선합니다.
 - v5 변동성 레이어는 백테스트 후보이며 운영 HERD 점수에는 반영되지 않았습니다.

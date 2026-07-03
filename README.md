@@ -42,13 +42,11 @@ The `Herd Flow` animation visualizes these stages as particle distribution. Flee
 
 ## Core Features
 
-- **Dashboard**: S&P 500 Herd Flow banner, portfolio valuation, KRW/USD toggle, target-weight rebalance ideas, HERD change summary, asset diagnosis
-- **Stock Detail**: HERD v4 score, long-term decision panel, indicator breakdown, EPS/sector multipliers, price chart, financials, decision summary
-- **Search**: representative ticker search, HERD preview, timing candidates, recent searches
-- **Watchlist**: HERD cards, opportunity queue, buy/neutral/trim candidate summary, sorting, deletion
-- **History**: portfolio_history chart with start-return, drawdown, and review point
-- **Rebalance Plan**: rule-based MVP before Claude API integration, with target weights, cash target, budget, and intensity settings
-- **Herd Flow Preview**: compare all five animation stages at `/herd-flow`
+- **Dashboard**: S&P 500 Herd Flow banner, portfolio valuation, core rebalance check, and holding-level HERD action cards
+- **Watchlist**: opportunity queue and HERD cards sorted by long-term add/trim timing priority
+- **Search**: ticker/company search, HERD preview, recent searches, and portfolio/watchlist add actions
+- **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, indicator breakdown, price chart, and financials
+- **HERD Lab**: model version, backtest summary, action matrix, and validation data for the HERD methodology
 
 ---
 
@@ -181,9 +179,9 @@ The frontend usually runs at `http://localhost:5173`.
 
 ## Current Limitations
 
-- The Rebalance Plan is currently a rule-based MVP and does not call the Claude API yet.
-- Target weights and rebalance settings are stored in localStorage, not in the database.
-- Dashboard asset diagnosis is based on portfolio_history return/MDD summaries, not a true HERD strategy backtest.
+- The MVP is intentionally focused on HERD-based add/hold/trim timing, not full portfolio management.
+- The Rebalance Plan, History page, and Herd Flow Preview routes exist, but they are hidden from the main sidebar.
+- Target weights are stored in localStorage, not in the database.
 - Authentication, multi-user support, brokerage integration, and deployment are not implemented yet.
 - Before official brokerage APIs are available, manual entry and CSV/Excel import UX are the priority.
 - The v5 volatility layer is a backtest candidate and is not part of the production HERD score.

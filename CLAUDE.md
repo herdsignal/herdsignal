@@ -158,9 +158,9 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ### 다음 단계
 
-- README.md / README.ko.md를 현재 코드 기준으로 재정리
-- 리밸런싱 플랜의 Claude API 연동 여부 검토
-- Herd Flow 미리보기 페이지 유지/제거 여부 결정
+- StockDetail 핵심 정보 재정리
+- HERD 신뢰도와 Action Layer 설명 최소화
+- CSV/엑셀 import 기반 포트폴리오 입력 검토
 
 ---
 
@@ -299,11 +299,13 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - Action Layer 백테스트 요약
   - 5단계 행동 매트릭스
 - [x] AiRebalance (`/ai`)
+  - 보류/내부 접근 라우트, 사이드바 미노출
   - 목표 비중·현금 목표·리밸런싱 예산 설정
   - 보수적/표준/공격적 리밸런싱 강도 선택
   - 현재 비중 vs 목표 비중 비교
   - 규칙 기반 매수/매도/보류 실행안
 - [x] History (`/history`)
+  - 보류/내부 접근 라우트, 사이드바 미노출
   - 월/년 기간 토글
   - recharts 기반 총 평가금액 차트
   - portfolio_history 시계열 표시
@@ -331,7 +333,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 frontend에서 제거됨. backend API와 Finnhub collector 코드는 남아 있다.
 - 리밸런싱 플랜은 아직 Claude API를 호출하지 않는 frontend 규칙 기반 MVP다.
 - 목표 비중과 리밸런싱 설정은 localStorage 저장이며 DB 저장 기능은 없다.
-- Dashboard의 자산 진단은 portfolio_history 기반 수익률/MDD 요약이며 실제 HERD 전략 백테스트가 아니다.
+- History의 자산 진단은 portfolio_history 기반 수익률/MDD 요약이며 실제 HERD 전략 백테스트가 아니다.
 - `backtest_v5_volatility.py`는 v5 후보 검증용이며 운영 HERD 점수에는 미반영이다.
 - 로그인/멀티유저 UI는 없음. MVP는 `AppConstants.DEFAULT_USER_ID` 기반 `local` 사용자 고정.
 - SPY 배너의 SPY 종가, 1개월 수익률 표시는 아직 `—` placeholder.
@@ -354,6 +356,6 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - 거시경제 지표(VIX, DXY, 10년물 국채 수익률)는 운영 계산에 반영되어 있지 않다.
 - 옵션 Put/Call, 공매도 비율, 종목 간 상관관계는 운영 계산에 반영되어 있지 않다.
 - Python과 Spring Boot는 DB 중심으로 통신하지만, on-demand 계산과 실시간 포트폴리오 평가에서는 Spring Boot가 ProcessBuilder로 Python을 실행한다.
-- 리밸런싱 플랜은 아직 투자 성과를 검증하는 백테스트 엔진과 연결되어 있지 않다.
+- 리밸런싱 플랜은 보류/내부 접근 기능이며 아직 투자 성과를 검증하는 백테스트 엔진과 연결되어 있지 않다.
 
 ---
