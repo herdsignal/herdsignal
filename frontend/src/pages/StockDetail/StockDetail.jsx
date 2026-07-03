@@ -469,11 +469,11 @@ export default function StockDetail() {
                 <div className={styles.herdAnimBottom}>
                   <SpectrumBar score={herdScore} height={3} />
                   <div className={styles.spectrumLabels}>
-                    <span>Flee 이탈</span>
-                    <span>Scatter 흩어짐</span>
-                    <span>Calm 균형</span>
-                    <span>Drift 쏠림</span>
-                    <span>Rush 밀집</span>
+                    <span>Flee 군중 이탈</span>
+                    <span>Scatter 군중 흩어짐</span>
+                    <span>Calm 군중 균형</span>
+                    <span>Drift 군중 쏠림</span>
+                    <span>Rush 군중 밀집</span>
                   </div>
                 </div>
               </div>

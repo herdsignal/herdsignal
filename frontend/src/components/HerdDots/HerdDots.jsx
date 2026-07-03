@@ -1,8 +1,8 @@
 /**
- * HerdDots.jsx — HERD 무리 점 애니메이션 컴포넌트
+ * HerdDots.jsx — HERD 군중 점 애니메이션 컴포넌트
  *
  * score에 따라 군중의 흐름을 다르게 표현한다.
- * Flee=무리 이탈, Scatter=흩어짐, Calm=균형, Drift=쏠림, Rush=밀집.
+ * Flee=군중 이탈, Scatter=군중 흩어짐, Calm=군중 균형, Drift=군중 쏠림, Rush=군중 밀집.
  *
  * fill=true: 부모 컨테이너를 꽉 채우는 모드 (배너, 테이블 행에서 사용)
  * fill=false: 고정 width/height 모드 (기본값)
