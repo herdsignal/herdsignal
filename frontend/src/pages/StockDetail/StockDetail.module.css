@@ -507,6 +507,54 @@
   color: var(--text-2);
 }
 
+.validationBox {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.validationBox p {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+
+.validationGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.validationItem {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface2);
+}
+
+.validationItem span,
+.validationItem em {
+  display: block;
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--text-3);
+  font-style: normal;
+}
+
+.validationItem strong {
+  display: block;
+  margin: 4px 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--text-1);
+}
+
 /* ────────────────────────────
    재무 정보 카드
    ──────────────────────────── */

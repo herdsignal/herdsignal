@@ -476,7 +476,7 @@ export default function Watchlist() {
                             className={styles.cardQuality}
                             style={{ color: qualityColor(item.qualityLevel) }}
                           >
-                            {item.qualityLabel}
+                            데이터 품질
                             {item.qualityScore != null && ` · ${item.qualityScore}`}
                           </div>
                         )}

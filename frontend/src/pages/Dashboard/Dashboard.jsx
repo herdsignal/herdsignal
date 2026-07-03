@@ -1004,7 +1004,7 @@ export default function Dashboard() {
                             className={styles.cardQuality}
                             style={{ color: qualityColor(herd.qualityLevel) }}
                           >
-                            {herd.qualityLabel}
+                            데이터 품질
                             {herd.qualityScore != null && ` · ${herd.qualityScore}`}
                           </div>
                         )}

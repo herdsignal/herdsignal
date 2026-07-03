@@ -189,6 +189,17 @@ function qualityTone(level) {
   }
 }
 
+function dataQualityLabel(label) {
+  if (!label) return null
+  return label.replace('신뢰도', '데이터 품질')
+}
+
+const HERD_VALIDATION = [
+  { label: '10년 MDD 개선', value: '+7.3%p', desc: 'Buy & Hold 대비 평균 최대낙폭 완화' },
+  { label: '수익률 보존', value: '38.8%', desc: '장기 급등 수익 일부를 포기하고 변동성 완화' },
+  { label: '검증 성격', value: '보조형', desc: '전량 매매가 아닌 추가매수·일부익절 타이밍 참고' },
+]
+
 /** 가격 차트 커스텀 툴팁 */
 function PriceTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -346,9 +357,9 @@ export default function StockDetail() {
         tone: color,
       },
       {
-        label: 'HERD 신뢰도',
+        label: '데이터 품질',
         value: herdData?.qualityLabel
-          ? `${herdData.qualityLabel} · ${herdData.qualityScore}점`
+          ? `${dataQualityLabel(herdData.qualityLabel)} · ${herdData.qualityScore}점`
           : '산출 대기',
         tone: qualityColor,
       },
@@ -482,7 +493,7 @@ export default function StockDetail() {
                   className={styles.qualityPill}
                   style={{ color: qualityColor, borderColor: qualityColor }}
                 >
-                  {herdData.qualityLabel ?? '신뢰도 산출 중'}
+                  {dataQualityLabel(herdData.qualityLabel) ?? '데이터 품질 산출 중'}
                   {herdData.qualityScore != null && ` · ${herdData.qualityScore}점`}
                 </div>
               </div>
@@ -594,16 +605,16 @@ export default function StockDetail() {
                 <div className={styles.qualityBox}>
                   <div className={styles.qualityBoxHead}>
                     <div>
-                      <span>HERD 신뢰도</span>
+                      <span>데이터 품질</span>
                       <strong style={{ color: qualityColor }}>
-                        {herdData.qualityLabel ?? '산출 대기'}
+                        {dataQualityLabel(herdData.qualityLabel) ?? '산출 대기'}
                       </strong>
                     </div>
                     {herdData.qualityScore != null && (
                       <em>{herdData.qualityScore}/100</em>
                     )}
                   </div>
-                  <p>{herdData.qualitySummary ?? '가격 데이터와 지표 완성도를 기준으로 신뢰도를 계산합니다.'}</p>
+                  <p>{herdData.qualitySummary ?? '가격 데이터와 지표 완성도를 기준으로 데이터 품질을 계산합니다.'}</p>
                   {Array.isArray(herdData.qualityReasons) && herdData.qualityReasons.length > 0 && (
                     <div className={styles.qualityReasonGrid}>
                       {herdData.qualityReasons.slice(0, 6).map((reason) => (
@@ -611,6 +622,28 @@ export default function StockDetail() {
                       ))}
                     </div>
                   )}
+                </div>
+                <div className={styles.validationBox}>
+                  <div className={styles.qualityBoxHead}>
+                    <div>
+                      <span>HERD 검증 요약</span>
+                      <strong>장기 보유 보조형 신호</strong>
+                    </div>
+                    <em>10년</em>
+                  </div>
+                  <p>
+                    HERD는 Buy & Hold를 대체하기보다 장기 보유 중 군중 이탈·밀집 구간의
+                    추가매수와 일부익절 타이밍을 보조합니다.
+                  </p>
+                  <div className={styles.validationGrid}>
+                    {HERD_VALIDATION.map((item) => (
+                      <div key={item.label} className={styles.validationItem}>
+                        <span>{item.label}</span>
+                        <strong>{item.value}</strong>
+                        <em>{item.desc}</em>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
