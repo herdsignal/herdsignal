@@ -179,6 +179,16 @@ function sectorMultiplierDesc(value) {
   return '중립'
 }
 
+function qualityTone(level) {
+  switch (level) {
+    case 'HIGH': return 'var(--flee)'
+    case 'GOOD': return 'var(--calm)'
+    case 'LIMITED': return 'var(--drift)'
+    case 'LOW': return 'var(--rush)'
+    default: return 'var(--text-3)'
+  }
+}
+
 /** 가격 차트 커스텀 툴팁 */
 function PriceTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -315,6 +325,7 @@ export default function StockDetail() {
   const stageDisp  = herdStage.startsWith('Herd ') ? herdStage : `Herd ${herdStage}`
   const color      = stageColor(herdStage)
   const sigStyle   = signalStyle(herdData?.signal)
+  const qualityColor = qualityTone(herdData?.qualityLevel)
   const holding    = portfolio.find((item) => item.ticker === ticker.toUpperCase()) ?? null
   const decision   = useMemo(() => buildDecision({
     herdData: { ...herdData, ticker: ticker.toUpperCase() },
@@ -335,6 +346,13 @@ export default function StockDetail() {
         tone: color,
       },
       {
+        label: 'HERD 신뢰도',
+        value: herdData?.qualityLabel
+          ? `${herdData.qualityLabel} · ${herdData.qualityScore}점`
+          : '산출 대기',
+        tone: qualityColor,
+      },
+      {
         label: '보유 상태',
         value: holding
           ? `${Number(holding.quantity ?? 0).toLocaleString('ko-KR')}주 보유`
@@ -352,7 +370,7 @@ export default function StockDetail() {
     }
 
     return facts
-  }, [color, decision.title, financials, herdScore, holding, stageDisp])
+  }, [color, decision.title, financials, herdData, herdScore, holding, qualityColor, stageDisp])
 
   /* 가격 차트 색상 — 기간 첫날 대비 마지막날 방향 */
   const priceColor = useMemo(() => {
@@ -460,6 +478,13 @@ export default function StockDetail() {
                 >
                   {getTimingSignal(herdScore)}
                 </div>
+                <div
+                  className={styles.qualityPill}
+                  style={{ color: qualityColor, borderColor: qualityColor }}
+                >
+                  {herdData.qualityLabel ?? '신뢰도 산출 중'}
+                  {herdData.qualityScore != null && ` · ${herdData.qualityScore}점`}
+                </div>
               </div>
 
               {/* 우: HerdDots + 스펙트럼 */}
@@ -565,6 +590,27 @@ export default function StockDetail() {
                       <em>{sectorMultiplierDesc(herdData.sectorMultiplier)}</em>
                     </strong>
                   </div>
+                </div>
+                <div className={styles.qualityBox}>
+                  <div className={styles.qualityBoxHead}>
+                    <div>
+                      <span>HERD 신뢰도</span>
+                      <strong style={{ color: qualityColor }}>
+                        {herdData.qualityLabel ?? '산출 대기'}
+                      </strong>
+                    </div>
+                    {herdData.qualityScore != null && (
+                      <em>{herdData.qualityScore}/100</em>
+                    )}
+                  </div>
+                  <p>{herdData.qualitySummary ?? '가격 데이터와 지표 완성도를 기준으로 신뢰도를 계산합니다.'}</p>
+                  {Array.isArray(herdData.qualityReasons) && herdData.qualityReasons.length > 0 && (
+                    <div className={styles.qualityReasonGrid}>
+                      {herdData.qualityReasons.slice(0, 6).map((reason) => (
+                        <span key={reason}>{reason}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -137,6 +137,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 - Dashboard: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, KRW/USD 통화 토글, 목표 비중 기반 리밸런싱 추천, HERD 변화 요약, 자산 진단, 보유 종목 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침
 - StockDetail: HERD v4 점수·단계·신호, 장기투자 판단 패널, HERD 지표 분해와 보정 승수 UI, 가격 차트, 재무정보 카드, 판단 요약/다음 행동 사이드 패널
+- HERD 신뢰도: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공
 - Search: 디바운스 검색, HERD 미리보기, 타이밍 후보, 대표 종목 그리드, 최근 검색, 포트폴리오/관심종목 추가
 - Watchlist: S&P 500 Herd Flow 배너, 관심 종목 HERD 카드, 기회 대기열, 매수/중립/익절 후보 요약, 정렬, 삭제
 - AiRebalance: Claude API 연결 전 규칙 기반 리밸런싱 플랜, 목표 비중·현금 목표·예산·강도 설정, 매수/매도/보류 실행안

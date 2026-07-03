@@ -162,6 +162,16 @@ function badgeStyle(stage) {
   }
 }
 
+function qualityColor(level) {
+  switch (level) {
+    case 'HIGH': return 'var(--flee)'
+    case 'GOOD': return 'var(--calm)'
+    case 'LIMITED': return 'var(--drift)'
+    case 'LOW': return 'var(--rush)'
+    default: return 'var(--text-3)'
+  }
+}
+
 /** USD 금액 포맷: $1,234.56 */
 function fmtUSD(value) {
   if (value == null) return '—'
@@ -989,6 +999,15 @@ export default function Dashboard() {
                       <div>
                         <div className={styles.cardTicker}>{item.ticker}</div>
                         <div className={styles.cardStageName}>{stageName}</div>
+                        {herd?.qualityLabel && (
+                          <div
+                            className={styles.cardQuality}
+                            style={{ color: qualityColor(herd.qualityLevel) }}
+                          >
+                            {herd.qualityLabel}
+                            {herd.qualityScore != null && ` · ${herd.qualityScore}`}
+                          </div>
+                        )}
                       </div>
                     </div>
 

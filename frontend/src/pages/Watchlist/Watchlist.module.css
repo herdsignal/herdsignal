@@ -446,6 +446,13 @@
   color: var(--text-3);
 }
 
+.cardQuality {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .cardHerd {
   text-align: right;
   flex-shrink: 0;

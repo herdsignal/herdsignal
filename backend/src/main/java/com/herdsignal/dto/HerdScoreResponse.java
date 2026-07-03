@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * HERD 점수 + 지표 분해값 합산 응답 DTO.
@@ -43,6 +44,24 @@ public class HerdScoreResponse {
     /** 점수 산출 기준 날짜 */
     private LocalDate scoreDate;
 
+    /** HERD 신뢰도 점수 (0~100) */
+    private Integer qualityScore;
+
+    /** HERD 신뢰도 등급 (HIGH / GOOD / LIMITED / LOW) */
+    private String qualityLevel;
+
+    /** HERD 신뢰도 표시 문구 */
+    private String qualityLabel;
+
+    /** HERD 신뢰도 요약 문장 */
+    private String qualitySummary;
+
+    /** HERD 신뢰도 플래그 */
+    private List<String> qualityFlags;
+
+    /** HERD 신뢰도 산출 근거 */
+    private List<String> qualityReasons;
+
     /* ── 지표 분해값 (HerdIndicator로부터, 없으면 null) ── */
 
     /** 주봉 RSI 백분위 정규화값 */
@@ -68,6 +87,23 @@ public class HerdScoreResponse {
      * HerdScore는 필수, HerdIndicator는 없을 수 있으므로 null 허용.
      */
     public static HerdScoreResponse of(HerdScore score, HerdIndicator indicator) {
+        return of(score, indicator, null, null, null, null, List.of(), List.of());
+    }
+
+    /**
+     * 정적 팩토리 메서드.
+     * HERD 신뢰도는 DB 저장값이 아니라 응답 생성 시점에 계산해 함께 내려준다.
+     */
+    public static HerdScoreResponse of(
+            HerdScore score,
+            HerdIndicator indicator,
+            Integer qualityScore,
+            String qualityLevel,
+            String qualityLabel,
+            String qualitySummary,
+            List<String> qualityFlags,
+            List<String> qualityReasons
+    ) {
         HerdScoreResponseBuilder builder = HerdScoreResponse.builder()
                 .ticker(score.getTicker())
                 .herdScore(score.getHerdScore())
@@ -77,7 +113,13 @@ public class HerdScoreResponse {
                 .herdV4(score.getHerdScore())
                 .herdStage(score.getHerdStage())
                 .signal(score.getSignal())
-                .scoreDate(score.getScoreDate());
+                .scoreDate(score.getScoreDate())
+                .qualityScore(qualityScore)
+                .qualityLevel(qualityLevel)
+                .qualityLabel(qualityLabel)
+                .qualitySummary(qualitySummary)
+                .qualityFlags(qualityFlags)
+                .qualityReasons(qualityReasons);
 
         // 지표 분해값이 있는 경우에만 채움
         if (indicator != null) {

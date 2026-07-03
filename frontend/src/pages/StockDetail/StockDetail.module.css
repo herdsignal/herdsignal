@@ -221,6 +221,20 @@
   line-height: 1.4;
 }
 
+.qualityPill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: 1px solid;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 /* 우: 애니메이션 블록 */
 .herdAnimSide {
   position: relative;
@@ -424,6 +438,73 @@
   font-style: normal;
   font-weight: 500;
   color: var(--text-3);
+}
+
+.qualityBox {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface2);
+}
+
+.qualityBoxHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.qualityBoxHead div {
+  display: grid;
+  gap: 4px;
+}
+
+.qualityBoxHead span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.qualityBoxHead strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.qualityBoxHead em {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.qualityBox p {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+
+.qualityReasonGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.qualityReasonGrid span {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-2);
 }
 
 /* ────────────────────────────

@@ -81,6 +81,16 @@ function badgeStyle(stage) {
   }
 }
 
+function qualityColor(level) {
+  switch (level) {
+    case 'HIGH': return 'var(--flee)'
+    case 'GOOD': return 'var(--calm)'
+    case 'LIMITED': return 'var(--drift)'
+    case 'LOW': return 'var(--rush)'
+    default: return 'var(--text-3)'
+  }
+}
+
 /** scoreDate → 한국어 날짜 문자열 */
 function formatDate(dateStr) {
   if (!dateStr) return '—'
@@ -461,6 +471,15 @@ export default function Watchlist() {
                         <div className={styles.cardStageName}>
                           {stageName} · 기회 {Math.round(opportunity)}
                         </div>
+                        {item.qualityLabel && (
+                          <div
+                            className={styles.cardQuality}
+                            style={{ color: qualityColor(item.qualityLevel) }}
+                          >
+                            {item.qualityLabel}
+                            {item.qualityScore != null && ` · ${item.qualityScore}`}
+                          </div>
+                        )}
                       </div>
                     </div>
 
