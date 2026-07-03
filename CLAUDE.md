@@ -136,7 +136,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 **frontend/**
 
 - Dashboard: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, KRW/USD 통화 토글, 목표 비중 기반 리밸런싱 추천, HERD 변화 요약, 자산 진단, 보유 종목 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침
-- StockDetail: HERD v4 점수·단계·신호, Action Layer 행동 비율, 장기투자 판단 패널, HERD 지표 분해와 보정 승수 UI, 데이터 품질, HERD 검증 요약, 가격 차트, 재무정보 카드, 판단 요약/다음 행동 사이드 패널
+- StockDetail: HERD v4 점수·단계·신호, Action Layer 행동 비율, HERD 지표 분해와 보정 승수 UI, 가격 차트, 재무정보 카드
 - HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionScore/actionLabel/actionRatio/actionRegime 응답 제공. DB 저장 없이 backend 응답 시점에 계산한다.
 - Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, 타이밍 후보, 대표 종목 그리드, 최근 검색, 포트폴리오/관심종목 추가
@@ -278,11 +278,10 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - 수동 새로고침은 DB 조회 기반 빠른 갱신
 - [x] StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
-  - 장기투자 판단 패널
+  - Action Layer 행동 비율
   - 지표 분해 UI + EPS/섹터 강도 보정 승수
   - 가격 차트
   - 재무 정보
-  - 판단 요약/다음 행동 사이드 패널
   - 포트폴리오 추가
   - 관심종목 추가
 - [x] Search (`/search`)

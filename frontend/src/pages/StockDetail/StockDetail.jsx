@@ -3,9 +3,7 @@
  *
  * 구성:
  *   1) 브레드크럼 + 종목 헤더 (배지 + 포트폴리오/관심종목 추가 버튼)
- *   2) 2컬럼 그리드 (좌: 메인 / 우: 340px 사이드)
- *   좌: HERD 카드 → 장기투자 판단 → 지표 분해 카드 → 재무 정보
- *   우: 판단 요약 → 다음 행동
+ *   2) HERD 카드 → Action Layer → 가격 차트 → 지표 분해 → 재무 정보
  *
  * API: getStockHerd(ticker), addToPortfolio(ticker), addToWatchlist(ticker)
  * 래퍼런스: wireframes/wireframe-detail.html
@@ -207,12 +205,6 @@ function actionTone(grade, signal) {
   return 'var(--text-3)'
 }
 
-const HERD_VALIDATION = [
-  { label: '10년 MDD 개선', value: '+7.3%p', desc: 'Buy & Hold 대비 평균 최대낙폭 완화' },
-  { label: '수익률 보존', value: '38.8%', desc: '장기 급등 수익 일부를 포기하고 변동성 완화' },
-  { label: '검증 성격', value: '보조형', desc: '전량 매매가 아닌 추가매수·일부익절 타이밍 참고' },
-]
-
 /** 가격 차트 커스텀 툴팁 */
 function PriceTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -358,49 +350,6 @@ export default function StockDetail() {
     holding,
     summary: portfolioSummary,
   }), [herdData, financials, holding, portfolioSummary, ticker])
-  const sideFacts = useMemo(() => {
-    const facts = [
-      {
-        label: 'HERD 상태',
-        value: `${Math.round(herdScore)} · ${stageDisp}`,
-        tone: color,
-      },
-      {
-        label: '추천 행동',
-        value: herdData?.actionLabel ?? decision.title,
-        tone: actionColor,
-      },
-      {
-        label: '행동 비율',
-        value: formatActionRatio(herdData?.actionRatio),
-        tone: actionColor,
-      },
-      {
-        label: '데이터 품질',
-        value: herdData?.qualityLabel
-          ? `${dataQualityLabel(herdData.qualityLabel)} · ${herdData.qualityScore}점`
-          : '산출 대기',
-        tone: qualityColor,
-      },
-      {
-        label: '보유 상태',
-        value: holding
-          ? `${Number(holding.quantity ?? 0).toLocaleString('ko-KR')}주 보유`
-          : '포트폴리오 미보유',
-        tone: 'var(--text-1)',
-      },
-    ]
-
-    if (financials?.trailingPe != null) {
-      facts.push({
-        label: '밸류에이션',
-        value: `PER ${fmtNum1(financials.trailingPe)}`,
-        tone: 'var(--text-1)',
-      })
-    }
-
-    return facts
-  }, [actionColor, color, decision.title, financials, herdData, herdScore, holding, qualityColor, stageDisp])
 
   /* 가격 차트 색상 — 기간 첫날 대비 마지막날 방향 */
   const priceColor = useMemo(() => {
@@ -482,7 +431,7 @@ export default function StockDetail() {
         </div>
       )}
 
-      {/* ── 2컬럼 컨텐츠 그리드 ── */}
+      {/* ── 핵심 컨텐츠 ── */}
       {!loading && !error && herdData && (
         <div className={styles.contentGrid}>
 
@@ -534,11 +483,11 @@ export default function StockDetail() {
               </div>
             </div>
 
-            {/* 장기투자 판단 카드 */}
+            {/* Action Layer 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>장기투자 판단</div>
-                <div className={styles.cardMeta}>HERD + 보유 비중 + 재무 컨텍스트</div>
+                <div className={styles.cardTitle}>Action Layer</div>
+                <div className={styles.cardMeta}>장기투자 행동 비율</div>
               </div>
               <div className={styles.cardBody}>
                 <div className={styles.decisionHero}>
@@ -556,7 +505,7 @@ export default function StockDetail() {
                   </div>
                 </div>
                 <div className={styles.decisionList}>
-                  {(herdData.actionReasons?.length ? herdData.actionReasons : decision.notes).map((note) => (
+                  {(herdData.actionReasons?.length ? herdData.actionReasons : decision.notes).slice(0, 3).map((note) => (
                     <div key={note} className={styles.decisionItem}>{note}</div>
                   ))}
                 </div>
@@ -630,49 +579,6 @@ export default function StockDetail() {
                       {formatMultiplier(herdData.sectorMultiplier)}
                       <em>{sectorMultiplierDesc(herdData.sectorMultiplier)}</em>
                     </strong>
-                  </div>
-                </div>
-                <div className={styles.qualityBox}>
-                  <div className={styles.qualityBoxHead}>
-                    <div>
-                      <span>데이터 품질</span>
-                      <strong style={{ color: qualityColor }}>
-                        {dataQualityLabel(herdData.qualityLabel) ?? '산출 대기'}
-                      </strong>
-                    </div>
-                    {herdData.qualityScore != null && (
-                      <em>{herdData.qualityScore}/100</em>
-                    )}
-                  </div>
-                  <p>{herdData.qualitySummary ?? '가격 데이터와 지표 완성도를 기준으로 데이터 품질을 계산합니다.'}</p>
-                  {Array.isArray(herdData.qualityReasons) && herdData.qualityReasons.length > 0 && (
-                    <div className={styles.qualityReasonGrid}>
-                      {herdData.qualityReasons.slice(0, 6).map((reason) => (
-                        <span key={reason}>{reason}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className={styles.validationBox}>
-                  <div className={styles.qualityBoxHead}>
-                    <div>
-                      <span>HERD 검증 요약</span>
-                      <strong>장기 보유 보조형 신호</strong>
-                    </div>
-                    <em>10년</em>
-                  </div>
-                  <p>
-                    HERD는 Buy & Hold를 대체하기보다 장기 보유 중 군중 이탈·밀집 구간의
-                    추가매수와 일부익절 타이밍을 보조합니다.
-                  </p>
-                  <div className={styles.validationGrid}>
-                    {HERD_VALIDATION.map((item) => (
-                      <div key={item.label} className={styles.validationItem}>
-                        <span>{item.label}</span>
-                        <strong>{item.value}</strong>
-                        <em>{item.desc}</em>
-                      </div>
-                    ))}
                   </div>
                 </div>
               </div>
@@ -761,44 +667,6 @@ export default function StockDetail() {
               </div>
             </div>
 
-          </div>
-
-          {/* ─── 오른쪽 사이드 ─── */}
-          <div className={styles.colSide}>
-
-            {/* 판단 요약 카드 */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>판단 요약</div>
-                <div className={styles.cardMeta}>장기투자 기준</div>
-              </div>
-              <div className={styles.cardBodySmall}>
-                <div className={styles.sideFactList}>
-                  {sideFacts.map((fact) => (
-                    <div key={fact.label} className={styles.sideFact}>
-                      <span>{fact.label}</span>
-                      <strong style={{ color: fact.tone }}>{fact.value}</strong>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 다음 행동 카드 */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>다음 행동</div>
-                <div className={styles.cardMeta}>과잉 매매 방지</div>
-              </div>
-              <div className={styles.cardBodySmall}>
-                <div className={styles.actionNoteList}>
-                  <p>{herdData.actionRegimeLabel ?? decision.subtitle}</p>
-                  {(herdData.actionReasons?.length ? herdData.actionReasons : decision.notes).slice(0, 3).map((note) => (
-                    <span key={note}>{note}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       )}

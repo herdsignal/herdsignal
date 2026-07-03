@@ -68,11 +68,10 @@ Rush    #EF4444  (레드)
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
-  - HERD 데이터 품질 배지와 상세 근거
-  - HERD 검증 요약 (10년 백테스트 MDD 개선·수익률 보존·보조형 신호 설명)
-  - 장기투자 판단 패널 (HERD + 보유 비중 + 재무 컨텍스트)
+  - HERD 데이터 품질 배지
   - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
-  - 판단 요약/다음 행동 사이드 패널
+  - 가격 차트
+  - 재무 정보
   - 포트폴리오 추가
   - 관심종목 추가
 - Search (`/search`)
@@ -108,7 +107,7 @@ Rush    #EF4444  (레드)
   - portfolio_history 시계열 표시
 
 ## 부분 구현 / 미구현
-- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 제거됨. 상세 사이드는 판단 요약과 다음 행동만 유지한다.
+- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 제거됨. 상세 화면은 HERD와 Action Layer 중심 단일 컬럼으로 유지한다.
 - 목표 비중은 `hs_target_weights` localStorage에 저장하며, 아직 DB 저장 기능은 없다.
 - 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
 - Dashboard의 간이 백테스트는 portfolio_history 기반 수익률/MDD 진단이며 실제 HERD 매매 시뮬레이션은 아니다.
