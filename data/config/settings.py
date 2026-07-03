@@ -111,6 +111,28 @@ SECTOR_RELATIVE_MULTIPLIERS = {
 
 
 # ──────────────────────────────────────────────
+# HERD v5 후보 — 변동성 레이어 백테스트 설정
+# ──────────────────────────────────────────────
+# 운영 계산에는 아직 반영하지 않는다. backtest_v5_volatility.py에서
+# VIX/VXN/종목 실현변동성 백분위수로 v5 후보 성능을 검증한다.
+VOLATILITY_LOOKBACK_DAYS = int(os.getenv("VOLATILITY_LOOKBACK_DAYS", "252"))
+VOLATILITY_MIN_DAYS = int(os.getenv("VOLATILITY_MIN_DAYS", "126"))
+REALIZED_VOL_WINDOW_DAYS = int(os.getenv("REALIZED_VOL_WINDOW_DAYS", "20"))
+VOLATILITY_LAYER_WEIGHTS = {
+    "realized": float(os.getenv("VOL_LAYER_WEIGHT_REALIZED", "0.50")),
+    "vix":      float(os.getenv("VOL_LAYER_WEIGHT_VIX",      "0.25")),
+    "vxn":      float(os.getenv("VOL_LAYER_WEIGHT_VXN",      "0.25")),
+}
+VOLATILITY_MULTIPLIERS = {
+    "extreme_fear": float(os.getenv("VOL_MULTIPLIER_EXTREME_FEAR", "0.90")),
+    "fear":         float(os.getenv("VOL_MULTIPLIER_FEAR",         "0.95")),
+    "neutral":      float(os.getenv("VOL_MULTIPLIER_NEUTRAL",      "1.00")),
+    "calm":         float(os.getenv("VOL_MULTIPLIER_CALM",         "1.05")),
+    "complacent":   float(os.getenv("VOL_MULTIPLIER_COMPLACENT",   "1.10")),
+}
+
+
+# ──────────────────────────────────────────────
 # HERD Index 단계 판정 임계값
 # ──────────────────────────────────────────────
 # 백분위수 정규화 방식 기반으로 도출한 최적 임계값.
