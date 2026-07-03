@@ -477,16 +477,16 @@
 }
 
 /* ────────────────────────────
-   가격 차트 카드
+   HERD 히스토리 카드
    ──────────────────────────── */
 
 /* 탭 버튼 묶음 (카드 헤더 우측) */
-.priceTabs {
+.historyTabs {
   display: flex;
   gap: 4px;
 }
 
-.priceTab {
+.historyTab {
   padding: 3px 10px;
   border-radius: 5px;
   border: 1px solid var(--border2);
@@ -498,14 +498,14 @@
   font-family: 'Inter', sans-serif;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
-.priceTab:hover { color: var(--text-1); border-color: var(--text-3); }
+.historyTab:hover { color: var(--text-1); border-color: var(--text-3); }
 
-.priceTabActive {
+.historyTabActive {
   background: var(--text-1);
   color: var(--bg);
   border-color: var(--text-1);
 }
-.priceTabActive:hover { color: var(--bg); }
+.historyTabActive:hover { color: var(--bg); }
 
 /* 빈 상태 / 로딩 */
 .chartEmpty {
@@ -515,25 +515,6 @@
   justify-content: center;
   font-size: 13px;
   color: var(--text-3);
-}
-
-/* 가격 차트 커스텀 툴팁 */
-.priceTooltip {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 8px 12px;
-}
-.priceTooltipDate {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 2px;
-}
-.priceTooltipVal {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-1);
 }
 
 .actionWarningList {

@@ -18,12 +18,23 @@ const herdModelReport = {
     { label: '연평균 행동', value: '8.5회', sub: '10년 평균', tone: 'slate' },
     { label: '표본', value: '5종목', sub: 'NVDA/MSFT/AAPL/JPM/SPY', tone: 'orange' },
   ],
+  targets: [
+    { label: 'Return Capture', actual: '70.2%', target: '70%+', result: 'PASS', tone: 'pass' },
+    { label: 'MDD Defense', actual: '+5.5%p', target: '5%p+', result: 'PASS', tone: 'pass' },
+    { label: 'Action Density', actual: '8.5/년', target: '12/년 이하', result: 'PASS', tone: 'pass' },
+    { label: 'Outlier Risk', actual: 'NVDA 37.2%', target: '40%+', result: 'WATCH', tone: 'watch' },
+  ],
   rows: [
-    { ticker: 'NVDA', buyHold: '+16,667.5%', action: '+6,196.5%', capture: '37.2%', mdd: '+10.3%p', actions: '9.0/년' },
-    { ticker: 'MSFT', buyHold: '+762.3%', action: '+709.5%', capture: '93.1%', mdd: '+3.8%p', actions: '8.7/년' },
-    { ticker: 'AAPL', buyHold: '+1,325.8%', action: '+1,088.6%', capture: '82.1%', mdd: '+0.6%p', actions: '8.2/년' },
-    { ticker: 'JPM', buyHold: '+626.5%', action: '+422.2%', capture: '67.4%', mdd: '+6.8%p', actions: '8.4/년' },
-    { ticker: 'SPY', buyHold: '+319.1%', action: '+227.5%', capture: '71.3%', mdd: '+5.8%p', actions: '8.3/년' },
+    { ticker: 'NVDA', buyHold: '+16,667.5%', action: '+6,196.5%', capture: '37.2%', mdd: '+10.3%p', actions: '9.0/년', verdict: '방어 우선', tone: 'watch' },
+    { ticker: 'MSFT', buyHold: '+762.3%', action: '+709.5%', capture: '93.1%', mdd: '+3.8%p', actions: '8.7/년', verdict: '우수', tone: 'pass' },
+    { ticker: 'AAPL', buyHold: '+1,325.8%', action: '+1,088.6%', capture: '82.1%', mdd: '+0.6%p', actions: '8.2/년', verdict: '수익 보존', tone: 'pass' },
+    { ticker: 'JPM', buyHold: '+626.5%', action: '+422.2%', capture: '67.4%', mdd: '+6.8%p', actions: '8.4/년', verdict: '방어 개선', tone: 'pass' },
+    { ticker: 'SPY', buyHold: '+319.1%', action: '+227.5%', capture: '71.3%', mdd: '+5.8%p', actions: '8.3/년', verdict: '기준 통과', tone: 'pass' },
+  ],
+  riskNotes: [
+    ['강점', 'MDD 방어 목표 통과, 행동 횟수 과다하지 않음'],
+    ['주의', '초고성장주 급등 구간에서는 수익률 일부 포기'],
+    ['운영 기준', '실제 화면은 HERD_v4 점수 + HERD_v5 Action Layer를 분리 표시'],
   ],
   stages: [
     { stage: 'Flee', range: '0-15', action: '추가매수', ratio: '8-22%', tone: 'flee' },

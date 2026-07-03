@@ -1,0 +1,84 @@
+.wrap {
+  position: relative;
+  width: 100%;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 10px;
+  background: var(--surface2);
+  color: var(--text-3);
+}
+
+.empty strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.empty span {
+  font-size: 12px;
+}
+
+.sparseBadge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 2;
+  padding: 5px 8px;
+  border: 1px solid rgba(251, 146, 60, 0.24);
+  border-radius: 999px;
+  background: rgba(251, 146, 60, 0.08);
+  color: var(--drift);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-top: -2px;
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+.legend span {
+  min-width: 0;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tooltip {
+  min-width: 128px;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 9px 12px;
+}
+
+.tooltipDate {
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.tooltipScore {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.tooltipStage {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-2);
+}

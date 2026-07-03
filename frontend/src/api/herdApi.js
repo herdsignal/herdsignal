@@ -82,12 +82,12 @@ export const refreshStockHerd = (ticker) =>
   api.post(`/api/stocks/${ticker}/herd/refresh`, null, { timeout: 60_000 })
 
 /** 특정 종목 HERD 히스토리 조회 (기본 3y) */
-export const getSpyHerdHistory = (period = '3y') =>
-  api.get(`/api/stocks/SPY/herd/history?period=${period}`)
+export const getStockHerdHistory = (ticker, period = '3y') =>
+  api.get(`/api/stocks/${ticker}/herd/history?period=${period}`)
 
-/** 종목 일별 종가 히스토리 조회 (1M|3M|1Y|5Y) */
-export const getStockPrices = (ticker, period = '1M') =>
-  api.get(`/api/stocks/${ticker}/prices?period=${period}`)
+/** SPY HERD 히스토리 조회 (기본 3y) */
+export const getSpyHerdHistory = (period = '3y') =>
+  getStockHerdHistory('SPY', period)
 
 /* ── 종목 재무정보 ───────────────────────────── */
 

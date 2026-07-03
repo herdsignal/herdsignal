@@ -12,6 +12,7 @@ Spring Boot API를 호출해서 HERD Index 데이터를 시각화.
 src/
 ├── components/     재사용 컴포넌트
 │   ├── HerdDots/   Herd Flow 점 애니메이션
+│   ├── HerdHistoryChart/ HERD Index 히스토리 차트
 │   ├── SpectrumBar/ Flee~Rush 스펙트럼 바
 │   ├── Layout/     사이드바 + Outlet 레이아웃
 │   └── AvgPriceModal/ 평균 매수가·수량 수정 모달
@@ -49,6 +50,7 @@ Rush    #EF4444  (레드)
 
 ## 핵심 UI 컴포넌트
 - HerdDots: Herd Flow 점 애니메이션 (Flee=전 영역 듬성듬성 분산, Scatter=작은 군집들이 깨져 흩어짐, Calm=중앙 균형, Drift=오른쪽 쏠림, Rush=좁은 군중 밀집)
+- HerdHistoryChart: HERD 점수 히스토리 공용 차트 (Flee~Rush 구간 배경, 현재 점수 기준선, 이력 부족 배지)
 - SpectrumBar: Flee~Rush 스펙트럼 바
 - Layout: 공통 사이드바 + 페이지 Outlet
 - AvgPriceModal: 평균 매수가·수량 수정 모달
@@ -57,7 +59,7 @@ Rush    #EF4444  (레드)
 - 사이드바 노출 메뉴는 MVP 기준으로 Dashboard, Watchlist, Search, HerdLab만 유지한다.
 - AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
 - Dashboard (`/`)
-  - S&P 500 HERD 배너
+  - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션, Timeline=HERD Index 히스토리 차트)
   - 포트폴리오 평가금액 요약
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
@@ -71,7 +73,7 @@ Rush    #EF4444  (레드)
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
-  - 가격 차트
+  - HERD Index 히스토리 차트
   - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
   - 낮은 HERD 데이터 품질만 배지 표시
   - 재무 정보
@@ -99,6 +101,7 @@ Rush    #EF4444  (레드)
 - HerdLab (`/herd-lab`)
   - 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드
   - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
+  - 목표 대비 PASS/WATCH 판정과 종목별 백테스트 verdict 표시
   - HERD 5단계 행동 매트릭스와 v4 가중치 표시
   - 표시 데이터는 `src/data/herdModelReport.js`에서 관리하며 JSX에 백테스트 숫자를 직접 하드코딩하지 않는다.
 - AiRebalance (`/ai`)
@@ -138,9 +141,9 @@ Rush    #EF4444  (레드)
 - getPortfolio / getPortfolioHerd / refreshPortfolioHerd / getPortfolioRealtime / getPortfolioSummary / getPortfolioHistory
 - addToPortfolio / removeFromPortfolio / updateAvgPrice
 - getWatchlistHerd / addToWatchlist / removeFromWatchlist
-- getStockHerd / refreshStockHerd / getSpyHerdHistory
+- getStockHerd / refreshStockHerd / getStockHerdHistory / getSpyHerdHistory
 - searchStocks
-- getStockPrices / getStockFinancials
+- getStockFinancials
 
 ## localStorage 사용
 - `hs_portfolio_realtime`: 포트폴리오 실시간 평가 캐시

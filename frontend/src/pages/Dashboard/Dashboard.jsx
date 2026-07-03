@@ -24,15 +24,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceArea,
-} from 'recharts'
-import {
   getPortfolio,
   getPortfolioSummary,
   getPortfolioHerd,
@@ -48,9 +39,10 @@ import {
   rebalanceIdeas,
   writeTargetWeights,
 } from '../../utils/portfolioTools'
-import HerdDots      from '../../components/HerdDots/HerdDots'
-import SpectrumBar   from '../../components/SpectrumBar/SpectrumBar'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
+import HerdDots      from '../../components/HerdDots/HerdDots'
+import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
+import SpectrumBar   from '../../components/SpectrumBar/SpectrumBar'
 import styles        from './Dashboard.module.css'
 
 const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
@@ -310,32 +302,6 @@ function findScoreAt(points, targetDate) {
     if (diff < minDiff) { minDiff = diff; closest = p }
   }
   return closest
-}
-
-/** "2023-07-01" → "2023.07" (X축 눈금 포맷) */
-function fmtHistAxisDate(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00')
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`
-}
-
-/** Timeline 차트 커스텀 툴팁 */
-function HistTooltip({ active, payload, label }) {
-  if (!active || !payload?.length) return null
-  const score = payload[0]?.value
-  return (
-    <div className={styles.histTooltip}>
-      <div className={styles.histTooltipDate}>
-        {label
-          ? new Date(label + 'T00:00:00').toLocaleDateString('ko-KR', {
-              year: 'numeric', month: 'long', day: 'numeric',
-            })
-          : ''}
-      </div>
-      <div style={{ color: scoreToColor(score), fontFamily: 'Space Grotesk', fontWeight: 600 }}>
-        HERD {score != null ? Math.round(score) : '—'}
-      </div>
-    </div>
-  )
 }
 
 function BannerStat({ label, point }) {
@@ -812,41 +778,11 @@ export default function Dashboard() {
               {spyHistory.length === 0 ? (
                 <div className={styles.bannerTimelineEmpty}>데이터 없음</div>
               ) : (
-                <ResponsiveContainer width="100%" height={190}>
-                  <LineChart data={spyHistory} margin={{ top: 8, right: 20, left: 0, bottom: 4 }}>
-                    <ReferenceArea y1={0}  y2={20}  fill="#3B82F6" fillOpacity={0.08} />
-                    <ReferenceArea y1={20} y2={40}  fill="#93C5FD" fillOpacity={0.08} />
-                    <ReferenceArea y1={40} y2={60}  fill="#9CA3AF" fillOpacity={0.05} />
-                    <ReferenceArea y1={60} y2={80}  fill="#FB923C" fillOpacity={0.08} />
-                    <ReferenceArea y1={80} y2={100} fill="#EF4444" fillOpacity={0.08} />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={fmtHistAxisDate}
-                      interval={Math.max(0, Math.floor(spyHistory.length / 6) - 1)}
-                      tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickMargin={6}
-                    />
-                    <YAxis
-                      domain={[0, 100]}
-                      ticks={[0, 20, 40, 60, 80, 100]}
-                      tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                      axisLine={false}
-                      tickLine={false}
-                      width={28}
-                    />
-                    <Tooltip content={<HistTooltip />} />
-                    <Line
-                      type="monotone"
-                      dataKey="score"
-                      stroke="rgba(255,255,255,0.65)"
-                      strokeWidth={1.5}
-                      dot={false}
-                      activeDot={{ r: 3, fill: 'rgba(255,255,255,0.9)', strokeWidth: 0 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                <HerdHistoryChart
+                  points={spyHistory}
+                  currentScore={spyScore}
+                  height={190}
+                />
               )}
             </div>
           )}

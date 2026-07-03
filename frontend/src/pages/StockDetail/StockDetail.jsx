@@ -3,7 +3,7 @@
  *
  * 구성:
  *   1) 브레드크럼 + 종목 헤더 (배지 + 포트폴리오/관심종목 추가 버튼)
- *   2) HERD 카드 → Action Layer → 가격 차트 → 지표 분해 → 재무 정보
+ *   2) HERD 카드 → Action Layer → HERD 히스토리 → 지표 분해 → 재무 정보
  *
  * API: getStockHerd(ticker), addToPortfolio(ticker), addToWatchlist(ticker)
  * 래퍼런스: wireframes/wireframe-detail.html
@@ -12,14 +12,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, useNavigate }                    from 'react-router-dom'
 import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
-} from 'recharts'
-import {
   getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials,
-  getStockPrices,
+  getStockHerdHistory,
   getPortfolio, getPortfolioSummary,
 } from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
+import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import { buildDecision } from '../../utils/decision'
 import styles      from './StockDetail.module.css'
@@ -88,6 +86,13 @@ const FINANCE_ITEMS = [
   { key: 'eps',             label: 'EPS (TTM)',  sub: null,   fmt: fmtDollar2 },
   { key: 'totalRevenue',    label: '매출 (TTM)', sub: null,   fmt: fmtCap     },
   { key: 'dividendYield',   label: '배당수익률', sub: null,   fmt: fmtPct2    },
+]
+
+const HISTORY_PERIODS = [
+  { value: '1m', label: '1M' },
+  { value: '6m', label: '6M' },
+  { value: '1y', label: '1Y' },
+  { value: '3y', label: '3Y' },
 ]
 
 /* ── 유틸 ─────────────────────────────────── */
@@ -225,17 +230,6 @@ function actionTone(grade, signal) {
   return 'var(--text-3)'
 }
 
-/** 가격 차트 커스텀 툴팁 */
-function PriceTooltip({ active, payload, label }) {
-  if (!active || !payload?.length) return null
-  return (
-    <div className={styles.priceTooltip}>
-      <div className={styles.priceTooltipDate}>{label}</div>
-      <div className={styles.priceTooltipVal}>${Number(payload[0]?.value).toFixed(2)}</div>
-    </div>
-  )
-}
-
 /* ── 버튼 레이블 매핑 ─────────────────────── */
 const BTN_LABELS = {
   portfolio: {
@@ -265,9 +259,9 @@ export default function StockDetail() {
   const [portfolioStatus,  setPortfolioStatus]   = useState('idle')
   const [watchlistStatus,  setWatchlistStatus]   = useState('idle')
   const [financials,       setFinancials]        = useState(null)
-  const [pricePoints,      setPricePoints]       = useState([])
-  const [priceTab,         setPriceTab]          = useState('1M')
-  const [priceLoading,     setPriceLoading]      = useState(false)
+  const [herdHistory,      setHerdHistory]       = useState([])
+  const [historyPeriod,    setHistoryPeriod]     = useState('1y')
+  const [historyLoading,   setHistoryLoading]    = useState(false)
   const [portfolio,        setPortfolio]         = useState([])
   const [portfolioSummary, setPortfolioSummary]  = useState(null)
 
@@ -320,15 +314,15 @@ export default function StockDetail() {
       .catch(() => { /* 재무정보 실패 시 "—" 유지 */ })
   }, [ticker])
 
-  /* 가격 차트 — ticker 또는 탭 변경 시 재조회 */
+  /* HERD 히스토리 — ticker 또는 기간 변경 시 재조회 */
   useEffect(() => {
-    setPriceLoading(true)
-    setPricePoints([])
-    getStockPrices(ticker.toUpperCase(), priceTab)
-      .then((res) => { setPricePoints(res.data?.data?.points ?? []) })
-      .catch(() => { setPricePoints([]) })
-      .finally(() => { setPriceLoading(false) })
-  }, [ticker, priceTab])
+    setHistoryLoading(true)
+    setHerdHistory([])
+    getStockHerdHistory(ticker.toUpperCase(), historyPeriod)
+      .then((res) => { setHerdHistory(res.data?.data?.points ?? []) })
+      .catch(() => { setHerdHistory([]) })
+      .finally(() => { setHistoryLoading(false) })
+  }, [ticker, historyPeriod])
 
   /* 포트폴리오 추가 */
   async function handleAddPortfolio() {
@@ -370,21 +364,11 @@ export default function StockDetail() {
     holding,
     summary: portfolioSummary,
   }), [herdData, financials, holding, portfolioSummary, ticker])
-
-  /* 가격 차트 색상 — 기간 첫날 대비 마지막날 방향 */
-  const priceColor = useMemo(() => {
-    if (pricePoints.length < 2) return '#3B82F6'
-    return pricePoints[pricePoints.length - 1].close >= pricePoints[0].close
-      ? '#3B82F6' : '#EF4444'
-  }, [pricePoints])
-
-  /* X축 날짜 포맷 — 단기(1M/3M)는 M/D, 장기(1Y/5Y)는 YY.MM */
-  const fmtPriceDate = useCallback((dateStr) => {
-    const d = new Date(dateStr + 'T00:00:00')
-    return (priceTab === '1M' || priceTab === '3M')
-      ? `${d.getMonth() + 1}/${d.getDate()}`
-      : `${String(d.getFullYear()).slice(2)}.${String(d.getMonth() + 1).padStart(2, '0')}`
-  }, [priceTab])
+  const historyPoints = useMemo(() => {
+    if (herdHistory.length > 0) return herdHistory
+    if (!herdData?.scoreDate) return []
+    return [{ date: herdData.scoreDate, score: herdScore }]
+  }, [herdHistory, herdData, herdScore])
 
   return (
     <div>
@@ -540,63 +524,34 @@ export default function StockDetail() {
               </div>
             </div>
 
-            {/* 가격 차트 카드 */}
+            {/* HERD 히스토리 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>가격 차트</div>
-                <div className={styles.priceTabs}>
-                  {['1M', '3M', '1Y', '5Y'].map((p) => (
+                <div>
+                  <div className={styles.cardTitle}>HERD Index History</div>
+                  <div className={styles.cardMeta}>저장된 HERD 점수 흐름</div>
+                </div>
+                <div className={styles.historyTabs}>
+                  {HISTORY_PERIODS.map((p) => (
                     <button
-                      key={p}
-                      className={`${styles.priceTab} ${priceTab === p ? styles.priceTabActive : ''}`}
-                      onClick={() => setPriceTab(p)}
-                    >{p}</button>
+                      key={p.value}
+                      className={`${styles.historyTab} ${historyPeriod === p.value ? styles.historyTabActive : ''}`}
+                      onClick={() => setHistoryPeriod(p.value)}
+                    >
+                      {p.label}
+                    </button>
                   ))}
                 </div>
               </div>
               <div className={styles.cardBody}>
-                {priceLoading ? (
+                {historyLoading ? (
                   <div className={styles.chartEmpty}>로딩 중…</div>
-                ) : pricePoints.length === 0 ? (
-                  <div className={styles.chartEmpty}>데이터 없음</div>
                 ) : (
-                  <ResponsiveContainer width="100%" height={200}>
-                    <AreaChart data={pricePoints} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={priceColor} stopOpacity={0.25} />
-                          <stop offset="100%" stopColor={priceColor} stopOpacity={0.02} />
-                        </linearGradient>
-                      </defs>
-                      <XAxis
-                        dataKey="date"
-                        tickFormatter={fmtPriceDate}
-                        interval="preserveStartEnd"
-                        tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                        axisLine={false}
-                        tickLine={false}
-                        tickMargin={6}
-                      />
-                      <YAxis
-                        domain={['auto', 'auto']}
-                        tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                        axisLine={false}
-                        tickLine={false}
-                        width={44}
-                        tickFormatter={(v) => `$${v.toFixed(0)}`}
-                      />
-                      <Tooltip content={<PriceTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="close"
-                        stroke={priceColor}
-                        strokeWidth={1.5}
-                        fill="url(#priceGrad)"
-                        dot={false}
-                        activeDot={{ r: 3, fill: priceColor, strokeWidth: 0 }}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  <HerdHistoryChart
+                    points={historyPoints}
+                    currentScore={herdScore}
+                    height={230}
+                  />
                 )}
               </div>
             </div>

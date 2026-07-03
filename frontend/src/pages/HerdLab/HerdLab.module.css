@@ -17,7 +17,9 @@
 .modelStrip span,
 .cardHead span,
 .metricCard span,
-.checkGrid span {
+.targetCard span,
+.checkGrid span,
+.riskGrid span {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -39,6 +41,12 @@
 }
 
 .metricGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.targetGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
@@ -71,7 +79,9 @@
 
 .metricCard,
 .card,
-.checkGrid div {
+.targetCard,
+.checkGrid div,
+.riskGrid div {
   border: 1px solid rgba(255, 255, 255, 0.095);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)), var(--surface);
   border-radius: 12px;
@@ -80,6 +90,41 @@
 
 .metricCard {
   padding: 18px 20px;
+}
+
+.targetCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 18px;
+}
+
+.targetCard strong {
+  display: block;
+  margin-top: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.7px;
+}
+
+.targetCard em {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-3);
+  font-style: normal;
+}
+
+.targetCard b {
+  flex-shrink: 0;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  line-height: 1;
 }
 
 .metricCard strong {
@@ -103,6 +148,14 @@
 .green { color: #22C55E; }
 .slate { color: var(--calm); }
 .orange { color: var(--drift); }
+.pass {
+  border-color: rgba(34, 197, 94, 0.24);
+  color: #22C55E;
+}
+.watch {
+  border-color: rgba(249, 115, 22, 0.28);
+  color: var(--drift);
+}
 .flee { background: var(--flee); }
 .scatter { background: var(--scatter); }
 .calm { background: var(--calm); }
@@ -134,7 +187,7 @@
 
 .tr {
   display: grid;
-  grid-template-columns: 0.7fr 1fr 1fr 0.75fr 0.75fr 0.7fr;
+  grid-template-columns: 0.65fr 0.95fr 0.95fr 0.85fr 0.85fr 0.65fr 0.75fr;
   gap: 14px;
   align-items: center;
   padding: 13px 0;
@@ -165,9 +218,46 @@
   color: var(--text-1);
 }
 
+.tr span em {
+  display: inline-flex;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .tr span:first-child strong {
   display: block;
   font-size: 14px;
+}
+
+.captureBar,
+.mddBar {
+  display: block;
+  height: 4px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface2);
+}
+
+.captureBar b,
+.mddBar b {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.captureBar b {
+  background: linear-gradient(90deg, var(--flee), var(--calm));
+}
+
+.mddBar b {
+  background: linear-gradient(90deg, #22C55E, var(--flee));
 }
 
 .gridTwo {
@@ -262,21 +352,31 @@
   gap: 12px;
 }
 
-.checkGrid div {
+.checkGrid div,
+.riskGrid div {
   padding: 16px 18px;
 }
 
-.checkGrid strong {
+.checkGrid strong,
+.riskGrid strong {
   display: block;
   margin-top: 8px;
   font-size: 13px;
   color: var(--text-1);
 }
 
+.riskGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
 @media (max-width: 1180px) {
   .metricGrid,
   .modelStrip,
-  .checkGrid {
+  .targetGrid,
+  .checkGrid,
+  .riskGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -293,7 +393,9 @@
 
   .metricGrid,
   .modelStrip,
-  .checkGrid {
+  .targetGrid,
+  .checkGrid,
+  .riskGrid {
     grid-template-columns: 1fr;
   }
 

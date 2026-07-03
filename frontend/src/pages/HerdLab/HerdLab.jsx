@@ -8,11 +8,25 @@ import herdModelReport from '../../data/herdModelReport'
 const {
   model: MODEL,
   metrics: METRICS,
+  targets: TARGETS,
   rows: TEST_ROWS,
   stages: STAGES,
   weights: WEIGHTS,
   checks: CHECKS,
+  riskNotes: RISK_NOTES,
 } = herdModelReport
+
+function pctWidth(value) {
+  const n = Number(String(value).replace(/[+%,/년p]/g, ''))
+  if (!Number.isFinite(n)) return 0
+  return Math.max(0, Math.min(100, n))
+}
+
+function mddWidth(value) {
+  const n = Number(String(value).replace(/[+%p]/g, ''))
+  if (!Number.isFinite(n)) return 0
+  return Math.max(0, Math.min(100, n * 8))
+}
 
 export default function HerdLab() {
   return (
@@ -54,6 +68,19 @@ export default function HerdLab() {
         ))}
       </section>
 
+      <section className={styles.targetGrid}>
+        {TARGETS.map((target) => (
+          <div key={target.label} className={styles.targetCard}>
+            <div>
+              <span>{target.label}</span>
+              <strong>{target.actual}</strong>
+              <em>목표 {target.target}</em>
+            </div>
+            <b className={styles[target.tone]}>{target.result}</b>
+          </div>
+        ))}
+      </section>
+
       <section className={styles.card}>
         <div className={styles.cardHead}>
           <span>Backtest</span>
@@ -67,15 +94,23 @@ export default function HerdLab() {
             <span>보존율</span>
             <span>MDD 개선</span>
             <span>행동</span>
+            <span>판정</span>
           </div>
           {TEST_ROWS.map((row) => (
             <div key={row.ticker} className={styles.tr}>
               <span><strong>{row.ticker}</strong></span>
               <span>{row.buyHold}</span>
               <span>{row.action}</span>
-              <span>{row.capture}</span>
-              <span className={styles.green}>{row.mdd}</span>
+              <span>
+                {row.capture}
+                <i className={styles.captureBar}><b style={{ width: `${pctWidth(row.capture)}%` }} /></i>
+              </span>
+              <span className={styles.green}>
+                {row.mdd}
+                <i className={styles.mddBar}><b style={{ width: `${mddWidth(row.mdd)}%` }} /></i>
+              </span>
               <span>{row.actions}</span>
+              <span><em className={styles[row.tone]}>{row.verdict}</em></span>
             </div>
           ))}
         </div>
@@ -119,6 +154,15 @@ export default function HerdLab() {
 
       <section className={styles.checkGrid}>
         {CHECKS.map(([label, value]) => (
+          <div key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </section>
+
+      <section className={styles.riskGrid}>
+        {RISK_NOTES.map(([label, value]) => (
           <div key={label}>
             <span>{label}</span>
             <strong>{value}</strong>

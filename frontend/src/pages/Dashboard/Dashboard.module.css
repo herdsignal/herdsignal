@@ -417,7 +417,7 @@
 }
 .bannerTabActive:hover { color: var(--bg); }
 
-/* Overview 탭 — 애니메이션 블록(좌) + 통계(우) */
+/* Overview 탭 — HERD 히스토리 차트(좌) + 통계(우) */
 .bannerOverview {
   flex: 1;
   display: flex;
@@ -440,7 +440,7 @@
 /* Timeline 탭 */
 .bannerTimeline {
   flex: 1;
-  padding: 46px 16px 8px 0;
+  padding: 46px 16px 8px 8px;
   display: flex;
   align-items: center;
   background: var(--surface2);
@@ -453,24 +453,12 @@
   color: var(--text-3);
 }
 
-/* Timeline 커스텀 툴팁 */
-.histTooltip {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 10px 14px;
-}
-.histTooltipDate {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 4px;
-}
-
 .bannerAnimLabel {
   position: absolute;
   bottom: 20px;
   left: 0;
   right: 0;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   padding: 0 20px;
@@ -478,7 +466,6 @@
   color: var(--text-3);
   letter-spacing: 0.04em;
   pointer-events: none;
-  z-index: 1;
 }
 
 .bannerSpectrumOverlay {
