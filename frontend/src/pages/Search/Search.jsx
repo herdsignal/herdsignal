@@ -20,6 +20,7 @@ import {
   addToPortfolio,
   addToWatchlist,
 } from '../../api/herdApi'
+import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import styles from './Search.module.css'
 
 /* ── 상수 ─────────────────────────────── */
@@ -45,6 +46,11 @@ const TICKER_NAMES = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticke
 
 /* localStorage 키 */
 const RECENT_KEY = 'hs_recent_searches'
+const PORTFOLIO_CACHE_KEYS = [
+  'hs_portfolio_realtime',
+  'hs_portfolio_herd',
+  'hs_cache_time',
+]
 
 /* ── 유틸 ─────────────────────────────── */
 
@@ -129,6 +135,10 @@ function saveToRecent(ticker) {
   localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 5)))
 }
 
+function clearPortfolioCache() {
+  PORTFOLIO_CACHE_KEYS.forEach((key) => localStorage.removeItem(key))
+}
+
 /** 추가 버튼 레이블 */
 function addBtnLabel(status, idleLabel) {
   if (status === 'loading') return '…'
@@ -163,6 +173,7 @@ export default function Search() {
   const [recentSearches, setRecentSearches] = useState(loadRecent)
   const [portfolioTickers, setPortfolioTickers] = useState(new Set())
   const [watchlistTickers, setWatchlistTickers] = useState(new Set())
+  const [modalTicker, setModalTicker] = useState(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -275,6 +286,8 @@ export default function Search() {
       await addToPortfolio(ticker)
       setPortfolioStatus('added')
       setPortfolioTickers(prev => new Set([...prev, ticker]))
+      clearPortfolioCache()
+      setModalTicker(ticker)
     } catch (e) {
       setPortfolioStatus(e.response?.status === 409 ? 'exists' : 'idle')
     }
@@ -518,6 +531,19 @@ export default function Search() {
             ))}
           </div>
         </>
+      )}
+
+      {modalTicker && (
+        <AvgPriceModal
+          ticker={modalTicker}
+          currentAvgPrice={null}
+          currentQuantity={null}
+          onClose={() => setModalTicker(null)}
+          onSaved={() => {
+            clearPortfolioCache()
+            setModalTicker(null)
+          }}
+        />
       )}
     </div>
   )
