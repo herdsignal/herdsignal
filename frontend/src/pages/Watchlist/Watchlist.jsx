@@ -21,6 +21,7 @@ import {
 import HerdDots  from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
+import { opportunityRows } from '../../utils/portfolioTools'
 import styles    from './Watchlist.module.css'
 
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
@@ -251,6 +252,8 @@ export default function Watchlist() {
   const sortedWatchlist = useMemo(() => {
     const list = [...watchlist]
     switch (sortMode) {
+      case 'opportunity':
+        return opportunityRows(list)
       case 'scoreDesc':
         return list.sort((a, b) => Number(b.herdScore ?? -1) - Number(a.herdScore ?? -1))
       case 'updated':
@@ -261,6 +264,8 @@ export default function Watchlist() {
         return list.sort((a, b) => Number(a.herdScore ?? 101) - Number(b.herdScore ?? 101))
     }
   }, [watchlist, sortMode])
+
+  const opportunityQueue = useMemo(() => opportunityRows(watchlist).slice(0, 3), [watchlist])
 
   const watchStats = useMemo(() => {
     const buyCount = watchlist.filter((item) =>
@@ -355,9 +360,9 @@ export default function Watchlist() {
               </div>
             </div>
             <div className={styles.summaryItem}>
-              <div className={styles.summaryLabel}>중립</div>
+              <div className={styles.summaryLabel}>대기 1순위</div>
               <div className={styles.summaryValue}>
-                {watchlist.length - watchStats.buyCount - watchStats.sellCount}
+                {opportunityQueue[0]?.ticker ?? '—'}
               </div>
             </div>
             <div className={styles.summaryItem}>
@@ -368,9 +373,30 @@ export default function Watchlist() {
             </div>
           </div>
 
+          <div className={styles.opportunityPanel}>
+            <div className={styles.sectionTitle}>기회 대기열</div>
+            <div className={styles.opportunityList}>
+              {opportunityQueue.map((item, index) => (
+                <button
+                  key={item.ticker}
+                  className={styles.opportunityItem}
+                  onClick={() => navigate(`/stock/${item.ticker}`)}
+                >
+                  <span>{index + 1}</span>
+                  <strong>{item.ticker}</strong>
+                  <em>HERD {Math.round(item.herdScore)} · {item.reason}</em>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className={styles.sectionRow}>
             <div className={styles.sectionTitle}>관심 종목 · {watchlist.length}</div>
             <div className={styles.sortControls}>
+              <button
+                className={`${styles.sortBtn} ${sortMode === 'opportunity' ? styles.sortBtnActive : ''}`}
+                onClick={() => setSortMode('opportunity')}
+              >기회순</button>
               <button
                 className={`${styles.sortBtn} ${sortMode === 'scoreAsc' ? styles.sortBtnActive : ''}`}
                 onClick={() => setSortMode('scoreAsc')}
@@ -399,6 +425,7 @@ export default function Watchlist() {
                 ? item.herdStage.slice(5)
                 : item.herdStage
               const isDeleting = deletingTicker === item.ticker
+              const opportunity = item.opportunityScore ?? opportunityRows([item])[0]?.opportunityScore
 
               return (
                 <div
@@ -431,7 +458,9 @@ export default function Watchlist() {
                       </div>
                       <div>
                         <div className={styles.cardTicker}>{item.ticker}</div>
-                        <div className={styles.cardStageName}>{stageName}</div>
+                        <div className={styles.cardStageName}>
+                          {stageName} · 기회 {Math.round(opportunity)}
+                        </div>
                       </div>
                     </div>
 

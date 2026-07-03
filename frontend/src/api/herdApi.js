@@ -85,9 +85,6 @@ export const getSpyHerdHistory = (period = '3y') =>
 export const getStockPrices = (ticker, period = '1M') =>
   api.get(`/api/stocks/${ticker}/prices?period=${period}`)
 
-/** 최근 30일 뉴스 최대 5건 조회 (Finnhub) */
-export const getStockNews = (ticker) => api.get(`/api/stocks/${ticker}/news`)
-
 /** 최신 1개월 애널리스트 컨센서스 조회 (Finnhub) */
 export const getStockAnalyst = (ticker) => api.get(`/api/stocks/${ticker}/analyst`)
 

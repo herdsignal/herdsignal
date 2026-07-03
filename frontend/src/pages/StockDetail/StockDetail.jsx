@@ -4,7 +4,7 @@
  * 구성:
  *   1) 브레드크럼 + 종목 헤더 (배지 + 포트폴리오/관심종목 추가 버튼)
  *   2) 2컬럼 그리드 (좌: 메인 / 우: 340px 사이드)
- *   좌: HERD 카드 → 지표 분해 카드 → 재무 정보 → 뉴스
+ *   좌: HERD 카드 → 장기투자 판단 → 지표 분해 카드 → 재무 정보
  *   우: 애널리스트 목표가 → 내부자 거래
  *
  * API: getStockHerd(ticker), addToPortfolio(ticker), addToWatchlist(ticker)
@@ -18,7 +18,7 @@ import {
 } from 'recharts'
 import {
   getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials,
-  getStockPrices, getStockNews, getStockAnalyst, getStockInsider,
+  getStockPrices, getStockAnalyst, getStockInsider,
   getPortfolio, getPortfolioSummary,
 } from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
@@ -222,8 +222,6 @@ export default function StockDetail() {
   const [pricePoints,      setPricePoints]       = useState([])
   const [priceTab,         setPriceTab]          = useState('1M')
   const [priceLoading,     setPriceLoading]      = useState(false)
-  const [news,             setNews]              = useState([])
-  const [newsLoading,      setNewsLoading]       = useState(false)
   const [analyst,          setAnalyst]           = useState(null)
   const [analystLoading,   setAnalystLoading]    = useState(false)
   const [insider,          setInsider]           = useState([])
@@ -289,16 +287,6 @@ export default function StockDetail() {
       .catch(() => { setPricePoints([]) })
       .finally(() => { setPriceLoading(false) })
   }, [ticker, priceTab])
-
-  /* 뉴스 — ticker 변경 시 재조회 */
-  useEffect(() => {
-    setNewsLoading(true)
-    setNews([])
-    getStockNews(ticker.toUpperCase())
-      .then((res) => { setNews(res.data?.data?.news ?? []) })
-      .catch(() => { setNews([]) })
-      .finally(() => { setNewsLoading(false) })
-  }, [ticker])
 
   /* 애널리스트 컨센서스 — ticker 변경 시 재조회 */
   useEffect(() => {
@@ -657,35 +645,6 @@ export default function StockDetail() {
               </div>
             </div>
 
-            {/* 뉴스 카드 */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>최근 뉴스</div>
-                <div className={styles.cardMeta}>Finnhub · 최근 30일</div>
-              </div>
-              <div className={styles.cardBody}>
-                {newsLoading ? (
-                  <p className={styles.placeholderText}>로딩 중…</p>
-                ) : news.length === 0 ? (
-                  <p className={styles.placeholderText}>데이터 없음</p>
-                ) : (
-                  <div className={styles.newsList}>
-                    {news.map((n, i) => (
-                      <a
-                        key={i}
-                        href={n.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.newsItem}
-                      >
-                        <div className={styles.newsHeadline}>{n.headline}</div>
-                        <div className={styles.newsMeta}>{n.source} · {n.date}</div>
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
 
           {/* ─── 오른쪽 사이드 ─── */}

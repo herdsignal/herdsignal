@@ -207,6 +207,105 @@
 }
 
 /* ────────────────────────────
+   의사결정 패널
+   ──────────────────────────── */
+.decisionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.decisionCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  min-height: 132px;
+}
+
+.decisionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+
+.decisionList {
+  display: grid;
+  gap: 7px;
+}
+
+.decisionList span,
+.decisionEmpty,
+.decisionNote {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.decisionEmpty,
+.decisionNote {
+  color: var(--text-3);
+}
+
+.decisionNote {
+  margin-top: 10px;
+}
+
+.rebalanceList {
+  display: grid;
+  gap: 8px;
+}
+
+.rebalanceRow {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.rebalanceRow strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  color: var(--text-1);
+}
+
+.rebalanceRow span {
+  color: var(--text-2);
+}
+
+.rebalanceRow em {
+  font-size: 11px;
+  font-style: normal;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.backtestStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.backtestStats span {
+  display: block;
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 5px;
+}
+
+.backtestStats strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  letter-spacing: -0.6px;
+  color: var(--text-1);
+}
+
+/* ────────────────────────────
    S&P500 HERD 배너
    ──────────────────────────── */
 .marketBanner {
@@ -736,6 +835,25 @@
   font-size: 11px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
+}
+
+.cardWeightInfo {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.targetInput {
+  width: 68px;
+  margin-left: 8px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text-1);
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
 }
 
 /* ────────────────────────────

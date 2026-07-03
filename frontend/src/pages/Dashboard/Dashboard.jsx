@@ -37,10 +37,19 @@ import {
   getPortfolioHerd,
   getStockHerd,
   getSpyHerdHistory,
+  getPortfolioHistory,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
+import {
+  buildChangeSummary,
+  historyStats,
+  portfolioRows,
+  readTargetWeights,
+  rebalanceIdeas,
+  writeTargetWeights,
+} from '../../utils/portfolioTools'
 import HerdDots      from '../../components/HerdDots/HerdDots'
 import SpectrumBar   from '../../components/SpectrumBar/SpectrumBar'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
@@ -330,6 +339,9 @@ export default function Dashboard() {
     () => localStorage.getItem('herdsignal_currency') || 'KRW'
   )
   const [editMode,       setEditMode]       = useState(false)
+  const [targetWeights,  setTargetWeights]  = useState(() => readTargetWeights())
+  const [changeSummary,  setChangeSummary]  = useState([])
+  const [historyPoints,  setHistoryPoints]  = useState([])
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -440,11 +452,18 @@ export default function Dashboard() {
         })
         .catch(() => { /* 히스토리 실패 시 Timeline 탭 빈 상태 유지 */ })
     }
-  }, [])
+  }, [herdMap])
 
   /* USD/KRW 환율 — 마운트 시 1회 조회 */
   useEffect(() => {
     fetchExchangeRate().then(setExchangeRate)
+  }, [])
+
+  /* 간이 포트폴리오 백테스트 — 실제 매매 시뮬레이션이 아닌 자산 히스토리 진단 */
+  useEffect(() => {
+    getPortfolioHistory('year')
+      .then((res) => { setHistoryPoints(res.data?.data?.points ?? []) })
+      .catch(() => { setHistoryPoints([]) })
   }, [])
 
   /* ticker → 현재가 데이터 맵 (Python snake_case) */
@@ -512,12 +531,14 @@ export default function Dashboard() {
       }
 
       if (herdRes.status === 'fulfilled') {
+        const prevMap = { ...herdMap }
         const map = {}
         const herdData = herdRes.value?.data?.data ?? null
         const herdStocks = herdData?.stocks ?? []
         herdStocks.forEach((h) => { map[h.ticker] = h })
         writeCache(CACHE_KEY_HERD, herdData)
         setHerdMap(map)
+        setChangeSummary(buildChangeSummary(prevMap, map))
       }
 
       if (spyRes.status === 'fulfilled') {
@@ -625,6 +646,18 @@ export default function Dashboard() {
   }, [modalTicker, priceMap, portfolio, fetchData])
 
   const modalStock = portfolio.find((p) => p.ticker === modalTicker)
+  const rows = useMemo(
+    () => portfolioRows(portfolio, summary, herdMap, targetWeights),
+    [portfolio, summary, herdMap, targetWeights]
+  )
+  const rebalanceRows = useMemo(() => rebalanceIdeas(rows), [rows])
+  const portfolioBacktest = useMemo(() => historyStats(historyPoints), [historyPoints])
+
+  function handleTargetWeightChange(ticker, value) {
+    const next = { ...targetWeights, [ticker]: value }
+    setTargetWeights(next)
+    writeTargetWeights(next)
+  }
 
   return (
     <div>
@@ -854,6 +887,56 @@ export default function Dashboard() {
         </>
       )}
 
+      {/* ── 의사결정 패널: 변화 요약 + 리밸런싱 + 간이 백테스트 ── */}
+      {!loading && !error && portfolio.length > 0 && (
+        <div className={styles.decisionGrid}>
+          <div className={styles.decisionCard}>
+            <div className={styles.decisionLabel}>오늘 변화</div>
+            {changeSummary.length > 0 ? (
+              <div className={styles.decisionList}>
+                {changeSummary.map((item) => <span key={item}>{item}</span>)}
+              </div>
+            ) : (
+              <div className={styles.decisionEmpty}>새로고침 후 큰 신호 변화 없음</div>
+            )}
+          </div>
+
+          <div className={styles.decisionCard}>
+            <div className={styles.decisionLabel}>리밸런싱 추천</div>
+            <div className={styles.rebalanceList}>
+              {rebalanceRows.map((row) => (
+                <div key={row.ticker} className={styles.rebalanceRow}>
+                  <strong>{row.ticker}</strong>
+                  <span>{row.action}</span>
+                  <em>{row.currentWeight.toFixed(1)}% / 목표 {row.targetWeight.toFixed(1)}%</em>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.decisionCard}>
+            <div className={styles.decisionLabel}>간이 백테스트</div>
+            {portfolioBacktest ? (
+              <div className={styles.backtestStats}>
+                <div>
+                  <span>1년 수익률</span>
+                  <strong style={{ color: pctColor(portfolioBacktest.returnPct) }}>
+                    {fmtPct(portfolioBacktest.returnPct)}
+                  </strong>
+                </div>
+                <div>
+                  <span>최대 낙폭</span>
+                  <strong>{fmtPct(portfolioBacktest.mdd)}</strong>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.decisionEmpty}>히스토리 부족</div>
+            )}
+            <p className={styles.decisionNote}>실제 HERD 매매 시뮬레이션은 아니며 현재 자산 히스토리 기준입니다.</p>
+          </div>
+        </div>
+      )}
+
       {/* ── 종목 카드 그리드 ── */}
       {!loading && !error && portfolio.length > 0 && (
         <>
@@ -863,6 +946,7 @@ export default function Dashboard() {
 
           <div className={styles.stockGrid}>
             {portfolio.map((item) => {
+              const row       = rows.find((r) => r.ticker === item.ticker)
               const herd      = herdMap[item.ticker]
               const stage     = herd?.herdStage ?? 'Calm'
               const color     = stageColor(stage)
@@ -969,6 +1053,18 @@ export default function Dashboard() {
                             >
                               수정
                             </button>
+                            <input
+                              className={styles.targetInput}
+                              type="number"
+                              min="0"
+                              max="100"
+                              step="1"
+                              value={targetWeights[item.ticker] ?? ''}
+                              placeholder={`${row?.targetWeight?.toFixed(0) ?? ''}%`}
+                              onClick={e => e.stopPropagation()}
+                              onChange={e => handleTargetWeightChange(item.ticker, e.target.value)}
+                              aria-label={`${item.ticker} 목표 비중`}
+                            />
                           </div>
                         )}
                       </div>
@@ -1008,6 +1104,11 @@ export default function Dashboard() {
                       </div>
                     ) : (
                       <span className={styles.cardDash}>현재가 —</span>
+                    )}
+                    {row && (
+                      <span className={styles.cardWeightInfo}>
+                        비중 {row.currentWeight.toFixed(1)}% · 목표 {row.targetWeight.toFixed(1)}%
+                      </span>
                     )}
                   </div>
                 </div>

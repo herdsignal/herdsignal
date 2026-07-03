@@ -1,6 +1,6 @@
 # frontend/ — React 대시보드
 
-최종 업데이트: 2026-07-02
+최종 업데이트: 2026-07-03
 
 ## 이 폴더의 역할
 Spring Boot API를 호출해서 HERD Index 데이터를 시각화.
@@ -24,7 +24,8 @@ src/
 ├── styles/         전역 CSS 변수
 ├── utils/          통화/환율 유틸
 │   ├── currency.js 통화 변환
-│   └── decision.js HERD 점수 + 보유/재무 컨텍스트 기반 행동 문장
+│   ├── decision.js HERD 점수 + 보유/재무 컨텍스트 기반 행동 문장
+│   └── portfolioTools.js 목표비중·리밸런싱·기회 대기열 계산
 └── api/            Spring Boot API 호출
     └── herdApi.js
 ```
@@ -54,6 +55,9 @@ Rush    #EF4444  (레드)
   - S&P 500 HERD 배너
   - 포트폴리오 평가금액 요약
   - KRW/USD 통화 토글
+  - 목표 비중 기반 리밸런싱 추천
+  - 새로고침 후 HERD 변화 요약
+  - portfolio_history 기반 1년 수익률·MDD 간이 진단
   - 보유 종목 카드
   - 편집 모드/삭제
   - 평단가·수량 수정 모달
@@ -75,8 +79,9 @@ Rush    #EF4444  (레드)
   - 포트폴리오/관심종목 추가
 - Watchlist (`/watchlist`)
   - 관심 종목 HERD 카드
+  - 기회 대기열 (HERD 저점 + BUY/ADD 신호 우선)
   - 매수/중립/익절 후보 요약
-  - HERD 점수·최신일·티커 정렬
+  - 기회·HERD 점수·최신일·티커 정렬
   - 빠른 새로고침
   - 관심 종목 삭제
   - S&P 500 HERD 배너
@@ -86,7 +91,9 @@ Rush    #EF4444  (레드)
   - portfolio_history 시계열 표시
 
 ## 부분 구현 / 미구현
-- StockDetail의 재무 정보, 뉴스, 애널리스트 목표가, 내부자 거래는 placeholder UI만 있음.
+- StockDetail 최근 뉴스 섹션은 제거됨. 애널리스트 컨센서스와 내부자 거래만 사이드 컨텍스트로 유지한다.
+- 목표 비중은 `hs_target_weights` localStorage에 저장하며, 아직 DB 저장 기능은 없다.
+- Dashboard의 간이 백테스트는 portfolio_history 기반 수익률/MDD 진단이며 실제 HERD 매매 시뮬레이션은 아니다.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.
@@ -109,6 +116,7 @@ Rush    #EF4444  (레드)
 - `hs_spy_herd`: SPY HERD 캐시
 - `hs_cache_time`: 캐시 저장 시각
 - `hs_recent_searches`: 최근 검색
+- `hs_target_weights`: 포트폴리오 종목별 목표 비중
 - `herdsignal_currency`: 통화 표시 모드
 
 ## AI 작업 원칙

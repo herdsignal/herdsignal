@@ -515,42 +515,6 @@
 }
 
 /* ────────────────────────────
-   뉴스 카드
-   ──────────────────────────── */
-.newsList {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.newsItem {
-  display: block;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-  text-decoration: none;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-.newsItem:last-child { border-bottom: none; }
-.newsItem:hover { opacity: 0.75; }
-
-.newsHeadline {
-  font-size: 13px;
-  color: var(--text-1);
-  line-height: 1.5;
-  margin-bottom: 4px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.newsMeta {
-  font-size: 11px;
-  color: var(--text-3);
-}
-
-/* ────────────────────────────
    애널리스트 컨센서스 카드
    ──────────────────────────── */
 .analystWrap {
