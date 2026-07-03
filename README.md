@@ -11,142 +11,118 @@
 
 ---
 
-## Why I Built This
+## Why
 
-I started long-term investing in US stocks in 2024. I believed in the long-term upward trend, but came to understand that bull and bear markets cycle repeatedly along the way.
+HerdSignal helps long-term US equity investors decide when to add, hold, or trim positions using data instead of intuition.
 
-The problem was that I had no way — beyond gut feeling — to determine whether the stocks I held were relatively expensive or cheap at any given moment.
-
-I thought: if there were objective signals, I could trim partially at peaks to build cash reserves, and add more during downturns to capture greater gains. HerdSignal is the project built to create those signals.
+It combines each stock's HERD Index with portfolio context and translates the score into actionable guidance.
 
 ---
 
 ## What Is the HERD Index?
 
-The HERD Index measures crowd sentiment for an individual stock on a **0–100 scale**, updated daily after market close. It combines six technical indicators, normalized against each stock's own 5-year history using percentile rank — so an NVDA score of 80 and a KO score of 80 carry the same relative meaning.
+The HERD Index is a 0-100 crowd-sentiment score for individual stocks. It is normalized against each stock's own historical behavior, so high-growth stocks and defensive stocks can be evaluated with the same formula.
+
+The production calculation uses a 5-year default price window. HERD v4 starts from the v3 weighted technical score, then applies EPS surprise and sector relative-strength multipliers.
 
 ### Five Stages
 
-| Score    | Stage       | Color         | Action                        |
-| -------- | ----------- | ------------- | ----------------------------- |
-| 0 – 15   | **Flee**    | 🔵 Blue       | Aggressive buy (30% add)      |
-| 15 – 40  | **Scatter** | 🩵 Light blue | Start scaling in (10% add)    |
-| 40 – 60  | **Calm**    | ⚫ Gray       | Hold current position         |
-| 60 – 75  | **Drift**   | 🟠 Orange     | Partial trim (5% reduce)      |
-| 75 – 100 | **Rush**    | 🔴 Red        | Significant trim (30% reduce) |
+| Score | Stage | Meaning | Action |
+| --- | --- | --- | --- |
+| 0-15 | Flee | Crowd exit | Consider aggressive buying |
+| 15-40 | Scatter | Crowd dispersion | Consider scaling in |
+| 40-60 | Calm | Crowd balance | Hold current position |
+| 60-75 | Drift | Crowd tilt | Consider partial trim |
+| 75-100 | Rush | Crowd concentration | Consider aggressive trim |
 
-> Signal cooldown: signals within 20 days of the same type are suppressed to prevent overtrading.
+The `Herd Flow` animation visualizes these stages as particle distribution. Flee appears sparse across the whole canvas, while Rush appears tightly concentrated in a narrow area.
 
 ---
 
 ## Core Features
 
-- **Portfolio Dashboard** — S&P 500 HERD banner + per-stock scores with live particle animation, KRW/USD currency toggle
-- **Realtime Portfolio Valuation** — Live market price fetched via yfinance for instant P&L
-- **Stock Detail** — Full indicator breakdown (6 metrics with weights), timing signal
-- **Ticker Search** — Debounced live search with HERD preview, popular stocks grid, recent history
-- **Watchlist** — Separate tracked list with instant remove
-- **Portfolio History** — recharts-based chart of total portfolio value over time (month/year toggle)
-- **Daily Scheduler** — Auto-calculates HERD for all tracked tickers at 16:30 ET after market close
-- **On-Demand Calculation** — Search/detail pages trigger instant HERD calculation if no recent data (7-day cache)
+- **Dashboard**: S&P 500 Herd Flow banner, portfolio valuation, KRW/USD toggle, target-weight rebalance ideas, HERD change summary, asset diagnosis
+- **Stock Detail**: HERD v4 score, long-term decision panel, indicator breakdown, EPS/sector multipliers, price chart, financials, decision summary
+- **Search**: representative ticker search, HERD preview, timing candidates, recent searches
+- **Watchlist**: HERD cards, opportunity queue, buy/neutral/trim candidate summary, sorting, deletion
+- **History**: portfolio_history chart with start-return, drawdown, and review point
+- **Rebalance Plan**: rule-based MVP before Claude API integration, with target weights, cash target, budget, and intensity settings
+- **Herd Flow Preview**: compare all five animation stages at `/herd-flow`
 
 ---
 
 ## Tech Stack
 
-| Layer       | Technology                           | Role                          |
-| ----------- | ------------------------------------ | ----------------------------- |
-| Data Engine | Python 3.12 + yfinance + pandas-ta   | Collect → Calculate → Store   |
-| REST API    | Spring Boot 3.x + JPA + Lombok       | Serve DB data to frontend     |
-| Database    | MariaDB 10.x                         | Single source of truth        |
-| Frontend    | React 18 + Vite 5 + react-router-dom | Dashboard & UI                |
-| Scheduler   | APScheduler (BlockingScheduler)      | Daily HERD update at 16:30 ET |
+| Layer | Technology | Role |
+| --- | --- | --- |
+| data | Python 3.12, yfinance, pandas-ta, APScheduler, Finnhub | Collect, calculate, store |
+| backend | Spring Boot 3.x, JPA, MariaDB, Gradle | DB reads, REST API, Python on-demand execution |
+| frontend | React 18, Vite 5, Recharts, Axios | Dashboard UI |
+| database | MariaDB | HERD, portfolio, watchlist, asset history |
 
 ---
 
 ## Architecture
 
+```text
+yfinance / Finnhub
+        |
+        v
+Python data engine
+        |
+        v
+MariaDB
+        |
+        v
+Spring Boot REST API
+        |
+        v
+React frontend
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Data Engine  (Python)                                       │
-│                                                             │
-│  yfinance ──► collectors/ ──► indicators/ ──► herd/         │
-│                                              calculator.py  │
-│                                                   │         │
-│                                              saver.py       │
-└───────────────────────────────────────────────────┼─────────┘
-                                                    │ INSERT
-                                                    ▼
-                                              ┌──────────────┐
-                                              │   MariaDB    │
-                                              │              │
-                                              │ herd_scores  │
-                                              │ herd_ind..   │
-                                              │ daily_prices │
-                                              │ user_port.   │
-                                              │ user_watch.  │
-                                              │ port_history │
-                                              └─────┬────────┘
-                                                    │ SELECT
-                                                    ▼
-┌─────────────────────────────────────────────────────────────┐
-│  REST API  (Spring Boot)                                     │
-│                                                             │
-│  GET /api/stocks/{ticker}/herd                              │
-│  GET /api/portfolio/herd                                    │
-│  GET /api/portfolio/realtime                                │
-│  GET /api/portfolio/history                                 │
-│  GET /api/watchlist/herd                                    │
-│  POST|DELETE /api/portfolio                                 │
-│  POST|DELETE /api/watchlist                                 │
-└───────────────────────────────────────────────────┬─────────┘
-                                                    │ JSON
-                                                    ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Dashboard  (React 18)                                       │
-│                                                             │
-│  /            Portfolio Dashboard + S&P500 banner           │
-│  /stock/:id   HERD card + indicator breakdown               │
-│  /search      Live ticker search + watchlist add            │
-│  /watchlist   Watched stocks + remove                       │
-│  /history     Portfolio value chart over time               │
-└─────────────────────────────────────────────────────────────┘
-```
+
+Python calculates and stores data. Spring Boot serves database-backed APIs. React renders the product experience.
+
+---
+
+## Main APIs
+
+- `GET /api/stocks/{ticker}/herd`
+- `POST /api/stocks/{ticker}/herd/refresh`
+- `GET /api/stocks/{ticker}/prices?period=1M|3M|1Y|5Y`
+- `GET /api/stocks/{ticker}/financials`
+- `GET /api/stocks/{ticker}/herd/history?period=1y|3y`
+- `GET /api/portfolio`
+- `GET /api/portfolio/herd`
+- `POST /api/portfolio/herd/refresh`
+- `GET /api/portfolio/summary`
+- `GET /api/portfolio/history?period=month|year`
+- `GET /api/portfolio/realtime`
+- `GET /api/watchlist`
+- `GET /api/watchlist/herd`
+
+News, analyst, and insider APIs exist in the backend, but the current frontend Stock Detail page does not display those sections.
 
 ---
 
 ## HERD Algorithm
 
-Six indicators are each normalized to 0–100 using **percentile rank against 5 years of the same stock's history**, then weighted-summed:
+The base score is a weighted sum of percentile-normalized indicators.
 
-| Indicator           | Weight | What It Captures                        |
-| ------------------- | ------ | --------------------------------------- |
-| Monthly RSI         | 24%    | Long-term momentum extremes             |
-| 200-Week MA Position| 20%    | Long-term trend position                |
-| Weekly RSI          | 19%    | Mid-term momentum extremes              |
-| 52-Week Position    | 19%    | Where price sits in its annual range    |
-| MA200 Deviation     | 18%    | Distance from the 200-day trend         |
-| Volume Strength     |  0%    | Recent volume vs. 20-day avg (computed, currently inactive) |
+| Indicator | Weight | Description |
+| --- | ---: | --- |
+| Monthly RSI | 24% | Long-term momentum |
+| 200-week MA position | 20% | Long-term trend position |
+| Weekly RSI | 19% | Mid-term momentum |
+| 52-week position | 19% | Position in annual price range |
+| MA200 deviation | 18% | Distance from 200-day trend |
+| Volume strength | 0% | Computed but inactive in production score |
 
-Percentile normalization means the same formula works for every ticker — a Rush in NVDA and a Rush in KO represent equivalent crowd-psychology extremes relative to their own histories.
+HERD v4 applies two multipliers to the base score:
 
----
+- EPS surprise: recent four-quarter beat/miss pattern
+- Sector relative strength: stock 90-day return vs sector ETF 90-day return
 
-## Backtesting Results
-
-The core question: "Why use it if returns are lower than just holding?"
-
-HerdSignal's goal isn't to maximize returns. It's to reduce the psychological shock of riding peak valuations into a major crash, and to create opportunities to buy more during downturns.
-
-Looking at MDD (Maximum Drawdown):
-
-| Ticker | B&H MDD | HERD MDD | Improvement | Worst-case loss on $10K invested |
-|--------|---------|----------|-------------|----------------------------------|
-| NVDA   | -66.3%  | -46.5%   | 19.8%p      | $3,370 → $5,350 ($1,980 protected) |
-| TSLA   | -73.6%  | -47.2%   | 26.4%p      | $2,640 → $5,280 ($2,640 protected) |
-| SPY    | -33.7%  | -15.9%   | 17.8%p      | $6,630 → $8,410 ($1,780 protected) |
-
-Some upside is sacrificed, but actual loss amounts during major crashes are significantly reduced. The difference between holding through a 50% drawdown and giving up is what determines real long-term returns.
+The final score is stored in `herd_scores.herd_score`. The API also exposes `herdV4`, `herdBase`, `epsMultiplier`, and `sectorMultiplier`.
 
 ---
 
@@ -154,15 +130,14 @@ Some upside is sacrificed, but actual loss amounts during major crashes are sign
 
 ### Prerequisites
 
-- Python 3.12 with `data/.venv/`
-- Java 17+, Gradle
-- MariaDB running locally
+- Python 3.12
+- Java 17+
+- MariaDB
 - Node.js 18+
 
-### 1. Database Setup
+### 1. Database
 
 ```bash
-# Create database and user
 mysql -u root -p
 CREATE DATABASE herdsignal CHARACTER SET utf8mb4;
 CREATE USER 'herdsignal'@'localhost' IDENTIFIED BY 'your_password';
@@ -172,72 +147,50 @@ GRANT ALL PRIVILEGES ON herdsignal.* TO 'herdsignal'@'localhost';
 ### 2. Data Engine
 
 ```bash
-cd data/
-
-# Create .env from template
-cp .env.example .env   # fill in DB credentials
-
-# Install dependencies
+cd data
+cp .env.example .env
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-
-# Initialize DB schema
 .venv/bin/python3.12 init_db.py
-
-# Seed default tickers (SPY benchmark + starter portfolio)
 .venv/bin/python3.12 setup_default_tickers.py
-
-# Run HERD calculation immediately (skip scheduler wait)
 .venv/bin/python3.12 scheduler/herd_scheduler.py --run-now
-
-# Start daily scheduler daemon (runs at 16:30 ET every market day)
 .venv/bin/python3.12 scheduler/herd_scheduler.py
 ```
 
 ### 3. Backend
 
 ```bash
-cd backend/
+cd backend
 ./gradlew bootRun
-# API available at http://localhost:8080
 ```
+
+The API runs at `http://localhost:8080`.
 
 ### 4. Frontend
 
 ```bash
-cd frontend/
+cd frontend
 npm install
 npm run dev
-# Dashboard at http://localhost:5173 (or 5174 if port is taken)
 ```
 
-### Quick API Check
-
-```bash
-curl http://localhost:8080/api/stocks/NVDA/herd
-curl http://localhost:8080/api/portfolio/herd
-curl http://localhost:8080/api/stocks/SPY/herd
-```
-
----
-
-## Roadmap
-
-HerdSignal's product direction and priorities are maintained in [ROADMAP.md](./ROADMAP.md).
-README stays focused on what the project is, how it works, and how to run it.
+The frontend usually runs at `http://localhost:5173`.
 
 ---
 
 ## Current Limitations
 
-These are understood trade-offs, not bugs:
+- The Rebalance Plan is currently a rule-based MVP and does not call the Claude API yet.
+- Target weights and rebalance settings are stored in localStorage, not in the database.
+- Dashboard asset diagnosis is based on portfolio_history return/MDD summaries, not a true HERD strategy backtest.
+- Authentication, multi-user support, brokerage integration, and deployment are not implemented yet.
+- The v5 volatility layer is a backtest candidate and is not part of the production HERD score.
 
-| Limitation                      | Impact                                 | Direction                   |
-| ------------------------------- | -------------------------------------- | --------------------------- |
-| All lagging indicators          | Signal fires after price already moved | Add leading indicators      |
-| No macro awareness              | Misses rate hike / geopolitical shocks | Add macro overlays          |
-| Can't catch V-shaped recoveries | Short sharp crashes not flagged        | Add options sentiment       |
-| No cross-ticker correlation     | Treats each stock independently        | Add correlation awareness   |
+---
+
+## Roadmap
+
+Product direction and priorities are maintained in [ROADMAP.md](./ROADMAP.md).
 
 ---
 

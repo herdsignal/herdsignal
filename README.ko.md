@@ -13,145 +13,116 @@
 
 ## 만든 이유
 
-2024년부터 미국주식 장기투자를 시작했다.
-장기적으로 우상향한다는 믿음은 있었지만, 그 과정에서 상승장과 하락장이
-반복된다는 것도 알게 됐다.
+HerdSignal은 장기투자자가 보유 종목의 매수, 보유, 일부 익절 타이밍을 감이 아니라 데이터로 판단하도록 돕는 프로젝트입니다.
 
-문제는 "지금 내가 보유한 주식이 상대적으로 비싼가, 싼가"를
-감이 아닌 데이터로 판단할 방법이 없었다는 것이다.
-
-객관적인 신호가 있다면 — 고점에서 일부 익절해 현금을 확보하고,
-하락장에서 추가매수해 더 큰 상승을 만들 수 있을 것이라 생각했다.
-HerdSignal은 그 신호를 만들기 위한 프로젝트다.
+개별 종목의 HERD Index와 포트폴리오 맥락을 함께 보여주고, 점수를 실제 행동 문장으로 번역합니다.
 
 ---
 
 ## HERD Index란?
 
-HERD Index는 개별 주식의 군중심리를 **0–100 점수**로 나타내며, 매일 장 마감 후 업데이트됩니다. 5개의 기술적 지표를 해당 종목의 10년 히스토리 기준 백분위수로 정규화해 합산합니다. NVDA의 80점과 KO의 80점이 각 종목의 역사 대비 동일한 의미를 가집니다.
+HERD Index는 개별 주식의 군중심리를 **0-100 점수**로 나타내는 지표입니다. 절대값이 아니라 해당 종목의 과거 흐름 대비 백분위수로 정규화하기 때문에, 성장주와 방어주를 같은 공식으로 비교할 수 있습니다.
+
+운영 계산은 기본 5년 가격 데이터를 사용합니다. v3 기본 점수에 EPS 서프라이즈와 섹터 상대 강도 보정 승수를 적용해 최종 v4 점수를 저장합니다.
 
 ### 5단계
 
-| 점수     | 단계                          | 색상      | 행동                      |
-| -------- | ----------------------------- | --------- | ------------------------- |
-| 0 – 15   | **Flee** — 군중 이탈          | 🔵 파랑   | 적극 매수 (30% 추가)      |
-| 15 – 40  | **Scatter** — 군중 흩어짐     | 🩵 연파랑 | 분할 매수 시작 (10% 추가) |
-| 40 – 60  | **Calm** — 군중 균형          | ⚫ 회색   | 현재 비중 유지            |
-| 60 – 75  | **Drift** — 군중 쏠림 진행    | 🟠 주황   | 부분 익절 (5% 감소)       |
-| 75 – 100 | **Rush** — 군중 밀집          | 🔴 빨강   | 적극 익절 (30% 감소)      |
+| 점수 | 단계 | 의미 | 행동 |
+| --- | --- | --- | --- |
+| 0-15 | Flee | 군중 이탈 | 적극 매수 검토 |
+| 15-40 | Scatter | 군중 흩어짐 | 분할 매수 검토 |
+| 40-60 | Calm | 군중 균형 | 보유 유지 |
+| 60-75 | Drift | 군중 쏠림 | 일부 익절 고려 |
+| 75-100 | Rush | 군중 밀집 | 적극 익절 고려 |
 
-> 신호 중복 제거: 동일 유형 신호가 20일 이내 재발생하면 무시합니다. 과매매를 방지합니다.
+`Herd Flow` 애니메이션은 이 단계를 점의 분포로 표현합니다. Flee는 전 영역에 듬성듬성 흩어지고, Rush는 좁은 영역에 촘촘하게 밀집합니다.
 
 ---
 
 ## 핵심 기능
 
-- **포트폴리오 대시보드** — S&P 500 HERD 배너 + 종목별 점수 + Herd Flow 애니메이션
-- **종목 상세** — 지표 분해, Timing Signal 제안, 차트·재무·판단 요약
-- **종목 검색** — 300ms 디바운스 실시간 검색, HERD 미리보기, 인기 종목 그리드, 최근 검색
-- **관심 종목** — 별도 트래킹 목록, 즉시 삭제
-- **일일 스케줄러** — 매일 16:30 ET(장 마감 30분 후) 전 종목 자동 계산
-- **AI 리밸런싱** — Claude API 기반 포트폴리오 분석 + 종목별 구체적 금액 제안
+- **Dashboard**: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, KRW/USD 토글, 목표 비중 기반 리밸런싱 추천, HERD 변화 요약, 자산 진단
+- **StockDetail**: HERD v4 점수, 장기투자 판단, 지표 분해, EPS/섹터 보정 승수, 가격 차트, 재무정보, 판단 요약
+- **Search**: 대표 종목 검색, HERD 미리보기, 타이밍 후보, 최근 검색
+- **Watchlist**: 관심 종목 HERD 카드, 기회 대기열, 매수/중립/익절 후보 요약, 정렬, 삭제
+- **History**: portfolio_history 기반 자산 차트, 시작 대비/고점 대비/점검 포인트
+- **Rebalance Plan**: Claude API 연결 전 규칙 기반 리밸런싱 플랜, 목표 비중/현금 목표/예산/강도 설정
+- **Herd Flow Preview**: `/herd-flow`에서 5단계 애니메이션 비교
 
 ---
 
 ## 기술 스택
 
-| 계층         | 기술                                 | 역할                    |
-| ------------ | ------------------------------------ | ----------------------- |
-| 데이터 엔진  | Python 3.12 + yfinance + pandas-ta   | 수집 → 계산 → 저장      |
-| REST API     | Spring Boot 3.x + JPA + Lombok       | DB 데이터 서빙          |
-| 데이터베이스 | MariaDB 10.x                         | 단일 진실 공급원        |
-| 프론트엔드   | React 18 + Vite 5 + react-router-dom | 대시보드 UI             |
-| 스케줄러     | APScheduler (BlockingScheduler)      | 매일 16:30 ET 자동 실행 |
+| 계층 | 기술 | 역할 |
+| --- | --- | --- |
+| data | Python 3.12, yfinance, pandas-ta, APScheduler, Finnhub | 수집, 계산, 저장 |
+| backend | Spring Boot 3.x, JPA, MariaDB, Gradle | DB 조회, REST API, Python on-demand 실행 |
+| frontend | React 18, Vite 5, Recharts, Axios | 대시보드 UI |
+| database | MariaDB | HERD, 포트폴리오, 관심종목, 자산 히스토리 저장 |
 
 ---
 
 ## 아키텍처
 
+```text
+yfinance / Finnhub
+        |
+        v
+Python data engine
+        |
+        v
+MariaDB
+        |
+        v
+Spring Boot REST API
+        |
+        v
+React frontend
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  데이터 엔진  (Python)                                        │
-│                                                             │
-│  yfinance ──► collectors/ ──► indicators/ ──► herd/         │
-│                                              calculator.py  │
-│                                                   │         │
-│                                              saver.py       │
-└───────────────────────────────────────────────────┼─────────┘
-                                                    │ INSERT
-                                                    ▼
-                                              ┌──────────┐
-                                              │  MariaDB  │
-                                              │           │
-                                              │ herd_scores│
-                                              │ herd_ind.. │
-                                              │ daily_prices│
-                                              │ user_port. │
-                                              │ user_watch.│
-                                              └─────┬──────┘
-                                                    │ SELECT
-                                                    ▼
-┌─────────────────────────────────────────────────────────────┐
-│  REST API  (Spring Boot)                                     │
-│                                                             │
-│  GET /api/stocks/{ticker}/herd                              │
-│  GET /api/portfolio/herd                                    │
-│  GET /api/watchlist/herd                                    │
-│  POST|DELETE /api/portfolio                                 │
-│  POST|DELETE /api/watchlist                                 │
-└───────────────────────────────────────────────────┬─────────┘
-                                                    │ JSON
-                                                    ▼
-┌─────────────────────────────────────────────────────────────┐
-│  대시보드  (React 18)                                         │
-│                                                             │
-│  /            포트폴리오 대시보드 + S&P500 배너               │
-│  /stock/:id   HERD 카드 + 지표 분해                          │
-│  /search      실시간 종목 검색 + 추가                         │
-│  /watchlist   관심 종목 + 삭제                               │
-└─────────────────────────────────────────────────────────────┘
-```
+
+Python은 계산과 저장을 담당하고, Spring Boot는 DB 데이터를 API로 서빙합니다. React는 API를 호출해 화면만 구성합니다.
+
+---
+
+## 주요 API
+
+- `GET /api/stocks/{ticker}/herd`
+- `POST /api/stocks/{ticker}/herd/refresh`
+- `GET /api/stocks/{ticker}/prices?period=1M|3M|1Y|5Y`
+- `GET /api/stocks/{ticker}/financials`
+- `GET /api/stocks/{ticker}/herd/history?period=1y|3y`
+- `GET /api/portfolio`
+- `GET /api/portfolio/herd`
+- `POST /api/portfolio/herd/refresh`
+- `GET /api/portfolio/summary`
+- `GET /api/portfolio/history?period=month|year`
+- `GET /api/portfolio/realtime`
+- `GET /api/watchlist`
+- `GET /api/watchlist/herd`
+
+backend에는 뉴스, 애널리스트, 내부자 거래 API도 존재하지만 현재 frontend StockDetail에서는 표시하지 않습니다.
 
 ---
 
 ## HERD 알고리즘
 
-5개 지표를 각각 **해당 종목의 10년 히스토리 기준 백분위수**로 0–100 정규화 후 동일 가중치로 합산합니다.
+기본 점수는 아래 지표들의 백분위수 정규화 가중합입니다.
 
-| 지표           | 가중치 | 측정 대상                  |
-| -------------- | ------ | -------------------------- |
-| 월봉 RSI       | 20%    | 장기 모멘텀 Rush/Flee 극단 |
-| 주봉 RSI       | 20%    | 중기 모멘텀 Rush/Flee 극단 |
-| 52주 고저 위치 | 20%    | 현재가의 연간 범위 내 위치 |
-| MA200 이격도   | 20%    | 200일 이동평균 대비 괴리율 |
-| 거래량 강도    | 20%    | 최근 거래량 vs 20일 평균   |
+| 지표 | 가중치 | 설명 |
+| --- | ---: | --- |
+| 월봉 RSI | 24% | 장기 모멘텀 |
+| 200주 MA 위치 | 20% | 장기 추세 위치 |
+| 주봉 RSI | 19% | 중기 모멘텀 |
+| 52주 위치 | 19% | 연간 가격 범위 내 위치 |
+| MA200 이격도 | 18% | 200일 추세 대비 거리 |
+| 거래량 강도 | 0% | 계산은 유지, 운영 점수 미반영 |
 
-백분위수 정규화 덕분에 동일한 수식이 모든 종목에 적용됩니다. NVDA의 Rush와 KO의 Rush는 각 종목의 역사 대비 동일한 군중심리 극단을 의미합니다.
+v4는 기본 점수에 두 가지 보정 승수를 곱합니다.
 
----
+- EPS 서프라이즈: 최근 4분기 beat/miss 흐름
+- 섹터 상대 강도: 종목 90일 수익률과 섹터 ETF 90일 수익률 비교
 
-## 백테스트 결과
-
-핵심 질문: "단순 보유보다 수익률이 낮은데 왜 쓰냐?"
-
-HerdSignal의 목표는 수익률 극대화가 아니다.
-고점에서 버티다 대폭락을 맞는 심리적 충격을 줄이고,
-하락장에서 추가매수 기회를 만드는 것이다.
-
-MDD(최대 낙폭) 기준으로 보면:
-
-| 종목 | 단순 보유 MDD | HERD 전략 MDD | 개선   | 1000만원 기준 최악 손실 차이     |
-| ---- | ------------- | ------------- | ------ | -------------------------------- |
-| NVDA | -66.3%        | -46.5%        | 19.8%p | 337만원 → 535만원 (198만원 방어) |
-| TSLA | -73.6%        | -47.2%        | 26.4%p | 264만원 → 528만원 (264만원 방어) |
-| SPY  | -33.7%        | -15.9%        | 17.8%p | 663만원 → 841만원 (178만원 방어) |
-
-수익률은 일부 포기하지만, 대폭락 시 실제 손실 금액을 크게 줄인다.
-계좌가 반토막 났을 때 버티는 것과 포기하는 것의 차이가
-장기투자의 실질 수익률을 결정한다.
-
-현재 지표는 기술적 데이터 중심이다. 향후 선행 지표와 매크로 데이터를 더하면
-신호 정확도와 시장 국면 대응력이 높아질 것으로 예상한다.
+최종 점수는 `herd_scores.herd_score`에 저장되며, API는 `herdV4`, `herdBase`, `epsMultiplier`, `sectorMultiplier`를 함께 제공합니다.
 
 ---
 
@@ -159,12 +130,12 @@ MDD(최대 낙폭) 기준으로 보면:
 
 ### 사전 준비
 
-- Python 3.12 (가상환경: `data/.venv/`)
-- Java 17+, Gradle
-- MariaDB 로컬 실행
+- Python 3.12
+- Java 17+
+- MariaDB
 - Node.js 18+
 
-### 1. 데이터베이스 설정
+### 1. 데이터베이스
 
 ```bash
 mysql -u root -p
@@ -176,72 +147,50 @@ GRANT ALL PRIVILEGES ON herdsignal.* TO 'herdsignal'@'localhost';
 ### 2. 데이터 엔진
 
 ```bash
-cd data/
-
-# .env 파일 생성 (DB 접속 정보 입력)
+cd data
 cp .env.example .env
-
-# 의존성 설치
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-
-# DB 스키마 초기화
 .venv/bin/python3.12 init_db.py
-
-# 기본 종목 등록 (SPY 벤치마크 + 스타터 포트폴리오)
 .venv/bin/python3.12 setup_default_tickers.py
-
-# HERD 즉시 계산 (스케줄러 대기 없이)
 .venv/bin/python3.12 scheduler/herd_scheduler.py --run-now
-
-# 일일 스케줄러 데몬 실행 (매일 16:30 ET 자동 실행)
 .venv/bin/python3.12 scheduler/herd_scheduler.py
 ```
 
 ### 3. 백엔드
 
 ```bash
-cd backend/
+cd backend
 ./gradlew bootRun
-# API: http://localhost:8080
 ```
+
+API 서버는 `http://localhost:8080`에서 실행됩니다.
 
 ### 4. 프론트엔드
 
 ```bash
-cd frontend/
+cd frontend
 npm install
 npm run dev
-# 대시보드: http://localhost:5173 (포트 사용 중이면 5174)
 ```
 
-### API 빠른 확인
+프론트엔드는 기본적으로 `http://localhost:5173`에서 실행됩니다.
 
-```bash
-curl http://localhost:8080/api/stocks/NVDA/herd
-curl http://localhost:8080/api/portfolio/herd
-curl http://localhost:8080/api/stocks/SPY/herd
-```
+---
+
+## 현재 한계
+
+- 리밸런싱 플랜은 아직 Claude API를 호출하지 않는 규칙 기반 MVP입니다.
+- 목표 비중과 리밸런싱 설정은 localStorage에 저장되며 DB 저장은 아직 없습니다.
+- Dashboard의 자산 진단은 실제 HERD 전략 백테스트가 아니라 portfolio_history 기반 수익률/MDD 요약입니다.
+- 로그인, 멀티유저, 증권사 연동, 배포는 아직 구현되지 않았습니다.
+- v5 변동성 레이어는 백테스트 후보이며 운영 HERD 점수에는 반영되지 않았습니다.
 
 ---
 
 ## 로드맵
 
-HerdSignal의 개발 방향과 우선순위는 [ROADMAP.md](./ROADMAP.md)에 정리되어 있습니다.
-README는 프로젝트 소개, 동작 방식, 실행 방법에 집중합니다.
-
----
-
-## v1 한계 (인지하고 사용할 것)
-
-버그가 아닌, 의도된 트레이드오프입니다.
-
-| 한계                    | 영향                                 | 개선 방향             |
-| ----------------------- | ------------------------------------ | --------------------- |
-| 기술적 지표 중심        | 가격 움직임 뒤에 신호가 늦을 수 있음 | 선행 지표 추가        |
-| 거시경제 미반영         | 금리·전쟁 등 매크로 이벤트 대응 약함 | 매크로 오버레이 추가  |
-| V자 반등 포착 어려움    | 단기 급락 후 빠른 회복 구간 미감지   | 옵션 심리 데이터 추가 |
-| 종목 간 상관관계 미반영 | 각 종목 독립적으로 처리              | 상관관계 인식 추가    |
+제품 방향과 우선순위는 [ROADMAP.md](./ROADMAP.md)에 정리되어 있습니다.
 
 ---
 

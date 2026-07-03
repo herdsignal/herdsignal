@@ -24,6 +24,11 @@ src/main/java/com/herdsignal/
 GET    /api/stocks/{ticker}/herd              종목 HERD Index + 지표 분해 조회
 POST   /api/stocks/{ticker}/herd/refresh      종목 HERD Index 강제 재계산 후 조회
 GET    /api/stocks/{ticker}/financials        종목 재무정보 조회 (yfinance .info)
+GET    /api/stocks/{ticker}/prices            종목 가격 히스토리 조회
+GET    /api/stocks/{ticker}/news              종목 뉴스 조회 (Finnhub)
+GET    /api/stocks/{ticker}/analyst           애널리스트 컨센서스 조회 (Finnhub)
+GET    /api/stocks/{ticker}/insider           내부자 거래 조회 (Finnhub)
+GET    /api/stocks/{ticker}/herd/history      종목 HERD 히스토리 조회
 GET    /api/portfolio/herd                    포트폴리오 전체 HERD 조회
 POST   /api/portfolio/herd/refresh            포트폴리오 전체 HERD 강제 재계산 후 조회
 
@@ -67,6 +72,13 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - FinancialsService
   - Python stock_info_collector.get_stock_financials(ticker) 호출
   - 종목 재무정보 반환 (ProcessBuilder, 티커 정규식 검증 포함)
+- PriceHistoryService
+  - daily_prices 기반 종목 가격 히스토리 반환
+  - period 파라미터(1M/3M/1Y/5Y) 기준 조회
+- FinnhubService
+  - Python finnhub_collector 호출
+  - 뉴스, 애널리스트 컨센서스, 내부자 거래 응답 반환
+  - frontend StockDetail에서는 현재 뉴스/애널리스트/내부자 거래 섹션을 표시하지 않음
 
 ## DB/JPA 원칙
 - Python `init_db.py`가 생성한 테이블 스키마를 기준으로 한다.
@@ -93,6 +105,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - 별도 `GET /api/stocks/{ticker}/indicators` 엔드포인트는 없음. 지표 분해값은 `/api/stocks/{ticker}/herd` 응답에 포함된다.
 - 200주 MA 위치는 `HerdScoreResponse.ma200Weekly`로 응답한다.
 - HERD v4 응답은 `herdScore`/`herdV4`에 최종 점수, `herdBase`에 v3 기본 점수, `epsMultiplier`/`sectorMultiplier`에 보정 승수를 포함한다.
+- 뉴스/애널리스트/내부자 거래 API는 backend에 존재하지만 현재 frontend 화면에서는 사용하지 않는다.
 - 로그인/인증/멀티유저 API는 없음. 현재는 `local` 사용자 고정.
 - 증권사 API 추상화는 구현되어 있지 않다.
 

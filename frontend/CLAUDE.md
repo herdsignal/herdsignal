@@ -121,7 +121,8 @@ Rush    #EF4444  (레드)
 - getPortfolio / getPortfolioHerd / refreshPortfolioHerd / getPortfolioRealtime / getPortfolioSummary / getPortfolioHistory
 - addToPortfolio / removeFromPortfolio / updateAvgPrice
 - getWatchlistHerd / addToWatchlist / removeFromWatchlist
-- getStockHerd / refreshStockHerd
+- getStockHerd / refreshStockHerd / getSpyHerdHistory
+- getStockPrices / getStockFinancials
 
 ## localStorage 사용
 - `hs_portfolio_realtime`: 포트폴리오 실시간 평가 캐시

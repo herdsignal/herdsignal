@@ -135,11 +135,13 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 **frontend/**
 
-- Dashboard: S&P 500 배너(HERD + 종가·1개월 수익률 실데이터), 포트폴리오 카드, KRW/USD 통화 토글, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 수동 새로고침
-- StockDetail: HERD v4 점수·단계·신호, HERD 지표 분해와 보정 승수 UI, 재무정보 카드 실데이터 (시가총액·PER·EPS·영업이익률·매출·배당수익률)
-- Search: 디바운스 검색, HERD 미리보기, 인기 종목 그리드, 최근 검색
-- Watchlist: HERD 카드, 삭제
-- History: 월/년 토글, recharts 자산 기록 차트
+- Dashboard: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, KRW/USD 통화 토글, 목표 비중 기반 리밸런싱 추천, HERD 변화 요약, 자산 진단, 보유 종목 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침
+- StockDetail: HERD v4 점수·단계·신호, 장기투자 판단 패널, HERD 지표 분해와 보정 승수 UI, 가격 차트, 재무정보 카드, 판단 요약/다음 행동 사이드 패널
+- Search: 디바운스 검색, HERD 미리보기, 타이밍 후보, 대표 종목 그리드, 최근 검색, 포트폴리오/관심종목 추가
+- Watchlist: S&P 500 Herd Flow 배너, 관심 종목 HERD 카드, 기회 대기열, 매수/중립/익절 후보 요약, 정렬, 삭제
+- AiRebalance: Claude API 연결 전 규칙 기반 리밸런싱 플랜, 목표 비중·현금 목표·예산·강도 설정, 매수/매도/보류 실행안
+- History: 월/년 토글, recharts 자산 기록 차트, 시작 대비·고점 대비·점검 포인트 자산 진단
+- HerdFlowPreview: `/herd-flow` 확인용 라우트, 실제 데이터와 무관한 HerdDots 5단계 애니메이션 비교
 
 **문서**
 
@@ -153,7 +155,9 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ### 다음 단계
 
-- **StockDetail 미연동 영역** — 뉴스(Finnhub), 애널리스트 목표가, 내부자 거래, 가격 차트 (UI 자리만 존재)
+- README.md / README.ko.md를 현재 코드 기준으로 재정리
+- 리밸런싱 플랜의 Claude API 연동 여부 검토
+- Herd Flow 미리보기 페이지 유지/제거 여부 결정
 
 ---
 
@@ -259,51 +263,75 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 ### frontend/
 
 - [x] Dashboard (`/`)
-  - S&P 500 HERD 배너
+  - S&P 500 Herd Flow 배너
   - 포트폴리오 평가금액 요약
   - KRW/USD 통화 토글
+  - 목표 비중 기반 리밸런싱 추천
+  - 새로고침 후 HERD 변화 요약
+  - portfolio_history 기반 자산 진단
   - 보유 종목 카드
   - 편집 모드/삭제
   - 평단가·수량 수정 모달
   - localStorage 캐시 우선 로딩
-  - 수동 새로고침
+  - 수동 새로고침은 DB 조회 기반 빠른 갱신
 - [x] StockDetail (`/stock/:ticker`)
-  - HERD 점수/단계/Timing Signal
-  - 지표 분해 UI
+  - HERD v4 점수/단계/Timing Signal
+  - 장기투자 판단 패널
+  - 지표 분해 UI + EPS/섹터 강도 보정 승수
+  - 가격 차트
+  - 재무 정보
+  - 판단 요약/다음 행동 사이드 패널
   - 포트폴리오 추가
   - 관심종목 추가
 - [x] Search (`/search`)
   - 300ms 디바운스 검색
   - HERD 미리보기
-  - 인기 종목 그리드
+  - 타이밍 후보
+  - 대표 종목 그리드
   - 최근 검색 localStorage 저장
   - 포트폴리오/관심종목 추가
 - [x] Watchlist (`/watchlist`)
+  - S&P 500 Herd Flow 배너
   - 관심 종목 HERD 카드
+  - 기회 대기열
+  - 매수/중립/익절 후보 요약
+  - 기회·HERD 점수·최신일·티커 정렬
   - 관심 종목 삭제
-  - S&P 500 HERD 배너
+- [x] AiRebalance (`/ai`)
+  - 목표 비중·현금 목표·리밸런싱 예산 설정
+  - 보수적/표준/공격적 리밸런싱 강도 선택
+  - 현재 비중 vs 목표 비중 비교
+  - 규칙 기반 매수/매도/보류 실행안
 - [x] History (`/history`)
   - 월/년 기간 토글
   - recharts 기반 총 평가금액 차트
   - portfolio_history 시계열 표시
+  - 시작 대비·고점 대비·점검 포인트 자산 진단
+- [x] HerdFlowPreview (`/herd-flow`)
+  - 실제 데이터와 무관한 Herd Flow 5단계 애니메이션 확인용
+  - 사이드바 미노출
 
 ### frontend localStorage
 
 - `hs_portfolio_realtime`: 포트폴리오 실시간 평가 캐시
 - `hs_portfolio_herd`: 포트폴리오 HERD 캐시
 - `hs_spy_herd`: SPY HERD 캐시
+- `hs_spy_history`: SPY HERD 히스토리 캐시
 - `hs_cache_time`: 캐시 저장 시각
 - `hs_recent_searches`: 최근 검색
+- `hs_target_weights`: 포트폴리오 종목별 목표 비중
+- `hs_rebalance_settings`: 리밸런싱 예산·현금 목표·강도 설정
 - `herdsignal_currency`: 통화 표시 모드
 
 ---
 
 ## 미구현 또는 부분 구현
 
-- StockDetail의 재무 정보, 뉴스, 애널리스트 목표가, 내부자 거래는 UI 자리만 있고 실제 데이터 연동은 없음.
-- Finnhub collector와 `FINNHUB_API_KEY` 설정은 존재하지만 운영 화면/API에 연결되어 있지 않음.
-- 200주 MA는 운영 점수 계산에 포함되지만 DB/API 지표 분해 응답에는 아직 없음.
-- `backtest_v3.py`의 실적 서프라이즈 필터·트레일링 스탑은 백테스트 코드이며 운영 계산에는 미연동.
+- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 frontend에서 제거됨. backend API와 Finnhub collector 코드는 남아 있다.
+- 리밸런싱 플랜은 아직 Claude API를 호출하지 않는 frontend 규칙 기반 MVP다.
+- 목표 비중과 리밸런싱 설정은 localStorage 저장이며 DB 저장 기능은 없다.
+- Dashboard의 자산 진단은 portfolio_history 기반 수익률/MDD 요약이며 실제 HERD 전략 백테스트가 아니다.
+- `backtest_v5_volatility.py`는 v5 후보 검증용이며 운영 HERD 점수에는 미반영이다.
 - 로그인/멀티유저 UI는 없음. MVP는 `AppConstants.DEFAULT_USER_ID` 기반 `local` 사용자 고정.
 - SPY 배너의 SPY 종가, 1개월 수익률 표시는 아직 `—` placeholder.
 
@@ -311,11 +339,11 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ## README와 현재 코드의 차이
 
-- README는 HERD 알고리즘을 5개 지표 동일 가중치로 설명하지만, 현재 운영 계산은 6개 지표 가중합산이며 거래량 가중치는 0%다.
-- README는 데이터 기간을 10년으로 설명하지만, 현재 기본 설정은 `YFINANCE_PERIOD=5y`다.
-- README의 Phase 1 완료 목록은 대체로 맞지만 History, localStorage 캐시, 평단가·수량 수정, 실시간 포트폴리오 평가 API를 충분히 설명하지 않는다.
-- README의 Stock Detail 애널리스트 목표가는 Phase 2로 적혀 있으며, 실제 코드도 아직 placeholder 상태다.
-- README의 v1 한계/로드맵 표현은 현재 코드의 v3 가중치·백테스트 파일명과 충돌한다. 실제 코드 기준으로 문서를 우선 갱신할 것.
+- README.md / README.ko.md는 현재 코드 기준 재정리가 필요하다.
+- 공개 소개 문서에서는 운영 중인 HERD v4, Herd Flow, Decision Layer, 리밸런싱 플랜, Watchlist 기회 대기열, Search 타이밍 후보, History 자산 진단을 반영해야 한다.
+- README에서 구현 완료로 보이면 안 되는 항목은 Claude API 기반 AI 리밸런싱, 멀티유저/인증, 증권사 연동, 배포다.
+- README의 StockDetail 뉴스/애널리스트/내부자 거래 설명은 현재 frontend 표시 상태와 다르므로 제거하거나 backend API 보유 수준으로 낮춰야 한다.
+- README의 로드맵은 ROADMAP.md와 역할이 겹치지 않게 간결화해야 한다.
 
 ---
 
@@ -324,7 +352,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - 운영 HERD 계산은 여전히 기술적 지표 중심이다.
 - 거시경제 지표(VIX, DXY, 10년물 국채 수익률)는 운영 계산에 반영되어 있지 않다.
 - 옵션 Put/Call, 공매도 비율, 종목 간 상관관계는 운영 계산에 반영되어 있지 않다.
-- DB/API 지표 분해 스키마가 운영 계산 지표(200주 MA)를 완전히 반영하지 못한다.
 - Python과 Spring Boot는 DB 중심으로 통신하지만, on-demand 계산과 실시간 포트폴리오 평가에서는 Spring Boot가 ProcessBuilder로 Python을 실행한다.
+- 리밸런싱 플랜은 아직 투자 성과를 검증하는 백테스트 엔진과 연결되어 있지 않다.
 
 ---
