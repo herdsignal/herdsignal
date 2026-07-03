@@ -11,6 +11,7 @@ import Search     from './pages/Search/Search'
 import Watchlist  from './pages/Watchlist/Watchlist'
 import History    from './pages/History/History'
 import AiRebalance from './pages/AiRebalance/AiRebalance'
+import HerdFlowPreview from './pages/HerdFlowPreview/HerdFlowPreview'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/watchlist"     element={<Watchlist />} />
           <Route path="/history"       element={<History />} />
           <Route path="/ai"            element={<AiRebalance />} />
+          <Route path="/herd-flow"     element={<HerdFlowPreview />} />
         </Route>
       </Routes>
     </BrowserRouter>

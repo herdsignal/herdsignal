@@ -21,6 +21,7 @@ src/
 │   ├── Search/     종목 검색 & 추가
 │   ├── Watchlist/  관심 종목
 │   ├── AiRebalance/ 리밸런싱 플랜
+│   ├── HerdFlowPreview/ Herd Flow 확인용
 │   └── History/    자산 기록
 ├── styles/         전역 CSS 변수
 ├── utils/          통화/환율 유틸
@@ -46,7 +47,7 @@ Rush    #EF4444  (레드)
 ```
 
 ## 핵심 UI 컴포넌트
-- HerdDots: Herd Flow 점 애니메이션 (Flee=화면 전체 분산, Scatter=넓은 흩어짐, Calm=중앙 균형, Drift=오른쪽 쏠림, Rush=좁은 군중 밀집)
+- HerdDots: Herd Flow 점 애니메이션 (Flee=전 영역 듬성듬성 분산, Scatter=작은 군집들이 깨져 흩어짐, Calm=중앙 균형, Drift=오른쪽 쏠림, Rush=좁은 군중 밀집)
 - SpectrumBar: Flee~Rush 스펙트럼 바
 - Layout: 공통 사이드바 + 페이지 Outlet
 - AvgPriceModal: 평균 매수가·수량 수정 모달
@@ -93,6 +94,9 @@ Rush    #EF4444  (레드)
   - 현재 비중 vs 목표 비중 비교
   - 규칙 기반 매수/매도/보류 실행안
   - AI 연결 전 규칙 기반 플랜 요약
+- HerdFlowPreview (`/herd-flow`)
+  - 실제 데이터와 무관한 HerdDots 5단계 애니메이션 확인용 페이지
+  - 사이드바에는 노출하지 않는다
 - History (`/history`)
   - 월/년 기간 토글
   - recharts 기반 총 평가금액 차트

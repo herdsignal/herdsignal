@@ -67,12 +67,12 @@ function getFlowProfile(score) {
       mode: 'scatter',
       anchorX: 0.36,
       anchorY: 0.5,
-      spreadX: 0.7,
-      spreadY: 0.72,
-      pull: 0.00036,
-      jitter: 0.00022,
-      maxV: 0.0032,
-      alpha: 0.62,
+      spreadX: 0.18,
+      spreadY: 0.22,
+      pull: 0.0005,
+      jitter: 0.00016,
+      maxV: 0.0029,
+      alpha: 0.66,
       trail: 0,
     }
   }
@@ -82,27 +82,36 @@ function getFlowProfile(score) {
     anchorY: 0.5,
     spreadX: 0.92,
     spreadY: 0.82,
-    pull: 0.00022,
-    jitter: 0.00028,
-    maxV: 0.0035,
-    alpha: 0.68,
+    pull: 0.00012,
+    jitter: 0.00034,
+    maxV: 0.003,
+    alpha: 0.58,
     trail: 0,
   }
 }
 
+const SCATTER_GROUPS = [
+  { x: 0.2, y: 0.32 },
+  { x: 0.38, y: 0.62 },
+  { x: 0.58, y: 0.42 },
+]
+
 function randomTarget(profile) {
   if (profile.mode === 'flee') {
+    const edgeBias = Math.random() < 0.35
     return {
-      tx: 0.08 + Math.random() * 0.84,
-      ty: 0.1 + Math.random() * 0.8,
+      tx: edgeBias
+        ? (Math.random() < 0.5 ? 0.05 + Math.random() * 0.18 : 0.77 + Math.random() * 0.18)
+        : 0.14 + Math.random() * 0.72,
+      ty: 0.08 + Math.random() * 0.84,
     }
   }
 
   if (profile.mode === 'scatter') {
-    const leftBias = Math.random() < 0.58
+    const group = SCATTER_GROUPS[Math.floor(Math.random() * SCATTER_GROUPS.length)]
     return {
-      tx: leftBias ? 0.08 + Math.random() * 0.42 : 0.42 + Math.random() * 0.42,
-      ty: 0.12 + Math.random() * 0.76,
+      tx: Math.max(0.06, Math.min(0.92, group.x + (Math.random() - 0.5) * 0.2)),
+      ty: Math.max(0.1, Math.min(0.9, group.y + (Math.random() - 0.5) * 0.28)),
     }
   }
 
@@ -154,9 +163,17 @@ export default function HerdDots({
           vx: (Math.random() - 0.5) * 0.0018,
           vy: (Math.random() - 0.5) * 0.0018,
           phase: Math.random() * Math.PI * 2,
-          orbit: profile.mode === 'cluster' ? 0.35 + Math.random() * 0.45 : 0.55 + Math.random() * 0.9,
+          orbit: profile.mode === 'flee'
+            ? 0.9 + Math.random() * 1.2
+            : profile.mode === 'cluster'
+              ? 0.35 + Math.random() * 0.45
+              : 0.55 + Math.random() * 0.9,
           /* 물리 픽셀 기준 반지름 */
-          r:  (1.1 + Math.random() * (score >= 75 ? 2.7 : 2)) * dpr,
+          r:  (
+            profile.mode === 'flee'
+              ? 0.9 + Math.random() * 1.5
+              : 1.1 + Math.random() * (score >= 75 ? 2.7 : 2)
+          ) * dpr,
         }
       })
     }
