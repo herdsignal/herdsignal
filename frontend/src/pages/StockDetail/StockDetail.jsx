@@ -192,6 +192,12 @@ function dataQualityLabel(label) {
   return label.replace('신뢰도', '데이터 품질')
 }
 
+function shouldShowQuality(data) {
+  if (!data?.qualityLabel) return false
+  if (data.qualityLevel === 'LIMITED' || data.qualityLevel === 'LOW') return true
+  return Number(data.qualityScore ?? 100) < 70
+}
+
 function formatActionRatio(value) {
   const n = Number(value ?? 0)
   if (n <= 0) return '관찰'
@@ -457,13 +463,15 @@ export default function StockDetail() {
                 >
                   {getTimingSignal(herdScore)}
                 </div>
-                <div
-                  className={styles.qualityPill}
-                  style={{ color: qualityColor, borderColor: qualityColor }}
-                >
-                  {dataQualityLabel(herdData.qualityLabel) ?? '데이터 품질 산출 중'}
-                  {herdData.qualityScore != null && ` · ${herdData.qualityScore}점`}
-                </div>
+                {shouldShowQuality(herdData) && (
+                  <div
+                    className={styles.qualityPill}
+                    style={{ color: qualityColor, borderColor: qualityColor }}
+                  >
+                    {dataQualityLabel(herdData.qualityLabel) ?? '데이터 품질 확인 필요'}
+                    {herdData.qualityScore != null && ` · ${herdData.qualityScore}점`}
+                  </div>
+                )}
               </div>
 
               {/* 우: HerdDots + 스펙트럼 */}
@@ -505,16 +513,77 @@ export default function StockDetail() {
                   </div>
                 </div>
                 <div className={styles.decisionList}>
-                  {(herdData.actionReasons?.length ? herdData.actionReasons : decision.notes).slice(0, 3).map((note) => (
+                  {(herdData.actionReasons?.length ? herdData.actionReasons : decision.notes).slice(0, 2).map((note) => (
                     <div key={note} className={styles.decisionItem}>{note}</div>
                   ))}
                 </div>
                 {Array.isArray(herdData.actionWarnings) && herdData.actionWarnings.length > 0 && (
                   <div className={styles.actionWarningList}>
-                    {herdData.actionWarnings.slice(0, 3).map((warning) => (
+                    {herdData.actionWarnings.slice(0, 1).map((warning) => (
                       <span key={warning}>{warning}</span>
                     ))}
                   </div>
+                )}
+              </div>
+            </div>
+
+            {/* 가격 차트 카드 */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div className={styles.cardTitle}>가격 차트</div>
+                <div className={styles.priceTabs}>
+                  {['1M', '3M', '1Y', '5Y'].map((p) => (
+                    <button
+                      key={p}
+                      className={`${styles.priceTab} ${priceTab === p ? styles.priceTabActive : ''}`}
+                      onClick={() => setPriceTab(p)}
+                    >{p}</button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.cardBody}>
+                {priceLoading ? (
+                  <div className={styles.chartEmpty}>로딩 중…</div>
+                ) : pricePoints.length === 0 ? (
+                  <div className={styles.chartEmpty}>데이터 없음</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart data={pricePoints} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={priceColor} stopOpacity={0.25} />
+                          <stop offset="100%" stopColor={priceColor} stopOpacity={0.02} />
+                        </linearGradient>
+                      </defs>
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={fmtPriceDate}
+                        interval="preserveStartEnd"
+                        tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
+                        axisLine={false}
+                        tickLine={false}
+                        tickMargin={6}
+                      />
+                      <YAxis
+                        domain={['auto', 'auto']}
+                        tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
+                        axisLine={false}
+                        tickLine={false}
+                        width={44}
+                        tickFormatter={(v) => `$${v.toFixed(0)}`}
+                      />
+                      <Tooltip content={<PriceTooltip />} />
+                      <Area
+                        type="monotone"
+                        dataKey="close"
+                        stroke={priceColor}
+                        strokeWidth={1.5}
+                        fill="url(#priceGrad)"
+                        dot={false}
+                        activeDot={{ r: 3, fill: priceColor, strokeWidth: 0 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 )}
               </div>
             </div>
@@ -581,67 +650,6 @@ export default function StockDetail() {
                     </strong>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* 가격 차트 카드 */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>가격 차트</div>
-                <div className={styles.priceTabs}>
-                  {['1M', '3M', '1Y', '5Y'].map((p) => (
-                    <button
-                      key={p}
-                      className={`${styles.priceTab} ${priceTab === p ? styles.priceTabActive : ''}`}
-                      onClick={() => setPriceTab(p)}
-                    >{p}</button>
-                  ))}
-                </div>
-              </div>
-              <div className={styles.cardBody}>
-                {priceLoading ? (
-                  <div className={styles.chartEmpty}>로딩 중…</div>
-                ) : pricePoints.length === 0 ? (
-                  <div className={styles.chartEmpty}>데이터 없음</div>
-                ) : (
-                  <ResponsiveContainer width="100%" height={200}>
-                    <AreaChart data={pricePoints} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={priceColor} stopOpacity={0.25} />
-                          <stop offset="100%" stopColor={priceColor} stopOpacity={0.02} />
-                        </linearGradient>
-                      </defs>
-                      <XAxis
-                        dataKey="date"
-                        tickFormatter={fmtPriceDate}
-                        interval="preserveStartEnd"
-                        tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                        axisLine={false}
-                        tickLine={false}
-                        tickMargin={6}
-                      />
-                      <YAxis
-                        domain={['auto', 'auto']}
-                        tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                        axisLine={false}
-                        tickLine={false}
-                        width={44}
-                        tickFormatter={(v) => `$${v.toFixed(0)}`}
-                      />
-                      <Tooltip content={<PriceTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="close"
-                        stroke={priceColor}
-                        strokeWidth={1.5}
-                        fill="url(#priceGrad)"
-                        dot={false}
-                        activeDot={{ r: 3, fill: priceColor, strokeWidth: 0 }}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                )}
               </div>
             </div>
 

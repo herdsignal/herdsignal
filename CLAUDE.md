@@ -136,7 +136,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 **frontend/**
 
 - Dashboard: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, KRW/USD 통화 토글, 핵심 리밸런싱 체크, 보유 종목 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침
-- StockDetail: HERD v4 점수·단계·신호, HERD_v5 Action Layer 행동 비율, HERD 지표 분해와 보정 승수 UI, 가격 차트, 재무정보 카드
+- StockDetail: HERD v4 점수·단계·신호, HERD_v5 Action Layer 행동 비율, 가격 차트, 지표 분해·보정 승수, 재무정보 카드
 - HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공
 - HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v5는 HERD_v4 점수에 Balanced Action Layer를 얹은 응답 시점 행동 모델이다.
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. DB 저장 없이 backend 응답 시점에 계산한다.
@@ -158,7 +158,6 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ### 다음 단계
 
-- StockDetail 핵심 정보 재정리
 - HERD 신뢰도와 Action Layer 설명 최소화
 - CSV/엑셀 import 기반 포트폴리오 입력 검토
 

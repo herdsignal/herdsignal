@@ -69,9 +69,9 @@ Rush    #EF4444  (레드)
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
-  - HERD 데이터 품질 배지
-  - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
   - 가격 차트
+  - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
+  - 낮은 HERD 데이터 품질만 배지 표시
   - 재무 정보
   - 포트폴리오 추가
   - 관심종목 추가
