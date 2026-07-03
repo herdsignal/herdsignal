@@ -221,34 +221,10 @@ curl http://localhost:8080/api/stocks/SPY/herd
 
 ---
 
-## Development Roadmap
+## Roadmap
 
-### Phase 1 — Technical Indicators (Current) ✅
-
-- [x] HERD Index algorithm (6 indicators, percentile normalization)
-- [x] Daily scheduler with APScheduler
-- [x] Spring Boot REST API (portfolio + watchlist + per-stock HERD)
-- [x] React dashboard (portfolio, detail, search, watchlist, history pages)
-- [x] S&P 500 benchmark (SPY) as market-wide HERD signal
-- [x] On-demand HERD calculation with 7-day cache
-- [x] Realtime portfolio valuation via yfinance
-
-### Phase 2 — Leading Indicators
-
-- [ ] Options Put/Call ratio integration
-- [ ] Short interest ratio
-- [ ] Cross-ticker correlation weighting
-
-### Phase 3 — Macro Overlay
-
-- [ ] VIX integration
-- [ ] DXY (dollar index)
-- [ ] 10-year Treasury yield
-
-### Phase 4 — ML Optimization
-
-- [ ] Auto-tune weights per ticker category (growth vs. value vs. ETF)
-- [ ] Reinforcement learning for signal timing
+HerdSignal's product direction and priorities are maintained in [ROADMAP.md](./ROADMAP.md).
+README stays focused on what the project is, how it works, and how to run it.
 
 ---
 
@@ -256,12 +232,12 @@ curl http://localhost:8080/api/stocks/SPY/herd
 
 These are understood trade-offs, not bugs:
 
-| Limitation                      | Impact                                 | Planned Fix                 |
+| Limitation                      | Impact                                 | Direction                   |
 | ------------------------------- | -------------------------------------- | --------------------------- |
-| All lagging indicators          | Signal fires after price already moved | Phase 2: leading indicators |
-| No macro awareness              | Misses rate hike / geopolitical shocks | Phase 3: VIX, DXY, yields   |
-| Can't catch V-shaped recoveries | Short sharp crashes not flagged        | Phase 2: Put/Call ratio     |
-| No cross-ticker correlation     | Treats each stock independently        | Phase 2: correlation matrix |
+| All lagging indicators          | Signal fires after price already moved | Add leading indicators      |
+| No macro awareness              | Misses rate hike / geopolitical shocks | Add macro overlays          |
+| Can't catch V-shaped recoveries | Short sharp crashes not flagged        | Add options sentiment       |
+| No cross-ticker correlation     | Treats each stock independently        | Add correlation awareness   |
 
 ---
 
