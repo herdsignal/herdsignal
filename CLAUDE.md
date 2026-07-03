@@ -137,9 +137,9 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 - Dashboard: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, KRW/USD 통화 토글, 핵심 리밸런싱 체크, 보유 종목 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침
 - StockDetail: HERD v4 점수·단계·신호, HERD_v5 Action Layer 행동 비율, 가격 차트, 지표 분해·보정 승수, 재무정보 카드
-- HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공
+- HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공. frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
 - HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v5는 HERD_v4 점수에 Balanced Action Layer를 얹은 응답 시점 행동 모델이다.
-- HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. DB 저장 없이 backend 응답 시점에 계산한다.
+- HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. frontend에서는 actionScore를 `강도`로 표시하고, DB 저장 없이 backend 응답 시점에 계산한다.
 - Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, 최근 검색, 포트폴리오/관심종목 추가
 - Watchlist: S&P 500 Herd Flow 배너, 기회 대기열, 기회 점수순 관심 종목 HERD 카드, 삭제
 - HERD Lab: 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드, Action Layer 백테스트, 5단계 행동 매트릭스. 표시 데이터는 `frontend/src/data/herdModelReport.js`에서 관리한다.
@@ -158,7 +158,6 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ### 다음 단계
 
-- HERD 신뢰도와 Action Layer 설명 최소화
 - CSV/엑셀 import 기반 포트폴리오 입력 검토
 
 ---

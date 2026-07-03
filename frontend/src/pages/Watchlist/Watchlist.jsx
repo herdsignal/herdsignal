@@ -91,11 +91,24 @@ function qualityColor(level) {
   }
 }
 
+function qualityWarningText(item) {
+  const label = item?.qualityLevel === 'LOW' ? '데이터 부족' : '데이터 제한'
+  return `${label}${item?.qualityScore != null ? ` · ${item.qualityScore}` : ''}`
+}
+
+function formatActionScore(value) {
+  if (value == null) return null
+  const n = Number(value)
+  if (!Number.isFinite(n)) return null
+  return `강도 ${Math.round(n)}`
+}
+
 function formatActionText(item) {
-  if (!item?.actionLabel) return decisionSignalDesc(item?.signal)
-  const ratio = Number(item.actionRatio ?? 0)
-  if (!Number.isFinite(ratio) || ratio <= 0) return item.actionLabel
-  return `${Math.round(ratio * 100)}% · ${item.actionLabel}`
+  const action = item?.actionLabel ?? decisionSignalDesc(item?.signal)
+  const strength = formatActionScore(item?.actionScore)
+  const ratio = Number(item?.actionRatio ?? 0)
+  const ratioText = Number.isFinite(ratio) && ratio > 0 ? `${Math.round(ratio * 100)}%` : null
+  return [strength, ratioText, action].filter(Boolean).join(' · ')
 }
 
 /** scoreDate → 한국어 날짜 문자열 */
@@ -423,8 +436,7 @@ export default function Watchlist() {
                             className={styles.cardQuality}
                             style={{ color: qualityColor(item.qualityLevel) }}
                           >
-                            데이터 품질
-                            {item.qualityScore != null && ` · ${item.qualityScore}`}
+                            {qualityWarningText(item)}
                           </div>
                         )}
                       </div>

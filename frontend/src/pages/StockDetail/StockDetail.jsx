@@ -187,21 +187,35 @@ function qualityTone(level) {
   }
 }
 
-function dataQualityLabel(label) {
-  if (!label) return null
-  return label.replace('신뢰도', '데이터 품질')
-}
-
 function shouldShowQuality(data) {
   if (!data?.qualityLabel) return false
   if (data.qualityLevel === 'LIMITED' || data.qualityLevel === 'LOW') return true
   return Number(data.qualityScore ?? 100) < 70
 }
 
+function qualityWarningText(data) {
+  const label = data?.qualityLevel === 'LOW' ? '데이터 부족' : '데이터 제한'
+  return `${label}${data?.qualityScore != null ? ` · ${data.qualityScore}점` : ''}`
+}
+
+function formatActionScore(value) {
+  if (value == null) return null
+  const n = Number(value)
+  if (!Number.isFinite(n)) return null
+  return `강도 ${Math.round(n)}`
+}
+
 function formatActionRatio(value) {
   const n = Number(value ?? 0)
   if (n <= 0) return '관찰'
   return `${Math.round(n * 100)}%`
+}
+
+function formatActionMeta(data) {
+  return [
+    data?.actionModelVersion ?? 'HERD_v5',
+    formatActionScore(data?.actionScore),
+  ].filter(Boolean).join(' · ')
 }
 
 function actionTone(grade, signal) {
@@ -468,8 +482,7 @@ export default function StockDetail() {
                     className={styles.qualityPill}
                     style={{ color: qualityColor, borderColor: qualityColor }}
                   >
-                    {dataQualityLabel(herdData.qualityLabel) ?? '데이터 품질 확인 필요'}
-                    {herdData.qualityScore != null && ` · ${herdData.qualityScore}점`}
+                    {qualityWarningText(herdData)}
                   </div>
                 )}
               </div>
@@ -495,12 +508,12 @@ export default function StockDetail() {
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <div className={styles.cardTitle}>Action Layer</div>
-                <div className={styles.cardMeta}>장기투자 행동 비율</div>
+                <div className={styles.cardMeta}>{formatActionMeta(herdData)}</div>
               </div>
               <div className={styles.cardBody}>
                 <div className={styles.decisionHero}>
                   <div>
-                    <div className={styles.decisionLabel}>Action Layer</div>
+                    <div className={styles.decisionLabel}>타이밍 액션</div>
                     <div className={styles.decisionTitle}>
                       {herdData.actionLabel ?? decision.title}
                     </div>

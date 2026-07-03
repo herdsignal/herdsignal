@@ -176,11 +176,24 @@ function shouldShowQuality(herd) {
   return Number(herd.qualityScore ?? 100) < 70
 }
 
+function qualityWarningText(herd) {
+  const label = herd?.qualityLevel === 'LOW' ? '데이터 부족' : '데이터 제한'
+  return `${label}${herd?.qualityScore != null ? ` · ${herd.qualityScore}` : ''}`
+}
+
+function formatActionScore(value) {
+  if (value == null) return null
+  const n = Number(value)
+  if (!Number.isFinite(n)) return null
+  return `강도 ${Math.round(n)}`
+}
+
 function formatActionText(herd) {
-  if (!herd?.actionLabel) return decisionSignalDesc(herd?.signal)
-  const ratio = Number(herd.actionRatio ?? 0)
-  if (!Number.isFinite(ratio) || ratio <= 0) return herd.actionLabel
-  return `${Math.round(ratio * 100)}% · ${herd.actionLabel}`
+  const action = herd?.actionLabel ?? decisionSignalDesc(herd?.signal)
+  const strength = formatActionScore(herd?.actionScore)
+  const ratio = Number(herd?.actionRatio ?? 0)
+  const ratioText = Number.isFinite(ratio) && ratio > 0 ? `${Math.round(ratio * 100)}%` : null
+  return [strength, ratioText, action].filter(Boolean).join(' · ')
 }
 
 /** USD 금액 포맷: $1,234.56 */
@@ -972,8 +985,7 @@ export default function Dashboard() {
                             className={styles.cardQuality}
                             style={{ color: qualityColor(herd.qualityLevel) }}
                           >
-                            데이터 품질
-                            {herd.qualityScore != null && ` · ${herd.qualityScore}`}
+                            {qualityWarningText(herd)}
                           </div>
                         )}
                       </div>

@@ -66,6 +66,7 @@ Rush    #EF4444  (레드)
   - 평단가·수량 수정 모달
   - localStorage 캐시 우선 로딩
   - 수동 새로고침은 DB 조회 기반 빠른 갱신만 수행
+  - 보유 종목 카드는 `강도 · 행동 비율 · 행동 라벨`로 Action Layer를 축약 표시
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
@@ -86,6 +87,7 @@ Rush    #EF4444  (레드)
 - Watchlist (`/watchlist`)
   - 관심 종목 HERD 카드
   - 낮은 HERD 데이터 품질만 배지 표시
+  - 관심 종목 카드는 `강도 · 행동 비율 · 행동 라벨`로 Action Layer를 축약 표시
   - 기회 대기열 (HERD 저점 + BUY/ADD 신호 우선)
   - 기회 점수순 자동 정렬
   - 빠른 새로고침
@@ -117,8 +119,8 @@ Rush    #EF4444  (레드)
 - Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
-- HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 표시하며, frontend에서 별도 점수 계산을 하지 않는다.
-- Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 표시하며, frontend에서 별도 행동 점수 계산을 하지 않는다.
+- HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
+- Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 사용하며, frontend에서는 actionScore를 `강도`로 표시하고 별도 행동 점수 계산을 하지 않는다.
 - Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 하루 경계는 backend에서 KST 22:30 기준으로 계산한다.
 - Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.
 - Dashboard/Watchlist의 SPY 배너에서 SPY 종가, 1개월 수익률은 아직 `—` placeholder.
