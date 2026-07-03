@@ -62,6 +62,14 @@ function toSearchCandidate(item) {
   }
 }
 
+function candidateForTicker(ticker, matches = []) {
+  return matches.find((item) => item.ticker === ticker) ?? TICKER_META[ticker] ?? {
+    ticker,
+    name: ticker,
+    sector: '미국 주식',
+  }
+}
+
 function candidateMatches(item, normalized, rawQuery = '') {
   const aliasText = (item.aliases ?? []).join(' ').toUpperCase()
   const rawAliasText = (item.aliases ?? []).join(' ')
@@ -241,16 +249,30 @@ export default function Search() {
           return
         }
 
-        const res  = await getStockHerd(ticker)
-        if (cancelled) return   /* 언마운트 또는 query 변경으로 취소된 경우 무시 */
-        const data = res.data?.data
-        if (data) {
-          setSearchResult({ status: 'found', data, matches: candidates })
-          /* 결과 있을 때만 최근 검색에 저장 */
-          saveToRecent(ticker)
-          setRecentSearches(loadRecent())
-        } else {
-          setSearchResult({ status: 'not_found', matches: candidates })
+        try {
+          const res  = await getStockHerd(ticker)
+          if (cancelled) return   /* 언마운트 또는 query 변경으로 취소된 경우 무시 */
+          const data = res.data?.data
+          if (data) {
+            setSearchResult({ status: 'found', data, matches: candidates })
+            /* 결과 있을 때만 최근 검색에 저장 */
+            saveToRecent(ticker)
+            setRecentSearches(loadRecent())
+          } else {
+            setSearchResult({
+              status: 'symbol_found',
+              candidate: candidateForTicker(ticker, candidates),
+              matches: candidates,
+            })
+          }
+        } catch {
+          if (!cancelled) {
+            setSearchResult({
+              status: 'symbol_found',
+              candidate: candidateForTicker(ticker, candidates),
+              matches: candidates,
+            })
+          }
         }
       } catch {
         if (!cancelled) setSearchResult({ status: 'not_found', matches })
@@ -266,10 +288,10 @@ export default function Search() {
 
   /* 검색 결과가 바뀌면 추가 버튼 상태 초기화 */
   useEffect(() => {
-    const ticker = searchResult?.data?.ticker
+    const ticker = searchResult?.data?.ticker ?? searchResult?.candidate?.ticker
     setPortfolioStatus(ticker && portfolioTickers.has(ticker) ? 'exists' : 'idle')
     setWatchlistStatus(ticker && watchlistTickers.has(ticker) ? 'exists' : 'idle')
-  }, [searchResult?.data?.ticker, portfolioTickers, watchlistTickers])
+  }, [searchResult?.data?.ticker, searchResult?.candidate?.ticker, portfolioTickers, watchlistTickers])
 
   /* ── 추가 버튼 핸들러 ── */
   async function handleAddPortfolio(ticker) {
@@ -356,7 +378,56 @@ export default function Search() {
     if (searchResult.status === 'not_found') {
       return (
         <div className={styles.dropdownPlaceholder}>
-          데이터가 없습니다. 스케줄러 실행 후 조회 가능합니다.
+          검색 결과가 없습니다. 티커를 직접 입력해보세요.
+        </div>
+      )
+    }
+
+    if (searchResult.status === 'symbol_found') {
+      const d = searchResult.candidate
+      const label = d.ticker.length <= 4 ? d.ticker : d.ticker.slice(0, 4)
+      return (
+        <div className={styles.searchResultItem}>
+          <div className={styles.resultLeft}>
+            <div className={styles.resultBadge}>{label}</div>
+            <div>
+              <div className={styles.resultTicker}>{d.ticker}</div>
+              <div className={styles.resultName}>
+                {d.name} · {d.sector}
+              </div>
+              <div className={styles.resultNote}>
+                심볼은 찾았지만 HERD 데이터는 아직 없습니다. 상장 기간이 짧거나 계산 대기 중일 수 있어요.
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.resultRight} onClick={e => e.stopPropagation()}>
+            <div className={styles.resultHerd}>
+              <div className={styles.resultHerdScore}>—</div>
+              <div className={styles.resultHerdStage}>HERD 대기</div>
+              <div className={styles.resultHerdDesc}>관심종목에 추가 가능</div>
+            </div>
+            <button
+              className={`${styles.resultAddBtn} ${
+                portfolioStatus === 'added' || portfolioStatus === 'exists'
+                  ? styles.resultAddBtnDone : ''
+              }`}
+              onClick={() => handleAddPortfolio(d.ticker)}
+              disabled={portfolioStatus === 'loading'}
+            >
+              {addBtnLabel(portfolioStatus, '+ 포트폴리오')}
+            </button>
+            <button
+              className={`${styles.resultAddBtn} ${
+                watchlistStatus === 'added' || watchlistStatus === 'exists'
+                  ? styles.resultAddBtnDone : ''
+              }`}
+              onClick={() => handleAddWatchlist(d.ticker)}
+              disabled={watchlistStatus === 'loading'}
+            >
+              {addBtnLabel(watchlistStatus, '+ 관심종목')}
+            </button>
+          </div>
         </div>
       )
     }
