@@ -46,7 +46,7 @@ Rush    #EF4444  (레드)
 ```
 
 ## 핵심 UI 컴포넌트
-- HerdDots: Herd Flow 점 애니메이션 (Flee=군중 이탈, Scatter=군중 흩어짐, Calm=군중 균형, Drift=군중 쏠림, Rush=군중 밀집)
+- HerdDots: Herd Flow 점 애니메이션 (Flee=화면 전체 분산, Scatter=넓은 흩어짐, Calm=중앙 균형, Drift=오른쪽 쏠림, Rush=좁은 군중 밀집)
 - SpectrumBar: Flee~Rush 스펙트럼 바
 - Layout: 공통 사이드바 + 페이지 Outlet
 - AvgPriceModal: 평균 매수가·수량 수정 모달

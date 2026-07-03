@@ -1,7 +1,7 @@
 /**
  * HerdDots.jsx — HERD 군중 점 애니메이션 컴포넌트
  *
- * score에 따라 군중의 흐름을 다르게 표현한다.
+ * score에 따라 군중의 분포와 밀도를 다르게 표현한다.
  * Flee=군중 이탈, Scatter=군중 흩어짐, Calm=군중 균형, Drift=군중 쏠림, Rush=군중 밀집.
  *
  * fill=true: 부모 컨테이너를 꽉 채우는 모드 (배너, 테이블 행에서 사용)
@@ -22,40 +22,40 @@ function getColor(score) {
 function getFlowProfile(score) {
   if (score >= 75) {
     return {
-      anchorX: 0.82,
+      mode: 'cluster',
+      anchorX: 0.78,
       anchorY: 0.5,
-      spreadX: 0.12,
-      spreadY: 0.32,
-      pull: 0.00135,
-      drift: 0.00042,
+      spreadX: 0.08,
+      spreadY: 0.16,
+      pull: 0.0011,
       jitter: 0.00008,
-      maxV: 0.0056,
+      maxV: 0.0038,
       alpha: 0.86,
-      trail: 0.16,
+      trail: 0.08,
     }
   }
   if (score >= 60) {
     return {
+      mode: 'drift',
       anchorX: 0.66,
       anchorY: 0.5,
-      spreadX: 0.24,
-      spreadY: 0.42,
-      pull: 0.00078,
-      drift: 0.00022,
+      spreadX: 0.22,
+      spreadY: 0.34,
+      pull: 0.00072,
       jitter: 0.00012,
-      maxV: 0.0042,
+      maxV: 0.0032,
       alpha: 0.72,
-      trail: 0.1,
+      trail: 0.04,
     }
   }
   if (score >= 40) {
     return {
+      mode: 'calm',
       anchorX: 0.5,
       anchorY: 0.5,
       spreadX: 0.34,
       spreadY: 0.48,
       pull: 0.0005,
-      drift: 0,
       jitter: 0.00012,
       maxV: 0.0026,
       alpha: 0.56,
@@ -64,29 +64,51 @@ function getFlowProfile(score) {
   }
   if (score >= 15) {
     return {
+      mode: 'scatter',
       anchorX: 0.36,
       anchorY: 0.5,
-      spreadX: 0.48,
-      spreadY: 0.62,
-      pull: 0.00042,
-      drift: -0.00016,
-      jitter: 0.00028,
-      maxV: 0.0038,
+      spreadX: 0.7,
+      spreadY: 0.72,
+      pull: 0.00036,
+      jitter: 0.00022,
+      maxV: 0.0032,
       alpha: 0.62,
-      trail: 0.04,
+      trail: 0,
     }
   }
   return {
-    anchorX: 0.18,
+    mode: 'flee',
+    anchorX: 0.5,
     anchorY: 0.5,
-    spreadX: 0.62,
-    spreadY: 0.74,
-    pull: 0.00035,
-    drift: -0.00036,
-    jitter: 0.00038,
-    maxV: 0.0048,
+    spreadX: 0.92,
+    spreadY: 0.82,
+    pull: 0.00022,
+    jitter: 0.00028,
+    maxV: 0.0035,
     alpha: 0.68,
-    trail: 0.1,
+    trail: 0,
+  }
+}
+
+function randomTarget(profile) {
+  if (profile.mode === 'flee') {
+    return {
+      tx: 0.08 + Math.random() * 0.84,
+      ty: 0.1 + Math.random() * 0.8,
+    }
+  }
+
+  if (profile.mode === 'scatter') {
+    const leftBias = Math.random() < 0.58
+    return {
+      tx: leftBias ? 0.08 + Math.random() * 0.42 : 0.42 + Math.random() * 0.42,
+      ty: 0.12 + Math.random() * 0.76,
+    }
+  }
+
+  return {
+    tx: Math.max(0.04, Math.min(0.96, profile.anchorX + (Math.random() - 0.5) * profile.spreadX)),
+    ty: Math.max(0.08, Math.min(0.92, profile.anchorY + (Math.random() - 0.5) * profile.spreadY)),
   }
 }
 
@@ -122,16 +144,21 @@ export default function HerdDots({
 
     /* 점 배열 초기화 */
     function initDots() {
-      return Array.from({ length: dotCount }, () => ({
-        x:  Math.max(0.02, Math.min(0.98, profile.anchorX + (Math.random() - 0.5) * profile.spreadX)),
-        y:  Math.max(0.08, Math.min(0.92, profile.anchorY + (Math.random() - 0.5) * profile.spreadY)),
-        vx: (Math.random() - 0.5) * 0.0025,
-        vy: (Math.random() - 0.5) * 0.0025,
-        phase: Math.random() * Math.PI * 2,
-        orbit: 0.4 + Math.random() * 0.8,
-        /* 물리 픽셀 기준 반지름 */
-        r:  (1.1 + Math.random() * (score >= 75 ? 2.6 : 2)) * dpr,
-      }))
+      return Array.from({ length: dotCount }, () => {
+        const target = randomTarget(profile)
+        return {
+          x:  target.tx + (Math.random() - 0.5) * profile.spreadX * 0.2,
+          y:  target.ty + (Math.random() - 0.5) * profile.spreadY * 0.2,
+          tx: target.tx,
+          ty: target.ty,
+          vx: (Math.random() - 0.5) * 0.0018,
+          vy: (Math.random() - 0.5) * 0.0018,
+          phase: Math.random() * Math.PI * 2,
+          orbit: profile.mode === 'cluster' ? 0.35 + Math.random() * 0.45 : 0.55 + Math.random() * 0.9,
+          /* 물리 픽셀 기준 반지름 */
+          r:  (1.1 + Math.random() * (score >= 75 ? 2.7 : 2)) * dpr,
+        }
+      })
     }
 
     /* 캔버스 물리 픽셀 크기 설정 (fill 모드 vs 고정 모드) */
@@ -155,31 +182,31 @@ export default function HerdDots({
       ctx.clearRect(0, 0, W, H)
 
       dots.forEach(d => {
-        const waveX = Math.sin(tick * 0.012 + d.phase) * 0.018 * d.orbit
-        const waveY = Math.cos(tick * 0.01 + d.phase) * 0.028 * d.orbit
-        const targetX = profile.anchorX + waveX
-        const targetY = profile.anchorY + waveY
+        const waveX = Math.sin(tick * 0.011 + d.phase) * 0.014 * d.orbit
+        const waveY = Math.cos(tick * 0.01 + d.phase) * 0.022 * d.orbit
+        const targetX = d.tx + waveX
+        const targetY = d.ty + waveY
         const noiseX = (Math.random() - 0.5) * profile.jitter
         const noiseY = (Math.random() - 0.5) * profile.jitter
 
         d.prevX = d.x
         d.prevY = d.y
 
-        /* Flee는 바깥으로 이탈, Rush는 한쪽으로 밀집되는 흐름을 더한다. */
-        d.vx += (targetX - d.x) * profile.pull + profile.drift + noiseX
+        /* Flee는 화면 전체에 분산되고, Rush는 좁은 군집으로 수렴한다. */
+        d.vx += (targetX - d.x) * profile.pull + noiseX
         d.vy += (targetY - d.y) * profile.pull * 0.72 + noiseY
 
         d.x += d.vx
         d.y += d.vy
 
-        /* 경계 처리: Flee는 화면 가장자리에서 다시 흩어지고, Rush는 밀집권 안으로 되돌아온다. */
+        /* 경계 처리: 가장자리에 고정되지 않도록 부드럽게 되돌린다. */
         if (d.x < 0.01) {
           d.x = 0.01
-          d.vx = Math.abs(d.vx) * (score < 40 ? 0.25 : 0.55)
+          d.vx = Math.abs(d.vx) * 0.6
         }
         if (d.x > 0.99) {
           d.x = 0.99
-          d.vx = -Math.abs(d.vx) * (score >= 60 ? 0.35 : 0.55)
+          d.vx = -Math.abs(d.vx) * 0.6
         }
         if (d.y < 0.04 || d.y > 0.96) d.vy *= -0.65
 
