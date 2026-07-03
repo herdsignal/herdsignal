@@ -191,9 +191,14 @@ function formatActionScore(value) {
 function formatActionText(herd) {
   const action = herd?.actionLabel ?? decisionSignalDesc(herd?.signal)
   const strength = formatActionScore(herd?.actionScore)
-  const ratio = Number(herd?.actionRatio ?? 0)
-  const ratioText = Number.isFinite(ratio) && ratio > 0 ? `${Math.round(ratio * 100)}%` : null
-  return [strength, ratioText, action].filter(Boolean).join(' · ')
+  return [strength, action].filter(Boolean).join(' · ')
+}
+
+function formatActionCode(herd) {
+  if (!herd?.signal) return 'HOLD'
+  const ratio = Number(herd.actionRatio ?? 0)
+  if (!Number.isFinite(ratio) || ratio <= 0) return herd.signal
+  return `${herd.signal} ${Math.round(ratio * 100)}%`
 }
 
 /** USD 금액 포맷: $1,234.56 */
@@ -991,27 +996,23 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    {/* 우측: HERD 점수 → 단계명 → 시그널 배지 (의미상 한 묶음) */}
+                    {/* 우측: 최종 액션을 먼저 보여주고, HERD 점수는 보조 메타로 표시 */}
                     <div className={styles.cardHerd} style={{ paddingRight: editMode ? '20px' : '4px' }}>
                       {herd ? (
-                        <>
-                          <div className={styles.cardHerdNum} style={{ color }}>
-                            {Math.round(herd.herdV4 ?? herd.herdScore)}
+                        <div className={styles.cardActionPanel}>
+                          <div
+                            className={styles.cardActionCode}
+                            style={{ color: signal.color }}
+                          >
+                            {formatActionCode(herd)}
                           </div>
-                          <div className={styles.cardHerdStage}>{stageName}</div>
-                          {/* 시그널 배지 — HERD 점수와 의미상 연결되어 같은 블록에 배치 */}
-                          <div className={styles.cardSignalGroup}>
-                            <span
-                              className={styles.cardSignalBadge}
-                              style={{ background: signal.bg, color: signal.color }}
-                            >
-                              {herd.signal}
-                            </span>
-                            <span className={styles.cardSignalDesc}>
-                              {formatActionText(herd)}
-                            </span>
+                          <div className={styles.cardActionLabel}>
+                            {formatActionText(herd)}
                           </div>
-                        </>
+                          <div className={styles.cardActionMeta}>
+                            HERD {Math.round(herd.herdV4 ?? herd.herdScore)} · {stageName}
+                          </div>
+                        </div>
                       ) : (
                         <span className={styles.cardDash}>—</span>
                       )}

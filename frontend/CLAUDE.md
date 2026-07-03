@@ -66,7 +66,7 @@ Rush    #EF4444  (레드)
   - 평단가·수량 수정 모달
   - localStorage 캐시 우선 로딩
   - 수동 새로고침은 DB 조회 기반 빠른 갱신만 수행
-  - 보유 종목 카드는 `강도 · 행동 비율 · 행동 라벨`로 Action Layer를 축약 표시
+  - 보유 종목 카드는 `ADD 10%`/`HOLD`/`SELL 30%` 같은 액션 코드를 우선 표시하고 HERD 점수는 보조 메타로 표시
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시

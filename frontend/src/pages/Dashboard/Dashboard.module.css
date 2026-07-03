@@ -675,6 +675,7 @@
   text-align: right;
   flex-shrink: 0;
   padding-right: 20px; /* 삭제 버튼 공간 확보 */
+  max-width: 220px;
 }
 
 .cardHerdNum {
@@ -690,6 +691,42 @@
   font-size: 10px;
   font-weight: 600;
   color: var(--text-2);
+}
+
+.cardActionPanel {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  min-width: 150px;
+}
+
+.cardActionCode {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.cardActionLabel {
+  max-width: 220px;
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardActionMeta {
+  color: var(--text-3);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
 }
 
 .cardDash {
