@@ -143,9 +143,8 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, 타이밍 후보, 대표 종목 그리드, 최근 검색, 포트폴리오/관심종목 추가
 - Watchlist: S&P 500 Herd Flow 배너, 관심 종목 HERD 카드, 기회 대기열, 매수/중립/익절 후보 요약, 정렬, 삭제
 - HERD Lab: 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드, Action Layer 백테스트, 5단계 행동 매트릭스. 표시 데이터는 `frontend/src/data/herdModelReport.js`에서 관리한다.
-- AiRebalance: Claude API 연결 전 규칙 기반 리밸런싱 플랜, 목표 비중·현금 목표·예산·강도 설정, 매수/매도/보류 실행안
-- History: 월/년 토글, recharts 자산 기록 차트, 시작 대비·고점 대비·점검 포인트 자산 진단
-- HerdFlowPreview: `/herd-flow` 확인용 라우트, 실제 데이터와 무관한 HerdDots 5단계 애니메이션 비교
+- 사이드바 노출 MVP 메뉴: 대시보드, 관심 종목, 종목 검색, HERD Lab
+- 보류/내부 접근 라우트: AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`)
 
 **문서**
 

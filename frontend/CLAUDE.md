@@ -54,6 +54,8 @@ Rush    #EF4444  (레드)
 - AvgPriceModal: 평균 매수가·수량 수정 모달
 
 ## 현재 구현된 페이지
+- 사이드바 노출 메뉴는 MVP 기준으로 Dashboard, Watchlist, Search, HerdLab만 유지한다.
+- AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
 - Dashboard (`/`)
   - S&P 500 HERD 배너
   - 포트폴리오 평가금액 요약
