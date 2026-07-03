@@ -56,7 +56,7 @@ Rush    #EF4444  (레드)
   - 편집 모드/삭제
   - 평단가·수량 수정 모달
   - localStorage 캐시 우선 로딩
-  - 수동 새로고침
+  - 수동 새로고침은 DB 조회 기반 빠른 갱신만 수행
 - StockDetail (`/stock/:ticker`)
   - HERD 점수/단계/Timing Signal
   - 지표 분해 UI
@@ -64,12 +64,17 @@ Rush    #EF4444  (레드)
   - 관심종목 추가
 - Search (`/search`)
   - 300ms 디바운스 검색
+  - 대표 종목 티커/종목명 로컬 매칭
   - HERD 미리보기
   - 인기 종목 그리드
   - 최근 검색 localStorage 저장
+  - 포트폴리오/관심종목 중복 상태 표시
   - 포트폴리오/관심종목 추가
 - Watchlist (`/watchlist`)
   - 관심 종목 HERD 카드
+  - 매수/중립/익절 후보 요약
+  - HERD 점수·최신일·티커 정렬
+  - 빠른 새로고침
   - 관심 종목 삭제
   - S&P 500 HERD 배너
 - History (`/history`)

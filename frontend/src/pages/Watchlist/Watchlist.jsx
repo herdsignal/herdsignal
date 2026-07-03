@@ -10,7 +10,7 @@
  * API: getWatchlistHerd() + getStockHerd('SPY') — 병렬 호출
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate }   from 'react-router-dom'
 import { getWatchlistHerd, getStockHerd, removeFromWatchlist } from '../../api/herdApi'
 import HerdDots  from '../../components/HerdDots/HerdDots'
@@ -43,10 +43,10 @@ function stageColor(stage) {
 /** stage → 한국어 설명 (배너 하단) */
 function stageDesc(stage) {
   switch (normalizeStage(stage)) {
-    case 'rush':    return '군중 과열 · 익절 구간'
-    case 'drift':   return '군중 유입 · 익절 고려'
-    case 'scatter': return '관심 분산 · 추가매수 고려'
-    case 'flee':    return '공포 · 매수 구간'
+    case 'rush':    return '극단적 과열 · 적극 익절'
+    case 'drift':   return '탐욕 · 일부 익절 고려'
+    case 'scatter': return '공포 · 분할 매수'
+    case 'flee':    return '극단적 공포 · 적극 매수'
     default:        return '중립 · 보유 유지'
   }
 }
@@ -90,7 +90,9 @@ export default function Watchlist() {
   const [watchlist,      setWatchlist]      = useState([])
   const [spyData,        setSpyData]        = useState(null)
   const [loading,        setLoading]        = useState(true)
+  const [refreshing,     setRefreshing]     = useState(false)
   const [error,          setError]          = useState(null)
+  const [sortMode,       setSortMode]       = useState('scoreAsc')
   /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
   /* SPY 데이터 ref 캐시 — Dashboard와 동일한 StrictMode 대응 */
@@ -101,8 +103,9 @@ export default function Watchlist() {
   })
 
   /* 관심 종목 조회 (SPY와 분리) */
-  const fetchData = useCallback(async () => {
-    setLoading(true)
+  const fetchData = useCallback(async (silent = false) => {
+    if (silent) setRefreshing(true)
+    else setLoading(true)
     setError(null)
     try {
       const watchlistRes = await getWatchlistHerd().catch(() => null)
@@ -119,6 +122,7 @@ export default function Watchlist() {
       }
     } finally {
       setLoading(false)
+      setRefreshing(false)
     }
   }, [])
 
@@ -160,6 +164,33 @@ export default function Watchlist() {
   const spyScore = spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
 
+  const sortedWatchlist = useMemo(() => {
+    const list = [...watchlist]
+    switch (sortMode) {
+      case 'scoreDesc':
+        return list.sort((a, b) => Number(b.herdScore ?? -1) - Number(a.herdScore ?? -1))
+      case 'updated':
+        return list.sort((a, b) => String(b.scoreDate ?? '').localeCompare(String(a.scoreDate ?? '')))
+      case 'ticker':
+        return list.sort((a, b) => a.ticker.localeCompare(b.ticker))
+      default:
+        return list.sort((a, b) => Number(a.herdScore ?? 101) - Number(b.herdScore ?? 101))
+    }
+  }, [watchlist, sortMode])
+
+  const watchStats = useMemo(() => {
+    const buyCount = watchlist.filter((item) =>
+      ['flee', 'scatter'].includes(normalizeStage(item.herdStage))
+    ).length
+    const sellCount = watchlist.filter((item) =>
+      ['drift', 'rush'].includes(normalizeStage(item.herdStage))
+    ).length
+    const avgScore = watchlist.length
+      ? Math.round(watchlist.reduce((sum, item) => sum + Number(item.herdScore ?? 0), 0) / watchlist.length)
+      : null
+    return { buyCount, sellCount, avgScore }
+  }, [watchlist])
+
   return (
     <div>
 
@@ -169,9 +200,18 @@ export default function Watchlist() {
           <div className={styles.pageDate}>{today}</div>
           <h1 className={styles.pageTitle}>관심 종목</h1>
         </div>
-        <button className={styles.btnPrimary} onClick={() => navigate('/search')}>
-          종목 추가
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            className={styles.btnRefresh}
+            onClick={() => fetchData(true)}
+            disabled={refreshing || loading}
+          >
+            {refreshing ? '새로고침 중…' : '↻ 새로고침'}
+          </button>
+          <button className={styles.btnPrimary} onClick={() => navigate('/search')}>
+            종목 추가
+          </button>
+        </div>
       </div>
 
       {/* ── S&P500 HERD 배너 (Dashboard와 동일) ── */}
@@ -200,12 +240,14 @@ export default function Watchlist() {
 
         <div className={styles.bannerStatsBlock}>
           <div className={styles.bannerStatItem}>
-            <div className={styles.bannerStatLabel}>SPY 종가</div>
-            <div className={styles.bannerStatValue}>—</div>
+            <div className={styles.bannerStatLabel}>관심 종목</div>
+            <div className={styles.bannerStatValue}>{watchlist.length}</div>
           </div>
           <div className={styles.bannerStatItem}>
-            <div className={styles.bannerStatLabel}>1개월 수익률</div>
-            <div className={styles.bannerStatValue}>—</div>
+            <div className={styles.bannerStatLabel}>평균 HERD</div>
+            <div className={styles.bannerStatValue}>
+              {watchStats.avgScore ?? '—'}
+            </div>
           </div>
           <div className={styles.bannerStatItem}>
             <div className={styles.bannerStatLabel}>업데이트</div>
@@ -234,12 +276,51 @@ export default function Watchlist() {
       {/* ── 관심 종목 카드 그리드 — 2열 ── */}
       {!loading && !error && watchlist.length > 0 && (
         <>
+          <div className={styles.summaryGrid}>
+            <div className={styles.summaryItem}>
+              <div className={styles.summaryLabel}>매수 후보</div>
+              <div className={styles.summaryValue} style={{ color: 'var(--flee)' }}>
+                {watchStats.buyCount}
+              </div>
+            </div>
+            <div className={styles.summaryItem}>
+              <div className={styles.summaryLabel}>중립</div>
+              <div className={styles.summaryValue}>
+                {watchlist.length - watchStats.buyCount - watchStats.sellCount}
+              </div>
+            </div>
+            <div className={styles.summaryItem}>
+              <div className={styles.summaryLabel}>익절 후보</div>
+              <div className={styles.summaryValue} style={{ color: 'var(--rush)' }}>
+                {watchStats.sellCount}
+              </div>
+            </div>
+          </div>
+
           <div className={styles.sectionRow}>
             <div className={styles.sectionTitle}>관심 종목 · {watchlist.length}</div>
+            <div className={styles.sortControls}>
+              <button
+                className={`${styles.sortBtn} ${sortMode === 'scoreAsc' ? styles.sortBtnActive : ''}`}
+                onClick={() => setSortMode('scoreAsc')}
+              >저점순</button>
+              <button
+                className={`${styles.sortBtn} ${sortMode === 'scoreDesc' ? styles.sortBtnActive : ''}`}
+                onClick={() => setSortMode('scoreDesc')}
+              >과열순</button>
+              <button
+                className={`${styles.sortBtn} ${sortMode === 'updated' ? styles.sortBtnActive : ''}`}
+                onClick={() => setSortMode('updated')}
+              >최신순</button>
+              <button
+                className={`${styles.sortBtn} ${sortMode === 'ticker' ? styles.sortBtnActive : ''}`}
+                onClick={() => setSortMode('ticker')}
+              >티커순</button>
+            </div>
           </div>
 
           <div className={styles.stockGrid}>
-            {watchlist.map((item) => {
+            {sortedWatchlist.map((item) => {
               const color      = stageColor(item.herdStage)
               const badge      = badgeStyle(item.herdStage)
               const signal     = signalStyle(item.signal)
@@ -298,6 +379,9 @@ export default function Watchlist() {
                       style={{ background: signal.bg, color: signal.color }}
                     >
                       {item.signal}
+                    </span>
+                    <span className={styles.cardUpdate}>
+                      {formatDate(item.scoreDate)}
                     </span>
                   </div>
                 </div>

@@ -10,7 +10,7 @@
  *
  * 데이터 소스:
  *   - getPortfolio()          → 종목 목록 + avgPrice/quantity (항상 최신 호출)
- *   - getPortfolioRealtime()  → yfinance 실시간 총액 (캐시 우선 — 약 3~5초 소요)
+ *   - getPortfolioSummary()   → DB 기준 포트폴리오 요약 (캐시 우선)
  *   - getPortfolioHerd()      → HERD 점수 (캐시 우선)
  *   - getStockHerd('SPY')     → SPY 배너용 HERD (캐시 우선)
  *
@@ -33,12 +33,10 @@ import {
 } from 'recharts'
 import {
   getPortfolio,
-  getPortfolioRealtime,
+  getPortfolioSummary,
   getPortfolioHerd,
   getStockHerd,
   getSpyHerdHistory,
-  refreshPortfolioHerd,
-  refreshStockHerd,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
@@ -72,6 +70,26 @@ function writeCache(key, data) {
   try {
     localStorage.setItem(key, JSON.stringify(data))
   } catch { /* 용량 초과 등 무시 */ }
+}
+
+/** backend camelCase / Python snake_case 포트폴리오 요약을 화면 모델(snake_case)로 통일 */
+function normalizePortfolioSummary(data) {
+  if (!data) return null
+  return {
+    total_value:      data.total_value      ?? data.totalValue      ?? null,
+    total_cost:       data.total_cost       ?? data.totalCost       ?? null,
+    total_return_pct: data.total_return_pct ?? data.totalReturnPct  ?? null,
+    daily_change_pct: data.daily_change_pct ?? data.dailyChangePct  ?? null,
+    stocks: (data.stocks ?? []).map((s) => ({
+      ticker:           s.ticker,
+      avg_price:        s.avg_price        ?? s.avgPrice        ?? null,
+      quantity:         s.quantity         ?? null,
+      current_price:    s.current_price    ?? s.currentPrice    ?? null,
+      market_value:     s.market_value     ?? s.marketValue     ?? null,
+      return_pct:       s.return_pct       ?? s.returnPct       ?? null,
+      daily_change_pct: s.daily_change_pct ?? s.dailyChangePct  ?? null,
+    })),
+  }
 }
 
 /** 캐시 저장 시각을 ISO string으로 기록하고 Date 객체 반환 */
@@ -355,11 +373,11 @@ export default function Dashboard() {
       } else {
         /* 캐시 미스 — API 호출 (첫 방문 케이스) */
         const [summaryRes, herdRes] = await Promise.allSettled([
-          getPortfolioRealtime(),
+          getPortfolioSummary(),
           getPortfolioHerd(),
         ])
         if (summaryRes.status === 'fulfilled') {
-          const data = summaryRes.value.data?.data ?? null
+          const data = normalizePortfolioSummary(summaryRes.value.data?.data ?? null)
           setSummary(data)
           writeCache(CACHE_KEY_REALTIME, data)
         }
@@ -473,20 +491,21 @@ export default function Dashboard() {
   }, [currencyMode, exchangeRate])
 
   /*
-   * 수동 새로고침 — API 강제 호출 후 localStorage 캐시 갱신.
+   * 수동 새로고침 — DB에 저장된 최신 데이터만 빠르게 재조회 후 캐시 갱신.
    * getPortfolio() 제외 (종목 목록은 추가/삭제 시에만 변경됨).
    */
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     try {
-      const [summaryRes, herdRes, spyRes] = await Promise.allSettled([
-        getPortfolioRealtime(),
-        refreshPortfolioHerd(),
-        refreshStockHerd('SPY'),
+      const [summaryRes, herdRes, spyRes, spyHistoryRes] = await Promise.allSettled([
+        getPortfolioSummary(),
+        getPortfolioHerd(),
+        getStockHerd('SPY'),
+        getSpyHerdHistory('3y'),
       ])
 
       if (summaryRes.status === 'fulfilled') {
-        const data = summaryRes.value.data?.data ?? null
+        const data = normalizePortfolioSummary(summaryRes.value.data?.data ?? null)
         setSummary(data)
         writeCache(CACHE_KEY_REALTIME, data)
       }
@@ -506,10 +525,6 @@ export default function Dashboard() {
         setSpyData(data)
         writeCache(CACHE_KEY_SPY, data)
       }
-
-      const spyHistoryRes = await getSpyHerdHistory('3y')
-        .then(res => ({ status: 'fulfilled', value: res }))
-        .catch(error => ({ status: 'rejected', reason: error }))
 
       if (spyHistoryRes.status === 'fulfilled') {
         const points = spyHistoryRes.value.data?.data?.points ?? []

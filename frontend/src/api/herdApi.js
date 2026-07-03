@@ -42,6 +42,9 @@ export const getPortfolio = () => api.get('/api/portfolio')
 /** 관심 종목 전체 HERD 점수 조회 */
 export const getWatchlistHerd = () => api.get('/api/watchlist/herd')
 
+/** 관심 종목 목록 조회 */
+export const getWatchlist = () => api.get('/api/watchlist')
+
 /** 관심 종목 추가 */
 export const addToWatchlist = (ticker, memo) => api.post('/api/watchlist', { ticker, memo })
 

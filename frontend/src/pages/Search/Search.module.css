@@ -30,7 +30,7 @@
 /* ── 검색 바 ── */
 .searchWrap {
   position: relative;
-  margin-bottom: 32px;
+  margin-bottom: 12px;
 }
 
 .searchInput {
@@ -58,6 +58,41 @@
   font-size: 18px;
   pointer-events: none;
   user-select: none;
+}
+
+.suggestionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.suggestionChip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 11px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-2);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.suggestionChip:hover {
+  background: var(--surface2);
+  border-color: var(--border2);
+  color: var(--text-1);
+}
+.suggestionChip span {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+.suggestionChip small {
+  font-size: 11px;
+  color: var(--text-3);
 }
 
 /* ────────────────────────────
@@ -149,6 +184,12 @@
   font-size: 10px;
   color: var(--text-3);
   margin-top: 1px;
+}
+.resultHerdDesc {
+  font-size: 10px;
+  color: var(--text-2);
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
 /* 추가 버튼 */
@@ -265,6 +306,14 @@
 .popularName {
   font-size: 11px;
   color: var(--text-3);
+}
+
+.popularMeta {
+  font-size: 11px;
+  color: var(--text-2);
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
 }
 
 /* ── 최근 검색 ── */

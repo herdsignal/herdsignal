@@ -11,24 +11,37 @@
  * 래퍼런스: wireframes/wireframe-search.html
  */
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate }                  from 'react-router-dom'
-import { getStockHerd, addToPortfolio, addToWatchlist } from '../../api/herdApi'
+import {
+  getPortfolio,
+  getWatchlist,
+  getStockHerd,
+  addToPortfolio,
+  addToWatchlist,
+} from '../../api/herdApi'
 import styles from './Search.module.css'
 
 /* ── 상수 ─────────────────────────────── */
 
-const POPULAR_TICKERS = ['NVDA', 'AAPL', 'MSFT', 'META', 'TSLA', 'SPY']
+const STOCK_CANDIDATES = [
+  { ticker: 'NVDA', name: 'NVIDIA Corporation', sector: 'Semiconductors' },
+  { ticker: 'AAPL', name: 'Apple Inc.', sector: 'Consumer Technology' },
+  { ticker: 'MSFT', name: 'Microsoft Corporation', sector: 'Software' },
+  { ticker: 'META', name: 'Meta Platforms', sector: 'Communication Services' },
+  { ticker: 'TSLA', name: 'Tesla, Inc.', sector: 'EV / Auto' },
+  { ticker: 'GOOGL', name: 'Alphabet Inc.', sector: 'Communication Services' },
+  { ticker: 'AMZN', name: 'Amazon.com, Inc.', sector: 'Consumer Discretionary' },
+  { ticker: 'PLTR', name: 'Palantir Technologies', sector: 'Software' },
+  { ticker: 'IONQ', name: 'IonQ, Inc.', sector: 'Quantum Computing' },
+  { ticker: 'BITX', name: '2x Bitcoin Strategy ETF', sector: 'Crypto ETF' },
+  { ticker: 'SPY', name: 'S&P 500 ETF', sector: 'Benchmark ETF' },
+  { ticker: 'QQQ', name: 'Nasdaq 100 ETF', sector: 'Benchmark ETF' },
+]
 
-/* 인기 종목 표시명 */
-const TICKER_NAMES = {
-  NVDA: 'NVIDIA Corporation',
-  AAPL: 'Apple Inc.',
-  MSFT: 'Microsoft Corporation',
-  META: 'Meta Platforms',
-  TSLA: 'Tesla, Inc.',
-  SPY:  'S&P 500 ETF',
-}
+const POPULAR_TICKERS = ['NVDA', 'AAPL', 'MSFT', 'PLTR', 'TSLA', 'IONQ']
+const TICKER_META = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticker, item]))
+const TICKER_NAMES = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticker, item.name]))
 
 /* localStorage 키 */
 const RECENT_KEY = 'hs_recent_searches'
@@ -67,6 +80,16 @@ function badgeColors(stage) {
 function stageDisplay(stage) {
   if (!stage) return 'Herd Calm'
   return stage.startsWith('Herd ') ? stage : `Herd ${stage}`
+}
+
+function stageDesc(stage) {
+  switch (normalizeStage(stage)) {
+    case 'rush':    return '극단적 과열 · 적극 익절'
+    case 'drift':   return '탐욕 · 일부 익절 고려'
+    case 'scatter': return '공포 · 분할 매수'
+    case 'flee':    return '극단적 공포 · 적극 매수'
+    default:        return '중립 · 보유 유지'
+  }
 }
 
 /* 최근 검색 localStorage 조작 */
@@ -114,6 +137,8 @@ export default function Search() {
 
   /* 최근 검색 (localStorage에서 초기값 로드) */
   const [recentSearches, setRecentSearches] = useState(loadRecent)
+  const [portfolioTickers, setPortfolioTickers] = useState(new Set())
+  const [watchlistTickers, setWatchlistTickers] = useState(new Set())
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -136,6 +161,26 @@ export default function Search() {
     fetchPopular()
   }, [])
 
+  /* ── 중복 추가 방지를 위한 보유/관심 티커 조회 ── */
+  useEffect(() => {
+    async function fetchMembership() {
+      const [portfolioRes, watchlistRes] = await Promise.allSettled([
+        getPortfolio(),
+        getWatchlist(),
+      ])
+
+      if (portfolioRes.status === 'fulfilled') {
+        const list = portfolioRes.value.data?.data ?? []
+        setPortfolioTickers(new Set(list.map(item => item.ticker)))
+      }
+      if (watchlistRes.status === 'fulfilled') {
+        const list = watchlistRes.value.data?.data ?? []
+        setWatchlistTickers(new Set(list.map(item => item.ticker)))
+      }
+    }
+    fetchMembership()
+  }, [])
+
   /* ── 검색 디바운스 300ms ── */
   useEffect(() => {
     /* 2글자 미만이면 드롭다운 닫기 */
@@ -144,17 +189,24 @@ export default function Search() {
       return
     }
 
-    setSearchResult({ status: 'loading' })
+    const normalized = query.trim().toUpperCase()
+    const matches = STOCK_CANDIDATES.filter((item) =>
+      item.ticker.includes(normalized) ||
+      item.name.toUpperCase().includes(normalized)
+    )
+    const exact = STOCK_CANDIDATES.find((item) => item.ticker === normalized)
+    const ticker = exact?.ticker ?? matches[0]?.ticker ?? normalized
+
+    setSearchResult({ status: 'loading', matches })
     let cancelled = false
 
     const timer = setTimeout(async () => {
-      const ticker = query.toUpperCase()
       try {
         const res  = await getStockHerd(ticker)
         if (cancelled) return   /* 언마운트 또는 query 변경으로 취소된 경우 무시 */
         const data = res.data?.data
         if (data) {
-          setSearchResult({ status: 'found', data })
+          setSearchResult({ status: 'found', data, matches })
           /* 결과 있을 때만 최근 검색에 저장 */
           saveToRecent(ticker)
           setRecentSearches(loadRecent())
@@ -175,9 +227,10 @@ export default function Search() {
 
   /* 검색 결과가 바뀌면 추가 버튼 상태 초기화 */
   useEffect(() => {
-    setPortfolioStatus('idle')
-    setWatchlistStatus('idle')
-  }, [searchResult?.data?.ticker])
+    const ticker = searchResult?.data?.ticker
+    setPortfolioStatus(ticker && portfolioTickers.has(ticker) ? 'exists' : 'idle')
+    setWatchlistStatus(ticker && watchlistTickers.has(ticker) ? 'exists' : 'idle')
+  }, [searchResult?.data?.ticker, portfolioTickers, watchlistTickers])
 
   /* ── 추가 버튼 핸들러 ── */
   async function handleAddPortfolio(ticker) {
@@ -186,6 +239,7 @@ export default function Search() {
     try {
       await addToPortfolio(ticker)
       setPortfolioStatus('added')
+      setPortfolioTickers(prev => new Set([...prev, ticker]))
     } catch (e) {
       setPortfolioStatus(e.response?.status === 409 ? 'exists' : 'idle')
     }
@@ -197,6 +251,7 @@ export default function Search() {
     try {
       await addToWatchlist(ticker)
       setWatchlistStatus('added')
+      setWatchlistTickers(prev => new Set([...prev, ticker]))
     } catch (e) {
       setWatchlistStatus(e.response?.status === 409 ? 'exists' : 'idle')
     }
@@ -211,10 +266,23 @@ export default function Search() {
   /* 드롭다운 표시 여부 */
   const showDropdown = query.length >= 2 && searchResult !== null
 
+  const suggestionMatches = useMemo(() => {
+    const normalized = query.trim().toUpperCase()
+    if (normalized.length < 2) return []
+    return STOCK_CANDIDATES.filter((item) =>
+      item.ticker.includes(normalized) ||
+      item.name.toUpperCase().includes(normalized)
+    ).slice(0, 5)
+  }, [query])
+
   /* ── 드롭다운 콘텐츠 렌더 헬퍼 ── */
   function renderDropdownContent() {
     if (searchResult.status === 'loading') {
-      return <div className={styles.dropdownPlaceholder}>검색 중…</div>
+      return (
+        <div className={styles.dropdownPlaceholder}>
+          검색 중…
+        </div>
+      )
     }
 
     if (searchResult.status === 'not_found') {
@@ -230,6 +298,7 @@ export default function Search() {
     const color = stageColor(d.herdStage)
     const badge = badgeColors(d.herdStage)
     const label = d.ticker.length <= 4 ? d.ticker : d.ticker.slice(0, 4)
+    const meta  = TICKER_META[d.ticker]
 
     return (
       <div
@@ -242,7 +311,7 @@ export default function Search() {
           <div>
             <div className={styles.resultTicker}>{d.ticker}</div>
             <div className={styles.resultName}>
-              {TICKER_NAMES[d.ticker] ?? '미국 주식'}
+              {meta ? `${meta.name} · ${meta.sector}` : '미국 주식'}
             </div>
           </div>
         </div>
@@ -255,6 +324,9 @@ export default function Search() {
             </div>
             <div className={styles.resultHerdStage}>
               {stageDisplay(d.herdStage)}
+            </div>
+            <div className={styles.resultHerdDesc}>
+              {stageDesc(d.herdStage)}
             </div>
           </div>
 
@@ -314,6 +386,21 @@ export default function Search() {
         <span className={styles.searchIcon}>⌕</span>
       </div>
 
+      {suggestionMatches.length > 0 && (
+        <div className={styles.suggestionRow}>
+          {suggestionMatches.map((item) => (
+            <button
+              key={item.ticker}
+              className={styles.suggestionChip}
+              onClick={() => setQuery(item.ticker)}
+            >
+              <span>{item.ticker}</span>
+              <small>{item.name}</small>
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* 검색 결과 드롭다운 */}
       {showDropdown && (
         <div className={styles.searchDropdown}>
@@ -355,6 +442,9 @@ export default function Search() {
               <div className={styles.popularTicker}>{ticker}</div>
               <div className={styles.popularName}>
                 {TICKER_NAMES[ticker] ?? ticker}
+              </div>
+              <div className={styles.popularMeta}>
+                {data ? stageDesc(data.herdStage) : 'HERD 데이터 대기'}
               </div>
             </div>
           )
