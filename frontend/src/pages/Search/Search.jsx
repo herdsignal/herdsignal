@@ -5,8 +5,7 @@
  *   1) 페이지 헤더
  *   2) 검색 바 (디바운스 300ms, 2글자 이상 → getStockHerd 조회)
  *   3) 검색 결과 드롭다운 (HERD 점수 + 포트폴리오/관심종목 추가 버튼)
- *   4) 인기 종목 3열 그리드 (마운트 시 6개 병렬 조회)
- *   5) 최근 검색 목록 (localStorage, 최대 5개)
+ *   4) 최근 검색 목록 (localStorage, 최대 5개)
  *
  * 래퍼런스: wireframes/wireframe-search.html
  */
@@ -41,7 +40,6 @@ const STOCK_CANDIDATES = [
   { ticker: 'QQQ', name: 'Nasdaq 100 ETF', sector: 'Benchmark ETF' },
 ]
 
-const POPULAR_TICKERS = ['NVDA', 'AAPL', 'MSFT', 'PLTR', 'TSLA', 'IONQ']
 const TICKER_META = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticker, item]))
 const TICKER_NAMES = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticker, item.name]))
 
@@ -161,9 +159,6 @@ export default function Search() {
   const [portfolioStatus, setPortfolioStatus] = useState('idle')
   const [watchlistStatus, setWatchlistStatus] = useState('idle')
 
-  /* 인기 종목 HERD 데이터 */
-  const [popularData, setPopularData] = useState({})
-
   /* 최근 검색 (localStorage에서 초기값 로드) */
   const [recentSearches, setRecentSearches] = useState(loadRecent)
   const [portfolioTickers, setPortfolioTickers] = useState(new Set())
@@ -172,23 +167,6 @@ export default function Search() {
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
-
-  /* ── 인기 종목 병렬 조회 (마운트 시 1회) ── */
-  useEffect(() => {
-    async function fetchPopular() {
-      const results = await Promise.allSettled(
-        POPULAR_TICKERS.map(t => getStockHerd(t))
-      )
-      const map = {}
-      results.forEach((r, i) => {
-        map[POPULAR_TICKERS[i]] = r.status === 'fulfilled'
-          ? (r.value.data?.data ?? null)
-          : null
-      })
-      setPopularData(map)
-    }
-    fetchPopular()
-  }, [])
 
   /* ── 중복 추가 방지를 위한 보유/관심 티커 조회 ── */
   useEffect(() => {
@@ -332,33 +310,6 @@ export default function Search() {
     }
     return STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized)).slice(0, 5)
   }, [query, searchResult?.matches])
-
-  const discoveryGroups = useMemo(() => {
-    const loaded = POPULAR_TICKERS
-      .map((ticker) => popularData[ticker])
-      .filter(Boolean)
-
-    const low = loaded
-      .filter((item) => Number(item.herdScore) <= 40)
-      .sort((a, b) => Number(a.herdScore) - Number(b.herdScore))
-      .slice(0, 3)
-
-    const calm = loaded
-      .filter((item) => Number(item.herdScore) > 40 && Number(item.herdScore) < 60)
-      .sort((a, b) => Math.abs(50 - Number(a.herdScore)) - Math.abs(50 - Number(b.herdScore)))
-      .slice(0, 3)
-
-    const hot = loaded
-      .filter((item) => Number(item.herdScore) >= 60)
-      .sort((a, b) => Number(b.herdScore) - Number(a.herdScore))
-      .slice(0, 3)
-
-    return [
-      { title: '저점 후보', desc: '분할매수 관찰', rows: low },
-      { title: '중립 후보', desc: '보유·대기', rows: calm },
-      { title: '밀집 후보', desc: '익절 관찰', rows: hot },
-    ]
-  }, [popularData])
 
   /* ── 드롭다운 콘텐츠 렌더 헬퍼 ── */
   function renderDropdownContent() {
@@ -542,76 +493,6 @@ export default function Search() {
           {renderDropdownContent()}
         </div>
       )}
-
-      {/* 타이밍 후보 */}
-      <div className={styles.sectionLabel}>타이밍 후보</div>
-      <div className={styles.discoveryGrid}>
-        {discoveryGroups.map((group) => (
-          <div key={group.title} className={styles.discoveryCard}>
-            <div className={styles.discoveryHead}>
-              <strong>{group.title}</strong>
-              <span>{group.desc}</span>
-            </div>
-            {group.rows.length === 0 ? (
-              <div className={styles.discoveryEmpty}>대상 없음</div>
-            ) : group.rows.map((item) => {
-              const color = stageColor(item.herdStage)
-              return (
-                <button
-                  key={item.ticker}
-                  className={styles.discoveryRow}
-                  onClick={() => navigate(`/stock/${item.ticker}`)}
-                >
-                  <span>{item.ticker}</span>
-                  <em style={{ color }}>HERD {Math.round(item.herdScore)}</em>
-                </button>
-              )
-            })}
-          </div>
-        ))}
-      </div>
-
-      {/* 인기 종목 HERD */}
-      <div className={styles.sectionLabel}>대표 종목 HERD</div>
-      <div className={styles.popularGrid}>
-        {POPULAR_TICKERS.map(ticker => {
-          const data  = popularData[ticker]
-          const score = data?.herdScore ?? null
-          const stage = data?.herdStage ?? null
-          const color = stage ? stageColor(stage) : 'var(--text-3)'
-          const badge = stage
-            ? badgeColors(stage)
-            : { background: 'var(--surface2)', color: 'var(--text-3)' }
-
-          return (
-            <div
-              key={ticker}
-              className={styles.popularCard}
-              onClick={() => navigate(`/stock/${ticker}`)}
-            >
-              {/* 왼쪽 컬러 스트라이프 — ::before 대신 절대 위치 div 사용 */}
-              <div className={styles.popularStripe} style={{ background: color }} />
-
-              <div className={styles.popularTop}>
-                <div className={styles.popularBadge} style={badge}>
-                  {ticker.length <= 4 ? ticker : ticker.slice(0, 4)}
-                </div>
-                <div className={styles.popularScore} style={{ color }}>
-                  {score !== null ? Math.round(score) : '—'}
-                </div>
-              </div>
-
-              <div className={styles.popularTicker}>{ticker}</div>
-              <div className={styles.popularName}>
-                {TICKER_NAMES[ticker] ?? ticker}
-              </div>
-              <div className={styles.popularMeta}>
-                {data ? stageDesc(data.herdStage) : 'HERD 데이터 대기'}
-              </div>
-            </div>
-          )
-        })}
-      </div>
 
       {/* 최근 검색 */}
       {recentSearches.length > 0 && (

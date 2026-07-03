@@ -172,7 +172,6 @@ export default function Watchlist() {
   const [loading,        setLoading]        = useState(true)
   const [refreshing,     setRefreshing]     = useState(false)
   const [error,          setError]          = useState(null)
-  const [sortMode,       setSortMode]       = useState('scoreAsc')
   /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
   /* SPY 데이터 ref 캐시 — Dashboard와 동일한 StrictMode 대응 */
@@ -266,36 +265,19 @@ export default function Watchlist() {
     return findScoreAt(spyHistory, t)
   }, [spyHistory])
 
-  const sortedWatchlist = useMemo(() => {
-    const list = [...watchlist]
-    switch (sortMode) {
-      case 'opportunity':
-        return opportunityRows(list)
-      case 'scoreDesc':
-        return list.sort((a, b) => Number((b.herdV4 ?? b.herdScore) ?? -1) - Number((a.herdV4 ?? a.herdScore) ?? -1))
-      case 'updated':
-        return list.sort((a, b) => String(b.scoreDate ?? '').localeCompare(String(a.scoreDate ?? '')))
-      case 'ticker':
-        return list.sort((a, b) => a.ticker.localeCompare(b.ticker))
-      default:
-        return list.sort((a, b) => Number((a.herdV4 ?? a.herdScore) ?? 101) - Number((b.herdV4 ?? b.herdScore) ?? 101))
-    }
-  }, [watchlist, sortMode])
+  const sortedWatchlist = useMemo(() => (
+    watchlist
+      .map((item) => opportunityRows([item])[0] ?? item)
+      .sort((a, b) => Number(b.opportunityScore ?? 0) - Number(a.opportunityScore ?? 0))
+  ), [watchlist])
 
   const opportunityQueue = useMemo(() => opportunityRows(watchlist).slice(0, 3), [watchlist])
 
-  const watchStats = useMemo(() => {
-    const buyCount = watchlist.filter((item) =>
-      ['flee', 'scatter'].includes(normalizeStage(item.herdStage))
-    ).length
-    const sellCount = watchlist.filter((item) =>
-      ['drift', 'rush'].includes(normalizeStage(item.herdStage))
-    ).length
-    const avgScore = watchlist.length
-      ? Math.round(watchlist.reduce((sum, item) => sum + Number(item.herdV4 ?? item.herdScore ?? 0), 0) / watchlist.length)
-      : null
-    return { buyCount, sellCount, avgScore }
-  }, [watchlist])
+  function shouldShowQuality(item) {
+    if (!item?.qualityLabel) return false
+    if (item.qualityLevel === 'LIMITED' || item.qualityLevel === 'LOW') return true
+    return Number(item.qualityScore ?? 100) < 70
+  }
 
   return (
     <div>
@@ -369,27 +351,6 @@ export default function Watchlist() {
       {/* ── 관심 종목 카드 그리드 — 2열 ── */}
       {!loading && !error && watchlist.length > 0 && (
         <>
-          <div className={styles.summaryGrid}>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryLabel}>매수 후보</div>
-              <div className={styles.summaryValue} style={{ color: 'var(--flee)' }}>
-                {watchStats.buyCount}
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryLabel}>대기 1순위</div>
-              <div className={styles.summaryValue}>
-                {opportunityQueue[0]?.ticker ?? '—'}
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryLabel}>익절 후보</div>
-              <div className={styles.summaryValue} style={{ color: 'var(--rush)' }}>
-                {watchStats.sellCount}
-              </div>
-            </div>
-          </div>
-
           <div className={styles.opportunityPanel}>
             <div className={styles.sectionTitle}>기회 대기열</div>
             <div className={styles.opportunityList}>
@@ -409,28 +370,7 @@ export default function Watchlist() {
 
           <div className={styles.sectionRow}>
             <div className={styles.sectionTitle}>관심 종목 · {watchlist.length}</div>
-            <div className={styles.sortControls}>
-              <button
-                className={`${styles.sortBtn} ${sortMode === 'opportunity' ? styles.sortBtnActive : ''}`}
-                onClick={() => setSortMode('opportunity')}
-              >기회순</button>
-              <button
-                className={`${styles.sortBtn} ${sortMode === 'scoreAsc' ? styles.sortBtnActive : ''}`}
-                onClick={() => setSortMode('scoreAsc')}
-              >저점순</button>
-              <button
-                className={`${styles.sortBtn} ${sortMode === 'scoreDesc' ? styles.sortBtnActive : ''}`}
-                onClick={() => setSortMode('scoreDesc')}
-              >밀집순</button>
-              <button
-                className={`${styles.sortBtn} ${sortMode === 'updated' ? styles.sortBtnActive : ''}`}
-                onClick={() => setSortMode('updated')}
-              >최신순</button>
-              <button
-                className={`${styles.sortBtn} ${sortMode === 'ticker' ? styles.sortBtnActive : ''}`}
-                onClick={() => setSortMode('ticker')}
-              >티커순</button>
-            </div>
+            <div className={styles.sectionHint}>기회 점수순</div>
           </div>
 
           <div className={styles.stockGrid}>
@@ -478,7 +418,7 @@ export default function Watchlist() {
                         <div className={styles.cardStageName}>
                           {stageName} · 기회 {Math.round(opportunity)}
                         </div>
-                        {item.qualityLabel && (
+                        {shouldShowQuality(item) && (
                           <div
                             className={styles.cardQuality}
                             style={{ color: qualityColor(item.qualityLevel) }}

@@ -140,8 +140,8 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공
 - HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v5는 HERD_v4 점수에 Balanced Action Layer를 얹은 응답 시점 행동 모델이다.
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. DB 저장 없이 backend 응답 시점에 계산한다.
-- Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, 타이밍 후보, 대표 종목 그리드, 최근 검색, 포트폴리오/관심종목 추가
-- Watchlist: S&P 500 Herd Flow 배너, 관심 종목 HERD 카드, 기회 대기열, 매수/중립/익절 후보 요약, 정렬, 삭제
+- Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, 최근 검색, 포트폴리오/관심종목 추가
+- Watchlist: S&P 500 Herd Flow 배너, 기회 대기열, 기회 점수순 관심 종목 HERD 카드, 삭제
 - HERD Lab: 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드, Action Layer 백테스트, 5단계 행동 매트릭스. 표시 데이터는 `frontend/src/data/herdModelReport.js`에서 관리한다.
 - 사이드바 노출 MVP 메뉴: 대시보드, 관심 종목, 종목 검색, HERD Lab
 - 보류/내부 접근 라우트: AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`)
@@ -269,9 +269,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - S&P 500 Herd Flow 배너
   - 포트폴리오 평가금액 요약
   - KRW/USD 통화 토글
-  - 목표 비중 기반 리밸런싱 추천
-  - 새로고침 후 HERD 변화 요약
-  - portfolio_history 기반 자산 진단
+  - 목표 비중 기반 핵심 리밸런싱 체크
   - 보유 종목 카드
   - 편집 모드/삭제
   - 평단가·수량 수정 모달
@@ -288,16 +286,13 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - [x] Search (`/search`)
   - 300ms 디바운스 검색
   - HERD 미리보기
-  - 타이밍 후보
-  - 대표 종목 그리드
   - 최근 검색 localStorage 저장
   - 포트폴리오/관심종목 추가
 - [x] Watchlist (`/watchlist`)
   - S&P 500 Herd Flow 배너
   - 관심 종목 HERD 카드
   - 기회 대기열
-  - 매수/중립/익절 후보 요약
-  - 기회·HERD 점수·최신일·티커 정렬
+  - 기회 점수순 자동 정렬
   - 관심 종목 삭제
 - [x] HERD Lab (`/herd-lab`)
   - 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드
@@ -346,7 +341,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 ## README와 현재 코드의 차이
 
 - README.md / README.ko.md는 현재 코드 기준 재정리가 필요하다.
-- 공개 소개 문서에서는 운영 중인 HERD v4, Herd Flow, Decision Layer, 리밸런싱 플랜, Watchlist 기회 대기열, Search 타이밍 후보, History 자산 진단을 반영해야 한다.
+- 공개 소개 문서에서는 운영 중인 HERD v4, Herd Flow, Action Layer, Dashboard/Watchlist/Search/HERD Lab 중심 MVP를 반영해야 한다.
 - README에서 구현 완료로 보이면 안 되는 항목은 Claude API 기반 AI 리밸런싱, 멀티유저/인증, 증권사 연동, 배포다.
 - README의 StockDetail 뉴스/애널리스트/내부자 거래 설명은 현재 frontend 표시 상태와 다르므로 제거하거나 backend API 보유 수준으로 낮춰야 한다.
 - README의 로드맵은 ROADMAP.md와 역할이 겹치지 않게 간결화해야 한다.
