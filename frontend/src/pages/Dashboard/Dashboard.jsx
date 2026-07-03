@@ -201,6 +201,24 @@ function formatActionCode(herd) {
   return `${herd.signal} ${Math.round(ratio * 100)}%`
 }
 
+function refreshResultText(summaryRes, herdRes, spyRes) {
+  const done = []
+  const failed = []
+
+  if (summaryRes.status === 'fulfilled') done.push('가격 갱신')
+  else failed.push('가격')
+
+  if (herdRes.status === 'fulfilled') done.push('HERD 조회')
+  else failed.push('HERD')
+
+  if (spyRes.status === 'fulfilled') done.push('SPY 갱신')
+  else failed.push('SPY')
+
+  if (done.length === 0) return '새로고침 실패'
+  if (failed.length > 0) return `${done.join(' · ')} · ${failed.join('/')} 실패`
+  return done.join(' · ')
+}
+
 /** USD 금액 포맷: $1,234.56 */
 function fmtUSD(value) {
   if (value == null) return '—'
@@ -366,6 +384,7 @@ export default function Dashboard() {
   const [deletingTicker, setDeletingTicker] = useState(null)
   const [exchangeRate,   setExchangeRate]   = useState(null)
   const [refreshing,     setRefreshing]     = useState(false)
+  const [refreshNotice,  setRefreshNotice]  = useState(null)
   /*
    * 마지막 캐시 저장 시각 — localStorage 'hs_cache_time'에서 초기화.
    * 캐시 없으면 null (헤더에 업데이트 시각 미표시).
@@ -379,6 +398,7 @@ export default function Dashboard() {
   )
   const [editMode,       setEditMode]       = useState(false)
   const [targetWeights,  setTargetWeights]  = useState(() => readTargetWeights())
+  const refreshNoticeTimer = useRef(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -447,6 +467,10 @@ export default function Dashboard() {
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  useEffect(() => () => {
+    if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
+  }, [])
 
   /*
    * SPY 배너 — 포트폴리오 로딩과 완전히 분리.
@@ -547,6 +571,8 @@ export default function Dashboard() {
    */
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
+    if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
+    setRefreshNotice('가격 · HERD · SPY 확인 중')
     try {
       const [summaryRes, herdRes, spyRes] = await Promise.allSettled([
         getPortfolioSummary(),
@@ -576,8 +602,14 @@ export default function Dashboard() {
         writeCache(CACHE_KEY_SPY, data)
       }
 
-      /* 캐시 저장 시각 갱신 — 헤더 "업데이트 · 오후 X:XX" 기준 */
-      setLastUpdated(saveCacheTime())
+      /* 하나라도 성공했을 때만 헤더 "업데이트 · 오후 X:XX" 기준 갱신 */
+      if ([summaryRes, herdRes, spyRes].some((res) => res.status === 'fulfilled')) {
+        setLastUpdated(saveCacheTime())
+      }
+      setRefreshNotice(refreshResultText(summaryRes, herdRes, spyRes))
+      refreshNoticeTimer.current = setTimeout(() => {
+        setRefreshNotice(null)
+      }, 3200)
     } finally {
       setRefreshing(false)
     }
@@ -693,6 +725,11 @@ export default function Dashboard() {
           {lastUpdated && (
             <span className={styles.updateTime}>
               업데이트 · {fmtTime(lastUpdated)}
+            </span>
+          )}
+          {refreshNotice && (
+            <span className={styles.refreshNotice}>
+              {refreshNotice}
             </span>
           )}
           <button

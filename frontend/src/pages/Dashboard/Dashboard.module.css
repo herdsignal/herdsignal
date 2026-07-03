@@ -55,6 +55,21 @@
   white-space: nowrap;
 }
 
+.refreshNotice {
+  max-width: 260px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface2);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 7px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* 새로고침 보조 버튼 — 종목 추가보다 덜 강조 */
 .btnRefresh {
   background: var(--surface2);
