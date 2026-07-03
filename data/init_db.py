@@ -84,6 +84,9 @@ class HerdIndicator(Base):
     ma200_deviation  = Column(Decimal(5, 2), nullable=True,                         comment="MA200 이격도 정규화값 (0~100)")
     volume_strength  = Column(Decimal(5, 2), nullable=True,                         comment="거래량 강도 정규화값 (0~100)")
     ma200_weekly     = Column(Decimal(5, 2), nullable=True,                         comment="200주 MA 위치 정규화값 (0~100)")
+    herd_base         = Column(Decimal(5, 2), nullable=True,                         comment="HERD v3 기본 점수")
+    eps_multiplier    = Column(Decimal(5, 2), nullable=True,                         comment="EPS 서프라이즈 보정 승수")
+    sector_multiplier = Column(Decimal(5, 2), nullable=True,                         comment="섹터 상대 강도 보정 승수")
     created_at       = Column(DateTime,      nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
 
 

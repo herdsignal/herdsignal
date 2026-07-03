@@ -22,6 +22,18 @@ public class HerdScoreResponse {
     /** HERD 점수 (0.00 ~ 100.00) */
     private BigDecimal herdScore;
 
+    /** HERD v3 기본 점수 */
+    private BigDecimal herdBase;
+
+    /** EPS 서프라이즈 보정 승수 */
+    private BigDecimal epsMultiplier;
+
+    /** 섹터 상대 강도 보정 승수 */
+    private BigDecimal sectorMultiplier;
+
+    /** HERD v4 최종 점수 */
+    private BigDecimal herdV4;
+
     /** 단계 (Herd Flee / Scatter / Calm / Drift / Rush) */
     private String herdStage;
 
@@ -59,6 +71,10 @@ public class HerdScoreResponse {
         HerdScoreResponseBuilder builder = HerdScoreResponse.builder()
                 .ticker(score.getTicker())
                 .herdScore(score.getHerdScore())
+                .herdBase(score.getHerdScore())
+                .epsMultiplier(BigDecimal.ONE)
+                .sectorMultiplier(BigDecimal.ONE)
+                .herdV4(score.getHerdScore())
                 .herdStage(score.getHerdStage())
                 .signal(score.getSignal())
                 .scoreDate(score.getScoreDate());
@@ -70,7 +86,17 @@ public class HerdScoreResponse {
                    .position52w(indicator.getPosition52w())
                    .ma200Deviation(indicator.getMa200Deviation())
                    .volumeStrength(indicator.getVolumeStrength())
-                   .ma200Weekly(indicator.getMa200Weekly());
+                   .ma200Weekly(indicator.getMa200Weekly())
+                   .herdBase(indicator.getHerdBase() != null
+                           ? indicator.getHerdBase()
+                           : score.getHerdScore())
+                   .epsMultiplier(indicator.getEpsMultiplier() != null
+                           ? indicator.getEpsMultiplier()
+                           : BigDecimal.ONE)
+                   .sectorMultiplier(indicator.getSectorMultiplier() != null
+                           ? indicator.getSectorMultiplier()
+                           : BigDecimal.ONE)
+                   .herdV4(score.getHerdScore());
         }
 
         return builder.build();

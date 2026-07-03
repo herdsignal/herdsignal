@@ -77,6 +77,40 @@ assert _weight_sum == 1.0, (
 
 
 # ──────────────────────────────────────────────
+# HERD v4 보정 승수
+# ──────────────────────────────────────────────
+# v3 기본 점수는 그대로 보존하고, EPS 서프라이즈와 섹터 상대 강도만
+# 최종 점수에 곱한다. 데이터 수집 실패 시 각 승수는 1.0으로 폴백한다.
+EPS_SURPRISE_MULTIPLIERS = {
+    "beat_4":  float(os.getenv("EPS_MULTIPLIER_BEAT_4",  "0.85")),
+    "beat_3":  float(os.getenv("EPS_MULTIPLIER_BEAT_3",  "0.90")),
+    "beat_2":  float(os.getenv("EPS_MULTIPLIER_BEAT_2",  "0.95")),
+    "neutral": float(os.getenv("EPS_MULTIPLIER_NEUTRAL", "1.00")),
+    "miss_2":  float(os.getenv("EPS_MULTIPLIER_MISS_2",  "1.05")),
+    "miss_3":  float(os.getenv("EPS_MULTIPLIER_MISS_3",  "1.10")),
+    "miss_4":  float(os.getenv("EPS_MULTIPLIER_MISS_4",  "1.15")),
+}
+
+SECTOR_ETF_MAP = {
+    "Technology":          os.getenv("SECTOR_ETF_TECHNOLOGY", "QQQ"),
+    "Healthcare":          os.getenv("SECTOR_ETF_HEALTHCARE", "XLV"),
+    "Energy":              os.getenv("SECTOR_ETF_ENERGY", "XLE"),
+    "Financial Services":  os.getenv("SECTOR_ETF_FINANCIALS", "XLF"),
+    "Financials":          os.getenv("SECTOR_ETF_FINANCIALS", "XLF"),
+    "Consumer Cyclical":   os.getenv("SECTOR_ETF_CONSUMER_CYCLICAL", "XLY"),
+}
+DEFAULT_SECTOR_ETF = os.getenv("DEFAULT_SECTOR_ETF", "SPY")
+SECTOR_RELATIVE_DAYS = int(os.getenv("SECTOR_RELATIVE_DAYS", "90"))
+SECTOR_RELATIVE_MULTIPLIERS = {
+    "strong_outperform": float(os.getenv("SECTOR_MULTIPLIER_STRONG_OUTPERFORM", "0.90")),
+    "outperform":        float(os.getenv("SECTOR_MULTIPLIER_OUTPERFORM",        "0.95")),
+    "neutral":           float(os.getenv("SECTOR_MULTIPLIER_NEUTRAL",           "1.00")),
+    "underperform":      float(os.getenv("SECTOR_MULTIPLIER_UNDERPERFORM",      "1.05")),
+    "strong_underperform": float(os.getenv("SECTOR_MULTIPLIER_STRONG_UNDERPERFORM", "1.10")),
+}
+
+
+# ──────────────────────────────────────────────
 # HERD Index 단계 판정 임계값
 # ──────────────────────────────────────────────
 # 백분위수 정규화 방식 기반으로 도출한 최적 임계값.

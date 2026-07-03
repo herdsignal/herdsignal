@@ -8,6 +8,8 @@ import logging
 from typing import TypedDict
 
 from config.settings import HERD_WEIGHTS
+from collectors.finnhub_collector import get_eps_surprise_multiplier
+from collectors.sector_collector import get_sector_multiplier
 from collectors.stock_collector import collect
 from indicators.rsi import calc_weekly_rsi, calc_monthly_rsi
 from indicators.price_position import calc_52w_position, calc_ma200_deviation
@@ -40,11 +42,22 @@ class IndicatorValues(TypedDict):
     ma200_weekly:    float   # 200주 이동평균 위치 (v2 신규 추가)
 
 
+class HerdScoreBreakdown(TypedDict):
+    herd_base:         float
+    eps_multiplier:    float
+    sector_multiplier: float
+    herd_v4:           float
+
+
 class HerdResult(TypedDict):
-    ticker:     str
-    score:      float
-    stage:      str
-    indicators: IndicatorValues
+    ticker:            str
+    score:             float
+    stage:             str
+    indicators:        IndicatorValues
+    herd_base:         float
+    eps_multiplier:    float
+    sector_multiplier: float
+    herd_v4:           float
 
 
 def get_stage(score: float) -> str:
@@ -87,6 +100,47 @@ def calc_herd_score(indicators: IndicatorValues) -> float:
         score += weight * value
 
     return round(float(max(0.0, min(100.0, score))), 2)
+
+
+def calc_herd_scores(
+    indicators: IndicatorValues,
+    eps_multiplier: float = 1.0,
+    sector_multiplier: float = 1.0,
+) -> HerdScoreBreakdown:
+    """
+    HERD v3 기본 점수와 v4 보정 점수를 함께 반환한다.
+
+    calc_herd_score()의 float 반환 호환성을 유지하기 위해 v4 확장값은
+    별도 함수에서 계산한다.
+    """
+    herd_base = calc_herd_score(indicators)
+    adjusted = herd_base * eps_multiplier * sector_multiplier
+    herd_v4 = round(float(max(0.0, min(100.0, adjusted))), 2)
+
+    return HerdScoreBreakdown(
+        herd_base         = herd_base,
+        eps_multiplier    = round(float(eps_multiplier), 2),
+        sector_multiplier = round(float(sector_multiplier), 2),
+        herd_v4           = herd_v4,
+    )
+
+
+def _safe_eps_multiplier(ticker: str) -> float:
+    """EPS 보정 승수 조회 실패 시 1.0으로 폴백한다."""
+    try:
+        return get_eps_surprise_multiplier(ticker)
+    except Exception as e:
+        logger.warning(f"[{ticker}] EPS 보정 실패 — 기본값 1.0 사용: {e}")
+        return 1.0
+
+
+def _safe_sector_multiplier(ticker: str) -> float:
+    """섹터 상대 강도 보정 승수 조회 실패 시 1.0으로 폴백한다."""
+    try:
+        return get_sector_multiplier(ticker)
+    except Exception as e:
+        logger.warning(f"[{ticker}] 섹터 보정 실패 — 기본값 1.0 사용: {e}")
+        return 1.0
 
 
 def run(ticker: str) -> HerdResult:
@@ -148,16 +202,30 @@ def run(ticker: str) -> HerdResult:
         ma200_weekly    = values["ma200_weekly"],
     )
 
-    # 3. 가중합산 및 단계 판정
-    score = calc_herd_score(indicators)
+    # 3. 가중합산 + HERD v4 보정 및 단계 판정
+    breakdown = calc_herd_scores(
+        indicators,
+        eps_multiplier    = _safe_eps_multiplier(ticker),
+        sector_multiplier = _safe_sector_multiplier(ticker),
+    )
+    score = breakdown["herd_v4"]
     stage = get_stage(score)
 
     result = HerdResult(
-        ticker     = ticker.upper(),
-        score      = score,
-        stage      = stage,
-        indicators = indicators,
+        ticker            = ticker.upper(),
+        score             = score,
+        stage             = stage,
+        indicators        = indicators,
+        herd_base         = breakdown["herd_base"],
+        eps_multiplier    = breakdown["eps_multiplier"],
+        sector_multiplier = breakdown["sector_multiplier"],
+        herd_v4           = breakdown["herd_v4"],
     )
 
-    logger.info(f"[{ticker}] HERD Index = {score:.2f} ({stage})")
+    logger.info(
+        f"[{ticker}] HERD v4 = {score:.2f} ({stage}) "
+        f"base={breakdown['herd_base']:.2f} "
+        f"eps×{breakdown['eps_multiplier']:.2f} "
+        f"sector×{breakdown['sector_multiplier']:.2f}"
+    )
     return result

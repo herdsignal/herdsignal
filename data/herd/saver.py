@@ -127,6 +127,9 @@ def _upsert_herd_indicators(session, ticker: str,
         "ma200_deviation": round(float(indicators["ma200_deviation"]), 2),
         "volume_strength": round(float(indicators["volume_strength"]), 2),
         "ma200_weekly"   : round(float(indicators["ma200_weekly"]),    2),
+        "herd_base"      : round(float(indicators.get("herd_base", 0.0)), 2),
+        "eps_multiplier" : round(float(indicators.get("eps_multiplier", 1.0)), 2),
+        "sector_multiplier": round(float(indicators.get("sector_multiplier", 1.0)), 2),
     }
 
     if obj is None:
@@ -207,6 +210,10 @@ def save_herd_result(ticker: str, herd_result: dict, df: pd.DataFrame) -> bool:
     """
     score_date = date.today()
     logger.info(f"[{ticker}] ── DB 저장 시작  날짜={score_date} ──")
+    indicators = dict(herd_result["indicators"])
+    indicators["herd_base"] = herd_result.get("herd_base", herd_result["score"])
+    indicators["eps_multiplier"] = herd_result.get("eps_multiplier", 1.0)
+    indicators["sector_multiplier"] = herd_result.get("sector_multiplier", 1.0)
 
     with _SessionFactory() as session:
         try:
@@ -219,7 +226,7 @@ def save_herd_result(ticker: str, herd_result: dict, df: pd.DataFrame) -> bool:
             )
             _upsert_herd_indicators(
                 session, ticker,
-                herd_result["indicators"],
+                indicators,
                 score_date,
             )
             _upsert_daily_price(session, ticker, df)
@@ -248,6 +255,10 @@ def save_herd_for_date(ticker: str, herd_result: dict, score_date: date) -> bool
         저장 성공 여부 (True / False)
     """
     logger.debug(f"[{ticker}] 백필 저장  날짜={score_date}")
+    indicators = dict(herd_result["indicators"])
+    indicators["herd_base"] = herd_result.get("herd_base", herd_result["score"])
+    indicators["eps_multiplier"] = herd_result.get("eps_multiplier", 1.0)
+    indicators["sector_multiplier"] = herd_result.get("sector_multiplier", 1.0)
 
     with _SessionFactory() as session:
         try:
@@ -260,7 +271,7 @@ def save_herd_for_date(ticker: str, herd_result: dict, score_date: date) -> bool
             )
             _upsert_herd_indicators(
                 session, ticker,
-                herd_result["indicators"],
+                indicators,
                 score_date,
             )
             session.commit()

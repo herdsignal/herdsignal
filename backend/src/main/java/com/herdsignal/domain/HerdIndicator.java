@@ -70,6 +70,18 @@ public class HerdIndicator {
     @Column(name = "ma200_weekly", precision = 5, scale = 2)
     private BigDecimal ma200Weekly;
 
+    /** HERD v3 기본 점수 */
+    @Column(name = "herd_base", precision = 5, scale = 2)
+    private BigDecimal herdBase;
+
+    /** EPS 서프라이즈 보정 승수 */
+    @Column(name = "eps_multiplier", precision = 5, scale = 2)
+    private BigDecimal epsMultiplier;
+
+    /** 섹터 상대 강도 보정 승수 */
+    @Column(name = "sector_multiplier", precision = 5, scale = 2)
+    private BigDecimal sectorMultiplier;
+
     /** 레코드 생성 시각 (UTC) — Python이 관리, Spring은 읽기 전용 */
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

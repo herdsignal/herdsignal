@@ -58,8 +58,8 @@ Rush    #EF4444  (레드)
   - localStorage 캐시 우선 로딩
   - 수동 새로고침은 DB 조회 기반 빠른 갱신만 수행
 - StockDetail (`/stock/:ticker`)
-  - HERD 점수/단계/Timing Signal
-  - 지표 분해 UI
+  - HERD v4 점수/단계/Timing Signal
+  - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
   - 포트폴리오 추가
   - 관심종목 추가
 - Search (`/search`)
@@ -85,6 +85,7 @@ Rush    #EF4444  (레드)
 ## 부분 구현 / 미구현
 - StockDetail의 재무 정보, 뉴스, 애널리스트 목표가, 내부자 거래는 placeholder UI만 있음.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
+- StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - Dashboard/Watchlist의 SPY 배너에서 SPY 종가, 1개월 수익률은 아직 `—` placeholder.
 
 ## API 연동

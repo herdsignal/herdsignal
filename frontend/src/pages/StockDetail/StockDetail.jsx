@@ -152,6 +152,31 @@ function formatIndicator(value, unit, signed) {
   return signed && value > 0 ? `+${fixed}${unit}` : `${fixed}${unit}`
 }
 
+function formatMultiplier(value) {
+  if (value == null) return '×1.00'
+  return `×${Number(value).toFixed(2)}`
+}
+
+function epsMultiplierDesc(value) {
+  const n = Number(value ?? 1)
+  if (n <= 0.85) return '4연속 beat'
+  if (n <= 0.90) return '3연속 beat'
+  if (n <= 0.95) return '2연속 beat'
+  if (n >= 1.15) return '4연속 miss'
+  if (n >= 1.10) return '3연속 miss'
+  if (n >= 1.05) return '2연속 miss'
+  return '중립'
+}
+
+function sectorMultiplierDesc(value) {
+  const n = Number(value ?? 1)
+  if (n <= 0.90) return '섹터 대비 강한 우위'
+  if (n <= 0.95) return '섹터 대비 우위'
+  if (n >= 1.10) return '섹터 대비 뚜렷한 약세'
+  if (n >= 1.05) return '섹터 약세'
+  return '중립'
+}
+
 /** 가격 차트 커스텀 툴팁 */
 function PriceTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -302,7 +327,7 @@ export default function StockDetail() {
   }
 
   /* HERD 데이터에서 사용할 변수들 */
-  const herdScore  = herdData?.herdScore ?? 50
+  const herdScore  = herdData?.herdV4 ?? herdData?.herdScore ?? 50
   const herdStage  = herdData?.herdStage ?? 'Calm'
   /* 표시용 stage 이름: "Herd Scatter" → "Herd Scatter" (이미 올바른 형태) */
   const stageDisp  = herdStage.startsWith('Herd ') ? herdStage : `Herd ${herdStage}`
@@ -480,6 +505,22 @@ export default function StockDetail() {
                     </div>
                   )
                 })}
+                <div className={styles.adjustmentBox}>
+                  <div className={styles.adjustmentRow}>
+                    <span>EPS 보정</span>
+                    <strong>
+                      {formatMultiplier(herdData.epsMultiplier)}
+                      <em>{epsMultiplierDesc(herdData.epsMultiplier)}</em>
+                    </strong>
+                  </div>
+                  <div className={styles.adjustmentRow}>
+                    <span>섹터 강도 보정</span>
+                    <strong>
+                      {formatMultiplier(herdData.sectorMultiplier)}
+                      <em>{sectorMultiplierDesc(herdData.sectorMultiplier)}</em>
+                    </strong>
+                  </div>
+                </div>
               </div>
             </div>
 

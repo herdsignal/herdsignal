@@ -21,7 +21,7 @@ _DATA_DIR = Path(__file__).resolve().parent.parent
 if str(_DATA_DIR) not in sys.path:
     sys.path.insert(0, str(_DATA_DIR))
 
-from config.settings import FINNHUB_API_KEY  # noqa: E402
+from config.settings import EPS_SURPRISE_MULTIPLIERS, FINNHUB_API_KEY  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -105,6 +105,61 @@ def get_earnings_surprise(ticker: str) -> float | None:
         f"(실제={actual}, 예상={estimate}, 분기={latest.get('period')})"
     )
     return surprise_pct
+
+
+def get_eps_surprise_multiplier(ticker: str) -> float:
+    """
+    최근 4분기 EPS 서프라이즈 연속 beat/miss 흐름을 HERD v4 보정 승수로 변환한다.
+
+    ETF처럼 실적 데이터가 없거나 API가 실패하면 1.0을 반환해
+    기존 HERD v3 점수에 영향을 주지 않는다.
+    """
+    try:
+        history = get_earnings_history(ticker)
+        surprises = [
+            item["surprise_pct"]
+            for item in history[:4]
+            if item.get("surprise_pct") is not None
+        ]
+    except Exception as e:
+        logger.warning(f"[{ticker}] EPS 보정 승수 계산 실패 — 기본값 1.0 사용: {e}")
+        return EPS_SURPRISE_MULTIPLIERS["neutral"]
+
+    if len(surprises) < 2:
+        logger.debug(f"[{ticker}] EPS 보정 데이터 부족 — 기본값 1.0 사용")
+        return EPS_SURPRISE_MULTIPLIERS["neutral"]
+
+    latest_is_beat = surprises[0] > 0
+    latest_is_miss = surprises[0] < 0
+
+    if not latest_is_beat and not latest_is_miss:
+        return EPS_SURPRISE_MULTIPLIERS["neutral"]
+
+    streak = 0
+    for surprise in surprises:
+        if latest_is_beat and surprise > 0:
+            streak += 1
+        elif latest_is_miss and surprise < 0:
+            streak += 1
+        else:
+            break
+
+    if latest_is_beat:
+        if streak >= 4:
+            return EPS_SURPRISE_MULTIPLIERS["beat_4"]
+        if streak == 3:
+            return EPS_SURPRISE_MULTIPLIERS["beat_3"]
+        if streak == 2:
+            return EPS_SURPRISE_MULTIPLIERS["beat_2"]
+        return EPS_SURPRISE_MULTIPLIERS["neutral"]
+
+    if streak >= 4:
+        return EPS_SURPRISE_MULTIPLIERS["miss_4"]
+    if streak == 3:
+        return EPS_SURPRISE_MULTIPLIERS["miss_3"]
+    if streak == 2:
+        return EPS_SURPRISE_MULTIPLIERS["miss_2"]
+    return EPS_SURPRISE_MULTIPLIERS["neutral"]
 
 
 # ──────────────────────────────────────────────

@@ -114,13 +114,13 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 **data/**
 
-- HERD Index v3 계산 (6개 지표, 불균등 가중치, 백분위수 정규화)
+- HERD Index v4 계산 (v3 6개 지표 기본 점수 + EPS 서프라이즈/섹터 상대 강도 보정 승수)
 - MariaDB 저장 (stocks / herd_scores / herd_indicators / daily_prices — 4개 테이블 UPSERT)
 - 3-Tier 스케줄러
   - Tier 1: 매일 16:30 ET 자동 계산 (user_portfolio + user_watchlist + SPY)
   - Tier 2: on-demand 계산 + 7일 캐시 (검색·상세 조회 시)
   - Tier 3: yfinance 실시간 포트폴리오 평가 + portfolio_history UPSERT
-- 백테스트 코드 (backtest_v3.py 기반, 실적 서프라이즈 필터·트레일링 스탑)
+- 백테스트 코드 (backtest_v3.py, backtest_v4.py 기반)
 
 **backend/**
 
@@ -136,7 +136,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 **frontend/**
 
 - Dashboard: S&P 500 배너(HERD + 종가·1개월 수익률 실데이터), 포트폴리오 카드, KRW/USD 통화 토글, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 수동 새로고침
-- StockDetail: HERD 점수·단계·신호, HERD v3 지표 분해 UI, 재무정보 카드 실데이터 (시가총액·PER·EPS·영업이익률·매출·배당수익률)
+- StockDetail: HERD v4 점수·단계·신호, HERD 지표 분해와 보정 승수 UI, 재무정보 카드 실데이터 (시가총액·PER·EPS·영업이익률·매출·배당수익률)
 - Search: 디바운스 검색, HERD 미리보기, 인기 종목 그리드, 최근 검색
 - Watchlist: HERD 카드, 삭제
 - History: 월/년 토글, recharts 자산 기록 차트
@@ -163,7 +163,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 - 정규화 방식: 백분위수 (scipy.stats.percentileofscore)
 - 데이터 기간: 기본 5년 (`YFINANCE_PERIOD=5y`)
-- 운영 계산: 6개 지표를 계산해 가중합산
+- 운영 계산: 6개 지표를 계산해 v3 기본 점수를 만들고, v4 보정 승수를 곱해 최종 점수 산출
 - 구성 지표:
   - 월봉 RSI 24%
   - 주봉 RSI 19%
@@ -171,7 +171,12 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - MA200 이격도 18%
   - 거래량 강도 0% (계산 코드는 유지, 운영 가중치 비활성)
   - 200주 MA 위치 20%
-- `herd_indicators` DB 테이블과 `HerdScoreResponse` API 응답은 200주 MA 위치(`ma200_weekly`)를 포함함.
+- HERD v4 보정:
+  - EPS 서프라이즈 최근 4분기 연속 beat/miss → `eps_multiplier`
+  - 90일 종목 수익률 - 섹터 ETF 수익률 → `sector_multiplier`
+  - 최종 점수: `herd_v4 = herd_base × eps_multiplier × sector_multiplier`
+- `herd_scores.herd_score`는 최종 v4 점수를 저장한다.
+- `herd_indicators` DB 테이블과 `HerdScoreResponse` API 응답은 200주 MA 위치(`ma200_weekly`), `herd_base`, `eps_multiplier`, `sector_multiplier`, `herd_v4`를 포함함.
 
 ### 임계값
 
@@ -190,7 +195,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - score <= 15: BUY
   - score <= 40: ADD
   - 그 외: HOLD
-- `backtest_v3.py`의 실적 서프라이즈 필터·트레일링 스탑은 백테스트 전략이며, 현재 운영 계산 경로에는 연결되어 있지 않음.
+- `backtest_v4.py`는 현재 승수를 3년 HERD 시계열에 적용하는 sanity check이며, 과거 시점별 EPS/섹터 승수를 완전히 복원하지는 않음.
 
 ### 백테스트 검증 결과
 

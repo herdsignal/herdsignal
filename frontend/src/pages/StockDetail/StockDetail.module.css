@@ -312,6 +312,41 @@
   color: var(--text-1);
 }
 
+.adjustmentBox {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+
+.adjustmentRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.adjustmentRow strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.adjustmentRow em {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
 /* ────────────────────────────
    재무 정보 카드
    ──────────────────────────── */
