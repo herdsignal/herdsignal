@@ -275,6 +275,33 @@ export default function Search() {
     ).slice(0, 5)
   }, [query])
 
+  const discoveryGroups = useMemo(() => {
+    const loaded = POPULAR_TICKERS
+      .map((ticker) => popularData[ticker])
+      .filter(Boolean)
+
+    const low = loaded
+      .filter((item) => Number(item.herdScore) <= 40)
+      .sort((a, b) => Number(a.herdScore) - Number(b.herdScore))
+      .slice(0, 3)
+
+    const calm = loaded
+      .filter((item) => Number(item.herdScore) > 40 && Number(item.herdScore) < 60)
+      .sort((a, b) => Math.abs(50 - Number(a.herdScore)) - Math.abs(50 - Number(b.herdScore)))
+      .slice(0, 3)
+
+    const hot = loaded
+      .filter((item) => Number(item.herdScore) >= 60)
+      .sort((a, b) => Number(b.herdScore) - Number(a.herdScore))
+      .slice(0, 3)
+
+    return [
+      { title: '저점 후보', desc: '분할매수 관찰', rows: low },
+      { title: '중립 후보', desc: '보유·대기', rows: calm },
+      { title: '과열 후보', desc: '익절 관찰', rows: hot },
+    ]
+  }, [popularData])
+
   /* ── 드롭다운 콘텐츠 렌더 헬퍼 ── */
   function renderDropdownContent() {
     if (searchResult.status === 'loading') {
@@ -409,8 +436,36 @@ export default function Search() {
         </div>
       )}
 
+      {/* 타이밍 후보 */}
+      <div className={styles.sectionLabel}>타이밍 후보</div>
+      <div className={styles.discoveryGrid}>
+        {discoveryGroups.map((group) => (
+          <div key={group.title} className={styles.discoveryCard}>
+            <div className={styles.discoveryHead}>
+              <strong>{group.title}</strong>
+              <span>{group.desc}</span>
+            </div>
+            {group.rows.length === 0 ? (
+              <div className={styles.discoveryEmpty}>대상 없음</div>
+            ) : group.rows.map((item) => {
+              const color = stageColor(item.herdStage)
+              return (
+                <button
+                  key={item.ticker}
+                  className={styles.discoveryRow}
+                  onClick={() => navigate(`/stock/${item.ticker}`)}
+                >
+                  <span>{item.ticker}</span>
+                  <em style={{ color }}>HERD {Math.round(item.herdScore)}</em>
+                </button>
+              )
+            })}
+          </div>
+        ))}
+      </div>
+
       {/* 인기 종목 HERD */}
-      <div className={styles.sectionLabel}>인기 종목 HERD</div>
+      <div className={styles.sectionLabel}>대표 종목 HERD</div>
       <div className={styles.popularGrid}>
         {POPULAR_TICKERS.map(ticker => {
           const data  = popularData[ticker]

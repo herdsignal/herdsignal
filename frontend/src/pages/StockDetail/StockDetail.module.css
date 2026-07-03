@@ -515,102 +515,58 @@
 }
 
 /* ────────────────────────────
-   애널리스트 컨센서스 카드
+   판단 사이드 카드
    ──────────────────────────── */
-.analystWrap {
+.sideFactList {
+  display: grid;
+  gap: 12px;
+}
+
+.sideFact {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--border);
+}
+.sideFact:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.sideFact span {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.sideFact strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.actionNoteList {
+  display: grid;
   gap: 10px;
 }
 
-/* 컨센서스 한 줄 요약 */
-.analystConsensus {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-  color: var(--text-1);
-  margin-bottom: 4px;
+.actionNoteList p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
 }
 
-/* 각 추천 항목 행 */
-.analystRow {
-  display: grid;
-  grid-template-columns: 80px 1fr 28px;
-  align-items: center;
-  gap: 8px;
-}
-
-.analystLabel {
-  font-size: 11px;
-  color: var(--text-3);
-  white-space: nowrap;
-}
-
-.analystTrack {
-  height: 4px;
+.actionNoteList span {
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   background: var(--surface2);
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.analystFill {
-  height: 100%;
-  border-radius: 99px;
-  transition: width 0.5s ease;
-}
-
-.analystCount {
-  font-size: 11px;
-  color: var(--text-2);
-  text-align: right;
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-/* ────────────────────────────
-   내부자 거래 카드
-   ──────────────────────────── */
-.insiderTable {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.insiderRow {
-  display: grid;
-  grid-template-columns: 1fr 36px 56px 72px;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--border);
   font-size: 12px;
-}
-.insiderRow:last-child { border-bottom: none; }
-
-.insiderName {
+  line-height: 1.5;
   color: var(--text-2);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.insiderCode {
-  font-weight: 600;
-  font-size: 11px;
-  text-align: center;
-}
-
-.insiderShare {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11px;
-  color: var(--text-2);
-  text-align: right;
-}
-
-.insiderDate {
-  font-size: 11px;
-  color: var(--text-3);
-  text-align: right;
 }
 
 /* ── 플레이스홀더 ── */

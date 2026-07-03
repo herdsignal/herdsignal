@@ -1,5 +1,5 @@
 /**
- * AiRebalance.jsx — AI 리밸런싱 MVP (/ai)
+ * AiRebalance.jsx — 리밸런싱 플랜 MVP (/ai)
  *
  * Claude API 연결 전 단계.
  * 기존 포트폴리오/평가금액/HERD API와 localStorage 목표 비중으로
@@ -153,8 +153,8 @@ export default function AiRebalance() {
     <div>
       <div className={styles.pageHeader}>
         <div>
-          <div className={styles.pageDate}>규칙 기반 프리뷰</div>
-          <h1 className={styles.pageTitle}>AI 리밸런싱</h1>
+          <div className={styles.pageDate}>규칙 기반 실행안</div>
+          <h1 className={styles.pageTitle}>리밸런싱 플랜</h1>
         </div>
         <button className={styles.btnSecondary} onClick={equalizeTargets}>
           목표 균등 설정
@@ -255,8 +255,8 @@ export default function AiRebalance() {
 
             <section className={styles.card}>
               <div className={styles.cardHeader}>
-                <h2>AI 요약</h2>
-                <span>Claude API 연결 전 규칙 기반 설명</span>
+                <h2>플랜 요약</h2>
+                <span>AI 연결 전 규칙 기반 설명</span>
               </div>
               <div className={styles.aiSummary}>
                 {summaryLines.map((line) => <p key={line}>{line}</p>)}

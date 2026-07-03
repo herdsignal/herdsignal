@@ -85,12 +85,6 @@ export const getSpyHerdHistory = (period = '3y') =>
 export const getStockPrices = (ticker, period = '1M') =>
   api.get(`/api/stocks/${ticker}/prices?period=${period}`)
 
-/** 최신 1개월 애널리스트 컨센서스 조회 (Finnhub) */
-export const getStockAnalyst = (ticker) => api.get(`/api/stocks/${ticker}/analyst`)
-
-/** 최근 내부자 거래 최대 10건 조회 (Finnhub) */
-export const getStockInsider = (ticker) => api.get(`/api/stocks/${ticker}/insider`)
-
 /* ── 종목 재무정보 ───────────────────────────── */
 
 /** 종목 재무정보 조회 (시가총액·PER·EPS·영업이익률·매출·배당수익률) */

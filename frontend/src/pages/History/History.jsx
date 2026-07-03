@@ -127,6 +127,20 @@ export default function History() {
   const maxVal  = values.length > 0 ? Math.max(...values) : 1000
   const padding = (maxVal - minVal) * 0.08 || 100
   const yDomain = [Math.max(0, minVal - padding), maxVal + padding]
+  const historyInsight = (() => {
+    if (points.length < 2) return null
+    const first = points[0]
+    const peak = points.reduce((best, point) =>
+      Number(point.totalValue) > Number(best.totalValue) ? point : best
+    , points[0])
+    const drawdown = latest?.totalValue && peak?.totalValue
+      ? (latest.totalValue / peak.totalValue - 1) * 100
+      : null
+    const fromStart = first?.totalValue && latest?.totalValue
+      ? (latest.totalValue / first.totalValue - 1) * 100
+      : null
+    return { first, peak, drawdown, fromStart }
+  })()
 
   return (
     <div>
@@ -180,6 +194,34 @@ export default function History() {
             >
               {fmtPct(summary.dailyChangePct)}
             </div>
+          </div>
+        </div>
+      )}
+
+      {historyInsight && (
+        <div className={styles.insightGrid}>
+          <div className={styles.insightCard}>
+            <span>시작 대비</span>
+            <strong style={{ color: pctColor(historyInsight.fromStart) }}>
+              {fmtPct(historyInsight.fromStart)}
+            </strong>
+            <em>{historyInsight.first.date} 이후</em>
+          </div>
+          <div className={styles.insightCard}>
+            <span>고점 대비</span>
+            <strong style={{ color: pctColor(historyInsight.drawdown) }}>
+              {fmtPct(historyInsight.drawdown)}
+            </strong>
+            <em>고점 {fmtUSD(historyInsight.peak.totalValue)}</em>
+          </div>
+          <div className={styles.insightCard}>
+            <span>점검 포인트</span>
+            <strong>
+              {historyInsight.drawdown != null && historyInsight.drawdown < -8
+                ? '리밸런싱 확인'
+                : '비중 유지 가능'}
+            </strong>
+            <em>HERD 신호와 함께 확인</em>
           </div>
         </div>
       )}

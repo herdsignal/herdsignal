@@ -20,7 +20,7 @@ src/
 │   ├── StockDetail/ 종목 상세
 │   ├── Search/     종목 검색 & 추가
 │   ├── Watchlist/  관심 종목
-│   ├── AiRebalance/ AI 리밸런싱
+│   ├── AiRebalance/ 리밸런싱 플랜
 │   └── History/    자산 기록
 ├── styles/         전역 CSS 변수
 ├── utils/          통화/환율 유틸
@@ -68,6 +68,7 @@ Rush    #EF4444  (레드)
   - HERD v4 점수/단계/Timing Signal
   - 장기투자 판단 패널 (HERD + 보유 비중 + 재무 컨텍스트)
   - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
+  - 판단 요약/다음 행동 사이드 패널
   - 포트폴리오 추가
   - 관심종목 추가
 - Search (`/search`)
@@ -91,16 +92,16 @@ Rush    #EF4444  (레드)
   - 보수적/표준/공격적 리밸런싱 강도 선택
   - 현재 비중 vs 목표 비중 비교
   - 규칙 기반 매수/매도/보류 실행안
-  - Claude API 연결 전 규칙 기반 요약
+  - AI 연결 전 규칙 기반 플랜 요약
 - History (`/history`)
   - 월/년 기간 토글
   - recharts 기반 총 평가금액 차트
   - portfolio_history 시계열 표시
 
 ## 부분 구현 / 미구현
-- StockDetail 최근 뉴스 섹션은 제거됨. 애널리스트 컨센서스와 내부자 거래만 사이드 컨텍스트로 유지한다.
+- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 제거됨. 상세 사이드는 판단 요약과 다음 행동만 유지한다.
 - 목표 비중은 `hs_target_weights` localStorage에 저장하며, 아직 DB 저장 기능은 없다.
-- AI 리밸런싱 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
+- 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
 - Dashboard의 간이 백테스트는 portfolio_history 기반 수익률/MDD 진단이며 실제 HERD 매매 시뮬레이션은 아니다.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.

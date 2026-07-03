@@ -69,7 +69,7 @@ export default function Layout() {
               `${styles.navItem} ${isActive ? styles.active : ''}`
             }
           >
-            AI 리밸런싱
+            리밸런싱 플랜
           </NavLink>
           <NavLink
             to="/search"

@@ -512,16 +512,16 @@ export default function Dashboard() {
 
   /*
    * 수동 새로고침 — DB에 저장된 최신 데이터만 빠르게 재조회 후 캐시 갱신.
-   * getPortfolio() 제외 (종목 목록은 추가/삭제 시에만 변경됨).
+   * getPortfolio()와 SPY 3년 히스토리는 제외한다.
+   * 종목 목록은 추가/삭제 시에만 바뀌고, 히스토리는 최초 로딩 캐시로 충분하다.
    */
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     try {
-      const [summaryRes, herdRes, spyRes, spyHistoryRes] = await Promise.allSettled([
+      const [summaryRes, herdRes, spyRes] = await Promise.allSettled([
         getPortfolioSummary(),
         getPortfolioHerd(),
         getStockHerd('SPY'),
-        getSpyHerdHistory('3y'),
       ])
 
       if (summaryRes.status === 'fulfilled') {
@@ -546,13 +546,6 @@ export default function Dashboard() {
         spyDataCache.current = data
         setSpyData(data)
         writeCache(CACHE_KEY_SPY, data)
-      }
-
-      if (spyHistoryRes.status === 'fulfilled') {
-        const points = spyHistoryRes.value.data?.data?.points ?? []
-        spyHistoryCache.current = points
-        setSpyHistory(points)
-        writeCache(CACHE_KEY_SPY_HISTORY, points)
       }
 
       /* 캐시 저장 시각 갱신 — 헤더 "업데이트 · 오후 X:XX" 기준 */

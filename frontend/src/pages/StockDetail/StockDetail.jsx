@@ -5,7 +5,7 @@
  *   1) 브레드크럼 + 종목 헤더 (배지 + 포트폴리오/관심종목 추가 버튼)
  *   2) 2컬럼 그리드 (좌: 메인 / 우: 340px 사이드)
  *   좌: HERD 카드 → 장기투자 판단 → 지표 분해 카드 → 재무 정보
- *   우: 애널리스트 목표가 → 내부자 거래
+ *   우: 판단 요약 → 다음 행동
  *
  * API: getStockHerd(ticker), addToPortfolio(ticker), addToWatchlist(ticker)
  * 래퍼런스: wireframes/wireframe-detail.html
@@ -18,7 +18,7 @@ import {
 } from 'recharts'
 import {
   getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials,
-  getStockPrices, getStockAnalyst, getStockInsider,
+  getStockPrices,
   getPortfolio, getPortfolioSummary,
 } from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
@@ -222,10 +222,6 @@ export default function StockDetail() {
   const [pricePoints,      setPricePoints]       = useState([])
   const [priceTab,         setPriceTab]          = useState('1M')
   const [priceLoading,     setPriceLoading]      = useState(false)
-  const [analyst,          setAnalyst]           = useState(null)
-  const [analystLoading,   setAnalystLoading]    = useState(false)
-  const [insider,          setInsider]           = useState([])
-  const [insiderLoading,   setInsiderLoading]    = useState(false)
   const [portfolio,        setPortfolio]         = useState([])
   const [portfolioSummary, setPortfolioSummary]  = useState(null)
 
@@ -288,26 +284,6 @@ export default function StockDetail() {
       .finally(() => { setPriceLoading(false) })
   }, [ticker, priceTab])
 
-  /* 애널리스트 컨센서스 — ticker 변경 시 재조회 */
-  useEffect(() => {
-    setAnalystLoading(true)
-    setAnalyst(null)
-    getStockAnalyst(ticker.toUpperCase())
-      .then((res) => { setAnalyst(res.data?.data ?? null) })
-      .catch(() => { setAnalyst(null) })
-      .finally(() => { setAnalystLoading(false) })
-  }, [ticker])
-
-  /* 내부자 거래 — ticker 변경 시 재조회 */
-  useEffect(() => {
-    setInsiderLoading(true)
-    setInsider([])
-    getStockInsider(ticker.toUpperCase())
-      .then((res) => { setInsider(res.data?.data?.transactions ?? []) })
-      .catch(() => { setInsider([]) })
-      .finally(() => { setInsiderLoading(false) })
-  }, [ticker])
-
   /* 포트폴리오 추가 */
   async function handleAddPortfolio() {
     if (portfolioStatus !== 'idle') return
@@ -346,6 +322,37 @@ export default function StockDetail() {
     holding,
     summary: portfolioSummary,
   }), [herdData, financials, holding, portfolioSummary, ticker])
+  const sideFacts = useMemo(() => {
+    const facts = [
+      {
+        label: 'HERD 상태',
+        value: `${Math.round(herdScore)} · ${stageDisp}`,
+        tone: color,
+      },
+      {
+        label: '추천 행동',
+        value: decision.title,
+        tone: color,
+      },
+      {
+        label: '보유 상태',
+        value: holding
+          ? `${Number(holding.quantity ?? 0).toLocaleString('ko-KR')}주 보유`
+          : '포트폴리오 미보유',
+        tone: 'var(--text-1)',
+      },
+    ]
+
+    if (financials?.trailingPe != null) {
+      facts.push({
+        label: '밸류에이션',
+        value: `PER ${fmtNum1(financials.trailingPe)}`,
+        tone: 'var(--text-1)',
+      })
+    }
+
+    return facts
+  }, [color, decision.title, financials, herdScore, holding, stageDisp])
 
   /* 가격 차트 색상 — 기간 첫날 대비 마지막날 방향 */
   const priceColor = useMemo(() => {
@@ -650,79 +657,37 @@ export default function StockDetail() {
           {/* ─── 오른쪽 사이드 ─── */}
           <div className={styles.colSide}>
 
-            {/* 애널리스트 컨센서스 카드 */}
+            {/* 판단 요약 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>애널리스트 컨센서스</div>
-                <div className={styles.cardMeta}>Finnhub</div>
+                <div className={styles.cardTitle}>판단 요약</div>
+                <div className={styles.cardMeta}>장기투자 기준</div>
               </div>
               <div className={styles.cardBodySmall}>
-                {analystLoading ? (
-                  <p className={styles.placeholderText}>로딩 중…</p>
-                ) : !analyst || analyst.total === 0 ? (
-                  <p className={styles.placeholderText}>데이터 없음</p>
-                ) : (
-                  <div className={styles.analystWrap}>
-                    <div className={styles.analystConsensus}>
-                      {analyst.consensus} · {analyst.total}명
+                <div className={styles.sideFactList}>
+                  {sideFacts.map((fact) => (
+                    <div key={fact.label} className={styles.sideFact}>
+                      <span>{fact.label}</span>
+                      <strong style={{ color: fact.tone }}>{fact.value}</strong>
                     </div>
-                    {[
-                      { key: 'strongBuy',  label: 'Strong Buy',  color: '#2563EB' },
-                      { key: 'buy',        label: 'Buy',         color: '#60A5FA' },
-                      { key: 'hold',       label: 'Hold',        color: '#9CA3AF' },
-                      { key: 'sell',       label: 'Sell',        color: '#FB923C' },
-                      { key: 'strongSell', label: 'Strong Sell', color: '#EF4444' },
-                    ].map(({ key, label, color: barColor }) => {
-                      const count = analyst[key] ?? 0
-                      const pct   = analyst.total > 0 ? (count / analyst.total) * 100 : 0
-                      return (
-                        <div key={key} className={styles.analystRow}>
-                          <div className={styles.analystLabel}>{label}</div>
-                          <div className={styles.analystTrack}>
-                            <div
-                              className={styles.analystFill}
-                              style={{ width: `${pct}%`, background: barColor }}
-                            />
-                          </div>
-                          <div className={styles.analystCount}>{count}</div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* 내부자 거래 카드 */}
+            {/* 다음 행동 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>내부자 거래</div>
-                <div className={styles.cardMeta}>Finnhub · 최근 10건</div>
+                <div className={styles.cardTitle}>다음 행동</div>
+                <div className={styles.cardMeta}>과잉 매매 방지</div>
               </div>
               <div className={styles.cardBodySmall}>
-                {insiderLoading ? (
-                  <p className={styles.placeholderText}>로딩 중…</p>
-                ) : insider.length === 0 ? (
-                  <p className={styles.placeholderText}>데이터 없음</p>
-                ) : (
-                  <div className={styles.insiderTable}>
-                    {insider.map((tx, i) => (
-                      <div key={i} className={styles.insiderRow}>
-                        <div className={styles.insiderName}>{tx.name}</div>
-                        <div
-                          className={styles.insiderCode}
-                          style={{ color: tx.transactionCode === 'P' ? '#60A5FA' : '#EF4444' }}
-                        >
-                          {tx.transactionCode === 'P' ? '매수' : tx.transactionCode === 'S' ? '매도' : tx.transactionCode}
-                        </div>
-                        <div className={styles.insiderShare}>
-                          {Number(tx.share ?? 0).toLocaleString()}주
-                        </div>
-                        <div className={styles.insiderDate}>{tx.date}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className={styles.actionNoteList}>
+                  <p>{decision.subtitle}</p>
+                  {decision.notes.slice(0, 3).map((note) => (
+                    <span key={note}>{note}</span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

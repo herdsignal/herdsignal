@@ -235,6 +235,75 @@
   margin-bottom: 14px;
 }
 
+.discoveryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.discoveryCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.discoveryHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+
+.discoveryHead strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  letter-spacing: -0.3px;
+}
+
+.discoveryHead span,
+.discoveryEmpty {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.discoveryEmpty {
+  padding: 12px 0 2px;
+}
+
+.discoveryRow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-1);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+.discoveryRow:last-child { border-bottom: none; }
+.discoveryRow:hover span { color: var(--text-1); }
+
+.discoveryRow span {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.discoveryRow em {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+}
+
 /* ────────────────────────────
    인기 종목 그리드
    ──────────────────────────── */
