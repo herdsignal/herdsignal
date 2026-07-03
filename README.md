@@ -16,6 +16,7 @@
 HerdSignal helps long-term US equity investors decide when to add, hold, or trim positions using data instead of intuition.
 
 It combines each stock's HERD Index with portfolio context and translates the score into actionable guidance.
+It is positioned as a decision engine for add/hold/trim actions, not a general-purpose portfolio tracker.
 
 ---
 
@@ -184,6 +185,7 @@ The frontend usually runs at `http://localhost:5173`.
 - Target weights and rebalance settings are stored in localStorage, not in the database.
 - Dashboard asset diagnosis is based on portfolio_history return/MDD summaries, not a true HERD strategy backtest.
 - Authentication, multi-user support, brokerage integration, and deployment are not implemented yet.
+- Before official brokerage APIs are available, manual entry and CSV/Excel import UX are the priority.
 - The v5 volatility layer is a backtest candidate and is not part of the production HERD score.
 
 ---
