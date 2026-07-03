@@ -63,10 +63,10 @@ function signalStyle(signal) {
   switch (signal) {
     case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: '#EF4444' }
     case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',   color: '#F97316' }
-    case 'HOLD':   return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
+    case 'HOLD':   return { bg: 'rgba(163,170,184,0.14)', color: 'var(--calm)' }
     case 'ADD':    return { bg: 'rgba(96,165,250,0.12)',  color: '#60A5FA' }
     case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6' }
-    default:       return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
+    default:       return { bg: 'rgba(163,170,184,0.14)', color: 'var(--calm)' }
   }
 }
 
@@ -77,7 +77,7 @@ function badgeStyle(stage) {
     case 'drift':   return { bg: 'rgba(249,115,22,0.12)',  color: 'var(--drift)' }
     case 'scatter': return { bg: 'rgba(96,165,250,0.12)',  color: 'var(--scatter)' }
     case 'flee':    return { bg: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
-    default:        return { bg: 'rgba(113,113,122,0.12)', color: 'var(--calm)' }
+    default:        return { bg: 'rgba(163,170,184,0.13)', color: 'var(--calm)' }
   }
 }
 
@@ -89,6 +89,13 @@ function qualityColor(level) {
     case 'LOW': return 'var(--rush)'
     default: return 'var(--text-3)'
   }
+}
+
+function formatActionText(item) {
+  if (!item?.actionLabel) return decisionSignalDesc(item?.signal)
+  const ratio = Number(item.actionRatio ?? 0)
+  if (!Number.isFinite(ratio) || ratio <= 0) return item.actionLabel
+  return `${Math.round(ratio * 100)}% · ${item.actionLabel}`
 }
 
 /** scoreDate → 한국어 날짜 문자열 */
@@ -445,7 +452,7 @@ export default function Watchlist() {
                   style={{ opacity: isDeleting ? 0.4 : 1 }}
                 >
                   {/* 좌측 HERD 단계 컬러 스트라이프 */}
-                  <div className={styles.cardStripe} style={{ background: color }} />
+                  <div className={styles.cardStripe} style={{ background: color, color }} />
 
                   {/* 삭제 버튼 — 우상단, hover 시 표시 */}
                   <button
@@ -501,9 +508,7 @@ export default function Watchlist() {
                         {item.signal}
                       </span>
                       <span className={styles.cardSignalDesc}>
-                        {item.actionLabel
-                          ? `${Math.round(Number(item.actionRatio ?? 0) * 100)}% · ${item.actionLabel}`
-                          : decisionSignalDesc(item.signal)}
+                        {formatActionText(item)}
                       </span>
                     </div>
                     <span className={styles.cardUpdate}>

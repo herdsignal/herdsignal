@@ -144,10 +144,10 @@ function signalStyle(signal) {
   switch (signal) {
     case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: '#EF4444' }
     case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',   color: '#F97316' }
-    case 'HOLD':   return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
+    case 'HOLD':   return { bg: 'rgba(163,170,184,0.14)', color: 'var(--calm)' }
     case 'ADD':    return { bg: 'rgba(96,165,250,0.12)',  color: '#60A5FA' }
     case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6' }
-    default:       return { bg: 'rgba(113,113,122,0.14)', color: '#A1A1AA' }
+    default:       return { bg: 'rgba(163,170,184,0.14)', color: 'var(--calm)' }
   }
 }
 
@@ -158,7 +158,7 @@ function badgeStyle(stage) {
     case 'drift':   return { bg: 'rgba(249,115,22,0.12)',  color: 'var(--drift)' }
     case 'scatter': return { bg: 'rgba(96,165,250,0.12)',  color: 'var(--scatter)' }
     case 'flee':    return { bg: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
-    default:        return { bg: 'rgba(113,113,122,0.12)', color: 'var(--calm)' }
+    default:        return { bg: 'rgba(163,170,184,0.13)', color: 'var(--calm)' }
   }
 }
 
@@ -170,6 +170,13 @@ function qualityColor(level) {
     case 'LOW': return 'var(--rush)'
     default: return 'var(--text-3)'
   }
+}
+
+function formatActionText(herd) {
+  if (!herd?.actionLabel) return decisionSignalDesc(herd?.signal)
+  const ratio = Number(herd.actionRatio ?? 0)
+  if (!Number.isFinite(ratio) || ratio <= 0) return herd.actionLabel
+  return `${Math.round(ratio * 100)}% · ${herd.actionLabel}`
 }
 
 /** USD 금액 포맷: $1,234.56 */
@@ -973,7 +980,7 @@ export default function Dashboard() {
                   onClick={editMode ? undefined : () => navigate(`/stock/${item.ticker}`)}
                   style={{ opacity: isDeleting ? 0.4 : 1 }}
                 >
-                  <div className={styles.cardStripe} style={{ background: color }} />
+                  <div className={styles.cardStripe} style={{ background: color, color }} />
 
                   {editMode && (
                     <button
@@ -1028,9 +1035,7 @@ export default function Dashboard() {
                               {herd.signal}
                             </span>
                             <span className={styles.cardSignalDesc}>
-                              {herd.actionLabel
-                                ? `${Math.round(Number(herd.actionRatio ?? 0) * 100)}% · ${herd.actionLabel}`
-                                : decisionSignalDesc(herd.signal)}
+                              {formatActionText(herd)}
                             </span>
                           </div>
                         </>

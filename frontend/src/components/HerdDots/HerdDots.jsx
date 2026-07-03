@@ -14,7 +14,7 @@ import { useRef, useEffect } from 'react'
 function getColor(score) {
   if (score >= 75) return '#EF4444'  // Rush  — 레드
   if (score >= 60) return '#F97316'  // Drift — 오렌지
-  if (score >= 40) return '#71717A'  // Calm  — 회색
+  if (score >= 40) return '#A3AAB8'  // Calm  — 회색
   if (score >= 15) return '#60A5FA'  // Scatter — 연파랑
   return '#3B82F6'                   // Flee  — 파랑
 }

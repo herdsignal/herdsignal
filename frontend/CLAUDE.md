@@ -40,8 +40,8 @@ src/
 ## HERD 5단계 색상
 ```
 Flee    #3B82F6  (파랑)
-Scatter #93C5FD  (연파랑)
-Calm    #9CA3AF  (회색)
+Scatter #60A5FA  (연파랑)
+Calm    #A3AAB8  (회색)
 Drift   #FB923C  (오렌지)
 Rush    #EF4444  (레드)
 ```

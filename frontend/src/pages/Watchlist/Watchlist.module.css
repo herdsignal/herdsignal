@@ -353,20 +353,25 @@
 .stockGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 .stockCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.008)), var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.095);
   border-radius: 12px;
-  padding: 16px 18px;
+  padding: 18px 20px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  transition: border-color 0.15s, opacity 0.15s;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s, opacity 0.15s;
 }
-.stockCard:hover { border-color: var(--border2); }
+.stockCard:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.014)), var(--surface);
+  transform: translateY(-1px);
+}
 
 /* 좌측 컬러 스트라이프 */
 .cardStripe {
@@ -374,7 +379,8 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 3px;
+  width: 4px;
+  box-shadow: 0 0 18px currentColor;
 }
 
 /* 삭제 버튼 — 우상단, hover 시 표시 */
@@ -419,9 +425,9 @@
 }
 
 .cardTickerBadge {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -434,8 +440,8 @@
 
 .cardTicker {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   letter-spacing: -0.3px;
   margin-bottom: 2px;
   color: var(--text-1);
@@ -443,13 +449,15 @@
 
 .cardStageName {
   font-size: 11px;
-  color: var(--text-3);
+  font-weight: 600;
+  color: var(--text-2);
 }
 
 .cardQuality {
   margin-top: 4px;
   font-size: 10px;
   font-weight: 600;
+  opacity: 0.9;
   white-space: nowrap;
 }
 
@@ -461,7 +469,7 @@
 
 .cardHerdNum {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: -1px;
   line-height: 1;
@@ -470,7 +478,8 @@
 
 .cardHerdStage {
   font-size: 10px;
-  color: var(--text-3);
+  font-weight: 600;
+  color: var(--text-2);
 }
 
 /* 카드 하단: 시그널 배지 (관심 종목은 하단만) */
@@ -484,10 +493,10 @@
 
 .cardSignalBadge {
   display: inline-block;
-  padding: 4px 9px;
-  border-radius: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.04em;
 }
 
@@ -500,6 +509,7 @@
 
 .cardSignalDesc {
   font-size: 11px;
+  font-weight: 600;
   color: var(--text-2);
   white-space: nowrap;
 }

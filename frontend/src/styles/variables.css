@@ -5,23 +5,23 @@
 
 :root {
   /* 배경 계층 */
-  --bg:       #09090B;
-  --surface:  #111113;
-  --surface2: #18181B;
+  --bg:       #08090D;
+  --surface:  #12141A;
+  --surface2: #1A1D25;
 
   /* 경계선 */
-  --border:  #27272A;
-  --border2: #3F3F46;
+  --border:  #2A2F3A;
+  --border2: #424A5A;
 
   /* 텍스트 계층 */
   --text-1: #FAFAFA;
-  --text-2: #A1A1AA;
-  --text-3: #52525B;
+  --text-2: #B4B8C3;
+  --text-3: #707684;
 
   /* HERD 5단계 색상 */
   --flee:    #3B82F6;   /* 파랑 — 0~15 */
   --scatter: #60A5FA;   /* 연파랑 — 15~40 */
-  --calm:    #71717A;   /* 회색 — 40~60 */
+  --calm:    #A3AAB8;   /* 회색 — 40~60 */
   --drift:   #F97316;   /* 오렌지 — 60~75 */
   --rush:    #EF4444;   /* 레드 — 75~100 */
 
