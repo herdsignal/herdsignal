@@ -142,28 +142,28 @@ def _action_decision(score: float, ctx: pd.Series, profile: str) -> tuple[str, s
     if profile == "balanced":
         if score >= RUSH_THRESHOLD:
             if trend >= 75 and ma200_dev < 45:
-                return "HEALTHY_RUSH", "SELL", 0.03
-            if trend >= 70 and ma200_dev < 65:
                 return "HEALTHY_RUSH", "SELL", 0.05
+            if trend >= 70 and ma200_dev < 65:
+                return "HEALTHY_RUSH", "SELL", 0.08
             if trend < 45 or ma200_dev > 90:
-                return "CROWDED_RUSH", "SELL", 0.25
-            return "NORMAL_RUSH", "SELL", 0.12
+                return "CROWDED_RUSH", "SELL", 0.30
+            return "NORMAL_RUSH", "SELL", 0.15
 
         if score >= DRIFT_LOWER:
             if trend >= 75:
-                return "HEALTHY_DRIFT", "HOLD", 0.0
-            return "NORMAL_DRIFT", "SELL", 0.05
+                return "HEALTHY_DRIFT", "SELL", 0.02
+            return "NORMAL_DRIFT", "SELL", 0.06
 
         if score <= FLEE_THRESHOLD:
             if trend >= 55 and ma200_dev > -25:
-                return "OPPORTUNITY_FLEE", "BUY", 0.25
+                return "OPPORTUNITY_FLEE", "BUY", 0.22
             if trend < 35 or ma200_dev < -35:
                 return "BROKEN_FLEE", "HOLD", 0.0
-            return "NORMAL_FLEE", "BUY", 0.10
+            return "NORMAL_FLEE", "BUY", 0.08
 
         if score <= SCATTER_UPPER:
             if trend >= 60 and ma200_dev > -20:
-                return "OPPORTUNITY_SCATTER", "BUY", 0.05
+                return "OPPORTUNITY_SCATTER", "BUY", 0.04
             return "NORMAL_SCATTER", "HOLD", 0.0
 
         return "CALM", "HOLD", 0.0
@@ -266,6 +266,13 @@ def _avg(rows: list[dict], key: str) -> float | None:
     if not values:
         return None
     return sum(values) / len(values)
+
+
+def _period_years(period: str) -> float:
+    """yfinance period 문자열을 대략적인 연 단위로 변환한다."""
+    if period.endswith("y"):
+        return float(period[:-1])
+    return 1.0
 
 
 def run_one(ticker: str) -> dict:
@@ -396,9 +403,14 @@ def main() -> None:
     print(f"- Balanced Action MDD 개선: {_fmt_pct(_avg(rows, 'balanced_mdd_improvement'))}")
     print(f"- Growth Action 평균 거래 수: {_fmt_num(_avg(rows, 'growth_actions'))}")
     print(f"- Balanced Action 평균 거래 수: {_fmt_num(_avg(rows, 'balanced_actions'))}")
+    years = _period_years(DATA_PERIOD)
+    balanced_actions = _avg(rows, "balanced_actions")
+    annual_actions = balanced_actions / years if balanced_actions is not None else None
+    print(f"- Balanced Action 연평균 거래 수: {_fmt_num(annual_actions)}")
 
     print("\n판정 기준")
-    print("- 채택 후보: Action 수익률 보존율 60% 이상 + MDD 개선 5%p 이상")
+    print("- 채택 후보: Action 수익률 보존율 70% 이상 + MDD 개선 5%p 이상")
+    print("- 운영 적합 거래 빈도: 연 4~10회 수준")
     print("- 보류: 수익률 보존율 개선이 작거나 MDD 개선이 기존보다 크게 악화")
 
 
