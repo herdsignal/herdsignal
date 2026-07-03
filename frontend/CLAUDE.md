@@ -97,6 +97,7 @@ Rush    #EF4444  (레드)
   - 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드
   - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
   - HERD 5단계 행동 매트릭스와 v4 가중치 표시
+  - 표시 데이터는 `src/data/herdModelReport.js`에서 관리하며 JSX에 백테스트 숫자를 직접 하드코딩하지 않는다.
 - AiRebalance (`/ai`)
   - 목표 비중·현금 목표·리밸런싱 예산 설정
   - 보수적/표준/공격적 리밸런싱 강도 선택

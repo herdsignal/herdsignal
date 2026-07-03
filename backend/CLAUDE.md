@@ -113,7 +113,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - HERD v4 응답은 `herdScore`/`herdV4`에 최종 점수, `herdBase`에 v3 기본 점수, `epsMultiplier`/`sectorMultiplier`에 보정 승수를 포함한다.
 - HERD 신뢰도 응답은 DB 스키마 변경 없이 `HerdService`가 계산한다. `qualityScore`, `qualityLevel`, `qualityLabel`, `qualitySummary`, `qualityFlags`, `qualityReasons`를 포함한다.
 - HERD 신뢰도는 `daily_prices` 기간이 아니라 저장된 HERD 산출 결과의 완성도(핵심 지표, 200주 MA, v4 보정 승수, 최신성)를 기준으로 계산한다.
-- Action Layer 응답은 DB 스키마 변경 없이 `ActionDecisionService`가 계산한다. `actionScore`, `actionGrade`, `actionLabel`, `actionRatio`, `actionRegime`, `actionRegimeLabel`, `actionReasons`, `actionWarnings`를 포함한다.
+- HERD_v5 Action Layer 응답은 DB 스키마 변경 없이 `ActionDecisionService`가 계산한다. `actionModelVersion`, `actionModelName`, `baseModelVersion`, `actionModelStatus`, `actionScore`, `actionGrade`, `actionLabel`, `actionRatio`, `actionRegime`, `actionRegimeLabel`, `actionReasons`, `actionWarnings`를 포함한다.
 - 뉴스/애널리스트/내부자 거래 API는 backend에 존재하지만 현재 frontend 화면에서는 사용하지 않는다.
 - 로그인/인증/멀티유저 API는 없음. 현재는 `local` 사용자 고정.
 - 증권사 API 추상화는 구현되어 있지 않다.
