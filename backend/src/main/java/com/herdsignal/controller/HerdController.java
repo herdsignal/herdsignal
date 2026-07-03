@@ -10,6 +10,7 @@ import com.herdsignal.dto.NewsResponse;
 import com.herdsignal.dto.PortfolioHerdResponse;
 import com.herdsignal.dto.PriceHistoryResponse;
 import com.herdsignal.dto.StockFinancialsResponse;
+import com.herdsignal.dto.StockSearchResponse;
 import com.herdsignal.service.FinancialsService;
 import com.herdsignal.service.FinnhubService;
 import com.herdsignal.service.HerdService;
@@ -31,6 +32,17 @@ public class HerdController {
     private final FinancialsService  financialsService;
     private final PriceService       priceService;
     private final FinnhubService     finnhubService;
+
+    /**
+     * GET /api/stocks/search?q=apple
+     * 회사명 또는 티커 기반 종목 심볼 검색 (Finnhub).
+     */
+    @GetMapping("/stocks/search")
+    public ResponseEntity<ApiResponse<StockSearchResponse>> searchStocks(
+            @RequestParam String q) {
+        StockSearchResponse response = finnhubService.searchStocks(q);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 
     /**
      * GET /api/portfolio/herd

@@ -70,6 +70,10 @@ export const updateAvgPrice = (ticker, avgPrice, quantity) =>
 
 /* ── 개별 종목 ──────────────────────────────── */
 
+/** 회사명/티커 기반 종목 검색 */
+export const searchStocks = (query) =>
+  api.get(`/api/stocks/search?q=${encodeURIComponent(query)}`)
+
 /** 특정 종목 HERD 점수 + 지표 분해값 조회 */
 export const getStockHerd = (ticker) => api.get(`/api/stocks/${ticker}/herd`)
 

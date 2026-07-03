@@ -69,6 +69,64 @@ def _get(endpoint: str, params: dict) -> dict | list | None:
 
 
 # ──────────────────────────────────────────────
+# 공개 함수 0 — 심볼 검색
+# ──────────────────────────────────────────────
+def search_symbols(query: str, limit: int = 8) -> list[dict]:
+    """
+    회사명 또는 티커 문자열로 Finnhub 심볼 후보를 조회한다.
+
+    Args:
+        query: 검색어 (예: "Sandisk", "SNDK")
+        limit: 최대 반환 개수
+
+    Returns:
+        [
+            {
+                "ticker": "SNDK",
+                "name": "SANDISK CORPORATION",
+                "type": "Common Stock",
+                "display_symbol": "SNDK",
+            },
+            ...
+        ]
+    """
+    normalized = (query or "").strip()
+    if len(normalized) < 1:
+        return []
+
+    data = _get("search", {"q": normalized})
+    if not data or not isinstance(data, dict):
+        return []
+
+    results = data.get("result")
+    if not isinstance(results, list):
+        return []
+
+    symbols: list[dict] = []
+    seen: set[str] = set()
+    for item in results:
+        symbol = (item.get("symbol") or item.get("displaySymbol") or "").strip().upper()
+        if not symbol or symbol in seen:
+            continue
+
+        # HerdService 티커 검증과 맞춰 영숫자·점·하이픈 티커만 허용한다.
+        if not all(ch.isalnum() or ch in ".-" for ch in symbol):
+            continue
+
+        seen.add(symbol)
+        symbols.append({
+            "ticker": symbol,
+            "name": item.get("description") or symbol,
+            "type": item.get("type") or "Stock",
+            "display_symbol": item.get("displaySymbol") or symbol,
+        })
+        if len(symbols) >= limit:
+            break
+
+    return symbols
+
+
+# ──────────────────────────────────────────────
 # 공개 함수 1 — 최근 분기 EPS 서프라이즈
 # ──────────────────────────────────────────────
 def get_earnings_surprise(ticker: str) -> float | None:

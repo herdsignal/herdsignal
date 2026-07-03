@@ -23,6 +23,7 @@ src/main/java/com/herdsignal/
 ```
 GET    /api/stocks/{ticker}/herd              종목 HERD Index + 지표 분해 조회
 POST   /api/stocks/{ticker}/herd/refresh      종목 HERD Index 강제 재계산 후 조회
+GET    /api/stocks/search?q=apple             회사명/티커 기반 종목 심볼 검색 (Finnhub)
 GET    /api/stocks/{ticker}/financials        종목 재무정보 조회 (yfinance .info)
 GET    /api/stocks/{ticker}/prices            종목 가격 히스토리 조회
 GET    /api/stocks/{ticker}/news              종목 뉴스 조회 (Finnhub)
@@ -77,6 +78,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
   - period 파라미터(1M/3M/1Y/5Y) 기준 조회
 - FinnhubService
   - Python finnhub_collector 호출
+  - 회사명/티커 기반 심볼 검색 응답 반환
   - 뉴스, 애널리스트 컨센서스, 내부자 거래 응답 반환
   - frontend StockDetail에서는 현재 뉴스/애널리스트/내부자 거래 섹션을 표시하지 않음
 

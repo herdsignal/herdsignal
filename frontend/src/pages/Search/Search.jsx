@@ -17,6 +17,7 @@ import {
   getPortfolio,
   getWatchlist,
   getStockHerd,
+  searchStocks,
   addToPortfolio,
   addToWatchlist,
 } from '../../api/herdApi'
@@ -34,6 +35,7 @@ const STOCK_CANDIDATES = [
   { ticker: 'AMZN', name: 'Amazon.com, Inc.', sector: 'Consumer Discretionary' },
   { ticker: 'PLTR', name: 'Palantir Technologies', sector: 'Software' },
   { ticker: 'IONQ', name: 'IonQ, Inc.', sector: 'Quantum Computing' },
+  { ticker: 'SNDK', name: 'Sandisk Corporation', sector: 'Semiconductors / Storage', aliases: ['샌디스크', 'SanDisk'] },
   { ticker: 'BITX', name: '2x Bitcoin Strategy ETF', sector: 'Crypto ETF' },
   { ticker: 'SPY', name: 'S&P 500 ETF', sector: 'Benchmark ETF' },
   { ticker: 'QQQ', name: 'Nasdaq 100 ETF', sector: 'Benchmark ETF' },
@@ -47,6 +49,29 @@ const TICKER_NAMES = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticke
 const RECENT_KEY = 'hs_recent_searches'
 
 /* ── 유틸 ─────────────────────────────── */
+
+function isTickerLike(value) {
+  return /^[A-Z0-9.-]{1,10}$/.test(value)
+}
+
+function toSearchCandidate(item) {
+  return {
+    ticker: item.ticker,
+    name: item.name ?? item.ticker,
+    sector: item.type ?? '미국 주식',
+  }
+}
+
+function candidateMatches(item, normalized, rawQuery = '') {
+  const aliasText = (item.aliases ?? []).join(' ').toUpperCase()
+  const rawAliasText = (item.aliases ?? []).join(' ')
+  return (
+    item.ticker.includes(normalized) ||
+    item.name.toUpperCase().includes(normalized) ||
+    aliasText.includes(normalized) ||
+    (rawQuery && rawAliasText.includes(rawQuery.trim()))
+  )
+}
 
 /** herdStage 정규화: "Herd Scatter" → "scatter" */
 function normalizeStage(stage) {
@@ -189,32 +214,46 @@ export default function Search() {
       return
     }
 
-    const normalized = query.trim().toUpperCase()
-    const matches = STOCK_CANDIDATES.filter((item) =>
-      item.ticker.includes(normalized) ||
-      item.name.toUpperCase().includes(normalized)
-    )
-    const exact = STOCK_CANDIDATES.find((item) => item.ticker === normalized)
-    const ticker = exact?.ticker ?? matches[0]?.ticker ?? normalized
+    const rawQuery = query.trim()
+    const normalized = rawQuery.toUpperCase()
+    const matches = STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized, rawQuery))
 
     setSearchResult({ status: 'loading', matches })
     let cancelled = false
 
     const timer = setTimeout(async () => {
       try {
+        let candidates = matches
+        try {
+          const searchRes = await searchStocks(rawQuery)
+          const apiResults = searchRes.data?.data?.results ?? []
+          if (Array.isArray(apiResults) && apiResults.length > 0) {
+            candidates = apiResults.map(toSearchCandidate)
+          }
+        } catch {
+          // 검색 API 실패 시 로컬 후보 또는 정확한 티커 입력으로 fallback
+        }
+
+        const exact = candidates.find((item) => item.ticker === normalized)
+        const ticker = exact?.ticker ?? candidates[0]?.ticker ?? (isTickerLike(normalized) ? normalized : null)
+        if (!ticker) {
+          if (!cancelled) setSearchResult({ status: 'not_found', matches: candidates })
+          return
+        }
+
         const res  = await getStockHerd(ticker)
         if (cancelled) return   /* 언마운트 또는 query 변경으로 취소된 경우 무시 */
         const data = res.data?.data
         if (data) {
-          setSearchResult({ status: 'found', data, matches })
+          setSearchResult({ status: 'found', data, matches: candidates })
           /* 결과 있을 때만 최근 검색에 저장 */
           saveToRecent(ticker)
           setRecentSearches(loadRecent())
         } else {
-          setSearchResult({ status: 'not_found' })
+          setSearchResult({ status: 'not_found', matches: candidates })
         }
       } catch {
-        if (!cancelled) setSearchResult({ status: 'not_found' })
+        if (!cancelled) setSearchResult({ status: 'not_found', matches })
       }
     }, 300)
 
@@ -268,12 +307,14 @@ export default function Search() {
 
   const suggestionMatches = useMemo(() => {
     const normalized = query.trim().toUpperCase()
+    const rawQuery = query.trim()
     if (normalized.length < 2) return []
-    return STOCK_CANDIDATES.filter((item) =>
-      item.ticker.includes(normalized) ||
-      item.name.toUpperCase().includes(normalized)
-    ).slice(0, 5)
-  }, [query])
+    const resultMatches = searchResult?.matches
+    if (Array.isArray(resultMatches) && resultMatches.length > 0) {
+      return resultMatches.slice(0, 5)
+    }
+    return STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized, rawQuery)).slice(0, 5)
+  }, [query, searchResult?.matches])
 
   const discoveryGroups = useMemo(() => {
     const loaded = POPULAR_TICKERS
@@ -325,7 +366,7 @@ export default function Search() {
     const color = stageColor(d.herdStage)
     const badge = badgeColors(d.herdStage)
     const label = d.ticker.length <= 4 ? d.ticker : d.ticker.slice(0, 4)
-    const meta  = TICKER_META[d.ticker]
+    const meta  = searchResult.matches?.find((item) => item.ticker === d.ticker) ?? TICKER_META[d.ticker]
 
     return (
       <div

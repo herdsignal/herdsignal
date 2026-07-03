@@ -75,7 +75,8 @@ Rush    #EF4444  (레드)
   - 관심종목 추가
 - Search (`/search`)
   - 300ms 디바운스 검색
-  - 대표 종목 티커/종목명 로컬 매칭
+  - Finnhub 심볼 검색 API 기반 회사명/티커 검색
+  - 대표 종목 티커/종목명 로컬 매칭 fallback
   - HERD 미리보기
   - 인기 종목 그리드
   - 최근 검색 localStorage 저장
@@ -125,6 +126,7 @@ Rush    #EF4444  (레드)
 - addToPortfolio / removeFromPortfolio / updateAvgPrice
 - getWatchlistHerd / addToWatchlist / removeFromWatchlist
 - getStockHerd / refreshStockHerd / getSpyHerdHistory
+- searchStocks
 - getStockPrices / getStockFinancials
 
 ## localStorage 사용
