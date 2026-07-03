@@ -58,9 +58,7 @@ Rush    #EF4444  (레드)
   - S&P 500 HERD 배너
   - 포트폴리오 평가금액 요약
   - KRW/USD 통화 토글
-  - 목표 비중 기반 리밸런싱 추천
-  - 새로고침 후 HERD 변화 요약
-  - portfolio_history 기반 1년 수익률·MDD 간이 진단
+  - 목표 비중 기반 핵심 리밸런싱 체크
   - 보유 종목 카드
   - 편집 모드/삭제
   - 평단가·수량 수정 모달
@@ -116,7 +114,7 @@ Rush    #EF4444  (레드)
 - StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 제거됨. 상세 화면은 HERD와 Action Layer 중심 단일 컬럼으로 유지한다.
 - 목표 비중은 `hs_target_weights` localStorage에 저장하며, 아직 DB 저장 기능은 없다.
 - 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
-- Dashboard의 간이 백테스트는 portfolio_history 기반 수익률/MDD 진단이며 실제 HERD 매매 시뮬레이션은 아니다.
+- Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 표시하며, frontend에서 별도 점수 계산을 하지 않는다.

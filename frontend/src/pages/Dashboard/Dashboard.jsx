@@ -5,8 +5,9 @@
  *   1) 페이지 헤더 (새로고침·편집·종목 추가 버튼)
  *   2) S&P500 HERD 배너 — 시장 온도 먼저 파악
  *   3) 포트폴리오 평가금액 요약 카드 (통화 토글 포함)
- *   4) 보유 종목 2열 카드 그리드 (편집 모드 지원)
- *   5) 빈 상태 UI
+ *   4) 리밸런싱 체크
+ *   5) 보유 종목 2열 카드 그리드 (편집 모드 지원)
+ *   6) 빈 상태 UI
  *
  * 데이터 소스:
  *   - getPortfolio()          → 종목 목록 + avgPrice/quantity (항상 최신 호출)
@@ -37,14 +38,11 @@ import {
   getPortfolioHerd,
   getStockHerd,
   getSpyHerdHistory,
-  getPortfolioHistory,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import {
-  buildChangeSummary,
-  historyStats,
   portfolioRows,
   readTargetWeights,
   rebalanceIdeas,
@@ -170,6 +168,12 @@ function qualityColor(level) {
     case 'LOW': return 'var(--rush)'
     default: return 'var(--text-3)'
   }
+}
+
+function shouldShowQuality(herd) {
+  if (!herd?.qualityLabel) return false
+  if (herd.qualityLevel === 'LIMITED' || herd.qualityLevel === 'LOW') return true
+  return Number(herd.qualityScore ?? 100) < 70
 }
 
 function formatActionText(herd) {
@@ -357,8 +361,6 @@ export default function Dashboard() {
   )
   const [editMode,       setEditMode]       = useState(false)
   const [targetWeights,  setTargetWeights]  = useState(() => readTargetWeights())
-  const [changeSummary,  setChangeSummary]  = useState([])
-  const [historyPoints,  setHistoryPoints]  = useState([])
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -476,13 +478,6 @@ export default function Dashboard() {
     fetchExchangeRate().then(setExchangeRate)
   }, [])
 
-  /* 간이 포트폴리오 백테스트 — 실제 매매 시뮬레이션이 아닌 자산 히스토리 진단 */
-  useEffect(() => {
-    getPortfolioHistory('year')
-      .then((res) => { setHistoryPoints(res.data?.data?.points ?? []) })
-      .catch(() => { setHistoryPoints([]) })
-  }, [])
-
   /* ticker → 현재가 데이터 맵 (Python snake_case) */
   const priceMap = useMemo(() => {
     const map = {}
@@ -548,14 +543,12 @@ export default function Dashboard() {
       }
 
       if (herdRes.status === 'fulfilled') {
-        const prevMap = { ...herdMap }
         const map = {}
         const herdData = herdRes.value?.data?.data ?? null
         const herdStocks = herdData?.stocks ?? []
         herdStocks.forEach((h) => { map[h.ticker] = h })
         writeCache(CACHE_KEY_HERD, herdData)
         setHerdMap(map)
-        setChangeSummary(buildChangeSummary(prevMap, map))
       }
 
       if (spyRes.status === 'fulfilled') {
@@ -661,7 +654,6 @@ export default function Dashboard() {
     [portfolio, summary, herdMap, targetWeights]
   )
   const rebalanceRows = useMemo(() => rebalanceIdeas(rows), [rows])
-  const portfolioBacktest = useMemo(() => historyStats(historyPoints), [historyPoints])
 
   function handleTargetWeightChange(ticker, value) {
     const next = { ...targetWeights, [ticker]: value }
@@ -897,52 +889,21 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* ── 의사결정 패널: 변화 요약 + 리밸런싱 + 간이 백테스트 ── */}
-      {!loading && !error && portfolio.length > 0 && (
-        <div className={styles.decisionGrid}>
-          <div className={styles.decisionCard}>
-            <div className={styles.decisionLabel}>오늘 변화</div>
-            {changeSummary.length > 0 ? (
-              <div className={styles.decisionList}>
-                {changeSummary.map((item) => <span key={item}>{item}</span>)}
-              </div>
-            ) : (
-              <div className={styles.decisionEmpty}>새로고침 후 큰 신호 변화 없음</div>
-            )}
+      {/* ── 리밸런싱 체크 — 대시보드에서는 핵심 후보만 얇게 표시 ── */}
+      {!loading && !error && portfolio.length > 0 && rebalanceRows.length > 0 && (
+        <div className={styles.rebalanceStrip}>
+          <div className={styles.rebalanceStripHead}>
+            <span>리밸런싱 체크</span>
+            <strong>{rebalanceRows.length}개 후보</strong>
           </div>
-
-          <div className={styles.decisionCard}>
-            <div className={styles.decisionLabel}>리밸런싱 추천</div>
-            <div className={styles.rebalanceList}>
-              {rebalanceRows.map((row) => (
-                <div key={row.ticker} className={styles.rebalanceRow}>
-                  <strong>{row.ticker}</strong>
-                  <span>{row.action}</span>
-                  <em>{row.currentWeight.toFixed(1)}% / 목표 {row.targetWeight.toFixed(1)}%</em>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.decisionCard}>
-            <div className={styles.decisionLabel}>간이 백테스트</div>
-            {portfolioBacktest ? (
-              <div className={styles.backtestStats}>
-                <div>
-                  <span>1년 수익률</span>
-                  <strong style={{ color: pctColor(portfolioBacktest.returnPct) }}>
-                    {fmtPct(portfolioBacktest.returnPct)}
-                  </strong>
-                </div>
-                <div>
-                  <span>최대 낙폭</span>
-                  <strong>{fmtPct(portfolioBacktest.mdd)}</strong>
-                </div>
+          <div className={styles.rebalanceStripList}>
+            {rebalanceRows.slice(0, 4).map((row) => (
+              <div key={row.ticker} className={styles.rebalancePill}>
+                <strong>{row.ticker}</strong>
+                <span>{row.action}</span>
+                <em>{row.currentWeight.toFixed(1)}% / {row.targetWeight.toFixed(1)}%</em>
               </div>
-            ) : (
-              <div className={styles.decisionEmpty}>히스토리 부족</div>
-            )}
-            <p className={styles.decisionNote}>실제 HERD 매매 시뮬레이션은 아니며 현재 자산 히스토리 기준입니다.</p>
+            ))}
           </div>
         </div>
       )}
@@ -1006,7 +967,7 @@ export default function Dashboard() {
                       <div>
                         <div className={styles.cardTicker}>{item.ticker}</div>
                         <div className={styles.cardStageName}>{stageName}</div>
-                        {herd?.qualityLabel && (
+                        {shouldShowQuality(herd) && (
                           <div
                             className={styles.cardQuality}
                             style={{ color: qualityColor(herd.qualityLevel) }}

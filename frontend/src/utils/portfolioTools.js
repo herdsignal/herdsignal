@@ -120,49 +120,6 @@ export function rebalanceIdeas(rows) {
     .slice(0, 4)
 }
 
-export function buildChangeSummary(prevMap, nextMap) {
-  const changes = []
-  Object.entries(nextMap).forEach(([ticker, next]) => {
-    const prev = prevMap?.[ticker]
-    if (!prev) return
-    const prevScore = num(prev.herdScore, null)
-    const nextScore = num(next.herdScore, null)
-    if (prevScore == null || nextScore == null) return
-
-    const prevSignal = prev.signal ?? 'HOLD'
-    const nextSignal = next.signal ?? 'HOLD'
-    const scoreDelta = Math.round(nextScore - prevScore)
-
-    if (prevSignal !== nextSignal) {
-      changes.push(`${ticker} ${prevSignal} → ${nextSignal}`)
-    } else if (Math.abs(scoreDelta) >= 3) {
-      changes.push(`${ticker} HERD ${Math.round(prevScore)} → ${Math.round(nextScore)}`)
-    }
-  })
-  return changes.slice(0, 4)
-}
-
-export function historyStats(points) {
-  if (!points?.length) return null
-  const values = points
-    .map((p) => num(p.totalValue ?? p.total_value ?? p.value, null))
-    .filter((v) => v != null && v > 0)
-  if (values.length < 2) return null
-
-  const start = values[0]
-  const end = values[values.length - 1]
-  let peak = start
-  let mdd = 0
-  values.forEach((value) => {
-    if (value > peak) peak = value
-    mdd = Math.min(mdd, (value - peak) / peak * 100)
-  })
-  return {
-    returnPct: (end / start - 1) * 100,
-    mdd,
-  }
-}
-
 export function opportunityRows(watchlist) {
   return [...watchlist]
     .map((item) => {

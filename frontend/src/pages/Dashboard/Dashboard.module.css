@@ -207,102 +207,82 @@
 }
 
 /* ────────────────────────────
-   의사결정 패널
+   리밸런싱 체크
    ──────────────────────────── */
-.decisionGrid {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr 1fr;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.decisionCard {
+.rebalanceStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 18px 20px;
-  min-height: 132px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
 }
 
-.decisionLabel {
+.rebalanceStripHead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.rebalanceStripHead span {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-3);
-  margin-bottom: 12px;
 }
 
-.decisionList {
-  display: grid;
-  gap: 7px;
-}
-
-.decisionList span,
-.decisionEmpty,
-.decisionNote {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-2);
-}
-
-.decisionEmpty,
-.decisionNote {
-  color: var(--text-3);
-}
-
-.decisionNote {
-  margin-top: 10px;
-}
-
-.rebalanceList {
-  display: grid;
-  gap: 8px;
-}
-
-.rebalanceRow {
-  display: grid;
-  grid-template-columns: 52px 1fr auto;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-}
-
-.rebalanceRow strong {
+.rebalanceStripHead strong {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-1);
+  letter-spacing: -0.3px;
 }
 
-.rebalanceRow span {
-  color: var(--text-2);
+.rebalanceStripList {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
 }
 
-.rebalanceRow em {
-  font-size: 11px;
-  font-style: normal;
-  color: var(--text-3);
+.rebalancePill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 220px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
   white-space: nowrap;
 }
 
-.backtestStats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.backtestStats span {
-  display: block;
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 5px;
-}
-
-.backtestStats strong {
+.rebalancePill strong {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 20px;
-  letter-spacing: -0.6px;
+  font-size: 12px;
   color: var(--text-1);
+}
+
+.rebalancePill span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.rebalancePill em {
+  font-size: 10px;
+  font-style: normal;
+  color: var(--text-3);
+  flex-shrink: 0;
 }
 
 /* ────────────────────────────
