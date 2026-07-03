@@ -122,22 +122,33 @@ export function rebalanceIdeas(rows) {
 
 export function opportunityRows(watchlist) {
   return [...watchlist]
-    .map((item) => {
-      const score = num(item.herdScore, 50)
+    .map((item, index) => {
+      const score = num(item.herdV4 ?? item.herdScore, 50)
       const signal = item.signal ?? 'HOLD'
-      const signalBoost = signal === 'BUY' ? 30 : signal === 'ADD' ? 18 : signal === 'HOLD' ? 4 : -12
+      const actionScore = num(item.actionScore)
+      const signalBoost = signal === 'BUY' ? 34 : signal === 'ADD' ? 22 : signal === 'HOLD' ? 2 : -24
+      const strengthBoost = actionScore > 0 ? Math.min(16, actionScore / 8) : 0
       const opportunityScore = Math.max(0, Math.min(100, 100 - score + signalBoost))
       return {
         ...item,
-        opportunityScore,
-        reason: signal === 'BUY' || signal === 'ADD'
-          ? '매수 대기 우선순위 높음'
-          : signal === 'HOLD'
-            ? '가격 식을 때까지 관찰'
-            : '군중 밀집이 풀릴 때까지 대기',
+        opportunityScore: Math.max(0, Math.min(100, opportunityScore + strengthBoost)),
+        opportunityRank: signal === 'BUY' ? 3 : signal === 'ADD' ? 2 : signal === 'HOLD' ? 1 : 0,
+        originalIndex: index,
+        reason: signal === 'BUY'
+          ? 'Flee 우선 대기'
+          : signal === 'ADD'
+            ? 'Scatter 분할매수 후보'
+            : signal === 'HOLD'
+              ? 'Calm 관찰'
+              : 'Rush/Drift 제외',
       }
     })
-    .sort((a, b) => b.opportunityScore - a.opportunityScore)
+    .sort((a, b) => {
+      if (b.opportunityRank !== a.opportunityRank) return b.opportunityRank - a.opportunityRank
+      if (num(b.actionScore) !== num(a.actionScore)) return num(b.actionScore) - num(a.actionScore)
+      if (b.opportunityScore !== a.opportunityScore) return b.opportunityScore - a.opportunityScore
+      return a.originalIndex - b.originalIndex
+    })
 }
 
 export function buildRebalancePlan(rows, options = {}) {

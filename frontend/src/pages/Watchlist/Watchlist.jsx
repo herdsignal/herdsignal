@@ -111,6 +111,13 @@ function formatActionText(item) {
   return [strength, ratioText, action].filter(Boolean).join(' · ')
 }
 
+function formatActionCode(item) {
+  if (!item?.signal) return 'HOLD'
+  const ratio = Number(item.actionRatio ?? 0)
+  if (!Number.isFinite(ratio) || ratio <= 0) return item.signal
+  return `${item.signal} ${Math.round(ratio * 100)}%`
+}
+
 /** scoreDate → 한국어 날짜 문자열 */
 function formatDate(dateStr) {
   if (!dateStr) return '—'
@@ -284,7 +291,11 @@ export default function Watchlist() {
       .sort((a, b) => Number(b.opportunityScore ?? 0) - Number(a.opportunityScore ?? 0))
   ), [watchlist])
 
-  const opportunityQueue = useMemo(() => opportunityRows(watchlist).slice(0, 3), [watchlist])
+  const opportunityQueue = useMemo(() => (
+    opportunityRows(watchlist)
+      .filter((item) => item.signal === 'BUY' || item.signal === 'ADD')
+      .slice(0, 3)
+  ), [watchlist])
 
   function shouldShowQuality(item) {
     if (!item?.qualityLabel) return false
@@ -365,25 +376,40 @@ export default function Watchlist() {
       {!loading && !error && watchlist.length > 0 && (
         <>
           <div className={styles.opportunityPanel}>
-            <div className={styles.sectionTitle}>기회 대기열</div>
-            <div className={styles.opportunityList}>
-              {opportunityQueue.map((item, index) => (
-                <button
-                  key={item.ticker}
-                  className={styles.opportunityItem}
-                  onClick={() => navigate(`/stock/${item.ticker}`)}
-                >
-                  <span>{index + 1}</span>
-                  <strong>{item.ticker}</strong>
-                  <em>HERD {Math.round(item.herdV4 ?? item.herdScore)} · {item.reason}</em>
-                </button>
-              ))}
+            <div className={styles.sectionRow}>
+              <div className={styles.sectionTitle}>기회 대기열</div>
+              <div className={styles.sectionHint}>Flee/Scatter · 강도순</div>
             </div>
+            {opportunityQueue.length > 0 ? (
+              <div className={styles.opportunityList}>
+                {opportunityQueue.map((item, index) => {
+                  const signal = signalStyle(item.signal)
+                  return (
+                    <button
+                      key={item.ticker}
+                      className={styles.opportunityItem}
+                      onClick={() => navigate(`/stock/${item.ticker}`)}
+                    >
+                      <span>{index + 1}</span>
+                      <strong>{item.ticker}</strong>
+                      <em>{formatActionCode(item)}</em>
+                      <small style={{ color: signal.color }}>
+                        HERD {Math.round(item.herdV4 ?? item.herdScore)} · {item.reason}
+                      </small>
+                    </button>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className={styles.opportunityEmpty}>
+                지금은 Flee/Scatter 매수 후보가 없습니다.
+              </div>
+            )}
           </div>
 
           <div className={styles.sectionRow}>
             <div className={styles.sectionTitle}>관심 종목 · {watchlist.length}</div>
-            <div className={styles.sectionHint}>기회 점수순</div>
+            <div className={styles.sectionHint}>매수 후보 우선</div>
           </div>
 
           <div className={styles.stockGrid}>

@@ -141,7 +141,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v5는 HERD_v4 점수에 Balanced Action Layer를 얹은 응답 시점 행동 모델이다.
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. frontend에서는 actionScore를 `강도`로 표시하고, DB 저장 없이 backend 응답 시점에 계산한다.
 - Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, HERD 준비됨/계산 필요/데이터 부족 상태 표시, 최근 검색, 포트폴리오/관심종목 추가, 포트폴리오 추가 후 평단가·수량 입력 연결
-- Watchlist: S&P 500 Herd Flow 배너, 기회 대기열, 기회 점수순 관심 종목 HERD 카드, 삭제
+- Watchlist: S&P 500 Herd Flow 배너, Flee/Scatter 우선 기회 대기열, 매수 후보 우선 관심 종목 HERD 카드, 삭제
 - HERD Lab: 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드, Action Layer 백테스트, 5단계 행동 매트릭스. 표시 데이터는 `frontend/src/data/herdModelReport.js`에서 관리한다.
 - 사이드바 노출 MVP 메뉴: 대시보드, 관심 종목, 종목 검색, HERD Lab
 - 보류/내부 접근 라우트: AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`)
@@ -158,7 +158,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ### 다음 단계
 
-- Watchlist 기회 대기열 정리
+- HERD Lab 데이터 보드 고도화
 
 ---
 
