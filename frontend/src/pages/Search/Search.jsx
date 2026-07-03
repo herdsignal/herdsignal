@@ -35,7 +35,7 @@ const STOCK_CANDIDATES = [
   { ticker: 'AMZN', name: 'Amazon.com, Inc.', sector: 'Consumer Discretionary' },
   { ticker: 'PLTR', name: 'Palantir Technologies', sector: 'Software' },
   { ticker: 'IONQ', name: 'IonQ, Inc.', sector: 'Quantum Computing' },
-  { ticker: 'SNDK', name: 'Sandisk Corporation', sector: 'Semiconductors / Storage', aliases: ['샌디스크', 'SanDisk'] },
+  { ticker: 'SNDK', name: 'Sandisk Corporation', sector: 'Semiconductors / Storage' },
   { ticker: 'BITX', name: '2x Bitcoin Strategy ETF', sector: 'Crypto ETF' },
   { ticker: 'SPY', name: 'S&P 500 ETF', sector: 'Benchmark ETF' },
   { ticker: 'QQQ', name: 'Nasdaq 100 ETF', sector: 'Benchmark ETF' },
@@ -70,14 +70,10 @@ function candidateForTicker(ticker, matches = []) {
   }
 }
 
-function candidateMatches(item, normalized, rawQuery = '') {
-  const aliasText = (item.aliases ?? []).join(' ').toUpperCase()
-  const rawAliasText = (item.aliases ?? []).join(' ')
+function candidateMatches(item, normalized) {
   return (
     item.ticker.includes(normalized) ||
-    item.name.toUpperCase().includes(normalized) ||
-    aliasText.includes(normalized) ||
-    (rawQuery && rawAliasText.includes(rawQuery.trim()))
+    item.name.toUpperCase().includes(normalized)
   )
 }
 
@@ -224,7 +220,7 @@ export default function Search() {
 
     const rawQuery = query.trim()
     const normalized = rawQuery.toUpperCase()
-    const matches = STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized, rawQuery))
+    const matches = STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized))
 
     setSearchResult({ status: 'loading', matches })
     let cancelled = false
@@ -329,13 +325,12 @@ export default function Search() {
 
   const suggestionMatches = useMemo(() => {
     const normalized = query.trim().toUpperCase()
-    const rawQuery = query.trim()
     if (normalized.length < 2) return []
     const resultMatches = searchResult?.matches
     if (Array.isArray(resultMatches) && resultMatches.length > 0) {
       return resultMatches.slice(0, 5)
     }
-    return STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized, rawQuery)).slice(0, 5)
+    return STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized)).slice(0, 5)
   }, [query, searchResult?.matches])
 
   const discoveryGroups = useMemo(() => {
