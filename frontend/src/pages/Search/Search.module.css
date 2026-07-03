@@ -179,7 +179,10 @@
   flex-shrink: 0;
 }
 
-.resultHerd { text-align: right; min-width: 72px; }
+.resultHerd {
+  text-align: right;
+  min-width: 96px;
+}
 
 .resultHerdScore {
   font-family: 'Space Grotesk', sans-serif;
@@ -187,15 +190,43 @@
   font-weight: 700;
   letter-spacing: -0.5px;
 }
-.resultHerdStage {
+
+.readinessPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3px;
+  padding: 3px 7px;
+  border: 1px solid;
+  border-radius: 999px;
   font-size: 10px;
-  color: var(--text-3);
-  margin-top: 1px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
+
+.readinessReady {
+  border-color: rgba(59, 130, 246, 0.26);
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--flee);
+}
+
+.readinessPending {
+  border-color: rgba(249, 115, 22, 0.26);
+  background: rgba(249, 115, 22, 0.09);
+  color: var(--drift);
+}
+
+.readinessLimited {
+  border-color: rgba(239, 68, 68, 0.26);
+  background: rgba(239, 68, 68, 0.09);
+  color: var(--rush);
+}
+
 .resultHerdDesc {
   font-size: 10px;
   color: var(--text-2);
-  margin-top: 2px;
+  margin-top: 4px;
   white-space: nowrap;
 }
 

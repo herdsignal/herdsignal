@@ -125,6 +125,32 @@ function stageDesc(stage) {
   }
 }
 
+function herdReadiness(data) {
+  if (!data) {
+    return {
+      label: '계산 필요',
+      tone: 'Pending',
+      desc: 'HERD 계산 대기',
+    }
+  }
+  if (
+    data.qualityLevel === 'LIMITED' ||
+    data.qualityLevel === 'LOW' ||
+    Number(data.qualityScore ?? 100) < 70
+  ) {
+    return {
+      label: '데이터 부족',
+      tone: 'Limited',
+      desc: data.qualityScore != null ? `품질 ${data.qualityScore}` : '품질 확인 필요',
+    }
+  }
+  return {
+    label: 'HERD 준비됨',
+    tone: 'Ready',
+    desc: data.scoreDate ?? '최신 점수',
+  }
+}
+
 /* 최근 검색 localStorage 조작 */
 function loadRecent() {
   try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]') } catch { return [] }
@@ -345,6 +371,7 @@ export default function Search() {
     if (searchResult.status === 'symbol_found') {
       const d = searchResult.candidate
       const label = d.ticker.length <= 4 ? d.ticker : d.ticker.slice(0, 4)
+      const readiness = herdReadiness(null)
       return (
         <div className={styles.searchResultItem}>
           <div className={styles.resultLeft}>
@@ -363,8 +390,10 @@ export default function Search() {
           <div className={styles.resultRight} onClick={e => e.stopPropagation()}>
             <div className={styles.resultHerd}>
               <div className={styles.resultHerdScore}>—</div>
-              <div className={styles.resultHerdStage}>HERD 대기</div>
-              <div className={styles.resultHerdDesc}>관심종목에 추가 가능</div>
+              <div className={`${styles.readinessPill} ${styles.readinessPending}`}>
+                {readiness.label}
+              </div>
+              <div className={styles.resultHerdDesc}>{readiness.desc}</div>
             </div>
             <button
               className={`${styles.resultAddBtn} ${
@@ -397,6 +426,7 @@ export default function Search() {
     const badge = badgeColors(d.herdStage)
     const label = d.ticker.length <= 4 ? d.ticker : d.ticker.slice(0, 4)
     const meta  = searchResult.matches?.find((item) => item.ticker === d.ticker) ?? TICKER_META[d.ticker]
+    const readiness = herdReadiness(d)
 
     return (
       <div
@@ -418,13 +448,13 @@ export default function Search() {
         <div className={styles.resultRight} onClick={e => e.stopPropagation()}>
           <div className={styles.resultHerd}>
             <div className={styles.resultHerdScore} style={{ color }}>
-              {Math.round(d.herdScore)}
+              {Math.round(d.herdV4 ?? d.herdScore)}
             </div>
-            <div className={styles.resultHerdStage}>
-              {stageDisplay(d.herdStage)}
+            <div className={`${styles.readinessPill} ${styles[`readiness${readiness.tone}`]}`}>
+              {readiness.label}
             </div>
             <div className={styles.resultHerdDesc}>
-              {stageDesc(d.herdStage)}
+              {stageDisplay(d.herdStage)} · {readiness.desc}
             </div>
           </div>
 
