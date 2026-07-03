@@ -244,7 +244,7 @@ export default function Watchlist() {
     }
   }
 
-  const spyScore = spyData?.herdScore ?? 50
+  const spyScore = spyData?.herdV4 ?? spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
   const ystPoint = useMemo(() => {
     const t = new Date(); t.setDate(t.getDate() - 1)
@@ -265,13 +265,13 @@ export default function Watchlist() {
       case 'opportunity':
         return opportunityRows(list)
       case 'scoreDesc':
-        return list.sort((a, b) => Number(b.herdScore ?? -1) - Number(a.herdScore ?? -1))
+        return list.sort((a, b) => Number((b.herdV4 ?? b.herdScore) ?? -1) - Number((a.herdV4 ?? a.herdScore) ?? -1))
       case 'updated':
         return list.sort((a, b) => String(b.scoreDate ?? '').localeCompare(String(a.scoreDate ?? '')))
       case 'ticker':
         return list.sort((a, b) => a.ticker.localeCompare(b.ticker))
       default:
-        return list.sort((a, b) => Number(a.herdScore ?? 101) - Number(b.herdScore ?? 101))
+        return list.sort((a, b) => Number((a.herdV4 ?? a.herdScore) ?? 101) - Number((b.herdV4 ?? b.herdScore) ?? 101))
     }
   }, [watchlist, sortMode])
 
@@ -285,7 +285,7 @@ export default function Watchlist() {
       ['drift', 'rush'].includes(normalizeStage(item.herdStage))
     ).length
     const avgScore = watchlist.length
-      ? Math.round(watchlist.reduce((sum, item) => sum + Number(item.herdScore ?? 0), 0) / watchlist.length)
+      ? Math.round(watchlist.reduce((sum, item) => sum + Number(item.herdV4 ?? item.herdScore ?? 0), 0) / watchlist.length)
       : null
     return { buyCount, sellCount, avgScore }
   }, [watchlist])
@@ -394,7 +394,7 @@ export default function Watchlist() {
                 >
                   <span>{index + 1}</span>
                   <strong>{item.ticker}</strong>
-                  <em>HERD {Math.round(item.herdScore)} · {item.reason}</em>
+                  <em>HERD {Math.round(item.herdV4 ?? item.herdScore)} · {item.reason}</em>
                 </button>
               ))}
             </div>
@@ -485,7 +485,7 @@ export default function Watchlist() {
 
                     <div className={styles.cardHerd}>
                       <div className={styles.cardHerdNum} style={{ color }}>
-                        {Math.round(item.herdScore)}
+                        {Math.round(item.herdV4 ?? item.herdScore)}
                       </div>
                       <div className={styles.cardHerdStage}>{stageName}</div>
                     </div>
@@ -501,7 +501,9 @@ export default function Watchlist() {
                         {item.signal}
                       </span>
                       <span className={styles.cardSignalDesc}>
-                        {decisionSignalDesc(item.signal)}
+                        {item.actionLabel
+                          ? `${Math.round(Number(item.actionRatio ?? 0) * 100)}% · ${item.actionLabel}`
+                          : decisionSignalDesc(item.signal)}
                       </span>
                     </div>
                     <span className={styles.cardUpdate}>

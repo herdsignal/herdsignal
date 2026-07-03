@@ -67,6 +67,7 @@ Rush    #EF4444  (레드)
   - 수동 새로고침은 DB 조회 기반 빠른 갱신만 수행
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
+  - Action Layer 행동 점수/행동 비율/세부 국면 표시
   - HERD 데이터 품질 배지와 상세 근거
   - HERD 검증 요약 (10년 백테스트 MDD 개선·수익률 보존·보조형 신호 설명)
   - 장기투자 판단 패널 (HERD + 보유 비중 + 재무 컨텍스트)
@@ -114,6 +115,7 @@ Rush    #EF4444  (레드)
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 표시하며, frontend에서 별도 점수 계산을 하지 않는다.
+- Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 표시하며, frontend에서 별도 행동 점수 계산을 하지 않는다.
 - Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.
 - Dashboard/Watchlist의 SPY 배너에서 SPY 종가, 1개월 수익률은 아직 `—` placeholder.
 

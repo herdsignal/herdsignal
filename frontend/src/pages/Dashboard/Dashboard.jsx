@@ -580,7 +580,7 @@ export default function Dashboard() {
     }
   }
 
-  const spyScore = spyData?.herdScore ?? 50
+  const spyScore = spyData?.herdV4 ?? spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
 
   /* 히스토리 기준 통계 포인트 (Overview 탭) */
@@ -1016,7 +1016,7 @@ export default function Dashboard() {
                       {herd ? (
                         <>
                           <div className={styles.cardHerdNum} style={{ color }}>
-                            {Math.round(herd.herdScore)}
+                            {Math.round(herd.herdV4 ?? herd.herdScore)}
                           </div>
                           <div className={styles.cardHerdStage}>{stageName}</div>
                           {/* 시그널 배지 — HERD 점수와 의미상 연결되어 같은 블록에 배치 */}
@@ -1028,7 +1028,9 @@ export default function Dashboard() {
                               {herd.signal}
                             </span>
                             <span className={styles.cardSignalDesc}>
-                              {decisionSignalDesc(herd.signal)}
+                              {herd.actionLabel
+                                ? `${Math.round(Number(herd.actionRatio ?? 0) * 100)}% · ${herd.actionLabel}`
+                                : decisionSignalDesc(herd.signal)}
                             </span>
                           </div>
                         </>

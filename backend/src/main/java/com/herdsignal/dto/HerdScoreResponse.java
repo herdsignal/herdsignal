@@ -62,6 +62,30 @@ public class HerdScoreResponse {
     /** HERD 신뢰도 산출 근거 */
     private List<String> qualityReasons;
 
+    /** 행동 점수 (0~100) */
+    private Integer actionScore;
+
+    /** 행동 등급 (STRONG_ACTION / ACTION / WATCH / NO_ACTION) */
+    private String actionGrade;
+
+    /** 화면 표시용 행동 문구 */
+    private String actionLabel;
+
+    /** 권장 행동 비율 (0.00~0.30) */
+    private BigDecimal actionRatio;
+
+    /** 세부 국면 코드 */
+    private String actionRegime;
+
+    /** 세부 국면 표시 문구 */
+    private String actionRegimeLabel;
+
+    /** 행동 판단 근거 */
+    private List<String> actionReasons;
+
+    /** 보수적으로 봐야 하는 이유 */
+    private List<String> actionWarnings;
+
     /* ── 지표 분해값 (HerdIndicator로부터, 없으면 null) ── */
 
     /** 주봉 RSI 백분위 정규화값 */
@@ -87,7 +111,7 @@ public class HerdScoreResponse {
      * HerdScore는 필수, HerdIndicator는 없을 수 있으므로 null 허용.
      */
     public static HerdScoreResponse of(HerdScore score, HerdIndicator indicator) {
-        return of(score, indicator, null, null, null, null, List.of(), List.of());
+        return of(score, indicator, null, null, null, null, List.of(), List.of(), null);
     }
 
     /**
@@ -102,7 +126,8 @@ public class HerdScoreResponse {
             String qualityLabel,
             String qualitySummary,
             List<String> qualityFlags,
-            List<String> qualityReasons
+            List<String> qualityReasons,
+            ActionDecision actionDecision
     ) {
         HerdScoreResponseBuilder builder = HerdScoreResponse.builder()
                 .ticker(score.getTicker())
@@ -120,6 +145,17 @@ public class HerdScoreResponse {
                 .qualitySummary(qualitySummary)
                 .qualityFlags(qualityFlags)
                 .qualityReasons(qualityReasons);
+
+        if (actionDecision != null) {
+            builder.actionScore(actionDecision.getActionScore())
+                   .actionGrade(actionDecision.getActionGrade())
+                   .actionLabel(actionDecision.getActionLabel())
+                   .actionRatio(actionDecision.getActionRatio())
+                   .actionRegime(actionDecision.getActionRegime())
+                   .actionRegimeLabel(actionDecision.getActionRegimeLabel())
+                   .actionReasons(actionDecision.getActionReasons())
+                   .actionWarnings(actionDecision.getActionWarnings());
+        }
 
         // 지표 분해값이 있는 경우에만 채움
         if (indicator != null) {

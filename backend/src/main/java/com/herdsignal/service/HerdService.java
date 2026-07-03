@@ -5,6 +5,7 @@ import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.UserPortfolio;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.herdsignal.dto.ActionDecision;
 import com.herdsignal.dto.HerdHistoryPoint;
 import com.herdsignal.dto.HerdHistoryResponse;
 import com.herdsignal.dto.HerdScoreResponse;
@@ -47,6 +48,7 @@ public class HerdService {
     private final UserPortfolioRepository portfolioRepository;
     private final HerdScoreRepository herdScoreRepository;
     private final HerdIndicatorRepository herdIndicatorRepository;
+    private final ActionDecisionService actionDecisionService;
 
     /**
      * 포트폴리오 전체 HERD 조회.
@@ -444,6 +446,7 @@ public class HerdService {
     /** HERD 점수 응답에 데이터 신뢰도 레이어를 붙인다. */
     private HerdScoreResponse buildResponse(HerdScore score, HerdIndicator indicator) {
         HerdQuality quality = calculateQuality(score, indicator);
+        ActionDecision actionDecision = actionDecisionService.decide(score, indicator, quality.score());
         return HerdScoreResponse.of(
                 score,
                 indicator,
@@ -452,7 +455,8 @@ public class HerdService {
                 quality.label(),
                 quality.summary(),
                 quality.flags(),
-                quality.reasons()
+                quality.reasons(),
+                actionDecision
         );
     }
 

@@ -706,6 +706,23 @@
   color: var(--text-2);
 }
 
+.actionWarningList {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.actionWarningList span {
+  display: block;
+  padding: 9px 11px;
+  border: 1px solid rgba(249, 115, 22, 0.24);
+  border-radius: 8px;
+  background: rgba(249, 115, 22, 0.08);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--drift);
+}
+
 /* ── 플레이스홀더 ── */
 .placeholderText {
   font-size: 13px;

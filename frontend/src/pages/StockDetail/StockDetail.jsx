@@ -194,6 +194,19 @@ function dataQualityLabel(label) {
   return label.replace('신뢰도', '데이터 품질')
 }
 
+function formatActionRatio(value) {
+  const n = Number(value ?? 0)
+  if (n <= 0) return '관찰'
+  return `${Math.round(n * 100)}%`
+}
+
+function actionTone(grade, signal) {
+  if (grade === 'STRONG_ACTION') return signal === 'SELL' ? 'var(--rush)' : 'var(--flee)'
+  if (grade === 'ACTION') return signal === 'SELL' ? 'var(--drift)' : 'var(--scatter)'
+  if (grade === 'WATCH') return 'var(--calm)'
+  return 'var(--text-3)'
+}
+
 const HERD_VALIDATION = [
   { label: '10년 MDD 개선', value: '+7.3%p', desc: 'Buy & Hold 대비 평균 최대낙폭 완화' },
   { label: '수익률 보존', value: '38.8%', desc: '장기 급등 수익 일부를 포기하고 변동성 완화' },
@@ -337,6 +350,7 @@ export default function StockDetail() {
   const color      = stageColor(herdStage)
   const sigStyle   = signalStyle(herdData?.signal)
   const qualityColor = qualityTone(herdData?.qualityLevel)
+  const actionColor = actionTone(herdData?.actionGrade, herdData?.signal)
   const holding    = portfolio.find((item) => item.ticker === ticker.toUpperCase()) ?? null
   const decision   = useMemo(() => buildDecision({
     herdData: { ...herdData, ticker: ticker.toUpperCase() },
@@ -353,8 +367,13 @@ export default function StockDetail() {
       },
       {
         label: '추천 행동',
-        value: decision.title,
-        tone: color,
+        value: herdData?.actionLabel ?? decision.title,
+        tone: actionColor,
+      },
+      {
+        label: '행동 비율',
+        value: formatActionRatio(herdData?.actionRatio),
+        tone: actionColor,
       },
       {
         label: '데이터 품질',
@@ -381,7 +400,7 @@ export default function StockDetail() {
     }
 
     return facts
-  }, [color, decision.title, financials, herdData, herdScore, holding, qualityColor, stageDisp])
+  }, [actionColor, color, decision.title, financials, herdData, herdScore, holding, qualityColor, stageDisp])
 
   /* 가격 차트 색상 — 기간 첫날 대비 마지막날 방향 */
   const priceColor = useMemo(() => {
@@ -524,19 +543,30 @@ export default function StockDetail() {
               <div className={styles.cardBody}>
                 <div className={styles.decisionHero}>
                   <div>
-                    <div className={styles.decisionLabel}>추천 행동</div>
-                    <div className={styles.decisionTitle}>{decision.title}</div>
-                    <div className={styles.decisionSubtitle}>{decision.subtitle}</div>
+                    <div className={styles.decisionLabel}>Action Layer</div>
+                    <div className={styles.decisionTitle}>
+                      {herdData.actionLabel ?? decision.title}
+                    </div>
+                    <div className={styles.decisionSubtitle}>
+                      {herdData.actionRegimeLabel ?? decision.subtitle}
+                    </div>
                   </div>
-                  <div className={styles.decisionPill} style={{ color, borderColor: color }}>
-                    {decision.priority}
+                  <div className={styles.decisionPill} style={{ color: actionColor, borderColor: actionColor }}>
+                    {formatActionRatio(herdData.actionRatio)}
                   </div>
                 </div>
                 <div className={styles.decisionList}>
-                  {decision.notes.map((note) => (
+                  {(herdData.actionReasons?.length ? herdData.actionReasons : decision.notes).map((note) => (
                     <div key={note} className={styles.decisionItem}>{note}</div>
                   ))}
                 </div>
+                {Array.isArray(herdData.actionWarnings) && herdData.actionWarnings.length > 0 && (
+                  <div className={styles.actionWarningList}>
+                    {herdData.actionWarnings.slice(0, 3).map((warning) => (
+                      <span key={warning}>{warning}</span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -762,8 +792,8 @@ export default function StockDetail() {
               </div>
               <div className={styles.cardBodySmall}>
                 <div className={styles.actionNoteList}>
-                  <p>{decision.subtitle}</p>
-                  {decision.notes.slice(0, 3).map((note) => (
+                  <p>{herdData.actionRegimeLabel ?? decision.subtitle}</p>
+                  {(herdData.actionReasons?.length ? herdData.actionReasons : decision.notes).slice(0, 3).map((note) => (
                     <span key={note}>{note}</span>
                   ))}
                 </div>
