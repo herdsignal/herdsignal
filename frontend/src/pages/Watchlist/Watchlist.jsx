@@ -12,7 +12,12 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate }   from 'react-router-dom'
-import { getWatchlistHerd, getStockHerd, removeFromWatchlist } from '../../api/herdApi'
+import {
+  getWatchlistHerd,
+  getStockHerd,
+  getSpyHerdHistory,
+  removeFromWatchlist,
+} from '../../api/herdApi'
 import HerdDots  from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import styles    from './Watchlist.module.css'
@@ -63,6 +68,17 @@ function signalStyle(signal) {
   }
 }
 
+function signalDesc(signal) {
+  switch (signal) {
+    case 'BUY':    return '적극 매수'
+    case 'ADD':    return '추가 매수 고려'
+    case 'HOLD':   return '보유 유지'
+    case 'REDUCE': return '일부 익절 고려'
+    case 'SELL':   return '적극 익절'
+    default:       return '보유 유지'
+  }
+}
+
 /** stage → 티커 배지 배경/텍스트 색 */
 function badgeStyle(stage) {
   switch (normalizeStage(stage)) {
@@ -82,6 +98,61 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
 }
 
+function scoreToColor(score) {
+  if (score == null) return 'var(--text-1)'
+  if (score < 20) return 'var(--flee)'
+  if (score < 40) return 'var(--scatter)'
+  if (score < 60) return 'var(--calm)'
+  if (score < 80) return 'var(--drift)'
+  return 'var(--rush)'
+}
+
+function scoreToStage(score) {
+  if (score == null) return null
+  if (score < 20) return 'Herd Flee'
+  if (score < 40) return 'Herd Scatter'
+  if (score < 60) return 'Herd Calm'
+  if (score < 80) return 'Herd Drift'
+  return 'Herd Rush'
+}
+
+function findScoreAt(points, targetDate) {
+  if (!points?.length) return null
+  const target = targetDate.getTime()
+  let closest = null
+  let minDiff = Infinity
+  for (const p of points) {
+    const pointTime = new Date(`${p.date}T00:00:00`).getTime()
+    if (Number.isNaN(pointTime)) continue
+    const diff = Math.abs(pointTime - target)
+    if (diff < minDiff) { minDiff = diff; closest = p }
+  }
+  return closest
+}
+
+function BannerStat({ label, point }) {
+  const stage = scoreToStage(point?.score)
+
+  return (
+    <div className={styles.bannerStatItem}>
+      <div className={styles.bannerStatLabel}>{label}</div>
+      {point && stage ? (
+        <>
+          <div className={styles.bannerStatMain}>
+            <span className={styles.bannerStatValue} style={{ color: scoreToColor(point.score) }}>
+              {Math.round(point.score)}
+            </span>
+            <span className={styles.bannerStatStage}>{stage}</span>
+          </div>
+          <div className={styles.bannerStatDesc}>{stageDesc(stage)}</div>
+        </>
+      ) : (
+        <div className={styles.bannerStatValue}>—</div>
+      )}
+    </div>
+  )
+}
+
 /* ── 컴포넌트 ─────────────────────────────── */
 
 export default function Watchlist() {
@@ -89,6 +160,7 @@ export default function Watchlist() {
 
   const [watchlist,      setWatchlist]      = useState([])
   const [spyData,        setSpyData]        = useState(null)
+  const [spyHistory,     setSpyHistory]     = useState([])
   const [loading,        setLoading]        = useState(true)
   const [refreshing,     setRefreshing]     = useState(false)
   const [error,          setError]          = useState(null)
@@ -97,6 +169,7 @@ export default function Watchlist() {
   const [deletingTicker, setDeletingTicker] = useState(null)
   /* SPY 데이터 ref 캐시 — Dashboard와 동일한 StrictMode 대응 */
   const spyDataCache = useRef(null)
+  const spyHistoryCache = useRef(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -133,8 +206,9 @@ export default function Watchlist() {
    * ref 캐시로 StrictMode 이중 실행 시 state 재설정 문제 방지.
    */
   useEffect(() => {
-    if (spyDataCache.current) {
+    if (spyDataCache.current && spyHistoryCache.current) {
       setSpyData(spyDataCache.current)
+      setSpyHistory(spyHistoryCache.current)
       return
     }
     getStockHerd('SPY')
@@ -144,6 +218,14 @@ export default function Watchlist() {
         setSpyData(data)
       })
       .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
+
+    getSpyHerdHistory('3y')
+      .then((res) => {
+        const points = res.data?.data?.points ?? []
+        spyHistoryCache.current = points
+        setSpyHistory(points)
+      })
+      .catch(() => { /* 히스토리 실패 시 우측 통계만 빈 값 유지 */ })
   }, [])
 
   /* 관심 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 */
@@ -163,6 +245,18 @@ export default function Watchlist() {
 
   const spyScore = spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
+  const ystPoint = useMemo(() => {
+    const t = new Date(); t.setDate(t.getDate() - 1)
+    return findScoreAt(spyHistory, t)
+  }, [spyHistory])
+  const m1Point = useMemo(() => {
+    const t = new Date(); t.setDate(t.getDate() - 30)
+    return findScoreAt(spyHistory, t)
+  }, [spyHistory])
+  const y1Point = useMemo(() => {
+    const t = new Date(); t.setDate(t.getDate() - 365)
+    return findScoreAt(spyHistory, t)
+  }, [spyHistory])
 
   const sortedWatchlist = useMemo(() => {
     const list = [...watchlist]
@@ -239,22 +333,9 @@ export default function Watchlist() {
         </div>
 
         <div className={styles.bannerStatsBlock}>
-          <div className={styles.bannerStatItem}>
-            <div className={styles.bannerStatLabel}>관심 종목</div>
-            <div className={styles.bannerStatValue}>{watchlist.length}</div>
-          </div>
-          <div className={styles.bannerStatItem}>
-            <div className={styles.bannerStatLabel}>평균 HERD</div>
-            <div className={styles.bannerStatValue}>
-              {watchStats.avgScore ?? '—'}
-            </div>
-          </div>
-          <div className={styles.bannerStatItem}>
-            <div className={styles.bannerStatLabel}>업데이트</div>
-            <div className={styles.bannerStatUpdate}>
-              {spyData ? formatDate(spyData.scoreDate) : '—'}
-            </div>
-          </div>
+          <BannerStat label="전날" point={ystPoint} />
+          <BannerStat label="1달 전" point={m1Point} />
+          <BannerStat label="1년 전" point={y1Point} />
         </div>
       </div>
 
@@ -374,12 +455,17 @@ export default function Watchlist() {
 
                   {/* 카드 하단: 시그널 배지만 (관심 종목은 재무 데이터 없음) */}
                   <div className={styles.cardBottom}>
-                    <span
-                      className={styles.cardSignalBadge}
-                      style={{ background: signal.bg, color: signal.color }}
-                    >
-                      {item.signal}
-                    </span>
+                    <div className={styles.cardSignalGroup}>
+                      <span
+                        className={styles.cardSignalBadge}
+                        style={{ background: signal.bg, color: signal.color }}
+                      >
+                        {item.signal}
+                      </span>
+                      <span className={styles.cardSignalDesc}>
+                        {signalDesc(item.signal)}
+                      </span>
+                    </div>
                     <span className={styles.cardUpdate}>
                       {formatDate(item.scoreDate)}
                     </span>

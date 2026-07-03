@@ -706,6 +706,20 @@
   letter-spacing: 0.04em;
 }
 
+.cardSignalGroup {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  margin-top: 5px;
+}
+
+.cardSignalDesc {
+  font-size: 10px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
 .cardPriceInfo {
   display: flex;
   align-items: center;

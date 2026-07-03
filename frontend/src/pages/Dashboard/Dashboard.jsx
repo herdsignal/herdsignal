@@ -141,6 +141,17 @@ function signalStyle(signal) {
   }
 }
 
+function signalDesc(signal) {
+  switch (signal) {
+    case 'BUY':    return '적극 매수'
+    case 'ADD':    return '추가 매수 고려'
+    case 'HOLD':   return '보유 유지'
+    case 'REDUCE': return '일부 익절 고려'
+    case 'SELL':   return '적극 익절'
+    default:       return '보유 유지'
+  }
+}
+
 /** stage → 티커 배지 배경·텍스트 색 */
 function badgeStyle(stage) {
   switch (normalizeStage(stage)) {
@@ -923,12 +934,17 @@ export default function Dashboard() {
                           </div>
                           <div className={styles.cardHerdStage}>{stageName}</div>
                           {/* 시그널 배지 — HERD 점수와 의미상 연결되어 같은 블록에 배치 */}
-                          <span
-                            className={styles.cardSignalBadge}
-                            style={{ background: signal.bg, color: signal.color }}
-                          >
-                            {herd.signal}
-                          </span>
+                          <div className={styles.cardSignalGroup}>
+                            <span
+                              className={styles.cardSignalBadge}
+                              style={{ background: signal.bg, color: signal.color }}
+                            >
+                              {herd.signal}
+                            </span>
+                            <span className={styles.cardSignalDesc}>
+                              {signalDesc(herd.signal)}
+                            </span>
+                          </div>
                         </>
                       ) : (
                         <span className={styles.cardDash}>—</span>

@@ -188,6 +188,30 @@
   letter-spacing: -0.5px;
 }
 
+.bannerStatMain {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+
+.bannerStatStage {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+.bannerStatDesc {
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--text-3);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
 .bannerStatUpdate {
   font-size: 13px;
   color: var(--text-3);
@@ -403,6 +427,19 @@
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.04em;
+}
+
+.cardSignalGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cardSignalDesc {
+  font-size: 11px;
+  color: var(--text-2);
+  white-space: nowrap;
 }
 
 .cardUpdate {
