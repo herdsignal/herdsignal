@@ -151,6 +151,17 @@ CACHE_DAYS = int(os.getenv("CACHE_DAYS", "7"))
 
 
 # ──────────────────────────────────────────────
+# HERD 히스토리 백필 설정
+# ──────────────────────────────────────────────
+# StockDetail/Dashboard의 HERD Index 히스토리 차트에 사용할 과거 점수 생성 설정.
+# 과거 시점별 EPS/섹터 승수는 무료 API로 안정적 복원이 어려워 백필에서는
+# 기본값 1.0을 사용하고, 운영 최신 점수는 기존 v4 계산 결과를 유지한다.
+HERD_BACKFILL_YEARS = int(os.getenv("HERD_BACKFILL_YEARS", "3"))
+HERD_BACKFILL_FREQ = os.getenv("HERD_BACKFILL_FREQ", "weekly").lower()
+HERD_BACKFILL_SOURCE_PERIOD = os.getenv("HERD_BACKFILL_SOURCE_PERIOD", "10y")
+
+
+# ──────────────────────────────────────────────
 # 스케줄러 실행 시간 (미국 동부시간 ET 기준)
 # 미국 주식시장 마감: ET 16:00 → 30분 후 16:30 실행
 # 여름(EDT, UTC-4) → 한국시간 다음날 05:30 KST

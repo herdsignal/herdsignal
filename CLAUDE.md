@@ -120,6 +120,10 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - Tier 1: 매일 16:30 ET 자동 계산 (user_portfolio + user_watchlist + SPY)
   - Tier 2: on-demand 계산 + 7일 캐시 (검색·상세 조회 시)
   - Tier 3: yfinance 실시간 포트폴리오 평가 + portfolio_history UPSERT
+- HERD 히스토리 백필 (`data/herd/history_backfill.py`)
+  - StockDetail/Dashboard HERD 히스토리 차트용 과거 점수 생성
+  - 기본 대상: 포트폴리오 + 관심종목 + SPY (`--all-stocks` 명시 시 stocks 활성 종목 포함)
+  - 과거 EPS/섹터 승수는 1.0으로 저장해 미래 데이터 누수를 피함
 - 백테스트 코드 (backtest_v3.py, backtest_v4.py 기반)
 
 **backend/**
