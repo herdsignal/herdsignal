@@ -439,11 +439,51 @@
 
 /* Timeline 탭 */
 .bannerTimeline {
+  position: relative;
   flex: 1;
   padding: 46px 16px 8px 8px;
   display: flex;
   align-items: center;
   background: var(--surface2);
+}
+
+.bannerPeriodTabs {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+}
+
+.bannerPeriodTab {
+  min-width: 34px;
+  height: 24px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.02);
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.bannerPeriodTab:hover {
+  color: var(--text-1);
+  border-color: var(--text-3);
+}
+
+.bannerPeriodTabActive {
+  border-color: var(--text-1);
+  background: var(--text-1);
+  color: var(--bg);
+}
+
+.bannerPeriodTabActive:hover {
+  color: var(--bg);
 }
 
 .bannerTimelineEmpty {

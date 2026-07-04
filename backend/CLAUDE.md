@@ -29,7 +29,7 @@ GET    /api/stocks/{ticker}/prices            종목 가격 히스토리 조회
 GET    /api/stocks/{ticker}/news              종목 뉴스 조회 (Finnhub)
 GET    /api/stocks/{ticker}/analyst           애널리스트 컨센서스 조회 (Finnhub)
 GET    /api/stocks/{ticker}/insider           내부자 거래 조회 (Finnhub)
-GET    /api/stocks/{ticker}/herd/history      종목 HERD 히스토리 조회
+GET    /api/stocks/{ticker}/herd/history      종목 HERD 히스토리 조회 (period=1m|3m|1y|3y)
 GET    /api/portfolio/herd                    포트폴리오 전체 HERD 조회
 POST   /api/portfolio/herd/refresh            포트폴리오 전체 HERD 강제 재계산 후 조회
 

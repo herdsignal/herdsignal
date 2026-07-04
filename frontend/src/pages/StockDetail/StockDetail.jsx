@@ -90,7 +90,7 @@ const FINANCE_ITEMS = [
 
 const HISTORY_PERIODS = [
   { value: '1m', label: '1M' },
-  { value: '6m', label: '6M' },
+  { value: '3m', label: '3M' },
   { value: '1y', label: '1Y' },
   { value: '3y', label: '3Y' },
 ]

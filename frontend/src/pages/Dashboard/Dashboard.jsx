@@ -55,6 +55,13 @@ const CACHE_KEY_SPY         = 'hs_spy_herd'
 const CACHE_KEY_SPY_HISTORY = 'hs_spy_history'
 const CACHE_KEY_TIME        = 'hs_cache_time'
 
+const HISTORY_PERIODS = [
+  { value: '1m', label: '1M' },
+  { value: '3m', label: '3M' },
+  { value: '1y', label: '1Y' },
+  { value: '3y', label: '3Y' },
+]
+
 /** localStorage에서 JSON 파싱. 실패 시 null 반환 */
 function readCache(key) {
   try {
@@ -70,6 +77,10 @@ function writeCache(key, data) {
   try {
     localStorage.setItem(key, JSON.stringify(data))
   } catch { /* 용량 초과 등 무시 */ }
+}
+
+function spyHistoryCacheKey(period) {
+  return `${CACHE_KEY_SPY_HISTORY}_${period}`
 }
 
 /** backend camelCase / Python snake_case 포트폴리오 요약을 화면 모델(snake_case)로 통일 */
@@ -337,13 +348,16 @@ export default function Dashboard() {
   const [herdMap,        setHerdMap]        = useState({})
   const [spyData,        setSpyData]        = useState(null)
   const [spyHistory,     setSpyHistory]     = useState([])
+  const [spyStatsHistory, setSpyStatsHistory] = useState([])
+  const [spyHistoryPeriod, setSpyHistoryPeriod] = useState('3y')
+  const [spyHistoryLoading, setSpyHistoryLoading] = useState(false)
   const [spyTab,         setSpyTab]         = useState('overview')
   /*
    * SPY 데이터 ref 캐시 — React 18 Strict Mode가 effect를 cleanup → 재실행할 때
    * state는 초기화되지만 ref는 유지된다. 두 번째 실행에서 ref 값을 즉시 state에 반영.
    */
   const spyDataCache    = useRef(null)
-  const spyHistoryCache = useRef(null)
+  const spyHistoryCache = useRef({})
   const [loading,        setLoading]        = useState(true)
   const [error,          setError]          = useState(null)
   const [modalTicker,    setModalTicker]    = useState(null)
@@ -441,19 +455,26 @@ export default function Dashboard() {
   /*
    * SPY 배너 — 포트폴리오 로딩과 완전히 분리.
    * ref 캐시(Strict Mode 대응) → localStorage 캐시 → API 호출 순서로 처리.
-   * HERD 점수 + 3년 히스토리 동시 로딩.
+   * HERD 점수 + 선택 기간 히스토리 동시 로딩.
+   * Overview 통계는 1년 전 비교가 필요하므로 3Y 히스토리를 기준 데이터로 유지한다.
    */
   useEffect(() => {
-    const herdCached    = spyDataCache.current    ?? readCache(CACHE_KEY_SPY)
-    const historyCached = spyHistoryCache.current ?? readCache(CACHE_KEY_SPY_HISTORY)
+    const historyKey = spyHistoryCacheKey(spyHistoryPeriod)
+    const herdCached = spyDataCache.current ?? readCache(CACHE_KEY_SPY)
+    const historyCached =
+      spyHistoryCache.current[spyHistoryPeriod] ??
+      readCache(historyKey) ??
+      (spyHistoryPeriod === '3y' ? readCache(CACHE_KEY_SPY_HISTORY) : null)
 
     if (herdCached) {
       spyDataCache.current = herdCached
       setSpyData(herdCached)
     }
     if (historyCached) {
-      spyHistoryCache.current = historyCached
+      spyHistoryCache.current[spyHistoryPeriod] = historyCached
       setSpyHistory(historyCached)
+      setSpyHistoryLoading(false)
+      if (spyHistoryPeriod === '3y') setSpyStatsHistory(historyCached)
     }
 
     if (herdCached && historyCached) return
@@ -470,16 +491,23 @@ export default function Dashboard() {
     }
 
     if (!historyCached) {
-      getSpyHerdHistory('3y')
+      setSpyHistoryLoading(true)
+      setSpyHistory([])
+      getSpyHerdHistory(spyHistoryPeriod)
         .then((res) => {
           const points = res.data?.data?.points ?? []
-          spyHistoryCache.current = points
+          spyHistoryCache.current[spyHistoryPeriod] = points
           setSpyHistory(points)
-          writeCache(CACHE_KEY_SPY_HISTORY, points)
+          writeCache(historyKey, points)
+          if (spyHistoryPeriod === '3y') {
+            setSpyStatsHistory(points)
+            writeCache(CACHE_KEY_SPY_HISTORY, points)
+          }
         })
         .catch(() => { /* 히스토리 실패 시 Timeline 탭 빈 상태 유지 */ })
+        .finally(() => { setSpyHistoryLoading(false) })
     }
-  }, [herdMap])
+  }, [spyHistoryPeriod])
 
   /* USD/KRW 환율 — 마운트 시 1회 조회 */
   useEffect(() => {
@@ -602,16 +630,16 @@ export default function Dashboard() {
   /* 히스토리 기준 통계 포인트 (Overview 탭) */
   const ystPoint = useMemo(() => {
     const t = new Date(); t.setDate(t.getDate() - 1)
-    return findScoreAt(spyHistory, t)
-  }, [spyHistory])
+    return findScoreAt(spyStatsHistory, t)
+  }, [spyStatsHistory])
   const m1Point = useMemo(() => {
     const t = new Date(); t.setDate(t.getDate() - 30)
-    return findScoreAt(spyHistory, t)
-  }, [spyHistory])
+    return findScoreAt(spyStatsHistory, t)
+  }, [spyStatsHistory])
   const y1Point = useMemo(() => {
     const t = new Date(); t.setDate(t.getDate() - 365)
-    return findScoreAt(spyHistory, t)
-  }, [spyHistory])
+    return findScoreAt(spyStatsHistory, t)
+  }, [spyStatsHistory])
 
   /*
    * 모달 저장 완료 → 로컬 상태 즉시 업데이트 + localStorage 캐시 갱신.
@@ -775,7 +803,20 @@ export default function Dashboard() {
           {/* Timeline 탭 */}
           {spyTab === 'timeline' && (
             <div className={styles.bannerTimeline}>
-              {spyHistory.length === 0 ? (
+              <div className={styles.bannerPeriodTabs}>
+                {HISTORY_PERIODS.map((p) => (
+                  <button
+                    key={p.value}
+                    className={`${styles.bannerPeriodTab} ${spyHistoryPeriod === p.value ? styles.bannerPeriodTabActive : ''}`}
+                    onClick={() => setSpyHistoryPeriod(p.value)}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+              {spyHistoryLoading ? (
+                <div className={styles.bannerTimelineEmpty}>로딩 중…</div>
+              ) : spyHistory.length === 0 ? (
                 <div className={styles.bannerTimelineEmpty}>데이터 없음</div>
               ) : (
                 <HerdHistoryChart
