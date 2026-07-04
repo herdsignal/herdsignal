@@ -53,6 +53,7 @@ const CACHE_KEY_REALTIME    = 'hs_portfolio_realtime'
 const CACHE_KEY_HERD        = 'hs_portfolio_herd'
 const CACHE_KEY_SPY         = 'hs_spy_herd'
 const CACHE_KEY_SPY_HISTORY = 'hs_spy_history'
+const CACHE_KEY_SPY_HISTORY_VERSION = 'v2'
 const CACHE_KEY_TIME        = 'hs_cache_time'
 
 const HISTORY_PERIODS = [
@@ -80,7 +81,21 @@ function writeCache(key, data) {
 }
 
 function spyHistoryCacheKey(period) {
-  return `${CACHE_KEY_SPY_HISTORY}_${period}`
+  return `${CACHE_KEY_SPY_HISTORY}_${period}_${CACHE_KEY_SPY_HISTORY_VERSION}`
+}
+
+function minSpyHistoryPoints(period) {
+  switch (period) {
+    case '1m': return 4
+    case '3m': return 8
+    case '1y': return 20
+    case '3y': return 50
+    default: return 4
+  }
+}
+
+function isUsableSpyHistoryCache(period, points) {
+  return Array.isArray(points) && points.length >= minSpyHistoryPoints(period)
 }
 
 /** backend camelCase / Python snake_case 포트폴리오 요약을 화면 모델(snake_case)로 통일 */
@@ -463,10 +478,9 @@ export default function Dashboard() {
     const herdCached = spyDataCache.current ?? readCache(CACHE_KEY_SPY)
     const rawHistoryCached =
       spyHistoryCache.current[spyHistoryPeriod] ??
-      readCache(historyKey) ??
-      (spyHistoryPeriod === '3y' ? readCache(CACHE_KEY_SPY_HISTORY) : null)
+      readCache(historyKey)
     const historyCached =
-      Array.isArray(rawHistoryCached) && rawHistoryCached.length === 0 ? null : rawHistoryCached
+      isUsableSpyHistoryCache(spyHistoryPeriod, rawHistoryCached) ? rawHistoryCached : null
 
     if (herdCached) {
       spyDataCache.current = herdCached
@@ -503,7 +517,6 @@ export default function Dashboard() {
           writeCache(historyKey, points)
           if (spyHistoryPeriod === '3y') {
             setSpyStatsHistory(points)
-            writeCache(CACHE_KEY_SPY_HISTORY, points)
           }
         })
         .catch(() => { /* 히스토리 실패 시 Timeline 탭 빈 상태 유지 */ })
