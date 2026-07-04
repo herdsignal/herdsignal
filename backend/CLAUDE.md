@@ -1,6 +1,6 @@
 # backend/ — Spring Boot REST API
 
-최종 업데이트: 2026-07-03
+최종 업데이트: 2026-07-05
 
 ## 이 폴더의 역할
 MariaDB에 저장된 HERD Index 데이터를 React에 서빙.
@@ -74,6 +74,9 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - WatchlistService
   - 관심 종목 CRUD
   - HerdService를 재사용한 관심 종목 HERD 조회
+- TickerReadinessService
+  - 포트폴리오/관심종목 추가 전 티커 형식과 HERD 데이터 준비 여부 검증
+  - HERD 점수가 없는 심볼은 저장하지 않아 백필/스케줄러 대상 오염을 방지
 - FinancialsService
   - Python stock_info_collector.get_stock_financials(ticker) 호출
   - 종목 재무정보 반환 (ProcessBuilder, 티커 정규식 검증 포함)
@@ -104,6 +107,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 ## 예외 처리
 - `ResourceNotFoundException` → HTTP 404
 - `DuplicateResourceException` → HTTP 409
+- `IllegalArgumentException` → HTTP 400
 - 기타 예외 → HTTP 500
 - 모든 예외 응답은 `ApiResponse` 형태로 통일한다.
 

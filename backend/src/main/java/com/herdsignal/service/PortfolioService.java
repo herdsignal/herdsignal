@@ -48,6 +48,7 @@ public class PortfolioService {
     private final UserPortfolioRepository     portfolioRepository;
     private final PortfolioHistoryRepository  historyRepository;
     private final DailyPriceRepository        dailyPriceRepository;
+    private final TickerReadinessService      tickerReadinessService;
 
     // ──────────────────────────────────────────────
     // 기존 CRUD 메서드
@@ -60,7 +61,7 @@ public class PortfolioService {
      */
     @Transactional
     public void addStock(String userId, PortfolioAddRequest request) {
-        String ticker = request.getTicker().toUpperCase();
+        String ticker = tickerReadinessService.normalizeAndValidate(request.getTicker());
 
         if (portfolioRepository.existsByUserIdAndTicker(userId, ticker)) {
             throw new com.herdsignal.exception.DuplicateResourceException(

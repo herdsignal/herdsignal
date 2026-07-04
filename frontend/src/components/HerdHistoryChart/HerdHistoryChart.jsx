@@ -41,6 +41,42 @@ function formatAxisDate(dateStr, compact) {
   return `${String(d.getFullYear()).slice(2)}.${String(d.getMonth() + 1).padStart(2, '0')}`
 }
 
+function formatScore(value) {
+  if (value == null || Number.isNaN(value)) return '—'
+  return Math.round(value)
+}
+
+function formatDelta(value) {
+  if (value == null || Number.isNaN(value)) return '—'
+  const rounded = Math.round(value)
+  if (rounded > 0) return `+${rounded}`
+  return `${rounded}`
+}
+
+function buildHistorySummary(points, current) {
+  const scores = points
+    .map((point) => Number(point.score))
+    .filter((score) => Number.isFinite(score))
+
+  if (!scores.length || current == null) return null
+
+  const min = Math.min(...scores)
+  const max = Math.max(...scores)
+  const average = scores.reduce((sum, score) => sum + score, 0) / scores.length
+  const first = scores[0]
+  const currentNumber = Number(current)
+  const percentile = scores.length > 1
+    ? (scores.filter((score) => score <= currentNumber).length / scores.length) * 100
+    : null
+
+  return {
+    percentile,
+    delta: currentNumber - first,
+    average,
+    range: `${formatScore(min)}-${formatScore(max)}`,
+  }
+}
+
 function TooltipContent({ active, payload, label }) {
   if (!active || !payload?.length) return null
   const score = payload[0]?.value
@@ -74,6 +110,7 @@ export default function HerdHistoryChart({
   const hasSparseHistory = points.length > 0 && points.length < 4
   const current = currentScore ?? points[points.length - 1]?.score ?? null
   const stroke = scoreColor(current)
+  const summary = buildHistorySummary(points, current)
 
   if (!hasHistory) {
     return (
@@ -89,6 +126,28 @@ export default function HerdHistoryChart({
       {hasSparseHistory && (
         <div className={styles.sparseBadge}>
           이력 {points.length}개 · 백필 후 장기 히스토리 표시
+        </div>
+      )}
+      {!compact && summary && (
+        <div className={styles.summary}>
+          <div className={styles.summaryItem}>
+            <span>현재 위치</span>
+            <strong>{summary.percentile == null ? '—' : `${Math.round(summary.percentile)}%`}</strong>
+          </div>
+          <div className={styles.summaryItem}>
+            <span>기간 변화</span>
+            <strong className={summary.delta > 0 ? styles.deltaUp : summary.delta < 0 ? styles.deltaDown : ''}>
+              {formatDelta(summary.delta)}
+            </strong>
+          </div>
+          <div className={styles.summaryItem}>
+            <span>평균</span>
+            <strong>{formatScore(summary.average)}</strong>
+          </div>
+          <div className={styles.summaryItem}>
+            <span>범위</span>
+            <strong>{summary.range}</strong>
+          </div>
         </div>
       )}
       <ResponsiveContainer width="100%" height={height}>

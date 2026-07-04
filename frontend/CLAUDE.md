@@ -1,6 +1,6 @@
 # frontend/ — React 대시보드
 
-최종 업데이트: 2026-07-03
+최종 업데이트: 2026-07-05
 
 ## 이 폴더의 역할
 Spring Boot API를 호출해서 HERD Index 데이터를 시각화.
@@ -50,7 +50,7 @@ Rush    #EF4444  (레드)
 
 ## 핵심 UI 컴포넌트
 - HerdDots: Herd Flow 점 애니메이션 (Flee=전 영역 듬성듬성 분산, Scatter=작은 군집들이 깨져 흩어짐, Calm=중앙 균형, Drift=오른쪽 쏠림, Rush=좁은 군중 밀집)
-- HerdHistoryChart: HERD 점수 히스토리 공용 차트 (Flee~Rush 구간 배경, 현재 점수 기준선, 이력 부족 배지)
+- HerdHistoryChart: HERD 점수 히스토리 공용 차트 (Flee~Rush 구간 배경, 현재 점수 기준선, 현재 위치/기간 변화/평균/범위 데이터 보드, 이력 부족 배지)
 - SpectrumBar: Flee~Rush 스펙트럼 바
 - Layout: 공통 사이드바 + 페이지 Outlet
 - AvgPriceModal: 평균 매수가·수량 수정 모달
@@ -85,6 +85,7 @@ Rush    #EF4444  (레드)
   - 대표 종목 티커/종목명 로컬 매칭 fallback
   - HERD 미리보기
   - 검색 결과 HERD 준비 상태 표시 (`HERD 준비됨` / `계산 필요` / `데이터 부족`)
+  - `계산 필요` 상태는 포트폴리오/관심종목 추가 버튼을 비활성화한다.
   - 최근 검색 localStorage 저장
   - 포트폴리오/관심종목 중복 상태 표시
   - 포트폴리오 추가 후 평단가·수량 입력 모달 연결
@@ -127,7 +128,7 @@ Rush    #EF4444  (레드)
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
 - Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 사용하며, frontend에서는 actionScore를 `강도`로 표시하고 별도 행동 점수 계산을 하지 않는다.
-- Search에서 포트폴리오 추가 성공 시 Dashboard localStorage 캐시(`hs_portfolio_realtime`, `hs_portfolio_herd`, `hs_cache_time`)를 비우고 평단가·수량 입력 모달을 연다.
+- Search에서 포트폴리오/관심종목 추가는 HERD 데이터가 준비된 종목만 허용한다. 포트폴리오 추가 성공 시 Dashboard localStorage 캐시(`hs_portfolio_realtime`, `hs_portfolio_herd`, `hs_cache_time`)를 비우고 평단가·수량 입력 모달을 연다.
 - Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 하루 경계는 backend에서 KST 22:30 기준으로 계산한다.
 - Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.
 - Dashboard/Watchlist의 SPY 배너에서 SPY 종가, 1개월 수익률은 아직 `—` placeholder.

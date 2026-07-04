@@ -246,6 +246,7 @@ def backfill_many(
 ) -> dict[str, tuple[int, int, int]]:
     """여러 티커를 순차 백필한다."""
     result: dict[str, tuple[int, int, int]] = {}
+    failed_tickers: list[str] = []
     for ticker in tickers:
         try:
             result[ticker] = backfill_ticker(
@@ -257,8 +258,11 @@ def backfill_many(
                 dry_run=dry_run,
             )
         except Exception as e:
-            logger.error(f"[{ticker}] 백필 전체 실패: {e}", exc_info=True)
+            failed_tickers.append(ticker)
+            logger.warning(f"[{ticker}] 백필 건너뜀: {e}")
             result[ticker] = (0, 0, 1)
+    if failed_tickers:
+        logger.warning(f"백필 실패 티커 {len(failed_tickers)}개: {failed_tickers}")
     return result
 
 

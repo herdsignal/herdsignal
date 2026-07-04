@@ -194,6 +194,7 @@ export default function Search() {
   /* 드롭다운 추가 버튼 상태 */
   const [portfolioStatus, setPortfolioStatus] = useState('idle')
   const [watchlistStatus, setWatchlistStatus] = useState('idle')
+  const [addError, setAddError] = useState('')
 
   /* 최근 검색 (localStorage에서 초기값 로드) */
   const [recentSearches, setRecentSearches] = useState(loadRecent)
@@ -302,11 +303,13 @@ export default function Search() {
     const ticker = searchResult?.data?.ticker ?? searchResult?.candidate?.ticker
     setPortfolioStatus(ticker && portfolioTickers.has(ticker) ? 'exists' : 'idle')
     setWatchlistStatus(ticker && watchlistTickers.has(ticker) ? 'exists' : 'idle')
+    setAddError('')
   }, [searchResult?.data?.ticker, searchResult?.candidate?.ticker, portfolioTickers, watchlistTickers])
 
   /* ── 추가 버튼 핸들러 ── */
   async function handleAddPortfolio(ticker) {
     if (portfolioStatus !== 'idle') return
+    setAddError('')
     setPortfolioStatus('loading')
     try {
       await addToPortfolio(ticker)
@@ -316,11 +319,15 @@ export default function Search() {
       setModalTicker(ticker)
     } catch (e) {
       setPortfolioStatus(e.response?.status === 409 ? 'exists' : 'idle')
+      if (e.response?.status !== 409) {
+        setAddError(e.response?.data?.message ?? '종목을 추가할 수 없습니다.')
+      }
     }
   }
 
   async function handleAddWatchlist(ticker) {
     if (watchlistStatus !== 'idle') return
+    setAddError('')
     setWatchlistStatus('loading')
     try {
       await addToWatchlist(ticker)
@@ -328,6 +335,9 @@ export default function Search() {
       setWatchlistTickers(prev => new Set([...prev, ticker]))
     } catch (e) {
       setWatchlistStatus(e.response?.status === 409 ? 'exists' : 'idle')
+      if (e.response?.status !== 409) {
+        setAddError(e.response?.data?.message ?? '종목을 추가할 수 없습니다.')
+      }
     }
   }
 
@@ -396,24 +406,16 @@ export default function Search() {
               <div className={styles.resultHerdDesc}>{readiness.desc}</div>
             </div>
             <button
-              className={`${styles.resultAddBtn} ${
-                portfolioStatus === 'added' || portfolioStatus === 'exists'
-                  ? styles.resultAddBtnDone : ''
-              }`}
-              onClick={() => handleAddPortfolio(d.ticker)}
-              disabled={portfolioStatus === 'loading'}
+              className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`}
+              disabled
             >
-              {addBtnLabel(portfolioStatus, '+ 포트폴리오')}
+              HERD 필요
             </button>
             <button
-              className={`${styles.resultAddBtn} ${
-                watchlistStatus === 'added' || watchlistStatus === 'exists'
-                  ? styles.resultAddBtnDone : ''
-              }`}
-              onClick={() => handleAddWatchlist(d.ticker)}
-              disabled={watchlistStatus === 'loading'}
+              className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`}
+              disabled
             >
-              {addBtnLabel(watchlistStatus, '+ 관심종목')}
+              HERD 필요
             </button>
           </div>
         </div>
@@ -481,6 +483,7 @@ export default function Search() {
           >
             {addBtnLabel(watchlistStatus, '+ 관심종목')}
           </button>
+          {addError && <div className={styles.resultError}>{addError}</div>}
         </div>
       </div>
     )

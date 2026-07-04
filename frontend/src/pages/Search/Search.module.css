@@ -126,6 +126,7 @@
 
 /* 검색 결과 행 */
 .searchResultItem {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -251,6 +252,12 @@
 }
 .resultAddBtn:disabled { opacity: 0.6; cursor: default; }
 
+.resultAddBtnBlocked {
+  border-color: rgba(249, 115, 22, 0.2);
+  background: rgba(249, 115, 22, 0.08);
+  color: var(--drift);
+}
+
 /* 추가 완료 상태 */
 .resultAddBtnDone {
   background: rgba(34, 197, 94, 0.1);
@@ -261,6 +268,14 @@
   background: rgba(34, 197, 94, 0.15);
   color: #22C55E;
   border-color: rgba(34, 197, 94, 0.3);
+}
+
+.resultError {
+  max-width: 180px;
+  color: var(--rush);
+  font-size: 10px;
+  line-height: 1.35;
+  text-align: right;
 }
 
 /* ── 섹션 라벨 ── */

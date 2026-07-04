@@ -39,6 +39,46 @@
   line-height: 1;
 }
 
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.summaryItem {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 9px 10px;
+}
+
+.summaryItem span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.summaryItem strong {
+  display: block;
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.deltaUp {
+  color: var(--drift) !important;
+}
+
+.deltaDown {
+  color: var(--flee) !important;
+}
+
 .legend {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -46,6 +86,12 @@
   margin-top: -2px;
   font-size: 10px;
   color: var(--text-3);
+}
+
+@media (max-width: 720px) {
+  .summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .legend span {

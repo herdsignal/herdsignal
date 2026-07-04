@@ -36,6 +36,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 잘못된 요청 값 → HTTP 400.
+     * 티커 형식 오류, HERD 미준비 종목 추가 시도 등을 클라이언트에 명확히 반환.
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.fail(e.getMessage()));
+    }
+
+    /**
      * 나머지 모든 예외 → HTTP 500.
      * 예상치 못한 서버 오류를 클라이언트에게 안전하게 반환.
      */
