@@ -461,10 +461,12 @@ export default function Dashboard() {
   useEffect(() => {
     const historyKey = spyHistoryCacheKey(spyHistoryPeriod)
     const herdCached = spyDataCache.current ?? readCache(CACHE_KEY_SPY)
-    const historyCached =
+    const rawHistoryCached =
       spyHistoryCache.current[spyHistoryPeriod] ??
       readCache(historyKey) ??
       (spyHistoryPeriod === '3y' ? readCache(CACHE_KEY_SPY_HISTORY) : null)
+    const historyCached =
+      Array.isArray(rawHistoryCached) && rawHistoryCached.length === 0 ? null : rawHistoryCached
 
     if (herdCached) {
       spyDataCache.current = herdCached
