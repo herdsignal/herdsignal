@@ -4,7 +4,8 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(6, 10, 16, 0.68);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,13 +20,16 @@
 
 /* 모달 카드 */
 .modal {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(23, 30, 43, 0.98) 0%, rgba(16, 22, 32, 0.98) 100%),
+    var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
   width: 360px;
   max-width: 90vw;
   animation: slideUp 0.18s ease;
   overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
 }
 
 @keyframes slideUp {
@@ -45,8 +49,8 @@
 .title {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
+  font-weight: 700;
+  letter-spacing: 0;
   color: var(--text-1);
 }
 
@@ -55,19 +59,20 @@
 }
 
 .closeBtn {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
   color: var(--text-3);
   font-size: 14px;
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  transition: color var(--t-fast), background var(--t-fast);
+  padding: 5px 7px;
+  border-radius: 6px;
+  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
   font-family: 'Inter', sans-serif;
 }
 .closeBtn:hover {
   color: var(--text-2);
   background: var(--surface2);
+  border-color: var(--border);
 }
 
 /* ── 본문 ── */
@@ -86,8 +91,8 @@
 
 .fieldLabel {
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--text-3);
 }
@@ -95,13 +100,13 @@
 .input {
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--card-radius);
   padding: 10px 14px;
   font-size: 14px;
   font-family: 'Inter', sans-serif;
   color: var(--text-1);
   outline: none;
-  transition: border-color var(--t-fast);
+  transition: background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
   /* 숫자 스핀 버튼 숨기기 */
   -moz-appearance: textfield;
 }
@@ -110,7 +115,9 @@
   -webkit-appearance: none;
 }
 .input:focus {
+  background: rgba(59, 130, 246, 0.06);
   border-color: var(--flee);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
 
 .errorMsg {
@@ -119,7 +126,8 @@
   line-height: 1.5;
   padding: 8px 12px;
   background: rgba(239, 68, 68, 0.08);
-  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  border-radius: var(--card-radius);
 }
 
 /* ── 푸터 ── */
@@ -133,17 +141,18 @@
 .cancelBtn {
   flex: 1;
   padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border2);
-  background: none;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.025);
   color: var(--text-2);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
-  transition: border-color var(--t-fast), color var(--t-fast);
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
 }
 .cancelBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--text-3);
   color: var(--text-1);
 }
@@ -152,15 +161,15 @@
 .saveBtn {
   flex: 2;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: var(--card-radius);
   border: none;
-  background: var(--text-1);
-  color: var(--bg);
+  background: var(--flee);
+  color: white;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
-  transition: opacity var(--t-fast);
+  transition: background var(--t-fast), opacity var(--t-fast);
 }
-.saveBtn:hover:not(:disabled) { opacity: 0.85; }
+.saveBtn:hover:not(:disabled) { background: #2563eb; }
 .saveBtn:disabled { opacity: 0.4; cursor: default; }

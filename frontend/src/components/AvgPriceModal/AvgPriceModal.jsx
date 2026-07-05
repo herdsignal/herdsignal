@@ -43,9 +43,7 @@ export default function AvgPriceModal({
       await updateAvgPrice(ticker, avg, qty)
       /* 저장된 값을 부모에 전달 → 부모가 로컬 상태 즉시 업데이트 */
       onSaved(avg, qty)
-    } catch (e) {
-      /* 진단용 — 원인 파악 후 제거 */
-      console.error('[AvgPriceModal] 저장 에러:', e)
+    } catch {
       setError('저장 중 오류가 발생했습니다. 다시 시도해주세요.')
     } finally {
       setSaving(false)
@@ -73,7 +71,13 @@ export default function AvgPriceModal({
             {/* 기존 평단가 여부에 따라 제목 구분 */}
             {currentAvgPrice != null ? ' 평단가 수정' : ' 평단가 입력'}
           </span>
-          <button className={styles.closeBtn} onClick={onClose}>✕</button>
+          <button
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="모달 닫기"
+          >
+            ✕
+          </button>
         </div>
 
         {/* 입력 필드 */}

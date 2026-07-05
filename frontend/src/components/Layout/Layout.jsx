@@ -43,7 +43,7 @@ export default function Layout() {
               `${styles.navItem} ${isActive ? styles.active : ''}`
             }
           >
-            관심 종목
+            매수 대기열
           </NavLink>
         </nav>
 
@@ -74,7 +74,7 @@ export default function Layout() {
             className={styles.themeBtn}
             onClick={() => setIsDark((d) => !d)}
           >
-            {isDark ? '☀ 라이트 모드' : '● 다크 모드'}
+            {isDark ? '라이트 모드' : '다크 모드'}
           </button>
         </div>
       </aside>

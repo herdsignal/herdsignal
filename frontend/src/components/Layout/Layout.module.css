@@ -32,7 +32,9 @@
 /* ── 사이드바 ── */
 .sidebar {
   width: var(--sidebar);
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, rgba(24, 32, 45, 0.96) 0%, rgba(14, 19, 28, 0.98) 100%),
+    var(--surface);
   border-right: 1px solid var(--border);
   position: fixed;
   top: 0;
@@ -42,7 +44,8 @@
   flex-direction: column;
   padding: 28px 20px;
   z-index: 10;
-  transition: background var(--t-base), border-color var(--t-base);
+  box-shadow: 18px 0 42px rgba(0, 0, 0, 0.16);
+  transition: background var(--t-base), border-color var(--t-base), box-shadow var(--t-base);
 }
 
 /* 로고 */
@@ -67,8 +70,8 @@
 
 .navLabel {
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--text-3);
   padding: 0 4px;
@@ -78,23 +81,27 @@
 .navItem {
   display: flex;
   align-items: center;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--card-radius);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-2);
   cursor: pointer;
-  margin-bottom: 1px;
-  transition: background var(--t-fast), color var(--t-fast);
+  margin-bottom: 3px;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
 }
 .navItem:hover {
-  background: var(--surface2);
+  background: rgba(255, 255, 255, 0.035);
+  border-color: var(--border);
   color: var(--text-1);
 }
 .active {
-  background: var(--surface2);
+  background: rgba(59, 130, 246, 0.11);
+  border-color: rgba(59, 130, 246, 0.28);
+  box-shadow: inset 3px 0 0 var(--flee);
   color: var(--text-1);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 /* 하단 테마 버튼 */
@@ -105,24 +112,26 @@
 .themeBtn {
   width: 100%;
   text-align: left;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 9px 10px;
+  border-radius: var(--card-radius);
   font-size: 12px;
   color: var(--text-3);
   cursor: pointer;
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border);
   font-family: 'Inter', sans-serif;
-  transition: color var(--t-fast);
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
 }
 .themeBtn:hover {
-  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border2);
+  color: var(--text-1);
 }
 
 /* ── 메인 콘텐츠 ── */
 .main {
   margin-left: var(--sidebar);
   flex: 1;
-  padding: 40px 56px;
+  padding: 40px 56px 56px;
   min-width: 0;
 }
