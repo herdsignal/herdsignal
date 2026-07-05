@@ -174,18 +174,29 @@ function scoreToStage(score) {
   return stageLabelFromScore(score, true)
 }
 
-function findScoreAt(points, targetDate) {
+function averageScoreForLastDays(points, days, fallbackScore = null) {
   if (!points?.length) return null
-  const target = targetDate.getTime()
-  let closest = null
-  let minDiff = Infinity
+  const now = new Date()
+  const cutoff = new Date(now)
+  cutoff.setDate(cutoff.getDate() - days)
+
+  const values = []
   for (const p of points) {
-    const pointTime = new Date(`${p.date}T00:00:00`).getTime()
-    if (Number.isNaN(pointTime)) continue
-    const diff = Math.abs(pointTime - target)
-    if (diff < minDiff) { minDiff = diff; closest = p }
+    const pointDate = new Date(`${p.date}T00:00:00`)
+    if (Number.isNaN(pointDate.getTime())) continue
+    if (pointDate >= cutoff && pointDate <= now && p.score != null) {
+      values.push(Number(p.score))
+    }
   }
-  return closest
+
+  if (values.length === 0) {
+    const latest = points[points.length - 1]
+    const score = fallbackScore ?? latest?.score
+    return score == null ? null : { score }
+  }
+
+  const score = values.reduce((sum, v) => sum + v, 0) / values.length
+  return { score }
 }
 
 function BannerStat({ label, point }) {
@@ -318,18 +329,18 @@ export default function Watchlist() {
 
   const spyScore = spyData?.herdV4 ?? spyData?.herdScore ?? 50
   const spyStage = spyData?.herdStage ?? 'Calm'
-  const ystPoint = useMemo(() => {
-    const t = new Date(); t.setDate(t.getDate() - 1)
-    return findScoreAt(spyStatsHistory, t)
-  }, [spyStatsHistory])
-  const m1Point = useMemo(() => {
-    const t = new Date(); t.setDate(t.getDate() - 30)
-    return findScoreAt(spyStatsHistory, t)
-  }, [spyStatsHistory])
-  const y1Point = useMemo(() => {
-    const t = new Date(); t.setDate(t.getDate() - 365)
-    return findScoreAt(spyStatsHistory, t)
-  }, [spyStatsHistory])
+  const d1AvgPoint = useMemo(
+    () => averageScoreForLastDays(spyStatsHistory, 1, spyScore),
+    [spyStatsHistory, spyScore]
+  )
+  const m1AvgPoint = useMemo(
+    () => averageScoreForLastDays(spyStatsHistory, 30, spyScore),
+    [spyStatsHistory, spyScore]
+  )
+  const y1AvgPoint = useMemo(
+    () => averageScoreForLastDays(spyStatsHistory, 365, spyScore),
+    [spyStatsHistory, spyScore]
+  )
 
   const sortedWatchlist = useMemo(() => (
     watchlist
@@ -411,9 +422,9 @@ export default function Watchlist() {
               </div>
 
               <div className={styles.bannerHistStats}>
-                <BannerStat label="어제" point={ystPoint} />
-                <BannerStat label="1달 전" point={m1Point} />
-                <BannerStat label="1년 전" point={y1Point} />
+                <BannerStat label="1일 평균" point={d1AvgPoint} />
+                <BannerStat label="1달 평균" point={m1AvgPoint} />
+                <BannerStat label="1년 평균" point={y1AvgPoint} />
                 <div className={styles.bannerStatItem}>
                   <div className={styles.bannerStatLabel}>업데이트</div>
                   <div className={styles.bannerStatUpdate}>

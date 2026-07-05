@@ -59,7 +59,7 @@ Rush    #EF4444  (레드)
 - 사이드바 노출 메뉴는 MVP 기준으로 Dashboard, Watchlist, Search, HerdLab만 유지한다.
 - AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
 - Dashboard (`/`)
-  - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
+  - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
   - 포트폴리오 평가금액 요약
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
@@ -99,7 +99,7 @@ Rush    #EF4444  (레드)
   - 매수 후보 우선 자동 정렬
   - 빠른 새로고침
   - 관심 종목 삭제
-  - S&P 500 HERD 배너
+  - S&P 500 HERD 배너 (Dashboard와 같은 1일/1달/1년 평균 표시)
 - HerdLab (`/herd-lab`)
   - 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드
   - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
