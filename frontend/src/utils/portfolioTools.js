@@ -135,12 +135,12 @@ export function opportunityRows(watchlist) {
         opportunityRank: signal === 'BUY' ? 3 : signal === 'ADD' ? 2 : signal === 'HOLD' ? 1 : 0,
         originalIndex: index,
         reason: signal === 'BUY'
-          ? 'Flee 우선 대기'
+          ? 'Flee 적극매수 후보'
           : signal === 'ADD'
             ? 'Scatter 분할매수 후보'
             : signal === 'HOLD'
               ? 'Calm 관찰'
-              : 'Rush/Drift 제외',
+              : '익절 구간 제외',
       }
     })
     .sort((a, b) => {

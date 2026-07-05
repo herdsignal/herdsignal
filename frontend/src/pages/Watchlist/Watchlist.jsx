@@ -368,8 +368,8 @@ export default function Watchlist() {
         <>
           <div className={styles.opportunityPanel}>
             <div className={styles.sectionRow}>
-              <div className={styles.sectionTitle}>기회 대기열</div>
-              <div className={styles.sectionHint}>Flee/Scatter · 강도순</div>
+              <div className={styles.sectionTitle}>매수 대기열</div>
+              <div className={styles.sectionHint}>추가매수 우선순</div>
             </div>
             {opportunityQueue.length > 0 ? (
               <div className={styles.opportunityList}>
@@ -393,14 +393,14 @@ export default function Watchlist() {
               </div>
             ) : (
               <div className={styles.opportunityEmpty}>
-                지금은 Flee/Scatter 매수 후보가 없습니다.
+                지금은 추가매수 후보가 없습니다.
               </div>
             )}
           </div>
 
           <div className={styles.sectionRow}>
             <div className={styles.sectionTitle}>관심 종목 · {watchlist.length}</div>
-            <div className={styles.sectionHint}>매수 후보 우선</div>
+            <div className={styles.sectionHint}>매수 우선도순</div>
           </div>
 
           <div className={styles.stockGrid}>
@@ -446,7 +446,7 @@ export default function Watchlist() {
                       <div>
                         <div className={styles.cardTicker}>{item.ticker}</div>
                         <div className={styles.cardStageName}>
-                          {stageName} · 기회 {Math.round(opportunity)}
+                          {stageName} · 매수 우선도 {Math.round(opportunity)}
                         </div>
                         {shouldShowQuality(item) && (
                           <div

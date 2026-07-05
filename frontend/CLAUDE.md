@@ -29,7 +29,7 @@ src/
 ├── utils/          통화/환율 유틸
 │   ├── currency.js 통화 변환
 │   ├── decision.js HERD 점수 + 보유/재무 컨텍스트 기반 행동 문장
-│   └── portfolioTools.js 목표비중·리밸런싱·기회 대기열 계산
+│   └── portfolioTools.js 목표비중·리밸런싱·매수 대기열 계산
 └── api/            Spring Boot API 호출
     └── herdApi.js
 ```
@@ -94,7 +94,7 @@ Rush    #EF4444  (레드)
   - 관심 종목 HERD 카드
   - 낮은 HERD 데이터 품질만 배지 표시
   - 관심 종목 카드는 `강도 · 행동 비율 · 행동 라벨`로 Action Layer를 축약 표시
-  - 기회 대기열 (Flee/Scatter + BUY/ADD 신호 우선)
+  - 매수 대기열 (Flee/Scatter + BUY/ADD 신호 우선)
   - 매수 후보 우선 자동 정렬
   - 빠른 새로고침
   - 관심 종목 삭제
