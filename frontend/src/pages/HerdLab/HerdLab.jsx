@@ -81,7 +81,7 @@ export default function HerdLab() {
 
       <section className={styles.card}>
         <div className={styles.cardHead}>
-          <span>Backtest</span>
+          <span>검증 결과</span>
           <strong>Buy & Hold vs Action Layer</strong>
         </div>
         <div className={styles.table}>
@@ -117,7 +117,7 @@ export default function HerdLab() {
       <section className={styles.gridTwo}>
         <div className={styles.card}>
           <div className={styles.cardHead}>
-            <span>Action Matrix</span>
+            <span>행동 매트릭스</span>
             <strong>구간별 행동 비율</strong>
           </div>
           <div className={styles.stageGrid}>
@@ -135,7 +135,7 @@ export default function HerdLab() {
 
         <div className={styles.card}>
           <div className={styles.cardHead}>
-            <span>Formula</span>
+            <span>점수 구성</span>
             <strong>HERD_v4 점수 구성</strong>
           </div>
           <div className={styles.weightList}>
