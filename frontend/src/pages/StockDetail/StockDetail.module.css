@@ -448,42 +448,6 @@
 }
 
 /* ────────────────────────────
-   재무 정보 카드
-   ──────────────────────────── */
-.financeGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.financeItem {
-  background: var(--surface2);
-  padding: 14px 16px;
-}
-
-.financeLabel {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 4px;
-}
-
-.financeValue {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-}
-
-.financeSub {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-top: 2px;
-}
-
-/* ────────────────────────────
    HERD 히스토리 카드
    ──────────────────────────── */
 
@@ -564,6 +528,52 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--border);
+}
+
+.currentReliability {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.currentReliability div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.currentReliability span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.currentReliability strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--flee);
+}
+
+.currentReliability em {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .reliabilityItem {

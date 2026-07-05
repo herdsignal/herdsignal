@@ -2,7 +2,7 @@
  * utils/decision.js — HERD 점수를 장기투자 행동 문장으로 변환.
  *
  * 운영 HERD 점수는 변경하지 않는다.
- * 화면에서만 보유 여부, 재무 컨텍스트, 포트폴리오 비중을 함께 해석한다.
+ * 화면에서만 보유 여부와 포트폴리오 비중을 함께 해석한다.
  */
 
 export function normalizeStage(stage) {
@@ -65,27 +65,7 @@ function portfolioWeight(holding, summary, summaryStock) {
   return value / total * 100
 }
 
-function qualityNotes(financials) {
-  if (!financials) return ['재무 데이터 로딩 전이라 품질 판단은 보류합니다.']
-
-  const notes = []
-  const eps = toNumber(financials.eps)
-  const margin = toNumber(financials.operatingMargin)
-  const pe = toNumber(financials.trailingPe)
-  const revenue = toNumber(financials.totalRevenue)
-
-  if (eps != null && eps < 0) notes.push('EPS가 적자라 저점 매수 신호를 보수적으로 봐야 합니다.')
-  if (margin != null && margin < 0) notes.push('영업이익률이 음수라 실적 회복 확인이 필요합니다.')
-  if (pe != null && pe > 80) notes.push('PER이 높아 군중 밀집 구간에서는 익절 우선순위가 올라갑니다.')
-  if (revenue != null && revenue > 0 && notes.length === 0) {
-    notes.push('기본 재무 데이터상 즉시 차단할 품질 경고는 없습니다.')
-  }
-  if (notes.length === 0) notes.push('재무 지표가 제한적이어서 HERD 신호 중심으로 판단합니다.')
-
-  return notes
-}
-
-export function buildDecision({ herdData, financials, holding, summary }) {
+export function buildDecision({ herdData, holding, summary }) {
   const score = toNumber(herdData?.herdV4 ?? herdData?.herdScore) ?? 50
   const signal = herdData?.signal ?? 'HOLD'
   const stage = herdData?.herdStage ?? 'Herd Calm'
@@ -110,8 +90,6 @@ export function buildDecision({ herdData, financials, holding, summary }) {
   } else {
     notes.push('미보유 종목입니다. 현재 구간에서는 추격 매수보다 관찰 우선입니다.')
   }
-
-  qualityNotes(financials).forEach((note) => notes.push(note))
 
   let title = signalDesc(signal)
   let subtitle = signalLongDesc(signal)

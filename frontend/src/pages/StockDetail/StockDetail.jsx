@@ -3,7 +3,7 @@
  *
  * 구성:
  *   1) 브레드크럼 + 종목 헤더 (배지 + 포트폴리오/관심종목 추가 버튼)
- *   2) HERD 카드 → Action Layer → HERD 히스토리 → 지표 분해 → 재무 정보
+ *   2) HERD 카드 → Action Layer → 신호 신뢰도 → HERD 히스토리 → 지표 분해
  *
  * API: getStockHerd(ticker), addToPortfolio(ticker), addToWatchlist(ticker)
  * 래퍼런스: wireframes/wireframe-detail.html
@@ -12,7 +12,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, useNavigate }                    from 'react-router-dom'
 import {
-  getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials,
+  getStockHerd, addToPortfolio, addToWatchlist,
   getStockHerdHistory, getStockHerdReliability,
   getPortfolio, getPortfolioSummary,
 } from '../../api/herdApi'
@@ -38,54 +38,6 @@ const INDICATORS = [
   { key: 'weeklyRsi',      label: '주봉 RSI',       weight: 19, min: 0,   max: 100, unit: '',  signed: false },
   { key: 'position52w',    label: '52주 위치',      weight: 19, min: 0,   max: 100, unit: '%', signed: false },
   { key: 'ma200Deviation', label: 'MA200 이격도',   weight: 18, min: -50, max: 50,  unit: '%', signed: true  },
-]
-
-/* ── 재무정보 포맷 함수 ──────────────────────── */
-
-/** 시가총액·매출 → "$X.XXT / $X.XXB / $X.XXM" */
-function fmtCap(v) {
-  if (v == null) return '—'
-  const n = Number(v)
-  if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`
-  if (n >= 1e9)  return `$${(n / 1e9).toFixed(2)}B`
-  if (n >= 1e6)  return `$${(n / 1e6).toFixed(2)}M`
-  return `$${n.toLocaleString('en-US')}`
-}
-
-/** PER → 소수점 1자리 */
-function fmtNum1(v) {
-  if (v == null) return '—'
-  return Number(v).toFixed(1)
-}
-
-/** 영업이익률 → "+X.X%" / "-X.X%" */
-function fmtPct1(v) {
-  if (v == null) return '—'
-  const n = Number(v)
-  return `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
-}
-
-/** EPS → "$X.XX" (음수 허용) */
-function fmtDollar2(v) {
-  if (v == null) return '—'
-  const n = Number(v)
-  return `${n < 0 ? '-$' : '$'}${Math.abs(n).toFixed(2)}`
-}
-
-/** 배당수익률 → "X.XX%" */
-function fmtPct2(v) {
-  if (v == null) return '—'
-  return `${Number(v).toFixed(2)}%`
-}
-
-/* 재무 정보 항목 정의 — key: API 응답 camelCase 키, fmt: 포맷 함수 */
-const FINANCE_ITEMS = [
-  { key: 'marketCap',       label: '시가총액',   sub: null,   fmt: fmtCap     },
-  { key: 'trailingPe',      label: 'P/E Ratio',  sub: null,   fmt: fmtNum1    },
-  { key: 'operatingMargin', label: '영업이익률', sub: null,   fmt: fmtPct1    },
-  { key: 'eps',             label: 'EPS (TTM)',  sub: null,   fmt: fmtDollar2 },
-  { key: 'totalRevenue',    label: '매출 (TTM)', sub: null,   fmt: fmtCap     },
-  { key: 'dividendYield',   label: '배당수익률', sub: null,   fmt: fmtPct2    },
 ]
 
 const HISTORY_PERIODS = [
@@ -275,6 +227,34 @@ function fmtAnnualActions(value) {
   return `${n.toFixed(1)}회`
 }
 
+function currentSignalReliability(herdData, reliability) {
+  if (!reliability) return null
+  const signal = herdData?.signal
+
+  if (signal === 'BUY' || signal === 'ADD') {
+    return {
+      label: '현재 매수 신호',
+      value: reliability.fleeHitRate,
+      sample: reliability.fleeSampleSize,
+      caption: '과거 Flee/Scatter 이후 반등 기준',
+    }
+  }
+  if (signal === 'SELL' || signal === 'REDUCE') {
+    return {
+      label: '현재 익절 신호',
+      value: reliability.rushHitRate,
+      sample: reliability.rushSampleSize,
+      caption: '과거 Drift/Rush 이후 냉각 기준',
+    }
+  }
+  return {
+    label: '현재 보유 신호',
+    value: reliability.returnPreservation,
+    sample: null,
+    caption: 'Action Layer 수익률 보존 기준',
+  }
+}
+
 /* ── 버튼 레이블 매핑 ─────────────────────── */
 const BTN_LABELS = {
   portfolio: {
@@ -303,7 +283,6 @@ export default function StockDetail() {
   const [error,            setError]             = useState(null)
   const [portfolioStatus,  setPortfolioStatus]   = useState('idle')
   const [watchlistStatus,  setWatchlistStatus]   = useState('idle')
-  const [financials,       setFinancials]        = useState(null)
   const [herdHistory,      setHerdHistory]       = useState([])
   const [historyPeriod,    setHistoryPeriod]     = useState('1y')
   const [historyLoading,   setHistoryLoading]    = useState(false)
@@ -348,18 +327,6 @@ export default function StockDetail() {
         }
       })
   }, [])
-
-  /*
-   * 재무정보 — HERD 로딩과 독립적으로 실행.
-   * ProcessBuilder 경유로 3~10초 소요될 수 있으므로 별도 effect로 분리.
-   * 성공 전까지 FINANCE_ITEMS는 "—"로 표시됨.
-   */
-  useEffect(() => {
-    setFinancials(null)
-    getStockFinancials(ticker.toUpperCase())
-      .then((res) => { setFinancials(res.data?.data ?? null) })
-      .catch(() => { /* 재무정보 실패 시 "—" 유지 */ })
-  }, [ticker])
 
   /* HERD 히스토리 — ticker 또는 기간 변경 시 재조회 */
   useEffect(() => {
@@ -417,10 +384,13 @@ export default function StockDetail() {
   const holding    = portfolio.find((item) => item.ticker === ticker.toUpperCase()) ?? null
   const decision   = useMemo(() => buildDecision({
     herdData: { ...herdData, ticker: ticker.toUpperCase() },
-    financials,
     holding,
     summary: portfolioSummary,
-  }), [herdData, financials, holding, portfolioSummary, ticker])
+  }), [herdData, holding, portfolioSummary, ticker])
+  const currentReliability = useMemo(
+    () => currentSignalReliability(herdData, reliability),
+    [herdData, reliability]
+  )
   const historyPoints = useMemo(() => {
     if (herdHistory.length > 0) return herdHistory
     if (!herdData?.scoreDate) return []
@@ -608,6 +578,18 @@ export default function StockDetail() {
                   <div className={styles.chartEmpty}>로딩 중…</div>
                 ) : reliability ? (
                   <>
+                    {currentReliability && (
+                      <div className={styles.currentReliability}>
+                        <div>
+                          <span>{currentReliability.label}</span>
+                          <strong>{fmtReliabilityPlainPct(currentReliability.value)}</strong>
+                        </div>
+                        <em>
+                          {currentReliability.caption}
+                          {currentReliability.sample != null ? ` · ${currentReliability.sample}회` : ''}
+                        </em>
+                      </div>
+                    )}
                     <div className={styles.reliabilityGrid}>
                       <div className={styles.reliabilityItem}>
                         <span>Flee 적중률</span>
@@ -738,28 +720,6 @@ export default function StockDetail() {
                       <em>{sectorMultiplierDesc(herdData.sectorMultiplier)}</em>
                     </strong>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 재무 정보 카드 */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>재무 정보</div>
-                <div className={styles.cardMeta}>
-                  {financials ? 'yfinance · 15분 지연' : '로딩 중…'}
-                </div>
-              </div>
-              <div className={styles.cardBody}>
-                <div className={styles.financeGrid}>
-                  {FINANCE_ITEMS.map((item) => (
-                    <div key={item.key} className={styles.financeItem}>
-                      <div className={styles.financeLabel}>{item.label}</div>
-                      <div className={styles.financeValue}>
-                        {item.fmt(financials ? financials[item.key] : null)}
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>

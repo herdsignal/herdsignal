@@ -37,6 +37,8 @@ const HISTORY_PERIODS = [
   { value: '3y', label: '3Y' },
 ]
 
+const REFRESH_SCOPE_TITLE = '관심종목 HERD DB 조회와 SPY 최신 점수만 갱신합니다. 히스토리는 Timeline 탭에서 별도 조회됩니다.'
+
 /* ── 유틸 (Dashboard와 동일) ──────────────── */
 
 /** herdStage 소문자 정규화: "Herd Scatter" → "scatter" */
@@ -236,12 +238,14 @@ export default function Watchlist() {
   const [spyTab,         setSpyTab]         = useState('overview')
   const [loading,        setLoading]        = useState(true)
   const [refreshing,     setRefreshing]     = useState(false)
+  const [refreshNotice,  setRefreshNotice]  = useState(null)
   const [error,          setError]          = useState(null)
   /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
   /* SPY 데이터 ref 캐시 — Dashboard와 동일한 StrictMode 대응 */
   const spyDataCache = useRef(null)
   const spyHistoryCache = useRef({})
+  const refreshNoticeTimer = useRef(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -249,8 +253,13 @@ export default function Watchlist() {
 
   /* 관심 종목 조회 (SPY와 분리) */
   const fetchData = useCallback(async (silent = false) => {
-    if (silent) setRefreshing(true)
-    else setLoading(true)
+    if (silent) {
+      setRefreshing(true)
+      if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
+      setRefreshNotice('관심종목 HERD 조회 중')
+    } else {
+      setLoading(true)
+    }
     setError(null)
     try {
       const watchlistRes = await getWatchlistHerd().catch(() => null)
@@ -261,17 +270,27 @@ export default function Watchlist() {
         const stocks = responseData?.stocks
           ?? (Array.isArray(responseData) ? responseData : [])
         setWatchlist(stocks)
+        if (silent) setRefreshNotice('관심종목 HERD 갱신')
       } else {
         setWatchlist([])
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
+        if (silent) setRefreshNotice('관심종목 HERD 조회 실패')
       }
     } finally {
       setLoading(false)
       setRefreshing(false)
+      if (silent) {
+        refreshNoticeTimer.current = setTimeout(() => {
+          setRefreshNotice(null)
+        }, 3200)
+      }
     }
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => () => {
+    if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
+  }, [])
 
   /*
    * SPY 배너 — Dashboard와 동일한 구조.
@@ -370,10 +389,16 @@ export default function Watchlist() {
           <h1 className={styles.pageTitle}>관심 종목</h1>
         </div>
         <div className={styles.headerActions}>
+          {refreshNotice && (
+            <span className={styles.refreshNotice}>
+              {refreshNotice}
+            </span>
+          )}
           <button
             className={styles.btnRefresh}
             onClick={() => fetchData(true)}
             disabled={refreshing || loading}
+            title={REFRESH_SCOPE_TITLE}
           >
             {refreshing ? '새로고침 중…' : '↻ 새로고침'}
           </button>

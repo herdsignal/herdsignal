@@ -28,7 +28,7 @@ src/
 ├── styles/         전역 CSS 변수
 ├── utils/          통화/환율 유틸
 │   ├── currency.js 통화 변환
-│   ├── decision.js HERD 점수 + 보유/재무 컨텍스트 기반 행동 문장
+│   ├── decision.js HERD 점수 + 보유/포트폴리오 컨텍스트 기반 행동 문장
 │   └── portfolioTools.js 목표비중·리밸런싱·매수 대기열 계산
 └── api/            Spring Boot API 호출
     └── herdApi.js
@@ -77,7 +77,6 @@ Rush    #EF4444  (레드)
   - 1M/3M/1Y/3Y HERD Index 히스토리 차트
   - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
   - 낮은 HERD 데이터 품질만 배지 표시
-  - 재무 정보
   - 포트폴리오 추가
   - 관심종목 추가
 - Search (`/search`)
@@ -122,7 +121,7 @@ Rush    #EF4444  (레드)
   - portfolio_history 시계열 표시
 
 ## 부분 구현 / 미구현
-- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 제거됨. 상세 화면은 HERD와 Action Layer 중심 단일 컬럼으로 유지한다.
+- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래, 재무 정보 섹션은 제거됨. 상세 화면은 HERD와 Action Layer 중심 단일 컬럼으로 유지한다.
 - 목표 비중은 `hs_target_weights` localStorage에 저장하며, 아직 DB 저장 기능은 없다.
 - 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
 - Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
@@ -149,7 +148,6 @@ Rush    #EF4444  (레드)
 - getStockHerd / refreshStockHerd / getStockHerdHistory / getSpyHerdHistory
 - getStockHerdReliability
 - searchStocks
-- getStockFinancials
 
 ## localStorage 사용
 - `hs_portfolio_realtime`: 포트폴리오 실시간 평가 캐시

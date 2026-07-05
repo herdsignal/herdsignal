@@ -93,9 +93,4 @@ export const getStockHerdReliability = (ticker, years = 3) =>
 export const getSpyHerdHistory = (period = '3y') =>
   getStockHerdHistory('SPY', period)
 
-/* ── 종목 재무정보 ───────────────────────────── */
-
-/** 종목 재무정보 조회 (시가총액·PER·EPS·영업이익률·매출·배당수익률) */
-export const getStockFinancials = (ticker) => api.get(`/api/stocks/${ticker}/financials`)
-
 export default api

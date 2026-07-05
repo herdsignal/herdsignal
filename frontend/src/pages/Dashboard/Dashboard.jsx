@@ -64,6 +64,8 @@ const HISTORY_PERIODS = [
   { value: '3y', label: '3Y' },
 ]
 
+const REFRESH_SCOPE_TITLE = '가격 평가, HERD DB 조회, SPY 최신 점수만 갱신합니다. 히스토리와 신뢰도는 각 화면에서 별도 조회됩니다.'
+
 /** localStorage에서 JSON 파싱. 실패 시 null 반환 */
 function readCache(key) {
   try {
@@ -596,7 +598,7 @@ export default function Dashboard() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
-    setRefreshNotice('가격 · HERD · SPY 확인 중')
+    setRefreshNotice('가격 평가 · HERD DB 조회 · SPY 확인 중')
     try {
       const [summaryRes, herdRes, spyRes] = await Promise.allSettled([
         getPortfolioSummary(),
@@ -760,6 +762,7 @@ export default function Dashboard() {
             className={styles.btnRefresh}
             onClick={handleRefresh}
             disabled={refreshing || loading}
+            title={REFRESH_SCOPE_TITLE}
           >
             {refreshing ? '새로고침 중…' : '↻ 새로고침'}
           </button>
