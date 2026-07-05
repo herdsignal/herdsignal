@@ -3,7 +3,7 @@ collectors/finnhub_collector.py — Finnhub API 데이터 수집
 
 수집 대상:
   1. 실적 서프라이즈 (EPS 실제값 vs 예상값)
-  2. 애널리스트 평균 목표가
+  2. 심볼 검색
   3. 백테스트용 과거 실적 전체 히스토리 (look-ahead bias 방지)
 
 무료 플랜 rate limit: 분당 60회 → 각 호출 후 0.5초 딜레이 적용
@@ -221,55 +221,7 @@ def get_eps_surprise_multiplier(ticker: str) -> float:
 
 
 # ──────────────────────────────────────────────
-# 공개 함수 2 — 애널리스트 평균 목표가
-# ──────────────────────────────────────────────
-def get_analyst_target(ticker: str) -> dict | None:
-    """
-    현재 애널리스트 컨센서스 목표가를 조회한다.
-    현재가는 Finnhub quote 엔드포인트로 별도 조회.
-
-    Args:
-        ticker: 종목 티커 (예: "AAPL")
-
-    Returns:
-        {"current": 현재가, "target": 목표가(평균), "upside": 상승여력%}
-        데이터 없으면 None
-    """
-    # 목표가 조회 (API 호출 1회)
-    target_data = _get("stock/price-target", {"symbol": ticker})
-
-    # 현재가 조회 (API 호출 2회 — rate limit 고려)
-    quote_data = _get("quote", {"symbol": ticker})
-
-    if not target_data or not quote_data:
-        logger.debug(f"[{ticker}] 목표가 또는 현재가 데이터 없음")
-        return None
-
-    target_mean   = target_data.get("targetMean")
-    current_price = quote_data.get("c")   # c = current price
-
-    if not target_mean or not current_price or current_price == 0:
-        logger.debug(
-            f"[{ticker}] 유효하지 않은 데이터 — "
-            f"target={target_mean}, current={current_price}"
-        )
-        return None
-
-    upside = round((target_mean / current_price - 1) * 100, 1)
-    result = {
-        "current": round(float(current_price), 2),
-        "target":  round(float(target_mean),   2),
-        "upside":  upside,
-    }
-    logger.info(
-        f"[{ticker}] 목표가: ${result['target']:.2f} "
-        f"(현재 ${result['current']:.2f}, 상승여력 {result['upside']:+.1f}%)"
-    )
-    return result
-
-
-# ──────────────────────────────────────────────
-# 공개 함수 3 — 백테스트용 과거 실적 히스토리
+# 공개 함수 2 — 백테스트용 과거 실적 히스토리
 # ──────────────────────────────────────────────
 def get_earnings_history(ticker: str) -> list[dict]:
     """
@@ -336,150 +288,6 @@ def get_earnings_history(ticker: str) -> list[dict]:
 
     logger.info(f"[{ticker}] 실적 히스토리 {len(records)}개 수집 완료")
     return records  # Finnhub는 최신 → 과거 순으로 반환
-
-
-# ──────────────────────────────────────────────
-# 공개 함수 4 — 최근 뉴스 (StockDetail 연동)
-# ──────────────────────────────────────────────
-def get_company_news(ticker: str, days: int = 30) -> list[dict]:
-    """
-    최근 N일 회사 뉴스를 최대 5건 반환한다.
-    Finnhub company-news 엔드포인트 사용 (무료 플랜 지원).
-
-    Args:
-        ticker: 종목 티커 (예: "AAPL")
-        days:   조회 기간 (기본 30일)
-
-    Returns:
-        [{"headline": str, "source": str, "url": str, "date": "YYYY-MM-DD"}, ...]
-        최대 5건. API 실패 또는 결과 없으면 빈 리스트.
-    """
-    from_dt = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
-    to_dt   = datetime.now().strftime("%Y-%m-%d")
-    data = _get("company-news", {"symbol": ticker, "from": from_dt, "to": to_dt})
-
-    if not data or not isinstance(data, list):
-        logger.debug(f"[{ticker}] 뉴스 데이터 없음")
-        return []
-
-    results: list[dict] = []
-    for item in data[:5]:  # 최신 5건만 (Finnhub는 최신순 정렬)
-        ts = item.get("datetime", 0)
-        try:
-            date_str = datetime.fromtimestamp(int(ts)).strftime("%Y-%m-%d") if ts else ""
-        except (ValueError, OSError):
-            date_str = ""
-        results.append({
-            "headline": item.get("headline", ""),
-            "source":   item.get("source", ""),
-            "url":      item.get("url", ""),
-            "date":     date_str,
-        })
-
-    logger.info(f"[{ticker}] 뉴스 {len(results)}건 수집 완료")
-    return results
-
-
-# ──────────────────────────────────────────────
-# 공개 함수 5 — 애널리스트 추천 컨센서스 (StockDetail 연동)
-# ──────────────────────────────────────────────
-def get_recommendation_trends(ticker: str) -> dict | None:
-    """
-    최신 1개월 애널리스트 추천 컨센서스를 반환한다.
-    Finnhub stock/recommendation 엔드포인트 사용 (무료 플랜 지원).
-    price_target은 프리미엄 전용이므로 사용하지 않는다.
-
-    Args:
-        ticker: 종목 티커 (예: "AAPL")
-
-    Returns:
-        {
-            "strong_buy": int, "buy": int, "hold": int,
-            "sell": int, "strong_sell": int,
-            "total": int, "consensus": str, "period": str
-        }
-        데이터 없거나 실패 시 None.
-    """
-    data = _get("stock/recommendation", {"symbol": ticker})
-
-    if not data or not isinstance(data, list) or len(data) == 0:
-        logger.debug(f"[{ticker}] 애널리스트 추천 데이터 없음")
-        return None
-
-    latest = data[0]  # 가장 최근 달
-    strong_buy  = int(latest.get("strongBuy",  0) or 0)
-    buy         = int(latest.get("buy",        0) or 0)
-    hold        = int(latest.get("hold",       0) or 0)
-    sell        = int(latest.get("sell",       0) or 0)
-    strong_sell = int(latest.get("strongSell", 0) or 0)
-    total       = strong_buy + buy + hold + sell + strong_sell
-
-    # 컨센서스 결정 — 비율 기반 간단 규칙
-    if total == 0:
-        consensus = "N/A"
-    elif strong_buy / total >= 0.5:
-        consensus = "Strong Buy"
-    elif (strong_buy + buy) / total >= 0.5:
-        consensus = "Buy"
-    elif (strong_sell + sell) / total >= 0.5:
-        consensus = "Sell"
-    elif hold / total >= 0.35:
-        consensus = "Hold"
-    else:
-        consensus = "Buy"
-
-    result = {
-        "strong_buy":  strong_buy,
-        "buy":         buy,
-        "hold":        hold,
-        "sell":        sell,
-        "strong_sell": strong_sell,
-        "total":       total,
-        "consensus":   consensus,
-        "period":      latest.get("period", ""),
-    }
-    logger.info(f"[{ticker}] 컨센서스: {consensus} (총 {total}명)")
-    return result
-
-
-# ──────────────────────────────────────────────
-# 공개 함수 6 — 내부자 거래 (StockDetail 연동)
-# ──────────────────────────────────────────────
-def get_insider_transactions(ticker: str, limit: int = 10) -> list[dict]:
-    """
-    최근 내부자 거래를 최대 N건 반환한다.
-    Finnhub stock/insider-transactions 엔드포인트 사용 (무료 플랜 지원).
-
-    Args:
-        ticker: 종목 티커 (예: "AAPL")
-        limit:  최대 반환 건수 (기본 10)
-
-    Returns:
-        [{"name": str, "transaction_code": str, "share": int, "date": "YYYY-MM-DD"}, ...]
-        "P"=매수, "S"=매도. 실패 시 빈 리스트.
-    """
-    data = _get("stock/insider-transactions", {"symbol": ticker})
-
-    if not data or not isinstance(data, dict):
-        logger.debug(f"[{ticker}] 내부자 거래 데이터 없음")
-        return []
-
-    transactions = data.get("data", [])
-    if not transactions or not isinstance(transactions, list):
-        return []
-
-    results: list[dict] = []
-    for tx in transactions[:limit]:
-        share = tx.get("share", 0)
-        results.append({
-            "name":             tx.get("name", ""),
-            "transaction_code": tx.get("transactionCode", ""),
-            "share":            int(share) if share is not None else 0,
-            "date":             tx.get("transactionDate", ""),
-        })
-
-    logger.info(f"[{ticker}] 내부자 거래 {len(results)}건 수집 완료")
-    return results
 
 
 # ──────────────────────────────────────────────

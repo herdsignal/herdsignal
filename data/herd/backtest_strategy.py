@@ -121,7 +121,7 @@ def _run_strategy_a(close: pd.Series) -> StrategyResult:
 def _run_strategy_b(close: pd.Series,
                     herd: pd.Series) -> StrategyResult:
     """
-    Rush(≥80) → 전량 매도 / Flee(≤20) → 전량 매수.
+    settings.py의 Rush/Flee 임계값 기준으로 전량 매도/매수한다.
     신호 없으면 포지션 유지.
     """
     result = StrategyResult(name="B — HERD 단순 신호")

@@ -25,10 +25,6 @@ GET    /api/stocks/{ticker}/herd              종목 HERD Index + 지표 분해 
 POST   /api/stocks/{ticker}/herd/refresh      종목 HERD Index 강제 재계산 후 조회
 GET    /api/stocks/search?q=apple             회사명/티커 기반 종목 심볼 검색 (Finnhub)
 GET    /api/stocks/{ticker}/financials        종목 재무정보 조회 (yfinance .info)
-GET    /api/stocks/{ticker}/prices            종목 가격 히스토리 조회
-GET    /api/stocks/{ticker}/news              종목 뉴스 조회 (Finnhub)
-GET    /api/stocks/{ticker}/analyst           애널리스트 컨센서스 조회 (Finnhub)
-GET    /api/stocks/{ticker}/insider           내부자 거래 조회 (Finnhub)
 GET    /api/stocks/{ticker}/herd/history      종목 HERD 히스토리 조회 (period=1m|3m|1y|3y)
 GET    /api/portfolio/herd                    포트폴리오 전체 HERD 조회
 POST   /api/portfolio/herd/refresh            포트폴리오 전체 HERD 강제 재계산 후 조회
@@ -80,14 +76,9 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - FinancialsService
   - Python stock_info_collector.get_stock_financials(ticker) 호출
   - 종목 재무정보 반환 (ProcessBuilder, 티커 정규식 검증 포함)
-- PriceHistoryService
-  - daily_prices 기반 종목 가격 히스토리 반환
-  - period 파라미터(1M/3M/1Y/5Y) 기준 조회
 - FinnhubService
   - Python finnhub_collector 호출
   - 회사명/티커 기반 심볼 검색 응답 반환
-  - 뉴스, 애널리스트 컨센서스, 내부자 거래 응답 반환
-  - frontend StockDetail에서는 현재 뉴스/애널리스트/내부자 거래 섹션을 표시하지 않음
 
 ## DB/JPA 원칙
 - Python `init_db.py`가 생성한 테이블 스키마를 기준으로 한다.
@@ -119,9 +110,10 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - HERD 신뢰도는 `daily_prices` 기간이 아니라 저장된 HERD 산출 결과의 완성도(핵심 지표, 200주 MA, v4 보정 승수, 최신성)를 기준으로 계산한다.
 - HERD_v5 Action Layer 응답은 DB 스키마 변경 없이 `ActionDecisionService`가 계산한다. `actionModelVersion`, `actionModelName`, `baseModelVersion`, `actionModelStatus`, `actionScore`, `actionGrade`, `actionLabel`, `actionRatio`, `actionRegime`, `actionRegimeLabel`, `actionReasons`, `actionWarnings`를 포함한다.
 - 포트폴리오 종목별 `dailyChangePct`는 KST 22:30 미국장 시작을 하루 경계로 본다. 22:30 전에는 직전 미국장 세션을 오늘로 유지한다.
-- 뉴스/애널리스트/내부자 거래 API는 backend에 존재하지만 현재 frontend 화면에서는 사용하지 않는다.
 - 로그인/인증/멀티유저 API는 없음. 현재는 `local` 사용자 고정.
 - 증권사 API 추상화는 구현되어 있지 않다.
+- Action Layer와 `settings.py`는 Rush 75 / Flee 15 행동 신호 기준을 사용한다. Python `calculator.py`와 frontend `utils/herdStage.js`도 같은 기준을 따른다.
+- 가격 히스토리, 뉴스, 애널리스트, 내부자 거래 API/DTO/서비스는 MVP 정리 과정에서 제거했다.
 
 ## 코드 원칙
 - Controller는 요청/응답만 처리, 비즈니스 로직은 Service로

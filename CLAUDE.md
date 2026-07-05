@@ -1,6 +1,6 @@
 # HerdSignal — 프로젝트 공통 지침
 
-최종 업데이트: 2026-07-03
+최종 업데이트: 2026-07-05
 
 ## 서비스 개요
 
@@ -15,8 +15,11 @@
 ## 핵심 개념
 
 - **HERD Index**: 개별주 군중심리 지표 (0~100)
-- **5단계**: Flee(0~20) → Scatter(20~40) → Calm(40~60) → Drift(60~80) → Rush(80~100)
+- **5단계**: Flee → Scatter → Calm → Drift → Rush
 - **서비스 철학**: Rush일 때 익절, Flee일 때 매수
+
+현재 단계 표시와 행동 신호 기준은 Rush 75 / Flee 15 중심으로 통일한다.
+세부 기준은 Python `HERD_THRESHOLDS`, backend Action Layer, frontend `utils/herdStage.js`를 함께 맞춘다.
 
 ## 모노레포 구조
 
@@ -332,7 +335,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ## 미구현 또는 부분 구현
 
-- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 frontend에서 제거됨. backend API와 Finnhub collector 코드는 남아 있다.
+- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 frontend에서 제거됨. 관련 backend API/DTO와 Python collector 함수도 제거했다.
 - 리밸런싱 플랜은 아직 Claude API를 호출하지 않는 frontend 규칙 기반 MVP다.
 - 목표 비중과 리밸런싱 설정은 localStorage 저장이며 DB 저장 기능은 없다.
 - History의 자산 진단은 portfolio_history 기반 수익률/MDD 요약이며 실제 HERD 전략 백테스트가 아니다.
@@ -344,11 +347,12 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 ## README와 현재 코드의 차이
 
-- README.md / README.ko.md는 현재 코드 기준 재정리가 필요하다.
-- 공개 소개 문서에서는 운영 중인 HERD v4, Herd Flow, Action Layer, Dashboard/Watchlist/Search/HERD Lab 중심 MVP를 반영해야 한다.
+- README.md / README.ko.md는 2026-07-05 기준 현재 MVP 상태를 반영한다.
+- 공개 소개 문서에서는 운영 중인 HERD v4, Herd Flow, HERD_v5 Action Layer, Dashboard/Watchlist/Search/HERD Lab 중심 MVP만 전면에 둔다.
 - README에서 구현 완료로 보이면 안 되는 항목은 Claude API 기반 AI 리밸런싱, 멀티유저/인증, 증권사 연동, 배포다.
-- README의 StockDetail 뉴스/애널리스트/내부자 거래 설명은 현재 frontend 표시 상태와 다르므로 제거하거나 backend API 보유 수준으로 낮춰야 한다.
-- README의 로드맵은 ROADMAP.md와 역할이 겹치지 않게 간결화해야 한다.
+- StockDetail은 가격 차트가 아니라 HERD Index 히스토리 차트를 보여준다.
+- 뉴스/애널리스트/내부자 거래/가격 히스토리 API는 현재 backend 공개 API에서 제거했다. 필요하면 별도 기능으로 재도입한다.
+- README의 로드맵은 ROADMAP.md와 역할이 겹치지 않게 간결화한다.
 
 ---
 
@@ -359,5 +363,8 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - 옵션 Put/Call, 공매도 비율, 종목 간 상관관계는 운영 계산에 반영되어 있지 않다.
 - Python과 Spring Boot는 DB 중심으로 통신하지만, on-demand 계산과 실시간 포트폴리오 평가에서는 Spring Boot가 ProcessBuilder로 Python을 실행한다.
 - 리밸런싱 플랜은 보류/내부 접근 기능이며 아직 투자 성과를 검증하는 백테스트 엔진과 연결되어 있지 않다.
+- backend 공개 API는 현재 MVP에서 쓰는 HERD/검색/재무/포트폴리오/관심종목 중심으로 정리했다.
+- Dashboard.jsx, StockDetail.jsx, HerdService.java는 기능이 누적되어 큰 파일이 되었다. 동작 안정화 이후 화면 섹션/서비스 책임 단위로 분리 검토한다.
+- HERD_v6 후보는 Rush/Flee 내부 강도와 피크아웃/바닥 확인 로직이다. 구현 전 백테스트로 수익률 보존, MDD 개선, 연간 행동 횟수를 먼저 검증한다.
 
 ---

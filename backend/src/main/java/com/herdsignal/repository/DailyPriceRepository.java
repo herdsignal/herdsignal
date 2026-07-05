@@ -2,9 +2,6 @@ package com.herdsignal.repository;
 
 import com.herdsignal.domain.DailyPrice;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +38,4 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
             LocalDate priceDate
     );
 
-    /** 특정 날짜 이후 종가 히스토리 조회 (날짜 오름차순) — 가격 차트용 */
-    @Query("SELECT d FROM DailyPrice d WHERE d.ticker = :ticker AND d.priceDate >= :cutoff ORDER BY d.priceDate ASC")
-    List<DailyPrice> findHistoryByTickerSince(@Param("ticker") String ticker, @Param("cutoff") LocalDate cutoff);
 }

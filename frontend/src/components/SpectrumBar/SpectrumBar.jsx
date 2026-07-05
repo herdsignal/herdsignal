@@ -7,14 +7,11 @@
  */
 
 import styles from './SpectrumBar.module.css'
+import { scoreColor } from '../../utils/herdStage'
 
 /** score 구간별 thumb 테두리 색상 반환 */
 function getThumbColor(score) {
-  if (score >= 75) return 'var(--rush)'
-  if (score >= 60) return 'var(--drift)'
-  if (score >= 40) return 'var(--calm)'
-  if (score >= 15) return 'var(--scatter)'
-  return 'var(--flee)'
+  return scoreColor(score)
 }
 
 /**

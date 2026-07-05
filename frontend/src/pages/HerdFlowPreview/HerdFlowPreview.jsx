@@ -6,6 +6,7 @@
 
 import HerdDots from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
+import { scoreColor } from '../../utils/herdStage'
 import styles from './HerdFlowPreview.module.css'
 
 const STAGES = [
@@ -42,11 +43,7 @@ const STAGES = [
 ]
 
 function stageColor(score) {
-  if (score >= 75) return 'var(--rush)'
-  if (score >= 60) return 'var(--drift)'
-  if (score >= 40) return 'var(--calm)'
-  if (score >= 15) return 'var(--scatter)'
-  return 'var(--flee)'
+  return scoreColor(score)
 }
 
 export default function HerdFlowPreview() {

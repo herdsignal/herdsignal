@@ -50,7 +50,7 @@ Rush    #EF4444  (레드)
 
 ## 핵심 UI 컴포넌트
 - HerdDots: Herd Flow 점 애니메이션 (Flee=전 영역 듬성듬성 분산, Scatter=작은 군집들이 깨져 흩어짐, Calm=중앙 균형, Drift=오른쪽 쏠림, Rush=좁은 군중 밀집)
-- HerdHistoryChart: HERD 점수 히스토리 공용 차트 (Flee~Rush 구간 배경, 현재 점수 기준선, 현재 위치/기간 변화/평균/범위 데이터 보드, 이력 부족 배지)
+- HerdHistoryChart: HERD 점수 히스토리 공용 차트 (Flee~Rush 구간 배경, 현재 점수 기준선, 현재 위치/평균 대비/기간 평균/저점-고점 데이터 보드, 이력 부족 배지)
 - SpectrumBar: Flee~Rush 스펙트럼 바
 - Layout: 공통 사이드바 + 페이지 Outlet
 - AvgPriceModal: 평균 매수가·수량 수정 모달
@@ -132,6 +132,7 @@ Rush    #EF4444  (레드)
 - Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 하루 경계는 backend에서 KST 22:30 기준으로 계산한다.
 - Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.
 - Dashboard/Watchlist의 SPY 배너에서 SPY 종가, 1개월 수익률은 아직 `—` placeholder.
+- HERD 단계 표시 기준은 `src/utils/herdStage.js`에서 관리한다. backend Action Layer와 같은 Rush 75 / Flee 15 기준을 따른다.
 
 ## API 연동
 모든 API 호출은 src/api/herdApi.js에서만 관리.

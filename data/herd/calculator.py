@@ -7,7 +7,7 @@ herd/calculator.py — HERD Index 합산 계산기
 import logging
 from typing import TypedDict
 
-from config.settings import HERD_WEIGHTS
+from config.settings import HERD_THRESHOLDS, HERD_WEIGHTS
 from collectors.finnhub_collector import get_eps_surprise_multiplier
 from collectors.sector_collector import get_sector_multiplier
 from collectors.stock_collector import collect
@@ -19,15 +19,10 @@ from indicators.ma200_weekly import calc_ma200_weekly
 logger = logging.getLogger(__name__)
 
 # ──────────────────────────────────────────────
-# HERD 5단계 경계값 (변경 시 이 상수만 수정)
+# HERD 5단계 경계값
 # ──────────────────────────────────────────────
-STAGE_BOUNDARIES = [
-    (0,   20,  "Herd Flee"),     # 극단적 공포 — 매수 타이밍
-    (20,  40,  "Herd Scatter"),  # 약한 공포
-    (40,  60,  "Herd Calm"),     # 중립
-    (60,  80,  "Herd Drift"),    # 약한 탐욕
-    (80,  100, "Herd Rush"),     # 극단적 탐욕 — 익절 타이밍
-]
+SCATTER_UPPER = 40.0
+DRIFT_LOWER = 60.0
 
 
 # ──────────────────────────────────────────────
@@ -63,13 +58,17 @@ class HerdResult(TypedDict):
 def get_stage(score: float) -> str:
     """
     HERD 점수를 입력받아 5단계 중 하나를 반환한다.
-    경계값(20, 40, 60, 80)은 상위 단계에 포함된다.
+    경계값은 settings.py의 HERD_THRESHOLDS와 Action Layer 기준을 따른다.
     """
-    for lower, upper, label in STAGE_BOUNDARIES:
-        if lower <= score < upper:
-            return label
-    # 정확히 100.0일 경우 최상위 단계 반환
-    return STAGE_BOUNDARIES[-1][2]
+    if score <= HERD_THRESHOLDS["flee"]:
+        return "Herd Flee"
+    if score <= SCATTER_UPPER:
+        return "Herd Scatter"
+    if score < DRIFT_LOWER:
+        return "Herd Calm"
+    if score < HERD_THRESHOLDS["rush"]:
+        return "Herd Drift"
+    return "Herd Rush"
 
 
 def calc_herd_score(indicators: IndicatorValues) -> float:

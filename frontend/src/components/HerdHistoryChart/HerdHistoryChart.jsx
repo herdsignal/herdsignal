@@ -14,24 +14,11 @@ import {
   YAxis,
 } from 'recharts'
 import { useId } from 'react'
+import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import styles from './HerdHistoryChart.module.css'
 
-function scoreColor(score) {
-  if (score == null) return 'var(--text-1)'
-  if (score < 20) return 'var(--flee)'
-  if (score < 40) return 'var(--scatter)'
-  if (score < 60) return 'var(--calm)'
-  if (score < 80) return 'var(--drift)'
-  return 'var(--rush)'
-}
-
 function scoreStage(score) {
-  if (score == null) return '—'
-  if (score < 20) return 'Flee'
-  if (score < 40) return 'Scatter'
-  if (score < 60) return 'Calm'
-  if (score < 80) return 'Drift'
-  return 'Rush'
+  return stageLabelFromScore(score)
 }
 
 function formatAxisDate(dateStr, compact) {
@@ -53,6 +40,25 @@ function formatDelta(value) {
   return `${rounded}`
 }
 
+function rangeLabel(min, max) {
+  return `${formatScore(min)} → ${formatScore(max)}`
+}
+
+function positionLabel(percentile) {
+  if (percentile == null || Number.isNaN(percentile)) return '표본 부족'
+  if (percentile >= 80) return '기간 상단'
+  if (percentile <= 20) return '기간 하단'
+  return '기간 중간'
+}
+
+function averageDeltaLabel(delta) {
+  if (delta == null || Number.isNaN(delta)) return '평균 비교 불가'
+  const rounded = Math.round(delta)
+  if (rounded > 0) return '평균보다 높음'
+  if (rounded < 0) return '평균보다 낮음'
+  return '평균 수준'
+}
+
 function buildHistorySummary(points, current) {
   const scores = points
     .map((point) => Number(point.score))
@@ -63,17 +69,19 @@ function buildHistorySummary(points, current) {
   const min = Math.min(...scores)
   const max = Math.max(...scores)
   const average = scores.reduce((sum, score) => sum + score, 0) / scores.length
-  const first = scores[0]
   const currentNumber = Number(current)
   const percentile = scores.length > 1
     ? (scores.filter((score) => score <= currentNumber).length / scores.length) * 100
     : null
+  const averageDelta = currentNumber - average
 
   return {
     percentile,
-    delta: currentNumber - first,
+    averageDelta,
     average,
-    range: `${formatScore(min)}-${formatScore(max)}`,
+    min,
+    max,
+    range: rangeLabel(min, max),
   }
 }
 
@@ -133,20 +141,24 @@ export default function HerdHistoryChart({
           <div className={styles.summaryItem}>
             <span>현재 위치</span>
             <strong>{summary.percentile == null ? '—' : `${Math.round(summary.percentile)}%`}</strong>
+            <small>{positionLabel(summary.percentile)}</small>
           </div>
           <div className={styles.summaryItem}>
-            <span>기간 변화</span>
-            <strong className={summary.delta > 0 ? styles.deltaUp : summary.delta < 0 ? styles.deltaDown : ''}>
-              {formatDelta(summary.delta)}
+            <span>평균 대비</span>
+            <strong className={summary.averageDelta > 0 ? styles.deltaUp : summary.averageDelta < 0 ? styles.deltaDown : ''}>
+              {formatDelta(summary.averageDelta)}
             </strong>
+            <small>{averageDeltaLabel(summary.averageDelta)}</small>
           </div>
           <div className={styles.summaryItem}>
-            <span>평균</span>
-            <strong>{formatScore(summary.average)}</strong>
+            <span>기간 평균</span>
+            <strong>HERD {formatScore(summary.average)}</strong>
+            <small>선택 기간 기준</small>
           </div>
           <div className={styles.summaryItem}>
-            <span>범위</span>
+            <span>저점-고점</span>
             <strong>{summary.range}</strong>
+            <small>{scoreStage(summary.min)} → {scoreStage(summary.max)}</small>
           </div>
         </div>
       )}
@@ -158,12 +170,12 @@ export default function HerdHistoryChart({
               <stop offset="100%" stopColor={stroke} stopOpacity={0.02} />
             </linearGradient>
           </defs>
-          <ReferenceArea y1={0} y2={20} fill="#3B82F6" fillOpacity={0.075} />
-          <ReferenceArea y1={20} y2={40} fill="#60A5FA" fillOpacity={0.055} />
+          <ReferenceArea y1={0} y2={15} fill="#3B82F6" fillOpacity={0.075} />
+          <ReferenceArea y1={15} y2={40} fill="#60A5FA" fillOpacity={0.055} />
           <ReferenceArea y1={40} y2={60} fill="#A3AAB8" fillOpacity={0.04} />
-          <ReferenceArea y1={60} y2={80} fill="#FB923C" fillOpacity={0.055} />
-          <ReferenceArea y1={80} y2={100} fill="#EF4444" fillOpacity={0.075} />
-          {[20, 40, 60, 80].map((line) => (
+          <ReferenceArea y1={60} y2={75} fill="#FB923C" fillOpacity={0.055} />
+          <ReferenceArea y1={75} y2={100} fill="#EF4444" fillOpacity={0.075} />
+          {[15, 40, 60, 75].map((line) => (
             <ReferenceLine
               key={line}
               y={line}
@@ -191,7 +203,7 @@ export default function HerdHistoryChart({
           />
           <YAxis
             domain={[0, 100]}
-            ticks={compact ? [0, 50, 100] : [0, 20, 40, 60, 80, 100]}
+            ticks={compact ? [0, 50, 100] : [0, 15, 40, 60, 75, 100]}
             tick={{ fontSize: 10, fill: 'var(--text-3)', fontFamily: 'Inter' }}
             axisLine={false}
             tickLine={false}

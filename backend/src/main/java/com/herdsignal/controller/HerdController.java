@@ -1,20 +1,15 @@
 package com.herdsignal.controller;
 
 import com.herdsignal.config.AppConstants;
-import com.herdsignal.dto.AnalystResponse;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.HerdHistoryResponse;
 import com.herdsignal.dto.HerdScoreResponse;
-import com.herdsignal.dto.InsiderResponse;
-import com.herdsignal.dto.NewsResponse;
 import com.herdsignal.dto.PortfolioHerdResponse;
-import com.herdsignal.dto.PriceHistoryResponse;
 import com.herdsignal.dto.StockFinancialsResponse;
 import com.herdsignal.dto.StockSearchResponse;
 import com.herdsignal.service.FinancialsService;
 import com.herdsignal.service.FinnhubService;
 import com.herdsignal.service.HerdService;
-import com.herdsignal.service.PriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +25,6 @@ public class HerdController {
 
     private final HerdService        herdService;
     private final FinancialsService  financialsService;
-    private final PriceService       priceService;
     private final FinnhubService     finnhubService;
 
     /**
@@ -114,49 +108,4 @@ public class HerdController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    /**
-     * GET /api/stocks/{ticker}/prices?period=1M
-     * 일별 종가 히스토리 조회. period: 1M(기본) | 3M | 1Y | 5Y.
-     * daily_prices 테이블 직접 조회 — Python 호출 없음.
-     */
-    @GetMapping("/stocks/{ticker}/prices")
-    public ResponseEntity<ApiResponse<PriceHistoryResponse>> getStockPrices(
-            @PathVariable String ticker,
-            @RequestParam(defaultValue = "1M") String period) {
-        PriceHistoryResponse response = priceService.getPriceHistory(ticker.toUpperCase(), period);
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
-
-    /**
-     * GET /api/stocks/{ticker}/news
-     * 최근 30일 뉴스 최대 5건 조회 (Finnhub).
-     * API 실패 또는 키 미설정 시 빈 리스트 반환.
-     */
-    @GetMapping("/stocks/{ticker}/news")
-    public ResponseEntity<ApiResponse<NewsResponse>> getStockNews(@PathVariable String ticker) {
-        NewsResponse response = finnhubService.getNews(ticker.toUpperCase());
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
-
-    /**
-     * GET /api/stocks/{ticker}/analyst
-     * 최신 1개월 애널리스트 추천 컨센서스 조회 (Finnhub).
-     * 데이터 없거나 실패 시 data=null 반환.
-     */
-    @GetMapping("/stocks/{ticker}/analyst")
-    public ResponseEntity<ApiResponse<AnalystResponse>> getStockAnalyst(@PathVariable String ticker) {
-        AnalystResponse response = finnhubService.getAnalyst(ticker.toUpperCase());
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
-
-    /**
-     * GET /api/stocks/{ticker}/insider
-     * 최근 내부자 거래 최대 10건 조회 (Finnhub).
-     * 실패 시 빈 리스트 반환.
-     */
-    @GetMapping("/stocks/{ticker}/insider")
-    public ResponseEntity<ApiResponse<InsiderResponse>> getStockInsider(@PathVariable String ticker) {
-        InsiderResponse response = finnhubService.getInsider(ticker.toUpperCase());
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
 }

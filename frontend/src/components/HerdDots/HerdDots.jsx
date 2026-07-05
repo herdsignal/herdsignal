@@ -9,18 +9,19 @@
  */
 
 import { useRef, useEffect } from 'react'
+import { HERD_STAGE_THRESHOLDS } from '../../utils/herdStage'
 
 /** score 구간별 HERD 색상 반환 */
 function getColor(score) {
-  if (score >= 75) return '#EF4444'  // Rush  — 레드
-  if (score >= 60) return '#F97316'  // Drift — 오렌지
-  if (score >= 40) return '#A3AAB8'  // Calm  — 회색
-  if (score >= 15) return '#60A5FA'  // Scatter — 연파랑
+  if (score >= HERD_STAGE_THRESHOLDS.rush) return '#EF4444'  // Rush  — 레드
+  if (score >= HERD_STAGE_THRESHOLDS.drift) return '#F97316' // Drift — 오렌지
+  if (score > HERD_STAGE_THRESHOLDS.scatter) return '#A3AAB8' // Calm  — 회색
+  if (score > HERD_STAGE_THRESHOLDS.flee) return '#60A5FA'    // Scatter — 연파랑
   return '#3B82F6'                   // Flee  — 파랑
 }
 
 function getFlowProfile(score) {
-  if (score >= 75) {
+  if (score >= HERD_STAGE_THRESHOLDS.rush) {
     return {
       mode: 'cluster',
       anchorX: 0.78,
@@ -34,7 +35,7 @@ function getFlowProfile(score) {
       trail: 0.08,
     }
   }
-  if (score >= 60) {
+  if (score >= HERD_STAGE_THRESHOLDS.drift) {
     return {
       mode: 'drift',
       anchorX: 0.66,
@@ -48,7 +49,7 @@ function getFlowProfile(score) {
       trail: 0.04,
     }
   }
-  if (score >= 40) {
+  if (score > HERD_STAGE_THRESHOLDS.scatter) {
     return {
       mode: 'calm',
       anchorX: 0.5,
@@ -62,7 +63,7 @@ function getFlowProfile(score) {
       trail: 0,
     }
   }
-  if (score >= 15) {
+  if (score > HERD_STAGE_THRESHOLDS.flee) {
     return {
       mode: 'scatter',
       anchorX: 0.36,
@@ -172,7 +173,7 @@ export default function HerdDots({
           r:  (
             profile.mode === 'flee'
               ? 0.9 + Math.random() * 1.5
-              : 1.1 + Math.random() * (score >= 75 ? 2.7 : 2)
+              : 1.1 + Math.random() * (score >= HERD_STAGE_THRESHOLDS.rush ? 2.7 : 2)
           ) * dpr,
         }
       })

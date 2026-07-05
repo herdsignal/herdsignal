@@ -21,6 +21,7 @@ import {
 import HerdDots  from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
+import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { opportunityRows } from '../../utils/portfolioTools'
 import styles    from './Watchlist.module.css'
 
@@ -127,21 +128,11 @@ function formatDate(dateStr) {
 }
 
 function scoreToColor(score) {
-  if (score == null) return 'var(--text-1)'
-  if (score < 20) return 'var(--flee)'
-  if (score < 40) return 'var(--scatter)'
-  if (score < 60) return 'var(--calm)'
-  if (score < 80) return 'var(--drift)'
-  return 'var(--rush)'
+  return score == null ? 'var(--text-1)' : scoreColor(score)
 }
 
 function scoreToStage(score) {
-  if (score == null) return null
-  if (score < 20) return 'Herd Flee'
-  if (score < 40) return 'Herd Scatter'
-  if (score < 60) return 'Herd Calm'
-  if (score < 80) return 'Herd Drift'
-  return 'Herd Rush'
+  return stageLabelFromScore(score, true)
 }
 
 function findScoreAt(points, targetDate) {

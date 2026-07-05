@@ -33,6 +33,7 @@ import {
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
+import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import {
   portfolioRows,
   readTargetWeights,
@@ -296,22 +297,12 @@ function fmtScoreDate(dateStr, fetchTime) {
 
 /** HERD 점수 → 단계 색상 (히스토리 통계용) */
 function scoreToColor(score) {
-  if (score == null) return 'var(--text-1)'
-  if (score < 20) return 'var(--flee)'
-  if (score < 40) return 'var(--scatter)'
-  if (score < 60) return 'var(--calm)'
-  if (score < 80) return 'var(--drift)'
-  return 'var(--rush)'
+  return score == null ? 'var(--text-1)' : scoreColor(score)
 }
 
 /** HERD 점수 → 단계명 (히스토리 통계용) */
 function scoreToStage(score) {
-  if (score == null) return null
-  if (score < 20) return 'Herd Flee'
-  if (score < 40) return 'Herd Scatter'
-  if (score < 60) return 'Herd Calm'
-  if (score < 80) return 'Herd Drift'
-  return 'Herd Rush'
+  return stageLabelFromScore(score, true)
 }
 
 /** points 배열에서 targetDate에 가장 가까운 포인트 반환 */
