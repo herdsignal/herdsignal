@@ -1,6 +1,6 @@
 .page {
   display: grid;
-  gap: 18px;
+  gap: 16px;
   max-width: 1280px;
 }
 
@@ -9,7 +9,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
-  padding-bottom: 24px;
+  padding: 20px 0 24px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -20,7 +20,7 @@
 .targetCard span {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--text-3);
 }
@@ -30,7 +30,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 36px;
   line-height: 1;
-  letter-spacing: -1.2px;
+  letter-spacing: 0;
 }
 
 .header p {
@@ -58,9 +58,12 @@
 
 .modelStrip div {
   padding: 16px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.095);
-  border-radius: 12px;
-  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+    var(--surface2);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .modelStrip strong {
@@ -71,17 +74,19 @@
   white-space: nowrap;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
-  letter-spacing: -0.3px;
+  letter-spacing: 0;
   color: var(--text-1);
 }
 
 .metricCard,
 .card,
 .targetCard {
-  border: 1px solid rgba(255, 255, 255, 0.095);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)), var(--surface);
-  border-radius: 12px;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+    var(--surface);
+  border-radius: var(--card-radius);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
 }
 
 .metricCard {
@@ -102,7 +107,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 22px;
   line-height: 1;
-  letter-spacing: -0.7px;
+  letter-spacing: 0;
 }
 
 .targetCard em {
@@ -129,7 +134,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 30px;
   line-height: 1;
-  letter-spacing: -1px;
+  letter-spacing: 0;
 }
 
 .metricCard em {
@@ -167,13 +172,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 18px 20px 0;
+  min-height: 56px;
+  padding: 16px 20px 0;
 }
 
 .cardHead strong {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 16px;
-  letter-spacing: -0.4px;
+  letter-spacing: 0;
 }
 
 .table {
@@ -190,6 +196,10 @@
   border-bottom: 1px solid var(--border);
 }
 
+.tr:not(.th):hover {
+  background: rgba(255, 255, 255, 0.018);
+}
+
 .tr:last-child {
   border-bottom: none;
 }
@@ -201,7 +211,7 @@
 .th span {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--text-3);
 }
@@ -238,7 +248,7 @@
   margin-top: 6px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--surface2);
+  background: var(--surface3, var(--surface2));
 }
 
 .captureBar b,
@@ -325,7 +335,7 @@
 .weightRow div {
   height: 5px;
   border-radius: 99px;
-  background: var(--surface2);
+  background: var(--surface3, var(--surface2));
   overflow: hidden;
 }
 
