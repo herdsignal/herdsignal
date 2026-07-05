@@ -150,7 +150,7 @@ export default function AiRebalance() {
   ]
 
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.pageHeader}>
         <div>
           <div className={styles.pageDate}>규칙 기반 실행안</div>
@@ -229,7 +229,7 @@ export default function AiRebalance() {
             <section className={styles.card}>
               <div className={styles.cardHeader}>
                 <h2>현재 vs 목표</h2>
-                <span>목표 비중은 브라우저에 저장됩니다.</span>
+                <span>목표 비중 기반</span>
               </div>
               <div className={styles.table}>
                 {rows.map((row) => (
@@ -256,7 +256,7 @@ export default function AiRebalance() {
             <section className={styles.card}>
               <div className={styles.cardHeader}>
                 <h2>플랜 요약</h2>
-                <span>AI 연결 전 규칙 기반 설명</span>
+                <span>규칙 기반 근거</span>
               </div>
               <div className={styles.aiSummary}>
                 {summaryLines.map((line) => <p key={line}>{line}</p>)}
