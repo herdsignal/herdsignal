@@ -68,7 +68,8 @@ Rush    #EF4444  (레드)
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
   - 보유 종목 카드
-  - 편집 모드/표시 순서 변경/삭제
+  - 보유 종목 정렬(행동순/HERD 낮은순/HERD 높은순/비중순)
+  - 편집 모드/삭제
   - 평단가·수량 수정 모달
   - localStorage 캐시 우선 로딩
   - 수동 새로고침은 DB 조회 기반 빠른 갱신만 수행
@@ -165,7 +166,7 @@ Rush    #EF4444  (레드)
 - `hs_cache_time`: 캐시 저장 시각
 - `hs_recent_searches`: 최근 검색
 - `hs_target_weights`: 포트폴리오 종목별 목표 비중
-- `hs_portfolio_order`: Dashboard 보유 종목 표시 순서
+- `hs_dashboard_sort`: Dashboard 보유 종목 정렬 기준
 - `hs_rebalance_settings`: 리밸런싱 예산·현금 목표·강도 설정
 - `herdsignal_currency`: 통화 표시 모드
 
