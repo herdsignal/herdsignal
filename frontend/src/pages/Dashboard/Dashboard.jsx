@@ -882,7 +882,7 @@ export default function Dashboard() {
       {summary && (
         <>
           <div className={styles.summarySectionHeader}>
-            <div className={styles.sectionTitle}>포트폴리오 평가</div>
+            <div className={styles.sectionTitle}>자산 현황</div>
             <div className={styles.currencyToggle}>
               <button
                 className={`${styles.currencyBtn} ${currencyMode === 'KRW' ? styles.currencyBtnActive : ''}`}
@@ -958,7 +958,7 @@ export default function Dashboard() {
       {!loading && !error && portfolio.length > 0 && rebalanceRows.length > 0 && (
         <div className={styles.rebalanceStrip}>
           <div className={styles.rebalanceStripHead}>
-            <span>리밸런싱 체크</span>
+            <span>행동 대기열</span>
             <strong>{rebalanceRows.length}개 후보</strong>
           </div>
           <div className={styles.rebalanceStripList}>
