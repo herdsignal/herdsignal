@@ -45,7 +45,7 @@ The `Herd Flow` animation visualizes these stages as particle distribution. Flee
 - **Dashboard**: S&P 500 Herd Flow banner, portfolio valuation, core rebalance check, and holding-level HERD action cards
 - **Watchlist**: opportunity queue and HERD cards sorted by long-term add/trim timing priority
 - **Search**: ticker/company search, HERD preview, recent searches, and portfolio/watchlist add actions
-- **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, HERD Index history, indicator breakdown, and financials
+- **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, signal reliability board, HERD Index history, indicator breakdown, and financials
 - **HERD Lab**: model version, backtest summary, action matrix, and validation data for the HERD methodology
 
 ---
@@ -90,6 +90,7 @@ Python calculates and stores data. Spring Boot serves database-backed APIs. Reac
 - `GET /api/stocks/search?q=apple`
 - `GET /api/stocks/{ticker}/financials`
 - `GET /api/stocks/{ticker}/herd/history?period=1m|3m|1y|3y`
+- `GET /api/stocks/{ticker}/herd/reliability?years=3`
 - `GET /api/portfolio`
 - `GET /api/portfolio/herd`
 - `POST /api/portfolio/herd/refresh`
@@ -122,6 +123,8 @@ HERD v4 applies two multipliers to the base score:
 - Sector relative strength: stock 90-day return vs sector ETF 90-day return
 
 The final score is stored in `herd_scores.herd_score`. The API also exposes `herdV4`, `herdBase`, `epsMultiplier`, and `sectorMultiplier`.
+
+Signal reliability is calculated separately from data quality. It compares saved HERD history with later price movement and reports Flee hit rate, Rush hit rate, MDD improvement, return preservation, and annual action count.
 
 ---
 

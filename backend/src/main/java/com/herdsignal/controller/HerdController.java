@@ -3,12 +3,14 @@ package com.herdsignal.controller;
 import com.herdsignal.config.AppConstants;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.HerdHistoryResponse;
+import com.herdsignal.dto.HerdReliabilityResponse;
 import com.herdsignal.dto.HerdScoreResponse;
 import com.herdsignal.dto.PortfolioHerdResponse;
 import com.herdsignal.dto.StockFinancialsResponse;
 import com.herdsignal.dto.StockSearchResponse;
 import com.herdsignal.service.FinancialsService;
 import com.herdsignal.service.FinnhubService;
+import com.herdsignal.service.HerdReliabilityService;
 import com.herdsignal.service.HerdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ public class HerdController {
     private final HerdService        herdService;
     private final FinancialsService  financialsService;
     private final FinnhubService     finnhubService;
+    private final HerdReliabilityService herdReliabilityService;
 
     /**
      * GET /api/stocks/search?q=apple
@@ -105,6 +108,21 @@ public class HerdController {
             @PathVariable String ticker,
             @RequestParam(defaultValue = "3y") String period) {
         HerdHistoryResponse response = herdService.getHerdHistory(ticker.toUpperCase(), period);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * GET /api/stocks/{ticker}/herd/reliability?years=3
+     * 저장된 HERD 히스토리와 가격 데이터를 기반으로 신호 신뢰도 조회.
+     */
+    @GetMapping("/stocks/{ticker}/herd/reliability")
+    public ResponseEntity<ApiResponse<HerdReliabilityResponse>> getStockHerdReliability(
+            @PathVariable String ticker,
+            @RequestParam(defaultValue = "3") int years) {
+        HerdReliabilityResponse response = herdReliabilityService.getReliability(
+                ticker.toUpperCase(),
+                years
+        );
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

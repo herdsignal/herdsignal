@@ -127,6 +127,9 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - StockDetail/Dashboard HERD 히스토리 차트용 과거 점수 생성
   - 기본 대상: 포트폴리오 + 관심종목 + SPY (`--all-stocks` 명시 시 stocks 활성 종목 포함)
   - 과거 EPS/섹터 승수는 1.0으로 저장해 미래 데이터 누수를 피함
+- HERD 신호 신뢰도 계산 (`data/herd/signal_reliability.py`)
+  - 저장된 HERD 히스토리와 yfinance 가격으로 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수 계산
+  - DB 스키마 변경 없는 on-demand 분석
 - 백테스트 코드 (backtest_v3.py, backtest_v4.py 기반)
 
 **backend/**
@@ -137,6 +140,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - 관심 종목 전체 API (CRUD + HERD 조회)
 - 시장 데이터 API (`GET /api/market/spy` — SPY 종가·1개월 수익률)
 - 재무정보 API (`GET /api/stocks/{ticker}/financials` — 시가총액·PER·EPS 등)
+- HERD 신호 신뢰도 API (`GET /api/stocks/{ticker}/herd/reliability` — 과거 신호 성능)
 - Python on-demand 계산 연동 (ProcessBuilder)
 - 전역 예외 처리 (404 / 409 / 500)
 
@@ -144,6 +148,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 - Dashboard: S&P 500 Herd Flow 배너(Overview 애니메이션 + Timeline HERD 히스토리), 포트폴리오 평가 요약, KRW/USD 통화 토글, 핵심 리밸런싱 체크, 액션 강조 보유 종목 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침 피드백
 - StockDetail: HERD v4 점수·단계·신호, HERD_v5 Action Layer 행동 비율, HERD Index 히스토리 차트, 지표 분해·보정 승수, 재무정보 카드
+- StockDetail: 최근 3년 HERD 신호 신뢰도 데이터 보드(Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수)
 - HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공. frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
 - HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v5는 HERD_v4 점수에 Balanced Action Layer를 얹은 응답 시점 행동 모델이다.
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. frontend에서는 actionScore를 `강도`로 표시하고, DB 저장 없이 backend 응답 시점에 계산한다.

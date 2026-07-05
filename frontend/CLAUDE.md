@@ -73,6 +73,7 @@ Rush    #EF4444  (레드)
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
+  - 최근 3년 HERD 신호 신뢰도 데이터 보드
   - 1M/3M/1Y/3Y HERD Index 히스토리 차트
   - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
   - 낮은 HERD 데이터 품질만 배지 표시
@@ -127,6 +128,7 @@ Rush    #EF4444  (레드)
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
+- HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수를 보여준다.
 - Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 사용하며, frontend에서는 actionScore를 `강도`로 표시하고 별도 행동 점수 계산을 하지 않는다.
 - Search에서 포트폴리오/관심종목 추가는 HERD 데이터가 준비된 종목만 허용한다. 포트폴리오 추가 성공 시 Dashboard localStorage 캐시(`hs_portfolio_realtime`, `hs_portfolio_herd`, `hs_cache_time`)를 비우고 평단가·수량 입력 모달을 연다.
 - Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 하루 경계는 backend에서 KST 22:30 기준으로 계산한다.
@@ -144,6 +146,7 @@ Rush    #EF4444  (레드)
 - addToPortfolio / removeFromPortfolio / updateAvgPrice
 - getWatchlistHerd / addToWatchlist / removeFromWatchlist
 - getStockHerd / refreshStockHerd / getStockHerdHistory / getSpyHerdHistory
+- getStockHerdReliability
 - searchStocks
 - getStockFinancials
 

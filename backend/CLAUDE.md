@@ -26,6 +26,7 @@ POST   /api/stocks/{ticker}/herd/refresh      종목 HERD Index 강제 재계산
 GET    /api/stocks/search?q=apple             회사명/티커 기반 종목 심볼 검색 (Finnhub)
 GET    /api/stocks/{ticker}/financials        종목 재무정보 조회 (yfinance .info)
 GET    /api/stocks/{ticker}/herd/history      종목 HERD 히스토리 조회 (period=1m|3m|1y|3y)
+GET    /api/stocks/{ticker}/herd/reliability  종목 HERD 신호 신뢰도 조회 (years=3)
 GET    /api/portfolio/herd                    포트폴리오 전체 HERD 조회
 POST   /api/portfolio/herd/refresh            포트폴리오 전체 HERD 강제 재계산 후 조회
 
@@ -76,6 +77,9 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - FinancialsService
   - Python stock_info_collector.get_stock_financials(ticker) 호출
   - 종목 재무정보 반환 (ProcessBuilder, 티커 정규식 검증 포함)
+- HerdReliabilityService
+  - Python signal_reliability.py 호출
+  - 저장된 HERD 히스토리와 yfinance 가격 기반 신호 성능 신뢰도 반환
 - FinnhubService
   - Python finnhub_collector 호출
   - 회사명/티커 기반 심볼 검색 응답 반환
@@ -108,6 +112,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - HERD v4 응답은 `herdScore`/`herdV4`에 최종 점수, `herdBase`에 v3 기본 점수, `epsMultiplier`/`sectorMultiplier`에 보정 승수를 포함한다.
 - HERD 신뢰도 응답은 DB 스키마 변경 없이 `HerdService`가 계산한다. `qualityScore`, `qualityLevel`, `qualityLabel`, `qualitySummary`, `qualityFlags`, `qualityReasons`를 포함한다.
 - HERD 신뢰도는 `daily_prices` 기간이 아니라 저장된 HERD 산출 결과의 완성도(핵심 지표, 200주 MA, v4 보정 승수, 최신성)를 기준으로 계산한다.
+- HERD 신호 성능 신뢰도는 `HerdReliabilityService`가 Python을 호출해 계산한다. `qualityScore`와 달리 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수를 기준으로 한다.
 - HERD_v5 Action Layer 응답은 DB 스키마 변경 없이 `ActionDecisionService`가 계산한다. `actionModelVersion`, `actionModelName`, `baseModelVersion`, `actionModelStatus`, `actionScore`, `actionGrade`, `actionLabel`, `actionRatio`, `actionRegime`, `actionRegimeLabel`, `actionReasons`, `actionWarnings`를 포함한다.
 - 포트폴리오 종목별 `dailyChangePct`는 KST 22:30 미국장 시작을 하루 경계로 본다. 22:30 전에는 직전 미국장 세션을 오늘로 유지한다.
 - 로그인/인증/멀티유저 API는 없음. 현재는 `local` 사용자 고정.

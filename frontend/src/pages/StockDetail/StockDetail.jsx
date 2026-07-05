@@ -13,7 +13,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, useNavigate }                    from 'react-router-dom'
 import {
   getStockHerd, addToPortfolio, addToWatchlist, getStockFinancials,
-  getStockHerdHistory,
+  getStockHerdHistory, getStockHerdReliability,
   getPortfolio, getPortfolioSummary,
 } from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
@@ -230,6 +230,37 @@ function actionTone(grade, signal) {
   return 'var(--text-3)'
 }
 
+function reliabilityTone(grade) {
+  switch (grade) {
+    case 'STRONG': return 'var(--flee)'
+    case 'GOOD': return 'var(--scatter)'
+    case 'WATCH': return 'var(--drift)'
+    case 'DATA_LIMITED': return 'var(--text-3)'
+    default: return 'var(--calm)'
+  }
+}
+
+function fmtReliabilityPct(value, suffix = '%') {
+  if (value == null) return '—'
+  const n = Number(value)
+  if (!Number.isFinite(n)) return '—'
+  return `${n >= 0 ? '+' : ''}${n.toFixed(1)}${suffix}`
+}
+
+function fmtReliabilityPlainPct(value) {
+  if (value == null) return '—'
+  const n = Number(value)
+  if (!Number.isFinite(n)) return '—'
+  return `${n.toFixed(0)}%`
+}
+
+function fmtAnnualActions(value) {
+  if (value == null) return '—'
+  const n = Number(value)
+  if (!Number.isFinite(n)) return '—'
+  return `${n.toFixed(1)}회`
+}
+
 /* ── 버튼 레이블 매핑 ─────────────────────── */
 const BTN_LABELS = {
   portfolio: {
@@ -262,6 +293,8 @@ export default function StockDetail() {
   const [herdHistory,      setHerdHistory]       = useState([])
   const [historyPeriod,    setHistoryPeriod]     = useState('1y')
   const [historyLoading,   setHistoryLoading]    = useState(false)
+  const [reliability,      setReliability]       = useState(null)
+  const [reliabilityLoading, setReliabilityLoading] = useState(false)
   const [portfolio,        setPortfolio]         = useState([])
   const [portfolioSummary, setPortfolioSummary]  = useState(null)
 
@@ -323,6 +356,16 @@ export default function StockDetail() {
       .catch(() => { setHerdHistory([]) })
       .finally(() => { setHistoryLoading(false) })
   }, [ticker, historyPeriod])
+
+  /* HERD 신호 신뢰도 — 저장된 HERD 히스토리와 가격 데이터 기반 */
+  useEffect(() => {
+    setReliabilityLoading(true)
+    setReliability(null)
+    getStockHerdReliability(ticker.toUpperCase(), 3)
+      .then((res) => { setReliability(res.data?.data ?? null) })
+      .catch(() => { setReliability(null) })
+      .finally(() => { setReliabilityLoading(false) })
+  }, [ticker])
 
   /* 포트폴리오 추가 */
   async function handleAddPortfolio() {
@@ -520,6 +563,67 @@ export default function StockDetail() {
                       <span key={warning}>{warning}</span>
                     ))}
                   </div>
+                )}
+              </div>
+            </div>
+
+            {/* HERD 신호 신뢰도 카드 */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <div className={styles.cardTitle}>Signal Reliability</div>
+                  <div className={styles.cardMeta}>최근 3년 HERD 히스토리 기준</div>
+                </div>
+                {reliability && (
+                  <div
+                    className={styles.reliabilityBadge}
+                    style={{
+                      color: reliabilityTone(reliability.reliabilityGrade),
+                      borderColor: reliabilityTone(reliability.reliabilityGrade),
+                    }}
+                  >
+                    {reliability.reliabilityLabel}
+                  </div>
+                )}
+              </div>
+              <div className={styles.cardBodySmall}>
+                {reliabilityLoading ? (
+                  <div className={styles.chartEmpty}>로딩 중…</div>
+                ) : reliability ? (
+                  <>
+                    <div className={styles.reliabilityGrid}>
+                      <div className={styles.reliabilityItem}>
+                        <span>Flee 적중률</span>
+                        <strong>{fmtReliabilityPlainPct(reliability.fleeHitRate)}</strong>
+                        <em>{reliability.fleeSampleSize ?? 0}회</em>
+                      </div>
+                      <div className={styles.reliabilityItem}>
+                        <span>Rush 적중률</span>
+                        <strong>{fmtReliabilityPlainPct(reliability.rushHitRate)}</strong>
+                        <em>{reliability.rushSampleSize ?? 0}회</em>
+                      </div>
+                      <div className={styles.reliabilityItem}>
+                        <span>MDD 개선</span>
+                        <strong>{fmtReliabilityPct(reliability.mddImprovement, '%p')}</strong>
+                        <em>낙폭 관리</em>
+                      </div>
+                      <div className={styles.reliabilityItem}>
+                        <span>수익률 보존</span>
+                        <strong>{fmtReliabilityPlainPct(reliability.returnPreservation)}</strong>
+                        <em>Buy & Hold 대비</em>
+                      </div>
+                      <div className={styles.reliabilityItem}>
+                        <span>연 행동 수</span>
+                        <strong>{fmtAnnualActions(reliability.annualActions)}</strong>
+                        <em>과매매 체크</em>
+                      </div>
+                    </div>
+                    <div className={styles.reliabilitySummary}>
+                      {reliability.summary}
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.chartEmpty}>신뢰도 데이터를 계산할 수 없습니다.</div>
                 )}
               </div>
             </div>

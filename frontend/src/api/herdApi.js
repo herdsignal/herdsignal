@@ -85,6 +85,10 @@ export const refreshStockHerd = (ticker) =>
 export const getStockHerdHistory = (ticker, period = '3y') =>
   api.get(`/api/stocks/${ticker}/herd/history?period=${period}`)
 
+/** 특정 종목 HERD 신호 신뢰도 조회 */
+export const getStockHerdReliability = (ticker, years = 3) =>
+  api.get(`/api/stocks/${ticker}/herd/reliability?years=${years}`, { timeout: 70_000 })
+
 /** SPY HERD 히스토리 조회 (기본 3y) */
 export const getSpyHerdHistory = (period = '3y') =>
   getStockHerdHistory('SPY', period)
