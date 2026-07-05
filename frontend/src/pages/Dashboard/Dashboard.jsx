@@ -57,6 +57,8 @@ const CACHE_KEY_SPY         = 'hs_spy_herd'
 const CACHE_KEY_SPY_HISTORY = 'hs_spy_history'
 const CACHE_KEY_SPY_HISTORY_VERSION = 'v2'
 const CACHE_KEY_TIME        = 'hs_cache_time'
+const CACHE_KEY_VERSION     = 'hs_dashboard_cache_version'
+const DASHBOARD_CACHE_VERSION = 'v3-logo'
 
 const HISTORY_PERIODS = [
   { value: '1m', label: '1M' },
@@ -86,6 +88,27 @@ function writeCache(key, data) {
 
 function spyHistoryCacheKey(period) {
   return `${CACHE_KEY_SPY_HISTORY}_${period}_${CACHE_KEY_SPY_HISTORY_VERSION}`
+}
+
+function ensureDashboardCacheVersion() {
+  try {
+    if (localStorage.getItem(CACHE_KEY_VERSION) === DASHBOARD_CACHE_VERSION) {
+      return false
+    }
+
+    [
+      CACHE_KEY_REALTIME,
+      CACHE_KEY_HERD,
+      CACHE_KEY_SPY,
+      CACHE_KEY_TIME,
+      ...HISTORY_PERIODS.map((period) => spyHistoryCacheKey(period.value)),
+    ].forEach((key) => localStorage.removeItem(key))
+
+    localStorage.setItem(CACHE_KEY_VERSION, DASHBOARD_CACHE_VERSION)
+    return true
+  } catch {
+    return false
+  }
 }
 
 function minSpyHistoryPoints(period) {
@@ -421,6 +444,9 @@ export default function Dashboard() {
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
+    if (ensureDashboardCacheVersion()) {
+      setLastUpdated(null)
+    }
     try {
       /*
        * (1) 종목 목록 — 항상 최신 조회.
