@@ -87,8 +87,11 @@
 }
 
 .logoText em {
+  background: linear-gradient(90deg, #3B82F6 0%, #FB923C 62%, #EF4444 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   font-style: normal;
-  color: var(--flee);
 }
 
 /* 네비 그룹 */

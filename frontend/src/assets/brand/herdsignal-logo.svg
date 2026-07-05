@@ -1,6 +1,13 @@
 <svg width="190" height="44" viewBox="0 0 190 44" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">HerdSignal logo</title>
   <desc id="desc">HerdSignal wordmark with a particle H symbol.</desc>
+  <defs>
+    <linearGradient id="signalGradient" x1="105" y1="0" x2="168" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="0.62" stop-color="#FB923C"/>
+      <stop offset="1" stop-color="#EF4444"/>
+    </linearGradient>
+  </defs>
   <g>
     <rect width="44" height="44" rx="12" fill="#111827"/>
     <rect x="0.5" y="0.5" width="43" height="43" rx="11.5" stroke="#334155"/>
@@ -29,5 +36,5 @@
     <path d="M18 22C20.5 19.5 23.5 24.5 26 22" stroke="#60A5FA" stroke-width="1.6" stroke-linecap="round"/>
   </g>
   <text x="56" y="27.8" fill="#E5EDF8" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="20" font-weight="750" letter-spacing="-0.2">Herd</text>
-  <text x="105" y="27.8" fill="#3B82F6" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="20" font-weight="750" letter-spacing="-0.2">Signal</text>
+  <text x="105" y="27.8" fill="url(#signalGradient)" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="20" font-weight="750" letter-spacing="-0.2">Signal</text>
 </svg>
