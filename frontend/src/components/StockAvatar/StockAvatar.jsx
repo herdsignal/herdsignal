@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react'
 import styles from './StockAvatar.module.css'
 
+const ETF_TICKERS = new Set([
+  'SPY', 'QQQ', 'DIA', 'IWM', 'VOO', 'VTI', 'VT',
+  'SOXL', 'SOXS', 'TQQQ', 'SQQQ', 'BITX', 'IBIT', 'BITO',
+  'XLK', 'XLF', 'XLE', 'XLV', 'XLY', 'XLP', 'XLU', 'XLI',
+])
+
 function tickerLabel(ticker) {
   const normalized = (ticker || '').toUpperCase()
   return normalized.length <= 4 ? normalized : normalized.slice(0, 4)
+}
+
+function isEtfTicker(ticker) {
+  return ETF_TICKERS.has((ticker || '').toUpperCase())
 }
 
 export default function StockAvatar({
@@ -15,6 +25,7 @@ export default function StockAvatar({
 }) {
   const [failed, setFailed] = useState(false)
   const hasLogo = Boolean(logoUrl) && !failed
+  const isEtfFallback = !hasLogo && isEtfTicker(ticker)
 
   useEffect(() => {
     setFailed(false)
@@ -22,7 +33,7 @@ export default function StockAvatar({
 
   return (
     <div
-      className={`${styles.avatar} ${styles[size] ?? styles.md} ${hasLogo ? styles.hasLogo : ''} ${className}`}
+      className={`${styles.avatar} ${styles[size] ?? styles.md} ${hasLogo ? styles.hasLogo : ''} ${isEtfFallback ? styles.etfFallback : ''} ${className}`}
       style={{
         '--avatar-bg': tone?.bg,
         '--avatar-color': tone?.color,

@@ -681,12 +681,12 @@
 .cardTickerBlock {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .cardTicker {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0;
   margin-bottom: 2px;
@@ -694,7 +694,7 @@
 }
 
 .cardStageName {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-2);
 }
