@@ -530,15 +530,6 @@
   z-index: 1;
 }
 
-.bannerStatsBlock {
-  padding: 32px 28px;
-  border-left: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 20px;
-}
-
 .bannerStatItem {}
 
 .bannerStatLabel {
@@ -730,27 +721,12 @@
   white-space: nowrap;
 }
 
-/* HERD 숫자 + 단계명 (우측 정렬) */
+/* HERD 액션 영역 (우측 정렬) */
 .cardHerd {
   text-align: right;
   flex-shrink: 0;
   padding-right: 20px; /* 삭제 버튼 공간 확보 */
   max-width: 220px;
-}
-
-.cardHerdNum {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1;
-  margin-bottom: 3px;
-}
-
-.cardHerdStage {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-2);
 }
 
 .cardActionPanel {
@@ -817,30 +793,6 @@
   border-top: 1px solid var(--border);
 }
 
-/* 평단가 입력 완료 — 평가금액 + 수익률 */
-.cardFinance {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.cardFinanceRight { text-align: right; }
-
-.cardFinanceLabel {
-  font-size: 10px;
-  color: var(--text-3);
-  letter-spacing: 0;
-  margin-bottom: 3px;
-}
-
-.cardFinanceValue {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--text-1);
-}
-
 /* 평단가 미입력 — 안내 텍스트 + 입력 버튼 */
 .cardNoPrice {
   display: flex;
@@ -904,33 +856,6 @@
   border-top: 1px solid var(--border);
   padding-top: 10px;
   margin-top: 12px;
-}
-
-.cardSignalBadge {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0;
-}
-
-.cardSignalGroup {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 7px;
-  margin-top: 5px;
-}
-
-.cardSignalDesc {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-2);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .cardPriceInfo {

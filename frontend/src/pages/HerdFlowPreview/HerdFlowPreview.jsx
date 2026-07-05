@@ -48,7 +48,7 @@ function stageColor(score) {
 
 export default function HerdFlowPreview() {
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.pageHeader}>
         <div>
           <div className={styles.pageDate}>Herd Flow Preview</div>

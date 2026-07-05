@@ -377,11 +377,6 @@
 }
 .indicatorRow:last-child { border-bottom: none; }
 
-/* 비활성 지표 (거래량 강도 등) — 흐리게 표시 */
-.indicatorRowDisabled {
-  opacity: 0.4;
-}
-
 .indicatorLabel {
   font-size: 13px;
   color: var(--text-2);
@@ -758,14 +753,6 @@
     flex-direction: column;
     align-items: flex-start;
   }
-}
-
-/* ── 플레이스홀더 ── */
-.placeholderText {
-  font-size: 13px;
-  color: var(--text-3);
-  text-align: center;
-  padding: 12px 0;
 }
 
 /* ── 로딩 / 에러 ── */

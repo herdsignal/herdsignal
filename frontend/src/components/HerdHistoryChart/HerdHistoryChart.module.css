@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border-radius: 10px;
+  border-radius: var(--card-radius);
   background: var(--surface2);
   color: var(--text-3);
 }
@@ -49,7 +49,7 @@
 .summaryItem {
   min-width: 0;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--card-radius);
   background: rgba(255, 255, 255, 0.02);
   padding: 9px 10px;
 }
@@ -114,9 +114,9 @@
 
 .tooltip {
   min-width: 128px;
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: rgba(16, 22, 32, 0.98);
   padding: 9px 12px;
 }
 
@@ -130,7 +130,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: -0.2px;
+  letter-spacing: 0;
 }
 
 .tooltipStage {
