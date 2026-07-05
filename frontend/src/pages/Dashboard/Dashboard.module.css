@@ -684,20 +684,6 @@
   gap: 10px;
 }
 
-.cardTickerBadge {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--card-radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0;
-  flex-shrink: 0;
-}
-
 .cardTicker {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;

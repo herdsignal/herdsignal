@@ -36,6 +36,10 @@ public class Stock {
     @Column(name = "sector", length = 50)
     private String sector;
 
+    /** 회사 로고 URL */
+    @Column(name = "logo_url", length = 300)
+    private String logoUrl;
+
     /**
      * 시가총액 카테고리 (대형주 / 중형주 / 소형주).
      * Hibernate 기본 네이밍: marketCapCategory → market_cap_category

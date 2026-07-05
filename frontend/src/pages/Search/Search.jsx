@@ -21,6 +21,7 @@ import {
   addToWatchlist,
 } from '../../api/herdApi'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
+import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import styles from './Search.module.css'
 
 /* ── 상수 ─────────────────────────────── */
@@ -380,12 +381,11 @@ export default function Search() {
 
     if (searchResult.status === 'symbol_found') {
       const d = searchResult.candidate
-      const label = d.ticker.length <= 4 ? d.ticker : d.ticker.slice(0, 4)
       const readiness = herdReadiness(null)
       return (
         <div className={styles.searchResultItem}>
           <div className={styles.resultLeft}>
-            <div className={styles.resultBadge}>{label}</div>
+            <StockAvatar ticker={d.ticker} />
             <div>
               <div className={styles.resultTicker}>{d.ticker}</div>
               <div className={styles.resultName}>
@@ -426,7 +426,6 @@ export default function Search() {
     const d     = searchResult.data
     const color = stageColor(d.herdStage)
     const badge = badgeColors(d.herdStage)
-    const label = d.ticker.length <= 4 ? d.ticker : d.ticker.slice(0, 4)
     const meta  = searchResult.matches?.find((item) => item.ticker === d.ticker) ?? TICKER_META[d.ticker]
     const readiness = herdReadiness(d)
 
@@ -437,7 +436,7 @@ export default function Search() {
       >
         {/* 좌: 배지 + 티커/종목명 */}
         <div className={styles.resultLeft}>
-          <div className={styles.resultBadge} style={badge}>{label}</div>
+          <StockAvatar ticker={d.ticker} logoUrl={d.logoUrl} tone={badge} />
           <div>
             <div className={styles.resultTicker}>{d.ticker}</div>
             <div className={styles.resultName}>

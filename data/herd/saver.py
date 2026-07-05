@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from config.database import create_db_engine, get_session_factory
 from config.settings import HERD_THRESHOLDS
+from collectors.finnhub_collector import get_company_profile
 # init_db.py의 ORM 모델 재사용 — 동일한 Base를 공유하므로 metadata 충돌 없음
 from init_db import DailyPrice, HerdIndicator, HerdScore, Stock
 
@@ -51,6 +52,15 @@ def _derive_signal(score: float) -> str:
     return "HOLD"         # Calm: 보유 유지
 
 
+def _load_stock_profile(ticker: str) -> dict:
+    """Finnhub 회사 프로필을 조회한다. 실패 시 빈 dict 반환."""
+    try:
+        return get_company_profile(ticker) or {}
+    except Exception as e:
+        logger.debug(f"[{ticker}] 회사 프로필 조회 실패 — 로고 없이 진행: {e}")
+        return {}
+
+
 def _upsert_stock(session, ticker: str) -> None:
     """
     stocks 테이블에 종목이 없으면 INSERT, 있으면 updated_at만 갱신.
@@ -59,16 +69,26 @@ def _upsert_stock(session, ticker: str) -> None:
     obj = session.query(Stock).filter_by(ticker=ticker).first()
     now = _now()
 
+    profile = None
+
     if obj is None:
+        profile = _load_stock_profile(ticker)
         session.add(Stock(
             ticker     = ticker,
+            name       = profile.get("name"),
+            sector     = profile.get("sector"),
+            logo_url   = profile.get("logo_url"),
             is_active  = True,
             created_at = now,
             updated_at = now,
         ))
         logger.info(f"[{ticker}] stocks INSERT")
     else:
-        # 종목명 등 메타정보는 건드리지 않고 갱신 시각만 업데이트
+        if not obj.name or not obj.sector or not obj.logo_url:
+            profile = _load_stock_profile(ticker)
+            obj.name = obj.name or profile.get("name")
+            obj.sector = obj.sector or profile.get("sector")
+            obj.logo_url = obj.logo_url or profile.get("logo_url")
         obj.updated_at = now
         logger.debug(f"[{ticker}] stocks updated_at 갱신")
 

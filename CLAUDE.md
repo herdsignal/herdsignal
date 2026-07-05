@@ -30,7 +30,7 @@ herdsignal/
 └── frontend/   React 대시보드
 ```
 
-- `data/`: yfinance 수집, HERD 계산, MariaDB 저장, 스케줄러.
+- `data/`: yfinance/Finnhub 수집, HERD 계산, MariaDB 저장, 스케줄러.
 - `backend/`: MariaDB 데이터를 읽어 React에 제공하는 REST API.
 - `frontend/`: Spring Boot API를 호출해 포트폴리오/종목/HERD 데이터를 시각화.
 
@@ -119,6 +119,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 - HERD Index v4 계산 (v3 6개 지표 기본 점수 + EPS 서프라이즈/섹터 상대 강도 보정 승수)
 - MariaDB 저장 (stocks / herd_scores / herd_indicators / daily_prices — 4개 테이블 UPSERT)
+- stocks 메타데이터 캐싱 (Finnhub company profile 기반 name / sector / logo_url)
 - 3-Tier 스케줄러
   - Tier 1: 매일 16:30 ET 자동 계산 (user_portfolio + user_watchlist + SPY)
   - Tier 2: on-demand 계산 + 7일 캐시 (검색·상세 조회 시)
@@ -135,6 +136,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 **backend/**
 
 - HERD 조회 API (`GET /api/stocks/{ticker}/herd`, `GET /api/portfolio/herd`)
+- HERD 응답에 종목 메타데이터(companyName / sector / logoUrl) 포함
 - HERD 강제 갱신 API (`POST /api/stocks/{ticker}/herd/refresh`, `POST /api/portfolio/herd/refresh`)
 - 포트폴리오 전체 API (CRUD + summary + history + realtime + 평단가 수정)
 - 관심 종목 전체 API (CRUD + HERD 조회)
@@ -154,6 +156,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. frontend에서는 actionScore를 `강도`로 표시하고, DB 저장 없이 backend 응답 시점에 계산한다.
 - Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, HERD 준비됨/계산 필요/데이터 부족 상태 표시, 최근 검색, 포트폴리오/관심종목 추가, 포트폴리오 추가 후 평단가·수량 입력 연결
 - Watchlist: S&P 500 Herd Flow 배너, Flee/Scatter 우선 기회 대기열, 매수 후보 우선 관심 종목 HERD 카드, 삭제
+- StockAvatar: 회사 로고 URL이 있으면 로고 표시, 없거나 이미지 로딩 실패 시 티커 배지 fallback
 - HERD Lab: 현재 HERD 모델 버전(`HERD_v5`) 검증 데이터 보드, 목표 대비 PASS/WATCH 판정, 종목별 백테스트 verdict, 5단계 행동 매트릭스. 표시 데이터는 `frontend/src/data/herdModelReport.js`에서 관리한다.
 - 사이드바 노출 MVP 메뉴: 대시보드, 관심 종목, 종목 검색, HERD Lab
 - 보류/내부 접근 라우트: AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`)

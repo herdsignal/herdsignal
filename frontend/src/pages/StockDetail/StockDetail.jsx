@@ -19,6 +19,7 @@ import {
 import HerdDots    from '../../components/HerdDots/HerdDots'
 import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
+import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { buildDecision } from '../../utils/decision'
 import styles      from './StockDetail.module.css'
 
@@ -530,16 +531,17 @@ export default function StockDetail() {
       {/* ── 종목 헤더 ── */}
       <div className={styles.stockHeader}>
         <div className={styles.stockHeaderLeft}>
-          {/* 티커 배지 (로드 전에는 회색) */}
-          <div
-            className={styles.stockLogo}
-            style={herdData ? badgeColors(herdStage) : undefined}
-          >
-            {ticker.length <= 4 ? ticker.toUpperCase() : ticker.slice(0, 4).toUpperCase()}
-          </div>
+          <StockAvatar
+            ticker={ticker}
+            logoUrl={herdData?.logoUrl}
+            size="lg"
+            tone={herdData ? badgeColors(herdStage) : undefined}
+          />
           <div>
             <div className={styles.stockTicker}>{ticker.toUpperCase()}</div>
-            <div className={styles.stockFullname}>미국 주식 · NASDAQ</div>
+            <div className={styles.stockFullname}>
+              {[herdData?.companyName, herdData?.sector].filter(Boolean).join(' · ') || '미국 주식'}
+            </div>
           </div>
         </div>
 

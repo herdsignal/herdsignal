@@ -16,7 +16,7 @@ from datetime import datetime
 
 from sqlalchemy import (
     BigInteger, Boolean, Column, DateTime, Date,
-    Index, String, UniqueConstraint,
+    Index, String, UniqueConstraint, text,
 )
 from sqlalchemy import Numeric as Decimal
 
@@ -36,6 +36,7 @@ class Stock(Base):
     ticker              = Column(String(10),  nullable=False, unique=True,          comment="티커 심볼 (AAPL, NVDA 등)")
     name                = Column(String(100), nullable=True,                         comment="종목 정식 명칭")
     sector              = Column(String(50),  nullable=True,                         comment="섹터 (Technology, Healthcare 등)")
+    logo_url            = Column(String(300), nullable=True,                         comment="회사 로고 URL")
     market_cap_category = Column(String(20),  nullable=True,                         comment="대형주 / 중형주 / 소형주")
     is_active           = Column(Boolean,     nullable=False, default=True,          comment="추적 활성 여부 (비활성화 시 False)")
     created_at          = Column(DateTime,    nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
@@ -192,7 +193,34 @@ def init_tables(engine) -> None:
     """Base.metadata.create_all로 모든 테이블을 생성한다."""
     logger.info("테이블 생성 시작...")
     Base.metadata.create_all(bind=engine)
+    ensure_schema_columns(engine)
     logger.info("테이블 생성 완료")
+
+
+def ensure_schema_columns(engine) -> None:
+    """
+    기존 DB에 새 nullable 컬럼을 보강한다.
+    SQLAlchemy create_all은 이미 존재하는 테이블 컬럼을 추가하지 않으므로
+    ddl-auto=validate를 쓰는 backend와 스키마를 맞추기 위해 최소 ALTER만 수행한다.
+    """
+    from sqlalchemy import inspect
+
+    inspector = inspect(engine)
+    if "stocks" not in inspector.get_table_names():
+        return
+
+    columns = {col["name"] for col in inspector.get_columns("stocks")}
+    if "logo_url" in columns:
+        return
+
+    if engine.dialect.name == "sqlite":
+        ddl = "ALTER TABLE stocks ADD COLUMN logo_url VARCHAR(300)"
+    else:
+        ddl = "ALTER TABLE stocks ADD COLUMN logo_url VARCHAR(300) NULL COMMENT '회사 로고 URL'"
+
+    with engine.begin() as conn:
+        conn.execute(text(ddl))
+    logger.info("stocks.logo_url 컬럼 추가 완료")
 
 
 def verify_tables(engine) -> None:

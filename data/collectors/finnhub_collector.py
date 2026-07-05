@@ -127,6 +127,45 @@ def search_symbols(query: str, limit: int = 8) -> list[dict]:
 
 
 # ──────────────────────────────────────────────
+# 공개 함수 0-1 — 회사 프로필
+# ──────────────────────────────────────────────
+def get_company_profile(ticker: str) -> dict | None:
+    """
+    Finnhub company profile2에서 회사명, 섹터, 로고 URL을 조회한다.
+
+    Returns:
+        {
+            "ticker": "AAPL",
+            "name": "Apple Inc",
+            "sector": "Technology",
+            "logo_url": "https://...",
+        }
+        데이터가 없거나 API가 실패하면 None.
+    """
+    symbol = (ticker or "").strip().upper()
+    if not symbol:
+        return None
+
+    data = _get("stock/profile2", {"symbol": symbol})
+    if not data or not isinstance(data, dict):
+        return None
+
+    name = data.get("name")
+    sector = data.get("finnhubIndustry")
+    logo_url = data.get("logo")
+
+    if not any([name, sector, logo_url]):
+        return None
+
+    return {
+        "ticker": symbol,
+        "name": name,
+        "sector": sector,
+        "logo_url": logo_url,
+    }
+
+
+# ──────────────────────────────────────────────
 # 공개 함수 1 — 최근 분기 EPS 서프라이즈
 # ──────────────────────────────────────────────
 def get_earnings_surprise(ticker: str) -> float | None:

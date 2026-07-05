@@ -14,6 +14,7 @@ src/
 │   ├── HerdDots/   Herd Flow 점 애니메이션
 │   ├── HerdHistoryChart/ HERD Index 히스토리 차트
 │   ├── SpectrumBar/ Flee~Rush 스펙트럼 바
+│   ├── StockAvatar/ 회사 로고 + 티커 fallback 아바타
 │   ├── Layout/     사이드바 + Outlet 레이아웃
 │   └── AvgPriceModal/ 평균 매수가·수량 수정 모달
 ├── pages/          화면 단위
@@ -54,6 +55,7 @@ Rush    #EF4444  (레드)
 - HerdDots: Herd Flow 점 애니메이션 (Flee=전 영역 듬성듬성 분산, Scatter=작은 군집들이 깨져 흩어짐, Calm=중앙 균형, Drift=오른쪽 쏠림, Rush=좁은 군중 밀집)
 - HerdHistoryChart: HERD 점수 히스토리 공용 차트 (Flee~Rush 구간 배경, 현재 점수 기준선, 현재 위치/평균 대비/기간 평균/저점-고점 데이터 보드, 이력 부족 배지)
 - SpectrumBar: Flee~Rush 스펙트럼 바
+- StockAvatar: `logoUrl`이 있으면 회사 로고를 표시하고, 없거나 이미지 로딩 실패 시 티커 배지를 표시한다.
 - Layout: 공통 사이드바 + 페이지 Outlet
 - AvgPriceModal: 평균 매수가·수량 수정 모달
 
@@ -131,6 +133,7 @@ Rush    #EF4444  (레드)
 - Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
+- StockDetail 상단 회사명/섹터/로고는 `GET /api/stocks/{ticker}/herd` 응답의 `companyName`/`sector`/`logoUrl`을 사용한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
 - HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수를 보여준다.
 - Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 사용하며, frontend에서는 actionScore를 `강도`로 표시하고 별도 행동 점수 계산을 하지 않는다.

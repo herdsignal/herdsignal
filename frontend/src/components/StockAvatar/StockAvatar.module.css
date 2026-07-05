@@ -1,0 +1,58 @@
+.avatar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--card-radius);
+  background: var(--avatar-bg, rgba(163, 170, 184, 0.14));
+  color: var(--avatar-color, var(--calm));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.avatar span {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.hasLogo {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sm {
+  width: 32px;
+  height: 32px;
+}
+
+.sm span {
+  font-size: 9px;
+}
+
+.md {
+  width: 36px;
+  height: 36px;
+}
+
+.md span {
+  font-size: 9px;
+}
+
+.lg {
+  width: 48px;
+  height: 48px;
+}
+
+.lg span {
+  font-size: 12px;
+}

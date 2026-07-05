@@ -21,6 +21,7 @@ import {
 import HerdDots  from '../../components/HerdDots/HerdDots'
 import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
+import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { opportunityRows } from '../../utils/portfolioTools'
@@ -578,12 +579,11 @@ export default function Watchlist() {
                   {/* 카드 상단: 종목 (좌) + HERD (우) */}
                   <div className={styles.cardTop}>
                     <div className={styles.cardTickerBlock}>
-                      <div
-                        className={styles.cardTickerBadge}
-                        style={{ background: badge.bg, color: badge.color }}
-                      >
-                        {item.ticker.length <= 4 ? item.ticker : item.ticker.slice(0, 4)}
-                      </div>
+                      <StockAvatar
+                        ticker={item.ticker}
+                        logoUrl={item.logoUrl}
+                        tone={badge}
+                      />
                       <div>
                         <div className={styles.cardTicker}>{item.ticker}</div>
                         <div className={styles.cardStageName}>

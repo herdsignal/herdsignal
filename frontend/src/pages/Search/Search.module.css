@@ -149,20 +149,6 @@
   gap: 14px;
 }
 
-/* 티커 배지 */
-.resultBadge {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--card-radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
 .resultTicker {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 14px;

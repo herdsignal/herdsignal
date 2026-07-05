@@ -2,6 +2,7 @@ package com.herdsignal.dto;
 
 import com.herdsignal.domain.HerdIndicator;
 import com.herdsignal.domain.HerdScore;
+import com.herdsignal.domain.Stock;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,6 +20,15 @@ public class HerdScoreResponse {
 
     /** 티커 심볼 */
     private String ticker;
+
+    /** 회사명 */
+    private String companyName;
+
+    /** 섹터 */
+    private String sector;
+
+    /** 회사 로고 URL */
+    private String logoUrl;
 
     /** HERD 점수 (0.00 ~ 100.00) */
     private BigDecimal herdScore;
@@ -123,7 +133,7 @@ public class HerdScoreResponse {
      * HerdScore는 필수, HerdIndicator는 없을 수 있으므로 null 허용.
      */
     public static HerdScoreResponse of(HerdScore score, HerdIndicator indicator) {
-        return of(score, indicator, null, null, null, null, List.of(), List.of(), null);
+        return of(score, indicator, null, null, null, null, List.of(), List.of(), null, null);
     }
 
     /**
@@ -141,8 +151,41 @@ public class HerdScoreResponse {
             List<String> qualityReasons,
             ActionDecision actionDecision
     ) {
+        return of(
+                score,
+                indicator,
+                qualityScore,
+                qualityLevel,
+                qualityLabel,
+                qualitySummary,
+                qualityFlags,
+                qualityReasons,
+                actionDecision,
+                null
+        );
+    }
+
+    /**
+     * 정적 팩토리 메서드.
+     * Stock 메타데이터가 있으면 회사명/섹터/로고 URL을 함께 내려준다.
+     */
+    public static HerdScoreResponse of(
+            HerdScore score,
+            HerdIndicator indicator,
+            Integer qualityScore,
+            String qualityLevel,
+            String qualityLabel,
+            String qualitySummary,
+            List<String> qualityFlags,
+            List<String> qualityReasons,
+            ActionDecision actionDecision,
+            Stock stock
+    ) {
         HerdScoreResponseBuilder builder = HerdScoreResponse.builder()
                 .ticker(score.getTicker())
+                .companyName(stock != null ? stock.getName() : null)
+                .sector(stock != null ? stock.getSector() : null)
+                .logoUrl(stock != null ? stock.getLogoUrl() : null)
                 .herdScore(score.getHerdScore())
                 .herdBase(score.getHerdScore())
                 .epsMultiplier(BigDecimal.ONE)

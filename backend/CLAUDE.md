@@ -59,6 +59,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
   - DB에 데이터가 없으면 Python on-demand 계산을 ProcessBuilder로 실행 후 재조회
   - 포트폴리오/관심종목 HERD 조회용 공통 로직 제공
   - HERD 데이터 품질과 Action Layer 응답 계산
+  - stocks 메타데이터를 조회해 companyName / sector / logoUrl을 HERD 응답에 포함
 - ActionDecisionService
   - HERD 점수 + 지표 분해값 + 데이터 품질 기반 장기투자 행동 강도 계산
   - DB 저장 없이 API 응답 시점에 actionScore/actionLabel/actionRatio/actionRegime을 산출
@@ -110,6 +111,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - 별도 `GET /api/stocks/{ticker}/indicators` 엔드포인트는 없음. 지표 분해값은 `/api/stocks/{ticker}/herd` 응답에 포함된다.
 - 200주 MA 위치는 `HerdScoreResponse.ma200Weekly`로 응답한다.
 - HERD v4 응답은 `herdScore`/`herdV4`에 최종 점수, `herdBase`에 v3 기본 점수, `epsMultiplier`/`sectorMultiplier`에 보정 승수를 포함한다.
+- HERD 응답은 `stocks` 테이블 기준 `companyName`, `sector`, `logoUrl`을 포함한다. 로고가 없으면 frontend가 티커 배지로 fallback한다.
 - HERD 신뢰도 응답은 DB 스키마 변경 없이 `HerdService`가 계산한다. `qualityScore`, `qualityLevel`, `qualityLabel`, `qualitySummary`, `qualityFlags`, `qualityReasons`를 포함한다.
 - HERD 신뢰도는 `daily_prices` 기간이 아니라 저장된 HERD 산출 결과의 완성도(핵심 지표, 200주 MA, v4 보정 승수, 최신성)를 기준으로 계산한다.
 - HERD 신호 성능 신뢰도는 `HerdReliabilityService`가 Python을 호출해 계산한다. `qualityScore`와 달리 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수를 기준으로 한다.

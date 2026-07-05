@@ -2,6 +2,7 @@ package com.herdsignal.service;
 
 import com.herdsignal.domain.HerdIndicator;
 import com.herdsignal.domain.HerdScore;
+import com.herdsignal.domain.Stock;
 import com.herdsignal.domain.UserPortfolio;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +14,7 @@ import com.herdsignal.dto.PortfolioHerdResponse;
 import com.herdsignal.exception.ResourceNotFoundException;
 import com.herdsignal.repository.HerdIndicatorRepository;
 import com.herdsignal.repository.HerdScoreRepository;
+import com.herdsignal.repository.StockRepository;
 import com.herdsignal.repository.UserPortfolioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +50,7 @@ public class HerdService {
     private final UserPortfolioRepository portfolioRepository;
     private final HerdScoreRepository herdScoreRepository;
     private final HerdIndicatorRepository herdIndicatorRepository;
+    private final StockRepository stockRepository;
     private final ActionDecisionService actionDecisionService;
 
     /**
@@ -447,6 +450,7 @@ public class HerdService {
     private HerdScoreResponse buildResponse(HerdScore score, HerdIndicator indicator) {
         HerdQuality quality = calculateQuality(score, indicator);
         ActionDecision actionDecision = actionDecisionService.decide(score, indicator, quality.score());
+        Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
         return HerdScoreResponse.of(
                 score,
                 indicator,
@@ -456,7 +460,8 @@ public class HerdService {
                 quality.summary(),
                 quality.flags(),
                 quality.reasons(),
-                actionDecision
+                actionDecision,
+                stock
         );
     }
 

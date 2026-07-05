@@ -35,22 +35,6 @@
   gap: 20px;
 }
 
-/* 티커 배지 — 로드 전에는 CSS 변수 기본색, 로드 후 stage 색상 */
-.stockLogo {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--card-radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  background: rgba(113, 113, 122, 0.12);  /* 기본: calm 회색 */
-  color: var(--calm);
-  flex-shrink: 0;
-}
-
 .stockTicker {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 24px;
