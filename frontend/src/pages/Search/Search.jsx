@@ -498,7 +498,7 @@ export default function Search() {
         <div className={styles.pageDate}>{today}</div>
         <h1 className={styles.pageTitle}>종목 검색</h1>
         <p className={styles.pageDesc}>
-          티커 또는 종목명으로 검색해 포트폴리오에 추가하세요
+          HERD 계산 가능한 종목을 찾아 포트폴리오나 매수 대기열에 추가하세요
         </p>
       </div>
 
@@ -508,7 +508,7 @@ export default function Search() {
           ref={inputRef}
           className={styles.searchInput}
           type="text"
-          placeholder="티커 또는 종목명 입력 (예: AAPL, Tesla)"
+          placeholder="티커 또는 종목명 입력 (예: AAPL, TSLA)"
           value={query}
           onChange={e => setQuery(e.target.value.toUpperCase())}
           autoComplete="off"
