@@ -143,13 +143,13 @@ export default function History() {
   })()
 
   return (
-    <div>
+    <div className={styles.page}>
 
       {/* ── 페이지 헤더 ── */}
       <div className={styles.pageHeader}>
         <div>
           <div className={styles.pageDate}>{today}</div>
-          <h1 className={styles.pageTitle}>자산 기록</h1>
+          <h1 className={styles.pageTitle}>자산 히스토리</h1>
         </div>
         {/* 기간 토글 */}
         <div className={styles.periodToggle}>
@@ -229,7 +229,7 @@ export default function History() {
       {/* ── 차트 카드 ── */}
       <div className={styles.chartCard}>
         <div className={styles.chartTitleRow}>
-          <span className={styles.chartTitle}>총 평가금액 (USD)</span>
+          <span className={styles.chartTitle}>총 평가금액</span>
           {latest && (
             <span className={styles.chartLatest}>{fmtUSD(latest.totalValue)}</span>
           )}
@@ -260,7 +260,7 @@ export default function History() {
               margin={{ top: 10, right: 16, left: 0, bottom: 4 }}
             >
               <CartesianGrid
-                strokeDasharray="3 3"
+                strokeDasharray="4 6"
                 stroke="var(--border)"
                 vertical={false}
               />
@@ -289,7 +289,7 @@ export default function History() {
               {summary?.totalCost != null && (
                 <ReferenceLine
                   y={summary.totalCost}
-                  stroke="var(--border2)"
+                  stroke="rgba(163, 170, 184, 0.5)"
                   strokeDasharray="4 4"
                   label={{
                     value: '매입원가',
@@ -304,7 +304,7 @@ export default function History() {
                 type="monotone"
                 dataKey="totalValue"
                 stroke="var(--flee)"
-                strokeWidth={2}
+                strokeWidth={2.5}
                 dot={points.length === 1
                   ? { r: 5, fill: 'var(--flee)', strokeWidth: 0 }
                   : { r: 3, fill: 'var(--flee)', strokeWidth: 0 }
