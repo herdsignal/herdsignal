@@ -3,9 +3,9 @@
  *
  * 구성:
  *   1) 브레드크럼 + 종목 헤더 (배지 + 포트폴리오/관심종목 추가 버튼)
- *   2) HERD 카드 → Action Layer → 신호 신뢰도 → HERD 히스토리 → 지표 분해
+ *   2) HERD 카드 → Action Layer → 신호 신뢰도 → HERD 히스토리 → Fundamental Guard → 지표 분해
  *
- * API: getStockHerd(ticker), addToPortfolio(ticker), addToWatchlist(ticker)
+ * API: getStockHerd(ticker), getStockFinancials(ticker), addToPortfolio(ticker), addToWatchlist(ticker)
  * 래퍼런스: wireframes/wireframe-detail.html
  */
 
@@ -13,7 +13,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, useNavigate }                    from 'react-router-dom'
 import {
   getStockHerd, addToPortfolio, addToWatchlist,
-  getStockHerdHistory, getStockHerdReliability,
+  getStockFinancials, getStockHerdHistory, getStockHerdReliability,
   getPortfolio, getPortfolioSummary,
 } from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
@@ -227,6 +227,108 @@ function fmtAnnualActions(value) {
   return `${n.toFixed(1)}회`
 }
 
+function fmtCurrencyCompact(value) {
+  if (value == null) return '—'
+  const n = Number(value)
+  if (!Number.isFinite(n)) return '—'
+  if (Math.abs(n) >= 1_000_000_000_000) return `$${(n / 1_000_000_000_000).toFixed(1)}T`
+  if (Math.abs(n) >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
+  if (Math.abs(n) >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`
+  return `$${Math.round(n).toLocaleString()}`
+}
+
+function fmtNumber(value, digits = 1) {
+  if (value == null) return '—'
+  const n = Number(value)
+  if (!Number.isFinite(n)) return '—'
+  return n.toFixed(digits)
+}
+
+function fmtFinancePct(value) {
+  if (value == null) return '—'
+  const n = Number(value)
+  if (!Number.isFinite(n)) return '—'
+  return `${n.toFixed(1)}%`
+}
+
+function fundamentalTone(level) {
+  switch (level) {
+    case 'CLEAR': return 'var(--scatter)'
+    case 'CAUTION': return 'var(--drift)'
+    case 'RISK': return 'var(--rush)'
+    default: return 'var(--text-3)'
+  }
+}
+
+function evaluateFundamentalGuard(financials, herdData) {
+  if (!financials) {
+    return {
+      level: 'LIMITED',
+      label: '재무 데이터 제한',
+      summary: '제한된 재무 데이터 기준으로 판단을 보류합니다.',
+      reasons: ['핵심 재무 지표를 불러오지 못했습니다.'],
+    }
+  }
+
+  const eps = Number(financials.eps)
+  const pe = Number(financials.trailingPe)
+  const margin = Number(financials.operatingMargin)
+  const revenue = Number(financials.totalRevenue)
+  const marketCap = Number(financials.marketCap)
+  const isBuySignal = herdData?.signal === 'BUY' || herdData?.signal === 'ADD'
+  const isSellSignal = herdData?.signal === 'SELL' || herdData?.signal === 'REDUCE'
+  const risks = []
+  const cautions = []
+
+  if (!Number.isFinite(revenue) || revenue <= 0) cautions.push('매출 데이터 확인 필요')
+  if (!Number.isFinite(marketCap) || marketCap <= 0) cautions.push('시가총액 데이터 확인 필요')
+  if (!Number.isFinite(eps)) cautions.push('EPS 데이터 확인 필요')
+  if (Number.isFinite(eps) && eps < 0) cautions.push('EPS 적자')
+  if (!Number.isFinite(margin)) cautions.push('영업이익률 데이터 확인 필요')
+  if (Number.isFinite(margin) && margin < 0) cautions.push('영업이익률 음수')
+  if (Number.isFinite(pe) && pe >= 80) cautions.push('PER 80 이상')
+  if (!Number.isFinite(pe) && (!Number.isFinite(eps) || eps <= 0)) cautions.push('PER 산정 불가')
+
+  if (Number.isFinite(eps) && eps < 0 && Number.isFinite(margin) && margin < 0) {
+    risks.push('적자와 영업손실 동시 확인')
+  }
+  if ((!Number.isFinite(revenue) || revenue <= 0) && Number.isFinite(eps) && eps < 0) {
+    risks.push('매출 공백과 EPS 적자 동시 확인')
+  }
+  if (isSellSignal && Number.isFinite(pe) && pe >= 100) {
+    risks.push('고PER 구간의 Rush/Drift 신호')
+  }
+
+  const level = risks.length > 0 ? 'RISK' : cautions.length > 0 ? 'CAUTION' : 'CLEAR'
+  const label = level === 'RISK'
+    ? '재무 리스크 큼'
+    : level === 'CAUTION'
+      ? '재무 확인 필요'
+      : '확인된 주요 경고 없음'
+
+  let summary = '제한된 주요 재무 지표에서 큰 경고는 확인되지 않습니다.'
+  if (isBuySignal && level === 'CLEAR') {
+    summary = '매수 신호를 재무 데이터가 크게 방해하지 않습니다.'
+  } else if (isBuySignal && level === 'CAUTION') {
+    summary = '매수 신호지만 포지션 크기를 줄여 접근해야 합니다.'
+  } else if (isBuySignal && level === 'RISK') {
+    summary = '저점 신호만으로 매수 판단하지 마세요.'
+  } else if (isSellSignal && level !== 'CLEAR') {
+    summary = '익절 신호를 더 보수적으로 볼 구간입니다.'
+  } else if (level === 'CAUTION') {
+    summary = 'HERD 신호와 별도로 재무 지표 확인이 필요합니다.'
+  } else if (level === 'RISK') {
+    summary = 'HERD 신호보다 재무 리스크 확인을 우선해야 합니다.'
+  }
+
+  return {
+    level,
+    label,
+    summary,
+    reasons: [...risks, ...cautions].slice(0, 3),
+  }
+}
+
 function currentSignalReliability(herdData, reliability) {
   if (!reliability) return null
   const signal = herdData?.signal
@@ -288,6 +390,8 @@ export default function StockDetail() {
   const [historyLoading,   setHistoryLoading]    = useState(false)
   const [reliability,      setReliability]       = useState(null)
   const [reliabilityLoading, setReliabilityLoading] = useState(false)
+  const [financials,       setFinancials]        = useState(null)
+  const [financialsLoading, setFinancialsLoading] = useState(false)
   const [portfolio,        setPortfolio]         = useState([])
   const [portfolioSummary, setPortfolioSummary]  = useState(null)
 
@@ -348,6 +452,16 @@ export default function StockDetail() {
       .finally(() => { setReliabilityLoading(false) })
   }, [ticker])
 
+  /* Fundamental Guard — HERD 판단을 막을 재무 경고만 확인 */
+  useEffect(() => {
+    setFinancialsLoading(true)
+    setFinancials(null)
+    getStockFinancials(ticker.toUpperCase())
+      .then((res) => { setFinancials(res.data?.data ?? null) })
+      .catch(() => { setFinancials(null) })
+      .finally(() => { setFinancialsLoading(false) })
+  }, [ticker])
+
   /* 포트폴리오 추가 */
   async function handleAddPortfolio() {
     if (portfolioStatus !== 'idle') return
@@ -390,6 +504,10 @@ export default function StockDetail() {
   const currentReliability = useMemo(
     () => currentSignalReliability(herdData, reliability),
     [herdData, reliability]
+  )
+  const fundamentalGuard = useMemo(
+    () => evaluateFundamentalGuard(financials, herdData),
+    [financials, herdData]
   )
   const historyPoints = useMemo(() => {
     if (herdHistory.length > 0) return herdHistory
@@ -655,6 +773,67 @@ export default function StockDetail() {
                     currentScore={herdScore}
                     height={230}
                   />
+                )}
+              </div>
+            </div>
+
+            {/* Fundamental Guard 카드 */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <div className={styles.cardTitle}>Fundamental Guard</div>
+                  <div className={styles.cardMeta}>HERD 신호 재무 체크</div>
+                </div>
+                {!financialsLoading && (
+                  <div
+                    className={styles.fundamentalBadge}
+                    style={{
+                      color: fundamentalTone(fundamentalGuard.level),
+                      borderColor: fundamentalTone(fundamentalGuard.level),
+                    }}
+                  >
+                    {fundamentalGuard.label}
+                  </div>
+                )}
+              </div>
+              <div className={styles.cardBodySmall}>
+                {financialsLoading ? (
+                  <div className={styles.chartEmpty}>로딩 중…</div>
+                ) : (
+                  <>
+                    <div className={styles.fundamentalSummary}>
+                      {fundamentalGuard.summary}
+                    </div>
+                    <div className={styles.fundamentalGrid}>
+                      <div className={styles.fundamentalItem}>
+                        <span>시가총액</span>
+                        <strong>{fmtCurrencyCompact(financials?.marketCap)}</strong>
+                      </div>
+                      <div className={styles.fundamentalItem}>
+                        <span>PER</span>
+                        <strong>{fmtNumber(financials?.trailingPe)}</strong>
+                      </div>
+                      <div className={styles.fundamentalItem}>
+                        <span>EPS</span>
+                        <strong>{fmtNumber(financials?.eps, 2)}</strong>
+                      </div>
+                      <div className={styles.fundamentalItem}>
+                        <span>영업이익률</span>
+                        <strong>{fmtFinancePct(financials?.operatingMargin)}</strong>
+                      </div>
+                      <div className={styles.fundamentalItem}>
+                        <span>매출</span>
+                        <strong>{fmtCurrencyCompact(financials?.totalRevenue)}</strong>
+                      </div>
+                    </div>
+                    {fundamentalGuard.reasons.length > 0 && (
+                      <div className={styles.fundamentalReasons}>
+                        {fundamentalGuard.reasons.map((reason) => (
+                          <span key={reason}>{reason}</span>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>

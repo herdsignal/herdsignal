@@ -45,7 +45,7 @@ The `Herd Flow` animation visualizes these stages as particle distribution. Flee
 - **Dashboard**: S&P 500 Herd Flow banner, portfolio valuation, core rebalance check, and holding-level HERD action cards
 - **Watchlist**: opportunity queue and HERD cards sorted by long-term add/trim timing priority
 - **Search**: ticker/company search, HERD preview, recent searches, and portfolio/watchlist add actions
-- **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, signal reliability board, HERD Index history, and indicator breakdown
+- **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, signal reliability board, HERD Index history, Fundamental Guard, and indicator breakdown
 - **HERD Lab**: model version, backtest summary, action matrix, and validation data for the HERD methodology
 
 ---

@@ -81,6 +81,10 @@ export const getStockHerd = (ticker) => api.get(`/api/stocks/${ticker}/herd`)
 export const refreshStockHerd = (ticker) =>
   api.post(`/api/stocks/${ticker}/herd/refresh`, null, { timeout: 60_000 })
 
+/** 특정 종목 재무 가드용 핵심 재무정보 조회 */
+export const getStockFinancials = (ticker) =>
+  api.get(`/api/stocks/${ticker}/financials`, { timeout: 40_000 })
+
 /** 특정 종목 HERD 히스토리 조회 (기본 3y) */
 export const getStockHerdHistory = (ticker, period = '3y') =>
   api.get(`/api/stocks/${ticker}/herd/history?period=${period}`)

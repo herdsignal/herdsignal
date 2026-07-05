@@ -45,7 +45,7 @@ HERD Index는 개별 주식의 군중심리를 **0-100 점수**로 나타내는 
 - **Dashboard**: S&P 500 Herd Flow 배너, 포트폴리오 평가 요약, 핵심 리밸런싱 체크, 보유 종목 HERD 행동 카드
 - **Watchlist**: 장기 추가매수/익절 우선순위 기반 기회 대기열과 관심 종목 HERD 카드
 - **Search**: 티커/회사명 검색, HERD 미리보기, 최근 검색, 포트폴리오/관심종목 추가
-- **StockDetail**: HERD v4 점수, HERD_v5 Action Layer 판단, 신호 신뢰도 보드, HERD Index 히스토리, 지표 분해
+- **StockDetail**: HERD v4 점수, HERD_v5 Action Layer 판단, 신호 신뢰도 보드, HERD Index 히스토리, Fundamental Guard, 지표 분해
 - **HERD Lab**: 모델 버전, 백테스트 요약, Action Matrix, HERD 방법론 검증 데이터
 
 ---

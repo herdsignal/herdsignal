@@ -75,6 +75,7 @@ Rush    #EF4444  (레드)
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
   - 최근 3년 HERD 신호 신뢰도 데이터 보드
   - 1M/3M/1Y/3Y HERD Index 히스토리 차트
+  - Fundamental Guard: 시가총액/PER/EPS/영업이익률/매출 기반 재무 경고 필터
   - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
   - 낮은 HERD 데이터 품질만 배지 표시
   - 포트폴리오 추가
@@ -121,7 +122,8 @@ Rush    #EF4444  (레드)
   - portfolio_history 시계열 표시
 
 ## 부분 구현 / 미구현
-- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래, 재무 정보 섹션은 제거됨. 상세 화면은 HERD와 Action Layer 중심 단일 컬럼으로 유지한다.
+- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 제거됨. 상세 화면은 HERD와 Action Layer 중심 단일 컬럼으로 유지한다.
+- StockDetail 재무정보는 원본 재무제표 표가 아니라 Fundamental Guard로 표시한다. `확인된 주요 경고 없음`/`재무 확인 필요`/`재무 리스크 큼` 문구를 사용하며, 안전 보증처럼 표현하지 않는다.
 - 목표 비중은 `hs_target_weights` localStorage에 저장하며, 아직 DB 저장 기능은 없다.
 - 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
 - Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
@@ -146,6 +148,7 @@ Rush    #EF4444  (레드)
 - addToPortfolio / removeFromPortfolio / updateAvgPrice
 - getWatchlistHerd / addToWatchlist / removeFromWatchlist
 - getStockHerd / refreshStockHerd / getStockHerdHistory / getSpyHerdHistory
+- getStockFinancials
 - getStockHerdReliability
 - searchStocks
 
