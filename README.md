@@ -149,21 +149,21 @@ GRANT ALL PRIVILEGES ON herdsignal.* TO 'herdsignal'@'localhost';
 ### 2. Data Engine
 
 ```bash
-cd data
 cp .env.example .env
+cd data
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python3.12 init_db.py
-.venv/bin/python3.12 setup_default_tickers.py
-.venv/bin/python3.12 scheduler/herd_scheduler.py --run-now
-.venv/bin/python3.12 scheduler/herd_scheduler.py
+cd ..
+./scripts/run-data.sh init_db.py
+./scripts/run-data.sh setup_default_tickers.py
+./scripts/run-data.sh scheduler/herd_scheduler.py --run-now
+./scripts/run-data.sh scheduler/herd_scheduler.py
 ```
 
 ### 3. Backend
 
 ```bash
-cd backend
-./gradlew bootRun
+./scripts/run-backend.sh
 ```
 
 The API runs at `http://localhost:8080`.
@@ -173,7 +173,8 @@ The API runs at `http://localhost:8080`.
 ```bash
 cd frontend
 npm install
-npm run dev
+cd ..
+./scripts/run-frontend.sh
 ```
 
 The frontend usually runs at `http://localhost:5173`.

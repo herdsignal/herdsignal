@@ -146,7 +146,8 @@ Rush    #EF4444  (레드)
 ## API 연동
 모든 API 호출은 src/api/herdApi.js에서만 관리.
 개발 환경은 Vite proxy(`/api` → `localhost:8080`)를 사용한다.
-프로덕션 또는 명시 설정이 필요하면 `VITE_API_BASE_URL` 환경변수를 사용한다.
+프로덕션 또는 명시 설정이 필요하면 루트 `.env`의 `VITE_API_BASE_URL` 환경변수를 사용한다.
+로컬 실행은 루트에서 `./scripts/run-frontend.sh`를 우선 사용한다.
 
 현재 herdApi.js에서 관리하는 호출:
 - getPortfolio / getPortfolioHerd / refreshPortfolioHerd / getPortfolioRealtime / getPortfolioSummary / getPortfolioHistory

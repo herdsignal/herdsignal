@@ -27,12 +27,14 @@
 herdsignal/
 ├── data/       Python 데이터 엔진
 ├── backend/    Spring Boot REST API
-└── frontend/   React 대시보드
+├── frontend/   React 대시보드
+└── scripts/    루트 .env 기반 실행 스크립트
 ```
 
 - `data/`: yfinance/Finnhub 수집, HERD 계산, MariaDB 저장, 스케줄러.
 - `backend/`: MariaDB 데이터를 읽어 React에 제공하는 REST API.
 - `frontend/`: Spring Boot API를 호출해 포트폴리오/종목/HERD 데이터를 시각화.
+- `.env`: 프로젝트 루트 단일 환경변수 파일. data/backend 실행은 모두 이 파일을 기준으로 한다.
 
 ## 데이터 흐름
 
@@ -166,6 +168,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - data/CLAUDE.md 최신화
 - README.md 최신화
 - 루트 CLAUDE.md 최신화
+- 루트 `.env` 단일화 및 실행 스크립트 (`scripts/run-backend.sh`, `scripts/run-data.sh`, `scripts/run-frontend.sh`)
 
 ### 진행 중
 

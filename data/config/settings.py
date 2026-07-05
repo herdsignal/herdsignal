@@ -9,9 +9,10 @@ from pathlib import Path
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
 
-# settings.py 기준 상위(data/)의 .env 로드 — CWD에 무관하게 항상 data/.env를 참조.
-# ProcessBuilder가 프로젝트 루트에서 Python을 실행해도 키를 올바르게 주입받는다.
-_ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
+# 프로젝트 루트의 .env를 로드한다.
+# data/backend가 같은 환경변수 파일을 공유해 실행 위치별 DB 비밀번호 불일치를 막는다.
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_ENV_PATH = _PROJECT_ROOT / ".env"
 load_dotenv(_ENV_PATH)
 
 

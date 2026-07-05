@@ -149,21 +149,21 @@ GRANT ALL PRIVILEGES ON herdsignal.* TO 'herdsignal'@'localhost';
 ### 2. 데이터 엔진
 
 ```bash
-cd data
 cp .env.example .env
+cd data
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python3.12 init_db.py
-.venv/bin/python3.12 setup_default_tickers.py
-.venv/bin/python3.12 scheduler/herd_scheduler.py --run-now
-.venv/bin/python3.12 scheduler/herd_scheduler.py
+cd ..
+./scripts/run-data.sh init_db.py
+./scripts/run-data.sh setup_default_tickers.py
+./scripts/run-data.sh scheduler/herd_scheduler.py --run-now
+./scripts/run-data.sh scheduler/herd_scheduler.py
 ```
 
 ### 3. 백엔드
 
 ```bash
-cd backend
-./gradlew bootRun
+./scripts/run-backend.sh
 ```
 
 API 서버는 `http://localhost:8080`에서 실행됩니다.
@@ -173,7 +173,8 @@ API 서버는 `http://localhost:8080`에서 실행됩니다.
 ```bash
 cd frontend
 npm install
-npm run dev
+cd ..
+./scripts/run-frontend.sh
 ```
 
 프론트엔드는 기본적으로 `http://localhost:5173`에서 실행됩니다.

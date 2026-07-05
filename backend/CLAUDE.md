@@ -99,6 +99,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - Python 실행은 `ProcessBuilder` 기반이며 기본 타임아웃은 30초다.
 - 포트폴리오 HERD 배치 갱신 타임아웃은 120초다.
 - Python 실행 경로는 `data/.venv/bin/python3.12`를 사용한다.
+- 로컬 백엔드 실행은 루트 `.env`를 로드하는 `./scripts/run-backend.sh`를 우선 사용한다. `./gradlew bootRun`만 직접 실행하면 `DB_PASSWORD`가 주입되지 않아 DB 접속에 실패할 수 있다.
 
 ## 예외 처리
 - `ResourceNotFoundException` → HTTP 404
