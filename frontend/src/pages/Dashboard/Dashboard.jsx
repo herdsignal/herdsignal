@@ -58,6 +58,7 @@ const CACHE_KEY_SPY_HISTORY = 'hs_spy_history'
 const CACHE_KEY_SPY_HISTORY_VERSION = 'v2'
 const CACHE_KEY_TIME        = 'hs_cache_time'
 const CACHE_KEY_VERSION     = 'hs_dashboard_cache_version'
+const CACHE_KEY_PORTFOLIO_ORDER = 'hs_portfolio_order'
 const DASHBOARD_CACHE_VERSION = 'v3-logo'
 
 const HISTORY_PERIODS = [
@@ -84,6 +85,41 @@ function writeCache(key, data) {
   try {
     localStorage.setItem(key, JSON.stringify(data))
   } catch { /* 용량 초과 등 무시 */ }
+}
+
+function readPortfolioOrder() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(CACHE_KEY_PORTFOLIO_ORDER) || '[]')
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function writePortfolioOrder(order) {
+  try {
+    localStorage.setItem(CACHE_KEY_PORTFOLIO_ORDER, JSON.stringify(order))
+  } catch { /* localStorage 실패 시 기본 순서 유지 */ }
+}
+
+function applyPortfolioOrder(list, order) {
+  if (!Array.isArray(list) || list.length === 0) return []
+  const orderMap = new Map(order.map((ticker, index) => [ticker, index]))
+  return [...list].sort((a, b) => {
+    const aIndex = orderMap.has(a.ticker) ? orderMap.get(a.ticker) : Number.MAX_SAFE_INTEGER
+    const bIndex = orderMap.has(b.ticker) ? orderMap.get(b.ticker) : Number.MAX_SAFE_INTEGER
+    if (aIndex !== bIndex) return aIndex - bIndex
+    return 0
+  })
+}
+
+function reconcilePortfolioOrder(list, savedOrder = readPortfolioOrder()) {
+  const tickers = list.map((item) => item.ticker)
+  const existing = savedOrder.filter((ticker) => tickers.includes(ticker))
+  const added = tickers.filter((ticker) => !existing.includes(ticker))
+  const nextOrder = [...existing, ...added]
+  writePortfolioOrder(nextOrder)
+  return nextOrder
 }
 
 function spyHistoryCacheKey(period) {
@@ -455,7 +491,9 @@ export default function Dashboard() {
       const portfolioRes = await getPortfolio().catch(() => null)
       if (portfolioRes) {
         const raw = portfolioRes.data?.data
-        setPortfolio(Array.isArray(raw) ? raw : [])
+        const list = Array.isArray(raw) ? raw : []
+        const nextOrder = reconcilePortfolioOrder(list)
+        setPortfolio(applyPortfolioOrder(list, nextOrder))
       } else {
         setPortfolio([])
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
@@ -676,11 +714,29 @@ export default function Dashboard() {
     try {
       await removeFromPortfolio(ticker)
       setPortfolio(prev => prev.filter(item => item.ticker !== ticker))
+      writePortfolioOrder(portfolio.filter(item => item.ticker !== ticker).map(item => item.ticker))
     } catch {
       /* 삭제 실패 — 목록 그대로 유지 */
     } finally {
       setDeletingTicker(null)
     }
+  }
+
+  function handleMovePortfolioItem(e, ticker, direction) {
+    e.stopPropagation()
+    setPortfolio(prev => {
+      const currentIndex = prev.findIndex((item) => item.ticker === ticker)
+      const nextIndex = currentIndex + direction
+      if (currentIndex < 0 || nextIndex < 0 || nextIndex >= prev.length) return prev
+
+      const next = [...prev]
+      const [moved] = next.splice(currentIndex, 1)
+      next.splice(nextIndex, 0, moved)
+
+      const nextOrder = next.map((item) => item.ticker)
+      writePortfolioOrder(nextOrder)
+      return next
+    })
   }
 
   const spyScore = spyData?.herdV4 ?? spyData?.herdScore ?? 50
@@ -1008,7 +1064,7 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.stockGrid}>
-            {portfolio.map((item) => {
+            {portfolio.map((item, index) => {
               const row       = rows.find((r) => r.ticker === item.ticker)
               const herd      = herdMap[item.ticker]
               const stage     = herd?.herdStage ?? 'Calm'
@@ -1036,15 +1092,35 @@ export default function Dashboard() {
                   <div className={styles.cardStripe} style={{ background: color, color }} />
 
                   {editMode && (
-                    <button
-                      className={styles.cardDeleteBtn}
-                      style={{ opacity: 1 }}
-                      onClick={e => handleDelete(e, item.ticker)}
-                      disabled={!!deletingTicker}
-                      title={`${item.ticker} 포트폴리오에서 삭제`}
-                    >
-                      {isDeleting ? '…' : '✕'}
-                    </button>
+                    <>
+                      <div className={styles.cardMoveControls} aria-label={`${item.ticker} 표시 순서 변경`}>
+                        <button
+                          className={styles.cardMoveBtn}
+                          onClick={e => handleMovePortfolioItem(e, item.ticker, -1)}
+                          disabled={index === 0}
+                          title="위로 이동"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          className={styles.cardMoveBtn}
+                          onClick={e => handleMovePortfolioItem(e, item.ticker, 1)}
+                          disabled={index === portfolio.length - 1}
+                          title="아래로 이동"
+                        >
+                          ↓
+                        </button>
+                      </div>
+                      <button
+                        className={styles.cardDeleteBtn}
+                        style={{ opacity: 1 }}
+                        onClick={e => handleDelete(e, item.ticker)}
+                        disabled={!!deletingTicker}
+                        title={`${item.ticker} 포트폴리오에서 삭제`}
+                      >
+                        {isDeleting ? '…' : '✕'}
+                      </button>
+                    </>
                   )}
 
                   {/* ─ 상단: 종목명(좌) / HERD점수·단계명·시그널(우) ─ */}

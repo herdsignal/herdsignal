@@ -119,10 +119,12 @@
   outline: none;
   transition: background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
   /* 숫자 스핀 버튼 숨기기 */
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 .input::-webkit-outer-spin-button,
 .input::-webkit-inner-spin-button {
+  margin: 0;
   -webkit-appearance: none;
 }
 .input:focus {

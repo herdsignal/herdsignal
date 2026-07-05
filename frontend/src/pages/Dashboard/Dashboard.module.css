@@ -673,6 +673,7 @@
   cursor: default;
 }
 .stockCardEdit:hover { border-color: var(--border2); }
+.stockCardEdit .cardTop { padding-top: 26px; }
 
 /* 좌측 HERD 단계 컬러 스트라이프 */
 .cardStripe {
@@ -710,6 +711,48 @@
   background: rgba(239, 68, 68, 0.08);
 }
 .cardDeleteBtn:disabled { opacity: 0.2; cursor: default; }
+
+.cardMoveControls {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+}
+
+.cardMoveBtn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+}
+
+.cardMoveBtn:hover:not(:disabled) {
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(59, 130, 246, 0.12);
+  color: #93C5FD;
+}
+
+.cardMoveBtn:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+
+:global(body.light) .cardMoveBtn {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+:global(body.light) .cardMoveBtn:hover:not(:disabled) {
+  color: #2563EB;
+}
 
 /* ── 카드 상단: 종목 (좌) + HERD (우) ── */
 .cardTop {
@@ -925,6 +968,14 @@
   color: var(--text-1);
   font-size: 11px;
   font-family: 'Inter', sans-serif;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.targetInput::-webkit-outer-spin-button,
+.targetInput::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
 }
 
 /* ────────────────────────────
