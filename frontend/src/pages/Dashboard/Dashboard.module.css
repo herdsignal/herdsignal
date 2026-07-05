@@ -177,6 +177,10 @@
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
 }
 
+:global(body.light) .summaryCard {
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
 .summaryLabel {
   font-size: 11px;
   font-weight: 700;
@@ -324,6 +328,14 @@
   box-shadow: 0 24px 54px rgba(0, 0, 0, 0.22);
 }
 
+:global(body.light) .marketBanner {
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0) 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 250, 252, 0.98)),
+    var(--surface);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.1);
+}
+
 .bannerScoreBlock {
   padding: 34px 36px;
   border-right: 1px solid var(--border);
@@ -346,6 +358,14 @@
   pointer-events: none;
 }
 
+:global(body.light) .bannerScoreBlock::before {
+  background: radial-gradient(
+    ellipse at 0% 50%,
+    rgba(59, 130, 246, 0.14) 0%,
+    transparent 68%
+  );
+}
+
 .bannerEyebrow {
   font-size: 10px;
   font-weight: 600;
@@ -362,6 +382,10 @@
   letter-spacing: 0;
   line-height: 0.9;
   margin-bottom: 10px;
+}
+
+:global(body.light) .bannerScore {
+  color: #52657F;
 }
 
 .bannerStage {
@@ -384,6 +408,13 @@
     linear-gradient(180deg, rgba(32, 42, 56, 0.84), rgba(21, 27, 37, 0.9)),
     var(--surface2);
   flex: 1;
+}
+
+:global(body.light) .bannerAnimBlock {
+  background:
+    radial-gradient(circle at 52% 44%, rgba(59, 130, 246, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(229, 236, 246, 0.94), rgba(211, 221, 234, 0.92)),
+    var(--surface2);
 }
 
 /* 우측 패널 — 탭 + 컨텐츠 */
@@ -458,6 +489,12 @@
   align-items: center;
   background:
     linear-gradient(180deg, rgba(32, 42, 56, 0.84), rgba(21, 27, 37, 0.9)),
+    var(--surface2);
+}
+
+:global(body.light) .bannerTimeline {
+  background:
+    linear-gradient(180deg, rgba(235, 241, 249, 0.96), rgba(220, 229, 241, 0.94)),
     var(--surface2);
 }
 
@@ -618,6 +655,10 @@
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
   transition: border-color 0.15s, background 0.15s, transform 0.15s, opacity 0.15s;
 }
+
+:global(body.light) .stockCard {
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
 .stockCard:hover {
   border-color: var(--border2);
   background:
@@ -724,6 +765,11 @@
   border: 1px solid rgba(255, 255, 255, 0.055);
   border-radius: var(--card-radius);
   background: rgba(255, 255, 255, 0.025);
+}
+
+:global(body.light) .cardActionPanel {
+  border-color: rgba(148, 163, 184, 0.24);
+  background: rgba(248, 250, 252, 0.78);
 }
 
 .cardActionCode {
