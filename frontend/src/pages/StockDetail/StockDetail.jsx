@@ -676,8 +676,8 @@ export default function StockDetail() {
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <div>
-                  <div className={styles.cardTitle}>Signal Reliability</div>
-                  <div className={styles.cardMeta}>최근 3년 HERD 히스토리 기준</div>
+                  <div className={styles.cardTitle}>신호 검증</div>
+                  <div className={styles.cardMeta}>최근 3년 HERD 히스토리</div>
                 </div>
                 {reliability && (
                   <div
@@ -750,7 +750,7 @@ export default function StockDetail() {
               <div className={styles.cardHeader}>
                 <div>
                   <div className={styles.cardTitle}>HERD Index History</div>
-                  <div className={styles.cardMeta}>저장된 HERD 점수 흐름</div>
+                  <div className={styles.cardMeta}>1M · 3M · 1Y · 3Y</div>
                 </div>
                 <div className={styles.historyTabs}>
                   {HISTORY_PERIODS.map((p) => (
@@ -781,8 +781,8 @@ export default function StockDetail() {
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <div>
-                  <div className={styles.cardTitle}>Fundamental Guard</div>
-                  <div className={styles.cardMeta}>HERD 신호 재무 체크</div>
+                  <div className={styles.cardTitle}>재무 가드</div>
+                  <div className={styles.cardMeta}>HERD 신호 보조 필터</div>
                 </div>
                 {!financialsLoading && (
                   <div

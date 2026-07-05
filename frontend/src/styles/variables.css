@@ -5,18 +5,19 @@
 
 :root {
   /* 배경 계층 */
-  --bg:       #08090D;
-  --surface:  #12141A;
-  --surface2: #1A1D25;
+  --bg:       #0D121A;
+  --surface:  #151B25;
+  --surface2: #1B2330;
+  --surface3: #202A38;
 
   /* 경계선 */
-  --border:  #2A2F3A;
-  --border2: #424A5A;
+  --border:  #2B3545;
+  --border2: #465366;
 
   /* 텍스트 계층 */
-  --text-1: #FAFAFA;
-  --text-2: #B4B8C3;
-  --text-3: #707684;
+  --text-1: #F5F7FA;
+  --text-2: #B9C0CC;
+  --text-3: #7D8796;
 
   /* HERD 5단계 색상 */
   --flee:    #3B82F6;   /* 파랑 — 0~15 */
@@ -27,6 +28,7 @@
 
   /* 레이아웃 */
   --sidebar: 200px;
+  --card-radius: 8px;
 
   /* 트랜지션 */
   --t-fast: 0.1s ease;
