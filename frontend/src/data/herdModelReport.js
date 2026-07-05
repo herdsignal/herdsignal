@@ -31,11 +31,6 @@ const herdModelReport = {
     { ticker: 'JPM', buyHold: '+626.5%', action: '+422.2%', capture: '67.4%', mdd: '+6.8%p', actions: '8.4/년', verdict: '방어 개선', tone: 'pass' },
     { ticker: 'SPY', buyHold: '+319.1%', action: '+227.5%', capture: '71.3%', mdd: '+5.8%p', actions: '8.3/년', verdict: '기준 통과', tone: 'pass' },
   ],
-  riskNotes: [
-    ['강점', 'MDD 방어 목표 통과, 행동 횟수 과다하지 않음'],
-    ['주의', '초고성장주 급등 구간에서는 수익률 일부 포기'],
-    ['운영 기준', '실제 화면은 HERD_v4 점수 + HERD_v5 Action Layer를 분리 표시'],
-  ],
   stages: [
     { stage: 'Flee', range: '0-15', action: '추가매수', ratio: '8-22%', tone: 'flee' },
     { stage: 'Scatter', range: '15-40', action: '분할매수', ratio: '0-4%', tone: 'scatter' },
@@ -51,12 +46,5 @@ const herdModelReport = {
     { label: 'MA200 이격도', value: 18 },
   ],
 }
-
-herdModelReport.checks = [
-  ['현재 모델', `${herdModelReport.model.version} · ${herdModelReport.model.name}`],
-  ['기반 점수', herdModelReport.model.base],
-  ['목표', '수익률 70%+ 보존 / MDD 5%p+ 개선'],
-  ['상태', herdModelReport.model.status],
-]
 
 export default herdModelReport

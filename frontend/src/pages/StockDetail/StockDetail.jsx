@@ -216,6 +216,20 @@ function formatActionRatio(value) {
   return `${Math.round(n * 100)}%`
 }
 
+function formatActionBasis(data) {
+  const ratio = Number(data?.actionRatio ?? 0)
+  if (!Number.isFinite(ratio) || ratio <= 0) return '현재 비중 유지'
+
+  const pct = Math.round(ratio * 100)
+  if (data?.signal === 'BUY' || data?.signal === 'ADD') {
+    return `목표 투자금 기준 ${pct}% 분할 투입`
+  }
+  if (data?.signal === 'SELL' || data?.signal === 'REDUCE') {
+    return `보유 평가금액 기준 ${pct}% 축소`
+  }
+  return '현재 비중 유지'
+}
+
 function formatActionMeta(data) {
   return [
     data?.actionModelVersion ?? 'HERD_v5',
@@ -546,6 +560,9 @@ export default function StockDetail() {
                     </div>
                     <div className={styles.decisionSubtitle}>
                       {herdData.actionRegimeLabel ?? decision.subtitle}
+                    </div>
+                    <div className={styles.decisionBasis}>
+                      {formatActionBasis(herdData)}
                     </div>
                   </div>
                   <div className={styles.decisionPill} style={{ color: actionColor, borderColor: actionColor }}>

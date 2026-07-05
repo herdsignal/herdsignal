@@ -12,8 +12,6 @@ const {
   rows: TEST_ROWS,
   stages: STAGES,
   weights: WEIGHTS,
-  checks: CHECKS,
-  riskNotes: RISK_NOTES,
 } = herdModelReport
 
 function pctWidth(value) {
@@ -36,7 +34,7 @@ export default function HerdLab() {
           <span>HERD LAB</span>
           <h1>{MODEL.version}</h1>
         </div>
-        <p>{MODEL.name} · {MODEL.release} · 내부 백테스트 기준</p>
+        <p>{MODEL.name} · 검증 기간 {MODEL.period}</p>
       </header>
 
       <section className={styles.modelStrip}>
@@ -45,8 +43,8 @@ export default function HerdLab() {
           <strong>{MODEL.version}</strong>
         </div>
         <div>
-          <span>Layer</span>
-          <strong>{MODEL.name}</strong>
+          <span>Period</span>
+          <strong>{MODEL.period}</strong>
         </div>
         <div>
           <span>Input</span>
@@ -150,24 +148,6 @@ export default function HerdLab() {
             ))}
           </div>
         </div>
-      </section>
-
-      <section className={styles.checkGrid}>
-        {CHECKS.map(([label, value]) => (
-          <div key={label}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </div>
-        ))}
-      </section>
-
-      <section className={styles.riskGrid}>
-        {RISK_NOTES.map(([label, value]) => (
-          <div key={label}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </div>
-        ))}
       </section>
     </div>
   )

@@ -120,6 +120,20 @@ function formatActionText(item) {
   return [strength, ratioText, action].filter(Boolean).join(' · ')
 }
 
+function formatActionBasis(item) {
+  const ratio = Number(item?.actionRatio ?? 0)
+  if (!Number.isFinite(ratio) || ratio <= 0) return '현재 비중 유지'
+
+  const pct = Math.round(ratio * 100)
+  if (item?.signal === 'BUY' || item?.signal === 'ADD') {
+    return `목표 투자금 기준 ${pct}% 분할 투입`
+  }
+  if (item?.signal === 'SELL' || item?.signal === 'REDUCE') {
+    return `보유 평가금액 기준 ${pct}% 축소`
+  }
+  return '현재 비중 유지'
+}
+
 function formatActionCode(item) {
   if (!item?.signal) return 'HOLD'
   const ratio = Number(item.actionRatio ?? 0)
@@ -326,7 +340,7 @@ export default function Watchlist() {
   const opportunityQueue = useMemo(() => (
     opportunityRows(watchlist)
       .filter((item) => item.signal === 'BUY' || item.signal === 'ADD')
-      .slice(0, 3)
+      .slice(0, 5)
   ), [watchlist])
 
   function shouldShowQuality(item) {
@@ -460,7 +474,7 @@ export default function Watchlist() {
           <div className={styles.opportunityPanel}>
             <div className={styles.sectionRow}>
               <div className={styles.sectionTitle}>매수 대기열</div>
-              <div className={styles.sectionHint}>추가매수 우선순</div>
+              <div className={styles.sectionHint}>Flee/Scatter 우선 · 매수 우선도순</div>
             </div>
             {opportunityQueue.length > 0 ? (
               <div className={styles.opportunityList}>
@@ -476,7 +490,7 @@ export default function Watchlist() {
                       <strong>{item.ticker}</strong>
                       <em>{formatActionCode(item)}</em>
                       <small style={{ color: signal.color }}>
-                        HERD {Math.round(item.herdV4 ?? item.herdScore)} · {item.reason}
+                        {formatActionBasis(item)} · HERD {Math.round(item.herdV4 ?? item.herdScore)}
                       </small>
                     </button>
                   )
@@ -571,6 +585,9 @@ export default function Watchlist() {
                         {formatActionText(item)}
                       </span>
                     </div>
+                    <span className={styles.cardActionBasis}>
+                      {formatActionBasis(item)}
+                    </span>
                     <span className={styles.cardUpdate}>
                       {formatDate(item.scoreDate)}
                     </span>

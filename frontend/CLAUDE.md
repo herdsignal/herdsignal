@@ -69,7 +69,7 @@ Rush    #EF4444  (레드)
   - localStorage 캐시 우선 로딩
   - 수동 새로고침은 DB 조회 기반 빠른 갱신만 수행
   - 수동 새로고침 완료 후 `가격 갱신`/`HERD 조회`/`SPY 갱신` 결과를 짧게 표시
-  - 보유 종목 카드는 `ADD 10%`/`HOLD`/`SELL 30%` 같은 액션 코드를 우선 표시하고 HERD 점수는 보조 메타로 표시
+  - 보유 종목 카드는 `ADD 10%`/`HOLD`/`SELL 30%` 같은 액션 코드를 우선 표시하고, 매수는 목표 투자금 기준·익절은 보유 평가금액 기준으로 비율 의미를 명시한다.
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
@@ -94,8 +94,8 @@ Rush    #EF4444  (레드)
 - Watchlist (`/watchlist`)
   - 관심 종목 HERD 카드
   - 낮은 HERD 데이터 품질만 배지 표시
-  - 관심 종목 카드는 `강도 · 행동 비율 · 행동 라벨`로 Action Layer를 축약 표시
-  - 매수 대기열 (Flee/Scatter + BUY/ADD 신호 우선)
+  - 관심 종목 카드는 `강도 · 행동 비율 · 행동 라벨`과 행동 비율 기준을 축약 표시
+  - 매수 대기열 (Flee/Scatter + BUY/ADD 신호 우선, 최대 5개)
   - 매수 후보 우선 자동 정렬
   - 빠른 새로고침
   - 관심 종목 삭제
@@ -105,6 +105,7 @@ Rush    #EF4444  (레드)
   - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
   - 목표 대비 PASS/WATCH 판정과 종목별 백테스트 verdict 표시
   - HERD 5단계 행동 매트릭스와 v4 가중치 표시
+  - 설명문은 최소화하고 모델 버전·검증 기간·핵심 성과 수치 중심으로 표시
   - 표시 데이터는 `src/data/herdModelReport.js`에서 관리하며 JSX에 백테스트 숫자를 직접 하드코딩하지 않는다.
 - AiRebalance (`/ai`)
   - 목표 비중·현금 목표·리밸런싱 예산 설정

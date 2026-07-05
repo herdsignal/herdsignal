@@ -213,6 +213,20 @@ function formatActionText(herd) {
   return [strength, action].filter(Boolean).join(' · ')
 }
 
+function formatActionBasis(herd) {
+  const ratio = Number(herd?.actionRatio ?? 0)
+  if (!Number.isFinite(ratio) || ratio <= 0) return '현재 비중 유지'
+
+  const pct = Math.round(ratio * 100)
+  if (herd?.signal === 'BUY' || herd?.signal === 'ADD') {
+    return `목표 투자금 기준 ${pct}% 분할 투입`
+  }
+  if (herd?.signal === 'SELL' || herd?.signal === 'REDUCE') {
+    return `보유 평가금액 기준 ${pct}% 축소`
+  }
+  return '현재 비중 유지'
+}
+
 function formatActionCode(herd) {
   if (!herd?.signal) return 'HOLD'
   const ratio = Number(herd.actionRatio ?? 0)
@@ -1028,6 +1042,9 @@ export default function Dashboard() {
                           </div>
                           <div className={styles.cardActionLabel}>
                             {formatActionText(herd)}
+                          </div>
+                          <div className={styles.cardActionBasis}>
+                            {formatActionBasis(herd)}
                           </div>
                           <div className={styles.cardActionMeta}>
                             HERD {Math.round(herd.herdV4 ?? herd.herdScore)} · {stageName}

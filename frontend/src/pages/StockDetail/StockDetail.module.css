@@ -306,6 +306,13 @@
   color: var(--text-2);
 }
 
+.decisionBasis {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
 .decisionPill {
   flex-shrink: 0;
   border: 1px solid;

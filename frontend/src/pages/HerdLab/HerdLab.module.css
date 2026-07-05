@@ -17,9 +17,7 @@
 .modelStrip span,
 .cardHead span,
 .metricCard span,
-.targetCard span,
-.checkGrid span,
-.riskGrid span {
+.targetCard span {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -79,9 +77,7 @@
 
 .metricCard,
 .card,
-.targetCard,
-.checkGrid div,
-.riskGrid div {
+.targetCard {
   border: 1px solid rgba(255, 255, 255, 0.095);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)), var(--surface);
   border-radius: 12px;
@@ -346,37 +342,10 @@
   text-align: right;
 }
 
-.checkGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.checkGrid div,
-.riskGrid div {
-  padding: 16px 18px;
-}
-
-.checkGrid strong,
-.riskGrid strong {
-  display: block;
-  margin-top: 8px;
-  font-size: 13px;
-  color: var(--text-1);
-}
-
-.riskGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
 @media (max-width: 1180px) {
   .metricGrid,
   .modelStrip,
-  .targetGrid,
-  .checkGrid,
-  .riskGrid {
+  .targetGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -393,9 +362,7 @@
 
   .metricGrid,
   .modelStrip,
-  .targetGrid,
-  .checkGrid,
-  .riskGrid {
+  .targetGrid {
     grid-template-columns: 1fr;
   }
 
