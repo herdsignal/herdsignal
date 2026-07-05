@@ -37,12 +37,14 @@
 
 /* 라이트 모드 오버라이드 */
 body.light {
-  --bg:       #F8F8F9;
+  --bg:       #F4F7FB;
   --surface:  #FFFFFF;
-  --surface2: #F1F1F3;
-  --border:   #E4E4E7;
-  --border2:  #D4D4D8;
-  --text-1:   #09090B;
-  --text-2:   #71717A;
-  --text-3:   #A1A1AA;
+  --surface2: #EEF3F8;
+  --surface3: #E3EAF3;
+  --border:   #D8E0EA;
+  --border2:  #B8C4D3;
+  --text-1:   #111827;
+  --text-2:   #475569;
+  --text-3:   #7B8794;
+  --calm:     #64748B;
 }

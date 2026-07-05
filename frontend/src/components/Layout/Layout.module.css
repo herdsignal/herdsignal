@@ -18,6 +18,11 @@
   transition: background var(--t-base), color var(--t-base);
 }
 
+:global(body.light) {
+  background-image:
+    linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0%, rgba(244, 247, 251, 0) 260px);
+}
+
 :global(a) {
   text-decoration: none;
   color: inherit;
@@ -46,6 +51,13 @@
   z-index: 10;
   box-shadow: 18px 0 42px rgba(0, 0, 0, 0.16);
   transition: background var(--t-base), border-color var(--t-base), box-shadow var(--t-base);
+}
+
+:global(body.light) .sidebar {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(239, 245, 252, 0.98) 100%),
+    var(--surface);
+  box-shadow: 18px 0 42px rgba(15, 23, 42, 0.08);
 }
 
 /* 로고 */
@@ -96,6 +108,18 @@
   border-color: var(--border);
   color: var(--text-1);
 }
+
+:global(body.light) .navItem:hover {
+  background: rgba(15, 23, 42, 0.035);
+}
+
+:global(body.light) .active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.28);
+  box-shadow:
+    inset 3px 0 0 var(--flee),
+    0 8px 20px rgba(59, 130, 246, 0.08);
+}
 .active {
   background: rgba(59, 130, 246, 0.11);
   border-color: rgba(59, 130, 246, 0.28);
@@ -121,6 +145,14 @@
   border: 1px solid var(--border);
   font-family: 'Inter', sans-serif;
   transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+
+:global(body.light) .themeBtn {
+  background: rgba(15, 23, 42, 0.025);
+}
+
+:global(body.light) .themeBtn:hover {
+  background: rgba(15, 23, 42, 0.05);
 }
 .themeBtn:hover {
   background: rgba(255, 255, 255, 0.05);

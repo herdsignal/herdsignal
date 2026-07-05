@@ -54,6 +54,10 @@
   padding: 9px 10px;
 }
 
+:global(body.light) .summaryItem {
+  background: rgba(255, 255, 255, 0.72);
+}
+
 .summaryItem span {
   display: block;
   margin-bottom: 4px;
@@ -118,6 +122,11 @@
   border-radius: var(--card-radius);
   background: rgba(16, 22, 32, 0.98);
   padding: 9px 12px;
+}
+
+:global(body.light) .tooltip {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
 }
 
 .tooltipDate {

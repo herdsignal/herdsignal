@@ -32,6 +32,17 @@
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
 }
 
+:global(body.light) .overlay {
+  background: rgba(15, 23, 42, 0.28);
+}
+
+:global(body.light) .modal {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 250, 255, 0.98) 100%),
+    var(--surface);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+}
+
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -150,6 +161,14 @@
   cursor: pointer;
   font-family: 'Inter', sans-serif;
   transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+
+:global(body.light) .cancelBtn {
+  background: rgba(15, 23, 42, 0.025);
+}
+
+:global(body.light) .cancelBtn:hover:not(:disabled) {
+  background: rgba(15, 23, 42, 0.05);
 }
 .cancelBtn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.05);

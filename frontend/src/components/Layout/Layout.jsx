@@ -10,10 +10,13 @@ import styles from './Layout.module.css'
 
 export default function Layout() {
   /* body.light 클래스로 라이트모드 전환 */
-  const [isDark, setIsDark] = useState(true)
+  const [isDark, setIsDark] = useState(() => {
+    return localStorage.getItem('herdsignal_theme') !== 'light'
+  })
 
   useEffect(() => {
     document.body.classList.toggle('light', !isDark)
+    localStorage.setItem('herdsignal_theme', isDark ? 'dark' : 'light')
   }, [isDark])
 
   return (
