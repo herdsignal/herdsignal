@@ -19,6 +19,7 @@ import {
   removeFromWatchlist,
 } from '../../api/herdApi'
 import HerdDots  from '../../components/HerdDots/HerdDots'
+import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
@@ -28,6 +29,13 @@ import styles    from './Watchlist.module.css'
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
 const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
+
+const HISTORY_PERIODS = [
+  { value: '1m', label: '1M' },
+  { value: '3m', label: '3M' },
+  { value: '1y', label: '1Y' },
+  { value: '3y', label: '3Y' },
+]
 
 /* ── 유틸 (Dashboard와 동일) ──────────────── */
 
@@ -127,6 +135,23 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
 }
 
+function fmtScoreDate(dateStr) {
+  if (!dateStr) return '—'
+
+  const nowKST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+  const pad = (n) => String(n).padStart(2, '0')
+  const todayStr = `${nowKST.getFullYear()}-${pad(nowKST.getMonth() + 1)}-${pad(nowKST.getDate())}`
+  const ystKST = new Date(nowKST)
+  ystKST.setDate(ystKST.getDate() - 1)
+  const ystStr = `${ystKST.getFullYear()}-${pad(ystKST.getMonth() + 1)}-${pad(ystKST.getDate())}`
+
+  if (dateStr === todayStr) return '오늘'
+  if (dateStr === ystStr) return '어제'
+
+  const d = new Date(dateStr)
+  return isNaN(d) ? dateStr : d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
+}
+
 function scoreToColor(score) {
   return score == null ? 'var(--text-1)' : scoreColor(score)
 }
@@ -180,6 +205,10 @@ export default function Watchlist() {
   const [watchlist,      setWatchlist]      = useState([])
   const [spyData,        setSpyData]        = useState(null)
   const [spyHistory,     setSpyHistory]     = useState([])
+  const [spyStatsHistory, setSpyStatsHistory] = useState([])
+  const [spyHistoryPeriod, setSpyHistoryPeriod] = useState('3y')
+  const [spyHistoryLoading, setSpyHistoryLoading] = useState(false)
+  const [spyTab,         setSpyTab]         = useState('overview')
   const [loading,        setLoading]        = useState(true)
   const [refreshing,     setRefreshing]     = useState(false)
   const [error,          setError]          = useState(null)
@@ -187,7 +216,7 @@ export default function Watchlist() {
   const [deletingTicker, setDeletingTicker] = useState(null)
   /* SPY 데이터 ref 캐시 — Dashboard와 동일한 StrictMode 대응 */
   const spyDataCache = useRef(null)
-  const spyHistoryCache = useRef(null)
+  const spyHistoryCache = useRef({})
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -224,27 +253,39 @@ export default function Watchlist() {
    * ref 캐시로 StrictMode 이중 실행 시 state 재설정 문제 방지.
    */
   useEffect(() => {
-    if (spyDataCache.current && spyHistoryCache.current) {
+    const historyCached = spyHistoryCache.current[spyHistoryPeriod]
+
+    if (spyDataCache.current && historyCached) {
       setSpyData(spyDataCache.current)
-      setSpyHistory(spyHistoryCache.current)
+      setSpyHistory(historyCached)
+      if (spyHistoryPeriod === '3y') setSpyStatsHistory(historyCached)
       return
     }
-    getStockHerd('SPY')
-      .then((res) => {
-        const data = res.data?.data ?? null
-        spyDataCache.current = data
-        setSpyData(data)
-      })
-      .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
 
-    getSpyHerdHistory('3y')
+    if (!spyDataCache.current) {
+      getStockHerd('SPY')
+        .then((res) => {
+          const data = res.data?.data ?? null
+          spyDataCache.current = data
+          setSpyData(data)
+        })
+        .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
+    } else {
+      setSpyData(spyDataCache.current)
+    }
+
+    setSpyHistoryLoading(true)
+    setSpyHistory([])
+    getSpyHerdHistory(spyHistoryPeriod)
       .then((res) => {
         const points = res.data?.data?.points ?? []
-        spyHistoryCache.current = points
+        spyHistoryCache.current[spyHistoryPeriod] = points
         setSpyHistory(points)
+        if (spyHistoryPeriod === '3y') setSpyStatsHistory(points)
       })
-      .catch(() => { /* 히스토리 실패 시 우측 통계만 빈 값 유지 */ })
-  }, [])
+      .catch(() => { /* 히스토리 실패 시 Timeline 탭 빈 상태 유지 */ })
+      .finally(() => setSpyHistoryLoading(false))
+  }, [spyHistoryPeriod])
 
   /* 관심 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 */
   async function handleDelete(e, ticker) {
@@ -265,16 +306,16 @@ export default function Watchlist() {
   const spyStage = spyData?.herdStage ?? 'Calm'
   const ystPoint = useMemo(() => {
     const t = new Date(); t.setDate(t.getDate() - 1)
-    return findScoreAt(spyHistory, t)
-  }, [spyHistory])
+    return findScoreAt(spyStatsHistory, t)
+  }, [spyStatsHistory])
   const m1Point = useMemo(() => {
     const t = new Date(); t.setDate(t.getDate() - 30)
-    return findScoreAt(spyHistory, t)
-  }, [spyHistory])
+    return findScoreAt(spyStatsHistory, t)
+  }, [spyStatsHistory])
   const y1Point = useMemo(() => {
     const t = new Date(); t.setDate(t.getDate() - 365)
-    return findScoreAt(spyHistory, t)
-  }, [spyHistory])
+    return findScoreAt(spyStatsHistory, t)
+  }, [spyStatsHistory])
 
   const sortedWatchlist = useMemo(() => (
     watchlist
@@ -330,21 +371,71 @@ export default function Watchlist() {
           <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
         </div>
 
-        <div className={styles.bannerAnimBlock}>
-          <HerdDots score={spyScore} fill dotCount={60} />
-          <div className={styles.bannerAnimLabel}>
-            <span>← Flee · 군중 이탈</span>
-            <span>Rush · 군중 밀집 →</span>
+        <div className={styles.bannerRight}>
+          <div className={styles.bannerTabs}>
+            <button
+              className={`${styles.bannerTab} ${spyTab === 'overview' ? styles.bannerTabActive : ''}`}
+              onClick={() => setSpyTab('overview')}
+            >Overview</button>
+            <button
+              className={`${styles.bannerTab} ${spyTab === 'timeline' ? styles.bannerTabActive : ''}`}
+              onClick={() => setSpyTab('timeline')}
+            >Timeline</button>
           </div>
-          <div className={styles.bannerSpectrumOverlay}>
-            <SpectrumBar score={spyScore} height={3} />
-          </div>
-        </div>
 
-        <div className={styles.bannerStatsBlock}>
-          <BannerStat label="전날" point={ystPoint} />
-          <BannerStat label="1달 전" point={m1Point} />
-          <BannerStat label="1년 전" point={y1Point} />
+          {spyTab === 'overview' && (
+            <div className={styles.bannerOverview}>
+              <div className={styles.bannerAnimBlock}>
+                <HerdDots score={spyScore} fill dotCount={60} />
+                <div className={styles.bannerAnimLabel}>
+                  <span>← Flee · 군중 이탈</span>
+                  <span>Rush · 군중 밀집 →</span>
+                </div>
+                <div className={styles.bannerSpectrumOverlay}>
+                  <SpectrumBar score={spyScore} height={3} />
+                </div>
+              </div>
+
+              <div className={styles.bannerHistStats}>
+                <BannerStat label="어제" point={ystPoint} />
+                <BannerStat label="1달 전" point={m1Point} />
+                <BannerStat label="1년 전" point={y1Point} />
+                <div className={styles.bannerStatItem}>
+                  <div className={styles.bannerStatLabel}>업데이트</div>
+                  <div className={styles.bannerStatUpdate}>
+                    {spyData ? fmtScoreDate(spyData.scoreDate) : '—'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {spyTab === 'timeline' && (
+            <div className={styles.bannerTimeline}>
+              <div className={styles.bannerPeriodTabs}>
+                {HISTORY_PERIODS.map((p) => (
+                  <button
+                    key={p.value}
+                    className={`${styles.bannerPeriodTab} ${spyHistoryPeriod === p.value ? styles.bannerPeriodTabActive : ''}`}
+                    onClick={() => setSpyHistoryPeriod(p.value)}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+              {spyHistoryLoading ? (
+                <div className={styles.bannerTimelineEmpty}>로딩 중…</div>
+              ) : spyHistory.length === 0 ? (
+                <div className={styles.bannerTimelineEmpty}>데이터 없음</div>
+              ) : (
+                <HerdHistoryChart
+                  points={spyHistory}
+                  currentScore={spyScore}
+                  height={190}
+                />
+              )}
+            </div>
+          )}
         </div>
       </div>
 
