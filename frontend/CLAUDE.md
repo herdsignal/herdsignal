@@ -27,6 +27,7 @@ src/
 │   ├── HerdFlowPreview/ Herd Flow 확인용
 │   └── History/    자산 기록
 ├── styles/         전역 CSS 변수
+├── assets/brand/   HerdSignal 로고/심볼 SVG 자산
 ├── utils/          통화/환율 유틸
 │   ├── currency.js 통화 변환
 │   ├── decision.js HERD 점수 + 보유/포트폴리오 컨텍스트 기반 행동 문장
@@ -57,6 +58,7 @@ Rush    #EF4444  (레드)
 - SpectrumBar: Flee~Rush 스펙트럼 바
 - StockAvatar: `logoUrl`이 있으면 회사 로고를 표시하고, 없거나 이미지 로딩 실패 시 티커 배지를 표시한다.
 - Layout: 공통 사이드바 + 페이지 Outlet
+- Brand assets: Particle H 심볼은 왼쪽 Flee 분산, 오른쪽 Rush 밀집을 단순화한 SVG로 관리한다.
 - AvgPriceModal: 평균 매수가·수량 수정 모달
 
 ## 현재 구현된 페이지

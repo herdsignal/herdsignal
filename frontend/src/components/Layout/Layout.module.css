@@ -62,15 +62,31 @@
 
 /* 로고 */
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 40px;
+  padding: 0 2px;
+}
+
+.logoMark {
+  display: block;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 8px 18px rgba(59, 130, 246, 0.16));
+}
+
+.logoText {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0;
   color: var(--text-1);
-  margin-bottom: 40px;
-  padding: 0 4px;
+  line-height: 1;
 }
-.logoEm {
+
+.logoText em {
   font-style: normal;
   color: var(--flee);
 }

@@ -6,6 +6,7 @@
 
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
+import herdSignalMark from '../../assets/brand/herdsignal-mark.svg'
 import styles from './Layout.module.css'
 
 export default function Layout() {
@@ -23,9 +24,11 @@ export default function Layout() {
     <div className={styles.wrapper}>
       {/* ── 사이드바 ── */}
       <aside className={styles.sidebar}>
-        {/* 로고: Herd는 흰색, Signal은 --flee 색 */}
         <div className={styles.logo}>
-          Herd<em className={styles.logoEm}>Signal</em>
+          <img src={herdSignalMark} alt="" className={styles.logoMark} aria-hidden="true" />
+          <span className={styles.logoText}>
+            Herd<em>Signal</em>
+          </span>
         </div>
 
         {/* 포트폴리오 섹션 */}
