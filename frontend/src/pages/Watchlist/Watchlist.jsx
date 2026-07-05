@@ -386,7 +386,7 @@ export default function Watchlist() {
       <div className={styles.pageHeader}>
         <div>
           <div className={styles.pageDate}>{today}</div>
-          <h1 className={styles.pageTitle}>관심 종목</h1>
+          <h1 className={styles.pageTitle}>매수 대기열</h1>
         </div>
         <div className={styles.headerActions}>
           {refreshNotice && (
@@ -510,7 +510,7 @@ export default function Watchlist() {
           <div className={styles.opportunityPanel}>
             <div className={styles.sectionRow}>
               <div className={styles.sectionTitle}>매수 대기열</div>
-              <div className={styles.sectionHint}>Flee/Scatter 우선 · 매수 우선도순</div>
+            <div className={styles.sectionHint}>Flee/Scatter 우선</div>
             </div>
             {opportunityQueue.length > 0 ? (
               <div className={styles.opportunityList}>
@@ -540,7 +540,7 @@ export default function Watchlist() {
           </div>
 
           <div className={styles.sectionRow}>
-            <div className={styles.sectionTitle}>관심 종목 · {watchlist.length}</div>
+            <div className={styles.sectionTitle}>관찰 종목 · {watchlist.length}</div>
             <div className={styles.sectionHint}>매수 우선도순</div>
           </div>
 

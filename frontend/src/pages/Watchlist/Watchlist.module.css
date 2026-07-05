@@ -5,8 +5,8 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 36px;
-  padding-bottom: 28px;
+  margin-bottom: 28px;
+  padding: 20px 0 24px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -14,14 +14,14 @@
   font-size: 12px;
   color: var(--text-3);
   margin-bottom: 6px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .pageTitle {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 28px;
   font-weight: 700;
-  letter-spacing: -1px;
+  letter-spacing: 0;
   line-height: 1;
 }
 
@@ -29,13 +29,13 @@
   background: var(--text-1);
   color: var(--bg);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--card-radius);
   padding: 9px 20px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
-  letter-spacing: -0.1px;
+  letter-spacing: 0;
   transition: opacity 0.15s;
 }
 .btnPrimary:hover { opacity: 0.8; }
@@ -47,17 +47,25 @@
 }
 
 .refreshNotice {
-  color: var(--text-3);
+  max-width: 260px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-2);
   font-size: 11px;
   font-weight: 600;
+  line-height: 1;
+  padding: 7px 10px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .btnRefresh {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-2);
   border: 1px solid var(--border2);
-  border-radius: 8px;
+  border-radius: var(--card-radius);
   padding: 9px 16px;
   font-size: 13px;
   font-weight: 600;
@@ -78,18 +86,22 @@
    S&P500 HERD 배너 (Dashboard와 동일)
    ──────────────────────────── */
 .marketBanner {
-  background: var(--surface);
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.075), rgba(255, 255, 255, 0) 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)),
+    var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  margin-bottom: 48px;
+  border-radius: var(--card-radius);
+  margin-bottom: 42px;
   display: grid;
   grid-template-columns: 280px 1fr;
   overflow: hidden;
-  min-height: 240px;
+  min-height: 250px;
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.22);
 }
 
 .bannerScoreBlock {
-  padding: 32px 36px;
+  padding: 34px 36px;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -103,8 +115,8 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse at 20% 50%,
-    rgba(249, 115, 22, 0.06) 0%,
+    ellipse at 0% 50%,
+    rgba(59, 130, 246, 0.11) 0%,
     transparent 70%
   );
   pointer-events: none;
@@ -113,7 +125,7 @@
 .bannerEyebrow {
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--text-3);
   margin-bottom: 12px;
@@ -123,7 +135,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 80px;
   font-weight: 700;
-  letter-spacing: -4px;
+  letter-spacing: 0;
   line-height: 0.9;
   margin-bottom: 10px;
 }
@@ -132,7 +144,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 16px;
   font-weight: 600;
-  letter-spacing: -0.3px;
+  letter-spacing: 0;
   margin-bottom: 6px;
 }
 
@@ -144,7 +156,9 @@
 
 .bannerAnimBlock {
   position: relative;
-  background: var(--surface2);
+  background:
+    linear-gradient(180deg, rgba(32, 42, 56, 0.84), rgba(21, 27, 37, 0.9)),
+    var(--surface2);
   flex: 1;
 }
 
@@ -169,7 +183,7 @@
 .bannerTab {
   min-width: 76px;
   padding: 5px 12px;
-  border-radius: 5px;
+  border-radius: 6px;
   border: 1px solid var(--border2);
   background: transparent;
   color: var(--text-3);
@@ -177,7 +191,7 @@
   font-weight: 500;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 .bannerTab:hover { color: var(--text-1); border-color: var(--text-3); }
@@ -206,7 +220,7 @@
   padding: 0 20px;
   font-size: 10px;
   color: var(--text-3);
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   pointer-events: none;
   z-index: 1;
 }
@@ -222,7 +236,7 @@
 .bannerHistStats {
   width: 198px;
   flex-shrink: 0;
-  padding: 48px 24px 16px;
+  padding: 50px 24px 16px;
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -236,7 +250,9 @@
   padding: 46px 16px 8px 8px;
   display: flex;
   align-items: center;
-  background: var(--surface2);
+  background:
+    linear-gradient(180deg, rgba(32, 42, 56, 0.84), rgba(21, 27, 37, 0.9)),
+    var(--surface2);
 }
 
 .bannerPeriodTabs {
@@ -291,14 +307,14 @@
   font-size: 11px;
   color: var(--text-3);
   margin-bottom: 4px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .bannerStatValue {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 18px;
   font-weight: 600;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
 }
 
 .bannerStatMain {
@@ -313,7 +329,7 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--text-2);
-  letter-spacing: -0.2px;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -342,8 +358,8 @@
 
 .sectionTitle {
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.07em;
+  font-weight: 700;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--text-3);
 }
@@ -365,15 +381,21 @@
   align-items: center;
   gap: 10px;
   text-align: left;
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+    var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--card-radius);
   padding: 14px 16px;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
-  transition: border-color 0.15s;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.14);
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
 }
-.opportunityItem:hover { border-color: var(--border2); }
+.opportunityItem:hover {
+  border-color: var(--border2);
+  transform: translateY(-1px);
+}
 
 .opportunityItem span {
   width: 22px;
@@ -415,8 +437,10 @@
 .opportunityEmpty {
   margin-top: 12px;
   border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
+  border-radius: var(--card-radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+    var(--surface);
   color: var(--text-3);
   font-size: 12px;
   font-weight: 600;
@@ -440,19 +464,23 @@
 }
 
 .stockCard {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.008)), var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.095);
-  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+    var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
   padding: 18px 20px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
   transition: border-color 0.15s, background 0.15s, transform 0.15s, opacity 0.15s;
 }
 .stockCard:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.014)), var(--surface);
+  border-color: var(--border2);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+    var(--surface);
   transform: translateY(-1px);
 }
 
@@ -462,7 +490,7 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 3px;
   box-shadow: 0 0 18px currentColor;
 }
 
@@ -473,7 +501,7 @@
   right: 10px;
   width: 22px;
   height: 22px;
-  border-radius: 5px;
+  border-radius: 6px;
   border: 1px solid transparent;
   background: none;
   color: var(--text-3);
@@ -510,14 +538,14 @@
 .cardTickerBadge {
   width: 36px;
   height: 36px;
-  border-radius: 9px;
+  border-radius: var(--card-radius);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: -0.2px;
+  letter-spacing: 0;
   flex-shrink: 0;
 }
 
@@ -525,7 +553,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  letter-spacing: 0;
   margin-bottom: 2px;
   color: var(--text-1);
 }
@@ -554,7 +582,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 24px;
   font-weight: 700;
-  letter-spacing: -1px;
+  letter-spacing: 0;
   line-height: 1;
   margin-bottom: 3px;
 }
@@ -581,7 +609,7 @@
   border-radius: 6px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .cardSignalGroup {
@@ -648,7 +676,7 @@
 .retryBtn {
   background: none;
   border: 1px solid var(--border2);
-  border-radius: 8px;
+  border-radius: var(--card-radius);
   padding: 8px 20px;
   font-size: 13px;
   color: var(--text-1);
@@ -677,4 +705,79 @@
   font-size: 13px;
   color: var(--text-3);
   margin-bottom: 16px;
+}
+
+@media (max-width: 1100px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .headerActions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .marketBanner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bannerScoreBlock {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stockGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .bannerOverview {
+    flex-direction: column;
+  }
+
+  .bannerHistStats {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 18px 20px;
+  }
+
+  .bannerTabs {
+    top: 12px;
+    right: 12px;
+  }
+
+  .bannerAnimBlock {
+    min-height: 220px;
+  }
+
+  .opportunityItem {
+    grid-template-columns: 24px 54px minmax(0, 1fr);
+  }
+
+  .opportunityItem small {
+    grid-column: 2 / -1;
+  }
+
+  .stockCard {
+    padding: 16px;
+  }
+
+  .cardTop,
+  .cardBottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .cardHerd {
+    width: 100%;
+    padding-right: 0;
+    text-align: left;
+  }
 }
