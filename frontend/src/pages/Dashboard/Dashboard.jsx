@@ -1372,6 +1372,7 @@ export default function Dashboard() {
               const badge     = badgeStyle(stage)
               const signal    = signalStyle(herd?.signal)
               const stageName = stage.startsWith('Herd ') ? stage.slice(5) : stage
+              const herdScore = herd ? Math.round(herd.herdV4 ?? herd.herdScore) : null
 
               const price       = priceMap[item.ticker]
               const hasAvgPrice = item.avgPrice != null && item.quantity != null
@@ -1410,10 +1411,20 @@ export default function Dashboard() {
                         ticker={item.ticker}
                         logoUrl={herd?.logoUrl}
                         tone={badge}
+                        size="lg"
                       />
                       <div>
                         <div className={styles.cardTicker}>{item.ticker}</div>
-                        <div className={styles.cardStageName}>{stageName}</div>
+                        <div className={styles.cardStageLine}>
+                          <span className={styles.cardStageName} style={{ color }}>
+                            {stageName}
+                          </span>
+                          {herdScore != null && (
+                            <span className={styles.cardStageScore} style={{ color }}>
+                              HERD {herdScore}
+                            </span>
+                          )}
+                        </div>
                         {shouldShowQuality(herd) && (
                           <div
                             className={styles.cardQuality}
@@ -1441,8 +1452,8 @@ export default function Dashboard() {
                           <div className={styles.cardActionBasis}>
                             {formatActionBasis(herd)}
                           </div>
-                          <div className={styles.cardActionMeta}>
-                            HERD {Math.round(herd.herdV4 ?? herd.herdScore)} · {stageName}
+                          <div className={styles.cardActionMeta} style={{ color }}>
+                            HERD {herdScore} · {stageName}
                           </div>
                         </div>
                       ) : (

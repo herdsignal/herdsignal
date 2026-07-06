@@ -975,22 +975,42 @@
 .cardTickerBlock {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  min-width: 0;
 }
 
 .cardTicker {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   letter-spacing: 0;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
   color: var(--text-1);
+  line-height: 1;
+}
+
+.cardStageLine {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
 }
 
 .cardStageName {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-2);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.cardStageScore {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .cardQuality {
