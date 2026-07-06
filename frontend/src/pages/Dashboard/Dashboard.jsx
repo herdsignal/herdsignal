@@ -12,6 +12,7 @@
  * 데이터 소스:
  *   - getPortfolio()          → 종목 목록 + avgPrice/quantity (항상 최신 호출)
  *   - getPortfolioSummary()   → DB 기준 포트폴리오 요약 (캐시 우선)
+ *   - getPortfolioRealtime()  → 새로고침 시 yfinance 현재가 기반 평가
  *   - getPortfolioHerd()      → HERD 점수 (캐시 우선)
  *   - getStockHerd('SPY')     → SPY 배너용 HERD (캐시 우선)
  *
@@ -26,6 +27,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   getPortfolio,
   getPortfolioSummary,
+  getPortfolioRealtime,
   getPortfolioHerd,
   getStockHerd,
   getSpyHerdHistory,
@@ -75,7 +77,7 @@ const PORTFOLIO_SORT_OPTIONS = [
   { value: 'weight', label: '비중순' },
 ]
 
-const REFRESH_SCOPE_TITLE = '가격 평가, HERD DB 조회, SPY 최신 점수만 갱신합니다. 히스토리와 신뢰도는 각 화면에서 별도 조회됩니다.'
+const REFRESH_SCOPE_TITLE = 'yfinance 현재가, HERD DB 조회, SPY 최신 점수만 갱신합니다. 히스토리와 신뢰도는 각 화면에서 별도 조회됩니다.'
 
 /** localStorage에서 JSON 파싱. 실패 시 null 반환 */
 function readCache(key) {
@@ -306,11 +308,11 @@ function sortPortfolioItems(list, rows, herdMap, sortMode) {
   })
 }
 
-function refreshResultText(summaryRes, herdRes, spyRes) {
+function refreshResultText(priceRes, herdRes, spyRes) {
   const done = []
   const failed = []
 
-  if (summaryRes.status === 'fulfilled') done.push('가격 갱신')
+  if (priceRes.status === 'fulfilled') done.push('현재가 갱신')
   else failed.push('가격')
 
   if (herdRes.status === 'fulfilled') done.push('HERD 조회')
@@ -667,23 +669,23 @@ export default function Dashboard() {
   }, [currencyMode, exchangeRate])
 
   /*
-   * 수동 새로고침 — DB에 저장된 최신 데이터만 빠르게 재조회 후 캐시 갱신.
+   * 수동 새로고침 — yfinance 현재가 + DB HERD 데이터를 재조회 후 캐시 갱신.
    * getPortfolio()와 SPY 3년 히스토리는 제외한다.
    * 종목 목록은 추가/삭제 시에만 바뀌고, 히스토리는 최초 로딩 캐시로 충분하다.
    */
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
-    setRefreshNotice('가격 평가 · HERD DB 조회 · SPY 확인 중')
+    setRefreshNotice('현재가 조회 · HERD DB 조회 · SPY 확인 중')
     try {
-      const [summaryRes, herdRes, spyRes] = await Promise.allSettled([
-        getPortfolioSummary(),
+      const [priceRes, herdRes, spyRes] = await Promise.allSettled([
+        getPortfolioRealtime(),
         getPortfolioHerd(),
         getStockHerd('SPY'),
       ])
 
-      if (summaryRes.status === 'fulfilled') {
-        const data = normalizePortfolioSummary(summaryRes.value.data?.data ?? null)
+      if (priceRes.status === 'fulfilled') {
+        const data = normalizePortfolioSummary(priceRes.value.data?.data ?? null)
         setSummary(data)
         writeCache(CACHE_KEY_REALTIME, data)
       }
@@ -705,10 +707,10 @@ export default function Dashboard() {
       }
 
       /* 하나라도 성공했을 때만 헤더 "업데이트 · 오후 X:XX" 기준 갱신 */
-      if ([summaryRes, herdRes, spyRes].some((res) => res.status === 'fulfilled')) {
+      if ([priceRes, herdRes, spyRes].some((res) => res.status === 'fulfilled')) {
         setLastUpdated(saveCacheTime())
       }
-      setRefreshNotice(refreshResultText(summaryRes, herdRes, spyRes))
+      setRefreshNotice(refreshResultText(priceRes, herdRes, spyRes))
       refreshNoticeTimer.current = setTimeout(() => {
         setRefreshNotice(null)
       }, 3200)

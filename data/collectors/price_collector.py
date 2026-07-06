@@ -7,6 +7,7 @@ yfinance의 무료 티어는 약 15분 지연 데이터를 제공한다.
 
 import logging
 import sys
+from datetime import time
 from pathlib import Path
 
 import pandas as pd
@@ -17,6 +18,65 @@ if str(_DATA_DIR) not in sys.path:
     sys.path.insert(0, str(_DATA_DIR))
 
 logger = logging.getLogger(__name__)
+
+
+def _extract_close_frame(df: pd.DataFrame, tickers: list) -> pd.DataFrame:
+    """yf.download 결과에서 Close 컬럼만 ticker별 DataFrame으로 정규화한다."""
+    if df.empty:
+        return pd.DataFrame()
+
+    if isinstance(df.columns, pd.MultiIndex):
+        if "Close" in df.columns.get_level_values(0):
+            close = df["Close"]
+        elif "Close" in df.columns.get_level_values(1):
+            close = df.xs("Close", axis=1, level=1)
+        else:
+            return pd.DataFrame()
+    elif "Close" in df.columns:
+        close = df["Close"]
+    else:
+        return pd.DataFrame()
+
+    if isinstance(close, pd.Series):
+        return pd.DataFrame({tickers[0]: close})
+    return close
+
+
+def _latest_regular_close(daily_closes: pd.Series, current_price: float, latest_ts) -> float:
+    """
+    일일 등락률 기준이 되는 직전 정규장 종가를 반환한다.
+
+    yfinance daily 데이터는 장중/장후 갱신 타이밍이 달라질 수 있다.
+    - 프리장/장중: daily 최신값을 직전 정규장 종가로 사용
+    - 정규장 마감 후 daily 최신값이 현재가와 같은 날짜로 갱신된 경우: 한 칸 이전 종가 사용
+    """
+    closes = daily_closes.dropna()
+    if closes.empty:
+        return current_price
+
+    prev_close = float(closes.iloc[-1])
+    if len(closes) < 2 or latest_ts is None:
+        return prev_close
+
+    try:
+        latest = pd.Timestamp(latest_ts)
+        if latest.tzinfo is not None:
+            latest = latest.tz_convert("America/New_York")
+
+        latest_date = latest.date()
+        latest_time = latest.time()
+        daily_last_date = pd.Timestamp(closes.index[-1]).date()
+
+        if (
+            latest_date == daily_last_date
+            and latest_time >= time(16, 0)
+            and abs(current_price - prev_close) / prev_close < 0.001
+        ):
+            return float(closes.iloc[-2])
+    except Exception:
+        return prev_close
+
+    return prev_close
 
 
 def get_current_prices(tickers: list) -> dict:
@@ -47,44 +107,59 @@ def get_current_prices(tickers: list) -> dict:
     result: dict = {ticker: None for ticker in tickers}
 
     try:
-        # yf.download로 전체 티커 한번에 조회 (최근 5영업일)
-        # auto_adjust=True: 배당·분할 조정 종가 사용 (Adj Close → Close)
-        df = yf.download(
+        # 1분봉 + prepost=True로 프리장/애프터장 가격까지 포함한다.
+        # 일봉은 직전 정규장 종가(prev_close) 기준 계산에만 사용한다.
+        intraday_df = yf.download(
             tickers=tickers,
             period="5d",
+            interval="1m",
+            prepost=True,
+            auto_adjust=True,
+            progress=False,
+            threads=True,
+        )
+        daily_df = yf.download(
+            tickers=tickers,
+            period="7d",
+            interval="1d",
             auto_adjust=True,
             progress=False,
             threads=True,
         )
 
-        if df.empty:
+        if intraday_df.empty and daily_df.empty:
             logger.warning(f"[price_collector] yfinance 반환 데이터 없음: {tickers}")
             return result
 
-        # Close 컬럼 추출 — 단일·다중 종목 구조 통일
-        raw_close = df["Close"]
-        if isinstance(raw_close, pd.Series):
-            # 단일 종목: Series → 1열 DataFrame으로 변환
-            close_df = pd.DataFrame({tickers[0]: raw_close})
-        else:
-            # 다중 종목: DataFrame (컬럼 = 티커)
-            close_df = raw_close
+        intraday_close_df = _extract_close_frame(intraday_df, tickers)
+        daily_close_df = _extract_close_frame(daily_df, tickers)
 
         for ticker in tickers:
             try:
-                if ticker not in close_df.columns:
+                current_series = (
+                    intraday_close_df[ticker].dropna()
+                    if ticker in intraday_close_df.columns
+                    else pd.Series(dtype=float)
+                )
+                daily_series = (
+                    daily_close_df[ticker].dropna()
+                    if ticker in daily_close_df.columns
+                    else pd.Series(dtype=float)
+                )
+
+                if current_series.empty and daily_series.empty:
                     logger.warning(f"[price_collector][{ticker}] 컬럼 없음")
                     continue
 
-                # NaN 행 제거 후 최신 2개 값 사용
-                closes = close_df[ticker].dropna()
-                if closes.empty:
-                    logger.warning(f"[price_collector][{ticker}] 유효한 종가 없음")
-                    continue
+                # 프리장/장중이면 intraday 최신값, 실패 시 일봉 최신값으로 폴백
+                if not current_series.empty:
+                    current_price = float(current_series.iloc[-1])
+                    latest_ts = current_series.index[-1]
+                else:
+                    current_price = float(daily_series.iloc[-1])
+                    latest_ts = daily_series.index[-1]
 
-                current_price = float(closes.iloc[-1])
-                # 전일 종가가 없으면 현재가로 대체 (등락률 = 0)
-                prev_close = float(closes.iloc[-2]) if len(closes) >= 2 else current_price
+                prev_close = _latest_regular_close(daily_series, current_price, latest_ts)
                 change_pct = (
                     (current_price - prev_close) / prev_close * 100
                     if prev_close > 0 else 0.0

@@ -74,8 +74,8 @@ Rush    #EF4444  (레드)
   - 편집 모드/삭제
   - 평단가·수량 수정 모달
   - localStorage 캐시 우선 로딩
-  - 수동 새로고침은 DB 조회 기반 빠른 갱신만 수행
-  - 수동 새로고침 완료 후 `가격 갱신`/`HERD 조회`/`SPY 갱신` 결과를 짧게 표시
+  - 수동 새로고침은 `/api/portfolio/realtime`으로 yfinance 현재가를 다시 조회하고, HERD/SPY는 DB 최신값을 조회한다.
+  - 수동 새로고침 완료 후 `현재가 갱신`/`HERD 조회`/`SPY 갱신` 결과를 짧게 표시
   - 보유 종목 카드는 `ADD 10%`/`HOLD`/`SELL 30%` 같은 액션 코드를 우선 표시하고, 매수는 목표 투자금 기준·익절은 보유 평가금액 기준으로 비율 의미를 명시한다.
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
