@@ -1,6 +1,6 @@
 """
 init_db.py — 테이블 초기화 스크립트
-HerdSignal 서비스에 필요한 7개 테이블을 생성한다.
+HerdSignal 서비스에 필요한 테이블을 생성한다.
 이미 존재하는 테이블은 건드리지 않는다 (CREATE TABLE IF NOT EXISTS).
 
 실행:
@@ -155,7 +155,46 @@ class UserWatchlist(Base):
 
 
 # ──────────────────────────────────────────────
-# 7. 포트폴리오 일별 스냅샷 (portfolio_history)
+# 7. 현금 보유액 현재값 (user_cash_balance)
+# ──────────────────────────────────────────────
+class UserCashBalance(Base):
+    """사용자 현금 보유액 현재값."""
+    __tablename__ = "user_cash_balance"
+    __table_args__ = (
+        UniqueConstraint("user_id", name="uq_user_cash_balance_user"),
+        {"comment": "사용자 현금 보유액 현재값"},
+    )
+
+    id          = Column(BigInteger,     primary_key=True, autoincrement=True, comment="PK")
+    user_id     = Column(String(50),     nullable=False,                        comment="사용자 ID")
+    cash_amount = Column(Decimal(15, 2), nullable=False, default=0,              comment="현금 보유액 (USD)")
+    created_at  = Column(DateTime,       nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
+    updated_at  = Column(DateTime,       nullable=False, default=datetime.utcnow,
+                         onupdate=datetime.utcnow,                              comment="마지막 수정 시각 (UTC)")
+
+
+# ──────────────────────────────────────────────
+# 8. 현금 보유액 일별 스냅샷 (user_cash_history)
+# ──────────────────────────────────────────────
+class UserCashHistory(Base):
+    """사용자 현금 보유액 일별 스냅샷."""
+    __tablename__ = "user_cash_history"
+    __table_args__ = (
+        UniqueConstraint("user_id", "snapshot_date", name="uq_user_cash_history_user_date"),
+        {"comment": "사용자 현금 보유액 일별 스냅샷"},
+    )
+
+    id            = Column(BigInteger,     primary_key=True, autoincrement=True, comment="PK")
+    user_id       = Column(String(50),     nullable=False,                        comment="사용자 ID")
+    snapshot_date = Column(Date,           nullable=False,                        comment="스냅샷 기준일")
+    cash_amount   = Column(Decimal(15, 2), nullable=False, default=0,              comment="현금 보유액 (USD)")
+    created_at    = Column(DateTime,       nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
+    updated_at    = Column(DateTime,       nullable=False, default=datetime.utcnow,
+                           onupdate=datetime.utcnow,                              comment="마지막 수정 시각 (UTC)")
+
+
+# ──────────────────────────────────────────────
+# 9. 포트폴리오 일별 스냅샷 (portfolio_history)
 # ──────────────────────────────────────────────
 class PortfolioHistory(Base):
     """
@@ -185,7 +224,7 @@ SQLITE_PATH = "herdsignal_test.db"
 
 MODELS = [
     Stock, HerdScore, HerdIndicator, DailyPrice,
-    UserPortfolio, UserWatchlist, PortfolioHistory,
+    UserPortfolio, UserWatchlist, UserCashBalance, UserCashHistory, PortfolioHistory,
 ]
 
 

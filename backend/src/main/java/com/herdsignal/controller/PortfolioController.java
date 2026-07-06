@@ -82,6 +82,29 @@ public class PortfolioController {
     }
 
     /**
+     * GET /api/portfolio/cash
+     * 현재 현금 보유액 조회.
+     */
+    @GetMapping("/cash")
+    public ResponseEntity<ApiResponse<CashBalanceResponse>> getCashBalance() {
+        CashBalanceResponse response =
+                portfolioService.getCashBalance(AppConstants.DEFAULT_USER_ID);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * PUT /api/portfolio/cash
+     * 현금 보유액 수정. 오늘 현금 스냅샷도 함께 저장한다.
+     */
+    @PutMapping("/cash")
+    public ResponseEntity<ApiResponse<CashBalanceResponse>> updateCashBalance(
+            @RequestBody CashBalanceRequest request) {
+        CashBalanceResponse response =
+                portfolioService.updateCashBalance(AppConstants.DEFAULT_USER_ID, request);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
      * PATCH /api/portfolio/{ticker}/avg-price
      * 평균 매수가·보유 수량 수정.
      * 존재하지 않는 종목이면 404 Not Found.

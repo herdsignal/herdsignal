@@ -3,11 +3,15 @@ package com.herdsignal.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.domain.DailyPrice;
 import com.herdsignal.domain.PortfolioHistory;
+import com.herdsignal.domain.UserCashBalance;
+import com.herdsignal.domain.UserCashHistory;
 import com.herdsignal.domain.UserPortfolio;
 import com.herdsignal.dto.*;
 import com.herdsignal.exception.ResourceNotFoundException;
 import com.herdsignal.repository.DailyPriceRepository;
 import com.herdsignal.repository.PortfolioHistoryRepository;
+import com.herdsignal.repository.UserCashBalanceRepository;
+import com.herdsignal.repository.UserCashHistoryRepository;
 import com.herdsignal.repository.UserPortfolioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +54,8 @@ public class PortfolioService {
     private final PortfolioHistoryRepository  historyRepository;
     private final DailyPriceRepository        dailyPriceRepository;
     private final TickerReadinessService      tickerReadinessService;
+    private final UserCashBalanceRepository   cashBalanceRepository;
+    private final UserCashHistoryRepository   cashHistoryRepository;
 
     // ──────────────────────────────────────────────
     // 기존 CRUD 메서드
@@ -139,6 +146,7 @@ public class PortfolioService {
         BigDecimal totalCost;
         BigDecimal totalReturnPct;
         BigDecimal dailyChangePct;
+        BigDecimal cashBalance = getCashAmount(userId);
 
         Optional<PortfolioHistory> latestOpt =
                 historyRepository.findTopByUserIdOrderBySnapshotDateDesc(userId);
@@ -184,6 +192,9 @@ public class PortfolioService {
 
         return PortfolioSummaryResponse.builder()
                 .totalValue(totalValue.setScale(2, RoundingMode.HALF_UP))
+                .investedValue(totalValue.setScale(2, RoundingMode.HALF_UP))
+                .cashBalance(cashBalance.setScale(2, RoundingMode.HALF_UP))
+                .totalAssetValue(totalValue.add(cashBalance).setScale(2, RoundingMode.HALF_UP))
                 .totalCost(totalCost.setScale(2, RoundingMode.HALF_UP))
                 .totalReturnPct(totalReturnPct.setScale(2, RoundingMode.HALF_UP))
                 .dailyChangePct(dailyChangePct.setScale(2, RoundingMode.HALF_UP))
@@ -201,24 +212,98 @@ public class PortfolioService {
     @Transactional(readOnly = true)
     public PortfolioHistoryResponse getPortfolioHistory(String userId, String period) {
         LocalDate end   = LocalDate.now();
-        LocalDate start = "year".equalsIgnoreCase(period)
-                ? end.minusDays(365)
-                : end.minusDays(30);
+        LocalDate start;
+        if ("all".equalsIgnoreCase(period)) {
+            start = LocalDate.of(1970, 1, 1);
+        } else if ("year".equalsIgnoreCase(period)) {
+            start = end.minusDays(365);
+        } else {
+            start = end.minusDays(30);
+        }
 
         List<PortfolioHistory> histories =
                 historyRepository.findByUserIdAndSnapshotDateBetweenOrderBySnapshotDateAsc(
                         userId, start, end);
+        Map<LocalDate, BigDecimal> cashByDate = getCashHistoryMap(userId, start, end);
 
         List<PortfolioHistoryResponse.HistoryPoint> points = histories.stream()
-                .map(h -> PortfolioHistoryResponse.HistoryPoint.builder()
-                        .date(h.getSnapshotDate())
-                        .totalValue(h.getTotalValue())
-                        .totalReturnPct(h.getTotalReturnPct())
-                        .build())
+                .map(h -> {
+                    BigDecimal investedValue = h.getTotalValue();
+                    BigDecimal cashBalance = cashByDate.getOrDefault(h.getSnapshotDate(), BigDecimal.ZERO);
+                    return PortfolioHistoryResponse.HistoryPoint.builder()
+                            .date(h.getSnapshotDate())
+                            .totalValue(investedValue.add(cashBalance))
+                            .investedValue(investedValue)
+                            .cashBalance(cashBalance)
+                            .totalAssetValue(investedValue.add(cashBalance))
+                            .totalReturnPct(h.getTotalReturnPct())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return PortfolioHistoryResponse.builder()
                 .points(points)
+                .build();
+    }
+
+    /**
+     * 현금 보유액 조회.
+     */
+    @Transactional(readOnly = true)
+    public CashBalanceResponse getCashBalance(String userId) {
+        BigDecimal cashAmount = getCashAmount(userId);
+        LocalDate snapshotDate = cashHistoryRepository.findByUserIdOrderBySnapshotDateAsc(userId)
+                .stream()
+                .reduce((first, second) -> second)
+                .map(UserCashHistory::getSnapshotDate)
+                .orElse(null);
+
+        return CashBalanceResponse.builder()
+                .cashAmount(cashAmount.setScale(2, RoundingMode.HALF_UP))
+                .snapshotDate(snapshotDate)
+                .build();
+    }
+
+    /**
+     * 현금 보유액 수정.
+     * 현재값과 오늘 스냅샷을 함께 저장해 총자산 히스토리에 반영한다.
+     */
+    @Transactional
+    public CashBalanceResponse updateCashBalance(String userId, CashBalanceRequest request) {
+        if (request.getCashAmount() == null || request.getCashAmount().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("현금 보유액은 0 이상이어야 합니다.");
+        }
+
+        BigDecimal cashAmount = request.getCashAmount().setScale(2, RoundingMode.HALF_UP);
+        LocalDate snapshotDate = currentMarketSessionDateKst();
+        LocalDateTime now = LocalDateTime.now();
+
+        UserCashBalance balance = cashBalanceRepository.findByUserId(userId)
+                .orElseGet(() -> UserCashBalance.builder()
+                        .userId(userId)
+                        .cashAmount(BigDecimal.ZERO)
+                        .createdAt(now)
+                        .updatedAt(now)
+                        .build());
+        balance.setCashAmount(cashAmount);
+        balance.setUpdatedAt(now);
+        cashBalanceRepository.save(balance);
+
+        UserCashHistory history = cashHistoryRepository.findByUserIdAndSnapshotDate(userId, snapshotDate)
+                .orElseGet(() -> UserCashHistory.builder()
+                        .userId(userId)
+                        .snapshotDate(snapshotDate)
+                        .cashAmount(BigDecimal.ZERO)
+                        .createdAt(now)
+                        .updatedAt(now)
+                        .build());
+        history.setCashAmount(cashAmount);
+        history.setUpdatedAt(now);
+        cashHistoryRepository.save(history);
+
+        return CashBalanceResponse.builder()
+                .cashAmount(cashAmount)
+                .snapshotDate(snapshotDate)
                 .build();
     }
 
@@ -357,6 +442,31 @@ public class PortfolioService {
         LocalDate today = LocalDate.now(KST_ZONE);
         LocalTime now = LocalTime.now(KST_ZONE);
         return now.isBefore(US_MARKET_DAY_START_KST) ? today.minusDays(1) : today;
+    }
+
+    private BigDecimal getCashAmount(String userId) {
+        return cashBalanceRepository.findByUserId(userId)
+                .map(UserCashBalance::getCashAmount)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    private Map<LocalDate, BigDecimal> getCashHistoryMap(String userId, LocalDate start, LocalDate end) {
+        List<UserCashHistory> cashRows = cashHistoryRepository
+                .findByUserIdAndSnapshotDateBetweenOrderBySnapshotDateAsc(userId, start, end);
+        Map<LocalDate, BigDecimal> cashByDate = new HashMap<>();
+        BigDecimal currentCash = BigDecimal.ZERO;
+
+        int cashIndex = 0;
+        for (PortfolioHistory history : historyRepository.findByUserIdAndSnapshotDateBetweenOrderBySnapshotDateAsc(userId, start, end)) {
+            LocalDate date = history.getSnapshotDate();
+            while (cashIndex < cashRows.size() && !cashRows.get(cashIndex).getSnapshotDate().isAfter(date)) {
+                currentCash = cashRows.get(cashIndex).getCashAmount();
+                cashIndex++;
+            }
+            cashByDate.put(date, currentCash);
+        }
+
+        return cashByDate;
     }
 
     /**

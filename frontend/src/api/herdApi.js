@@ -64,6 +64,13 @@ export const getPortfolioRealtime = () =>
 export const getPortfolioHistory = (period) =>
   api.get(`/api/portfolio/history?period=${period}`)
 
+/** 현재 현금 보유액 조회 */
+export const getCashBalance = () => api.get('/api/portfolio/cash')
+
+/** 현재 현금 보유액 수정 */
+export const updateCashBalance = (cashAmount) =>
+  api.put('/api/portfolio/cash', { cashAmount })
+
 /** 보유 종목의 평균 매수가·수량 수정 */
 export const updateAvgPrice = (ticker, avgPrice, quantity) =>
   api.patch(`/api/portfolio/${ticker}/avg-price`, { avgPrice, quantity })

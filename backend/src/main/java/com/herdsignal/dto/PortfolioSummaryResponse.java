@@ -20,6 +20,15 @@ public class PortfolioSummaryResponse {
     /** 총 평가금액 (USD) */
     private BigDecimal totalValue;
 
+    /** 현금 제외 주식 평가금액 (USD) */
+    private BigDecimal investedValue;
+
+    /** 현금 보유액 (USD) */
+    private BigDecimal cashBalance;
+
+    /** 주식 평가금액 + 현금 보유액 (USD) */
+    private BigDecimal totalAssetValue;
+
     /** 총 매입금액 (USD) */
     private BigDecimal totalCost;
 

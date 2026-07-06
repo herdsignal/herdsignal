@@ -66,7 +66,9 @@ Rush    #EF4444  (레드)
 - AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
 - Dashboard (`/`)
   - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
-  - 포트폴리오 평가금액 요약
+  - 총자산 요약 (주식 평가액 + 현금 보유액)
+  - 총자산 카드 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시
+  - 현금 보유액 입력/저장
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
   - 보유 종목 카드
@@ -154,6 +156,7 @@ Rush    #EF4444  (레드)
 
 현재 herdApi.js에서 관리하는 호출:
 - getPortfolio / getPortfolioHerd / refreshPortfolioHerd / getPortfolioRealtime / getPortfolioSummary / getPortfolioHistory
+- getCashBalance / updateCashBalance
 - addToPortfolio / removeFromPortfolio / updateAvgPrice
 - getWatchlistHerd / addToWatchlist / removeFromWatchlist
 - getStockHerd / refreshStockHerd / getStockHerdHistory / getSpyHerdHistory

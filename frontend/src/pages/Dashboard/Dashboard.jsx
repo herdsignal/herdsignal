@@ -25,12 +25,25 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts'
+import {
   getPortfolio,
   getPortfolioSummary,
   getPortfolioRealtime,
   getPortfolioHerd,
   getStockHerd,
   getSpyHerdHistory,
+  getPortfolioHistory,
+  getCashBalance,
+  updateCashBalance,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
@@ -68,6 +81,12 @@ const HISTORY_PERIODS = [
   { value: '3m', label: '3M' },
   { value: '1y', label: '1Y' },
   { value: '3y', label: '3Y' },
+]
+
+const ASSET_HISTORY_PERIODS = [
+  { value: 'month', label: '1개월' },
+  { value: 'year', label: '1년' },
+  { value: 'all', label: '전체' },
 ]
 
 const PORTFOLIO_SORT_OPTIONS = [
@@ -138,8 +157,15 @@ function isUsableSpyHistoryCache(period, points) {
 /** backend camelCase / Python snake_case 포트폴리오 요약을 화면 모델(snake_case)로 통일 */
 function normalizePortfolioSummary(data) {
   if (!data) return null
+  const investedValue = data.invested_value ?? data.investedValue ?? data.total_value ?? data.totalValue ?? null
+  const cashBalance = data.cash_balance ?? data.cashBalance ?? 0
+  const totalAssetValue = data.total_asset_value ?? data.totalAssetValue ??
+    (investedValue == null ? null : Number(investedValue) + Number(cashBalance ?? 0))
   return {
-    total_value:      data.total_value      ?? data.totalValue      ?? null,
+    total_value:      totalAssetValue,
+    invested_value:   investedValue,
+    cash_balance:     cashBalance,
+    total_asset_value: totalAssetValue,
     total_cost:       data.total_cost       ?? data.totalCost       ?? null,
     total_return_pct: data.total_return_pct ?? data.totalReturnPct  ?? null,
     daily_change_pct: data.daily_change_pct ?? data.dailyChangePct  ?? null,
@@ -357,6 +383,52 @@ function fmtTime(date) {
   return date.toLocaleTimeString('ko-KR', { hour: 'numeric', minute: '2-digit' })
 }
 
+/** 차트 X축 날짜 포맷: 2026-06-30 → 6/30 */
+function fmtAxisDate(dateStr) {
+  const d = new Date(dateStr)
+  return Number.isNaN(d.getTime()) ? dateStr : `${d.getMonth() + 1}/${d.getDate()}`
+}
+
+function normalizeHistoryPoint(point) {
+  const investedValue = point.invested_value ?? point.investedValue ?? point.totalValue ?? point.total_value ?? 0
+  const cashBalance = point.cash_balance ?? point.cashBalance ?? 0
+  const totalAssetValue = point.total_asset_value ?? point.totalAssetValue ?? point.totalValue ?? point.total_value ?? 0
+  return {
+    date: point.date,
+    investedValue: Number(investedValue),
+    cashBalance: Number(cashBalance),
+    totalAssetValue: Number(totalAssetValue),
+    totalReturnPct: point.total_return_pct ?? point.totalReturnPct ?? null,
+  }
+}
+
+function AssetHistoryTooltip({ active, payload, label, displayAmount }) {
+  if (!active || !payload?.length) return null
+  const date = new Date(label)
+  const dateText = Number.isNaN(date.getTime())
+    ? label
+    : date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
+  const row = payload[0]?.payload
+
+  return (
+    <div className={styles.assetTooltip}>
+      <div className={styles.assetTooltipDate}>{dateText}</div>
+      <div className={styles.assetTooltipRow}>
+        <span>총자산</span>
+        <strong>{displayAmount(row?.totalAssetValue)}</strong>
+      </div>
+      <div className={styles.assetTooltipRow}>
+        <span>주식</span>
+        <strong>{displayAmount(row?.investedValue)}</strong>
+      </div>
+      <div className={styles.assetTooltipRow}>
+        <span>현금</span>
+        <strong>{displayAmount(row?.cashBalance)}</strong>
+      </div>
+    </div>
+  )
+}
+
 /**
  * SPY scoreDate 스마트 포맷 (KST 기준).
  * - 오늘: "오늘 HH:MM"  (fetchTime이 있으면 그 시각, 없으면 현재 시각)
@@ -485,6 +557,14 @@ export default function Dashboard() {
     () => localStorage.getItem(CACHE_KEY_PORTFOLIO_SORT) || 'action'
   )
   const [targetWeights,  setTargetWeights]  = useState(() => readTargetWeights())
+  const [cashBalance,    setCashBalance]    = useState(0)
+  const [cashDraft,      setCashDraft]      = useState('')
+  const [cashSaving,     setCashSaving]     = useState(false)
+  const [assetPanelOpen, setAssetPanelOpen] = useState(false)
+  const [assetHistoryPeriod, setAssetHistoryPeriod] = useState('year')
+  const [assetHistory,   setAssetHistory]   = useState([])
+  const [assetHistoryLoading, setAssetHistoryLoading] = useState(false)
+  const [assetHistoryError, setAssetHistoryError] = useState(null)
   const refreshNoticeTimer = useRef(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
@@ -551,10 +631,47 @@ export default function Dashboard() {
         setHerdMap(map)
         setLastUpdated(saveCacheTime())
       }
+
+      getCashBalance()
+        .then((res) => {
+          const amount = Number(res.data?.data?.cashAmount ?? 0)
+          setCashBalance(amount)
+          setCashDraft(amount > 0 ? String(amount) : '')
+          setSummary(prev => prev
+            ? {
+                ...prev,
+                cash_balance: amount,
+                total_value: Number(prev.invested_value ?? prev.total_value ?? 0) + amount,
+                total_asset_value: Number(prev.invested_value ?? prev.total_value ?? 0) + amount,
+              }
+            : prev
+          )
+        })
+        .catch(() => {
+          setCashBalance(0)
+        })
     } finally {
       setLoading(false)
     }
   }, [])
+
+  const fetchAssetHistory = useCallback(async () => {
+    setAssetHistoryLoading(true)
+    setAssetHistoryError(null)
+    try {
+      const res = await getPortfolioHistory(assetHistoryPeriod)
+      const points = (res.data?.data?.points ?? []).map(normalizeHistoryPoint)
+      setAssetHistory(points)
+    } catch {
+      setAssetHistoryError('자산 히스토리를 불러올 수 없습니다.')
+    } finally {
+      setAssetHistoryLoading(false)
+    }
+  }, [assetHistoryPeriod])
+
+  useEffect(() => {
+    if (assetPanelOpen) fetchAssetHistory()
+  }, [assetPanelOpen, fetchAssetHistory])
 
   useEffect(() => { fetchData() }, [fetchData])
 
@@ -686,6 +803,11 @@ export default function Dashboard() {
 
       if (priceRes.status === 'fulfilled') {
         const data = normalizePortfolioSummary(priceRes.value.data?.data ?? null)
+        if (data) {
+          data.cash_balance = cashBalance
+          data.total_value = Number(data.invested_value ?? data.total_value ?? 0) + Number(cashBalance ?? 0)
+          data.total_asset_value = data.total_value
+        }
         setSummary(data)
         writeCache(CACHE_KEY_REALTIME, data)
       }
@@ -717,7 +839,35 @@ export default function Dashboard() {
     } finally {
       setRefreshing(false)
     }
-  }, [])
+  }, [cashBalance])
+
+  const handleCashSave = useCallback(async () => {
+    const amount = Number(cashDraft || 0)
+    if (!Number.isFinite(amount) || amount < 0 || cashSaving) return
+
+    setCashSaving(true)
+    try {
+      const res = await updateCashBalance(amount)
+      const saved = Number(res.data?.data?.cashAmount ?? amount)
+      setCashBalance(saved)
+      setCashDraft(saved > 0 ? String(saved) : '')
+      setSummary(prev => {
+        if (!prev) return prev
+        const investedValue = Number(prev.invested_value ?? prev.total_value ?? 0)
+        const next = {
+          ...prev,
+          cash_balance: saved,
+          total_value: investedValue + saved,
+          total_asset_value: investedValue + saved,
+        }
+        writeCache(CACHE_KEY_REALTIME, next)
+        return next
+      })
+      if (assetPanelOpen) fetchAssetHistory()
+    } finally {
+      setCashSaving(false)
+    }
+  }, [cashDraft, cashSaving, assetPanelOpen, fetchAssetHistory])
 
   /* 포트폴리오 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 (낙관적 업데이트) */
   async function handleDelete(e, ticker) {
@@ -781,18 +931,21 @@ export default function Dashboard() {
             : s
         )
         const oldMarketValue = priceMap[ticker]?.market_value ?? 0
-        const newTotalValue  = (prev.total_value ?? 0) - oldMarketValue + newMarketValue
+        const newInvestedValue = (prev.invested_value ?? prev.total_value ?? 0) - oldMarketValue + newMarketValue
+        const cash = Number(prev.cash_balance ?? cashBalance ?? 0)
         const oldStock       = portfolio.find(p => p.ticker === ticker)
         const oldCost        = (oldStock?.avgPrice ?? 0) * (oldStock?.quantity ?? 0)
         const newTotalCost   = (prev.total_cost ?? 0) - oldCost + newAvgPrice * newQty
         const newTotalReturnPct = newTotalCost > 0
-          ? (newTotalValue - newTotalCost) / newTotalCost * 100
+          ? (newInvestedValue - newTotalCost) / newTotalCost * 100
           : 0
 
         const next = {
           ...prev,
           stocks:           updatedStocks,
-          total_value:      newTotalValue,
+          invested_value:   newInvestedValue,
+          total_value:      newInvestedValue + cash,
+          total_asset_value: newInvestedValue + cash,
           total_cost:       newTotalCost,
           total_return_pct: newTotalReturnPct,
         }
@@ -805,7 +958,7 @@ export default function Dashboard() {
     }
 
     setModalTicker(null)
-  }, [modalTicker, priceMap, portfolio, fetchData])
+  }, [modalTicker, priceMap, portfolio, fetchData, cashBalance])
 
   const modalStock = portfolio.find((p) => p.ticker === modalTicker)
   const rows = useMemo(
@@ -817,6 +970,24 @@ export default function Dashboard() {
     [portfolio, rows, herdMap, portfolioSort]
   )
   const rebalanceRows = useMemo(() => rebalanceIdeas(rows), [rows])
+  const assetLatest = assetHistory.length > 0 ? assetHistory[assetHistory.length - 1] : null
+  const assetFirst = assetHistory.length > 0 ? assetHistory[0] : null
+  const assetPeak = assetHistory.length > 0
+    ? assetHistory.reduce((best, point) =>
+        Number(point.totalAssetValue) > Number(best.totalAssetValue) ? point : best
+      , assetHistory[0])
+    : null
+  const assetStartPct = assetFirst?.totalAssetValue && assetLatest?.totalAssetValue
+    ? (assetLatest.totalAssetValue / assetFirst.totalAssetValue - 1) * 100
+    : null
+  const assetDrawdownPct = assetPeak?.totalAssetValue && assetLatest?.totalAssetValue
+    ? (assetLatest.totalAssetValue / assetPeak.totalAssetValue - 1) * 100
+    : null
+  const assetValues = assetHistory.map((p) => p.totalAssetValue)
+  const assetMin = assetValues.length > 0 ? Math.min(...assetValues) : 0
+  const assetMax = assetValues.length > 0 ? Math.max(...assetValues) : 1000
+  const assetPadding = (assetMax - assetMin) * 0.08 || 100
+  const assetYDomain = [Math.max(0, assetMin - assetPadding), assetMax + assetPadding]
 
   function handleTargetWeightChange(ticker, value) {
     const next = { ...targetWeights, [ticker]: value }
@@ -987,8 +1158,12 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.summarySection}>
-            <div className={styles.summaryCard}>
-              <div className={styles.summaryLabel}>총 평가금액</div>
+            <button
+              type="button"
+              className={`${styles.summaryCard} ${styles.summaryCardButton}`}
+              onClick={() => setAssetPanelOpen(open => !open)}
+            >
+              <div className={styles.summaryLabel}>총자산</div>
               <div className={styles.summaryValue}>
                 {displayAmount(summary.total_value)}
               </div>
@@ -996,23 +1171,37 @@ export default function Dashboard() {
                 className={styles.summaryPnl}
                 style={{ color: pctColor(summary.total_return_pct) }}
               >
-                {displayPnl(summary.total_value - summary.total_cost)} ({fmtPct(summary.total_return_pct)})
+                {displayPnl((summary.invested_value ?? summary.total_value) - summary.total_cost)} ({fmtPct(summary.total_return_pct)})
               </div>
               <div className={styles.summarySub}>
-                매입 {displayAmount(summary.total_cost)}
+                주식 {displayAmount(summary.invested_value ?? summary.total_value)} · 현금 {displayAmount(summary.cash_balance ?? cashBalance)}
               </div>
-            </div>
+              <div className={styles.summaryHint}>
+                {assetPanelOpen ? '자산 히스토리 닫기' : '자산 히스토리 보기'}
+              </div>
+            </button>
 
             <div className={styles.summaryCard}>
-              <div className={styles.summaryLabel}>총 수익률</div>
-              <div
-                className={styles.summaryValue}
-                style={{ color: pctColor(summary.total_return_pct) }}
-              >
-                {fmtPct(summary.total_return_pct)}
+              <div className={styles.summaryLabel}>현금</div>
+              <div className={styles.cashInputRow}>
+                <span className={styles.cashPrefix}>$</span>
+                <input
+                  className={styles.cashInput}
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputMode="decimal"
+                  value={cashDraft}
+                  onChange={(e) => setCashDraft(e.target.value)}
+                  onBlur={handleCashSave}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.currentTarget.blur()
+                  }}
+                  placeholder="0.00"
+                />
               </div>
               <div className={styles.summarySub}>
-                {summary.total_return_pct >= 0 ? '평가이익' : '평가손실'}
+                {cashSaving ? '저장 중' : '입력한 날부터 총자산에 반영'}
               </div>
             </div>
 
@@ -1027,6 +1216,101 @@ export default function Dashboard() {
               <div className={styles.summarySub}>전일 대비</div>
             </div>
           </div>
+
+          {assetPanelOpen && (
+            <div className={styles.assetPanel}>
+              <div className={styles.assetPanelHeader}>
+                <div>
+                  <div className={styles.assetPanelLabel}>자산 히스토리</div>
+                  <div className={styles.assetPanelTitle}>
+                    {assetLatest ? displayAmount(assetLatest.totalAssetValue) : displayAmount(summary.total_value)}
+                  </div>
+                </div>
+                <div className={styles.assetPeriodToggle}>
+                  {ASSET_HISTORY_PERIODS.map((p) => (
+                    <button
+                      key={p.value}
+                      type="button"
+                      className={`${styles.assetPeriodBtn} ${assetHistoryPeriod === p.value ? styles.assetPeriodBtnActive : ''}`}
+                      onClick={() => setAssetHistoryPeriod(p.value)}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.assetStats}>
+                <div>
+                  <span>시작 대비</span>
+                  <strong style={{ color: pctColor(assetStartPct) }}>{fmtPct(assetStartPct)}</strong>
+                </div>
+                <div>
+                  <span>고점 대비</span>
+                  <strong style={{ color: pctColor(assetDrawdownPct) }}>{fmtPct(assetDrawdownPct)}</strong>
+                </div>
+                <div>
+                  <span>현재 현금</span>
+                  <strong>{displayAmount(summary.cash_balance ?? cashBalance)}</strong>
+                </div>
+              </div>
+
+              {assetHistoryLoading && (
+                <div className={styles.assetState}>히스토리 로딩 중…</div>
+              )}
+              {!assetHistoryLoading && assetHistoryError && (
+                <div className={styles.assetState}>{assetHistoryError}</div>
+              )}
+              {!assetHistoryLoading && !assetHistoryError && assetHistory.length === 0 && (
+                <div className={styles.assetState}>아직 자산 히스토리가 없습니다.</div>
+              )}
+              {!assetHistoryLoading && !assetHistoryError && assetHistory.length > 0 && (
+                <ResponsiveContainer width="100%" height={240}>
+                  <LineChart
+                    data={assetHistory}
+                    margin={{ top: 12, right: 14, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="4 6" stroke="var(--border)" vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={fmtAxisDate}
+                      tick={{ fontSize: 11, fill: 'var(--text-3)', fontFamily: 'Inter' }}
+                      axisLine={false}
+                      tickLine={false}
+                      tickMargin={8}
+                    />
+                    <YAxis
+                      domain={assetYDomain}
+                      tickFormatter={(v) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v}`}
+                      tick={{ fontSize: 11, fill: 'var(--text-3)', fontFamily: 'Inter' }}
+                      axisLine={false}
+                      tickLine={false}
+                      width={56}
+                    />
+                    <Tooltip content={<AssetHistoryTooltip displayAmount={displayAmount} />} />
+                    {summary.total_cost != null && (
+                      <ReferenceLine
+                        y={summary.total_cost}
+                        stroke="rgba(163, 170, 184, 0.55)"
+                        strokeDasharray="4 4"
+                      />
+                    )}
+                    <Line
+                      type="monotone"
+                      dataKey="totalAssetValue"
+                      stroke="var(--flee)"
+                      strokeWidth={2.5}
+                      dot={assetHistory.length === 1
+                        ? { r: 5, fill: 'var(--flee)', strokeWidth: 0 }
+                        : false
+                      }
+                      activeDot={{ r: 5, strokeWidth: 0 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          )}
 
           {exchangeRate != null && (
             <div className={styles.exchangeRateRow}>
