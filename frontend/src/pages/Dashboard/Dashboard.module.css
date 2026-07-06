@@ -1114,7 +1114,7 @@
 
 .cardInputBtn {
   flex-shrink: 0;
-  padding: 5px 12px;
+  padding: 6px 12px;
   border-radius: 6px;
   border: 1px solid #3B82F6;
   background: transparent;
@@ -1127,6 +1127,13 @@
   transition: background 0.15s;
 }
 .cardInputBtn:hover { background: rgba(59, 130, 246, 0.1); }
+
+.cardEditActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
 
 /* 카드 중간 — 평가금액 라벨 */
 .cardValueLabel {
@@ -1188,16 +1195,56 @@
   color: var(--text-3);
 }
 
+.cardHoldingInfo {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.targetEditRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+:global(body.light) .targetEditRow {
+  background: rgba(15, 23, 42, 0.025);
+}
+
+.targetLabel {
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.targetInputWrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .targetInput {
-  width: 68px;
-  margin-left: 8px;
-  padding: 5px 8px;
+  width: 72px;
+  padding: 6px 8px;
   border-radius: 6px;
   border: 1px solid var(--border2);
   background: var(--surface2);
   color: var(--text-1);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 700;
   font-family: 'Inter', sans-serif;
+  text-align: right;
   appearance: textfield;
   -moz-appearance: textfield;
 }

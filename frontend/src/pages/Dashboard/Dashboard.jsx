@@ -368,6 +368,26 @@ function fmtPct(value) {
   return `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`
 }
 
+/** 보유 수량 포맷: 정수는 12주, 소수는 12.3456주 */
+function fmtShares(value) {
+  if (value == null) return '—'
+  const n = Number(value)
+  if (!Number.isFinite(n)) return '—'
+  return `${n.toLocaleString('ko-KR', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4,
+  })}주`
+}
+
+function fmtWeightGap(row) {
+  if (!row) return ''
+  const gap = row.targetWeight - row.currentWeight
+  if (Math.abs(gap) < 0.05) return '목표 근처'
+  return gap > 0
+    ? `목표까지 ${gap.toFixed(1)}%p`
+    : `목표 초과 ${Math.abs(gap).toFixed(1)}%p`
+}
+
 /** 수익률 색상: 양수→초록, 음수→빨강, 0→회색 */
 function pctColor(value) {
   if (value == null) return 'var(--text-3)'
@@ -1479,7 +1499,7 @@ export default function Dashboard() {
                           </div>
                         )}
                         {editMode && (
-                          <div style={{ marginTop: '8px' }}>
+                          <div className={styles.cardEditActions}>
                             <button
                               className={styles.cardInputBtn}
                               onClick={e => {
@@ -1487,20 +1507,8 @@ export default function Dashboard() {
                                 setModalTicker(item.ticker)
                               }}
                             >
-                              수정
+                              평단·수량 수정
                             </button>
-                            <input
-                              className={styles.targetInput}
-                              type="number"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value={targetWeights[item.ticker] ?? ''}
-                              placeholder={`${row?.targetWeight?.toFixed(0) ?? ''}%`}
-                              onClick={e => e.stopPropagation()}
-                              onChange={e => handleTargetWeightChange(item.ticker, e.target.value)}
-                              aria-label={`${item.ticker} 목표 비중`}
-                            />
                           </div>
                         )}
                       </div>
@@ -1543,8 +1551,38 @@ export default function Dashboard() {
                     )}
                     {row && (
                       <span className={styles.cardWeightInfo}>
-                        비중 {row.currentWeight.toFixed(1)}% · 목표 {row.targetWeight.toFixed(1)}%
+                        비중 {row.currentWeight.toFixed(1)}% · 목표 {row.targetWeight.toFixed(1)}% · {fmtWeightGap(row)}
                       </span>
+                    )}
+                    {hasAvgPrice && (
+                      <span className={styles.cardHoldingInfo}>
+                        보유 {fmtShares(item.quantity)} · 평단 {displayAmount(item.avgPrice)}
+                      </span>
+                    )}
+                    {editMode && row && (
+                      <div
+                        className={styles.targetEditRow}
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <label className={styles.targetLabel} htmlFor={`target-${item.ticker}`}>
+                          목표 비중
+                        </label>
+                        <div className={styles.targetInputWrap}>
+                          <input
+                            id={`target-${item.ticker}`}
+                            className={styles.targetInput}
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value={targetWeights[item.ticker] ?? ''}
+                            placeholder={row.targetWeight.toFixed(0)}
+                            onChange={e => handleTargetWeightChange(item.ticker, e.target.value)}
+                            aria-label={`${item.ticker} 목표 비중`}
+                          />
+                          <span>%</span>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
