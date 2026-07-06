@@ -224,7 +224,7 @@ public class PortfolioService {
         List<PortfolioHistory> histories =
                 historyRepository.findByUserIdAndSnapshotDateBetweenOrderBySnapshotDateAsc(
                         userId, start, end);
-        Map<LocalDate, BigDecimal> cashByDate = getCashHistoryMap(userId, start, end);
+        Map<LocalDate, BigDecimal> cashByDate = getCashHistoryMap(userId, start, end, histories);
 
         List<PortfolioHistoryResponse.HistoryPoint> points = histories.stream()
                 .map(h -> {
@@ -252,9 +252,7 @@ public class PortfolioService {
     @Transactional(readOnly = true)
     public CashBalanceResponse getCashBalance(String userId) {
         BigDecimal cashAmount = getCashAmount(userId);
-        LocalDate snapshotDate = cashHistoryRepository.findByUserIdOrderBySnapshotDateAsc(userId)
-                .stream()
-                .reduce((first, second) -> second)
+        LocalDate snapshotDate = cashHistoryRepository.findTopByUserIdOrderBySnapshotDateDesc(userId)
                 .map(UserCashHistory::getSnapshotDate)
                 .orElse(null);
 
@@ -450,14 +448,21 @@ public class PortfolioService {
                 .orElse(BigDecimal.ZERO);
     }
 
-    private Map<LocalDate, BigDecimal> getCashHistoryMap(String userId, LocalDate start, LocalDate end) {
+    private Map<LocalDate, BigDecimal> getCashHistoryMap(
+            String userId,
+            LocalDate start,
+            LocalDate end,
+            List<PortfolioHistory> histories) {
         List<UserCashHistory> cashRows = cashHistoryRepository
                 .findByUserIdAndSnapshotDateBetweenOrderBySnapshotDateAsc(userId, start, end);
         Map<LocalDate, BigDecimal> cashByDate = new HashMap<>();
-        BigDecimal currentCash = BigDecimal.ZERO;
+        BigDecimal currentCash = cashHistoryRepository
+                .findTopByUserIdAndSnapshotDateBeforeOrderBySnapshotDateDesc(userId, start)
+                .map(UserCashHistory::getCashAmount)
+                .orElse(BigDecimal.ZERO);
 
         int cashIndex = 0;
-        for (PortfolioHistory history : historyRepository.findByUserIdAndSnapshotDateBetweenOrderBySnapshotDateAsc(userId, start, end)) {
+        for (PortfolioHistory history : histories) {
             LocalDate date = history.getSnapshotDate();
             while (cashIndex < cashRows.size() && !cashRows.get(cashIndex).getSnapshotDate().isAfter(date)) {
                 currentCash = cashRows.get(cashIndex).getCashAmount();

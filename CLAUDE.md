@@ -267,7 +267,9 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - POST `/api/portfolio`
   - DELETE `/api/portfolio/{ticker}`
   - GET `/api/portfolio/summary`
-  - GET `/api/portfolio/history?period=month|year`
+  - GET `/api/portfolio/history?period=month|year|all`
+  - GET `/api/portfolio/cash`
+  - PUT `/api/portfolio/cash`
   - PATCH `/api/portfolio/{ticker}/avg-price`
   - GET `/api/portfolio/realtime`
 - [x] 관심 종목 API
@@ -285,10 +287,11 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 - [x] Dashboard (`/`)
   - S&P 500 Herd Flow 배너
-  - 포트폴리오 평가금액 요약
+  - 현금 포함 포트폴리오 평가금액 요약
+  - 총자산 히스토리 차트
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
-  - 보유 종목 카드
+  - 보유 수량/평단/목표 비중 차이를 표시하는 보유 종목 카드
   - 편집 모드/삭제
   - 평단가·수량 수정 모달
   - localStorage 캐시 우선 로딩

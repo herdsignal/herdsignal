@@ -72,8 +72,10 @@ Rush    #EF4444  (레드)
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
   - 보유 종목 카드
+  - 보유 종목 카드에 회사 로고/티커/HERD 단계색/보유 수량/평단/목표 비중 차이 표시
   - 보유 종목 정렬(행동순/HERD 낮은순/HERD 높은순/비중순)
   - 편집 모드/삭제
+  - 편집 모드에서 종목별 목표 비중을 직접 입력하고 `hs_target_weights`에 저장
   - 평단가·수량 수정 모달
   - localStorage 캐시 우선 로딩
   - 수동 새로고침은 `/api/portfolio/realtime`으로 yfinance 현재가를 다시 조회하고, HERD/SPY는 DB 최신값을 조회한다.
@@ -133,7 +135,7 @@ Rush    #EF4444  (레드)
 ## 부분 구현 / 미구현
 - StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 제거됨. 상세 화면은 HERD와 Action Layer 중심 단일 컬럼으로 유지한다.
 - StockDetail 재무정보는 원본 재무제표 표가 아니라 Fundamental Guard로 표시한다. `확인된 주요 경고 없음`/`재무 확인 필요`/`재무 리스크 큼` 문구를 사용하며, 안전 보증처럼 표현하지 않는다.
-- 목표 비중은 `hs_target_weights` localStorage에 저장하며, 아직 DB 저장 기능은 없다.
+- 목표 비중은 Dashboard 편집 모드와 AiRebalance에서 수정하며 `hs_target_weights` localStorage에 저장한다. 아직 DB 저장 기능은 없다.
 - 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
 - Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.

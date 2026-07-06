@@ -1010,7 +1010,14 @@ export default function Dashboard() {
   const assetYDomain = [Math.max(0, assetMin - assetPadding), assetMax + assetPadding]
 
   function handleTargetWeightChange(ticker, value) {
-    const next = { ...targetWeights, [ticker]: value }
+    const next = { ...targetWeights }
+    if (value === '') {
+      delete next[ticker]
+    } else {
+      const n = Number(value)
+      if (!Number.isFinite(n)) return
+      next[ticker] = String(Math.min(100, Math.max(0, n)))
+    }
     setTargetWeights(next)
     writeTargetWeights(next)
   }

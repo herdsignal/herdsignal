@@ -42,7 +42,7 @@ The `Herd Flow` animation visualizes these stages as particle distribution. Flee
 
 ## Core Features
 
-- **Dashboard**: S&P 500 Herd Flow banner, portfolio valuation, core rebalance check, and holding-level HERD action cards
+- **Dashboard**: S&P 500 Herd Flow banner, portfolio valuation with cash, asset history, core rebalance check, and holding-level HERD action cards
 - **Watchlist**: opportunity queue and HERD cards sorted by long-term add/trim timing priority
 - **Search**: ticker/company search, HERD preview, recent searches, and portfolio/watchlist add actions
 - **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, signal reliability board, HERD Index history, Fundamental Guard, and indicator breakdown
@@ -95,7 +95,9 @@ Python calculates and stores data. Spring Boot serves database-backed APIs. Reac
 - `GET /api/portfolio/herd`
 - `POST /api/portfolio/herd/refresh`
 - `GET /api/portfolio/summary`
-- `GET /api/portfolio/history?period=month|year`
+- `GET /api/portfolio/history?period=month|year|all`
+- `GET /api/portfolio/cash`
+- `PUT /api/portfolio/cash`
 - `GET /api/portfolio/realtime`
 - `GET /api/watchlist`
 - `GET /api/watchlist/herd`
@@ -184,8 +186,8 @@ The frontend usually runs at `http://localhost:5173`.
 ## Current Limitations
 
 - The MVP is intentionally focused on HERD-based add/hold/trim timing, not full portfolio management.
-- The Rebalance Plan, History page, and Herd Flow Preview routes exist, but they are hidden from the main sidebar.
-- Target weights are stored in localStorage, not in the database.
+- The Rebalance Plan, legacy History page, and Herd Flow Preview routes exist, but they are hidden from the main sidebar.
+- Target weights are edited from Dashboard cards and stored in localStorage, not in the database.
 - Authentication, multi-user support, brokerage integration, and deployment are not implemented yet.
 - Portfolio entry is currently manual. Official brokerage APIs or low-friction import flows can be evaluated later.
 - The v5 volatility layer is a backtest candidate and is not part of the production HERD score.

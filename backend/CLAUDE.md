@@ -34,7 +34,7 @@ GET    /api/portfolio                         포트폴리오 목록 조회
 POST   /api/portfolio                         포트폴리오 종목 추가
 DELETE /api/portfolio/{ticker}                포트폴리오 종목 삭제
 GET    /api/portfolio/summary                 포트폴리오 평가 요약 조회
-GET    /api/portfolio/history?period=month    포트폴리오 히스토리 조회
+GET    /api/portfolio/history?period=month|year|all 포트폴리오 히스토리 조회
 GET    /api/portfolio/cash                    현재 현금 보유액 조회
 PUT    /api/portfolio/cash                    현금 보유액 수정 + 오늘 스냅샷 저장
 PATCH  /api/portfolio/{ticker}/avg-price      평균 매수가·수량 수정
@@ -70,6 +70,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
   - 현금 보유액 조회/수정
   - 평가 요약 조회 (주식 평가액 + 현금 보유액 + 총자산)
   - portfolio_history + user_cash_history 기반 총자산 히스토리 조회
+  - 기간 이전 최신 현금 스냅샷을 조회 시작 시점 현금으로 이월
   - 평균 매수가·수량 수정
   - Python 실시간 포트폴리오 계산 실행
 - WatchlistService

@@ -14,8 +14,12 @@ public interface UserCashHistoryRepository extends JpaRepository<UserCashHistory
 
     Optional<UserCashHistory> findByUserIdAndSnapshotDate(String userId, LocalDate snapshotDate);
 
+    Optional<UserCashHistory> findTopByUserIdAndSnapshotDateBeforeOrderBySnapshotDateDesc(
+            String userId, LocalDate snapshotDate);
+
+    Optional<UserCashHistory> findTopByUserIdOrderBySnapshotDateDesc(String userId);
+
     List<UserCashHistory> findByUserIdAndSnapshotDateBetweenOrderBySnapshotDateAsc(
             String userId, LocalDate start, LocalDate end);
 
-    List<UserCashHistory> findByUserIdOrderBySnapshotDateAsc(String userId);
 }
