@@ -1,12 +1,12 @@
 /**
  * Journal.jsx — 전체 HERD 판단 기록 (/journal)
  *
- * StockDetail에서 저장한 hs_signal_journal을 전체 종목 기준으로 보여준다.
- * 서버 저장 전 단계의 로컬 MVP 기록장이며, 매수/보류/익절 복기를 위한 화면이다.
+ * StockDetail에서 DB에 저장한 signal_journal을 전체 종목 기준으로 보여준다.
  */
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getSignalJournal } from '../../api/herdApi'
 import {
   formatJournalAmount,
   formatJournalCount,
@@ -14,7 +14,6 @@ import {
   formatJournalProfit,
   formatJournalQuantity,
   formatJournalTime,
-  readSignalJournal,
   summarizeSignalJournal,
 } from '../../utils/signalJournal'
 import styles from './Journal.module.css'
@@ -48,7 +47,18 @@ function actionClass(type) {
 export default function Journal() {
   const navigate = useNavigate()
   const [filter, setFilter] = useState('ALL')
-  const [logs] = useState(() => readSignalJournal())
+  const [logs, setLogs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    setLoading(true)
+    setError(null)
+    getSignalJournal()
+      .then((res) => setLogs(res.data?.data ?? []))
+      .catch(() => setError('판단 기록을 불러올 수 없습니다.'))
+      .finally(() => setLoading(false))
+  }, [])
 
   const filteredLogs = useMemo(() => {
     if (filter === 'ALL') return logs
@@ -111,7 +121,17 @@ export default function Journal() {
           <strong>{filter === 'ALL' ? '전체' : FILTERS.find((item) => item.value === filter)?.label}</strong>
         </div>
 
-        {filteredLogs.length === 0 ? (
+        {loading ? (
+          <div className={styles.emptyState}>
+            <strong>기록을 불러오는 중입니다.</strong>
+            <span>저장된 HERD 판단 기록을 확인하고 있습니다.</span>
+          </div>
+        ) : error ? (
+          <div className={styles.emptyState}>
+            <strong>{error}</strong>
+            <span>백엔드 서버와 DB 상태를 확인해주세요.</span>
+          </div>
+        ) : filteredLogs.length === 0 ? (
           <div className={styles.emptyState}>
             <strong>아직 기록이 없습니다.</strong>
             <span>종목 상세에서 HERD 판단을 남기면 여기에 쌓입니다.</span>
@@ -155,7 +175,7 @@ export default function Journal() {
                         ? `${Math.round(Number(log.herdScore))}${log.herdStage ? ` · ${log.herdStage}` : ''}`
                         : '—'}
                     </td>
-                    <td>{formatJournalTime(log.createdAt) || '—'}</td>
+                    <td>{formatJournalTime(log.recordedAt ?? log.createdAt) || '—'}</td>
                   </tr>
                 ))}
               </tbody>

@@ -72,7 +72,7 @@ Rush    #EF4444  (레드)
   - 총자산 카드 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시. backend 히스토리 포인트에 현재 summary/cash 포인트를 합성해 현금 저장 직후에도 마지막 값이 즉시 반영된다.
   - 자산 히스토리 추적 기준점(`hs_asset_baseline`) 설정으로 테스트 스냅샷과 실제 시작 수익률을 분리
   - 현금 보유액 표시 및 편집 모드 입력/저장
-  - HERD 판단 기록 전체 요약: 매수/익절 횟수·금액·평균 익절률·최근 기록 표시
+  - HERD 판단 기록 전체 요약: `/api/journal` 기반 매수/익절 횟수·금액·평균 익절률·최근 기록 표시
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
   - 보유 종목 카드
@@ -90,7 +90,7 @@ Rush    #EF4444  (레드)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
   - 현재 HERD 판단을 움직인 핵심 근거 데이터 보드
-  - HERD 판단 기록: 매수/보류/익절 판단 시 가격·수량·총액·수익률·메모를 `hs_signal_journal`에 저장하고, 매수/익절 횟수·금액·평균 익절률을 요약 표시
+  - HERD 판단 기록: 매수/보류/익절 판단 시 가격·수량·총액·수익률·메모를 DB `signal_journal`에 저장하고, 매수/익절 횟수·금액·평균 익절률을 요약 표시
   - 최근 3년 HERD 신호 신뢰도 데이터 보드
   - 1M/3M/1Y/3Y HERD Index 히스토리 차트
   - Fundamental Guard: 시가총액/PER/EPS/영업이익률/매출 기반 재무 경고 필터
@@ -126,7 +126,7 @@ Rush    #EF4444  (레드)
   - 설명문은 최소화하고 모델 버전·검증 기간·핵심 성과 수치 중심으로 표시
   - 표시 데이터는 `src/data/herdModelReport.js`에서 관리하며 JSX에 백테스트 숫자를 직접 하드코딩하지 않는다.
 - Journal (`/journal`)
-  - `hs_signal_journal` 전체 기록을 종목/액션/가격/수량/총액/수익률/HERD/날짜 테이블로 표시
+  - `/api/journal` 전체 기록을 종목/액션/가격/수량/총액/수익률/HERD/날짜 테이블로 표시
   - 전체/매수/익절/보류 필터와 매수·익절 금액, 평균 익절률 요약 표시
   - Dashboard 판단 기록 요약에서 진입하며, 사이드바에는 노출하지 않는다.
 - AiRebalance (`/ai`)
@@ -187,9 +187,10 @@ Rush    #EF4444  (레드)
 - `hs_target_weights`: 포트폴리오 종목별 목표 비중
 - `hs_dashboard_sort`: Dashboard 보유 종목 정렬 기준
 - `hs_rebalance_settings`: 리밸런싱 예산·현금 목표·강도 설정
-- `hs_signal_journal`: StockDetail 종목별 HERD 판단 기록
 - `hs_asset_baseline`: Dashboard 자산 히스토리 시작 기준일·기준 총자산
 - `herdsignal_currency`: 통화 표시 모드
+
+HERD 판단 기록은 localStorage가 아니라 backend `/api/journal`과 DB `signal_journal`을 기준으로 저장한다.
 
 ## AI 작업 원칙
 - 실제 frontend 코드 기준으로 판단한다.

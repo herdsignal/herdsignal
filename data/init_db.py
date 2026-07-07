@@ -218,6 +218,42 @@ class PortfolioHistory(Base):
 
 
 # ──────────────────────────────────────────────
+# 10. HERD 판단 기록 (signal_journal)
+# ──────────────────────────────────────────────
+class SignalJournal(Base):
+    """사용자가 HERD 신호를 보고 남긴 매수/보류/익절 판단 기록."""
+    __tablename__ = "signal_journal"
+    __table_args__ = (
+        Index("ix_signal_journal_user_recorded", "user_id", "recorded_at"),
+        Index("ix_signal_journal_user_ticker_recorded", "user_id", "ticker", "recorded_at"),
+        {"comment": "사용자 HERD 판단 기록"},
+    )
+
+    id                   = Column(BigInteger,      primary_key=True, autoincrement=True, comment="PK")
+    user_id              = Column(String(50),      nullable=False, default="local",       comment="사용자 ID")
+    ticker               = Column(String(10),      nullable=False,                        comment="티커 심볼")
+    action_type          = Column(String(20),      nullable=False,                        comment="판단 유형 (BUY/HOLD/SELL)")
+    action_label         = Column(String(50),      nullable=True,                         comment="화면 표시용 행동 문구")
+    score_date           = Column(Date,            nullable=True,                         comment="HERD 점수 기준일")
+    herd_score           = Column(Decimal(5, 2),   nullable=True,                         comment="기록 당시 HERD 점수")
+    herd_stage           = Column(String(20),      nullable=True,                         comment="기록 당시 HERD 단계")
+    signal               = Column(String(20),      nullable=True,                         comment="기록 당시 HERD 신호")
+    signal_label         = Column(String(100),     nullable=True,                         comment="기록 당시 신호 문구")
+    action_ratio         = Column(Decimal(6, 4),   nullable=True,                         comment="기록 당시 권장 행동 비율")
+    signal_duration_days = Column(BigInteger,      nullable=True,                         comment="기록 당시 신호 지속일")
+    stage_duration_days  = Column(BigInteger,      nullable=True,                         comment="기록 당시 단계 지속일")
+    price                = Column(Decimal(12, 4),  nullable=True,                         comment="기록 가격 (USD)")
+    quantity             = Column(Decimal(12, 4),  nullable=True,                         comment="기록 수량")
+    amount               = Column(Decimal(15, 2),  nullable=True,                         comment="기록 총액 (USD)")
+    profit_pct           = Column(Decimal(8, 4),   nullable=True,                         comment="익절/매매 수익률 (%)")
+    memo                 = Column(String(1000),    nullable=True,                         comment="사용자 메모")
+    recorded_at          = Column(DateTime,        nullable=False, default=datetime.utcnow, comment="판단 기록 시각 (UTC)")
+    created_at           = Column(DateTime,        nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
+    updated_at           = Column(DateTime,        nullable=False, default=datetime.utcnow,
+                                  onupdate=datetime.utcnow,                               comment="마지막 수정 시각 (UTC)")
+
+
+# ──────────────────────────────────────────────
 # 테이블 생성 실행
 # ──────────────────────────────────────────────
 SQLITE_PATH = "herdsignal_test.db"
@@ -225,6 +261,7 @@ SQLITE_PATH = "herdsignal_test.db"
 MODELS = [
     Stock, HerdScore, HerdIndicator, DailyPrice,
     UserPortfolio, UserWatchlist, UserCashBalance, UserCashHistory, PortfolioHistory,
+    SignalJournal,
 ]
 
 

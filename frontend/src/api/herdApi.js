@@ -75,6 +75,18 @@ export const updateCashBalance = (cashAmount) =>
 export const updateAvgPrice = (ticker, avgPrice, quantity) =>
   api.patch(`/api/portfolio/${ticker}/avg-price`, { avgPrice, quantity })
 
+/* ── HERD 판단 기록 ────────────────────────── */
+
+/** 전체 또는 특정 종목 HERD 판단 기록 조회 */
+export const getSignalJournal = (ticker) =>
+  api.get('/api/journal', { params: ticker ? { ticker } : {} })
+
+/** HERD 판단 기록 저장 */
+export const createSignalJournal = (entry) => api.post('/api/journal', entry)
+
+/** HERD 판단 기록 삭제 */
+export const deleteSignalJournal = (id) => api.delete(`/api/journal/${id}`)
+
 /* ── 개별 종목 ──────────────────────────────── */
 
 /** 회사명/티커 기반 종목 검색 */

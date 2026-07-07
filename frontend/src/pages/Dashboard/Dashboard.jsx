@@ -44,6 +44,7 @@ import {
   getPortfolioHistory,
   getCashBalance,
   updateCashBalance,
+  getSignalJournal,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
@@ -60,7 +61,6 @@ import {
   formatJournalAmount,
   formatJournalCount,
   formatJournalProfit,
-  readSignalJournal,
   summarizeSignalJournal,
 } from '../../utils/signalJournal'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
@@ -734,7 +734,7 @@ export default function Dashboard() {
     const baseline = readAssetBaseline()
     return baseline ? String(baseline.value) : ''
   })
-  const [signalLogs,     setSignalLogs]     = useState(() => readSignalJournal())
+  const [signalLogs,     setSignalLogs]     = useState([])
   const refreshNoticeTimer = useRef(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
@@ -846,12 +846,15 @@ export default function Dashboard() {
   useEffect(() => { fetchData() }, [fetchData])
 
   useEffect(() => {
-    const syncSignalLogs = () => setSignalLogs(readSignalJournal())
+    const syncSignalLogs = () => {
+      getSignalJournal()
+        .then((res) => setSignalLogs(res.data?.data ?? []))
+        .catch(() => setSignalLogs([]))
+    }
+    syncSignalLogs()
     window.addEventListener('focus', syncSignalLogs)
-    window.addEventListener('storage', syncSignalLogs)
     return () => {
       window.removeEventListener('focus', syncSignalLogs)
-      window.removeEventListener('storage', syncSignalLogs)
     }
   }, [])
 

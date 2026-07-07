@@ -15,6 +15,7 @@ import {
   getStockHerd, addToPortfolio, addToWatchlist,
   getStockFinancials, getStockHerdHistory, getStockHerdReliability,
   getPortfolio, getPortfolioSummary,
+  getSignalJournal, createSignalJournal, deleteSignalJournal,
 } from '../../api/herdApi'
 import HerdDots    from '../../components/HerdDots/HerdDots'
 import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
@@ -24,15 +25,12 @@ import SignalJournalModal from '../../components/SignalJournalModal/SignalJourna
 import { buildDecision } from '../../utils/decision'
 import { formatSignalDurationDetail } from '../../utils/signalDuration'
 import {
-  appendSignalJournal,
   formatJournalAmount,
   formatJournalPrice,
   formatJournalProfit,
   formatJournalQuantity,
   formatJournalTime,
   formatJournalCount,
-  readSignalJournal,
-  removeSignalJournal,
   summarizeSignalJournal,
 } from '../../utils/signalJournal'
 import styles      from './StockDetail.module.css'
@@ -514,9 +512,16 @@ export default function StockDetail() {
 
   const normalizedTicker = ticker.toUpperCase()
 
-  useEffect(() => {
-    setSignalLogs(readSignalJournal(normalizedTicker).slice(0, 5))
+  const fetchSignalLogs = useCallback(async () => {
+    try {
+      const res = await getSignalJournal(normalizedTicker)
+      setSignalLogs((res.data?.data ?? []).slice(0, 5))
+    } catch {
+      setSignalLogs([])
+    }
   }, [normalizedTicker])
+
+  useEffect(() => { fetchSignalLogs() }, [fetchSignalLogs])
 
   /* HERD 데이터 조회 */
   const fetchData = useCallback(async () => {
@@ -646,31 +651,45 @@ export default function StockDetail() {
     return [{ date: herdData.scoreDate, score: herdScore }]
   }, [herdHistory, herdData, herdScore])
 
-  function handleJournalAction(actionType, details = {}) {
-    const next = appendSignalJournal({
-      ticker: normalizedTicker,
-      actionType,
-      actionLabel: journalActionLabel(actionType),
-      scoreDate: herdData.scoreDate,
-      herdScore: Math.round(herdScore),
-      herdStage: stageDisp,
-      signal: herdData.signal,
-      signalLabel: herdData.actionLabel ?? decision.title,
-      actionRatio: herdData.actionRatio,
-      signalDurationDays: herdData.signalDurationDays,
-      stageDurationDays: herdData.stageDurationDays,
-      price: details.price,
-      quantity: details.quantity,
-      amount: details.amount,
-      profitPct: details.profitPct,
-      memo: details.memo,
-    })
-    setSignalLogs(next)
+  async function handleJournalAction(actionType, details = {}) {
+    try {
+      const res = await createSignalJournal({
+        ticker: normalizedTicker,
+        actionType,
+        actionLabel: journalActionLabel(actionType),
+        scoreDate: herdData.scoreDate,
+        herdScore: Math.round(herdScore),
+        herdStage: stageDisp,
+        signal: herdData.signal,
+        signalLabel: herdData.actionLabel ?? decision.title,
+        actionRatio: herdData.actionRatio,
+        signalDurationDays: herdData.signalDurationDays,
+        stageDurationDays: herdData.stageDurationDays,
+        price: details.price,
+        quantity: details.quantity,
+        amount: details.amount,
+        profitPct: details.profitPct,
+        memo: details.memo,
+      })
+      const saved = res.data?.data
+      if (saved) {
+        setSignalLogs((prev) => [saved, ...prev].slice(0, 5))
+      } else {
+        await fetchSignalLogs()
+      }
+    } catch {
+      await fetchSignalLogs()
+    }
     setJournalAction(null)
   }
 
-  function handleJournalDelete(id) {
-    setSignalLogs(removeSignalJournal(id, normalizedTicker))
+  async function handleJournalDelete(id) {
+    try {
+      await deleteSignalJournal(id)
+      setSignalLogs((prev) => prev.filter((log) => log.id !== id))
+    } catch {
+      await fetchSignalLogs()
+    }
   }
 
   return (
@@ -900,7 +919,7 @@ export default function StockDetail() {
                   <div className={styles.journalList}>
                     {signalLogs.slice(0, 3).map((log) => (
                       <div key={log.id} className={styles.journalItem}>
-                        <span>{formatJournalTime(log.createdAt)}</span>
+                        <span>{formatJournalTime(log.recordedAt ?? log.createdAt)}</span>
                         <strong>{log.actionLabel}</strong>
                         <em>
                           {[
