@@ -616,6 +616,55 @@
 }
 
 /* ────────────────────────────
+   신호 근거 카드
+   ──────────────────────────── */
+.evidenceGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--border);
+}
+
+.evidenceItem {
+  min-width: 0;
+  background: var(--surface2);
+  padding: 13px 14px;
+}
+
+.evidenceItem span,
+.evidenceItem em {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.evidenceItem span {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.evidenceItem strong {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--text-1);
+  margin-bottom: 3px;
+}
+
+.evidenceItem em {
+  font-size: 10px;
+  font-style: normal;
+  color: var(--text-3);
+}
+
+/* ────────────────────────────
    Fundamental Guard 카드
    ──────────────────────────── */
 .fundamentalBadge {
@@ -727,6 +776,7 @@
     min-height: 220px;
   }
 
+  .evidenceGrid,
   .reliabilityGrid,
   .fundamentalGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

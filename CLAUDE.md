@@ -151,7 +151,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 **frontend/**
 
 - Dashboard: S&P 500 Herd Flow 배너(Overview 애니메이션 + Timeline HERD 히스토리), 총자산/현금 포함 포트폴리오 평가 요약, 총자산 히스토리 차트, KRW/USD 통화 토글, 핵심 리밸런싱 체크, HERD 신호와 목표비중 차이를 함께 반영한 보유 종목 액션 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침 피드백
-- StockDetail: HERD v4 점수·단계·신호, HERD_v5 Action Layer 행동 비율, 현재 신호 기준 신뢰도, HERD Index 히스토리 차트, Fundamental Guard, 지표 분해·보정 승수
+- StockDetail: HERD v4 점수·단계·신호, HERD_v5 Action Layer 행동 비율, 현재 신호 근거 데이터 보드, 현재 신호 기준 신뢰도, HERD Index 히스토리 차트, Fundamental Guard, 지표 분해·보정 승수
 - StockDetail: 최근 3년 HERD 신호 신뢰도 데이터 보드(Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수)
 - HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공. frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
 - HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v5는 HERD_v4 점수에 Balanced Action Layer를 얹은 응답 시점 행동 모델이다.

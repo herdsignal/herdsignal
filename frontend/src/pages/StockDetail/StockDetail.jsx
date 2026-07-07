@@ -198,6 +198,97 @@ function actionTone(grade, signal) {
   return 'var(--text-3)'
 }
 
+function evidenceTone(type) {
+  switch (type) {
+    case 'buy': return 'var(--flee)'
+    case 'sell': return 'var(--rush)'
+    case 'warning': return 'var(--drift)'
+    default: return 'var(--calm)'
+  }
+}
+
+function buildSignalEvidence(data) {
+  if (!data) return []
+
+  const items = []
+  const push = (label, value, caption, type = 'neutral') => {
+    if (value == null) return
+    if (typeof value !== 'string' && Number.isNaN(Number(value))) return
+    items.push({
+      label,
+      value: typeof value === 'string' ? value : Math.round(Number(value)),
+      caption,
+      type,
+    })
+  }
+
+  const monthlyRsi = Number(data.monthlyRsi)
+  const weeklyRsi = Number(data.weeklyRsi)
+  const position52w = Number(data.position52w)
+  const ma200Weekly = Number(data.ma200Weekly)
+  const ma200Deviation = Number(data.ma200Deviation)
+  const epsMultiplier = Number(data.epsMultiplier ?? 1)
+  const sectorMultiplier = Number(data.sectorMultiplier ?? 1)
+
+  if (monthlyRsi <= 30) push('월봉 RSI', monthlyRsi, '장기 심리 하단', 'buy')
+  else if (monthlyRsi >= 70) push('월봉 RSI', monthlyRsi, '장기 심리 상단', 'sell')
+
+  if (weeklyRsi <= 30) push('주봉 RSI', weeklyRsi, '중기 과매도권', 'buy')
+  else if (weeklyRsi >= 70) push('주봉 RSI', weeklyRsi, '중기 과열권', 'sell')
+
+  if (position52w <= 30) push('52주 위치', `${position52w.toFixed(1)}%`, '연중 하단권', 'buy')
+  else if (position52w >= 70) push('52주 위치', `${position52w.toFixed(1)}%`, '연중 상단권', 'sell')
+
+  if (ma200Weekly <= 30) push('200주 MA', ma200Weekly, '장기 추세 하단', 'buy')
+  else if (ma200Weekly >= 70) push('200주 MA', ma200Weekly, '장기 추세 상단', 'sell')
+
+  if (ma200Deviation <= 30) push('MA200 이격', ma200Deviation, '장기선 대비 눌림', 'buy')
+  else if (ma200Deviation >= 70) push('MA200 이격', ma200Deviation, '장기선 대비 과열', 'sell')
+
+  if (epsMultiplier < 1) {
+    items.push({
+      label: 'EPS 보정',
+      value: formatMultiplier(epsMultiplier),
+      caption: epsMultiplierDesc(epsMultiplier),
+      type: 'buy',
+    })
+  } else if (epsMultiplier > 1) {
+    items.push({
+      label: 'EPS 보정',
+      value: formatMultiplier(epsMultiplier),
+      caption: epsMultiplierDesc(epsMultiplier),
+      type: 'warning',
+    })
+  }
+
+  if (sectorMultiplier < 1) {
+    items.push({
+      label: '섹터 강도',
+      value: formatMultiplier(sectorMultiplier),
+      caption: sectorMultiplierDesc(sectorMultiplier),
+      type: 'buy',
+    })
+  } else if (sectorMultiplier > 1) {
+    items.push({
+      label: '섹터 강도',
+      value: formatMultiplier(sectorMultiplier),
+      caption: sectorMultiplierDesc(sectorMultiplier),
+      type: 'warning',
+    })
+  }
+
+  if (items.length === 0) {
+    items.push({
+      label: 'HERD 균형',
+      value: Math.round(data.herdV4 ?? data.herdScore ?? 50),
+      caption: '강한 쏠림 없음',
+      type: 'neutral',
+    })
+  }
+
+  return items.slice(0, 5)
+}
+
 function reliabilityTone(grade) {
   switch (grade) {
     case 'STRONG': return 'var(--flee)'
@@ -511,6 +602,10 @@ export default function StockDetail() {
     () => evaluateFundamentalGuard(financials, herdData),
     [financials, herdData]
   )
+  const signalEvidence = useMemo(
+    () => buildSignalEvidence(herdData),
+    [herdData]
+  )
   const historyPoints = useMemo(() => {
     if (herdHistory.length > 0) return herdHistory
     if (!herdData?.scoreDate) return []
@@ -677,6 +772,28 @@ export default function StockDetail() {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* 신호 근거 카드 */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <div className={styles.cardTitle}>신호 근거</div>
+                  <div className={styles.cardMeta}>현재 HERD 판단을 움직인 데이터</div>
+                </div>
+                <div className={styles.cardMeta}>{herdData.scoreDate} 기준</div>
+              </div>
+              <div className={styles.cardBodySmall}>
+                <div className={styles.evidenceGrid}>
+                  {signalEvidence.map((item) => (
+                    <div key={`${item.label}-${item.caption}`} className={styles.evidenceItem}>
+                      <span>{item.label}</span>
+                      <strong style={{ color: evidenceTone(item.type) }}>{item.value}</strong>
+                      <em>{item.caption}</em>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
