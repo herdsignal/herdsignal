@@ -22,7 +22,12 @@ import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { buildDecision } from '../../utils/decision'
 import { formatSignalDurationDetail } from '../../utils/signalDuration'
-import { appendSignalJournal, formatJournalTime, readSignalJournal } from '../../utils/signalJournal'
+import {
+  appendSignalJournal,
+  formatJournalTime,
+  readSignalJournal,
+  removeSignalJournal,
+} from '../../utils/signalJournal'
 import styles      from './StockDetail.module.css'
 
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
@@ -644,6 +649,10 @@ export default function StockDetail() {
     setSignalLogs(next)
   }
 
+  function handleJournalDelete(id) {
+    setSignalLogs(removeSignalJournal(id, normalizedTicker))
+  }
+
   return (
     <div>
 
@@ -859,6 +868,14 @@ export default function StockDetail() {
                         <em>
                           HERD {log.herdScore} · {log.signalLabel}
                         </em>
+                        <button
+                          type="button"
+                          className={styles.journalDelete}
+                          onClick={() => handleJournalDelete(log.id)}
+                          aria-label={`${log.actionLabel} 삭제`}
+                        >
+                          삭제
+                        </button>
                       </div>
                     ))}
                   </div>

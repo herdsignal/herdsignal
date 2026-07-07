@@ -38,6 +38,12 @@ export function appendSignalJournal(entry) {
   return next.filter((item) => item.ticker === entry.ticker).slice(0, 5)
 }
 
+export function removeSignalJournal(id, ticker) {
+  const next = readAll().filter((item) => item.id !== id)
+  writeAll(next)
+  return readSignalJournal(ticker).filter((item) => item.id !== id).slice(0, 5)
+}
+
 export function formatJournalTime(value) {
   if (!value) return ''
   const date = new Date(value)
