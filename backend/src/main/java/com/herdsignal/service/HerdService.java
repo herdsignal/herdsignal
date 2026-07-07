@@ -448,10 +448,11 @@ public class HerdService {
 
     /** HERD 점수 응답에 데이터 신뢰도 레이어를 붙인다. */
     private HerdScoreResponse buildResponse(HerdScore score, HerdIndicator indicator) {
+        List<HerdScore> history = herdScoreRepository.findByTickerOrderByScoreDateDesc(score.getTicker());
         HerdQuality quality = calculateQuality(score, indicator);
-        ActionDecision actionDecision = actionDecisionService.decide(score, indicator, quality.score());
+        ActionDecision actionDecision = actionDecisionService.decide(score, indicator, quality.score(), history);
         Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
-        HerdScoreResponse.SignalDuration signalDuration = calculateSignalDuration(score);
+        HerdScoreResponse.SignalDuration signalDuration = calculateSignalDuration(score, history);
         return HerdScoreResponse.of(
                 score,
                 indicator,
@@ -471,8 +472,7 @@ public class HerdService {
      * 최신 HERD 점수 기준 현재 signal/stage가 언제부터 이어졌는지 계산한다.
      * 저장된 HERD 히스토리 포인트를 기준으로 하며, 주간 백필 구간은 실제 날짜 간격으로 반영한다.
      */
-    private HerdScoreResponse.SignalDuration calculateSignalDuration(HerdScore latestScore) {
-        List<HerdScore> history = herdScoreRepository.findByTickerOrderByScoreDateDesc(latestScore.getTicker());
+    private HerdScoreResponse.SignalDuration calculateSignalDuration(HerdScore latestScore, List<HerdScore> history) {
         LocalDate signalStartedAt = latestScore.getScoreDate();
         LocalDate stageStartedAt = latestScore.getScoreDate();
 

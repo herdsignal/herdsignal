@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class ActionDecision {
 
-    /** 행동 모델 버전 (HERD_v5 등) */
+    /** 행동 모델 버전 (HERD_v6 등) */
     private String actionModelVersion;
 
     /** 행동 모델명 */

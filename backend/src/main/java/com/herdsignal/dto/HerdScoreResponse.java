@@ -84,7 +84,7 @@ public class HerdScoreResponse {
     /** HERD 신뢰도 산출 근거 */
     private List<String> qualityReasons;
 
-    /** 행동 모델 버전 (HERD_v5 등) */
+    /** 행동 모델 버전 (HERD_v6 등) */
     private String actionModelVersion;
 
     /** 행동 모델명 */

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,25 +23,37 @@ public class ActionDecisionService {
     private static final double SCATTER_UPPER = 40.0;
     private static final double DRIFT_LOWER = 60.0;
     private static final double RUSH_THRESHOLD = 75.0;
-    private static final String ACTION_MODEL_VERSION = "HERD_v5";
-    private static final String ACTION_MODEL_NAME = "Balanced Action Layer";
+    private static final String ACTION_MODEL_VERSION = "HERD_v6";
+    private static final String ACTION_MODEL_NAME = "Progressive Action Layer";
     private static final String BASE_MODEL_VERSION = "HERD_v4";
     private static final String ACTION_MODEL_STATUS = "MVP_VALIDATION";
 
     public ActionDecision decide(HerdScore score, HerdIndicator indicator, Integer qualityScore) {
+        return decide(score, indicator, qualityScore, List.of());
+    }
+
+    public ActionDecision decide(
+            HerdScore score,
+            HerdIndicator indicator,
+            Integer qualityScore,
+            List<HerdScore> history
+    ) {
         double herdScore = score.getHerdScore().doubleValue();
         int dataQuality = qualityScore != null ? qualityScore : 50;
         TrendContext trend = calculateTrendContext(indicator);
-        RegimeDecision regime = chooseRegime(herdScore, trend);
-        int actionScore = calculateActionScore(herdScore, dataQuality, trend.score(), regime);
+        MomentumContext momentum = calculateMomentumContext(score, history);
+        RegimeDecision regime = chooseRegime(herdScore, trend, momentum);
+        int actionScore = calculateActionScore(herdScore, dataQuality, trend.score(), momentum.score(), regime);
 
         List<String> reasons = new ArrayList<>();
         reasons.add("HERD " + displayStage(score.getHerdStage()) + " 구간");
         reasons.add("장기 추세 품질 " + trend.score() + "/100");
+        reasons.add(momentum.reason());
         reasons.add("데이터 품질 " + dataQuality + "/100");
         reasons.add(regime.reason());
 
         List<String> warnings = new ArrayList<>(trend.warnings());
+        warnings.addAll(momentum.warnings());
         if (dataQuality < 65) {
             warnings.add("데이터 품질이 낮아 행동 비율을 보수적으로 해석해야 합니다.");
         }
@@ -62,6 +76,49 @@ public class ActionDecisionService {
                 .actionReasons(reasons)
                 .actionWarnings(warnings)
                 .build();
+    }
+
+    private MomentumContext calculateMomentumContext(HerdScore latest, List<HerdScore> history) {
+        if (history == null || history.size() < 2 || latest.getScoreDate() == null) {
+            return new MomentumContext(50, 0.0, 0.0, "HERD 변화 데이터 부족", List.of("HERD 변화율 데이터가 부족해 현재 점수 중심으로 해석합니다."));
+        }
+
+        HerdScore previous = null;
+        HerdScore monthAgo = null;
+        LocalDate latestDate = latest.getScoreDate();
+
+        for (HerdScore row : history) {
+            if (row.getScoreDate() == null || !row.getScoreDate().isBefore(latestDate)) {
+                continue;
+            }
+            if (previous == null) {
+                previous = row;
+            }
+            long days = ChronoUnit.DAYS.between(row.getScoreDate(), latestDate);
+            if (days <= 35) {
+                monthAgo = row;
+            }
+        }
+
+        if (previous == null) {
+            return new MomentumContext(50, 0.0, 0.0, "HERD 변화 데이터 부족", List.of("직전 HERD 포인트가 없어 변화율을 보수적으로 봅니다."));
+        }
+
+        HerdScore baseline = monthAgo != null ? monthAgo : previous;
+        double shortDelta = latest.getHerdScore().doubleValue() - previous.getHerdScore().doubleValue();
+        double monthDelta = latest.getHerdScore().doubleValue() - baseline.getHerdScore().doubleValue();
+
+        int momentumScore = 50;
+        if (monthDelta >= 12) momentumScore = 85;
+        else if (monthDelta >= 5) momentumScore = 70;
+        else if (monthDelta <= -12) momentumScore = 15;
+        else if (monthDelta <= -5) momentumScore = 30;
+
+        String direction = monthDelta > 1
+                ? "상승"
+                : monthDelta < -1 ? "둔화" : "유지";
+        String reason = String.format("HERD 최근 변화 %.1fpt(%s)", monthDelta, direction);
+        return new MomentumContext(momentumScore, shortDelta, monthDelta, reason, List.of());
     }
 
     private TrendContext calculateTrendContext(HerdIndicator indicator) {
@@ -138,11 +195,42 @@ public class ActionDecisionService {
         return new TrendContext(clamp(score, 0, 100), ma200DeviationValue, warnings);
     }
 
-    private RegimeDecision chooseRegime(double score, TrendContext trend) {
+    private RegimeDecision chooseRegime(double score, TrendContext trend, MomentumContext momentum) {
         int trendScore = trend.score();
         double ma200Dev = trend.ma200Deviation();
+        boolean momentumRising = momentum.monthDelta() >= 5.0;
+        boolean momentumCooling = momentum.monthDelta() <= -3.0 || momentum.shortDelta() <= -3.0;
 
         if (score >= RUSH_THRESHOLD) {
+            if (score >= 90.0) {
+                if (momentumCooling || trendScore < 55 || ma200Dev > 90) {
+                    return new RegimeDecision(
+                            "PEAKING_RUSH",
+                            "적극 익절 후보",
+                            "정점권 군중 밀집",
+                            0.30,
+                            "Rush 심화 후 HERD 둔화 또는 추세 부담이 보여 익절 강도를 높입니다."
+                    );
+                }
+                return new RegimeDecision(
+                        "EXTENDING_RUSH",
+                        "분할 익절 후보",
+                        "확장형 군중 밀집",
+                        0.18,
+                        "HERD가 90 이상이지만 과열이 진행 중이라 전량 대응보다 분할 익절을 우선합니다."
+                );
+            }
+            if (score >= 85.0) {
+                return new RegimeDecision(
+                        momentumCooling ? "COOLING_RUSH" : "DEEP_RUSH",
+                        momentumCooling ? "익절 우선 후보" : "일부 익절 후보",
+                        momentumCooling ? "둔화형 군중 밀집" : "심화형 군중 밀집",
+                        momentumCooling ? 0.22 : 0.12,
+                        momentumCooling
+                                ? "Rush 구간에서 HERD 둔화가 시작돼 익절 비중을 높입니다."
+                                : "Rush가 심화 중이지만 추세가 이어져 일부 익절만 제안합니다."
+                );
+            }
             if (trendScore >= 75) {
                 return new RegimeDecision(
                         "HEALTHY_RUSH",
@@ -165,8 +253,10 @@ public class ActionDecisionService {
                     "NORMAL_RUSH",
                     "일부 익절 후보",
                     "군중 밀집",
-                    0.15,
-                    "Rush 구간이지만 추세가 완전히 훼손되지는 않아 일부 익절만 제안합니다."
+                    momentumRising ? 0.08 : 0.15,
+                    momentumRising
+                            ? "Rush 초입에서 HERD가 상승 중이라 익절은 작게 나눕니다."
+                            : "Rush 구간이지만 추세가 완전히 훼손되지는 않아 일부 익절만 제안합니다."
             );
         }
 
@@ -190,6 +280,26 @@ public class ActionDecisionService {
         }
 
         if (score <= FLEE_THRESHOLD) {
+            if (score <= 10.0) {
+                if (trendScore < 35 && !momentumRising) {
+                    return new RegimeDecision(
+                            "BROKEN_DEEP_FLEE",
+                            "하락 훼손 관찰",
+                            "깊은 군중 이탈",
+                            0.00,
+                            "Flee가 깊지만 추세와 HERD 변화가 모두 약해 매수보다 관찰을 우선합니다."
+                    );
+                }
+                return new RegimeDecision(
+                        momentumRising ? "REVERSING_DEEP_FLEE" : "DEEP_FLEE",
+                        momentumRising ? "적극 추가매수 후보" : "분할매수 후보",
+                        momentumRising ? "반등형 군중 이탈" : "심화형 군중 이탈",
+                        momentumRising ? 0.30 : 0.15,
+                        momentumRising
+                                ? "깊은 Flee 이후 HERD가 되돌아와 추가매수 강도를 높입니다."
+                                : "깊은 Flee지만 아직 반등 확인 전이라 분할매수로 제한합니다."
+                );
+            }
             if (trendScore >= 55) {
                 return new RegimeDecision(
                         "OPPORTUNITY_FLEE",
@@ -218,6 +328,15 @@ public class ActionDecisionService {
         }
 
         if (score <= SCATTER_UPPER) {
+            if (score <= 25.0 && trendScore >= 60 && momentumRising) {
+                return new RegimeDecision(
+                        "REVERSING_SCATTER",
+                        "분할 추가매수 후보",
+                        "회복형 군중 흩어짐",
+                        0.08,
+                        "Scatter 저점권에서 HERD 회복이 보여 분할매수 후보로 봅니다."
+                );
+            }
             if (trendScore >= 60) {
                 return new RegimeDecision(
                         "OPPORTUNITY_SCATTER",
@@ -249,6 +368,7 @@ public class ActionDecisionService {
             double herdScore,
             int dataQuality,
             int trendScore,
+            int momentumScore,
             RegimeDecision regime
     ) {
         double signalStrength;
@@ -256,13 +376,13 @@ public class ActionDecisionService {
             signalStrength = herdScore <= FLEE_THRESHOLD
                     ? 60.0 + ((FLEE_THRESHOLD - herdScore) / FLEE_THRESHOLD) * 40.0
                     : 40.0 + ((SCATTER_UPPER - herdScore) / (SCATTER_UPPER - FLEE_THRESHOLD)) * 30.0;
-            signalStrength = signalStrength * 0.45 + trendScore * 0.35 + dataQuality * 0.20;
+            signalStrength = signalStrength * 0.40 + trendScore * 0.30 + momentumScore * 0.15 + dataQuality * 0.15;
         } else if (herdScore >= DRIFT_LOWER) {
             signalStrength = herdScore >= RUSH_THRESHOLD
                     ? 60.0 + ((herdScore - RUSH_THRESHOLD) / (100.0 - RUSH_THRESHOLD)) * 40.0
                     : 40.0 + ((herdScore - DRIFT_LOWER) / (RUSH_THRESHOLD - DRIFT_LOWER)) * 30.0;
             double crowdRisk = signalStrength * ("HEALTHY_RUSH".equals(regime.code()) ? 0.65 : 1.0);
-            signalStrength = crowdRisk * 0.45 + (100 - trendScore) * 0.30 + dataQuality * 0.25;
+            signalStrength = crowdRisk * 0.42 + (100 - trendScore) * 0.25 + (100 - momentumScore) * 0.18 + dataQuality * 0.15;
         } else {
             signalStrength = 25.0 + dataQuality * 0.20;
         }
@@ -292,6 +412,15 @@ public class ActionDecisionService {
     }
 
     private record TrendContext(int score, double ma200Deviation, List<String> warnings) {
+    }
+
+    private record MomentumContext(
+            int score,
+            double shortDelta,
+            double monthDelta,
+            String reason,
+            List<String> warnings
+    ) {
     }
 
     private record RegimeDecision(
