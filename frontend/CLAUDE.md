@@ -81,6 +81,7 @@ Rush    #EF4444  (레드)
   - 수동 새로고침은 `/api/portfolio/realtime`으로 yfinance 현재가를 다시 조회하고, HERD/SPY는 DB 최신값을 조회한다.
   - 수동 새로고침 완료 후 `현재가 갱신`/`HERD 조회`/`SPY 갱신` 결과를 짧게 표시
   - 보유 종목 카드는 `ADD 10%`/`HOLD`/`SELL 30%` 같은 액션 코드를 우선 표시하고, 매수는 목표 투자금 기준·익절은 보유 평가금액 기준으로 비율 의미를 명시한다.
+  - 보유 종목 액션은 HERD 신호와 현재 비중/목표 비중 차이를 함께 본다. 예: ADD 신호여도 목표비중을 초과하면 `WAIT`, SELL/REDUCE 신호와 목표비중 초과가 겹치면 비중 축소 우선으로 표시한다.
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시

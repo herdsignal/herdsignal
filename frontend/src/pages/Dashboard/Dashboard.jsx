@@ -297,6 +297,73 @@ function formatActionCode(herd) {
   return `${herd.signal} ${Math.round(ratio * 100)}%`
 }
 
+function positionGap(row) {
+  if (!row) return null
+  const gap = Number(row.targetWeight ?? 0) - Number(row.currentWeight ?? 0)
+  return Number.isFinite(gap) ? gap : null
+}
+
+function buildPositionAction(herd, row) {
+  const gap = positionGap(row)
+  const signal = herd?.signal ?? 'HOLD'
+  const isBuy = signal === 'BUY' || signal === 'ADD'
+  const isSell = signal === 'SELL' || signal === 'REDUCE'
+  const base = {
+    code: formatActionCode(herd),
+    text: formatActionText(herd),
+    basis: formatActionBasis(herd),
+    muted: false,
+  }
+
+  if (gap == null) return base
+
+  const absGap = Math.abs(gap).toFixed(1)
+  if (isBuy && gap < -2) {
+    return {
+      code: 'WAIT',
+      text: `${formatActionScore(herd?.actionScore) ?? '강도 확인'} · 추가매수 보류`,
+      basis: `목표보다 ${absGap}%p 초과 · HERD는 매수권`,
+      muted: true,
+    }
+  }
+
+  if (isBuy && gap > 2) {
+    return {
+      ...base,
+      text: `${formatActionScore(herd?.actionScore) ?? '강도 확인'} · 목표비중 채우기`,
+      basis: `목표까지 ${gap.toFixed(1)}%p 부족 · 분할 투입 우선`,
+    }
+  }
+
+  if (isSell && gap < -2) {
+    return {
+      ...base,
+      text: `${formatActionScore(herd?.actionScore) ?? '강도 확인'} · 비중 축소 우선`,
+      basis: `목표보다 ${absGap}%p 초과 · 익절 신호와 일치`,
+    }
+  }
+
+  if (isSell && gap > 2) {
+    return {
+      ...base,
+      text: `${formatActionScore(herd?.actionScore) ?? '강도 확인'} · 익절은 작게`,
+      basis: `목표까지 ${gap.toFixed(1)}%p 부족 · 과도한 축소 주의`,
+    }
+  }
+
+  if (signal === 'HOLD' && Math.abs(gap) > 5) {
+    return {
+      ...base,
+      text: gap > 0 ? '강도 보통 · 비중 부족' : '강도 보통 · 비중 초과',
+      basis: gap > 0
+        ? `목표까지 ${gap.toFixed(1)}%p 부족 · HERD는 보유`
+        : `목표보다 ${absGap}%p 초과 · HERD는 보유`,
+    }
+  }
+
+  return base
+}
+
 function actionPriority(signal) {
   switch (signal) {
     case 'SELL':   return 0
@@ -1401,6 +1468,8 @@ export default function Dashboard() {
               const signal    = signalStyle(herd?.signal)
               const stageName = stage.startsWith('Herd ') ? stage.slice(5) : stage
               const herdScore = herd ? Math.round(herd.herdV4 ?? herd.herdScore) : null
+              const positionAction = herd ? buildPositionAction(herd, row) : null
+              const actionColor = positionAction?.muted ? 'var(--calm)' : signal.color
 
               const price       = priceMap[item.ticker]
               const hasAvgPrice = item.avgPrice != null && item.quantity != null
@@ -1470,15 +1539,15 @@ export default function Dashboard() {
                         <div className={styles.cardActionPanel}>
                           <div
                             className={styles.cardActionCode}
-                            style={{ color: signal.color }}
+                            style={{ color: actionColor }}
                           >
-                            {formatActionCode(herd)}
+                            {positionAction.code}
                           </div>
                           <div className={styles.cardActionLabel}>
-                            {formatActionText(herd)}
+                            {positionAction.text}
                           </div>
                           <div className={styles.cardActionBasis}>
-                            {formatActionBasis(herd)}
+                            {positionAction.basis}
                           </div>
                           <div className={styles.cardActionMeta} style={{ color }}>
                             HERD {herdScore} · {stageName}
