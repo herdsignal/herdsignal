@@ -1278,25 +1278,11 @@ export default function Dashboard() {
 
             <div className={styles.summaryCard}>
               <div className={styles.summaryLabel}>현금</div>
-              <div className={styles.cashInputRow}>
-                <span className={styles.cashPrefix}>$</span>
-                <input
-                  className={styles.cashInput}
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  inputMode="decimal"
-                  value={cashDraft}
-                  onChange={(e) => setCashDraft(e.target.value)}
-                  onBlur={handleCashSave}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') e.currentTarget.blur()
-                  }}
-                  placeholder="0.00"
-                />
+              <div className={styles.summaryValue}>
+                {displayAmount(summary.cash_balance ?? cashBalance)}
               </div>
               <div className={styles.summarySub}>
-                {cashSaving ? '저장 중' : '입력한 날부터 총자산에 반영'}
+                {editMode ? '아래 편집 패널에서 수정' : '편집 모드에서 수정'}
               </div>
             </div>
 
@@ -1311,6 +1297,43 @@ export default function Dashboard() {
               <div className={styles.summarySub}>전일 대비</div>
             </div>
           </div>
+
+          {editMode && (
+            <div className={styles.portfolioEditPanel}>
+              <div className={styles.portfolioEditInfo}>
+                <span>포트폴리오 설정</span>
+                <strong>현금 보유액</strong>
+                <em>총자산과 목표 비중 계산에 함께 반영됩니다.</em>
+              </div>
+              <div className={styles.cashEditControl}>
+                <div className={styles.cashInputRow}>
+                  <span className={styles.cashPrefix}>$</span>
+                  <input
+                    className={styles.cashInput}
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={cashDraft}
+                    onChange={(e) => setCashDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleCashSave()
+                    }}
+                    placeholder="0.00"
+                    aria-label="현금 보유액"
+                  />
+                </div>
+                <button
+                  type="button"
+                  className={styles.cashSaveBtn}
+                  onClick={handleCashSave}
+                  disabled={cashSaving}
+                >
+                  {cashSaving ? '저장 중…' : '현금 저장'}
+                </button>
+              </div>
+            </div>
+          )}
 
           {assetPanelOpen && (
             <div className={styles.assetPanel}>
