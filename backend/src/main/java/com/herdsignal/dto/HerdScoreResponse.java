@@ -54,6 +54,18 @@ public class HerdScoreResponse {
     /** 점수 산출 기준 날짜 */
     private LocalDate scoreDate;
 
+    /** 현재 매매 신호가 시작된 날짜 */
+    private LocalDate signalStartedAt;
+
+    /** 현재 매매 신호 지속 일수 */
+    private Integer signalDurationDays;
+
+    /** 현재 HERD 단계가 시작된 날짜 */
+    private LocalDate stageStartedAt;
+
+    /** 현재 HERD 단계 지속 일수 */
+    private Integer stageDurationDays;
+
     /** HERD 신뢰도 점수 (0~100) */
     private Integer qualityScore;
 
@@ -133,7 +145,7 @@ public class HerdScoreResponse {
      * HerdScore는 필수, HerdIndicator는 없을 수 있으므로 null 허용.
      */
     public static HerdScoreResponse of(HerdScore score, HerdIndicator indicator) {
-        return of(score, indicator, null, null, null, null, List.of(), List.of(), null, null);
+        return of(score, indicator, null, null, null, null, List.of(), List.of(), null, null, null);
     }
 
     /**
@@ -161,6 +173,7 @@ public class HerdScoreResponse {
                 qualityFlags,
                 qualityReasons,
                 actionDecision,
+                null,
                 null
         );
     }
@@ -181,6 +194,38 @@ public class HerdScoreResponse {
             ActionDecision actionDecision,
             Stock stock
     ) {
+        return of(
+                score,
+                indicator,
+                qualityScore,
+                qualityLevel,
+                qualityLabel,
+                qualitySummary,
+                qualityFlags,
+                qualityReasons,
+                actionDecision,
+                stock,
+                null
+        );
+    }
+
+    /**
+     * 정적 팩토리 메서드.
+     * SignalDuration이 있으면 현재 신호/단계 지속 기간을 함께 내려준다.
+     */
+    public static HerdScoreResponse of(
+            HerdScore score,
+            HerdIndicator indicator,
+            Integer qualityScore,
+            String qualityLevel,
+            String qualityLabel,
+            String qualitySummary,
+            List<String> qualityFlags,
+            List<String> qualityReasons,
+            ActionDecision actionDecision,
+            Stock stock,
+            SignalDuration signalDuration
+    ) {
         HerdScoreResponseBuilder builder = HerdScoreResponse.builder()
                 .ticker(score.getTicker())
                 .companyName(stock != null ? stock.getName() : null)
@@ -194,6 +239,10 @@ public class HerdScoreResponse {
                 .herdStage(score.getHerdStage())
                 .signal(score.getSignal())
                 .scoreDate(score.getScoreDate())
+                .signalStartedAt(signalDuration != null ? signalDuration.getSignalStartedAt() : null)
+                .signalDurationDays(signalDuration != null ? signalDuration.getSignalDurationDays() : null)
+                .stageStartedAt(signalDuration != null ? signalDuration.getStageStartedAt() : null)
+                .stageDurationDays(signalDuration != null ? signalDuration.getStageDurationDays() : null)
                 .qualityScore(qualityScore)
                 .qualityLevel(qualityLevel)
                 .qualityLabel(qualityLabel)
@@ -237,5 +286,15 @@ public class HerdScoreResponse {
         }
 
         return builder.build();
+    }
+
+    /** 현재 신호/단계 지속 기간 DTO */
+    @Getter
+    @Builder
+    public static class SignalDuration {
+        private LocalDate signalStartedAt;
+        private Integer signalDurationDays;
+        private LocalDate stageStartedAt;
+        private Integer stageDurationDays;
     }
 }

@@ -24,6 +24,7 @@ import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
+import { formatSignalDuration } from '../../utils/signalDuration'
 import { opportunityRows } from '../../utils/portfolioTools'
 import styles    from './Watchlist.module.css'
 
@@ -528,6 +529,7 @@ export default function Watchlist() {
                       <em>{formatActionCode(item)}</em>
                       <small style={{ color: signal.color }}>
                         {formatActionBasis(item)} · HERD {Math.round(item.herdV4 ?? item.herdScore)}
+                        {formatSignalDuration(item) ? ` · ${formatSignalDuration(item)}` : ''}
                       </small>
                     </button>
                   )
@@ -622,7 +624,7 @@ export default function Watchlist() {
                       </span>
                     </div>
                     <span className={styles.cardActionBasis}>
-                      {formatActionBasis(item)}
+                      {formatSignalDuration(item) ?? formatActionBasis(item)}
                     </span>
                     <span className={styles.cardUpdate}>
                       {formatDate(item.scoreDate)}

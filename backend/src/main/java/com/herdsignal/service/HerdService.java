@@ -451,6 +451,7 @@ public class HerdService {
         HerdQuality quality = calculateQuality(score, indicator);
         ActionDecision actionDecision = actionDecisionService.decide(score, indicator, quality.score());
         Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
+        HerdScoreResponse.SignalDuration signalDuration = calculateSignalDuration(score);
         return HerdScoreResponse.of(
                 score,
                 indicator,
@@ -461,8 +462,63 @@ public class HerdService {
                 quality.flags(),
                 quality.reasons(),
                 actionDecision,
-                stock
+                stock,
+                signalDuration
         );
+    }
+
+    /**
+     * 최신 HERD 점수 기준 현재 signal/stage가 언제부터 이어졌는지 계산한다.
+     * 저장된 HERD 히스토리 포인트를 기준으로 하며, 주간 백필 구간은 실제 날짜 간격으로 반영한다.
+     */
+    private HerdScoreResponse.SignalDuration calculateSignalDuration(HerdScore latestScore) {
+        List<HerdScore> history = herdScoreRepository.findByTickerOrderByScoreDateDesc(latestScore.getTicker());
+        LocalDate signalStartedAt = latestScore.getScoreDate();
+        LocalDate stageStartedAt = latestScore.getScoreDate();
+
+        String latestSignal = normalizedSignal(latestScore.getSignal());
+        String latestStage = normalizedText(latestScore.getHerdStage());
+
+        for (HerdScore row : history) {
+            if (row.getScoreDate().isAfter(latestScore.getScoreDate())) {
+                continue;
+            }
+            if (normalizedSignal(row.getSignal()).equals(latestSignal)) {
+                signalStartedAt = row.getScoreDate();
+            } else {
+                break;
+            }
+        }
+
+        for (HerdScore row : history) {
+            if (row.getScoreDate().isAfter(latestScore.getScoreDate())) {
+                continue;
+            }
+            if (normalizedText(row.getHerdStage()).equals(latestStage)) {
+                stageStartedAt = row.getScoreDate();
+            } else {
+                break;
+            }
+        }
+
+        return HerdScoreResponse.SignalDuration.builder()
+                .signalStartedAt(signalStartedAt)
+                .signalDurationDays(daysInclusive(signalStartedAt, latestScore.getScoreDate()))
+                .stageStartedAt(stageStartedAt)
+                .stageDurationDays(daysInclusive(stageStartedAt, latestScore.getScoreDate()))
+                .build();
+    }
+
+    private String normalizedSignal(String signal) {
+        return normalizedText(signal == null || signal.isBlank() ? "HOLD" : signal);
+    }
+
+    private String normalizedText(String value) {
+        return value == null ? "" : value.trim().toUpperCase();
+    }
+
+    private int daysInclusive(LocalDate start, LocalDate end) {
+        return (int) ChronoUnit.DAYS.between(start, end) + 1;
     }
 
     /**

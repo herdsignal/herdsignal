@@ -121,6 +121,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - HERD 신뢰도는 `daily_prices` 기간이 아니라 저장된 HERD 산출 결과의 완성도(핵심 지표, 200주 MA, v4 보정 승수, 최신성)를 기준으로 계산한다.
 - HERD 신호 성능 신뢰도는 `HerdReliabilityService`가 Python을 호출해 계산한다. `qualityScore`와 달리 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수를 기준으로 한다.
 - HERD_v5 Action Layer 응답은 DB 스키마 변경 없이 `ActionDecisionService`가 계산한다. `actionModelVersion`, `actionModelName`, `baseModelVersion`, `actionModelStatus`, `actionScore`, `actionGrade`, `actionLabel`, `actionRatio`, `actionRegime`, `actionRegimeLabel`, `actionReasons`, `actionWarnings`를 포함한다.
+- HERD 응답은 저장된 `herd_scores` 히스토리 기준 현재 `signal`/`herdStage`가 언제부터 이어졌는지 계산해 `signalStartedAt`, `signalDurationDays`, `stageStartedAt`, `stageDurationDays`를 포함한다.
 - 포트폴리오 종목별 `dailyChangePct`는 KST 22:30 미국장 시작을 하루 경계로 본다. 22:30 전에는 직전 미국장 세션을 오늘로 유지한다.
 - 로그인/인증/멀티유저 API는 없음. 현재는 `local` 사용자 고정.
 - 증권사 API 추상화는 구현되어 있지 않다.

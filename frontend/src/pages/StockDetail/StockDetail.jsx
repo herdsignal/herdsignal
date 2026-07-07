@@ -21,6 +21,7 @@ import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { buildDecision } from '../../utils/decision'
+import { formatSignalDurationDetail } from '../../utils/signalDuration'
 import styles      from './StockDetail.module.css'
 
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
@@ -654,6 +655,11 @@ export default function StockDetail() {
                     <div className={styles.decisionBasis}>
                       {formatActionBasis(herdData)}
                     </div>
+                    {formatSignalDurationDetail(herdData) && (
+                      <div className={styles.decisionBasis}>
+                        {formatSignalDurationDetail(herdData)}
+                      </div>
+                    )}
                   </div>
                   <div className={styles.decisionPill} style={{ color: actionColor, borderColor: actionColor }}>
                     {formatActionRatio(herdData.actionRatio)}

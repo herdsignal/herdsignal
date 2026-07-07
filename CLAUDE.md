@@ -156,6 +156,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공. frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
 - HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v5는 HERD_v4 점수에 Balanced Action Layer를 얹은 응답 시점 행동 모델이다.
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. frontend에서는 actionScore를 `강도`로 표시하고, DB 저장 없이 backend 응답 시점에 계산한다.
+- HERD 신호 지속 기간: backend가 저장된 HERD 히스토리 기준으로 현재 signal/stage 시작일과 지속 일수를 응답하고, frontend는 보유종목/관심종목/상세 화면에 `신호 N일째`를 표시한다.
 - Search: Finnhub 심볼 검색 API, 디바운스 검색, HERD 미리보기, HERD 준비됨/계산 필요/데이터 부족 상태 표시, 최근 검색, 포트폴리오/관심종목 추가, 포트폴리오 추가 후 평단가·수량 입력 연결
 - Watchlist: S&P 500 Herd Flow 배너, Flee/Scatter 우선 기회 대기열, 매수 후보 우선 관심 종목 HERD 카드, 삭제
 - StockAvatar: 회사 로고 URL이 있으면 로고 표시, 없거나 이미지 로딩 실패 시 티커 배지 fallback

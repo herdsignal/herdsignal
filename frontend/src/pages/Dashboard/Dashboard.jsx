@@ -49,6 +49,7 @@ import {
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
+import { formatSignalDuration } from '../../utils/signalDuration'
 import {
   portfolioRows,
   readTargetWeights,
@@ -1481,6 +1482,7 @@ export default function Dashboard() {
                           </div>
                           <div className={styles.cardActionMeta} style={{ color }}>
                             HERD {herdScore} · {stageName}
+                            {formatSignalDuration(herd) ? ` · ${formatSignalDuration(herd)}` : ''}
                           </div>
                         </div>
                       ) : (
