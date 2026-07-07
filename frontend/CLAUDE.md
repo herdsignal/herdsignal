@@ -178,6 +178,7 @@ Rush    #EF4444  (레드)
 - `hs_target_weights`: 포트폴리오 종목별 목표 비중
 - `hs_dashboard_sort`: Dashboard 보유 종목 정렬 기준
 - `hs_rebalance_settings`: 리밸런싱 예산·현금 목표·강도 설정
+- `hs_signal_journal`: StockDetail 종목별 HERD 판단 기록
 - `herdsignal_currency`: 통화 표시 모드
 
 ## AI 작업 원칙

@@ -346,6 +346,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - `hs_recent_searches`: 최근 검색
 - `hs_target_weights`: 포트폴리오 종목별 목표 비중
 - `hs_rebalance_settings`: 리밸런싱 예산·현금 목표·강도 설정
+- `hs_signal_journal`: StockDetail 종목별 HERD 판단 기록
 - `herdsignal_currency`: 통화 표시 모드
 
 ---

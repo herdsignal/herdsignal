@@ -22,6 +22,7 @@ import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { buildDecision } from '../../utils/decision'
 import { formatSignalDurationDetail } from '../../utils/signalDuration'
+import { appendSignalJournal, formatJournalTime, readSignalJournal } from '../../utils/signalJournal'
 import styles      from './StockDetail.module.css'
 
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
@@ -450,6 +451,15 @@ function currentSignalReliability(herdData, reliability) {
   }
 }
 
+function journalActionLabel(type) {
+  switch (type) {
+    case 'BUY': return '매수 기록'
+    case 'HOLD': return '보류 기록'
+    case 'SELL': return '익절 기록'
+    default: return '판단 기록'
+  }
+}
+
 /* ── 버튼 레이블 매핑 ─────────────────────── */
 const BTN_LABELS = {
   portfolio: {
@@ -487,13 +497,20 @@ export default function StockDetail() {
   const [financialsLoading, setFinancialsLoading] = useState(false)
   const [portfolio,        setPortfolio]         = useState([])
   const [portfolioSummary, setPortfolioSummary]  = useState(null)
+  const [signalLogs,       setSignalLogs]        = useState([])
+
+  const normalizedTicker = ticker.toUpperCase()
+
+  useEffect(() => {
+    setSignalLogs(readSignalJournal(normalizedTicker).slice(0, 5))
+  }, [normalizedTicker])
 
   /* HERD 데이터 조회 */
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const res  = await getStockHerd(ticker.toUpperCase())
+      const res  = await getStockHerd(normalizedTicker)
       const data = res.data?.data
       if (data) {
         setHerdData(data)
@@ -507,7 +524,7 @@ export default function StockDetail() {
     } finally {
       setLoading(false)
     }
-  }, [ticker])
+  }, [normalizedTicker, ticker])
 
   useEffect(() => { fetchData() }, [fetchData])
 
@@ -529,38 +546,38 @@ export default function StockDetail() {
   useEffect(() => {
     setHistoryLoading(true)
     setHerdHistory([])
-    getStockHerdHistory(ticker.toUpperCase(), historyPeriod)
+    getStockHerdHistory(normalizedTicker, historyPeriod)
       .then((res) => { setHerdHistory(res.data?.data?.points ?? []) })
       .catch(() => { setHerdHistory([]) })
       .finally(() => { setHistoryLoading(false) })
-  }, [ticker, historyPeriod])
+  }, [normalizedTicker, historyPeriod])
 
   /* HERD 신호 신뢰도 — 저장된 HERD 히스토리와 가격 데이터 기반 */
   useEffect(() => {
     setReliabilityLoading(true)
     setReliability(null)
-    getStockHerdReliability(ticker.toUpperCase(), 3)
+    getStockHerdReliability(normalizedTicker, 3)
       .then((res) => { setReliability(res.data?.data ?? null) })
       .catch(() => { setReliability(null) })
       .finally(() => { setReliabilityLoading(false) })
-  }, [ticker])
+  }, [normalizedTicker])
 
   /* Fundamental Guard — HERD 판단을 막을 재무 경고만 확인 */
   useEffect(() => {
     setFinancialsLoading(true)
     setFinancials(null)
-    getStockFinancials(ticker.toUpperCase())
+    getStockFinancials(normalizedTicker)
       .then((res) => { setFinancials(res.data?.data ?? null) })
       .catch(() => { setFinancials(null) })
       .finally(() => { setFinancialsLoading(false) })
-  }, [ticker])
+  }, [normalizedTicker])
 
   /* 포트폴리오 추가 */
   async function handleAddPortfolio() {
     if (portfolioStatus !== 'idle') return
     setPortfolioStatus('loading')
     try {
-      await addToPortfolio(ticker.toUpperCase())
+      await addToPortfolio(normalizedTicker)
       setPortfolioStatus('added')
     } catch (e) {
       setPortfolioStatus(e.response?.status === 409 ? 'exists' : 'idle')
@@ -572,7 +589,7 @@ export default function StockDetail() {
     if (watchlistStatus !== 'idle') return
     setWatchlistStatus('loading')
     try {
-      await addToWatchlist(ticker.toUpperCase())
+      await addToWatchlist(normalizedTicker)
       setWatchlistStatus('added')
     } catch (e) {
       setWatchlistStatus(e.response?.status === 409 ? 'exists' : 'idle')
@@ -588,12 +605,12 @@ export default function StockDetail() {
   const sigStyle   = signalStyle(herdData?.signal)
   const qualityColor = qualityTone(herdData?.qualityLevel)
   const actionColor = actionTone(herdData?.actionGrade, herdData?.signal)
-  const holding    = portfolio.find((item) => item.ticker === ticker.toUpperCase()) ?? null
+  const holding    = portfolio.find((item) => item.ticker === normalizedTicker) ?? null
   const decision   = useMemo(() => buildDecision({
-    herdData: { ...herdData, ticker: ticker.toUpperCase() },
+    herdData: { ...herdData, ticker: normalizedTicker },
     holding,
     summary: portfolioSummary,
-  }), [herdData, holding, portfolioSummary, ticker])
+  }), [herdData, holding, portfolioSummary, normalizedTicker])
   const currentReliability = useMemo(
     () => currentSignalReliability(herdData, reliability),
     [herdData, reliability]
@@ -612,6 +629,21 @@ export default function StockDetail() {
     return [{ date: herdData.scoreDate, score: herdScore }]
   }, [herdHistory, herdData, herdScore])
 
+  function handleJournalAction(actionType) {
+    const next = appendSignalJournal({
+      ticker: normalizedTicker,
+      actionType,
+      actionLabel: journalActionLabel(actionType),
+      scoreDate: herdData.scoreDate,
+      herdScore: Math.round(herdScore),
+      herdStage: stageDisp,
+      signal: herdData.signal,
+      signalLabel: herdData.actionLabel ?? decision.title,
+      actionRatio: herdData.actionRatio,
+    })
+    setSignalLogs(next)
+  }
+
   return (
     <div>
 
@@ -621,20 +653,20 @@ export default function StockDetail() {
           포트폴리오
         </span>
         <span className={styles.breadcrumbSep}>/</span>
-        <span className={styles.breadcrumbCurrent}>{ticker.toUpperCase()}</span>
+        <span className={styles.breadcrumbCurrent}>{normalizedTicker}</span>
       </div>
 
       {/* ── 종목 헤더 ── */}
       <div className={styles.stockHeader}>
         <div className={styles.stockHeaderLeft}>
           <StockAvatar
-            ticker={ticker}
+            ticker={normalizedTicker}
             logoUrl={herdData?.logoUrl}
             size="lg"
             tone={herdData ? badgeColors(herdStage) : undefined}
           />
           <div>
-            <div className={styles.stockTicker}>{ticker.toUpperCase()}</div>
+            <div className={styles.stockTicker}>{normalizedTicker}</div>
             <div className={styles.stockFullname}>
               {[herdData?.companyName, herdData?.sector].filter(Boolean).join(' · ') || '미국 주식'}
             </div>
@@ -794,6 +826,47 @@ export default function StockDetail() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* 내 판단 기록 카드 */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <div className={styles.cardTitle}>내 판단 기록</div>
+                  <div className={styles.cardMeta}>HERD 신호를 보고 남긴 실사용 로그</div>
+                </div>
+                <div className={styles.cardMeta}>local</div>
+              </div>
+              <div className={styles.cardBodySmall}>
+                <div className={styles.journalActions}>
+                  <button type="button" className={styles.journalBtn} onClick={() => handleJournalAction('BUY')}>
+                    매수 기록
+                  </button>
+                  <button type="button" className={styles.journalBtn} onClick={() => handleJournalAction('HOLD')}>
+                    보류 기록
+                  </button>
+                  <button type="button" className={styles.journalBtn} onClick={() => handleJournalAction('SELL')}>
+                    익절 기록
+                  </button>
+                </div>
+                {signalLogs.length > 0 ? (
+                  <div className={styles.journalList}>
+                    {signalLogs.slice(0, 3).map((log) => (
+                      <div key={log.id} className={styles.journalItem}>
+                        <span>{formatJournalTime(log.createdAt)}</span>
+                        <strong>{log.actionLabel}</strong>
+                        <em>
+                          HERD {log.herdScore} · {log.signalLabel}
+                        </em>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.journalEmpty}>
+                    아직 기록이 없습니다.
+                  </div>
+                )}
               </div>
             </div>
 

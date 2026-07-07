@@ -665,6 +665,89 @@
 }
 
 /* ────────────────────────────
+   내 판단 기록 카드
+   ──────────────────────────── */
+.journalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.journalBtn {
+  border: 1px solid var(--border2);
+  border-radius: var(--card-radius);
+  background: var(--surface2);
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 12px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.journalBtn:hover {
+  border-color: var(--flee);
+  color: var(--text-1);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.journalList {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--border);
+}
+
+.journalItem {
+  display: grid;
+  grid-template-columns: 120px 100px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 11px 13px;
+  background: var(--surface2);
+}
+
+.journalItem span,
+.journalItem strong,
+.journalItem em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journalItem span {
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+.journalItem strong {
+  color: var(--text-1);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.journalItem em {
+  color: var(--text-2);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.journalEmpty {
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 14px;
+  background: var(--surface2);
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+/* ────────────────────────────
    Fundamental Guard 카드
    ──────────────────────────── */
 .fundamentalBadge {
@@ -780,6 +863,11 @@
   .reliabilityGrid,
   .fundamentalGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journalItem {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
   }
 
   .decisionHero,
