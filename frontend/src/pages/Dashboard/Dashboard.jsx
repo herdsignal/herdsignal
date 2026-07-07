@@ -56,6 +56,13 @@ import {
   rebalanceIdeas,
   writeTargetWeights,
 } from '../../utils/portfolioTools'
+import {
+  formatJournalAmount,
+  formatJournalCount,
+  formatJournalProfit,
+  readSignalJournal,
+  summarizeSignalJournal,
+} from '../../utils/signalJournal'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import HerdDots      from '../../components/HerdDots/HerdDots'
 import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
@@ -653,6 +660,7 @@ export default function Dashboard() {
   const [assetHistory,   setAssetHistory]   = useState([])
   const [assetHistoryLoading, setAssetHistoryLoading] = useState(false)
   const [assetHistoryError, setAssetHistoryError] = useState(null)
+  const [signalLogs,     setSignalLogs]     = useState(() => readSignalJournal())
   const refreshNoticeTimer = useRef(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
@@ -762,6 +770,16 @@ export default function Dashboard() {
   }, [assetPanelOpen, fetchAssetHistory])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  useEffect(() => {
+    const syncSignalLogs = () => setSignalLogs(readSignalJournal())
+    window.addEventListener('focus', syncSignalLogs)
+    window.addEventListener('storage', syncSignalLogs)
+    return () => {
+      window.removeEventListener('focus', syncSignalLogs)
+      window.removeEventListener('storage', syncSignalLogs)
+    }
+  }, [])
 
   useEffect(() => () => {
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
@@ -992,6 +1010,16 @@ export default function Dashboard() {
   const y1AvgPoint = useMemo(
     () => averageScoreForLastDays(spyStatsHistory, 365, spyScore),
     [spyStatsHistory, spyScore]
+  )
+
+  const signalJournalSummary = useMemo(
+    () => summarizeSignalJournal(signalLogs),
+    [signalLogs]
+  )
+
+  const recentSignalLogs = useMemo(
+    () => signalLogs.slice(0, 3),
+    [signalLogs]
   )
 
   /*
@@ -1438,6 +1466,65 @@ export default function Dashboard() {
                   maximumFractionDigits: 1,
                 })} · 15분 지연`}
               </span>
+            </div>
+          )}
+
+          {signalJournalSummary.totalCount > 0 && (
+            <div className={styles.journalOverview}>
+              <div className={styles.journalOverviewHead}>
+                <div>
+                  <span>판단 기록</span>
+                  <strong>{formatJournalCount(signalJournalSummary.totalCount)}</strong>
+                </div>
+                <button
+                  type="button"
+                  className={styles.journalOverviewLink}
+                  onClick={() => {
+                    const firstTicker = recentSignalLogs[0]?.ticker
+                    if (firstTicker) navigate(`/stock/${firstTicker}`)
+                  }}
+                  disabled={recentSignalLogs.length === 0}
+                >
+                  최근 기록 보기
+                </button>
+              </div>
+              <div className={styles.journalOverviewStats}>
+                <div>
+                  <span>매수 총액</span>
+                  <strong>{formatJournalAmount(signalJournalSummary.buyAmount) ?? '$0'}</strong>
+                  <em>{formatJournalCount(signalJournalSummary.buyCount)}</em>
+                </div>
+                <div>
+                  <span>익절 총액</span>
+                  <strong>{formatJournalAmount(signalJournalSummary.sellAmount) ?? '$0'}</strong>
+                  <em>{formatJournalCount(signalJournalSummary.sellCount)}</em>
+                </div>
+                <div>
+                  <span>평균 익절률</span>
+                  <strong>
+                    {signalJournalSummary.hasProfitData
+                      ? formatJournalProfit(signalJournalSummary.avgProfitPct)
+                      : '—'}
+                  </strong>
+                  <em>익절 기록 기준</em>
+                </div>
+              </div>
+              {recentSignalLogs.length > 0 && (
+                <div className={styles.journalRecentList}>
+                  {recentSignalLogs.map((log) => (
+                    <button
+                      key={log.id}
+                      type="button"
+                      className={styles.journalRecentItem}
+                      onClick={() => navigate(`/stock/${log.ticker}`)}
+                    >
+                      <strong>{log.ticker}</strong>
+                      <span>{log.actionLabel ?? log.actionType ?? '기록'}</span>
+                      <em>{formatJournalAmount(log.amount) ?? `HERD ${log.herdScore ?? '—'}`}</em>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </>
