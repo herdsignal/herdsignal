@@ -24,6 +24,7 @@ src/
 │   ├── Search/     종목 검색 & 추가
 │   ├── Watchlist/  관심 종목
 │   ├── HerdLab/    HERD 검증과 방법론
+│   ├── Journal/    전체 HERD 판단 기록
 │   ├── AiRebalance/ 리밸런싱 플랜
 │   ├── HerdFlowPreview/ Herd Flow 확인용
 │   └── History/    자산 기록
@@ -64,7 +65,7 @@ Rush    #EF4444  (레드)
 
 ## 현재 구현된 페이지
 - 사이드바 노출 메뉴는 MVP 기준으로 Dashboard, Watchlist, Search, HerdLab만 유지한다.
-- AiRebalance(`/ai`), History(`/history`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
+- AiRebalance(`/ai`), History(`/history`), Journal(`/journal`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
 - Dashboard (`/`)
   - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
   - 총자산 요약 (주식 평가액 + 현금 보유액)
@@ -124,6 +125,10 @@ Rush    #EF4444  (레드)
   - HERD 5단계 행동 매트릭스와 v4 가중치 표시
   - 설명문은 최소화하고 모델 버전·검증 기간·핵심 성과 수치 중심으로 표시
   - 표시 데이터는 `src/data/herdModelReport.js`에서 관리하며 JSX에 백테스트 숫자를 직접 하드코딩하지 않는다.
+- Journal (`/journal`)
+  - `hs_signal_journal` 전체 기록을 종목/액션/가격/수량/총액/수익률/HERD/날짜 테이블로 표시
+  - 전체/매수/익절/보류 필터와 매수·익절 금액, 평균 익절률 요약 표시
+  - Dashboard 판단 기록 요약에서 진입하며, 사이드바에는 노출하지 않는다.
 - AiRebalance (`/ai`)
   - 목표 비중·현금 목표·리밸런싱 예산 설정
   - 보수적/표준/공격적 리밸런싱 강도 선택

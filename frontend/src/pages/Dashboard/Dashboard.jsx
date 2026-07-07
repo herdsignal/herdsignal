@@ -1593,13 +1593,9 @@ export default function Dashboard() {
                 <button
                   type="button"
                   className={styles.journalOverviewLink}
-                  onClick={() => {
-                    const firstTicker = recentSignalLogs[0]?.ticker
-                    if (firstTicker) navigate(`/stock/${firstTicker}`)
-                  }}
-                  disabled={recentSignalLogs.length === 0}
+                  onClick={() => navigate('/journal')}
                 >
-                  최근 기록 보기
+                  전체 기록 보기
                 </button>
               </div>
               <div className={styles.journalOverviewStats}>

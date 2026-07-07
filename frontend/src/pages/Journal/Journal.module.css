@@ -1,0 +1,291 @@
+/* Journal.module.css — 전체 HERD 판단 기록 */
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pageDate {
+  color: var(--text-3);
+  font-size: 12px;
+  letter-spacing: 0;
+  margin-bottom: 6px;
+}
+
+.pageTitle {
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.filterTabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--surface2);
+}
+
+.filterBtn {
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 7px 14px;
+  transition: background var(--t-fast), color var(--t-fast);
+  white-space: nowrap;
+}
+
+.filterBtn:hover {
+  color: var(--text-1);
+}
+
+.filterBtnActive {
+  background: var(--text-1);
+  color: var(--bg);
+}
+
+.filterBtnActive:hover {
+  color: var(--bg);
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.summaryCard {
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
+    var(--surface);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14);
+}
+
+:global(body.light) .summaryCard {
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+.summaryCard span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.summaryCard strong {
+  display: block;
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-bottom: 7px;
+}
+
+.summaryCard em {
+  color: var(--text-3);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.tableCard {
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
+    var(--surface);
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+}
+
+:global(body.light) .tableCard {
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.tableHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tableHead span {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.tableHead strong {
+  color: var(--text-1);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid var(--border);
+  padding: 13px 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table th {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.table td {
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.table tbody tr {
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+
+.table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tickerBtn {
+  border: none;
+  background: transparent;
+  color: var(--text-1);
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+  padding: 0;
+}
+
+.actionBadge {
+  display: inline-flex;
+  align-items: center;
+  min-width: 52px;
+  justify-content: center;
+  border-radius: 6px;
+  background: rgba(163, 170, 184, 0.14);
+  color: var(--calm);
+  font-size: 11px;
+  font-weight: 900;
+  padding: 5px 8px;
+}
+
+.buy {
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--flee);
+}
+
+.sell {
+  background: rgba(239, 68, 68, 0.14);
+  color: var(--rush);
+}
+
+.hold {
+  background: rgba(163, 170, 184, 0.14);
+  color: var(--calm);
+}
+
+.positive {
+  color: #22C55E !important;
+}
+
+.negative {
+  color: var(--rush) !important;
+}
+
+.emptyState {
+  display: flex;
+  min-height: 220px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-3);
+}
+
+.emptyState strong {
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.emptyState span {
+  font-size: 12px;
+}
+
+@media (max-width: 1000px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .pageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .filterTabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .filterBtn {
+    flex: 1 0 auto;
+  }
+
+  .summaryGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
