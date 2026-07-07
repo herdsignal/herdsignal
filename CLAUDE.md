@@ -252,7 +252,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 - [x] Tier 2 on-demand HERD 계산
   - 상세/검색 조회 시 DB에 최신 데이터가 없으면 Python 즉시 계산
   - `CACHE_DAYS=7`
-  - `user_id='cache'`로 캐시 티커 저장
+  - `herd_scores` 최신 날짜 기준 캐시 판정
 - [x] Tier 3 실시간 포트폴리오 평가
   - yfinance 현재가 기반 계산
   - portfolio_history 오늘 스냅샷 UPSERT

@@ -11,7 +11,7 @@ Tier 1 — 매일 자동 업데이트 (run_herd_job)
 Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
   대상: 검색/조회 요청이 들어온 임의의 티커
   → 7일 이내 데이터가 있으면 캐시 반환 (재계산 없음)
-  → 없거나 만료됐으면 즉시 계산 후 user_id='cache'로 저장
+  → 없거나 만료됐으면 즉시 계산 후 herd_scores에 저장
 ────────────────────────────────────────────────────────
 
 실행:
@@ -205,7 +205,6 @@ def calculate_on_demand(ticker: str, force: bool = False) -> dict:
       1. herd_scores 테이블에서 해당 ticker의 최신 데이터 조회
       2. force=False이고 CACHE_DAYS(7일) 이내 데이터 있음 → 캐시에서 바로 반환
       3. force=True이거나 데이터 없거나 7일 이상 지남 → 즉시 계산 후 DB 저장
-         - user_portfolio에 user_id='cache'로 티커 등록 (없으면)
          - herd_scores / herd_indicators / daily_prices / stocks 업데이트
 
     Args:
@@ -278,16 +277,6 @@ def calculate_on_demand(ticker: str, force: bool = False) -> dict:
         f"(최신={latest_score.score_date if latest_score else '없음'}) "
         f"실시간 계산 시작"
     )
-
-    # user_portfolio에 cache 사용자로 티커 등록 (없으면 INSERT)
-    with _SessionFactory() as session:
-        cache_entry = session.query(UserPortfolio).filter_by(
-            user_id=_CACHE_USER_ID, ticker=ticker
-        ).first()
-        if not cache_entry:
-            session.add(UserPortfolio(user_id=_CACHE_USER_ID, ticker=ticker))
-            session.commit()
-            logger.info(f"[Tier2][{ticker}] user_portfolio에 캐시 티커 등록")
 
     # 데이터 수집 + HERD 계산 + DB 저장
     df          = collect(ticker)
