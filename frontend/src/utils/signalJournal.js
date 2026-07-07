@@ -26,16 +26,18 @@ export function readSignalJournal(ticker) {
 }
 
 export function appendSignalJournal(entry) {
+  const ticker = entry.ticker?.toUpperCase()
   const next = [
     {
-      id: `${Date.now()}-${entry.ticker}`,
+      id: `${Date.now()}-${ticker}`,
       createdAt: new Date().toISOString(),
       ...entry,
+      ticker,
     },
     ...readAll(),
   ]
   writeAll(next)
-  return next.filter((item) => item.ticker === entry.ticker).slice(0, 5)
+  return next.filter((item) => item.ticker === ticker).slice(0, 5)
 }
 
 export function removeSignalJournal(id, ticker) {
@@ -54,4 +56,32 @@ export function formatJournalTime(value) {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+export function formatJournalPrice(value) {
+  if (value == null) return null
+  const n = Number(value)
+  if (!Number.isFinite(n)) return null
+  return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+}
+
+export function formatJournalQuantity(value) {
+  if (value == null) return null
+  const n = Number(value)
+  if (!Number.isFinite(n)) return null
+  return `${n.toLocaleString(undefined, { maximumFractionDigits: 4 })}주`
+}
+
+export function formatJournalAmount(value) {
+  if (value == null) return null
+  const n = Number(value)
+  if (!Number.isFinite(n)) return null
+  return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+}
+
+export function formatJournalProfit(value) {
+  if (value == null) return null
+  const n = Number(value)
+  if (!Number.isFinite(n)) return null
+  return `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
 }

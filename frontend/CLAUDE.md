@@ -16,7 +16,8 @@ src/
 │   ├── SpectrumBar/ Flee~Rush 스펙트럼 바
 │   ├── StockAvatar/ 회사 로고 + 티커 fallback 아바타
 │   ├── Layout/     사이드바 + Outlet 레이아웃
-│   └── AvgPriceModal/ 평균 매수가·수량 수정 모달
+│   ├── AvgPriceModal/ 평균 매수가·수량 수정 모달
+│   └── SignalJournalModal/ HERD 판단 기록 입력 모달
 ├── pages/          화면 단위
 │   ├── Dashboard/  포트폴리오 대시보드
 │   ├── StockDetail/ 종목 상세
@@ -86,6 +87,7 @@ Rush    #EF4444  (레드)
   - HERD v4 점수/단계/Timing Signal
   - Action Layer 행동 점수/행동 비율/세부 국면 표시
   - 현재 HERD 판단을 움직인 핵심 근거 데이터 보드
+  - HERD 판단 기록: 매수/보류/익절 판단 시 가격·수량·총액·수익률·메모를 `hs_signal_journal`에 저장
   - 최근 3년 HERD 신호 신뢰도 데이터 보드
   - 1M/3M/1Y/3Y HERD Index 히스토리 차트
   - Fundamental Guard: 시가총액/PER/EPS/영업이익률/매출 기반 재무 경고 필터

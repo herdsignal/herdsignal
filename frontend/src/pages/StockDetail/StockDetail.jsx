@@ -20,10 +20,15 @@ import HerdDots    from '../../components/HerdDots/HerdDots'
 import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
+import SignalJournalModal from '../../components/SignalJournalModal/SignalJournalModal'
 import { buildDecision } from '../../utils/decision'
 import { formatSignalDurationDetail } from '../../utils/signalDuration'
 import {
   appendSignalJournal,
+  formatJournalAmount,
+  formatJournalPrice,
+  formatJournalProfit,
+  formatJournalQuantity,
   formatJournalTime,
   readSignalJournal,
   removeSignalJournal,
@@ -503,6 +508,7 @@ export default function StockDetail() {
   const [portfolio,        setPortfolio]         = useState([])
   const [portfolioSummary, setPortfolioSummary]  = useState(null)
   const [signalLogs,       setSignalLogs]        = useState([])
+  const [journalAction,    setJournalAction]     = useState(null)
 
   const normalizedTicker = ticker.toUpperCase()
 
@@ -634,7 +640,7 @@ export default function StockDetail() {
     return [{ date: herdData.scoreDate, score: herdScore }]
   }, [herdHistory, herdData, herdScore])
 
-  function handleJournalAction(actionType) {
+  function handleJournalAction(actionType, details = {}) {
     const next = appendSignalJournal({
       ticker: normalizedTicker,
       actionType,
@@ -645,8 +651,16 @@ export default function StockDetail() {
       signal: herdData.signal,
       signalLabel: herdData.actionLabel ?? decision.title,
       actionRatio: herdData.actionRatio,
+      signalDurationDays: herdData.signalDurationDays,
+      stageDurationDays: herdData.stageDurationDays,
+      price: details.price,
+      quantity: details.quantity,
+      amount: details.amount,
+      profitPct: details.profitPct,
+      memo: details.memo,
     })
     setSignalLogs(next)
+    setJournalAction(null)
   }
 
   function handleJournalDelete(id) {
@@ -849,13 +863,13 @@ export default function StockDetail() {
               </div>
               <div className={styles.cardBodySmall}>
                 <div className={styles.journalActions}>
-                  <button type="button" className={styles.journalBtn} onClick={() => handleJournalAction('BUY')}>
+                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('BUY')}>
                     매수 기록
                   </button>
-                  <button type="button" className={styles.journalBtn} onClick={() => handleJournalAction('HOLD')}>
+                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('HOLD')}>
                     보류 기록
                   </button>
-                  <button type="button" className={styles.journalBtn} onClick={() => handleJournalAction('SELL')}>
+                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('SELL')}>
                     익절 기록
                   </button>
                 </div>
@@ -866,8 +880,14 @@ export default function StockDetail() {
                         <span>{formatJournalTime(log.createdAt)}</span>
                         <strong>{log.actionLabel}</strong>
                         <em>
-                          HERD {log.herdScore} · {log.signalLabel}
+                          {[
+                            formatJournalPrice(log.price),
+                            formatJournalQuantity(log.quantity),
+                            formatJournalAmount(log.amount),
+                            formatJournalProfit(log.profitPct),
+                          ].filter(Boolean).join(' · ') || `HERD ${log.herdScore} · ${log.signalLabel}`}
                         </em>
+                        {log.memo && <small>{log.memo}</small>}
                         <button
                           type="button"
                           className={styles.journalDelete}
@@ -1120,6 +1140,19 @@ export default function StockDetail() {
 
           </div>
         </div>
+      )}
+      {journalAction && (
+        <SignalJournalModal
+          ticker={normalizedTicker}
+          actionType={journalAction}
+          herdSnapshot={{
+            score: Math.round(herdScore),
+            stage: stageDisp,
+            signalLabel: herdData?.actionLabel ?? decision.title,
+          }}
+          onClose={() => setJournalAction(null)}
+          onSave={(details) => handleJournalAction(journalAction, details)}
+        />
       )}
     </div>
   )

@@ -704,7 +704,7 @@
 
 .journalItem {
   display: grid;
-  grid-template-columns: 120px 100px minmax(0, 1fr) 44px;
+  grid-template-columns: 120px 100px minmax(0, 1fr) minmax(0, 160px) 44px;
   align-items: center;
   gap: 12px;
   min-width: 0;
@@ -714,7 +714,8 @@
 
 .journalItem span,
 .journalItem strong,
-.journalItem em {
+.journalItem em,
+.journalItem small {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -735,6 +736,12 @@
   color: var(--text-2);
   font-size: 11px;
   font-style: normal;
+  font-weight: 600;
+}
+
+.journalItem small {
+  color: var(--text-3);
+  font-size: 11px;
   font-weight: 600;
 }
 
