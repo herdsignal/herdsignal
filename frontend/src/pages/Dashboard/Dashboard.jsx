@@ -82,6 +82,7 @@ const CACHE_KEY_SPY_HISTORY_VERSION = 'v2'
 const CACHE_KEY_TIME        = 'hs_cache_time'
 const CACHE_KEY_VERSION     = 'hs_dashboard_cache_version'
 const CACHE_KEY_PORTFOLIO_SORT = 'hs_dashboard_sort'
+const CACHE_KEY_ASSET_BASELINE = 'hs_asset_baseline'
 const DASHBOARD_CACHE_VERSION = 'v3-logo'
 
 const HISTORY_PERIODS = [
@@ -121,6 +122,40 @@ function writeCache(key, data) {
   try {
     localStorage.setItem(key, JSON.stringify(data))
   } catch { /* 용량 초과 등 무시 */ }
+}
+
+function readAssetBaseline() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY_ASSET_BASELINE)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    const value = Number(parsed?.value)
+    if (!parsed?.date || !Number.isFinite(value) || value <= 0) return null
+    return { date: parsed.date, value }
+  } catch {
+    return null
+  }
+}
+
+function writeAssetBaseline(baseline) {
+  try {
+    localStorage.setItem(CACHE_KEY_ASSET_BASELINE, JSON.stringify(baseline))
+  } catch { /* localStorage 실패 무시 */ }
+}
+
+function formatInputDate(value) {
+  const date = value ? new Date(value) : new Date()
+  if (Number.isNaN(date.getTime())) return ''
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+}
+
+function isOnOrAfterDate(dateValue, baselineDate) {
+  if (!baselineDate) return true
+  const current = new Date(dateValue)
+  const baseline = new Date(baselineDate)
+  if (Number.isNaN(current.getTime()) || Number.isNaN(baseline.getTime())) return true
+  return current >= baseline
 }
 
 function spyHistoryCacheKey(period) {
@@ -660,6 +695,12 @@ export default function Dashboard() {
   const [assetHistory,   setAssetHistory]   = useState([])
   const [assetHistoryLoading, setAssetHistoryLoading] = useState(false)
   const [assetHistoryError, setAssetHistoryError] = useState(null)
+  const [assetBaseline, setAssetBaseline] = useState(() => readAssetBaseline())
+  const [assetBaselineDateDraft, setAssetBaselineDateDraft] = useState(() => readAssetBaseline()?.date ?? '')
+  const [assetBaselineValueDraft, setAssetBaselineValueDraft] = useState(() => {
+    const baseline = readAssetBaseline()
+    return baseline ? String(baseline.value) : ''
+  })
   const [signalLogs,     setSignalLogs]     = useState(() => readSignalJournal())
   const refreshNoticeTimer = useRef(null)
 
@@ -1086,24 +1127,56 @@ export default function Dashboard() {
     [portfolio, rows, herdMap, portfolioSort]
   )
   const rebalanceRows = useMemo(() => rebalanceIdeas(rows), [rows])
-  const assetLatest = assetHistory.length > 0 ? assetHistory[assetHistory.length - 1] : null
-  const assetFirst = assetHistory.length > 0 ? assetHistory[0] : null
-  const assetPeak = assetHistory.length > 0
-    ? assetHistory.reduce((best, point) =>
+  const assetChartHistory = assetBaseline?.date
+    ? assetHistory.filter((point) => isOnOrAfterDate(point.date, assetBaseline.date))
+    : assetHistory
+  const assetLatest = assetChartHistory.length > 0 ? assetChartHistory[assetChartHistory.length - 1] : null
+  const assetFirst = assetChartHistory.length > 0 ? assetChartHistory[0] : null
+  const assetStartValue = assetBaseline?.value ?? assetFirst?.totalAssetValue ?? null
+  const assetPeak = assetChartHistory.length > 0
+    ? assetChartHistory.reduce((best, point) =>
         Number(point.totalAssetValue) > Number(best.totalAssetValue) ? point : best
-      , assetHistory[0])
+      , assetChartHistory[0])
     : null
-  const assetStartPct = assetFirst?.totalAssetValue && assetLatest?.totalAssetValue
-    ? (assetLatest.totalAssetValue / assetFirst.totalAssetValue - 1) * 100
+  const assetStartPct = assetStartValue && assetLatest?.totalAssetValue
+    ? (assetLatest.totalAssetValue / assetStartValue - 1) * 100
     : null
   const assetDrawdownPct = assetPeak?.totalAssetValue && assetLatest?.totalAssetValue
     ? (assetLatest.totalAssetValue / assetPeak.totalAssetValue - 1) * 100
     : null
-  const assetValues = assetHistory.map((p) => p.totalAssetValue)
+  const assetValues = assetChartHistory.map((p) => p.totalAssetValue)
+  if (assetStartValue) assetValues.push(assetStartValue)
   const assetMin = assetValues.length > 0 ? Math.min(...assetValues) : 0
   const assetMax = assetValues.length > 0 ? Math.max(...assetValues) : 1000
   const assetPadding = (assetMax - assetMin) * 0.08 || 100
   const assetYDomain = [Math.max(0, assetMin - assetPadding), assetMax + assetPadding]
+  const assetBaselineLabel = assetBaseline
+    ? `${assetBaseline.date} · ${displayAmount(assetBaseline.value)}`
+    : '미설정'
+
+  const handleAssetBaselineSave = useCallback(() => {
+    const value = Number(assetBaselineValueDraft || 0)
+    const date = assetBaselineDateDraft || formatInputDate(assetLatest?.date)
+    if (!date || !Number.isFinite(value) || value <= 0) return
+
+    const next = { date, value }
+    setAssetBaseline(next)
+    setAssetBaselineDateDraft(date)
+    setAssetBaselineValueDraft(String(value))
+    writeAssetBaseline(next)
+  }, [assetBaselineDateDraft, assetBaselineValueDraft, assetLatest])
+
+  const handleAssetBaselineUseLatest = useCallback(() => {
+    const latestValue = Number(assetLatest?.totalAssetValue ?? summary?.total_value ?? 0)
+    const latestDate = formatInputDate(assetLatest?.date)
+    if (!Number.isFinite(latestValue) || latestValue <= 0 || !latestDate) return
+
+    const next = { date: latestDate, value: latestValue }
+    setAssetBaseline(next)
+    setAssetBaselineDateDraft(latestDate)
+    setAssetBaselineValueDraft(String(Number(latestValue.toFixed(2))))
+    writeAssetBaseline(next)
+  }, [assetLatest, summary])
 
   function handleTargetWeightChange(ticker, value) {
     const next = { ...targetWeights }
@@ -1401,19 +1474,53 @@ export default function Dashboard() {
                 </div>
               </div>
 
+              <div className={styles.assetBaselineBox}>
+                <div className={styles.assetBaselineInfo}>
+                  <span>추적 기준점</span>
+                  <strong>{assetBaselineLabel}</strong>
+                </div>
+                <div className={styles.assetBaselineControls}>
+                  <input
+                    type="date"
+                    value={assetBaselineDateDraft}
+                    onChange={(e) => setAssetBaselineDateDraft(e.target.value)}
+                    aria-label="자산 추적 기준일"
+                  />
+                  <div className={styles.assetBaselineAmount}>
+                    <span>$</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputMode="decimal"
+                      value={assetBaselineValueDraft}
+                      onChange={(e) => setAssetBaselineValueDraft(e.target.value)}
+                      placeholder="기준 총자산"
+                      aria-label="자산 추적 기준 총자산"
+                    />
+                  </div>
+                  <button type="button" onClick={handleAssetBaselineSave}>
+                    저장
+                  </button>
+                  <button type="button" onClick={handleAssetBaselineUseLatest}>
+                    현재값
+                  </button>
+                </div>
+              </div>
+
               {assetHistoryLoading && (
                 <div className={styles.assetState}>히스토리 로딩 중…</div>
               )}
               {!assetHistoryLoading && assetHistoryError && (
                 <div className={styles.assetState}>{assetHistoryError}</div>
               )}
-              {!assetHistoryLoading && !assetHistoryError && assetHistory.length === 0 && (
+              {!assetHistoryLoading && !assetHistoryError && assetChartHistory.length === 0 && (
                 <div className={styles.assetState}>아직 자산 히스토리가 없습니다.</div>
               )}
-              {!assetHistoryLoading && !assetHistoryError && assetHistory.length > 0 && (
+              {!assetHistoryLoading && !assetHistoryError && assetChartHistory.length > 0 && (
                 <ResponsiveContainer width="100%" height={240}>
                   <LineChart
-                    data={assetHistory}
+                    data={assetChartHistory}
                     margin={{ top: 12, right: 14, left: 0, bottom: 0 }}
                   >
                     <CartesianGrid strokeDasharray="4 6" stroke="var(--border)" vertical={false} />
@@ -1441,12 +1548,19 @@ export default function Dashboard() {
                         strokeDasharray="4 4"
                       />
                     )}
+                    {assetStartValue != null && (
+                      <ReferenceLine
+                        y={assetStartValue}
+                        stroke="rgba(59, 130, 246, 0.45)"
+                        strokeDasharray="5 5"
+                      />
+                    )}
                     <Line
                       type="monotone"
                       dataKey="totalAssetValue"
                       stroke="var(--flee)"
                       strokeWidth={2.5}
-                      dot={assetHistory.length === 1
+                      dot={assetChartHistory.length === 1
                         ? { r: 5, fill: 'var(--flee)', strokeWidth: 0 }
                         : false
                       }

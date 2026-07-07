@@ -650,6 +650,118 @@
   letter-spacing: 0;
 }
 
+.assetBaselineBox {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.7fr) minmax(0, 1.3fr);
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  border-radius: var(--card-radius);
+  background: rgba(59, 130, 246, 0.06);
+}
+
+:global(body.light) .assetBaselineBox {
+  background: rgba(59, 130, 246, 0.045);
+}
+
+.assetBaselineInfo {
+  min-width: 0;
+}
+
+.assetBaselineInfo span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.assetBaselineInfo strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text-1);
+  font-size: 12px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assetBaselineControls {
+  display: grid;
+  grid-template-columns: 134px minmax(150px, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.assetBaselineControls input,
+.assetBaselineControls button,
+.assetBaselineAmount {
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--surface2);
+  color: var(--text-1);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.assetBaselineControls input {
+  min-width: 0;
+  padding: 0 10px;
+  outline: none;
+}
+
+.assetBaselineControls input::-webkit-outer-spin-button,
+.assetBaselineControls input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.assetBaselineControls input[type='number'] {
+  appearance: textfield;
+}
+
+.assetBaselineAmount {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 0 10px;
+}
+
+.assetBaselineAmount span {
+  color: var(--text-3);
+  font-weight: 800;
+}
+
+.assetBaselineAmount input {
+  width: 100%;
+  height: auto;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.assetBaselineControls button {
+  cursor: pointer;
+  padding: 0 12px;
+  transition: border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
+  white-space: nowrap;
+}
+
+.assetBaselineControls button:hover {
+  transform: translateY(-1px);
+  border-color: var(--border2);
+  color: var(--flee);
+}
+
 .assetState {
   min-height: 190px;
   display: flex;
@@ -1622,6 +1734,14 @@
     width: 100%;
     min-width: 0;
   }
+
+  .assetBaselineBox {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .assetBaselineControls {
+    grid-template-columns: 134px minmax(150px, 1fr) auto auto;
+  }
 }
 
 @media (max-width: 720px) {
@@ -1700,6 +1820,22 @@
   }
 
   .cashSaveBtn {
+    width: 100%;
+  }
+
+  .assetStats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .assetPanelHeader {
+    flex-direction: column;
+  }
+
+  .assetBaselineControls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .assetBaselineControls button {
     width: 100%;
   }
 }
