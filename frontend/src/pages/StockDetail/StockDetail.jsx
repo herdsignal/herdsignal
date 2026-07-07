@@ -30,8 +30,10 @@ import {
   formatJournalProfit,
   formatJournalQuantity,
   formatJournalTime,
+  formatJournalCount,
   readSignalJournal,
   removeSignalJournal,
+  summarizeSignalJournal,
 } from '../../utils/signalJournal'
 import styles      from './StockDetail.module.css'
 
@@ -634,6 +636,10 @@ export default function StockDetail() {
     () => buildSignalEvidence(herdData),
     [herdData]
   )
+  const journalSummary = useMemo(
+    () => summarizeSignalJournal(signalLogs),
+    [signalLogs]
+  )
   const historyPoints = useMemo(() => {
     if (herdHistory.length > 0) return herdHistory
     if (!herdData?.scoreDate) return []
@@ -859,9 +865,26 @@ export default function StockDetail() {
                   <div className={styles.cardTitle}>내 판단 기록</div>
                   <div className={styles.cardMeta}>HERD 신호를 보고 남긴 실사용 로그</div>
                 </div>
-                <div className={styles.cardMeta}>local</div>
+                <div className={styles.cardMeta}>{formatJournalCount(journalSummary.totalCount)}</div>
               </div>
               <div className={styles.cardBodySmall}>
+                <div className={styles.journalSummaryGrid}>
+                  <div className={styles.journalSummaryItem}>
+                    <span>매수 기록</span>
+                    <strong>{formatJournalCount(journalSummary.buyCount)}</strong>
+                    <em>{formatJournalAmount(journalSummary.buyAmount) ?? '$0'}</em>
+                  </div>
+                  <div className={styles.journalSummaryItem}>
+                    <span>익절 기록</span>
+                    <strong>{formatJournalCount(journalSummary.sellCount)}</strong>
+                    <em>{formatJournalAmount(journalSummary.sellAmount) ?? '$0'}</em>
+                  </div>
+                  <div className={styles.journalSummaryItem}>
+                    <span>평균 익절률</span>
+                    <strong>{journalSummary.hasProfitData ? formatJournalProfit(journalSummary.avgProfitPct) : '—'}</strong>
+                    <em>입력 기록 기준</em>
+                  </div>
+                </div>
                 <div className={styles.journalActions}>
                   <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('BUY')}>
                     매수 기록

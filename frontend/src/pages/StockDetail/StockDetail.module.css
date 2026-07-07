@@ -674,6 +674,54 @@
   margin-bottom: 12px;
 }
 
+.journalSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--border);
+}
+
+.journalSummaryItem {
+  min-width: 0;
+  padding: 13px 14px;
+  background: var(--surface2);
+}
+
+.journalSummaryItem span,
+.journalSummaryItem strong,
+.journalSummaryItem em {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journalSummaryItem span {
+  margin-bottom: 6px;
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+.journalSummaryItem strong {
+  margin-bottom: 3px;
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.journalSummaryItem em {
+  color: var(--text-3);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+}
+
 .journalBtn {
   border: 1px solid var(--border2);
   border-radius: var(--card-radius);
@@ -885,7 +933,8 @@
 
   .evidenceGrid,
   .reliabilityGrid,
-  .fundamentalGrid {
+  .fundamentalGrid,
+  .journalSummaryGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
