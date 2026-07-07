@@ -532,6 +532,39 @@ function normalizeHistoryPoint(point) {
   }
 }
 
+function currentAssetPoint(summary, cashBalance) {
+  if (!summary) return null
+
+  const investedValue = Number(summary.invested_value ?? 0)
+  const cash = Number(summary.cash_balance ?? cashBalance ?? 0)
+  const totalAssetValue = Number(
+    summary.total_asset_value ?? summary.total_value ?? investedValue + cash
+  )
+  if (!Number.isFinite(totalAssetValue) || totalAssetValue <= 0) return null
+
+  return {
+    date: formatInputDate(),
+    investedValue: Number.isFinite(investedValue) ? investedValue : 0,
+    cashBalance: Number.isFinite(cash) ? cash : 0,
+    totalAssetValue,
+    totalReturnPct: summary.total_return_pct ?? null,
+  }
+}
+
+function mergeCurrentAssetPoint(history, currentPoint) {
+  if (!currentPoint) return history
+
+  const next = [...history]
+  const sameDateIndex = next.findIndex((point) => point.date === currentPoint.date)
+  if (sameDateIndex >= 0) {
+    next[sameDateIndex] = { ...next[sameDateIndex], ...currentPoint }
+  } else {
+    next.push(currentPoint)
+  }
+
+  return next.sort((a, b) => new Date(a.date) - new Date(b.date))
+}
+
 function AssetHistoryTooltip({ active, payload, label, displayAmount }) {
   if (!active || !payload?.length) return null
   const date = new Date(label)
@@ -1127,9 +1160,13 @@ export default function Dashboard() {
     [portfolio, rows, herdMap, portfolioSort]
   )
   const rebalanceRows = useMemo(() => rebalanceIdeas(rows), [rows])
+  const assetHistoryWithCurrent = useMemo(
+    () => mergeCurrentAssetPoint(assetHistory, currentAssetPoint(summary, cashBalance)),
+    [assetHistory, summary, cashBalance]
+  )
   const assetChartHistory = assetBaseline?.date
-    ? assetHistory.filter((point) => isOnOrAfterDate(point.date, assetBaseline.date))
-    : assetHistory
+    ? assetHistoryWithCurrent.filter((point) => isOnOrAfterDate(point.date, assetBaseline.date))
+    : assetHistoryWithCurrent
   const assetLatest = assetChartHistory.length > 0 ? assetChartHistory[assetChartHistory.length - 1] : null
   const assetFirst = assetChartHistory.length > 0 ? assetChartHistory[0] : null
   const assetStartValue = assetBaseline?.value ?? assetFirst?.totalAssetValue ?? null
