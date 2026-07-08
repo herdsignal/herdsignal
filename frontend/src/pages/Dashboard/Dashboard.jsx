@@ -1313,6 +1313,19 @@ export default function Dashboard() {
       </div>
 
       <div className={styles.commandFrame}>
+        <div className={styles.commandFrameTop}>
+          <div>
+            <span>Signal Command Center</span>
+            <strong>현재 시장 신호</strong>
+          </div>
+          <div className={styles.commandFrameMeta}>
+            <span>{lastUpdated ? `업데이트 · ${fmtTime(lastUpdated)}` : '업데이트 대기'}</span>
+            <button type="button" onClick={() => navigate('/herd-lab')}>
+              리포트 보기
+            </button>
+          </div>
+        </div>
+
         {/* ── S&P500 HERD 시장 무대 ── */}
         <div className={styles.marketBanner}>
           {/* 좌: 점수·단계 블록 */}
