@@ -1273,126 +1273,179 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── S&P500 HERD 배너 ── */}
-      <div className={styles.marketBanner}>
-        {/* 좌: 점수·단계 블록 */}
-        <div className={styles.bannerScoreBlock}>
-          <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
-          <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
-            {spyData ? Math.round(spyScore) : '—'}
-          </div>
-          <div className={styles.bannerStage} style={{ color: stageColor(spyStage) }}>
-            {spyStage.startsWith('Herd ') ? spyStage : `Herd ${spyStage}`}
-          </div>
-          <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
-        </div>
-
-        {/* 우: 탭 + 컨텐츠 */}
-        <div className={styles.bannerRight}>
-          {/* 탭 버튼 */}
-          <div className={styles.bannerTabs}>
-            <button
-              className={`${styles.bannerTab} ${spyTab === 'overview' ? styles.bannerTabActive : ''}`}
-              onClick={() => setSpyTab('overview')}
-            >Overview</button>
-            <button
-              className={`${styles.bannerTab} ${spyTab === 'timeline' ? styles.bannerTabActive : ''}`}
-              onClick={() => setSpyTab('timeline')}
-            >Timeline</button>
+      <div className={styles.commandFrame}>
+        {/* ── S&P500 HERD 시장 무대 ── */}
+        <div className={styles.marketBanner}>
+          {/* 좌: 점수·단계 블록 */}
+          <div className={styles.bannerScoreBlock}>
+            <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
+            <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
+              {spyData ? Math.round(spyScore) : '—'}
+            </div>
+            <div className={styles.bannerStage} style={{ color: stageColor(spyStage) }}>
+              {spyStage.startsWith('Herd ') ? spyStage : `Herd ${spyStage}`}
+            </div>
+            <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
           </div>
 
-          {/* Overview 탭 */}
-          {spyTab === 'overview' && (
-            <div className={styles.bannerOverview}>
-              <div className={styles.bannerAnimBlock}>
-                <HerdDots score={spyScore} fill dotCount={60} />
-                <div className={styles.bannerAnimLabel}>
-                  <span>← Flee · 군중 이탈</span>
-                  <span>Rush · 군중 밀집 →</span>
+          {/* 우: 탭 + 컨텐츠 */}
+          <div className={styles.bannerRight}>
+            {/* 탭 버튼 */}
+            <div className={styles.bannerTabs}>
+              <button
+                className={`${styles.bannerTab} ${spyTab === 'overview' ? styles.bannerTabActive : ''}`}
+                onClick={() => setSpyTab('overview')}
+              >Overview</button>
+              <button
+                className={`${styles.bannerTab} ${spyTab === 'timeline' ? styles.bannerTabActive : ''}`}
+                onClick={() => setSpyTab('timeline')}
+              >Timeline</button>
+            </div>
+
+            {/* Overview 탭 */}
+            {spyTab === 'overview' && (
+              <div className={styles.bannerOverview}>
+                <div className={styles.bannerAnimBlock}>
+                  <HerdDots score={spyScore} fill dotCount={60} />
+                  <div className={styles.bannerAnimLabel}>
+                    <span>← Flee · 군중 이탈</span>
+                    <span>Rush · 군중 밀집 →</span>
+                  </div>
+                  <div className={styles.bannerSpectrumOverlay}>
+                    <SpectrumBar score={spyScore} height={3} />
+                  </div>
                 </div>
-                <div className={styles.bannerSpectrumOverlay}>
-                  <SpectrumBar score={spyScore} height={3} />
-                </div>
-              </div>
-              <div className={styles.bannerHistStats}>
-                <BannerStat label="1일 평균" point={d1AvgPoint} />
-                <BannerStat label="1달 평균" point={m1AvgPoint} />
-                <BannerStat label="1년 평균" point={y1AvgPoint} />
-                <div className={styles.bannerStatItem}>
-                  <div className={styles.bannerStatLabel}>업데이트</div>
-                  <div className={styles.bannerStatUpdate}>
-                    {spyData ? fmtScoreDate(spyData.scoreDate, lastUpdated) : '—'}
+                <div className={styles.bannerHistStats}>
+                  <BannerStat label="1일 평균" point={d1AvgPoint} />
+                  <BannerStat label="1달 평균" point={m1AvgPoint} />
+                  <BannerStat label="1년 평균" point={y1AvgPoint} />
+                  <div className={styles.bannerStatItem}>
+                    <div className={styles.bannerStatLabel}>업데이트</div>
+                    <div className={styles.bannerStatUpdate}>
+                      {spyData ? fmtScoreDate(spyData.scoreDate, lastUpdated) : '—'}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Timeline 탭 */}
-          {spyTab === 'timeline' && (
-            <div className={styles.bannerTimeline}>
-              <div className={styles.bannerPeriodTabs}>
-                {HISTORY_PERIODS.map((p) => (
-                  <button
-                    key={p.value}
-                    className={`${styles.bannerPeriodTab} ${spyHistoryPeriod === p.value ? styles.bannerPeriodTabActive : ''}`}
-                    onClick={() => setSpyHistoryPeriod(p.value)}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-              {spyHistoryLoading ? (
-                <div className={styles.bannerTimelineEmpty}>로딩 중…</div>
-              ) : spyHistory.length === 0 ? (
-                <div className={styles.bannerTimelineEmpty}>데이터 없음</div>
-              ) : (
-                <HerdHistoryChart
-                  points={spyHistory}
-                  currentScore={spyScore}
-                  height={190}
-                />
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── 행동 대기열 — 장기투자 관찰 후보를 먼저 보여준다 ── */}
-      {!loading && !error && portfolio.length > 0 && (
-        <div className={styles.commandQueue}>
-          <div className={styles.commandQueueHead}>
-            <span>행동 대기열</span>
-            <strong>
-              {rebalanceRows.length > 0
-                ? `${rebalanceRows.length}개 관찰 후보`
-                : '강한 행동 신호 없음'}
-            </strong>
-          </div>
-          <div className={styles.commandQueueList}>
-            {rebalanceRows.length > 0 ? (
-              rebalanceRows.slice(0, 4).map((row, index) => (
-                <button
-                  key={row.ticker}
-                  type="button"
-                  className={styles.commandTicket}
-                  onClick={() => navigate(`/stock/${row.ticker}`)}
-                >
-                  <span className={styles.commandRank}>{index + 1}</span>
-                  <strong>{row.ticker}</strong>
-                  <em>{row.action}</em>
-                  <small>{row.currentWeight.toFixed(1)}% / {row.targetWeight.toFixed(1)}%</small>
-                </button>
-              ))
-            ) : (
-              <div className={styles.commandEmpty}>
-                <strong>현재는 보유와 관찰 구간입니다.</strong>
-                <span>Flee/Rush 또는 목표비중 이탈이 커질 때 대기열에 올라옵니다.</span>
+            {/* Timeline 탭 */}
+            {spyTab === 'timeline' && (
+              <div className={styles.bannerTimeline}>
+                <div className={styles.bannerPeriodTabs}>
+                  {HISTORY_PERIODS.map((p) => (
+                    <button
+                      key={p.value}
+                      className={`${styles.bannerPeriodTab} ${spyHistoryPeriod === p.value ? styles.bannerPeriodTabActive : ''}`}
+                      onClick={() => setSpyHistoryPeriod(p.value)}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+                {spyHistoryLoading ? (
+                  <div className={styles.bannerTimelineEmpty}>로딩 중…</div>
+                ) : spyHistory.length === 0 ? (
+                  <div className={styles.bannerTimelineEmpty}>데이터 없음</div>
+                ) : (
+                  <HerdHistoryChart
+                    points={spyHistory}
+                    currentScore={spyScore}
+                    height={190}
+                  />
+                )}
               </div>
             )}
           </div>
         </div>
-      )}
+
+        {/* ── 행동 대기열 — 장기투자 관찰 후보를 먼저 보여준다 ── */}
+        {!loading && !error && portfolio.length > 0 && (
+          <div className={styles.commandQueue}>
+            <div className={styles.commandQueueHead}>
+              <span>Action Queue</span>
+              <strong>
+                {rebalanceRows.length > 0
+                  ? `${rebalanceRows.length}개 관찰 후보`
+                  : '강한 행동 신호 없음'}
+              </strong>
+            </div>
+            <div className={styles.commandQueueList}>
+              {rebalanceRows.length > 0 ? (
+                rebalanceRows.slice(0, 4).map((row, index) => (
+                  <button
+                    key={row.ticker}
+                    type="button"
+                    className={styles.commandTicket}
+                    onClick={() => navigate(`/stock/${row.ticker}`)}
+                  >
+                    <span className={styles.commandRank}>{index + 1}</span>
+                    <strong>{row.ticker}</strong>
+                    <em>{row.action}</em>
+                    <small>{row.currentWeight.toFixed(1)}% / {row.targetWeight.toFixed(1)}%</small>
+                  </button>
+                ))
+              ) : (
+                <div className={styles.commandEmpty}>
+                  <strong>현재는 보유와 관찰 구간입니다.</strong>
+                  <span>Flee/Rush 또는 목표비중 이탈이 커질 때 대기열에 올라옵니다.</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {summary && (
+          <div className={styles.portfolioSummaryBar}>
+            <div className={styles.summaryMain}>
+              <span>포트폴리오 요약</span>
+              <strong>{displayAmount(summary.total_value)}</strong>
+              <em style={{ color: pctColor(summary.total_return_pct) }}>
+                {displayPnl((summary.invested_value ?? summary.total_value) - summary.total_cost)}
+                {' '}
+                {fmtPct(summary.total_return_pct)}
+              </em>
+            </div>
+            <div className={styles.summaryMetric}>
+              <span>주식 평가액</span>
+              <strong>{displayAmount(summary.invested_value ?? summary.total_value)}</strong>
+            </div>
+            <div className={styles.summaryMetric}>
+              <span>현금</span>
+              <strong>{displayAmount(summary.cash_balance ?? cashBalance)}</strong>
+            </div>
+            <div className={styles.summaryMetric}>
+              <span>오늘 등락</span>
+              <strong style={{ color: pctColor(summary.daily_change_pct) }}>
+                {fmtPct(summary.daily_change_pct)}
+              </strong>
+            </div>
+            <div className={styles.summaryActions}>
+              <div className={styles.currencyToggle}>
+                <button
+                  className={`${styles.currencyBtn} ${currencyMode === 'KRW' ? styles.currencyBtnActive : ''}`}
+                  onClick={() => handleCurrencyToggle('KRW')}
+                >
+                  ₩
+                </button>
+                <button
+                  className={`${styles.currencyBtn} ${currencyMode === 'USD' ? styles.currencyBtnActive : ''}`}
+                  onClick={() => handleCurrencyToggle('USD')}
+                >
+                  $
+                </button>
+              </div>
+              <button
+                type="button"
+                className={styles.ledgerHistoryBtn}
+                onClick={() => setAssetPanelOpen(open => !open)}
+              >
+                {assetPanelOpen ? '히스토리 닫기' : '히스토리'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* ── 로딩 ── */}
       {loading && (
@@ -1409,73 +1462,9 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── 포트폴리오 평가금액 요약 카드 ── */}
+      {/* ── 포트폴리오 세부 패널 ── */}
       {summary && (
         <>
-          <div className={styles.summarySectionHeader}>
-            <div className={styles.sectionTitle}>자산 원장</div>
-            <div className={styles.currencyToggle}>
-              <button
-                className={`${styles.currencyBtn} ${currencyMode === 'KRW' ? styles.currencyBtnActive : ''}`}
-                onClick={() => handleCurrencyToggle('KRW')}
-              >
-                ₩ 원화
-              </button>
-              <button
-                className={`${styles.currencyBtn} ${currencyMode === 'USD' ? styles.currencyBtnActive : ''}`}
-                onClick={() => handleCurrencyToggle('USD')}
-              >
-                $ 달러
-              </button>
-            </div>
-          </div>
-
-          <div className={styles.summarySection}>
-            <button
-              type="button"
-              className={`${styles.summaryCard} ${styles.summaryCardButton}`}
-              onClick={() => setAssetPanelOpen(open => !open)}
-            >
-              <div className={styles.summaryLabel}>총자산</div>
-              <div className={styles.summaryValue}>
-                {displayAmount(summary.total_value)}
-              </div>
-              <div
-                className={styles.summaryPnl}
-                style={{ color: pctColor(summary.total_return_pct) }}
-              >
-                {displayPnl((summary.invested_value ?? summary.total_value) - summary.total_cost)} ({fmtPct(summary.total_return_pct)})
-              </div>
-              <div className={styles.summarySub}>
-                주식 {displayAmount(summary.invested_value ?? summary.total_value)} · 현금 {displayAmount(summary.cash_balance ?? cashBalance)}
-              </div>
-              <div className={styles.summaryHint}>
-                {assetPanelOpen ? '자산 히스토리 닫기' : '자산 히스토리 보기'}
-              </div>
-            </button>
-
-            <div className={styles.summaryCard}>
-              <div className={styles.summaryLabel}>현금</div>
-              <div className={styles.summaryValue}>
-                {displayAmount(summary.cash_balance ?? cashBalance)}
-              </div>
-              <div className={styles.summarySub}>
-                {editMode ? '아래 편집 패널에서 수정' : '편집 모드에서 수정'}
-              </div>
-            </div>
-
-            <div className={styles.summaryCard}>
-              <div className={styles.summaryLabel}>오늘 등락</div>
-              <div
-                className={styles.summaryValue}
-                style={{ color: pctColor(summary.daily_change_pct) }}
-              >
-                {fmtPct(summary.daily_change_pct)}
-              </div>
-              <div className={styles.summarySub}>전일 대비</div>
-            </div>
-          </div>
-
           {editMode && (
             <div className={styles.portfolioEditPanel}>
               <div className={styles.portfolioEditInfo}>
