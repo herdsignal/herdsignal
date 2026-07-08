@@ -38,16 +38,17 @@
 .sidebar {
   width: var(--sidebar);
   background:
-    linear-gradient(180deg, rgba(19, 27, 39, 0.86) 0%, rgba(12, 17, 25, 0.94) 100%),
+    radial-gradient(circle at 18% 8%, rgba(59, 130, 246, 0.15), transparent 28%),
+    linear-gradient(180deg, rgba(18, 29, 45, 0.92) 0%, rgba(10, 16, 25, 0.98) 100%),
     var(--surface);
-  border-right: 1px solid rgba(70, 83, 102, 0.48);
+  border-right: 1px solid rgba(77, 96, 121, 0.48);
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
   display: flex;
   flex-direction: column;
-  padding: 28px 20px;
+  padding: 26px 18px;
   z-index: 10;
   box-shadow: 14px 0 34px rgba(0, 0, 0, 0.12);
   transition: background var(--t-base), border-color var(--t-base), box-shadow var(--t-base);
@@ -55,7 +56,8 @@
 
 :global(body.light) .sidebar {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86) 0%, rgba(239, 245, 252, 0.9) 100%),
+    radial-gradient(circle at 18% 8%, rgba(59, 130, 246, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(239, 245, 252, 0.96) 100%),
     var(--surface);
   box-shadow: 14px 0 34px rgba(15, 23, 42, 0.06);
 }
@@ -65,21 +67,27 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 40px;
-  padding: 0 2px;
+  margin-bottom: 42px;
+  padding: 10px 8px;
+  border: 1px solid rgba(96, 165, 250, 0.10);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.09), rgba(239, 68, 68, 0.035)),
+    rgba(255, 255, 255, 0.018);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.13);
 }
 
 .logoMark {
   display: block;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   flex: 0 0 auto;
   filter: drop-shadow(0 8px 18px rgba(59, 130, 246, 0.16));
 }
 
 .logoText {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 0;
   color: var(--text-1);
@@ -96,7 +104,7 @@
 
 /* 네비 그룹 */
 .navGroup {
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
 .navLabel {
@@ -105,27 +113,46 @@
   letter-spacing: 0;
   text-transform: uppercase;
   color: var(--text-3);
-  padding: 0 4px;
-  margin-bottom: 4px;
+  padding: 0 8px;
+  margin-bottom: 8px;
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  padding: 9px 10px;
+  gap: 10px;
+  position: relative;
+  padding: 10px 12px 10px 14px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text-2);
   cursor: pointer;
   margin-bottom: 3px;
   transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
 }
+
+.navItem::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgba(163, 170, 184, 0.42);
+  box-shadow: 0 0 0 4px rgba(163, 170, 184, 0.04);
+  transition: background var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast);
+}
+
 .navItem:hover {
-  background: rgba(255, 255, 255, 0.026);
+  background: rgba(255, 255, 255, 0.038);
   border-color: var(--border);
   color: var(--text-1);
+}
+
+.navItem:hover::before {
+  background: var(--scatter);
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
 }
 
 :global(body.light) .navItem:hover {
@@ -140,13 +167,22 @@
     0 8px 20px rgba(59, 130, 246, 0.08);
 }
 .active {
-  background: rgba(59, 130, 246, 0.095);
-  border-color: rgba(59, 130, 246, 0.28);
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.18), rgba(255, 255, 255, 0.036)),
+    rgba(59, 130, 246, 0.075);
+  border-color: rgba(96, 165, 250, 0.34);
   box-shadow:
     inset 3px 0 0 var(--flee),
-    0 10px 22px rgba(59, 130, 246, 0.06);
+    0 14px 26px rgba(59, 130, 246, 0.12);
   color: var(--text-1);
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.active::before {
+  background: var(--flee);
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.16),
+    0 0 18px rgba(59, 130, 246, 0.38);
 }
 
 /* 하단 테마 버튼 */
@@ -157,12 +193,12 @@
 .themeBtn {
   width: 100%;
   text-align: left;
-  padding: 9px 10px;
-  border-radius: var(--card-radius);
+  padding: 11px 12px;
+  border-radius: 12px;
   font-size: 12px;
-  color: var(--text-3);
+  color: var(--text-2);
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(255, 255, 255, 0.030);
   border: 1px solid var(--border);
   font-family: 'Inter', sans-serif;
   transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
