@@ -1725,7 +1725,15 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className={styles.stockGrid}>
+          <div className={styles.holdingsTable}>
+            <div className={styles.holdingsHeader}>
+              <span>종목</span>
+              <span>보유 비중</span>
+              <span>평가금액</span>
+              <span>수익률</span>
+              <span>HERD</span>
+              <span>신호</span>
+            </div>
             {sortedPortfolio.map((item) => {
               const row       = rows.find((r) => r.ticker === item.ticker)
               const herd      = herdMap[item.ticker]
@@ -1750,7 +1758,7 @@ export default function Dashboard() {
               return (
                 <div
                   key={item.ticker}
-                  className={`${styles.stockCard} ${editMode ? styles.stockCardEdit : ''}`}
+                  className={`${styles.holdingRow} ${editMode ? styles.holdingRowEdit : ''}`}
                   onClick={editMode ? undefined : () => navigate(`/stock/${item.ticker}`)}
                   style={{ opacity: isDeleting ? 0.4 : 1 }}
                 >
@@ -1768,168 +1776,112 @@ export default function Dashboard() {
                     </button>
                   )}
 
-                  {/* ─ 상단: 종목명(좌) / HERD점수·단계명·시그널(우) ─ */}
-                  <div className={styles.cardTop}>
-                    <div className={styles.cardTickerBlock}>
-                      <StockAvatar
-                        ticker={item.ticker}
-                        logoUrl={herd?.logoUrl}
-                        tone={badge}
-                        size="lg"
-                      />
-                      <div>
-                        <div className={styles.cardTicker}>{item.ticker}</div>
-                        <div className={styles.cardStageLine}>
-                          <span className={styles.cardStageName} style={{ color }}>
-                            {stageName}
-                          </span>
-                          {herdScore != null && (
-                            <span className={styles.cardStageScore} style={{ color }}>
-                              HERD {herdScore}
-                            </span>
-                          )}
-                        </div>
-                        {shouldShowQuality(herd) && (
-                          <div
-                            className={styles.cardQuality}
-                            style={{ color: qualityColor(herd.qualityLevel) }}
-                          >
-                            {qualityWarningText(herd)}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* 우측: 최종 액션을 먼저 보여주고, HERD 점수는 보조 메타로 표시 */}
-                    <div className={styles.cardHerd} style={{ paddingRight: editMode ? '20px' : '4px' }}>
-                      {herd ? (
-                        <div className={styles.cardActionPanel}>
-                          <div
-                            className={styles.cardActionCode}
-                            style={{ color: actionColor }}
-                          >
-                            {positionAction.code}
-                          </div>
-                          <div className={styles.cardActionLabel}>
-                            {positionAction.text}
-                          </div>
-                          <div className={styles.cardActionBasis}>
-                            {positionAction.basis}
-                          </div>
-                          <div className={styles.cardActionMeta} style={{ color }}>
-                            HERD {herdScore} · {stageName}
-                            {formatSignalDuration(herd) ? ` · ${formatSignalDuration(herd)}` : ''}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className={styles.cardDash}>—</span>
+                  <div className={styles.holdingStockCell}>
+                    <StockAvatar
+                      ticker={item.ticker}
+                      logoUrl={herd?.logoUrl}
+                      tone={badge}
+                      size="lg"
+                    />
+                    <div className={styles.holdingStockText}>
+                      <strong>{item.ticker}</strong>
+                      <span style={{ color }}>
+                        {stageName}
+                        {herdScore != null ? ` · HERD ${herdScore}` : ''}
+                      </span>
+                      {shouldShowQuality(herd) && (
+                        <em style={{ color: qualityColor(herd.qualityLevel) }}>
+                          {qualityWarningText(herd)}
+                        </em>
                       )}
                     </div>
                   </div>
 
-                  {/* ─ 중간: 평가금액 + 손익 (또는 평단가 안내) ─ */}
-                  <div className={styles.cardMiddle}>
-                    {hasAvgPrice ? (
-                      <div>
-                        <div className={styles.cardValueLabel}>평가금액</div>
-                        <div className={styles.cardValueMain}>
-                          {price ? displayAmount(price.market_value) : '—'}
-                        </div>
-                        {pnlUsd != null && (
-                          <div
-                            className={styles.cardPnlRow}
-                            style={{ color: pctColor(price.return_pct) }}
-                          >
-                            {displayPnl(pnlUsd)} ({fmtPct(price.return_pct)})
-                          </div>
-                        )}
-                        {editMode && (
-                          <div className={styles.cardEditActions}>
-                            <button
-                              className={styles.cardInputBtn}
-                              onClick={e => {
-                                e.stopPropagation()
-                                setModalTicker(item.ticker)
-                              }}
-                            >
-                              평단·수량 수정
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className={styles.cardNoPrice}>
-                        <span className={styles.cardNoPriceText}>
-                          평단가를 입력하면 수익률을 확인할 수 있어요
-                        </span>
-                        {editMode && (
-                          <button
-                            className={styles.cardInputBtn}
-                            onClick={e => {
-                              e.stopPropagation()
-                              setModalTicker(item.ticker)
-                            }}
-                          >
-                            입력
-                          </button>
-                        )}
-                      </div>
+                  <div className={styles.holdingMetric}>
+                    <span>{row ? `${row.currentWeight.toFixed(1)}%` : '—'}</span>
+                    <em>{row ? `목표 ${row.targetWeight.toFixed(1)}%` : '목표 —'}</em>
+                    {row && <small>{fmtWeightGap(row)}</small>}
+                  </div>
+
+                  <div className={styles.holdingMetric}>
+                    <span>{price ? displayAmount(price.market_value) : '—'}</span>
+                    <em>{hasAvgPrice ? `보유 ${fmtShares(item.quantity)}` : '수량 미입력'}</em>
+                    {hasAvgPrice && <small>평단 {displayAmount(item.avgPrice)}</small>}
+                  </div>
+
+                  <div className={styles.holdingMetric}>
+                    <span style={{ color: pctColor(price?.return_pct) }}>
+                      {price ? fmtPct(price.return_pct) : '—'}
+                    </span>
+                    <em style={{ color: pctColor(price?.return_pct) }}>
+                      {pnlUsd != null ? displayPnl(pnlUsd) : '평단 필요'}
+                    </em>
+                    {price && (
+                      <small style={{ color: pctColor(price.daily_change_pct) }}>
+                        오늘 {fmtPct(price.daily_change_pct)}
+                      </small>
                     )}
                   </div>
 
-                  {/* ─ 하단: 현재가 · 오늘 등락 (평단가 여부 무관) ─ */}
-                  <div className={styles.cardBottom}>
-                    {price ? (
-                      <div className={styles.cardPriceInfo}>
-                        <span className={styles.cardCurrentPrice}>
-                          현재가 {displayAmount(price.current_price)}
-                        </span>
-                        <span
-                          className={styles.cardDailyChange}
-                          style={{ color: pctColor(price.daily_change_pct) }}
-                        >
-                          오늘 {fmtPct(price.daily_change_pct)}
-                        </span>
-                      </div>
+                  <div className={styles.holdingHerdCell}>
+                    {herd ? (
+                      <>
+                        <strong style={{ color }}>{herdScore}</strong>
+                        <span style={{ color }}>{stageName}</span>
+                        {formatSignalDuration(herd) && <em>{formatSignalDuration(herd)}</em>}
+                      </>
                     ) : (
-                      <span className={styles.cardDash}>현재가 —</span>
-                    )}
-                    {row && (
-                      <span className={styles.cardWeightInfo}>
-                        비중 {row.currentWeight.toFixed(1)}% · 목표 {row.targetWeight.toFixed(1)}% · {fmtWeightGap(row)}
-                      </span>
-                    )}
-                    {hasAvgPrice && (
-                      <span className={styles.cardHoldingInfo}>
-                        보유 {fmtShares(item.quantity)} · 평단 {displayAmount(item.avgPrice)}
-                      </span>
-                    )}
-                    {editMode && row && (
-                      <div
-                        className={styles.targetEditRow}
-                        onClick={e => e.stopPropagation()}
-                      >
-                        <label className={styles.targetLabel} htmlFor={`target-${item.ticker}`}>
-                          목표 비중
-                        </label>
-                        <div className={styles.targetInputWrap}>
-                          <input
-                            id={`target-${item.ticker}`}
-                            className={styles.targetInput}
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            value={targetWeights[item.ticker] ?? ''}
-                            placeholder={row.targetWeight.toFixed(0)}
-                            onChange={e => handleTargetWeightChange(item.ticker, e.target.value)}
-                            aria-label={`${item.ticker} 목표 비중`}
-                          />
-                          <span>%</span>
-                        </div>
-                      </div>
+                      <span className={styles.cardDash}>—</span>
                     )}
                   </div>
+
+                  <div className={styles.holdingActionCell}>
+                    {herd ? (
+                      <>
+                        <strong style={{ color: actionColor }}>{positionAction.code}</strong>
+                        <span>{positionAction.text}</span>
+                        <em>{positionAction.basis}</em>
+                      </>
+                    ) : (
+                      <span className={styles.cardDash}>—</span>
+                    )}
+                  </div>
+
+                  {editMode && (
+                    <div className={styles.holdingEditTray} onClick={e => e.stopPropagation()}>
+                      <button
+                        className={styles.cardInputBtn}
+                        onClick={e => {
+                          e.stopPropagation()
+                          setModalTicker(item.ticker)
+                        }}
+                      >
+                        {hasAvgPrice ? '평단·수량 수정' : '평단·수량 입력'}
+                      </button>
+                      {row && (
+                        <div className={styles.targetEditRow}>
+                          <label className={styles.targetLabel} htmlFor={`target-${item.ticker}`}>
+                            목표 비중
+                          </label>
+                          <div className={styles.targetInputWrap}>
+                            <input
+                              id={`target-${item.ticker}`}
+                              className={styles.targetInput}
+                              type="number"
+                              min="0"
+                              max="100"
+                              step="1"
+                              value={targetWeights[item.ticker] ?? ''}
+                              placeholder={row.targetWeight.toFixed(0)}
+                              onChange={e => handleTargetWeightChange(item.ticker, e.target.value)}
+                              aria-label={`${item.ticker} 목표 비중`}
+                            />
+                            <span>%</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )
             })}
