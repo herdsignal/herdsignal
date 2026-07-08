@@ -322,10 +322,11 @@
   border: 1px solid var(--border);
   border-radius: calc(var(--card-radius) + 4px);
   background:
-    radial-gradient(circle at 62% 16%, rgba(59, 130, 246, 0.10), transparent 28%),
+    radial-gradient(circle at 58% 20%, rgba(251, 146, 60, 0.14), transparent 24%),
+    radial-gradient(circle at 38% 8%, rgba(59, 130, 246, 0.14), transparent 30%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.030), rgba(255, 255, 255, 0.008)),
     var(--surface);
-  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 28px 82px rgba(0, 0, 0, 0.28);
 }
 
 :global(body.light) .commandFrame {
@@ -340,10 +341,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 62px;
-  padding: 0 22px;
+  min-height: 66px;
+  padding: 0 26px;
   border-bottom: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.018);
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.018) 42%, rgba(251, 146, 60, 0.055));
 }
 
 :global(body.light) .commandFrameTop {
@@ -402,7 +404,7 @@
   grid-template-columns: minmax(250px, 1.15fr) repeat(3, minmax(150px, 0.75fr)) auto;
   align-items: center;
   gap: 0;
-  padding: 18px 20px;
+  padding: 20px 24px;
   border-top: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.018);
 }
@@ -492,13 +494,13 @@
 
 .commandQueue {
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
+  grid-template-columns: 200px minmax(0, 1fr);
   align-items: stretch;
   gap: 12px;
   margin: 0;
-  padding: 18px 20px;
+  padding: 20px 24px;
   background:
-    linear-gradient(90deg, rgba(59, 130, 246, 0.075), rgba(255, 255, 255, 0.012) 42%),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.105), rgba(255, 255, 255, 0.014) 42%),
     transparent;
   border-top: 1px solid var(--border);
   border-radius: 0;
@@ -547,14 +549,14 @@
 
 .commandTicket {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
+  grid-template-columns: 30px minmax(0, 1fr);
   grid-template-rows: auto auto;
   align-items: start;
   column-gap: 12px;
   row-gap: 12px;
   min-width: 0;
-  min-height: 136px;
-  padding: 18px;
+  min-height: 126px;
+  padding: 18px 20px;
   border: 1px solid var(--border);
   border-radius: calc(var(--card-radius) + 2px);
   background: rgba(255, 255, 255, 0.025);
@@ -646,7 +648,7 @@
 
 .commandTicketMain strong {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 25px;
+  font-size: 28px;
   font-weight: 800;
   letter-spacing: 0;
   line-height: 1;
@@ -916,6 +918,13 @@
   line-height: 1;
 }
 
+.assetPanelSub {
+  margin-top: 8px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .assetPeriodToggle {
   display: flex;
   gap: 4px;
@@ -949,7 +958,7 @@
 
 .assetStats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-bottom: 12px;
 }
@@ -978,118 +987,6 @@
   font-size: 18px;
   color: var(--text-1);
   letter-spacing: 0;
-}
-
-.assetBaselineBox {
-  display: grid;
-  grid-template-columns: minmax(160px, 0.7fr) minmax(0, 1.3fr);
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 14px;
-  padding: 12px 14px;
-  border: 1px solid rgba(59, 130, 246, 0.22);
-  border-radius: var(--card-radius);
-  background: rgba(59, 130, 246, 0.06);
-}
-
-:global(body.light) .assetBaselineBox {
-  background: rgba(59, 130, 246, 0.045);
-}
-
-.assetBaselineInfo {
-  min-width: 0;
-}
-
-.assetBaselineInfo span {
-  display: block;
-  margin-bottom: 5px;
-  color: var(--text-3);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.assetBaselineInfo strong {
-  display: block;
-  overflow: hidden;
-  color: var(--text-1);
-  font-size: 12px;
-  font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.assetBaselineControls {
-  display: grid;
-  grid-template-columns: 134px minmax(150px, 1fr) auto auto;
-  gap: 8px;
-  align-items: center;
-  min-width: 0;
-}
-
-.assetBaselineControls input,
-.assetBaselineControls button,
-.assetBaselineAmount {
-  height: 36px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--surface2);
-  color: var(--text-1);
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.assetBaselineControls input {
-  min-width: 0;
-  padding: 0 10px;
-  outline: none;
-}
-
-.assetBaselineControls input::-webkit-outer-spin-button,
-.assetBaselineControls input::-webkit-inner-spin-button {
-  appearance: none;
-  margin: 0;
-}
-
-.assetBaselineControls input[type='number'] {
-  appearance: textfield;
-}
-
-.assetBaselineAmount {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-  padding: 0 10px;
-}
-
-.assetBaselineAmount span {
-  color: var(--text-3);
-  font-weight: 800;
-}
-
-.assetBaselineAmount input {
-  width: 100%;
-  height: auto;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-}
-
-.assetBaselineControls button {
-  cursor: pointer;
-  padding: 0 12px;
-  transition: border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
-  white-space: nowrap;
-}
-
-.assetBaselineControls button:hover {
-  transform: translateY(-1px);
-  border-color: var(--border2);
-  color: var(--flee);
 }
 
 .assetState {
@@ -1141,6 +1038,8 @@
    ──────────────────────────── */
 .marketBanner {
   background:
+    radial-gradient(circle at 74% 42%, rgba(251, 146, 60, 0.10), transparent 24%),
+    radial-gradient(circle at 48% 44%, rgba(59, 130, 246, 0.12), transparent 28%),
     linear-gradient(135deg, rgba(59, 130, 246, 0.075), rgba(255, 255, 255, 0) 36%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)),
     var(--surface);
@@ -1148,9 +1047,9 @@
   border-radius: 0;
   margin-bottom: 0;
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: 280px minmax(0, 1fr);
   overflow: hidden;
-  min-height: 334px;
+  min-height: 376px;
   box-shadow: none;
 }
 
@@ -1163,7 +1062,7 @@
 }
 
 .bannerScoreBlock {
-  padding: 48px 42px;
+  padding: 54px 42px;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -1203,7 +1102,7 @@
 
 .bannerScore {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 96px;
+  font-size: 106px;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 0.9;
@@ -1231,7 +1130,9 @@
 .bannerAnimBlock {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(32, 42, 56, 0.84), rgba(21, 27, 37, 0.9)),
+    radial-gradient(circle at 58% 42%, rgba(251, 146, 60, 0.12), transparent 22%),
+    radial-gradient(circle at 34% 48%, rgba(59, 130, 246, 0.14), transparent 26%),
+    linear-gradient(180deg, rgba(32, 42, 56, 0.9), rgba(16, 23, 34, 0.94)),
     var(--surface2);
   flex: 1;
 }
@@ -1291,7 +1192,7 @@
   flex: 1;
   display: flex;
   overflow: hidden;
-  min-height: 334px;
+  min-height: 376px;
 }
 
 /* 히스토리 통계 패널 */
@@ -1936,13 +1837,6 @@
     min-width: 0;
   }
 
-  .assetBaselineBox {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .assetBaselineControls {
-    grid-template-columns: 134px minmax(150px, 1fr) auto auto;
-  }
 }
 
 @media (max-width: 720px) {
@@ -2067,11 +1961,4 @@
     flex-direction: column;
   }
 
-  .assetBaselineControls {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .assetBaselineControls button {
-    width: 100%;
-  }
 }

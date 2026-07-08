@@ -81,7 +81,6 @@ const CACHE_KEY_SPY_HISTORY_VERSION = 'v2'
 const CACHE_KEY_TIME        = 'hs_cache_time'
 const CACHE_KEY_VERSION     = 'hs_dashboard_cache_version'
 const CACHE_KEY_PORTFOLIO_SORT = 'hs_dashboard_sort'
-const CACHE_KEY_ASSET_BASELINE = 'hs_asset_baseline'
 const DASHBOARD_CACHE_VERSION = 'v3-logo'
 
 const HISTORY_PERIODS = [
@@ -123,38 +122,11 @@ function writeCache(key, data) {
   } catch { /* 용량 초과 등 무시 */ }
 }
 
-function readAssetBaseline() {
-  try {
-    const raw = localStorage.getItem(CACHE_KEY_ASSET_BASELINE)
-    if (!raw) return null
-    const parsed = JSON.parse(raw)
-    const value = Number(parsed?.value)
-    if (!parsed?.date || !Number.isFinite(value) || value <= 0) return null
-    return { date: parsed.date, value }
-  } catch {
-    return null
-  }
-}
-
-function writeAssetBaseline(baseline) {
-  try {
-    localStorage.setItem(CACHE_KEY_ASSET_BASELINE, JSON.stringify(baseline))
-  } catch { /* localStorage 실패 무시 */ }
-}
-
 function formatInputDate(value) {
   const date = value ? new Date(value) : new Date()
   if (Number.isNaN(date.getTime())) return ''
   const pad = (n) => String(n).padStart(2, '0')
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-}
-
-function isOnOrAfterDate(dateValue, baselineDate) {
-  if (!baselineDate) return true
-  const current = new Date(dateValue)
-  const baseline = new Date(baselineDate)
-  if (Number.isNaN(current.getTime()) || Number.isNaN(baseline.getTime())) return true
-  return current >= baseline
 }
 
 function spyHistoryCacheKey(period) {
@@ -736,12 +708,6 @@ export default function Dashboard() {
   const [assetHistory,   setAssetHistory]   = useState([])
   const [assetHistoryLoading, setAssetHistoryLoading] = useState(false)
   const [assetHistoryError, setAssetHistoryError] = useState(null)
-  const [assetBaseline, setAssetBaseline] = useState(() => readAssetBaseline())
-  const [assetBaselineDateDraft, setAssetBaselineDateDraft] = useState(() => readAssetBaseline()?.date ?? '')
-  const [assetBaselineValueDraft, setAssetBaselineValueDraft] = useState(() => {
-    const baseline = readAssetBaseline()
-    return baseline ? String(baseline.value) : ''
-  })
   const [signalLogs,     setSignalLogs]     = useState([])
   const refreshNoticeTimer = useRef(null)
 
@@ -1205,12 +1171,10 @@ export default function Dashboard() {
     () => mergeCurrentAssetPoint(assetHistory, currentAssetPoint(summary, cashBalance)),
     [assetHistory, summary, cashBalance]
   )
-  const assetChartHistory = assetBaseline?.date
-    ? assetHistoryWithCurrent.filter((point) => isOnOrAfterDate(point.date, assetBaseline.date))
-    : assetHistoryWithCurrent
+  const assetChartHistory = assetHistoryWithCurrent
   const assetLatest = assetChartHistory.length > 0 ? assetChartHistory[assetChartHistory.length - 1] : null
   const assetFirst = assetChartHistory.length > 0 ? assetChartHistory[0] : null
-  const assetStartValue = assetBaseline?.value ?? assetFirst?.totalAssetValue ?? null
+  const assetStartValue = assetFirst?.totalAssetValue ?? null
   const assetPeak = assetChartHistory.length > 0
     ? assetChartHistory.reduce((best, point) =>
         Number(point.totalAssetValue) > Number(best.totalAssetValue) ? point : best
@@ -1228,33 +1192,8 @@ export default function Dashboard() {
   const assetMax = assetValues.length > 0 ? Math.max(...assetValues) : 1000
   const assetPadding = (assetMax - assetMin) * 0.08 || 100
   const assetYDomain = [Math.max(0, assetMin - assetPadding), assetMax + assetPadding]
-  const assetBaselineLabel = assetBaseline
-    ? `${assetBaseline.date} · ${displayAmount(assetBaseline.value)}`
-    : '미설정'
-
-  const handleAssetBaselineSave = useCallback(() => {
-    const value = Number(assetBaselineValueDraft || 0)
-    const date = assetBaselineDateDraft || formatInputDate(assetLatest?.date)
-    if (!date || !Number.isFinite(value) || value <= 0) return
-
-    const next = { date, value }
-    setAssetBaseline(next)
-    setAssetBaselineDateDraft(date)
-    setAssetBaselineValueDraft(String(value))
-    writeAssetBaseline(next)
-  }, [assetBaselineDateDraft, assetBaselineValueDraft, assetLatest])
-
-  const handleAssetBaselineUseLatest = useCallback(() => {
-    const latestValue = Number(assetLatest?.totalAssetValue ?? summary?.total_value ?? 0)
-    const latestDate = formatInputDate(assetLatest?.date)
-    if (!Number.isFinite(latestValue) || latestValue <= 0 || !latestDate) return
-
-    const next = { date: latestDate, value: latestValue }
-    setAssetBaseline(next)
-    setAssetBaselineDateDraft(latestDate)
-    setAssetBaselineValueDraft(String(Number(latestValue.toFixed(2))))
-    writeAssetBaseline(next)
-  }, [assetLatest, summary])
+  const assetPeriodLabel = ASSET_HISTORY_PERIODS.find((p) => p.value === assetHistoryPeriod)?.label ?? '선택 기간'
+  const assetStartLabel = assetFirst?.date ? fmtAxisDate(assetFirst.date) : '—'
 
   function handleTargetWeightChange(ticker, value) {
     const next = { ...targetWeights }
@@ -1357,7 +1296,7 @@ export default function Dashboard() {
             {spyTab === 'overview' && (
               <div className={styles.bannerOverview}>
                 <div className={styles.bannerAnimBlock}>
-                  <HerdDots score={spyScore} fill dotCount={60} />
+                  <HerdDots score={spyScore} fill dotCount={84} />
                   <div className={styles.bannerAnimLabel}>
                     <span>← Flee · 군중 이탈</span>
                     <span>Rush · 군중 밀집 →</span>
@@ -1581,9 +1520,13 @@ export default function Dashboard() {
             <div className={styles.assetPanel}>
               <div className={styles.assetPanelHeader}>
                 <div>
-                  <div className={styles.assetPanelLabel}>자산 히스토리</div>
+                  <div className={styles.assetPanelLabel}>Asset History · {assetPeriodLabel}</div>
                   <div className={styles.assetPanelTitle}>
                     {assetLatest ? displayAmount(assetLatest.totalAssetValue) : displayAmount(summary.total_value)}
+                  </div>
+                  <div className={styles.assetPanelSub}>
+                    기간 시작 {assetStartLabel}
+                    {assetFirst?.totalAssetValue != null ? ` · ${displayAmount(assetFirst.totalAssetValue)}` : ''}
                   </div>
                 </div>
                 <div className={styles.assetPeriodToggle}>
@@ -1602,7 +1545,7 @@ export default function Dashboard() {
 
               <div className={styles.assetStats}>
                 <div>
-                  <span>시작 대비</span>
+                  <span>기간 수익률</span>
                   <strong style={{ color: pctColor(assetStartPct) }}>{fmtPct(assetStartPct)}</strong>
                 </div>
                 <div>
@@ -1613,39 +1556,9 @@ export default function Dashboard() {
                   <span>현재 현금</span>
                   <strong>{displayAmount(summary.cash_balance ?? cashBalance)}</strong>
                 </div>
-              </div>
-
-              <div className={styles.assetBaselineBox}>
-                <div className={styles.assetBaselineInfo}>
-                  <span>추적 기준점</span>
-                  <strong>{assetBaselineLabel}</strong>
-                </div>
-                <div className={styles.assetBaselineControls}>
-                  <input
-                    type="date"
-                    value={assetBaselineDateDraft}
-                    onChange={(e) => setAssetBaselineDateDraft(e.target.value)}
-                    aria-label="자산 추적 기준일"
-                  />
-                  <div className={styles.assetBaselineAmount}>
-                    <span>$</span>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      inputMode="decimal"
-                      value={assetBaselineValueDraft}
-                      onChange={(e) => setAssetBaselineValueDraft(e.target.value)}
-                      placeholder="기준 총자산"
-                      aria-label="자산 추적 기준 총자산"
-                    />
-                  </div>
-                  <button type="button" onClick={handleAssetBaselineSave}>
-                    저장
-                  </button>
-                  <button type="button" onClick={handleAssetBaselineUseLatest}>
-                    현재값
-                  </button>
+                <div>
+                  <span>주식 평가액</span>
+                  <strong>{displayAmount(summary.invested_value ?? summary.total_value)}</strong>
                 </div>
               </div>
 

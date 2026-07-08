@@ -70,8 +70,8 @@ Rush    #EF4444  (레드)
   - Signal Command Center 구조: 시장 HERD 신호 → 3개 핵심 Action Queue → 포트폴리오 요약 바 → 보유 종목 테이블 순으로 표시
   - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
   - 포트폴리오 요약 바 (총자산 + 주식 평가액 + 현금 보유액 + 오늘 등락)
-  - 총자산 카드 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시. backend 히스토리 포인트에 현재 summary/cash 포인트를 합성해 현금 저장 직후에도 마지막 값이 즉시 반영된다.
-  - 자산 히스토리 추적 기준점(`hs_asset_baseline`) 설정으로 테스트 스냅샷과 실제 시작 수익률을 분리
+  - 총자산 히스토리 버튼 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시. backend 히스토리 포인트에 현재 summary/cash 포인트를 합성해 현금 저장 직후에도 마지막 값이 즉시 반영된다.
+  - 자산 히스토리는 사용자가 기준일을 직접 관리하지 않고, 선택 기간의 시작값/현재값/기간 수익률/고점 대비/현금·주식 평가액을 표시한다.
   - 현금 보유액 표시 및 편집 모드 입력/저장
   - HERD 판단 기록 전체 요약: `/api/journal` 기반 매수/익절 횟수·금액·평균 익절률·최근 기록 표시
   - KRW/USD 통화 토글
@@ -188,7 +188,6 @@ Rush    #EF4444  (레드)
 - `hs_target_weights`: 포트폴리오 종목별 목표 비중
 - `hs_dashboard_sort`: Dashboard 보유 종목 정렬 기준
 - `hs_rebalance_settings`: 리밸런싱 예산·현금 목표·강도 설정
-- `hs_asset_baseline`: Dashboard 자산 히스토리 시작 기준일·기준 총자산
 - `herdsignal_currency`: 통화 표시 모드
 
 HERD 판단 기록은 localStorage가 아니라 backend `/api/journal`과 DB `signal_journal`을 기준으로 저장한다.
