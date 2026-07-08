@@ -431,7 +431,7 @@
 
 .commandQueue {
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
+  grid-template-columns: 180px minmax(0, 1fr);
   align-items: stretch;
   gap: 12px;
   margin: 0;
@@ -479,22 +479,23 @@
 
 .commandQueueList {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
   min-width: 0;
 }
 
 .commandTicket {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-columns: 34px minmax(0, 1fr);
   grid-template-rows: auto auto;
-  align-items: center;
-  column-gap: 8px;
-  row-gap: 4px;
+  align-items: start;
+  column-gap: 12px;
+  row-gap: 12px;
   min-width: 0;
-  padding: 12px 14px;
+  min-height: 136px;
+  padding: 18px;
   border: 1px solid var(--border);
-  border-radius: var(--card-radius);
+  border-radius: calc(var(--card-radius) + 2px);
   background: rgba(255, 255, 255, 0.025);
   color: var(--text-1);
   cursor: pointer;
@@ -513,39 +514,94 @@
   background: rgba(59, 130, 246, 0.055);
 }
 
-.commandRank {
+.commandTicketBuy {
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.16), rgba(255, 255, 255, 0.018) 56%),
+    rgba(255, 255, 255, 0.02);
+}
+
+.commandTicketHold {
+  background:
+    linear-gradient(135deg, rgba(163, 170, 184, 0.12), rgba(255, 255, 255, 0.018) 56%),
+    rgba(255, 255, 255, 0.02);
+}
+
+.commandTicketSell {
+  background:
+    linear-gradient(135deg, rgba(239, 68, 68, 0.13), rgba(251, 146, 60, 0.07) 42%, rgba(255, 255, 255, 0.018) 62%),
+    rgba(255, 255, 255, 0.02);
+}
+
+:global(body.light) .commandTicketBuy,
+:global(body.light) .commandTicketHold,
+:global(body.light) .commandTicketSell {
+  background-color: rgba(255, 255, 255, 0.78);
+}
+
+.commandActionIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  grid-row: 1 / span 2;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.14);
-  color: var(--flee);
-  font-size: 11px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--border);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
   font-weight: 800;
 }
 
-.commandTicket strong {
+.commandTicketMain {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.commandTicketMain strong {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
+  font-size: 25px;
   font-weight: 800;
   letter-spacing: 0;
+  line-height: 1;
 }
 
-.commandTicket em {
+.commandTicketMain span {
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.commandTicketMain em {
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commandTicketMeta {
+  grid-column: 2 / -1;
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.commandTicketMeta span {
   overflow: hidden;
   color: var(--text-2);
   font-size: 12px;
-  font-style: normal;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.commandTicket small {
-  grid-column: 2 / -1;
+.commandTicketMeta small {
   color: var(--text-3);
   font-size: 10px;
   font-weight: 700;

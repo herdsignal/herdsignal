@@ -417,6 +417,15 @@ function actionPriority(signal) {
   }
 }
 
+function queuePriority(actionCode) {
+  if (actionCode?.startsWith('SELL')) return 0
+  if (actionCode?.startsWith('REDUCE')) return 1
+  if (actionCode?.startsWith('BUY')) return 2
+  if (actionCode?.startsWith('ADD')) return 3
+  if (actionCode?.startsWith('WAIT')) return 4
+  return 5
+}
+
 function sortPortfolioItems(list, rows, herdMap, sortMode) {
   const rowMap = new Map(rows.map((row) => [row.ticker, row]))
   return [...list].sort((a, b) => {
@@ -1163,6 +1172,36 @@ export default function Dashboard() {
     [portfolio, rows, herdMap, portfolioSort]
   )
   const rebalanceRows = useMemo(() => rebalanceIdeas(rows), [rows])
+  const actionQueueCards = useMemo(() => {
+    const rowMap = new Map(rows.map((row) => [row.ticker, row]))
+    return sortedPortfolio
+      .map((item) => {
+        const herd = herdMap[item.ticker]
+        const row = rowMap.get(item.ticker)
+        if (!herd || !row) return null
+        const action = buildPositionAction(herd, row)
+        const score = Math.round(herd.herdV4 ?? herd.herdScore ?? 0)
+        const stage = herd.herdStage?.startsWith('Herd ')
+          ? herd.herdStage.slice(5)
+          : herd.herdStage ?? 'Calm'
+        return {
+          ticker: item.ticker,
+          herd,
+          row,
+          action,
+          score,
+          stage,
+          price: priceMap[item.ticker],
+          priority: queuePriority(action.code),
+        }
+      })
+      .filter(Boolean)
+      .sort((a, b) => {
+        if (a.priority !== b.priority) return a.priority - b.priority
+        return Number(b.herd.actionScore ?? 0) - Number(a.herd.actionScore ?? 0)
+      })
+      .slice(0, 3)
+  }, [sortedPortfolio, rows, herdMap, priceMap])
   const assetHistoryWithCurrent = useMemo(
     () => mergeCurrentAssetPoint(assetHistory, currentAssetPoint(summary, cashBalance)),
     [assetHistory, summary, cashBalance]
@@ -1365,26 +1404,50 @@ export default function Dashboard() {
             <div className={styles.commandQueueHead}>
               <span>Action Queue</span>
               <strong>
-                {rebalanceRows.length > 0
-                  ? `${rebalanceRows.length}개 관찰 후보`
+                {actionQueueCards.length > 0
+                  ? `${actionQueueCards.length}개 핵심 후보`
                   : '강한 행동 신호 없음'}
               </strong>
             </div>
             <div className={styles.commandQueueList}>
-              {rebalanceRows.length > 0 ? (
-                rebalanceRows.slice(0, 4).map((row, index) => (
+              {actionQueueCards.length > 0 ? (
+                actionQueueCards.map((card) => {
+                  const actionColor = card.action.muted
+                    ? 'var(--calm)'
+                    : signalStyle(card.herd.signal).color
+                  const cardTone = card.action.code.startsWith('SELL') || card.action.code.startsWith('REDUCE')
+                    ? styles.commandTicketSell
+                    : card.action.code.startsWith('ADD') || card.action.code.startsWith('BUY')
+                      ? styles.commandTicketBuy
+                      : styles.commandTicketHold
+
+                  return (
                   <button
-                    key={row.ticker}
+                    key={card.ticker}
                     type="button"
-                    className={styles.commandTicket}
-                    onClick={() => navigate(`/stock/${row.ticker}`)}
+                    className={`${styles.commandTicket} ${cardTone}`}
+                    onClick={() => navigate(`/stock/${card.ticker}`)}
                   >
-                    <span className={styles.commandRank}>{index + 1}</span>
-                    <strong>{row.ticker}</strong>
-                    <em>{row.action}</em>
-                    <small>{row.currentWeight.toFixed(1)}% / {row.targetWeight.toFixed(1)}%</small>
+                    <span className={styles.commandActionIcon} style={{ color: actionColor }}>
+                      {card.action.code.startsWith('SELL') || card.action.code.startsWith('REDUCE') ? '↓' : card.action.code.startsWith('HOLD') || card.action.code.startsWith('WAIT') ? '○' : '↑'}
+                    </span>
+                    <div className={styles.commandTicketMain}>
+                      <strong style={{ color: actionColor }}>{card.action.code}</strong>
+                      <span>{card.ticker}</span>
+                      <em>{card.stage} · HERD {card.score}</em>
+                    </div>
+                    <div className={styles.commandTicketMeta}>
+                      <span>{card.action.text}</span>
+                      <small>{card.row.currentWeight.toFixed(1)}% / {card.row.targetWeight.toFixed(1)}%</small>
+                      {card.price && (
+                        <small style={{ color: pctColor(card.price.daily_change_pct) }}>
+                          오늘 {fmtPct(card.price.daily_change_pct)}
+                        </small>
+                      )}
+                    </div>
                   </button>
-                ))
+                  )
+                })
               ) : (
                 <div className={styles.commandEmpty}>
                   <strong>현재는 보유와 관찰 구간입니다.</strong>
