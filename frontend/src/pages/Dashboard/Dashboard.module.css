@@ -1,12 +1,17 @@
 /* Dashboard.module.css */
 
+.dashboardShell {
+  display: grid;
+  gap: 0;
+}
+
 /* ── 페이지 헤더 ── */
 .pageHeader {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 28px;
-  padding: 20px 0 24px;
+  margin-bottom: 24px;
+  padding: 8px 0 22px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -23,6 +28,14 @@
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1;
+}
+
+.pageSubtitle {
+  margin-top: 10px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .btnPrimary {
@@ -126,7 +139,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 /* 통화 토글 버튼 묶음 */
@@ -162,24 +175,30 @@
 
 .summarySection {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
+  grid-template-columns: 1.15fr 0.9fr 0.9fr;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--card-radius) + 2px);
 }
 
 .summaryCard {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
-    var(--surface);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--card-radius);
-  padding: 22px 24px;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
+  padding: 16px 18px;
+  box-shadow: none;
   text-align: left;
 }
 
 :global(body.light) .summaryCard {
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
+}
+
+:global(body.light) .summarySection {
+  background: rgba(255, 255, 255, 0.68);
 }
 
 .summaryCardButton {
@@ -192,7 +211,8 @@
 
 .summaryCardButton:hover {
   transform: translateY(-1px);
-  border-color: var(--border2);
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.025);
 }
 
 .summaryLabel {
@@ -206,7 +226,7 @@
 
 .summaryValue {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
+  font-size: 25px;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1;
@@ -386,6 +406,153 @@
   font-size: 11px;
   color: var(--text-3);
   letter-spacing: 0;
+}
+
+.commandQueue {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 12px;
+  margin: -22px 0 26px;
+  padding: 12px;
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.075), rgba(255, 255, 255, 0.012) 42%),
+    var(--surface);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--card-radius) + 2px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+}
+
+:global(body.light) .commandQueue {
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.06), rgba(255, 255, 255, 0.78) 42%),
+    var(--surface);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+}
+
+.commandQueueHead {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 8px 10px;
+}
+
+.commandQueueHead span {
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.commandQueueHead strong {
+  margin-top: 6px;
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.commandQueueList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.commandTicket {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 4px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text-1);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  transition: transform var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+
+:global(body.light) .commandTicket {
+  background: rgba(248, 250, 252, 0.82);
+}
+
+.commandTicket:hover {
+  transform: translateY(-1px);
+  border-color: var(--border2);
+  background: rgba(59, 130, 246, 0.055);
+}
+
+.commandRank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  grid-row: 1 / span 2;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--flee);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.commandTicket strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.commandTicket em {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commandTicket small {
+  grid-column: 2 / -1;
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.commandEmpty {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.commandEmpty strong {
+  color: var(--text-1);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.commandEmpty span {
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .journalOverview {
@@ -807,88 +974,6 @@
 }
 
 /* ────────────────────────────
-   리밸런싱 체크
-   ──────────────────────────── */
-.rebalanceStrip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
-    var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  padding: 14px 16px;
-  margin-bottom: 24px;
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.14);
-}
-
-.rebalanceStripHead {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.rebalanceStripHead span {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.rebalanceStripHead strong {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  color: var(--text-1);
-  letter-spacing: 0;
-}
-
-.rebalanceStripList {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.rebalancePill {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  max-width: 220px;
-  padding: 7px 10px;
-  border-radius: var(--card-radius);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.rebalancePill strong {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12px;
-  color: var(--text-1);
-}
-
-.rebalancePill span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-2);
-}
-
-.rebalancePill em {
-  font-size: 10px;
-  font-style: normal;
-  color: var(--text-3);
-  flex-shrink: 0;
-}
-
-/* ────────────────────────────
    S&P500 HERD 배너
    ──────────────────────────── */
 .marketBanner {
@@ -897,13 +982,13 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)),
     var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  margin-bottom: 42px;
+  border-radius: calc(var(--card-radius) + 2px);
+  margin-bottom: 36px;
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 300px 1fr;
   overflow: hidden;
-  min-height: 250px;
-  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.22);
+  min-height: 282px;
+  box-shadow: 0 26px 68px rgba(0, 0, 0, 0.26);
 }
 
 :global(body.light) .marketBanner {
@@ -915,7 +1000,7 @@
 }
 
 .bannerScoreBlock {
-  padding: 34px 36px;
+  padding: 38px 40px;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -955,7 +1040,7 @@
 
 .bannerScore {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 80px;
+  font-size: 88px;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 0.9;
@@ -1258,22 +1343,22 @@
    ──────────────────────────── */
 .stockGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
 }
 
 /* ── 개별 종목 카드 ── */
 .stockCard {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
     var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  padding: 18px 20px;
+  border-radius: calc(var(--card-radius) + 2px);
+  padding: 16px 20px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.13);
   transition: border-color 0.15s, background 0.15s, transform 0.15s, opacity 0.15s;
 }
 
@@ -1283,7 +1368,7 @@
 .stockCard:hover {
   border-color: var(--border2);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.055), rgba(255, 255, 255, 0.014)),
     var(--surface);
   transform: translateY(-1px);
 }
@@ -1301,7 +1386,7 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 3px;
+  width: 4px;
   box-shadow: 0 0 18px currentColor;
 }
 
@@ -1337,19 +1422,20 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 14px;
+  gap: 22px;
+  margin-bottom: 12px;
 }
 
 .cardTickerBlock {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
 }
 
 .cardTicker {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: 0;
   margin-bottom: 5px;
@@ -1394,15 +1480,15 @@
   text-align: right;
   flex-shrink: 0;
   padding-right: 20px; /* 삭제 버튼 공간 확보 */
-  max-width: 220px;
+  max-width: 260px;
 }
 
 .cardActionPanel {
   display: grid;
   justify-items: end;
   gap: 4px;
-  min-width: 150px;
-  padding: 8px 10px;
+  min-width: 210px;
+  padding: 11px 13px;
   border: 1px solid rgba(255, 255, 255, 0.055);
   border-radius: var(--card-radius);
   background: rgba(255, 255, 255, 0.025);
@@ -1415,7 +1501,7 @@
 
 .cardActionCode {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 21px;
+  font-size: 25px;
   font-weight: 800;
   letter-spacing: 0;
   line-height: 1;
@@ -1462,7 +1548,7 @@
 
 /* ── 카드 중간: 재무 데이터 ── */
 .cardMiddle {
-  padding-top: 14px;
+  padding-top: 12px;
   border-top: 1px solid var(--border);
 }
 
@@ -1516,7 +1602,7 @@
 /* 카드 중간 — 평가금액 숫자 (크게) */
 .cardValueMain {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: 0;
   color: var(--text-1);
@@ -1534,14 +1620,15 @@
 /* ── 카드 하단: 현재가 · 오늘 등락 (평단가 여부 무관) ── */
 .cardBottom {
   border-top: 1px solid var(--border);
-  padding-top: 10px;
-  margin-top: 12px;
+  padding-top: 9px;
+  margin-top: 11px;
 }
 
 .cardPriceInfo {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .cardCurrentPrice {
@@ -1710,19 +1797,17 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .rebalanceStrip {
-    align-items: flex-start;
-    flex-direction: column;
+  .commandQueue {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: -16px;
+  }
+
+  .commandQueueList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .journalOverview {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .rebalanceStripList {
-    width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
   }
 
   .portfolioEditPanel {
@@ -1770,6 +1855,15 @@
 
   .sortTab {
     flex: 1 0 auto;
+  }
+
+  .commandQueueList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .commandEmpty {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .bannerOverview {

@@ -67,8 +67,9 @@ Rush    #EF4444  (레드)
 - 사이드바 노출 메뉴는 MVP 기준으로 Dashboard, Watchlist, Search, HerdLab만 유지한다.
 - AiRebalance(`/ai`), History(`/history`), Journal(`/journal`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
 - Dashboard (`/`)
+  - Signal Command Center 구조: 시장 HERD 신호 → 행동 대기열 → 자산 원장 → 보유 종목 티켓 순으로 표시
   - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
-  - 총자산 요약 (주식 평가액 + 현금 보유액)
+  - 자산 원장 요약 (주식 평가액 + 현금 보유액)
   - 총자산 카드 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시. backend 히스토리 포인트에 현재 summary/cash 포인트를 합성해 현금 저장 직후에도 마지막 값이 즉시 반영된다.
   - 자산 히스토리 추적 기준점(`hs_asset_baseline`) 설정으로 테스트 스냅샷과 실제 시작 수익률을 분리
   - 현금 보유액 표시 및 편집 모드 입력/저장

@@ -1232,13 +1232,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
+    <div className={styles.dashboardShell}>
 
       {/* ── 페이지 헤더 ── */}
       <div className={styles.pageHeader}>
         <div>
           <div className={styles.pageDate}>{today}</div>
           <h1 className={styles.pageTitle}>내 포트폴리오</h1>
+          <p className={styles.pageSubtitle}>시장 흐름과 보유 종목의 행동 대기열을 먼저 확인합니다.</p>
         </div>
         <div className={styles.headerActions}>
           {/* 마지막 캐시 저장 시각 — localStorage 'hs_cache_time' 기준 */}
@@ -1357,6 +1358,42 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* ── 행동 대기열 — 장기투자 관찰 후보를 먼저 보여준다 ── */}
+      {!loading && !error && portfolio.length > 0 && (
+        <div className={styles.commandQueue}>
+          <div className={styles.commandQueueHead}>
+            <span>행동 대기열</span>
+            <strong>
+              {rebalanceRows.length > 0
+                ? `${rebalanceRows.length}개 관찰 후보`
+                : '강한 행동 신호 없음'}
+            </strong>
+          </div>
+          <div className={styles.commandQueueList}>
+            {rebalanceRows.length > 0 ? (
+              rebalanceRows.slice(0, 4).map((row, index) => (
+                <button
+                  key={row.ticker}
+                  type="button"
+                  className={styles.commandTicket}
+                  onClick={() => navigate(`/stock/${row.ticker}`)}
+                >
+                  <span className={styles.commandRank}>{index + 1}</span>
+                  <strong>{row.ticker}</strong>
+                  <em>{row.action}</em>
+                  <small>{row.currentWeight.toFixed(1)}% / {row.targetWeight.toFixed(1)}%</small>
+                </button>
+              ))
+            ) : (
+              <div className={styles.commandEmpty}>
+                <strong>현재는 보유와 관찰 구간입니다.</strong>
+                <span>Flee/Rush 또는 목표비중 이탈이 커질 때 대기열에 올라옵니다.</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ── 로딩 ── */}
       {loading && (
         <div className={styles.loadingState}>
@@ -1376,7 +1413,7 @@ export default function Dashboard() {
       {summary && (
         <>
           <div className={styles.summarySectionHeader}>
-            <div className={styles.sectionTitle}>자산 현황</div>
+            <div className={styles.sectionTitle}>자산 원장</div>
             <div className={styles.currencyToggle}>
               <button
                 className={`${styles.currencyBtn} ${currencyMode === 'KRW' ? styles.currencyBtnActive : ''}`}
@@ -1678,25 +1715,6 @@ export default function Dashboard() {
             </div>
           )}
         </>
-      )}
-
-      {/* ── 리밸런싱 체크 — 대시보드에서는 핵심 후보만 얇게 표시 ── */}
-      {!loading && !error && portfolio.length > 0 && rebalanceRows.length > 0 && (
-        <div className={styles.rebalanceStrip}>
-          <div className={styles.rebalanceStripHead}>
-            <span>행동 대기열</span>
-            <strong>{rebalanceRows.length}개 후보</strong>
-          </div>
-          <div className={styles.rebalanceStripList}>
-            {rebalanceRows.slice(0, 4).map((row) => (
-              <div key={row.ticker} className={styles.rebalancePill}>
-                <strong>{row.ticker}</strong>
-                <span>{row.action}</span>
-                <em>{row.currentWeight.toFixed(1)}% / {row.targetWeight.toFixed(1)}%</em>
-              </div>
-            ))}
-          </div>
-        </div>
       )}
 
       {/* ── 종목 카드 그리드 ── */}

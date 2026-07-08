@@ -38,9 +38,9 @@
 .sidebar {
   width: var(--sidebar);
   background:
-    linear-gradient(180deg, rgba(24, 32, 45, 0.96) 0%, rgba(14, 19, 28, 0.98) 100%),
+    linear-gradient(180deg, rgba(19, 27, 39, 0.86) 0%, rgba(12, 17, 25, 0.94) 100%),
     var(--surface);
-  border-right: 1px solid var(--border);
+  border-right: 1px solid rgba(70, 83, 102, 0.48);
   position: fixed;
   top: 0;
   left: 0;
@@ -49,15 +49,15 @@
   flex-direction: column;
   padding: 28px 20px;
   z-index: 10;
-  box-shadow: 18px 0 42px rgba(0, 0, 0, 0.16);
+  box-shadow: 14px 0 34px rgba(0, 0, 0, 0.12);
   transition: background var(--t-base), border-color var(--t-base), box-shadow var(--t-base);
 }
 
 :global(body.light) .sidebar {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(239, 245, 252, 0.98) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86) 0%, rgba(239, 245, 252, 0.9) 100%),
     var(--surface);
-  box-shadow: 18px 0 42px rgba(15, 23, 42, 0.08);
+  box-shadow: 14px 0 34px rgba(15, 23, 42, 0.06);
 }
 
 /* 로고 */
@@ -114,7 +114,7 @@
   align-items: center;
   padding: 9px 10px;
   border: 1px solid transparent;
-  border-radius: var(--card-radius);
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-2);
@@ -123,7 +123,7 @@
   transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
 }
 .navItem:hover {
-  background: rgba(255, 255, 255, 0.035);
+  background: rgba(255, 255, 255, 0.026);
   border-color: var(--border);
   color: var(--text-1);
 }
@@ -133,16 +133,18 @@
 }
 
 :global(body.light) .active {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(59, 130, 246, 0.085);
   border-color: rgba(59, 130, 246, 0.28);
   box-shadow:
     inset 3px 0 0 var(--flee),
     0 8px 20px rgba(59, 130, 246, 0.08);
 }
 .active {
-  background: rgba(59, 130, 246, 0.11);
+  background: rgba(59, 130, 246, 0.095);
   border-color: rgba(59, 130, 246, 0.28);
-  box-shadow: inset 3px 0 0 var(--flee);
+  box-shadow:
+    inset 3px 0 0 var(--flee),
+    0 10px 22px rgba(59, 130, 246, 0.06);
   color: var(--text-1);
   font-weight: 700;
 }
