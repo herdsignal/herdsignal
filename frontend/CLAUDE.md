@@ -67,17 +67,17 @@ Rush    #EF4444  (레드)
 - 사이드바 노출 메뉴는 MVP 기준으로 Dashboard, Watchlist, Search, HerdLab만 유지한다.
 - AiRebalance(`/ai`), History(`/history`), Journal(`/journal`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
 - Dashboard (`/`)
-  - Signal Command Center 구조: 시장 HERD 신호 → 행동 대기열 → 자산 원장 → 보유 종목 티켓 순으로 표시
+  - Signal Command Center 구조: 시장 HERD 신호 → 3개 핵심 Action Queue → 포트폴리오 요약 바 → 보유 종목 테이블 순으로 표시
   - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
-  - 자산 원장 요약 (주식 평가액 + 현금 보유액)
+  - 포트폴리오 요약 바 (총자산 + 주식 평가액 + 현금 보유액 + 오늘 등락)
   - 총자산 카드 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시. backend 히스토리 포인트에 현재 summary/cash 포인트를 합성해 현금 저장 직후에도 마지막 값이 즉시 반영된다.
   - 자산 히스토리 추적 기준점(`hs_asset_baseline`) 설정으로 테스트 스냅샷과 실제 시작 수익률을 분리
   - 현금 보유액 표시 및 편집 모드 입력/저장
   - HERD 판단 기록 전체 요약: `/api/journal` 기반 매수/익절 횟수·금액·평균 익절률·최근 기록 표시
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
-  - 보유 종목 카드
-  - 보유 종목 카드에 회사 로고/티커/HERD 단계색/보유 수량/평단/목표 비중 차이 표시
+  - 보유 종목 테이블
+  - 보유 종목 행에 회사 로고/티커/HERD 단계색/보유 수량/평단/목표 비중 차이 표시
   - 보유 종목 정렬(행동순/HERD 낮은순/HERD 높은순/비중순)
   - 편집 모드/삭제
   - 편집 모드에서 현금 보유액과 종목별 목표 비중을 수정한다. 목표 비중은 `hs_target_weights`에 저장한다.
@@ -85,7 +85,7 @@ Rush    #EF4444  (레드)
   - localStorage 캐시 우선 로딩
   - 수동 새로고침은 `/api/portfolio/realtime`으로 yfinance 현재가를 다시 조회하고, HERD/SPY는 DB 최신값을 조회한다.
   - 수동 새로고침 완료 후 `현재가 갱신`/`HERD 조회`/`SPY 갱신` 결과를 짧게 표시
-  - 보유 종목 카드는 `ADD 10%`/`HOLD`/`SELL 30%` 같은 액션 코드를 우선 표시하고, 매수는 목표 투자금 기준·익절은 보유 평가금액 기준으로 비율 의미를 명시한다.
+  - 보유 종목 행은 `ADD 10%`/`HOLD`/`SELL 30%` 같은 액션 코드를 우선 표시하고, 매수는 목표 투자금 기준·익절은 보유 평가금액 기준으로 비율 의미를 명시한다.
   - 보유 종목 액션은 HERD 신호와 현재 비중/목표 비중 차이를 함께 본다. 예: ADD 신호여도 목표비중을 초과하면 `WAIT`, SELL/REDUCE 신호와 목표비중 초과가 겹치면 비중 축소 우선으로 표시한다.
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
