@@ -566,7 +566,9 @@
 }
 
 :global(body.light) .commandTicket {
-  background: rgba(248, 250, 252, 0.82);
+  border-color: rgba(184, 196, 211, 0.82);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
 }
 
 .commandTicket:hover {
@@ -599,6 +601,24 @@
   background-color: rgba(255, 255, 255, 0.78);
 }
 
+:global(body.light) .commandTicketBuy {
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(255, 255, 255, 0.90) 56%),
+    #FFFFFF;
+}
+
+:global(body.light) .commandTicketHold {
+  background:
+    linear-gradient(135deg, rgba(100, 116, 139, 0.10), rgba(255, 255, 255, 0.92) 56%),
+    #FFFFFF;
+}
+
+:global(body.light) .commandTicketSell {
+  background:
+    linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(249, 115, 22, 0.08) 42%, rgba(255, 255, 255, 0.92) 62%),
+    #FFFFFF;
+}
+
 .commandActionIcon {
   display: inline-flex;
   align-items: center;
@@ -611,6 +631,11 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 18px;
   font-weight: 800;
+}
+
+:global(body.light) .commandActionIcon {
+  background: rgba(248, 250, 252, 0.9);
+  border-color: rgba(184, 196, 211, 0.9);
 }
 
 .commandTicketMain {
@@ -1213,8 +1238,8 @@
 
 :global(body.light) .bannerAnimBlock {
   background:
-    radial-gradient(circle at 52% 44%, rgba(59, 130, 246, 0.08), transparent 34%),
-    linear-gradient(180deg, rgba(229, 236, 246, 0.94), rgba(211, 221, 234, 0.92)),
+    radial-gradient(circle at 52% 44%, rgba(59, 130, 246, 0.10), transparent 34%),
+    linear-gradient(180deg, rgba(219, 229, 242, 0.98), rgba(201, 213, 229, 0.96)),
     var(--surface2);
 }
 
@@ -1492,6 +1517,19 @@
 :global(body.light) .holdingsTable {
   background: rgba(255, 255, 255, 0.84);
   box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+:global(body.light) .holdingsHeader {
+  background: rgba(241, 245, 249, 0.76);
+  color: #64748B;
+}
+
+:global(body.light) .holdingRow {
+  background: rgba(255, 255, 255, 0.50);
+}
+
+:global(body.light) .holdingRow:hover {
+  background: rgba(239, 246, 255, 0.74);
 }
 
 .holdingsHeader,
