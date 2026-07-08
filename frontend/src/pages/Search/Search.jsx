@@ -501,20 +501,45 @@ export default function Search() {
         </p>
       </div>
 
-      {/* 검색 바 */}
-      <div className={styles.searchWrap}>
-        <input
-          ref={inputRef}
-          className={styles.searchInput}
-          type="text"
-          placeholder="티커 또는 종목명 입력 (예: AAPL, TSLA)"
-          value={query}
-          onChange={e => setQuery(e.target.value.toUpperCase())}
-          autoComplete="off"
-          spellCheck={false}
-        />
-        <span className={styles.searchIcon}>⌕</span>
-      </div>
+      <section className={styles.searchPanel}>
+        <div className={styles.searchPanelHead}>
+          <div>
+            <span>Stock Finder</span>
+            <strong>HERD 준비 종목 찾기</strong>
+          </div>
+          <em>{portfolioTickers.size}개 보유 · {watchlistTickers.size}개 대기</em>
+        </div>
+
+        {/* 검색 바 */}
+        <div className={styles.searchWrap}>
+          <input
+            ref={inputRef}
+            className={styles.searchInput}
+            type="text"
+            placeholder="티커 또는 종목명 입력 (예: AAPL, TSLA)"
+            value={query}
+            onChange={e => setQuery(e.target.value.toUpperCase())}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <span className={styles.searchIcon}>⌕</span>
+        </div>
+
+        <div className={styles.searchGuide}>
+          <div>
+            <span>Ready</span>
+            <strong>바로 추가 가능</strong>
+          </div>
+          <div>
+            <span>Pending</span>
+            <strong>계산 후 추가</strong>
+          </div>
+          <div>
+            <span>Limited</span>
+            <strong>데이터 확인 필요</strong>
+          </div>
+        </div>
+      </section>
 
       {suggestionMatches.length > 0 && (
         <div className={styles.suggestionRow}>

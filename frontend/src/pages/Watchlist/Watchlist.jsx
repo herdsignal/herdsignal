@@ -374,6 +374,8 @@ export default function Watchlist() {
       .filter((item) => item.signal === 'BUY' || item.signal === 'ADD')
       .slice(0, 5)
   ), [watchlist])
+  const waitCount = watchlist.filter((item) => item.signal === 'HOLD').length
+  const sellWatchCount = watchlist.filter((item) => item.signal === 'SELL' || item.signal === 'REDUCE').length
 
   function shouldShowQuality(item) {
     if (!item?.qualityLabel) return false
@@ -389,6 +391,7 @@ export default function Watchlist() {
         <div>
           <div className={styles.pageDate}>{today}</div>
           <h1 className={styles.pageTitle}>매수 대기열</h1>
+          <p className={styles.pageDesc}>관심종목 중 HERD가 매수권에 가까운 종목부터 확인합니다.</p>
         </div>
         <div className={styles.headerActions}>
           {refreshNotice && (
@@ -509,6 +512,24 @@ export default function Watchlist() {
       {/* ── 관심 종목 카드 그리드 — 2열 ── */}
       {!loading && !error && watchlist.length > 0 && (
         <>
+          <div className={styles.watchSummary}>
+            <div>
+              <span>Buy Queue</span>
+              <strong>{opportunityQueue.length}개</strong>
+              <em>Flee/Scatter 우선</em>
+            </div>
+            <div>
+              <span>Observe</span>
+              <strong>{waitCount}개</strong>
+              <em>보유·관찰 구간</em>
+            </div>
+            <div>
+              <span>Overheat</span>
+              <strong>{sellWatchCount}개</strong>
+              <em>쏠림·밀집 후보</em>
+            </div>
+          </div>
+
           <div className={styles.opportunityPanel}>
             <div className={styles.sectionRow}>
               <div className={styles.sectionTitle}>매수 대기열</div>

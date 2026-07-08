@@ -1525,7 +1525,7 @@ export default function Dashboard() {
                     {assetLatest ? displayAmount(assetLatest.totalAssetValue) : displayAmount(summary.total_value)}
                   </div>
                   <div className={styles.assetPanelSub}>
-                    기간 시작 {assetStartLabel}
+                    입출금 포함 총자산 흐름 · 기간 시작 {assetStartLabel}
                     {assetFirst?.totalAssetValue != null ? ` · ${displayAmount(assetFirst.totalAssetValue)}` : ''}
                   </div>
                 </div>
@@ -1545,20 +1545,24 @@ export default function Dashboard() {
 
               <div className={styles.assetStats}>
                 <div>
-                  <span>기간 수익률</span>
+                  <span>총자산 변화</span>
                   <strong style={{ color: pctColor(assetStartPct) }}>{fmtPct(assetStartPct)}</strong>
+                  <em>입출금 포함</em>
                 </div>
                 <div>
                   <span>고점 대비</span>
                   <strong style={{ color: pctColor(assetDrawdownPct) }}>{fmtPct(assetDrawdownPct)}</strong>
+                  <em>현재 총자산 기준</em>
                 </div>
                 <div>
                   <span>현재 현금</span>
                   <strong>{displayAmount(summary.cash_balance ?? cashBalance)}</strong>
+                  <em>총자산에 포함</em>
                 </div>
                 <div>
                   <span>주식 평가액</span>
                   <strong>{displayAmount(summary.invested_value ?? summary.total_value)}</strong>
+                  <em>보유 종목 평가</em>
                 </div>
               </div>
 

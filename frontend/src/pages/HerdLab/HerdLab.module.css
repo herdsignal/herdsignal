@@ -16,7 +16,6 @@
 .header span,
 .modelStrip span,
 .cardHead span,
-.metricCard span,
 .targetCard span {
   font-size: 10px;
   font-weight: 700;
@@ -38,10 +37,96 @@
   color: var(--text-3);
 }
 
-.metricGrid {
+.labHero {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 2fr);
+  gap: 14px;
+  min-height: 190px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--card-radius) + 4px);
+  background:
+    radial-gradient(circle at 24% 38%, rgba(59, 130, 246, 0.18), transparent 30%),
+    radial-gradient(circle at 88% 24%, rgba(251, 146, 60, 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.006)),
+    var(--surface);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.22);
+}
+
+:global(body.light) .labHero {
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.09);
+}
+
+.labHeroMain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.labHeroMain span,
+.labHeroMetrics span {
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.labHeroMain strong {
+  margin-top: 12px;
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 54px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 0.95;
+}
+
+.labHeroMain em {
+  margin-top: 12px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.labHeroMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
+}
+
+.labHeroMetrics div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+:global(body.light) .labHeroMetrics div {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.labHeroMetrics strong {
+  margin-top: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.labHeroMetrics em {
+  margin-top: 8px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
 }
 
 .targetGrid {
@@ -78,7 +163,6 @@
   color: var(--text-1);
 }
 
-.metricCard,
 .card,
 .targetCard {
   border: 1px solid var(--border);
@@ -87,10 +171,6 @@
     var(--surface);
   border-radius: var(--card-radius);
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
-}
-
-.metricCard {
-  padding: 18px 20px;
 }
 
 .targetCard {
@@ -126,23 +206,6 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 11px;
   line-height: 1;
-}
-
-.metricCard strong {
-  display: block;
-  margin-top: 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 30px;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-.metricCard em {
-  display: block;
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--text-3);
-  font-style: normal;
 }
 
 .blue { color: var(--flee); }
@@ -353,10 +416,17 @@
 }
 
 @media (max-width: 1180px) {
-  .metricGrid,
   .modelStrip,
   .targetGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .labHero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .labHeroMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .gridTwo {
@@ -370,9 +440,12 @@
     flex-direction: column;
   }
 
-  .metricGrid,
   .modelStrip,
   .targetGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .labHeroMetrics {
     grid-template-columns: 1fr;
   }
 

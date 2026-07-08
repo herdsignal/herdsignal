@@ -37,6 +37,23 @@ export default function HerdLab() {
         <p>{MODEL.name} · 검증 기간 {MODEL.period}</p>
       </header>
 
+      <section className={styles.labHero}>
+        <div className={styles.labHeroMain}>
+          <span>Current Model</span>
+          <strong>{MODEL.version}</strong>
+          <em>{MODEL.name} · {MODEL.status}</em>
+        </div>
+        <div className={styles.labHeroMetrics}>
+          {METRICS.map((metric) => (
+            <div key={metric.label}>
+              <span>{metric.label}</span>
+              <strong className={styles[metric.tone]}>{metric.value}</strong>
+              <em>{metric.sub}</em>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className={styles.modelStrip}>
         <div>
           <span>Model</span>
@@ -54,16 +71,6 @@ export default function HerdLab() {
           <span>Status</span>
           <strong>{MODEL.status}</strong>
         </div>
-      </section>
-
-      <section className={styles.metricGrid}>
-        {METRICS.map((metric) => (
-          <div key={metric.label} className={styles.metricCard}>
-            <span>{metric.label}</span>
-            <strong className={styles[metric.tone]}>{metric.value}</strong>
-            <em>{metric.sub}</em>
-          </div>
-        ))}
       </section>
 
       <section className={styles.targetGrid}>
