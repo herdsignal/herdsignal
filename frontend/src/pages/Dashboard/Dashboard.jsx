@@ -54,6 +54,7 @@ import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { formatSignalAgeLabel } from '../../utils/signalDuration'
 import {
   portfolioRows,
+  portfolioRiskWarnings,
   readTargetWeights,
   rebalanceIdeas,
   writeTargetWeights,
@@ -1122,6 +1123,10 @@ export default function Dashboard() {
     [portfolio, rows, herdMap, portfolioSort]
   )
   const rebalanceRows = useMemo(() => rebalanceIdeas(rows), [rows])
+  const riskWarnings = useMemo(
+    () => portfolioRiskWarnings(rows, summary),
+    [rows, summary]
+  )
   const actionQueueCards = useMemo(() => {
     const rowMap = new Map(rows.map((row) => [row.ticker, row]))
     return sortedPortfolio
@@ -1815,6 +1820,27 @@ export default function Dashboard() {
                   maximumFractionDigits: 1,
                 })} · 15분 지연`}
               </span>
+            </div>
+          )}
+
+          {summary && riskWarnings.length > 0 && (
+            <div className={styles.riskPanel}>
+              <div className={styles.riskPanelHead}>
+                <span>포트폴리오 리스크 체크</span>
+                <strong>{riskWarnings[0]?.level === 'CLEAR' ? '안정' : `${riskWarnings.length}개 점검`}</strong>
+              </div>
+              <div className={styles.riskList}>
+                {riskWarnings.map((item) => (
+                  <div
+                    key={`${item.title}-${item.value}`}
+                    className={`${styles.riskItem} ${styles[`riskItem_${item.level?.toLowerCase()}`] || ''}`}
+                  >
+                    <span>{item.title}</span>
+                    <strong>{item.value}</strong>
+                    <em>{item.detail}</em>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

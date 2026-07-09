@@ -106,8 +106,92 @@ export function portfolioRows(portfolio, summary, herdMap, targetWeights) {
       signal,
       action,
       marketValue,
+      returnPct: num(price?.return_pct, null),
     }
   })
+}
+
+export function portfolioRiskWarnings(rows, summary) {
+  const items = Array.isArray(rows) ? rows : []
+  if (items.length === 0) return []
+
+  const totalValue = num(summary?.total_value)
+  const cash = num(summary?.cash_balance)
+  const cashRatio = totalValue > 0 ? cash / totalValue * 100 : 0
+  const sortedByWeight = [...items].sort((a, b) => b.currentWeight - a.currentWeight)
+  const top = sortedByWeight[0]
+  const top3Weight = sortedByWeight.slice(0, 3).reduce((sum, item) => sum + item.currentWeight, 0)
+  const heatedWeight = items
+    .filter((item) => item.signal === 'SELL' || item.signal === 'REDUCE' || num(item.herd?.herdV4 ?? item.herd?.herdScore, 50) >= 60)
+    .reduce((sum, item) => sum + item.currentWeight, 0)
+  const buyCandidateCount = items.filter((item) => item.signal === 'BUY' || item.signal === 'ADD').length
+  const lossCluster = items
+    .filter((item) => num(item.returnPct, 0) <= -15)
+    .reduce((sum, item) => sum + item.currentWeight, 0)
+
+  const warnings = []
+  if (top && top.currentWeight >= 35) {
+    warnings.push({
+      level: 'HIGH',
+      title: `${top.ticker} 비중 집중`,
+      value: `${top.currentWeight.toFixed(1)}%`,
+      detail: '단일 종목 변동성이 전체 자산을 크게 흔들 수 있습니다.',
+    })
+  } else if (top && top.currentWeight >= 28) {
+    warnings.push({
+      level: 'MEDIUM',
+      title: `${top.ticker} 비중 점검`,
+      value: `${top.currentWeight.toFixed(1)}%`,
+      detail: '목표 비중과 HERD 신호를 함께 확인하세요.',
+    })
+  }
+
+  if (top3Weight >= 72) {
+    warnings.push({
+      level: 'MEDIUM',
+      title: '상위 3종목 집중',
+      value: `${top3Weight.toFixed(1)}%`,
+      detail: '수익 기여는 크지만 조정장 낙폭도 같이 커질 수 있습니다.',
+    })
+  }
+
+  if (heatedWeight >= 45) {
+    warnings.push({
+      level: 'MEDIUM',
+      title: '쏠림 구간 비중',
+      value: `${heatedWeight.toFixed(1)}%`,
+      detail: 'Drift/Rush 비중이 높아 리밸런싱 후보를 우선 확인하세요.',
+    })
+  }
+
+  if (buyCandidateCount > 0 && cashRatio < 5) {
+    warnings.push({
+      level: 'LOW',
+      title: '매수 후보 대비 현금 부족',
+      value: `${cashRatio.toFixed(1)}%`,
+      detail: `${buyCandidateCount}개 후보가 있지만 추가 투입 여력이 낮습니다.`,
+    })
+  }
+
+  if (lossCluster >= 35) {
+    warnings.push({
+      level: 'MEDIUM',
+      title: '손실 구간 집중',
+      value: `${lossCluster.toFixed(1)}%`,
+      detail: '손실 종목이 한쪽에 몰려 있어 추가매수 전 신호 검증이 필요합니다.',
+    })
+  }
+
+  if (warnings.length === 0) {
+    return [{
+      level: 'CLEAR',
+      title: '위험 쏠림 낮음',
+      value: '정상',
+      detail: '현재 보유 비중과 HERD 구간에서 큰 집중 경고는 없습니다.',
+    }]
+  }
+
+  return warnings.slice(0, 3)
 }
 
 export function rebalanceIdeas(rows) {

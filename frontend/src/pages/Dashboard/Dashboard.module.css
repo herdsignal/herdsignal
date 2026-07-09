@@ -314,6 +314,111 @@
   letter-spacing: 0;
 }
 
+.riskPanel {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
+    var(--surface);
+}
+
+:global(body.light) .riskPanel {
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+.riskPanelHead {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+}
+
+.riskPanelHead span,
+.riskItem span {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.riskPanelHead strong {
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.riskList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.riskItem {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--calm);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.riskItem strong {
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.riskItem em {
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.riskItem_high {
+  border-left-color: var(--rush);
+}
+
+.riskItem_high strong {
+  color: var(--rush);
+}
+
+.riskItem_medium {
+  border-left-color: var(--drift);
+}
+
+.riskItem_medium strong {
+  color: var(--drift);
+}
+
+.riskItem_low {
+  border-left-color: var(--scatter);
+}
+
+.riskItem_low strong {
+  color: var(--scatter);
+}
+
+.riskItem_clear {
+  border-left-color: #22C55E;
+}
+
+.riskItem_clear strong {
+  color: #22C55E;
+}
+
 .commandFrame {
   display: grid;
   gap: 0;
@@ -1953,6 +2058,14 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
+  }
+
+  .riskPanel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .riskList {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .journalOverviewStats {
