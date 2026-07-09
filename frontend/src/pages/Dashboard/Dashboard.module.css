@@ -2394,9 +2394,9 @@
 
   .mobileSignalMain {
     display: grid;
-    grid-template-columns: 112px minmax(0, 1fr);
-    min-height: 238px;
-    padding: 14px 14px 8px 18px;
+    grid-template-columns: 104px minmax(0, 1fr);
+    min-height: 204px;
+    padding: 10px 14px 8px 18px;
   }
 
   .mobileSignalScore {
@@ -2409,14 +2409,14 @@
 
   .mobileSignalScore strong {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 76px;
+    font-size: 68px;
     font-weight: 800;
     letter-spacing: 0;
     line-height: 0.86;
   }
 
   .mobileSignalScore span {
-    margin-top: 12px;
+    margin-top: 10px;
     font-family: 'Space Grotesk', sans-serif;
     font-size: 16px;
     font-weight: 800;
@@ -2434,7 +2434,7 @@
   .mobileSignalFlow {
     position: relative;
     min-width: 0;
-    min-height: 220px;
+    min-height: 188px;
     border-left: 1px solid var(--border);
   }
 
@@ -2626,8 +2626,9 @@
 
   .mobileAssetTop strong {
     display: block;
-    font-size: 28px;
+    font-size: 27px;
     line-height: 1;
+    white-space: nowrap;
   }
 
   .mobileAssetTop em {
@@ -2783,18 +2784,52 @@
 
 @media (max-width: 420px) {
   .mobileSignalMain {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-    min-height: 0;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 0;
+    min-height: 188px;
+    padding: 8px 12px 8px 16px;
   }
 
   .mobileSignalFlow {
-    min-height: 184px;
-    border-left: 0;
-    border-top: 1px solid var(--border);
+    min-height: 172px;
+    border-top: 0;
+    border-left: 1px solid var(--border);
   }
 
-  .mobileSignalStats,
+  .mobileSignalScore strong {
+    font-size: 62px;
+  }
+
+  .mobileSignalScore span {
+    font-size: 14px;
+  }
+
+  .mobileSignalScore em {
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .mobileSignalStats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mobileSignalStats div {
+    padding: 10px 11px;
+  }
+
+  .mobileSignalStats strong {
+    font-size: 17px;
+  }
+
+  .mobileSignalStats em {
+    font-size: 9px;
+  }
+
+  .mobileAssetTop {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .mobileAssetGrid {
     grid-template-columns: minmax(0, 1fr);
   }

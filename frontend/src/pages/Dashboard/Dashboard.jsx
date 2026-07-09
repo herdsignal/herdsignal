@@ -1276,18 +1276,24 @@ export default function Dashboard() {
           <div className={styles.mobileSignalStats}>
             <div>
               <span>1일 평균</span>
-              <strong style={{ color: stageColor(d1AvgPoint.stage) }}>{d1AvgPoint.score}</strong>
-              <em>{d1AvgPoint.stage}</em>
+              <strong style={{ color: scoreToColor(d1AvgPoint?.score) }}>
+                {d1AvgPoint?.score != null ? Math.round(d1AvgPoint.score) : '—'}
+              </strong>
+              <em>{scoreToStage(d1AvgPoint?.score) ?? '—'}</em>
             </div>
             <div>
               <span>1달 평균</span>
-              <strong style={{ color: stageColor(m1AvgPoint.stage) }}>{m1AvgPoint.score}</strong>
-              <em>{m1AvgPoint.stage}</em>
+              <strong style={{ color: scoreToColor(m1AvgPoint?.score) }}>
+                {m1AvgPoint?.score != null ? Math.round(m1AvgPoint.score) : '—'}
+              </strong>
+              <em>{scoreToStage(m1AvgPoint?.score) ?? '—'}</em>
             </div>
             <div>
               <span>1년 평균</span>
-              <strong style={{ color: stageColor(y1AvgPoint.stage) }}>{y1AvgPoint.score}</strong>
-              <em>{y1AvgPoint.stage}</em>
+              <strong style={{ color: scoreToColor(y1AvgPoint?.score) }}>
+                {y1AvgPoint?.score != null ? Math.round(y1AvgPoint.score) : '—'}
+              </strong>
+              <em>{scoreToStage(y1AvgPoint?.score) ?? '—'}</em>
             </div>
           </div>
         </article>
