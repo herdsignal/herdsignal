@@ -94,16 +94,18 @@
    ──────────────────────────── */
 .marketBanner {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 36%),
+    radial-gradient(circle at 74% 42%, rgba(251, 146, 60, 0.10), transparent 24%),
+    radial-gradient(circle at 48% 44%, rgba(59, 130, 246, 0.12), transparent 28%),
+    linear-gradient(135deg, rgba(59, 130, 246, 0.075), rgba(255, 255, 255, 0) 36%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)),
     var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   margin-bottom: 22px;
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 280px minmax(0, 1fr);
   overflow: hidden;
-  min-height: 250px;
+  min-height: 376px;
   box-shadow: 0 24px 54px rgba(0, 0, 0, 0.22);
 }
 
@@ -166,7 +168,7 @@
 }
 
 .bannerScoreBlock {
-  padding: 34px 36px;
+  padding: 54px 42px;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -181,7 +183,7 @@
   inset: 0;
   background: radial-gradient(
     ellipse at 0% 50%,
-    rgba(148, 163, 184, 0.09) 0%,
+    rgba(59, 130, 246, 0.11) 0%,
     transparent 70%
   );
   pointer-events: none;
@@ -190,7 +192,7 @@
 :global(body.light) .bannerScoreBlock::before {
   background: radial-gradient(
     ellipse at 0% 50%,
-    rgba(148, 163, 184, 0.12) 0%,
+    rgba(59, 130, 246, 0.14) 0%,
     transparent 68%
   );
 }
@@ -206,7 +208,7 @@
 
 .bannerScore {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 80px;
+  font-size: 106px;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 0.9;
@@ -234,7 +236,9 @@
 .bannerAnimBlock {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(32, 42, 56, 0.84), rgba(21, 27, 37, 0.9)),
+    radial-gradient(circle at 58% 42%, rgba(251, 146, 60, 0.12), transparent 22%),
+    radial-gradient(circle at 34% 48%, rgba(59, 130, 246, 0.14), transparent 26%),
+    linear-gradient(180deg, rgba(32, 42, 56, 0.9), rgba(16, 23, 34, 0.94)),
     var(--surface2);
   flex: 1;
 }
@@ -291,7 +295,7 @@
   flex: 1;
   display: flex;
   overflow: hidden;
-  min-height: 240px;
+  min-height: 376px;
 }
 
 .bannerAnimLabel {
@@ -318,9 +322,9 @@
 }
 
 .bannerHistStats {
-  width: 198px;
+  width: 190px;
   flex-shrink: 0;
-  padding: 50px 24px 16px;
+  padding: 56px 24px 20px;
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -331,7 +335,7 @@
 .bannerTimeline {
   position: relative;
   flex: 1;
-  padding: 46px 16px 8px 8px;
+  padding: 46px 16px 8px 10px;
   display: flex;
   align-items: center;
   background:

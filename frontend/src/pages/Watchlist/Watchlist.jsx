@@ -421,7 +421,7 @@ export default function Watchlist() {
           {spyTab === 'overview' && (
             <div className={styles.bannerOverview}>
               <div className={styles.bannerAnimBlock}>
-                <HerdDots score={spyScore} fill dotCount={60} />
+                <HerdDots score={spyScore} fill dotCount={84} />
                 <div className={styles.bannerAnimLabel}>
                   <span>← Flee · 군중 이탈</span>
                   <span>Rush · 군중 밀집 →</span>
