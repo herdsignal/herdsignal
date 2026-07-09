@@ -509,7 +509,7 @@ export default function Watchlist() {
         </div>
       )}
 
-      {/* ── 관심 종목 카드 그리드 — 2열 ── */}
+      {/* ── 관심 종목 Action Queue ── */}
       {!loading && !error && watchlist.length > 0 && (
         <>
           <div className={styles.watchSummary}>
@@ -568,7 +568,14 @@ export default function Watchlist() {
             <div className={styles.sectionHint}>매수 우선도순</div>
           </div>
 
-          <div className={styles.stockGrid}>
+          <div className={styles.queueTable}>
+            <div className={styles.queueHead}>
+              <span>종목</span>
+              <span>HERD</span>
+              <span>액션</span>
+              <span>신호</span>
+              <span>업데이트</span>
+            </div>
             {sortedWatchlist.map((item) => {
               const color      = stageColor(item.herdStage)
               const badge      = badgeStyle(item.herdStage)
@@ -582,75 +589,57 @@ export default function Watchlist() {
               return (
                 <div
                   key={item.ticker}
-                  className={styles.stockCard}
+                  className={styles.queueRow}
                   onClick={() => navigate(`/stock/${item.ticker}`)}
                   style={{ opacity: isDeleting ? 0.4 : 1 }}
                 >
-                  {/* 좌측 HERD 단계 컬러 스트라이프 */}
-                  <div className={styles.cardStripe} style={{ background: color, color }} />
+                  <span className={styles.queueStripe} style={{ background: color, color }} />
 
-                  {/* 삭제 버튼 — 우상단, hover 시 표시 */}
+                  <div className={styles.queueStock}>
+                    <StockAvatar
+                      ticker={item.ticker}
+                      logoUrl={item.logoUrl}
+                      tone={badge}
+                    />
+                    <div>
+                      <strong>{item.ticker}</strong>
+                      <em style={{ color }}>{stageName} · 매수 우선도 {Math.round(opportunity)}</em>
+                      {shouldShowQuality(item) && (
+                        <small style={{ color: qualityColor(item.qualityLevel) }}>
+                          {qualityWarningText(item)}
+                        </small>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={styles.queueHerd}>
+                    <strong style={{ color }}>{Math.round(item.herdV4 ?? item.herdScore)}</strong>
+                    <span>{stageName}</span>
+                  </div>
+
+                  <div className={styles.queueAction}>
+                    <strong style={{ color: signal.color }}>{formatActionCode(item)}</strong>
+                    <span>{formatActionText(item)}</span>
+                  </div>
+
+                  <div className={styles.queueSignal}>
+                    <strong>{formatSignalDuration(item) ?? '신호 확인'}</strong>
+                    <span>{formatActionBasis(item)}</span>
+                  </div>
+
+                  <div className={styles.queueMeta}>
+                    <strong>{formatDate(item.scoreDate)}</strong>
+                    <span>DB 최신 HERD</span>
+                  </div>
+
                   <button
-                    className={styles.cardDeleteBtn}
+                    className={styles.queueDeleteBtn}
                     onClick={e => handleDelete(e, item.ticker)}
                     disabled={!!deletingTicker}
                     title={`${item.ticker} 관심 종목에서 삭제`}
                   >
                     {isDeleting ? '…' : '✕'}
                   </button>
-
-                  {/* 카드 상단: 종목 (좌) + HERD (우) */}
-                  <div className={styles.cardTop}>
-                    <div className={styles.cardTickerBlock}>
-                      <StockAvatar
-                        ticker={item.ticker}
-                        logoUrl={item.logoUrl}
-                        tone={badge}
-                      />
-                      <div>
-                        <div className={styles.cardTicker}>{item.ticker}</div>
-                        <div className={styles.cardStageName}>
-                          {stageName} · 매수 우선도 {Math.round(opportunity)}
-                        </div>
-                        {shouldShowQuality(item) && (
-                          <div
-                            className={styles.cardQuality}
-                            style={{ color: qualityColor(item.qualityLevel) }}
-                          >
-                            {qualityWarningText(item)}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className={styles.cardHerd}>
-                      <div className={styles.cardHerdNum} style={{ color }}>
-                        {Math.round(item.herdV4 ?? item.herdScore)}
-                      </div>
-                      <div className={styles.cardHerdStage}>{stageName}</div>
-                    </div>
-                  </div>
-
-                  {/* 카드 하단: 시그널 배지만 (관심 종목은 재무 데이터 없음) */}
-                  <div className={styles.cardBottom}>
-                    <div className={styles.cardSignalGroup}>
-                      <span
-                        className={styles.cardSignalBadge}
-                        style={{ background: signal.bg, color: signal.color }}
-                      >
-                        {item.signal}
-                      </span>
-                      <span className={styles.cardSignalDesc}>
-                        {formatActionText(item)}
-                      </span>
-                    </div>
-                    <span className={styles.cardActionBasis}>
-                      {formatSignalDuration(item) ?? formatActionBasis(item)}
-                    </span>
-                    <span className={styles.cardUpdate}>
-                      {formatDate(item.scoreDate)}
-                    </span>
-                  </div>
                 </div>
               )
             })}

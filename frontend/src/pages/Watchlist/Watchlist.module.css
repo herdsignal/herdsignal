@@ -550,42 +550,66 @@
 }
 
 /* ────────────────────────────
-   관심 종목 카드 그리드 — 2열
-   Dashboard와 동일 구조, 재무 섹션만 없음
+   관심 종목 Action Queue
    ──────────────────────────── */
-.stockGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.stockCard {
+.queueTable {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--card-radius) + 2px);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
     var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  padding: 20px 22px;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
-  transition: border-color 0.15s, background 0.15s, transform 0.15s, opacity 0.15s;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16);
 }
 
-:global(body.light) .stockCard {
+:global(body.light) .queueTable {
   box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
 }
-.stockCard:hover {
-  border-color: var(--border2);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
-    var(--surface);
-  transform: translateY(-1px);
+
+.queueHead,
+.queueRow {
+  display: grid;
+  grid-template-columns: minmax(230px, 1.35fr) 110px minmax(180px, 1fr) minmax(170px, 1fr) 110px 28px;
+  gap: 18px;
+  align-items: center;
 }
 
-/* 좌측 컬러 스트라이프 */
-.cardStripe {
+.queueHead {
+  padding: 13px 18px 12px 26px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.queueHead span:nth-child(5) {
+  text-align: right;
+}
+
+.queueRow {
+  position: relative;
+  min-height: 78px;
+  padding: 14px 18px 14px 26px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.queueRow:last-child {
+  border-bottom: none;
+}
+
+.queueRow:hover {
+  background: rgba(255, 255, 255, 0.026);
+}
+
+:global(body.light) .queueRow:hover {
+  background: rgba(15, 23, 42, 0.026);
+}
+
+.queueStripe {
   position: absolute;
   left: 0;
   top: 0;
@@ -594,142 +618,88 @@
   box-shadow: 0 0 18px currentColor;
 }
 
-/* 삭제 버튼 — 우상단, hover 시 표시 */
-.cardDeleteBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background: none;
-  color: var(--text-3);
-  font-size: 10px;
-  cursor: pointer;
+.queueStock {
   display: flex;
   align-items: center;
-  justify-content: center;
-  opacity: 0.3;
-  transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s;
-}
-.stockCard:hover .cardDeleteBtn { opacity: 1; }
-.cardDeleteBtn:hover:not(:disabled) {
-  color: #EF4444;
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.08);
-}
-.cardDeleteBtn:disabled { opacity: 0.2; cursor: default; }
-
-/* 카드 상단: 종목 (좌) + HERD (우) */
-.cardTop {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.cardTickerBlock {
-  display: flex;
-  align-items: center;
+  min-width: 0;
   gap: 12px;
 }
 
-.cardTicker {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0;
-  margin-bottom: 2px;
+.queueStock strong,
+.queueAction strong,
+.queueSignal strong,
+.queueMeta strong {
+  display: block;
+  overflow: hidden;
   color: var(--text-1);
-}
-
-.cardStageName {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-2);
-}
-
-.cardQuality {
-  margin-top: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  opacity: 0.9;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.cardHerd {
-  text-align: right;
-  flex-shrink: 0;
-  padding-right: 20px; /* 삭제 버튼 공간 확보 */
+.queueStock em,
+.queueStock small,
+.queueHerd span,
+.queueAction span,
+.queueSignal span,
+.queueMeta span {
+  display: block;
+  overflow: hidden;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.cardHerdNum {
+.queueHerd strong {
+  display: block;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1;
-  margin-bottom: 3px;
 }
 
-.cardHerdStage {
-  font-size: 10px;
-  font-weight: 600;
+.queueHerd span {
   color: var(--text-2);
 }
 
-/* 카드 하단: 시그널 배지 (관심 종목은 하단만) */
-.cardBottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
+.queueMeta {
+  text-align: right;
 }
 
-.cardSignalBadge {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0;
-}
-
-.cardSignalGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.cardSignalDesc {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-2);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cardActionBasis {
-  flex: 0 1 auto;
-  min-width: 0;
-  overflow: hidden;
+.queueDeleteBtn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: none;
   color: var(--text-3);
+  cursor: pointer;
   font-size: 10px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  opacity: 0.34;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s;
 }
 
-.cardUpdate {
-  font-size: 11px;
-  color: var(--text-3);
-  white-space: nowrap;
+.queueRow:hover .queueDeleteBtn {
+  opacity: 1;
+}
+
+.queueDeleteBtn:hover:not(:disabled) {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: #EF4444;
+}
+
+.queueDeleteBtn:disabled {
+  cursor: default;
+  opacity: 0.2;
 }
 
 /* ────────────────────────────
@@ -814,12 +784,20 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .stockGrid {
+  .watchSummary {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .watchSummary {
-    grid-template-columns: minmax(0, 1fr);
+  .queueHead,
+  .queueRow {
+    grid-template-columns: minmax(220px, 1fr) 92px minmax(150px, 0.9fr) 28px;
+  }
+
+  .queueHead span:nth-child(4),
+  .queueHead span:nth-child(5),
+  .queueSignal,
+  .queueMeta {
+    display: none;
   }
 }
 
@@ -854,20 +832,23 @@
     grid-column: 2 / -1;
   }
 
-  .stockCard {
-    padding: 16px;
+  .queueHead {
+    display: none;
   }
 
-  .cardTop,
-  .cardBottom {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
+  .queueRow {
+    grid-template-columns: minmax(0, 1fr) 72px 24px;
+    gap: 12px;
+    min-height: 86px;
+    padding: 14px 14px 14px 22px;
   }
 
-  .cardHerd {
-    width: 100%;
-    padding-right: 0;
-    text-align: left;
+  .queueAction {
+    grid-column: 1 / -1;
+  }
+
+  .queueAction strong,
+  .queueAction span {
+    white-space: normal;
   }
 }
