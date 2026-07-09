@@ -134,6 +134,51 @@
   font-weight: 700;
 }
 
+.trustStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.trustStrip div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022), rgba(255, 255, 255, 0.006)),
+    var(--surface);
+}
+
+.trustStrip span,
+.modelNotes span {
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.trustStrip strong {
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.trustStrip em {
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .card {
   border: 1px solid var(--border);
   background:
@@ -318,6 +363,42 @@
   padding: 20px;
 }
 
+.modelNotes {
+  display: grid;
+  gap: 10px;
+  padding: 16px 20px 20px;
+}
+
+.modelNotes div {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.modelNotes span {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--flee);
+}
+
+.modelNotes strong {
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
 .weightRow {
   display: grid;
   grid-template-columns: 120px 1fr 44px;
@@ -359,6 +440,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .trustStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .gridTwo {
     grid-template-columns: 1fr;
   }
@@ -392,6 +477,10 @@
   }
 
   .labHeroMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .trustStrip {
     grid-template-columns: 1fr;
   }
 
@@ -460,8 +549,10 @@
   }
 
   .labHeroMetrics div,
+  .trustStrip div,
   .weightList,
   .stageGrid,
+  .modelNotes,
   .table {
     padding-left: 16px;
     padding-right: 16px;

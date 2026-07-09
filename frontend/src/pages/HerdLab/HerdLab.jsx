@@ -8,6 +8,8 @@ import herdModelReport from '../../data/herdModelReport'
 const {
   model: MODEL,
   metrics: METRICS,
+  trustChecks: TRUST_CHECKS,
+  modelNotes: MODEL_NOTES,
   rows: TEST_ROWS,
   stages: STAGES,
   weights: WEIGHTS,
@@ -52,6 +54,16 @@ export default function HerdLab() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className={styles.trustStrip}>
+        {TRUST_CHECKS.map((item) => (
+          <div key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <em>{item.sub}</em>
+          </div>
+        ))}
       </section>
 
       <section className={styles.card}>
@@ -122,6 +134,21 @@ export default function HerdLab() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className={styles.card}>
+        <div className={styles.cardHead}>
+          <span>모델 상태</span>
+          <strong>검증 수치와 운영 보정 분리</strong>
+        </div>
+        <div className={styles.modelNotes}>
+          {MODEL_NOTES.map((note, index) => (
+            <div key={note}>
+              <span>{index + 1}</span>
+              <strong>{note}</strong>
+            </div>
+          ))}
         </div>
       </section>
     </div>

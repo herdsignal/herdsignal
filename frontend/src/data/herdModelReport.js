@@ -4,19 +4,30 @@
 
 const herdModelReport = {
   model: {
-    version: 'HERD_v5',
-    name: 'Balanced Action Layer',
-    base: 'HERD_v4 score',
-    status: 'MVP 검증 중',
+    version: 'HERD_v6',
+    name: 'Progressive Action Layer',
+    base: 'HERD_v4 score + v5 validation',
+    status: '운영 검증 중',
     release: 'Phase 3',
-    source: 'data/herd/backtest_action_layer.py',
+    source: 'data/herd/backtest_action_layer.py · ActionDecisionService',
     period: '10년',
   },
   metrics: [
-    { label: '수익률 보존', value: '70.2%', sub: 'HERD_v5 기준', tone: 'blue' },
-    { label: 'MDD 개선', value: '+5.5%p', sub: 'B&H 대비', tone: 'green' },
+    { label: '검증 수익률 보존', value: '70.2%', sub: 'v5 백테스트 기준', tone: 'blue' },
+    { label: '검증 MDD 개선', value: '+5.5%p', sub: 'B&H 대비', tone: 'green' },
     { label: '연평균 행동', value: '8.5회', sub: '10년 평균', tone: 'slate' },
-    { label: '표본', value: '5종목', sub: 'NVDA/MSFT/AAPL/JPM/SPY', tone: 'orange' },
+    { label: '운영 보정', value: 'v6', sub: '신호 생애주기 반영', tone: 'orange' },
+  ],
+  trustChecks: [
+    { label: '검증 표본', value: '5종목', sub: 'NVDA/MSFT/AAPL/JPM/SPY' },
+    { label: '통과 기준', value: '60%+', sub: '수익률 보존 하한' },
+    { label: '행동 범위', value: '2-12회', sub: '연간 과매매 방지' },
+    { label: '현재 상태', value: 'MVP', sub: '실사용 검증 누적 중' },
+  ],
+  modelNotes: [
+    '성과 수치는 검증 완료된 HERD_v5 백테스트 기준입니다.',
+    'HERD_v6는 같은 점수 위에 신호 지속일을 반영해 초입·장기 지속 신호의 행동 강도를 보정합니다.',
+    '신규 종목은 종목별 신뢰도 표본이 쌓이기 전까지 참고용으로 봅니다.',
   ],
   rows: [
     { ticker: 'NVDA', buyHold: '+16,667.5%', action: '+6,196.5%', capture: '37.2%', mdd: '+10.3%p', actions: '9.0/년', verdict: '방어 우선', tone: 'watch' },
