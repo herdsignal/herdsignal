@@ -21,6 +21,12 @@ public class HerdReliabilityResponse {
     private Integer rushSampleSize;
     private Double rushHitRate;
 
+    private Double buyReturn1m;
+    private Double buyReturn3m;
+    private Double buyReturn6m;
+    private Double sellDrawdown1m;
+    private Double sellDrawdown3m;
+
     private Double mddImprovement;
     private Double returnPreservation;
     private Double annualActions;

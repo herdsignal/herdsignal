@@ -441,6 +441,42 @@ function currentSignalReliability(herdData, reliability) {
   }
 }
 
+function reliabilityEvidenceItems(reliability) {
+  if (!reliability) return []
+  return [
+    {
+      label: '매수 후 1M',
+      value: fmtReliabilityPct(reliability.buyReturn1m),
+      caption: 'Flee/Scatter 평균',
+      tone: Number(reliability.buyReturn1m) >= 0 ? 'buy' : 'sell',
+    },
+    {
+      label: '매수 후 3M',
+      value: fmtReliabilityPct(reliability.buyReturn3m),
+      caption: 'Flee/Scatter 평균',
+      tone: Number(reliability.buyReturn3m) >= 0 ? 'buy' : 'sell',
+    },
+    {
+      label: '매수 후 6M',
+      value: fmtReliabilityPct(reliability.buyReturn6m),
+      caption: 'Flee/Scatter 평균',
+      tone: Number(reliability.buyReturn6m) >= 0 ? 'buy' : 'sell',
+    },
+    {
+      label: '익절 후 1M',
+      value: fmtReliabilityPct(reliability.sellDrawdown1m),
+      caption: 'Drift/Rush 평균 저점',
+      tone: Number(reliability.sellDrawdown1m) <= 0 ? 'sell' : 'neutral',
+    },
+    {
+      label: '익절 후 3M',
+      value: fmtReliabilityPct(reliability.sellDrawdown3m),
+      caption: 'Drift/Rush 평균 저점',
+      tone: Number(reliability.sellDrawdown3m) <= 0 ? 'sell' : 'neutral',
+    },
+  ]
+}
+
 function journalActionLabel(type) {
   switch (type) {
     case 'BUY': return '매수 기록'
@@ -612,6 +648,10 @@ export default function StockDetail() {
   const currentReliability = useMemo(
     () => currentSignalReliability(herdData, reliability),
     [herdData, reliability]
+  )
+  const reliabilityEvidence = useMemo(
+    () => reliabilityEvidenceItems(reliability),
+    [reliability]
   )
   const fundamentalGuard = useMemo(
     () => evaluateFundamentalGuard(financials, herdData),
@@ -989,6 +1029,20 @@ export default function StockDetail() {
                         <em>과매매 체크</em>
                       </div>
                     </div>
+                    {reliabilityEvidence.length > 0 && (
+                      <div className={styles.reliabilityEvidenceGrid}>
+                        {reliabilityEvidence.map((item) => (
+                          <div
+                            key={item.label}
+                            className={`${styles.reliabilityEvidenceItem} ${styles[`reliabilityEvidence_${item.tone}`] || ''}`}
+                          >
+                            <span>{item.label}</span>
+                            <strong>{item.value}</strong>
+                            <em>{item.caption}</em>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div className={styles.reliabilitySummary}>
                       {reliability.summary}
                     </div>

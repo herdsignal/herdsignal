@@ -617,6 +617,65 @@
   color: var(--text-3);
 }
 
+.reliabilityEvidenceGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.reliabilityEvidenceItem {
+  min-width: 0;
+  padding: 12px 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.reliabilityEvidenceItem span,
+.reliabilityEvidenceItem strong,
+.reliabilityEvidenceItem em {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reliabilityEvidenceItem span {
+  margin-bottom: 6px;
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.reliabilityEvidenceItem strong {
+  margin-bottom: 3px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: var(--text-1);
+}
+
+.reliabilityEvidenceItem em {
+  color: var(--text-3);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.reliabilityEvidence_buy strong {
+  color: var(--positive);
+}
+
+.reliabilityEvidence_sell strong {
+  color: var(--negative);
+}
+
+.reliabilityEvidence_neutral strong {
+  color: var(--text-2);
+}
+
 .reliabilitySummary {
   margin-top: 12px;
   font-size: 12px;

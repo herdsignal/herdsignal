@@ -37,6 +37,15 @@ FLEE_FORWARD_DAYS = 126
 RUSH_FORWARD_DAYS = 63
 SIGNAL_COOLDOWN_DAYS = 20
 RUSH_DRAWDOWN_HIT_PCT = -5.0
+BUY_FORWARD_WINDOWS = {
+    "buy_return_1m": 21,
+    "buy_return_3m": 63,
+    "buy_return_6m": 126,
+}
+SELL_FORWARD_WINDOWS = {
+    "sell_drawdown_1m": 21,
+    "sell_drawdown_3m": 63,
+}
 
 
 def calculate_signal_reliability(ticker: str, years: int = 3) -> dict[str, Any]:
@@ -73,6 +82,11 @@ def calculate_signal_reliability(ticker: str, years: int = 3) -> dict[str, Any]:
         "flee_hit_rate": signal_stats["flee_hit_rate"],
         "rush_sample_size": signal_stats["rush_sample_size"],
         "rush_hit_rate": signal_stats["rush_hit_rate"],
+        "buy_return_1m": signal_stats["buy_return_1m"],
+        "buy_return_3m": signal_stats["buy_return_3m"],
+        "buy_return_6m": signal_stats["buy_return_6m"],
+        "sell_drawdown_1m": signal_stats["sell_drawdown_1m"],
+        "sell_drawdown_3m": signal_stats["sell_drawdown_3m"],
         "mdd_improvement": strategy_stats["mdd_improvement"],
         "return_preservation": strategy_stats["return_preservation"],
         "annual_actions": strategy_stats["annual_actions"],
@@ -137,6 +151,8 @@ def _build_score_frame(scores: list[HerdScore]) -> pd.DataFrame:
 def _measure_signal_hits(score_frame: pd.DataFrame, close: pd.Series) -> dict[str, Any]:
     flee_hits: list[bool] = []
     rush_hits: list[bool] = []
+    buy_forward_returns: dict[str, list[float]] = {key: [] for key in BUY_FORWARD_WINDOWS}
+    sell_forward_drawdowns: dict[str, list[float]] = {key: [] for key in SELL_FORWARD_WINDOWS}
     last_flee_date: pd.Timestamp | None = None
     last_rush_date: pd.Timestamp | None = None
 
@@ -151,6 +167,10 @@ def _measure_signal_hits(score_frame: pd.DataFrame, close: pd.Series) -> dict[st
             if ret is None:
                 continue
             flee_hits.append(ret > 0)
+            for key, days in BUY_FORWARD_WINDOWS.items():
+                window_ret = _forward_return(close, score_date, days)
+                if window_ret is not None:
+                    buy_forward_returns[key].append(window_ret)
             last_flee_date = score_date
 
         if score >= SELL_SCORE:
@@ -161,6 +181,10 @@ def _measure_signal_hits(score_frame: pd.DataFrame, close: pd.Series) -> dict[st
             if ret is None or drawdown is None:
                 continue
             rush_hits.append(ret < 0 or drawdown <= RUSH_DRAWDOWN_HIT_PCT)
+            for key, days in SELL_FORWARD_WINDOWS.items():
+                window_drawdown = _forward_drawdown(close, score_date, days)
+                if window_drawdown is not None:
+                    sell_forward_drawdowns[key].append(window_drawdown)
             last_rush_date = score_date
 
     return {
@@ -168,6 +192,8 @@ def _measure_signal_hits(score_frame: pd.DataFrame, close: pd.Series) -> dict[st
         "flee_hit_rate": _rate(flee_hits),
         "rush_sample_size": len(rush_hits),
         "rush_hit_rate": _rate(rush_hits),
+        **{key: _average(values) for key, values in buy_forward_returns.items()},
+        **{key: _average(values) for key, values in sell_forward_drawdowns.items()},
     }
 
 
@@ -296,6 +322,12 @@ def _rate(values: list[bool]) -> float | None:
     return sum(values) / len(values) * 100
 
 
+def _average(values: list[float]) -> float | None:
+    if not values:
+        return None
+    return sum(values) / len(values)
+
+
 def _grade_reliability(
     history_count: int,
     signal_stats: dict[str, Any],
@@ -352,6 +384,11 @@ def _limited_response(ticker: str, years: int, history_count: int, summary: str)
         "flee_hit_rate": None,
         "rush_sample_size": 0,
         "rush_hit_rate": None,
+        "buy_return_1m": None,
+        "buy_return_3m": None,
+        "buy_return_6m": None,
+        "sell_drawdown_1m": None,
+        "sell_drawdown_3m": None,
         "mdd_improvement": None,
         "return_preservation": None,
         "annual_actions": None,
