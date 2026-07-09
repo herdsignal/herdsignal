@@ -542,7 +542,7 @@ function AssetHistoryTooltip({ active, payload, label, displayAmount }) {
         <strong>{displayAmount(row?.totalAssetValue)}</strong>
       </div>
       <div className={styles.assetTooltipRow}>
-        <span>주식</span>
+        <span>주식 평가액</span>
         <strong>{displayAmount(row?.investedValue)}</strong>
       </div>
       <div className={styles.assetTooltipRow}>
@@ -1160,18 +1160,25 @@ export default function Dashboard() {
   const assetLatest = assetChartHistory.length > 0 ? assetChartHistory[assetChartHistory.length - 1] : null
   const assetFirst = assetChartHistory.length > 0 ? assetChartHistory[0] : null
   const assetStartValue = assetFirst?.totalAssetValue ?? null
+  const investedStartValue = assetFirst?.investedValue ?? null
   const assetPeak = assetChartHistory.length > 0
     ? assetChartHistory.reduce((best, point) =>
         Number(point.totalAssetValue) > Number(best.totalAssetValue) ? point : best
       , assetChartHistory[0])
     : null
-  const assetStartPct = assetStartValue && assetLatest?.totalAssetValue
+  const totalFlowPct = assetStartValue && assetLatest?.totalAssetValue
     ? (assetLatest.totalAssetValue / assetStartValue - 1) * 100
+    : null
+  const investedChangePct = investedStartValue && assetLatest?.investedValue
+    ? (assetLatest.investedValue / investedStartValue - 1) * 100
     : null
   const assetDrawdownPct = assetPeak?.totalAssetValue && assetLatest?.totalAssetValue
     ? (assetLatest.totalAssetValue / assetPeak.totalAssetValue - 1) * 100
     : null
-  const assetValues = assetChartHistory.map((p) => p.totalAssetValue)
+  const assetValues = assetChartHistory.flatMap((p) => [
+    Number(p.totalAssetValue),
+    Number(p.investedValue),
+  ]).filter(Number.isFinite)
   if (assetStartValue) assetValues.push(assetStartValue)
   const assetMin = assetValues.length > 0 ? Math.min(...assetValues) : 0
   const assetMax = assetValues.length > 0 ? Math.max(...assetValues) : 1000
@@ -1519,7 +1526,7 @@ export default function Dashboard() {
                     {assetLatest ? displayAmount(assetLatest.totalAssetValue) : displayAmount(summary.total_value)}
                   </div>
                   <div className={styles.assetPanelSub}>
-                    입출금 포함 총자산 흐름 · 기간 시작 {assetStartLabel}
+                    총자산은 입출금 포함 · 투자 변화는 주식 평가액 기준 · 기간 시작 {assetStartLabel}
                     {assetFirst?.totalAssetValue != null ? ` · ${displayAmount(assetFirst.totalAssetValue)}` : ''}
                   </div>
                 </div>
@@ -1539,8 +1546,13 @@ export default function Dashboard() {
 
               <div className={styles.assetStats}>
                 <div>
+                  <span>주식 평가액 변화</span>
+                  <strong style={{ color: pctColor(investedChangePct) }}>{fmtPct(investedChangePct)}</strong>
+                  <em>현금 변동 제외</em>
+                </div>
+                <div>
                   <span>총자산 변화</span>
-                  <strong style={{ color: pctColor(assetStartPct) }}>{fmtPct(assetStartPct)}</strong>
+                  <strong style={{ color: pctColor(totalFlowPct) }}>{fmtPct(totalFlowPct)}</strong>
                   <em>입출금 포함</em>
                 </div>
                 <div>
@@ -1552,11 +1564,6 @@ export default function Dashboard() {
                   <span>현재 현금</span>
                   <strong>{displayAmount(summary.cash_balance ?? cashBalance)}</strong>
                   <em>총자산에 포함</em>
-                </div>
-                <div>
-                  <span>주식 평가액</span>
-                  <strong>{displayAmount(summary.invested_value ?? summary.total_value)}</strong>
-                  <em>보유 종목 평가</em>
                 </div>
               </div>
 
@@ -1617,6 +1624,15 @@ export default function Dashboard() {
                         : false
                       }
                       activeDot={{ r: 5, strokeWidth: 0 }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="investedValue"
+                      stroke="var(--calm)"
+                      strokeWidth={1.8}
+                      strokeDasharray="5 5"
+                      dot={false}
+                      activeDot={{ r: 4, strokeWidth: 0 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
