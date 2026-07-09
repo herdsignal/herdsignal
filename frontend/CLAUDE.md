@@ -47,6 +47,7 @@ src/
 - 카드 radius, border, padding, 배지, 숫자 크기를 페이지별로 흩어지지 않게 통일한다.
 - 현재 UI 문구는 한국어 중심
 - 숫자 + 짧은 판단 문장을 함께 보여준다. 긴 설명문보다 행동 판단이 먼저 보여야 한다.
+- 모바일에서는 데스크톱 사이드바를 하단 탭 내비게이션으로 전환하고, Dashboard/Watchlist/Search/HerdLab 핵심 흐름을 먼저 보여준다.
 
 ## HERD 5단계 색상
 ```
@@ -62,13 +63,14 @@ Rush    #EF4444  (레드)
 - HerdHistoryChart: HERD 점수 히스토리 공용 차트 (Flee~Rush 구간 배경, 현재 점수 기준선, 현재 위치/평균 대비/기간 평균/저점-고점 데이터 보드, 이력 부족 배지)
 - SpectrumBar: Flee~Rush 스펙트럼 바
 - StockAvatar: `logoUrl`이 있으면 회사 로고를 표시하고, 없거나 이미지 로딩 실패 시 티커 배지를 표시한다.
-- Layout: 공통 사이드바 + 페이지 Outlet
+- Layout: 데스크톱 공통 사이드바 + 모바일 하단 탭 + 페이지 Outlet
 - Brand assets: Particle H 심볼은 왼쪽 Flee 분산, 오른쪽 Rush 밀집을 단순화한 SVG로 관리한다.
 - AvgPriceModal: 평균 매수가·수량 수정 모달
 
 ## 현재 구현된 페이지
 - 사이드바 노출 메뉴는 MVP 기준으로 Dashboard, Watchlist, Search, HerdLab만 유지한다.
 - AiRebalance(`/ai`), History(`/history`), Journal(`/journal`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
+- 모바일 하단 탭도 Dashboard, Watchlist, Search, HerdLab 4개 핵심 메뉴만 노출한다.
 - Dashboard (`/`)
   - Signal Command Center 구조: 시장 HERD 신호 → 3개 핵심 Action Queue → 포트폴리오 요약 바 → 보유 종목 테이블 순으로 표시
   - Signal Command Center는 S&P 500 흐름과 보유 종목 행동 대기열을 함께 확인하는 화면이며, 장기투자 지표 특성상 강한 행동 신호가 없는 상태도 정상 상태로 표시한다.

@@ -507,8 +507,90 @@
 }
 
 @media (max-width: 640px) {
+  .pageHeader {
+    margin-bottom: 18px;
+    padding: 4px 0 18px;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .pageDesc {
+    line-height: 1.45;
+  }
+
+  .searchPanel {
+    margin-left: -4px;
+    margin-right: -4px;
+    padding: 16px;
+    border-radius: var(--card-radius);
+  }
+
+  .searchPanelHead strong {
+    font-size: 20px;
+  }
+
+  .searchPanelHead em {
+    white-space: normal;
+  }
+
+  .searchInput {
+    min-height: 54px;
+    padding: 15px 48px 15px 16px;
+    font-size: 15px;
+  }
+
+  .suggestionRow {
+    flex-wrap: nowrap;
+    margin-bottom: 22px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .suggestionChip {
+    flex: 0 0 auto;
+  }
+
+  .searchDropdown {
+    margin-bottom: 26px;
+  }
+
+  .searchResultItem {
+    padding: 16px;
+  }
+
   .resultLeft {
     align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .resultTicker {
+    font-size: 20px;
+  }
+
+  .resultRight {
+    display: grid;
+    grid-template-columns: minmax(96px, 0.7fr) minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .resultHerd {
+    min-width: 0;
+  }
+
+  .resultDecision {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .resultAddBtn,
+  .resultError {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 38px;
+    text-align: center;
   }
 
   .suggestionChip {
@@ -520,5 +602,31 @@
   .resultNote {
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 420px) {
+  .searchPanel {
+    margin-left: -8px;
+    margin-right: -8px;
+  }
+
+  .searchGuide div {
+    padding: 11px 12px;
+  }
+
+  .resultRight {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .resultHerd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .resultHerdScore {
+    font-size: 30px;
   }
 }

@@ -309,6 +309,12 @@
   .pageHeader {
     align-items: flex-start;
     flex-direction: column;
+    margin-bottom: 20px;
+    padding: 4px 0 18px;
+  }
+
+  .pageTitle {
+    font-size: 24px;
   }
 
   .filterTabs {
@@ -322,5 +328,45 @@
 
   .summaryGrid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .summaryCard {
+    padding: 16px;
+  }
+
+  .tableHead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 560px) {
+  .filterTabs {
+    margin-left: -2px;
+    margin-right: -2px;
+  }
+
+  .filterBtn {
+    min-height: 36px;
+    padding: 7px 12px;
+  }
+
+  .tableCard {
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  .table {
+    min-width: 920px;
+  }
+
+  .table th,
+  .table td {
+    padding: 12px 13px;
+  }
+
+  .memoCell {
+    max-width: 190px;
   }
 }

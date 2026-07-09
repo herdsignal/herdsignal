@@ -321,3 +321,76 @@
     padding: 10px 16px;
   }
 }
+
+@media (max-width: 560px) {
+  .pageHeader {
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 4px 0 18px;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .periodToggle {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .toggleBtn {
+    flex: 1 0 auto;
+    min-height: 36px;
+    padding: 7px 14px;
+  }
+
+  .metaRow,
+  .chartCard,
+  .pointsCard {
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  .metaRow {
+    gap: 16px;
+    padding: 18px 16px;
+  }
+
+  .metaValue {
+    font-size: 20px;
+  }
+
+  .insightGrid {
+    gap: 10px;
+  }
+
+  .insightCard {
+    padding: 16px;
+  }
+
+  .chartCard {
+    padding: 20px 14px 16px;
+  }
+
+  .chartTitleRow {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 16px;
+  }
+
+  .pointsHeader {
+    display: none;
+  }
+
+  .pointsRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    padding: 13px 16px;
+  }
+
+  .pointsValue {
+    display: flex;
+    justify-content: space-between;
+  }
+}

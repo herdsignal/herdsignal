@@ -1887,6 +1887,68 @@
 }
 
 @media (max-width: 720px) {
+  .pageHeader {
+    margin-bottom: 18px;
+    padding: 4px 0 18px;
+  }
+
+  .pageTitle {
+    font-size: 26px;
+  }
+
+  .pageSubtitle {
+    max-width: 280px;
+    line-height: 1.45;
+  }
+
+  .headerActions {
+    gap: 8px;
+  }
+
+  .updateTime {
+    width: 100%;
+  }
+
+  .btnRefresh,
+  .btnEdit,
+  .btnPrimary {
+    min-height: 42px;
+    flex: 1 1 0;
+    padding: 10px 12px;
+  }
+
+  .refreshNotice {
+    order: 5;
+    width: 100%;
+    max-width: none;
+  }
+
+  .commandFrame {
+    margin-left: -16px;
+    margin-right: -16px;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+  }
+
+  .commandFrameTop {
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .commandFrameTop strong {
+    font-size: 16px;
+  }
+
+  .commandFrameMeta {
+    gap: 8px;
+  }
+
+  .commandFrameMeta button {
+    height: 36px;
+    flex: 1 1 auto;
+  }
+
   .sectionRow {
     align-items: flex-start;
     flex-direction: column;
@@ -1944,6 +2006,23 @@
     flex-direction: column;
   }
 
+  .marketBanner {
+    min-height: auto;
+  }
+
+  .bannerScoreBlock {
+    min-height: 168px;
+    padding: 30px 28px 24px;
+  }
+
+  .bannerScore {
+    font-size: 76px;
+  }
+
+  .bannerStage {
+    font-size: 15px;
+  }
+
   .bannerHistStats {
     width: 100%;
     border-left: none;
@@ -1960,6 +2039,53 @@
 
   .bannerAnimBlock {
     min-height: 220px;
+  }
+
+  .bannerTimeline {
+    min-height: 260px;
+    padding: 50px 6px 10px 0;
+  }
+
+  .bannerPeriodTabs {
+    left: 12px;
+    max-width: calc(100% - 24px);
+    overflow-x: auto;
+  }
+
+  .bannerPeriodTab {
+    flex: 0 0 auto;
+    min-width: 42px;
+    height: 28px;
+  }
+
+  .portfolioSummaryBar {
+    padding: 18px 16px;
+  }
+
+  .summaryMain strong {
+    font-size: 24px;
+  }
+
+  .commandQueue {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 18px 16px;
+  }
+
+  .commandQueueHead {
+    padding: 0;
+  }
+
+  .commandTicket {
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .commandTicketMain strong {
+    font-size: 24px;
+  }
+
+  .commandTicketMain span {
+    font-size: 18px;
   }
 
   .holdingsHeader {
@@ -1980,6 +2106,14 @@
   .holdingActionCell {
     padding-top: 12px;
     border-top: 1px solid var(--border);
+  }
+
+  .holdingStockText strong {
+    font-size: 22px;
+  }
+
+  .holdingHerdCell strong {
+    font-size: 26px;
   }
 
   .holdingEditTray {
@@ -2008,4 +2142,103 @@
     flex-direction: column;
   }
 
+}
+
+@media (max-width: 520px) {
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .headerActions {
+    align-items: stretch;
+  }
+
+  .currencyToggle {
+    width: 100%;
+  }
+
+  .currencyBtn {
+    flex: 1;
+    min-height: 34px;
+  }
+
+  .bannerScoreBlock {
+    min-height: 150px;
+    padding: 26px 24px 22px;
+  }
+
+  .bannerScore {
+    font-size: 68px;
+  }
+
+  .bannerHistStats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px 20px;
+  }
+
+  .bannerTabs {
+    top: 10px;
+    right: 10px;
+  }
+
+  .bannerTab {
+    min-width: 70px;
+    padding: 6px 10px;
+  }
+
+  .bannerAnimBlock {
+    min-height: 206px;
+  }
+
+  .bannerAnimLabel {
+    padding: 0 14px;
+    font-size: 9px;
+  }
+
+  .bannerSpectrumOverlay {
+    left: 12px;
+    right: 12px;
+  }
+
+  .portfolioSummaryBar,
+  .commandQueue {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .summaryMain strong {
+    font-size: 22px;
+  }
+
+  .summaryMetric strong {
+    font-size: 18px;
+  }
+
+  .commandTicket {
+    grid-template-columns: 28px minmax(0, 1fr);
+    padding: 14px;
+  }
+
+  .holdingRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 17px 16px 17px 18px;
+  }
+
+  .holdingMetric,
+  .holdingHerdCell {
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .holdingActionCell {
+    align-items: start;
+  }
+
+  .portfolioEditPanel,
+  .assetPanel {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }

@@ -48,6 +48,7 @@ HERD Index는 개별 주식의 군중심리를 **0-100 점수**로 나타내는 
 - **StockDetail**: HERD v4 점수, HERD_v5 Action Layer 판단, 신호 신뢰도 보드, 신호 이후 실제 성과 지표, HERD Index 히스토리, Fundamental Guard, 지표 분해
 - **Journal**: 매수/보류/익절 판단을 가격, 수량, 금액, 수익률, HERD 점수, 신호 지속일, 메모와 함께 DB에 저장하는 판단 기록장
 - **HERD Lab**: 모델 버전, 백테스트 요약, Action Matrix, HERD 방법론 검증 데이터
+- **Responsive UI**: 데스크톱 사이드바와 모바일 하단 탭을 함께 지원하는 반응형 화면
 
 ---
 
@@ -57,7 +58,7 @@ HERD Index는 개별 주식의 군중심리를 **0-100 점수**로 나타내는 
 | --- | --- | --- |
 | data | Python 3.12, yfinance, pandas-ta, APScheduler, Finnhub | 수집, 계산, 저장 |
 | backend | Spring Boot 3.x, JPA, MariaDB, Gradle | DB 조회, REST API, Python on-demand 실행 |
-| frontend | React 18, Vite 5, Recharts, Axios | 대시보드 UI |
+| frontend | React 18, Vite 5, Recharts, Axios | 반응형 대시보드 UI |
 | database | MariaDB | HERD, 포트폴리오, 관심종목, 자산 히스토리 저장 |
 
 ---

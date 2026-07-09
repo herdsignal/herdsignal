@@ -48,6 +48,7 @@ The `Herd Flow` animation visualizes these stages as particle distribution. Flee
 - **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, signal reliability board, post-signal performance metrics, HERD Index history, Fundamental Guard, and indicator breakdown
 - **Journal**: database-backed decision log for buy/hold/trim records with price, quantity, amount, profit rate, HERD score, signal age, and memo
 - **HERD Lab**: model version, backtest summary, action matrix, and validation data for the HERD methodology
+- **Responsive UI**: desktop sidebar and mobile bottom-tab layouts for core HERD workflows
 
 ---
 
@@ -57,7 +58,7 @@ The `Herd Flow` animation visualizes these stages as particle distribution. Flee
 | --- | --- | --- |
 | data | Python 3.12, yfinance, pandas-ta, APScheduler, Finnhub | Collect, calculate, store |
 | backend | Spring Boot 3.x, JPA, MariaDB, Gradle | DB reads, REST API, Python on-demand execution |
-| frontend | React 18, Vite 5, Recharts, Axios | Dashboard UI |
+| frontend | React 18, Vite 5, Recharts, Axios | Responsive dashboard UI |
 | database | MariaDB | HERD, portfolio, watchlist, asset history |
 
 ---

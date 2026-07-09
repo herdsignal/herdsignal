@@ -806,6 +806,55 @@
 }
 
 @media (max-width: 720px) {
+  .pageHeader {
+    margin-bottom: 18px;
+    padding: 4px 0 18px;
+  }
+
+  .pageTitle {
+    font-size: 26px;
+  }
+
+  .pageDesc {
+    max-width: 280px;
+    line-height: 1.45;
+  }
+
+  .headerActions {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .btnRefresh,
+  .btnPrimary {
+    min-height: 42px;
+    flex: 1 1 0;
+  }
+
+  .refreshNotice {
+    order: 5;
+    width: 100%;
+    max-width: none;
+  }
+
+  .marketBanner {
+    min-height: auto;
+    margin-left: -16px;
+    margin-right: -16px;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+  }
+
+  .bannerScoreBlock {
+    min-height: 158px;
+    padding: 28px 26px 22px;
+  }
+
+  .bannerScore {
+    font-size: 72px;
+  }
+
   .bannerOverview {
     flex-direction: column;
   }
@@ -826,6 +875,14 @@
 
   .bannerAnimBlock {
     min-height: 220px;
+  }
+
+  .watchSummary {
+    gap: 10px;
+  }
+
+  .watchSummary div {
+    padding: 15px 16px;
   }
 
   .opportunityItem {
@@ -854,5 +911,80 @@
   .queueAction strong,
   .queueAction span {
     white-space: normal;
+  }
+}
+
+@media (max-width: 520px) {
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .marketBanner {
+    margin-left: -12px;
+    margin-right: -12px;
+  }
+
+  .bannerScoreBlock {
+    min-height: 146px;
+    padding: 24px 22px 20px;
+  }
+
+  .bannerScore {
+    font-size: 64px;
+  }
+
+  .bannerHistStats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px 20px;
+  }
+
+  .bannerTab {
+    min-width: 70px;
+    padding: 6px 10px;
+  }
+
+  .bannerAnimBlock {
+    min-height: 204px;
+  }
+
+  .opportunityList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .opportunityItem {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    padding: 13px 14px;
+  }
+
+  .opportunityItem em {
+    justify-self: end;
+  }
+
+  .opportunityItem small {
+    grid-column: 2 / -1;
+  }
+
+  .queueRow {
+    grid-template-columns: minmax(0, 1fr) 64px 24px;
+    min-height: 96px;
+    padding: 15px 14px 15px 18px;
+  }
+
+  .queueStock {
+    gap: 10px;
+  }
+
+  .queueStock strong {
+    font-size: 18px;
+  }
+
+  .queueHerd strong {
+    font-size: 30px;
+  }
+
+  .queueAction {
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
   }
 }

@@ -16,6 +16,8 @@
   min-height: 100vh;
   font-size: 14px;
   transition: background var(--t-base), color var(--t-base);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 :global(body.light) {
@@ -232,4 +234,118 @@
   flex: 1;
   padding: 40px 56px 56px;
   min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .main {
+    padding: 32px 32px 52px;
+  }
+}
+
+@media (max-width: 760px) {
+  :global(body) {
+    background-image:
+      linear-gradient(180deg, rgba(43, 53, 69, 0.22) 0%, rgba(13, 18, 26, 0) 210px);
+    font-size: 13px;
+  }
+
+  :global(body.light) {
+    background-image:
+      linear-gradient(180deg, rgba(148, 163, 184, 0.10) 0%, rgba(244, 247, 251, 0) 210px);
+  }
+
+  .wrapper {
+    display: block;
+    min-height: 100dvh;
+  }
+
+  .sidebar {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: 74px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px calc(9px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(77, 96, 121, 0.64);
+    border-right: none;
+    background:
+      linear-gradient(180deg, rgba(21, 27, 37, 0.84), rgba(10, 16, 25, 0.97)),
+      var(--surface);
+    box-shadow: 0 -18px 34px rgba(0, 0, 0, 0.28);
+  }
+
+  :global(body.light) .sidebar {
+    border-top-color: rgba(184, 196, 211, 0.82);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(239, 245, 252, 0.97)),
+      var(--surface);
+    box-shadow: 0 -18px 34px rgba(15, 23, 42, 0.10);
+  }
+
+  .logo {
+    display: none;
+  }
+
+  .navGroup {
+    display: contents;
+    margin: 0;
+  }
+
+  .navLabel,
+  .sidebarBottom {
+    display: none;
+  }
+
+  .navItem {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 52px;
+    justify-content: center;
+    padding: 8px 4px;
+    margin: 0;
+    gap: 5px;
+    border-radius: 14px;
+    font-size: 11px;
+    line-height: 1.1;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .navItem::before {
+    width: 6px;
+    height: 6px;
+    box-shadow: none;
+  }
+
+  .active {
+    box-shadow:
+      inset 0 2px 0 var(--flee),
+      0 10px 22px rgba(0, 0, 0, 0.14);
+  }
+
+  :global(body.light) .active {
+    box-shadow:
+      inset 0 2px 0 var(--flee),
+      0 10px 22px rgba(15, 23, 42, 0.08);
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 22px 16px calc(104px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 420px) {
+  .main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .navItem {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
 }

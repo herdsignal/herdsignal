@@ -368,6 +368,27 @@
   .header {
     align-items: flex-start;
     flex-direction: column;
+    gap: 12px;
+    padding: 4px 0 18px;
+  }
+
+  .header h1 {
+    font-size: 30px;
+  }
+
+  .header p {
+    line-height: 1.45;
+  }
+
+  .labHero {
+    margin-left: -4px;
+    margin-right: -4px;
+    padding: 18px;
+    min-height: auto;
+  }
+
+  .labHeroMain strong {
+    font-size: 44px;
   }
 
   .labHeroMetrics {
@@ -375,12 +396,40 @@
   }
 
   .tr {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+    padding: 15px 0;
   }
 
   .th {
     display: none;
   }
+
+  .tr span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+  }
+
+  .tr span::before {
+    flex: 0 0 auto;
+    color: var(--text-3);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .tr span:nth-child(1)::before { content: '모델'; }
+  .tr span:nth-child(2)::before { content: '기간'; }
+  .tr span:nth-child(3)::before { content: '수익 보존'; }
+  .tr span:nth-child(4)::before { content: 'MDD'; }
+  .tr span:nth-child(5)::before { content: '행동'; }
+  .tr span:nth-child(6)::before { content: '판정'; }
+  .tr span:nth-child(7)::before { content: '상태'; }
 
   .stageRow {
     grid-template-columns: 10px 1fr 60px;
@@ -388,5 +437,46 @@
 
   .stageRow span:not(.dot) {
     display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .page {
+    gap: 14px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+  }
+
+  .labHero {
+    margin-left: -8px;
+    margin-right: -8px;
+    padding: 16px;
+  }
+
+  .labHeroMain strong {
+    font-size: 40px;
+  }
+
+  .labHeroMetrics div,
+  .weightList,
+  .stageGrid,
+  .table {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .cardHead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+    min-height: auto;
+    padding: 16px 16px 0;
+  }
+
+  .weightRow {
+    grid-template-columns: 96px 1fr 42px;
+    gap: 10px;
   }
 }

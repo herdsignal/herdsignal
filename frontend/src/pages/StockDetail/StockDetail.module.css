@@ -1057,6 +1057,103 @@
   }
 }
 
+@media (max-width: 560px) {
+  .breadcrumb {
+    margin-bottom: 14px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .stockHeader {
+    margin-bottom: 18px;
+    padding: 4px 0 18px;
+  }
+
+  .stockHeaderLeft {
+    gap: 14px;
+  }
+
+  .stockTicker {
+    font-size: 24px;
+  }
+
+  .stockHeaderRight {
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .btnWatchlist,
+  .btnPrimary {
+    min-height: 42px;
+    padding: 10px 12px;
+  }
+
+  .card {
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  .cardHeader {
+    min-height: auto;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+    padding: 16px 16px 0;
+  }
+
+  .cardBody,
+  .cardBodySmall {
+    padding: 16px;
+  }
+
+  .herdCard {
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  .herdScoreSide {
+    min-height: 188px;
+    padding: 28px 24px 22px;
+  }
+
+  .herdBigScore {
+    font-size: 72px;
+  }
+
+  .herdAnimSide {
+    min-height: 214px;
+  }
+
+  .herdAnimBottom {
+    padding: 0 12px;
+  }
+
+  .spectrumLabels {
+    font-size: 7px;
+  }
+
+  .evidenceGrid,
+  .reliabilityGrid,
+  .fundamentalGrid,
+  .journalSummaryGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fundamentalItem {
+    padding: 12px 14px;
+  }
+
+  .journalItem {
+    padding: 12px;
+  }
+
+  .fundamentalReasons span {
+    width: 100%;
+    justify-content: center;
+    border-radius: var(--card-radius);
+  }
+}
+
 /* ── 로딩 / 에러 ── */
 .loadingState {
   display: flex;
