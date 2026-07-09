@@ -152,6 +152,48 @@ function herdReadiness(data) {
   }
 }
 
+function inclusionDecision(data) {
+  if (!data) {
+    return {
+      label: '계산 대기',
+      desc: 'HERD 계산 후 편입 가능',
+      tone: 'Pending',
+    }
+  }
+
+  const readiness = herdReadiness(data)
+  if (readiness.tone === 'Limited') {
+    return {
+      label: '보류',
+      desc: '데이터 품질 확인 필요',
+      tone: 'Limited',
+    }
+  }
+
+  switch (normalizeStage(data.herdStage)) {
+    case 'flee':
+    case 'scatter':
+      return {
+        label: '매수 대기열',
+        desc: '관심종목 우선 편입',
+        tone: 'Ready',
+      }
+    case 'drift':
+    case 'rush':
+      return {
+        label: '쏠림 관찰',
+        desc: '신규 매수보다 관찰 우선',
+        tone: 'Limited',
+      }
+    default:
+      return {
+        label: '관찰',
+        desc: '보유/대기 판단 가능',
+        tone: 'Neutral',
+      }
+  }
+}
+
 /* 최근 검색 localStorage 조작 */
 function loadRecent() {
   try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]') } catch { return [] }
@@ -382,6 +424,7 @@ export default function Search() {
     if (searchResult.status === 'symbol_found') {
       const d = searchResult.candidate
       const readiness = herdReadiness(null)
+      const decision = inclusionDecision(null)
       return (
         <div className={styles.searchResultItem}>
           <div className={styles.resultLeft}>
@@ -404,6 +447,11 @@ export default function Search() {
                 {readiness.label}
               </div>
               <div className={styles.resultHerdDesc}>{readiness.desc}</div>
+            </div>
+            <div className={styles.resultDecision}>
+              <span>편입 판단</span>
+              <strong>{decision.label}</strong>
+              <em>{decision.desc}</em>
             </div>
             <button
               className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`}
@@ -428,6 +476,7 @@ export default function Search() {
     const badge = badgeColors(d.herdStage)
     const meta  = searchResult.matches?.find((item) => item.ticker === d.ticker) ?? TICKER_META[d.ticker]
     const readiness = herdReadiness(d)
+    const decision = inclusionDecision(d)
 
     return (
       <div
@@ -457,6 +506,12 @@ export default function Search() {
             <div className={styles.resultHerdDesc}>
               {stageDisplay(d.herdStage)} · {readiness.desc}
             </div>
+          </div>
+
+          <div className={`${styles.resultDecision} ${styles[`decision${decision.tone}`]}`}>
+            <span>편입 판단</span>
+            <strong>{decision.label}</strong>
+            <em>{decision.desc}</em>
           </div>
 
           {/* + 포트폴리오 */}
@@ -504,8 +559,8 @@ export default function Search() {
       <section className={styles.searchPanel}>
         <div className={styles.searchPanelHead}>
           <div>
-            <span>Stock Finder</span>
-            <strong>HERD 준비 종목 찾기</strong>
+            <span>Inclusion Check</span>
+            <strong>포트폴리오 편입 판단</strong>
           </div>
           <em>{portfolioTickers.size}개 보유 · {watchlistTickers.size}개 대기</em>
         </div>
@@ -528,15 +583,15 @@ export default function Search() {
         <div className={styles.searchGuide}>
           <div>
             <span>Ready</span>
-            <strong>바로 추가 가능</strong>
+            <strong>편입 가능</strong>
           </div>
           <div>
             <span>Pending</span>
-            <strong>계산 후 추가</strong>
+            <strong>계산 대기</strong>
           </div>
           <div>
             <span>Limited</span>
-            <strong>데이터 확인 필요</strong>
+            <strong>보류 우선</strong>
           </div>
         </div>
       </section>

@@ -101,11 +101,12 @@ Rush    #EF4444  (레드)
   - 포트폴리오 추가
   - 관심종목 추가
 - Search (`/search`)
-  - Stock Finder 패널에서 보유/대기 종목 수와 Ready/Pending/Limited 상태 기준을 먼저 보여준다.
+  - Inclusion Check 패널에서 보유/대기 종목 수와 Ready/Pending/Limited 편입 기준을 먼저 보여준다.
   - 300ms 디바운스 검색
   - Finnhub 심볼 검색 API 기반 회사명/티커 검색
   - 대표 종목 티커/종목명 로컬 매칭 fallback
   - HERD 미리보기
+  - 검색 결과에 `편입 판단` 블록을 표시해 매수 대기열/관찰/보류 우선 여부를 바로 보여준다.
   - 검색 결과 HERD 준비 상태 표시 (`HERD 준비됨` / `계산 필요` / `데이터 부족`)
   - `계산 필요` 상태는 포트폴리오/관심종목 추가 버튼을 비활성화한다.
   - 최근 검색 localStorage 저장
