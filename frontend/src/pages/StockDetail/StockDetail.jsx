@@ -24,6 +24,7 @@ import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import SignalJournalModal from '../../components/SignalJournalModal/SignalJournalModal'
 import { buildDecision } from '../../utils/decision'
 import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
+import { getHerdMomentum } from '../../utils/herdMomentum'
 import { formatSignalAgeLabel, formatSignalDurationDetail } from '../../utils/signalDuration'
 import {
   formatJournalAmount,
@@ -670,6 +671,10 @@ export default function StockDetail() {
     if (!herdData?.scoreDate) return []
     return [{ date: herdData.scoreDate, score: herdScore }]
   }, [herdHistory, herdData, herdScore])
+  const herdMomentum = useMemo(
+    () => getHerdMomentum(historyPoints, herdScore, herdStage),
+    [historyPoints, herdScore, herdStage]
+  )
 
   async function handleJournalAction(actionType, details = {}) {
     try {
@@ -859,6 +864,10 @@ export default function StockDetail() {
                         {formatSignalAgeLabel(herdData)}
                       </div>
                     )}
+                    <div className={`${styles.decisionMomentum} ${styles[`decisionMomentum_${herdMomentum.tone}`] || ''}`}>
+                      <span>{herdMomentum.label}</span>
+                      <strong>{herdMomentum.detail}</strong>
+                    </div>
                   </div>
                   <div className={styles.decisionPill} style={{ color: actionColor, borderColor: actionColor }}>
                     {formatActionRatio(herdData.actionRatio)}

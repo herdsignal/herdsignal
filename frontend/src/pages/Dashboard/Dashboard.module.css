@@ -1367,6 +1367,27 @@
   font-weight: 400;
 }
 
+.bannerStatMomentum {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.momentum_positive {
+  color: var(--positive);
+}
+
+.momentum_warning {
+  color: var(--drift);
+}
+
+.momentum_neutral {
+  color: var(--text-2);
+}
+
 /* ────────────────────────────
    섹션 헤더
    ──────────────────────────── */

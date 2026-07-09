@@ -49,6 +49,7 @@ import {
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
+import { getHerdMomentum } from '../../utils/herdMomentum'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { formatSignalAgeLabel } from '../../utils/signalDuration'
 import {
@@ -1042,6 +1043,10 @@ export default function Dashboard() {
     () => averageScoreForLastDays(spyStatsHistory, 365, spyScore),
     [spyStatsHistory, spyScore]
   )
+  const spyMomentum = useMemo(
+    () => getHerdMomentum(spyStatsHistory, spyScore, spyStage),
+    [spyStatsHistory, spyScore, spyStage]
+  )
 
   const signalJournalSummary = useMemo(
     () => summarizeSignalJournal(signalLogs),
@@ -1290,6 +1295,13 @@ export default function Dashboard() {
                   <BannerStat label="1일 평균" point={d1AvgPoint} />
                   <BannerStat label="1달 평균" point={m1AvgPoint} />
                   <BannerStat label="1년 평균" point={y1AvgPoint} />
+                  <div className={styles.bannerStatItem}>
+                    <div className={styles.bannerStatLabel}>강도 변화</div>
+                    <div className={`${styles.bannerStatMomentum} ${styles[`momentum_${spyMomentum.tone}`] || ''}`}>
+                      {spyMomentum.label}
+                    </div>
+                    <div className={styles.bannerStatDesc}>{spyMomentum.detail}</div>
+                  </div>
                   <div className={styles.bannerStatItem}>
                     <div className={styles.bannerStatLabel}>업데이트</div>
                     <div className={styles.bannerStatUpdate}>
