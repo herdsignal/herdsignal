@@ -3,7 +3,7 @@
  *
  * 구성:
  *   1) 브레드크럼 + 종목 헤더 (배지 + 포트폴리오/관심종목 추가 버튼)
- *   2) HERD 카드 → Action Layer → 신호 신뢰도 → HERD 히스토리 → Fundamental Guard → 지표 분해
+ *   2) HERD 카드 → Action Layer → 신호 근거/지표 → 신뢰도 → 히스토리 → 재무 가드 → 판단 기록
  *
  * API: getStockHerd(ticker), getStockFinancials(ticker), addToPortfolio(ticker), addToWatchlist(ticker)
  * 래퍼런스: wireframes/wireframe-detail.html
@@ -877,75 +877,68 @@ export default function StockDetail() {
               </div>
             </div>
 
-            {/* 내 판단 기록 카드 */}
+            {/* 지표 분해 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
-                <div>
-                  <div className={styles.cardTitle}>내 판단 기록</div>
-                  <div className={styles.cardMeta}>HERD 신호를 보고 남긴 실사용 로그</div>
+                <div className={styles.cardTitle}>지표 분해</div>
+                <div className={styles.cardMeta}>
+                  {herdData.scoreDate} 기준
                 </div>
-                <div className={styles.cardMeta}>{formatJournalCount(journalSummary.totalCount)}</div>
               </div>
-              <div className={styles.cardBodySmall}>
-                <div className={styles.journalSummaryGrid}>
-                  <div className={styles.journalSummaryItem}>
-                    <span>매수 기록</span>
-                    <strong>{formatJournalCount(journalSummary.buyCount)}</strong>
-                    <em>{formatJournalAmount(journalSummary.buyAmount) ?? '$0'}</em>
-                  </div>
-                  <div className={styles.journalSummaryItem}>
-                    <span>익절 기록</span>
-                    <strong>{formatJournalCount(journalSummary.sellCount)}</strong>
-                    <em>{formatJournalAmount(journalSummary.sellAmount) ?? '$0'}</em>
-                  </div>
-                  <div className={styles.journalSummaryItem}>
-                    <span>평균 익절률</span>
-                    <strong>{journalSummary.hasProfitData ? formatJournalProfit(journalSummary.avgProfitPct) : '—'}</strong>
-                    <em>입력 기록 기준</em>
-                  </div>
-                </div>
-                <div className={styles.journalActions}>
-                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('BUY')}>
-                    매수 기록
-                  </button>
-                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('HOLD')}>
-                    보류 기록
-                  </button>
-                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('SELL')}>
-                    익절 기록
-                  </button>
-                </div>
-                {signalLogs.length > 0 ? (
-                  <div className={styles.journalList}>
-                    {signalLogs.slice(0, 3).map((log) => (
-                      <div key={log.id} className={styles.journalItem}>
-                        <span>{formatJournalTime(log.recordedAt ?? log.createdAt)}</span>
-                        <strong>{log.actionLabel}</strong>
-                        <em>
-                          {[
-                            formatJournalPrice(log.price),
-                            formatJournalQuantity(log.quantity),
-                            formatJournalAmount(log.amount),
-                            formatJournalProfit(log.profitPct),
-                          ].filter(Boolean).join(' · ') || `HERD ${log.herdScore} · ${log.signalLabel}`}
-                        </em>
-                        {log.memo && <small>{log.memo}</small>}
-                        <button
-                          type="button"
-                          className={styles.journalDelete}
-                          onClick={() => handleJournalDelete(log.id)}
-                          aria-label={`${log.actionLabel} 삭제`}
-                        >
-                          삭제
-                        </button>
+              <div className={styles.cardBody}>
+                {INDICATORS.map((ind) => {
+                  /*
+                   * API 응답에 없는 필드는 undefined → null로 처리.
+                   */
+                  const raw    = herdData[ind.key] ?? null
+                  const hasVal = raw != null
+                  const pct    = hasVal ? normalizeBar(raw, ind.min, ind.max) : 0
+                  const disp   = raw != null ? formatIndicator(raw, ind.unit, ind.signed) : '—'
+
+                  return (
+                    <div
+                      key={ind.key}
+                      className={styles.indicatorRow}
+                    >
+                      {/* 지표명 */}
+                      <div className={styles.indicatorLabel}>{ind.label}</div>
+
+                      {/* 가중치 — 비활성 항목은 "비활성" 텍스트 */}
+                      <div className={styles.indicatorWeight}>
+                        {ind.weight}%
                       </div>
-                    ))}
+
+                      {/* 프로그레스 바 — 값 없으면 빈 트랙만 */}
+                      <div className={styles.indicatorTrack}>
+                        {hasVal && (
+                          <div
+                            className={styles.indicatorFill}
+                            style={{ width: `${pct}%`, background: color }}
+                          />
+                        )}
+                      </div>
+
+                      {/* 수치 */}
+                      <div className={styles.indicatorValue}>{disp}</div>
+                    </div>
+                  )
+                })}
+                <div className={styles.adjustmentBox}>
+                  <div className={styles.adjustmentRow}>
+                    <span>EPS 보정</span>
+                    <strong>
+                      {formatMultiplier(herdData.epsMultiplier)}
+                      <em>{epsMultiplierDesc(herdData.epsMultiplier)}</em>
+                    </strong>
                   </div>
-                ) : (
-                  <div className={styles.journalEmpty}>
-                    아직 기록이 없습니다.
+                  <div className={styles.adjustmentRow}>
+                    <span>섹터 강도 보정</span>
+                    <strong>
+                      {formatMultiplier(herdData.sectorMultiplier)}
+                      <em>{sectorMultiplierDesc(herdData.sectorMultiplier)}</em>
+                    </strong>
                   </div>
-                )}
+                </div>
               </div>
             </div>
 
@@ -1115,68 +1108,75 @@ export default function StockDetail() {
               </div>
             </div>
 
-            {/* 지표 분해 카드 */}
+            {/* 내 판단 기록 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>지표 분해</div>
-                <div className={styles.cardMeta}>
-                  {herdData.scoreDate} 기준
+                <div>
+                  <div className={styles.cardTitle}>내 판단 기록</div>
+                  <div className={styles.cardMeta}>HERD 신호를 보고 남긴 실사용 로그</div>
                 </div>
+                <div className={styles.cardMeta}>{formatJournalCount(journalSummary.totalCount)}</div>
               </div>
-              <div className={styles.cardBody}>
-                {INDICATORS.map((ind) => {
-                  /*
-                   * API 응답에 없는 필드는 undefined → null로 처리.
-                   */
-                  const raw    = herdData[ind.key] ?? null
-                  const hasVal = raw != null
-                  const pct    = hasVal ? normalizeBar(raw, ind.min, ind.max) : 0
-                  const disp   = raw != null ? formatIndicator(raw, ind.unit, ind.signed) : '—'
-
-                  return (
-                    <div
-                      key={ind.key}
-                      className={styles.indicatorRow}
-                    >
-                      {/* 지표명 */}
-                      <div className={styles.indicatorLabel}>{ind.label}</div>
-
-                      {/* 가중치 — 비활성 항목은 "비활성" 텍스트 */}
-                      <div className={styles.indicatorWeight}>
-                        {ind.weight}%
-                      </div>
-
-                      {/* 프로그레스 바 — 값 없으면 빈 트랙만 */}
-                      <div className={styles.indicatorTrack}>
-                        {hasVal && (
-                          <div
-                            className={styles.indicatorFill}
-                            style={{ width: `${pct}%`, background: color }}
-                          />
-                        )}
-                      </div>
-
-                      {/* 수치 */}
-                      <div className={styles.indicatorValue}>{disp}</div>
-                    </div>
-                  )
-                })}
-                <div className={styles.adjustmentBox}>
-                  <div className={styles.adjustmentRow}>
-                    <span>EPS 보정</span>
-                    <strong>
-                      {formatMultiplier(herdData.epsMultiplier)}
-                      <em>{epsMultiplierDesc(herdData.epsMultiplier)}</em>
-                    </strong>
+              <div className={styles.cardBodySmall}>
+                <div className={styles.journalSummaryGrid}>
+                  <div className={styles.journalSummaryItem}>
+                    <span>매수 기록</span>
+                    <strong>{formatJournalCount(journalSummary.buyCount)}</strong>
+                    <em>{formatJournalAmount(journalSummary.buyAmount) ?? '$0'}</em>
                   </div>
-                  <div className={styles.adjustmentRow}>
-                    <span>섹터 강도 보정</span>
-                    <strong>
-                      {formatMultiplier(herdData.sectorMultiplier)}
-                      <em>{sectorMultiplierDesc(herdData.sectorMultiplier)}</em>
-                    </strong>
+                  <div className={styles.journalSummaryItem}>
+                    <span>익절 기록</span>
+                    <strong>{formatJournalCount(journalSummary.sellCount)}</strong>
+                    <em>{formatJournalAmount(journalSummary.sellAmount) ?? '$0'}</em>
+                  </div>
+                  <div className={styles.journalSummaryItem}>
+                    <span>평균 익절률</span>
+                    <strong>{journalSummary.hasProfitData ? formatJournalProfit(journalSummary.avgProfitPct) : '—'}</strong>
+                    <em>입력 기록 기준</em>
                   </div>
                 </div>
+                <div className={styles.journalActions}>
+                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('BUY')}>
+                    매수 기록
+                  </button>
+                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('HOLD')}>
+                    보류 기록
+                  </button>
+                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('SELL')}>
+                    익절 기록
+                  </button>
+                </div>
+                {signalLogs.length > 0 ? (
+                  <div className={styles.journalList}>
+                    {signalLogs.slice(0, 3).map((log) => (
+                      <div key={log.id} className={styles.journalItem}>
+                        <span>{formatJournalTime(log.recordedAt ?? log.createdAt)}</span>
+                        <strong>{log.actionLabel}</strong>
+                        <em>
+                          {[
+                            formatJournalPrice(log.price),
+                            formatJournalQuantity(log.quantity),
+                            formatJournalAmount(log.amount),
+                            formatJournalProfit(log.profitPct),
+                          ].filter(Boolean).join(' · ') || `HERD ${log.herdScore} · ${log.signalLabel}`}
+                        </em>
+                        {log.memo && <small>{log.memo}</small>}
+                        <button
+                          type="button"
+                          className={styles.journalDelete}
+                          onClick={() => handleJournalDelete(log.id)}
+                          aria-label={`${log.actionLabel} 삭제`}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.journalEmpty}>
+                    아직 기록이 없습니다.
+                  </div>
+                )}
               </div>
             </div>
 
