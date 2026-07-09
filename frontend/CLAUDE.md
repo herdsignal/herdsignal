@@ -1,6 +1,6 @@
 # frontend/ — React 대시보드
 
-최종 업데이트: 2026-07-05
+최종 업데이트: 2026-07-10
 
 ## 이 폴더의 역할
 Spring Boot API를 호출해서 HERD Index 데이터를 시각화.
@@ -35,7 +35,8 @@ src/
 │   ├── dataQuality.js HERD 데이터 품질 표시 문구/색상 공통 유틸
 │   ├── decision.js HERD 점수 + 보유/포트폴리오 컨텍스트 기반 행동 문장
 │   ├── herdMomentum.js HERD 히스토리 기반 최근 강도 변화 해석
-│   └── portfolioTools.js 목표비중·리밸런싱·매수 대기열 계산
+│   ├── portfolioTools.js 목표비중·리밸런싱·매수 대기열 계산
+│   └── alertRules.js 포트폴리오 알림 조건 생성
 └── api/            Spring Boot API 호출
     └── herdApi.js
 ```
@@ -82,6 +83,7 @@ Rush    #EF4444  (레드)
   - HERD 판단 기록 전체 요약: `/api/journal` 기반 매수/익절 횟수·금액·평균 익절률·최근 기록 표시
   - KRW/USD 통화 토글
   - 목표 비중 기반 핵심 리밸런싱 체크
+  - 포트폴리오 리스크 체크와 알림 조건 패널
   - 보유 종목 테이블
   - 보유 종목 행에 회사 로고/티커/HERD 단계색/보유 수량/평단/목표 비중 차이 표시
   - 보유 종목 정렬(행동순/HERD 낮은순/HERD 높은순/비중순)
@@ -130,9 +132,9 @@ Rush    #EF4444  (레드)
   - 관심 종목 삭제
   - S&P 500 HERD 배너 (Dashboard와 같은 1일/1달/1년 평균 표시)
 - HerdLab (`/herd-lab`)
-  - 현재 HERD 모델 버전(`HERD_v5`) 검증 히어로 보드
+  - 현재 HERD 모델 버전(`HERD_v6`) 검증 히어로 보드
   - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
-  - 모델 버전/검증 기간/수익률 보존/MDD 개선/연간 행동 수를 상단 보드에 압축 표시
+  - 모델 버전/검증 기간/수익률 보존/MDD 개선/연간 행동 수/신뢰 체크를 상단 보드에 압축 표시
   - 종목별 백테스트 verdict 표시
   - HERD 5단계 행동 매트릭스와 v4 가중치 표시
   - 설명문은 최소화하고 모델 버전·검증 기간·핵심 성과 수치 중심으로 표시
@@ -162,12 +164,12 @@ Rush    #EF4444  (레드)
 - 목표 비중은 Dashboard 편집 모드와 AiRebalance에서 수정하며 `hs_target_weights` localStorage에 저장한다. 아직 DB 저장 기능은 없다.
 - 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
 - Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
-- 알림/루틴 UI는 아직 구현하지 않는다. 실제 사용 패턴 확인 후 강한 Flee/Rush, 목표비중 이탈, 장기 신호 지속 같은 저빈도 조건만 화면 또는 알림으로 확장한다.
+- Dashboard 알림 조건 패널은 구현되어 있다. `src/utils/alertRules.js`가 매수 후보, 익절 후보, 오래된 신호, 포트폴리오 리스크를 화면용 알림 후보로 생성한다. 브라우저 푸시/이메일 알림은 아직 구현하지 않는다.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - StockDetail 상단 회사명/섹터/로고는 `GET /api/stocks/{ticker}/herd` 응답의 `companyName`/`sector`/`logoUrl`을 사용한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, `src/utils/dataQuality.js` 기준으로 낮은 품질만 `데이터 제한/부족`과 제한 사유를 표시한다.
-- HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수를 보여준다.
+- HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 모델 적합도, 표본 품질, 매수/익절 edge를 보여준다.
 - Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 사용하며, frontend에서는 actionScore를 `강도`로 표시하고 별도 행동 점수 계산을 하지 않는다.
 - Dashboard/Watchlist/StockDetail은 backend 응답의 `signalDurationDays`/`stageDurationDays`를 사용해 현재 HERD 신호가 초입/진행/장기 지속 중 어디에 있는지 표시한다.
 - Search에서 포트폴리오/관심종목 추가는 HERD 데이터가 준비된 종목만 허용한다. 포트폴리오 추가 성공 시 Dashboard localStorage 캐시(`hs_portfolio_realtime`, `hs_portfolio_herd`, `hs_cache_time`)를 비우고 평단가·수량 입력 모달을 연다.

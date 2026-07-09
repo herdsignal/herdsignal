@@ -42,12 +42,12 @@ HERD Index는 개별 주식의 군중심리를 **0-100 점수**로 나타내는 
 
 ## 핵심 기능
 
-- **Dashboard**: S&P 500 Herd Flow 배너, HERD 강도 변화, 현금 포함 포트폴리오 평가 요약, 입출금 착시를 줄인 자산 히스토리, 핵심 리밸런싱 체크, 보유 종목 HERD 행동 카드
-- **Watchlist**: 장기 추가매수/익절 우선순위 기반 기회 대기열과 관심 종목 HERD 카드
+- **Dashboard**: S&P 500 Herd Flow 배너, HERD 강도 변화, 현금 포함 포트폴리오 평가 요약, 입출금 착시를 줄인 자산 히스토리, 핵심 리밸런싱 체크, 리스크/알림 조건, 보유 종목 HERD 행동 카드
+- **Watchlist**: 장기 추가매수/익절 우선순위와 신호 준비도 기반 매수 대기열
 - **Search**: 티커/회사명 검색, HERD 미리보기, 최근 검색, 포트폴리오/관심종목 추가
-- **StockDetail**: HERD v4 점수, HERD_v5 Action Layer 판단, 신호 신뢰도 보드, 신호 이후 실제 성과 지표, HERD Index 히스토리, Fundamental Guard, 지표 분해
+- **StockDetail**: HERD v4 점수, HERD_v6 Progressive Action Layer 판단, 신호 신뢰도 보드, 신호 이후 실제 성과 지표, HERD Index 히스토리, Fundamental Guard, 지표 분해
 - **Journal**: 매수/보류/익절 판단을 가격, 수량, 금액, 수익률, HERD 점수, 신호 지속일, 메모와 함께 DB에 저장하는 판단 기록장
-- **HERD Lab**: 모델 버전, 백테스트 요약, Action Matrix, HERD 방법론 검증 데이터
+- **HERD Lab**: 모델 버전, 백테스트 요약, 신뢰 체크, Action Matrix, HERD 방법론 검증 데이터
 - **Responsive UI**: 데스크톱 사이드바와 모바일 하단 탭을 함께 지원하는 반응형 화면
 
 ---
@@ -130,7 +130,7 @@ v4는 기본 점수에 두 가지 보정 승수를 곱합니다.
 
 최종 점수는 `herd_scores.herd_score`에 저장되며, API는 `herdV4`, `herdBase`, `epsMultiplier`, `sectorMultiplier`를 함께 제공합니다.
 
-신호 신뢰도는 데이터 품질과 별도로 계산합니다. 저장된 HERD 히스토리와 이후 가격 흐름을 비교해 Flee 적중률, Rush 적중률, 매수 신호 이후 1/3/6개월 평균 수익률, 익절 신호 이후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수를 보여줍니다.
+신호 신뢰도는 데이터 품질과 별도로 계산합니다. 저장된 HERD 히스토리와 이후 가격 흐름을 비교해 Flee 적중률, Rush 적중률, 매수 신호 이후 1/3/6개월 평균 수익률, 익절 신호 이후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 표본 품질, 매수/익절 edge를 보여줍니다.
 
 ---
 

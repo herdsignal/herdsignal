@@ -1,6 +1,6 @@
 # backend/ — Spring Boot REST API
 
-최종 업데이트: 2026-07-05
+최종 업데이트: 2026-07-10
 
 ## 이 폴더의 역할
 MariaDB에 저장된 HERD Index 데이터를 React에 서빙.
@@ -68,7 +68,7 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
   - HERD 데이터 품질과 Action Layer 응답 계산
   - stocks 메타데이터를 조회해 companyName / sector / logoUrl을 HERD 응답에 포함
 - ActionDecisionService
-  - HERD 점수 + 지표 분해값 + 데이터 품질 기반 장기투자 행동 강도 계산
+  - HERD 점수 + 지표 분해값 + 데이터 품질 + 신호 생애주기 기반 장기투자 행동 강도 계산
   - DB 저장 없이 API 응답 시점에 actionScore/actionLabel/actionRatio/actionRegime을 산출
 - PortfolioService
   - 포트폴리오 CRUD
@@ -89,12 +89,13 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
   - 종목 재무정보 반환 (ProcessBuilder, 티커 정규식 검증 포함)
 - HerdReliabilityService
   - Python signal_reliability.py 호출
-  - 저장된 HERD 히스토리와 yfinance 가격 기반 신호 성능 신뢰도 및 신호 이후 평균 수익/낙폭 반환
+  - 저장된 HERD 히스토리와 yfinance 가격 기반 신호 성능 신뢰도, 모델 적합도, 표본 품질, 신호 이후 평균 수익/낙폭 반환
 - FinnhubService
   - Python finnhub_collector 호출
   - 회사명/티커 기반 심볼 검색 응답 반환
 - SignalJournalService
   - HERD 판단 기록 CRUD
+  - 최신 종가 기준으로 저장 이후 현재 결과(outcomePct/outcomeAmount/outcomeDays)를 응답에 포함
   - MVP 단계에서는 `local` 사용자 기준으로 저장하고, 추후 인증 도입 시 userId만 교체한다.
 
 ## DB/JPA 원칙
@@ -127,8 +128,8 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - HERD 응답은 `stocks` 테이블 기준 `companyName`, `sector`, `logoUrl`을 포함한다. 로고가 없으면 frontend가 티커 배지로 fallback한다.
 - HERD 신뢰도 응답은 DB 스키마 변경 없이 `HerdService`가 계산한다. `qualityScore`, `qualityLevel`, `qualityLabel`, `qualitySummary`, `qualityFlags`, `qualityReasons`를 포함한다.
 - HERD 신뢰도는 `daily_prices` 기간이 아니라 저장된 HERD 산출 결과의 완성도(핵심 지표, 200주 MA, v4 보정 승수, 최신성)를 기준으로 계산한다.
-- HERD 신호 성능 신뢰도는 `HerdReliabilityService`가 Python을 호출해 계산한다. `qualityScore`와 달리 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수를 기준으로 한다.
-- HERD_v6 Progressive Action Layer 응답은 DB 스키마 변경 없이 `ActionDecisionService`가 계산한다. HERD_v4 점수, 지표 품질, 데이터 품질, 저장된 HERD 히스토리의 최근 변화율을 함께 사용하며 `actionModelVersion`, `actionModelName`, `baseModelVersion`, `actionModelStatus`, `actionScore`, `actionGrade`, `actionLabel`, `actionRatio`, `actionRegime`, `actionRegimeLabel`, `actionReasons`, `actionWarnings`를 포함한다.
+- HERD 신호 성능 신뢰도는 `HerdReliabilityService`가 Python을 호출해 계산한다. `qualityScore`와 달리 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 모델 적합도, 표본 품질, 매수/익절 edge를 기준으로 한다.
+- HERD_v6 Progressive Action Layer 응답은 DB 스키마 변경 없이 `ActionDecisionService`가 계산한다. HERD_v4 점수, 지표 품질, 데이터 품질, 저장된 HERD 히스토리의 최근 변화율, 현재 신호 지속 기간을 함께 사용하며 `actionModelVersion`, `actionModelName`, `baseModelVersion`, `actionModelStatus`, `actionScore`, `actionGrade`, `actionLabel`, `actionRatio`, `actionRegime`, `actionRegimeLabel`, `actionReasons`, `actionWarnings`를 포함한다.
 - HERD 응답은 저장된 `herd_scores` 히스토리 기준 현재 `signal`/`herdStage`가 언제부터 이어졌는지 계산해 `signalStartedAt`, `signalDurationDays`, `stageStartedAt`, `stageDurationDays`를 포함한다.
 - 포트폴리오 종목별 `dailyChangePct`는 KST 22:30 미국장 시작을 하루 경계로 본다. 22:30 전에는 직전 미국장 세션을 오늘로 유지한다.
 - 로그인/인증/멀티유저 API는 없음. 현재는 `local` 사용자 고정.
