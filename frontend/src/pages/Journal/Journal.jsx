@@ -10,6 +10,7 @@ import { getSignalJournal } from '../../api/herdApi'
 import {
   formatJournalAmount,
   formatJournalCount,
+  formatJournalDuration,
   formatJournalPrice,
   formatJournalProfit,
   formatJournalQuantity,
@@ -142,12 +143,11 @@ export default function Journal() {
               <thead>
                 <tr>
                   <th>종목</th>
-                  <th>액션</th>
-                  <th>가격</th>
-                  <th>수량</th>
-                  <th>총액</th>
+                  <th>판단</th>
+                  <th>체결 정보</th>
                   <th>수익률</th>
-                  <th>HERD</th>
+                  <th>HERD 신호</th>
+                  <th>메모</th>
                   <th>날짜</th>
                 </tr>
               </thead>
@@ -164,16 +164,29 @@ export default function Journal() {
                         {actionText(log)}
                       </span>
                     </td>
-                    <td>{formatJournalPrice(log.price) ?? '—'}</td>
-                    <td>{formatJournalQuantity(log.quantity) ?? '—'}</td>
-                    <td>{formatJournalAmount(log.amount) ?? '—'}</td>
+                    <td>
+                      <div className={styles.tradeStack}>
+                        <strong>{formatJournalAmount(log.amount) ?? '금액 미입력'}</strong>
+                        <span>
+                          {formatJournalPrice(log.price) ?? '가격 —'} · {formatJournalQuantity(log.quantity) ?? '수량 —'}
+                        </span>
+                      </div>
+                    </td>
                     <td className={Number(log.profitPct) >= 0 ? styles.positive : styles.negative}>
                       {formatJournalProfit(log.profitPct) ?? '—'}
                     </td>
                     <td>
-                      {log.herdScore != null
-                        ? `${Math.round(Number(log.herdScore))}${log.herdStage ? ` · ${log.herdStage}` : ''}`
-                        : '—'}
+                      <div className={styles.signalStack}>
+                        <strong>
+                          {log.herdScore != null
+                            ? `${Math.round(Number(log.herdScore))}${log.herdStage ? ` · ${log.herdStage}` : ''}`
+                            : '—'}
+                        </strong>
+                        <span>{formatJournalDuration(log.signalDurationDays) ?? log.signal ?? '신호 —'}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={styles.memoCell}>{log.memo || '—'}</span>
                     </td>
                     <td>{formatJournalTime(log.recordedAt ?? log.createdAt) || '—'}</td>
                   </tr>

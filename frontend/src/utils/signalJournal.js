@@ -76,3 +76,9 @@ export function formatJournalCount(value) {
   if (!Number.isFinite(n)) return '0회'
   return `${n.toLocaleString('ko-KR')}회`
 }
+
+export function formatJournalDuration(value) {
+  const n = Number(value)
+  if (!Number.isFinite(n) || n <= 0) return null
+  return `신호 ${Math.round(n).toLocaleString('ko-KR')}일째`
+}
