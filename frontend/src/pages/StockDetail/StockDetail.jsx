@@ -23,6 +23,7 @@ import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import SignalJournalModal from '../../components/SignalJournalModal/SignalJournalModal'
 import { buildDecision } from '../../utils/decision'
+import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { formatSignalDurationDetail } from '../../utils/signalDuration'
 import {
   formatJournalAmount,
@@ -145,27 +146,6 @@ function sectorMultiplierDesc(value) {
   if (n >= 1.10) return '섹터 대비 뚜렷한 약세'
   if (n >= 1.05) return '섹터 약세'
   return '중립'
-}
-
-function qualityTone(level) {
-  switch (level) {
-    case 'HIGH': return 'var(--flee)'
-    case 'GOOD': return 'var(--calm)'
-    case 'LIMITED': return 'var(--drift)'
-    case 'LOW': return 'var(--rush)'
-    default: return 'var(--text-3)'
-  }
-}
-
-function shouldShowQuality(data) {
-  if (!data?.qualityLabel) return false
-  if (data.qualityLevel === 'LIMITED' || data.qualityLevel === 'LOW') return true
-  return Number(data.qualityScore ?? 100) < 70
-}
-
-function qualityWarningText(data) {
-  const label = data?.qualityLevel === 'LOW' ? '데이터 부족' : '데이터 제한'
-  return `${label}${data?.qualityScore != null ? ` · ${data.qualityScore}점` : ''}`
 }
 
 function formatActionScore(value) {
@@ -621,7 +601,7 @@ export default function StockDetail() {
   const stageDisp  = herdStage.startsWith('Herd ') ? herdStage : `Herd ${herdStage}`
   const color      = stageColor(herdStage)
   const sigStyle   = signalStyle(herdData?.signal)
-  const qualityColor = qualityTone(herdData?.qualityLevel)
+  const qualityToneColor = qualityColor(herdData?.qualityLevel)
   const actionColor = actionTone(herdData?.actionGrade, herdData?.signal)
   const holding    = portfolio.find((item) => item.ticker === normalizedTicker) ?? null
   const decision   = useMemo(() => buildDecision({
@@ -785,12 +765,16 @@ export default function StockDetail() {
                   {getTimingSignal(herdScore)}
                 </div>
                 {shouldShowQuality(herdData) && (
-                  <div
-                    className={styles.qualityPill}
-                    style={{ color: qualityColor, borderColor: qualityColor }}
-                  >
-                    {qualityWarningText(herdData)}
-                  </div>
+                  <>
+                    <div
+                      className={styles.qualityPill}
+                      style={{ color: qualityToneColor, borderColor: qualityToneColor }}
+                      title={qualityReasonText(herdData)}
+                    >
+                      {qualityWarningText(herdData, { pointSuffix: true })}
+                    </div>
+                    <div className={styles.qualityReason}>{qualityReasonText(herdData)}</div>
+                  </>
                 )}
               </div>
 

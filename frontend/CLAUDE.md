@@ -32,6 +32,7 @@ src/
 ├── assets/brand/   HerdSignal 로고/심볼 SVG 자산
 ├── utils/          통화/환율 유틸
 │   ├── currency.js 통화 변환
+│   ├── dataQuality.js HERD 데이터 품질 표시 문구/색상 공통 유틸
 │   ├── decision.js HERD 점수 + 보유/포트폴리오 컨텍스트 기반 행동 문장
 │   └── portfolioTools.js 목표비중·리밸런싱·매수 대기열 계산
 └── api/            Spring Boot API 호출
@@ -160,7 +161,7 @@ Rush    #EF4444  (레드)
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - StockDetail 상단 회사명/섹터/로고는 `GET /api/stocks/{ticker}/herd` 응답의 `companyName`/`sector`/`logoUrl`을 사용한다.
-- HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, frontend에서는 낮은 품질만 `데이터 제한/부족`으로 표시한다.
+- HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, `src/utils/dataQuality.js` 기준으로 낮은 품질만 `데이터 제한/부족`과 제한 사유를 표시한다.
 - HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수를 보여준다.
 - Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 사용하며, frontend에서는 actionScore를 `강도`로 표시하고 별도 행동 점수 계산을 하지 않는다.
 - Dashboard/Watchlist/StockDetail은 backend 응답의 `signalDurationDays`/`stageDurationDays`를 사용해 현재 HERD 신호가 며칠째 이어지는지 표시한다.

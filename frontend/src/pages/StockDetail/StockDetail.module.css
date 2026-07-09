@@ -228,6 +228,15 @@
   line-height: 1.4;
 }
 
+.qualityReason {
+  max-width: 220px;
+  margin-top: 6px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
 /* 우: 애니메이션 블록 */
 .herdAnimSide {
   position: relative;

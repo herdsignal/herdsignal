@@ -22,6 +22,7 @@ import {
 } from '../../api/herdApi'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
+import { qualityReasonText, shouldShowQuality } from '../../utils/dataQuality'
 import styles from './Search.module.css'
 
 /* ── 상수 ─────────────────────────────── */
@@ -134,15 +135,11 @@ function herdReadiness(data) {
       desc: 'HERD 계산 대기',
     }
   }
-  if (
-    data.qualityLevel === 'LIMITED' ||
-    data.qualityLevel === 'LOW' ||
-    Number(data.qualityScore ?? 100) < 70
-  ) {
+  if (shouldShowQuality(data)) {
     return {
       label: '데이터 부족',
       tone: 'Limited',
-      desc: data.qualityScore != null ? `품질 ${data.qualityScore}` : '품질 확인 필요',
+      desc: qualityReasonText(data),
     }
   }
   return {

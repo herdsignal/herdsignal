@@ -48,6 +48,7 @@ import {
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
+import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { formatSignalDuration } from '../../utils/signalDuration'
 import {
@@ -253,27 +254,6 @@ function badgeStyle(stage) {
     case 'flee':    return { bg: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
     default:        return { bg: 'rgba(163,170,184,0.13)', color: 'var(--calm)' }
   }
-}
-
-function qualityColor(level) {
-  switch (level) {
-    case 'HIGH': return 'var(--flee)'
-    case 'GOOD': return 'var(--calm)'
-    case 'LIMITED': return 'var(--drift)'
-    case 'LOW': return 'var(--rush)'
-    default: return 'var(--text-3)'
-  }
-}
-
-function shouldShowQuality(herd) {
-  if (!herd?.qualityLabel) return false
-  if (herd.qualityLevel === 'LIMITED' || herd.qualityLevel === 'LOW') return true
-  return Number(herd.qualityScore ?? 100) < 70
-}
-
-function qualityWarningText(herd) {
-  const label = herd?.qualityLevel === 'LOW' ? '데이터 부족' : '데이터 제한'
-  return `${label}${herd?.qualityScore != null ? ` · ${herd.qualityScore}` : ''}`
 }
 
 function formatActionScore(value) {
@@ -1784,7 +1764,10 @@ export default function Dashboard() {
                         {herdScore != null ? ` · HERD ${herdScore}` : ''}
                       </span>
                       {shouldShowQuality(herd) && (
-                        <em style={{ color: qualityColor(herd.qualityLevel) }}>
+                        <em
+                          style={{ color: qualityColor(herd.qualityLevel) }}
+                          title={qualityReasonText(herd)}
+                        >
                           {qualityWarningText(herd)}
                         </em>
                       )}

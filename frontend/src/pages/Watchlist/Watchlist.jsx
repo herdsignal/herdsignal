@@ -23,6 +23,7 @@ import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
+import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { formatSignalDuration } from '../../utils/signalDuration'
 import { opportunityRows } from '../../utils/portfolioTools'
@@ -92,21 +93,6 @@ function badgeStyle(stage) {
     case 'flee':    return { bg: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
     default:        return { bg: 'rgba(163,170,184,0.13)', color: 'var(--calm)' }
   }
-}
-
-function qualityColor(level) {
-  switch (level) {
-    case 'HIGH': return 'var(--flee)'
-    case 'GOOD': return 'var(--calm)'
-    case 'LIMITED': return 'var(--drift)'
-    case 'LOW': return 'var(--rush)'
-    default: return 'var(--text-3)'
-  }
-}
-
-function qualityWarningText(item) {
-  const label = item?.qualityLevel === 'LOW' ? '데이터 부족' : '데이터 제한'
-  return `${label}${item?.qualityScore != null ? ` · ${item.qualityScore}` : ''}`
 }
 
 function formatActionScore(value) {
@@ -377,12 +363,6 @@ export default function Watchlist() {
   const waitCount = watchlist.filter((item) => item.signal === 'HOLD').length
   const sellWatchCount = watchlist.filter((item) => item.signal === 'SELL' || item.signal === 'REDUCE').length
 
-  function shouldShowQuality(item) {
-    if (!item?.qualityLabel) return false
-    if (item.qualityLevel === 'LIMITED' || item.qualityLevel === 'LOW') return true
-    return Number(item.qualityScore ?? 100) < 70
-  }
-
   return (
     <div>
 
@@ -605,7 +585,10 @@ export default function Watchlist() {
                       <strong>{item.ticker}</strong>
                       <em style={{ color }}>{stageName} · 매수 우선도 {Math.round(opportunity)}</em>
                       {shouldShowQuality(item) && (
-                        <small style={{ color: qualityColor(item.qualityLevel) }}>
+                        <small
+                          style={{ color: qualityColor(item.qualityLevel) }}
+                          title={qualityReasonText(item)}
+                        >
                           {qualityWarningText(item)}
                         </small>
                       )}
