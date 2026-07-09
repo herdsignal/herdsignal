@@ -349,17 +349,15 @@ export default function Watchlist() {
     [spyStatsHistory, spyScore]
   )
 
-  const sortedWatchlist = useMemo(() => (
-    watchlist
-      .map((item) => opportunityRows([item])[0] ?? item)
-      .sort((a, b) => Number(b.opportunityScore ?? 0) - Number(a.opportunityScore ?? 0))
-  ), [watchlist])
+  const scoredWatchlist = useMemo(() => opportunityRows(watchlist), [watchlist])
+  const sortedWatchlist = useMemo(() => scoredWatchlist, [scoredWatchlist])
 
   const opportunityQueue = useMemo(() => (
-    opportunityRows(watchlist)
+    scoredWatchlist
       .filter((item) => item.signal === 'BUY' || item.signal === 'ADD')
       .slice(0, 5)
-  ), [watchlist])
+  ), [scoredWatchlist])
+  const readyCount = scoredWatchlist.filter((item) => item.queueState === 'READY').length
   const waitCount = watchlist.filter((item) => item.signal === 'HOLD').length
   const sellWatchCount = watchlist.filter((item) => item.signal === 'SELL' || item.signal === 'REDUCE').length
 
@@ -494,9 +492,9 @@ export default function Watchlist() {
         <>
           <div className={styles.watchSummary}>
             <div>
-              <span>Buy Queue</span>
-              <strong>{opportunityQueue.length}개</strong>
-              <em>Flee/Scatter 우선</em>
+              <span>Ready</span>
+              <strong>{readyCount}개</strong>
+              <em>우선 확인 후보</em>
             </div>
             <div>
               <span>Observe</span>
@@ -513,7 +511,7 @@ export default function Watchlist() {
           <div className={styles.opportunityPanel}>
             <div className={styles.sectionRow}>
               <div className={styles.sectionTitle}>매수 대기열</div>
-            <div className={styles.sectionHint}>Flee/Scatter 우선</div>
+            <div className={styles.sectionHint}>준비도·신호일수 기준</div>
             </div>
             {opportunityQueue.length > 0 ? (
               <div className={styles.opportunityList}>
@@ -529,7 +527,7 @@ export default function Watchlist() {
                       <strong>{item.ticker}</strong>
                       <em>{formatActionCode(item)}</em>
                       <small style={{ color: signal.color }}>
-                        {formatActionBasis(item)} · HERD {Math.round(item.herdV4 ?? item.herdScore)}
+                        {item.queueLabel} · {formatActionBasis(item)} · HERD {Math.round(item.herdV4 ?? item.herdScore)}
                         {formatSignalDuration(item) ? ` · ${formatSignalAgeLabel(item)}` : ''}
                       </small>
                     </button>
@@ -545,7 +543,7 @@ export default function Watchlist() {
 
           <div className={styles.sectionRow}>
             <div className={styles.sectionTitle}>관찰 종목 · {watchlist.length}</div>
-            <div className={styles.sectionHint}>매수 우선도순</div>
+            <div className={styles.sectionHint}>준비도 높은 순</div>
           </div>
 
           <div className={styles.queueTable}>
@@ -553,7 +551,7 @@ export default function Watchlist() {
               <span>종목</span>
               <span>HERD</span>
               <span>액션</span>
-              <span>신호</span>
+              <span>준비도</span>
               <span>업데이트</span>
             </div>
             {sortedWatchlist.map((item) => {
@@ -564,7 +562,7 @@ export default function Watchlist() {
                 ? item.herdStage.slice(5)
                 : item.herdStage
               const isDeleting = deletingTicker === item.ticker
-              const opportunity = item.opportunityScore ?? opportunityRows([item])[0]?.opportunityScore
+              const opportunity = item.opportunityScore
 
               return (
                 <div
@@ -606,8 +604,8 @@ export default function Watchlist() {
                   </div>
 
                   <div className={styles.queueSignal}>
-                    <strong>{formatSignalAgeLabel(item)}</strong>
-                    <span>{formatActionBasis(item)}</span>
+                    <strong>{item.queueLabel}</strong>
+                    <span>{item.queueDetail} · {formatSignalAgeLabel(item)}</span>
                   </div>
 
                   <div className={styles.queueMeta}>

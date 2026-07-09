@@ -210,12 +210,47 @@ export function opportunityRows(watchlist) {
       const score = num(item.herdV4 ?? item.herdScore, 50)
       const signal = item.signal ?? 'HOLD'
       const actionScore = num(item.actionScore)
+      const signalDays = num(item.signalDurationDays)
+      const qualityScore = num(item.qualityScore, 80)
       const signalBoost = signal === 'BUY' ? 34 : signal === 'ADD' ? 22 : signal === 'HOLD' ? 2 : -24
       const strengthBoost = actionScore > 0 ? Math.min(16, actionScore / 8) : 0
+      const lifecycleBoost = signalDays >= 6 && signalDays <= 20
+        ? 8
+        : signalDays > 45
+          ? -10
+          : signalDays > 0 && signalDays <= 5
+            ? -4
+            : 0
+      const qualityPenalty = qualityScore < 65 ? -12 : 0
       const opportunityScore = Math.max(0, Math.min(100, 100 - score + signalBoost))
+      const adjustedScore = Math.max(0, Math.min(100, opportunityScore + strengthBoost + lifecycleBoost + qualityPenalty))
+      const queueState = signal === 'BUY' || signal === 'ADD'
+        ? adjustedScore >= 80
+          ? 'READY'
+          : adjustedScore >= 55 ? 'WATCH' : 'WAIT'
+        : signal === 'HOLD'
+          ? 'WAIT'
+          : 'AVOID'
       return {
         ...item,
-        opportunityScore: Math.max(0, Math.min(100, opportunityScore + strengthBoost)),
+        opportunityScore: adjustedScore,
+        queueState,
+        queueLabel: queueState === 'READY'
+          ? '우선 확인'
+          : queueState === 'WATCH'
+            ? '관찰 유지'
+            : queueState === 'AVOID'
+              ? '매수 제외'
+              : '대기',
+        queueDetail: signalDays > 45
+          ? '오래된 신호라 추격 금지'
+          : signalDays > 0 && signalDays <= 5
+            ? '초입 신호 확인 필요'
+            : qualityScore < 65
+              ? '데이터 품질 확인 필요'
+              : signal === 'BUY' || signal === 'ADD'
+                ? '분할매수 후보'
+                : '조건 대기',
         opportunityRank: signal === 'BUY' ? 3 : signal === 'ADD' ? 2 : signal === 'HOLD' ? 1 : 0,
         originalIndex: index,
         reason: signal === 'BUY'
