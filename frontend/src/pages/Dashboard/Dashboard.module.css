@@ -211,10 +211,10 @@
   margin-top: -12px;
   margin-bottom: 24px;
   padding: 18px 20px;
-  border: 1px solid rgba(59, 130, 246, 0.22);
+  border: 1px solid var(--border);
   border-radius: var(--card-radius);
   background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.10), rgba(255, 255, 255, 0) 44%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 44%),
     var(--surface);
   box-shadow: 0 16px 34px rgba(0, 0, 0, 0.12);
 }
@@ -322,8 +322,8 @@
   border: 1px solid var(--border);
   border-radius: calc(var(--card-radius) + 4px);
   background:
-    radial-gradient(circle at 58% 20%, rgba(251, 146, 60, 0.14), transparent 24%),
-    radial-gradient(circle at 38% 8%, rgba(59, 130, 246, 0.14), transparent 30%),
+    radial-gradient(circle at 58% 20%, rgba(251, 146, 60, 0.08), transparent 24%),
+    radial-gradient(circle at 38% 8%, rgba(148, 163, 184, 0.09), transparent 30%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.030), rgba(255, 255, 255, 0.008)),
     var(--surface);
   box-shadow: 0 28px 82px rgba(0, 0, 0, 0.28);
@@ -331,7 +331,7 @@
 
 :global(body.light) .commandFrame {
   background:
-    radial-gradient(circle at 62% 16%, rgba(59, 130, 246, 0.10), transparent 30%),
+    radial-gradient(circle at 62% 16%, rgba(148, 163, 184, 0.12), transparent 30%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(242, 247, 253, 0.94)),
     var(--surface);
   box-shadow: 0 20px 52px rgba(15, 23, 42, 0.10);
@@ -345,7 +345,7 @@
   padding: 0 26px;
   border-bottom: 1px solid var(--border);
   background:
-    linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.018) 42%, rgba(251, 146, 60, 0.055));
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012) 42%, rgba(251, 146, 60, 0.035));
 }
 
 :global(body.light) .commandFrameTop {
@@ -394,9 +394,9 @@
 }
 
 .commandFrameMeta button:hover {
-  border-color: var(--flee);
+  border-color: var(--border2);
   color: var(--text-1);
-  background: rgba(59, 130, 246, 0.08);
+  background: rgba(255, 255, 255, 0.045);
 }
 
 .portfolioSummaryBar {
@@ -487,9 +487,9 @@
 }
 
 .ledgerHistoryBtn:hover {
-  border-color: var(--flee);
+  border-color: var(--border2);
   color: var(--text-1);
-  background: rgba(59, 130, 246, 0.08);
+  background: rgba(255, 255, 255, 0.045);
 }
 
 .commandQueue {
@@ -500,7 +500,7 @@
   margin: 0;
   padding: 20px 24px;
   background:
-    linear-gradient(90deg, rgba(59, 130, 246, 0.105), rgba(255, 255, 255, 0.014) 42%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.014) 42%),
     transparent;
   border-top: 1px solid var(--border);
   border-radius: 0;
@@ -509,7 +509,7 @@
 
 :global(body.light) .commandQueue {
   background:
-    linear-gradient(90deg, rgba(59, 130, 246, 0.06), rgba(255, 255, 255, 0.78) 42%),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.025), rgba(255, 255, 255, 0.78) 42%),
     transparent;
   box-shadow: none;
 }

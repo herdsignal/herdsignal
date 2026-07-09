@@ -94,7 +94,7 @@
    ──────────────────────────── */
 .marketBanner {
   background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.075), rgba(255, 255, 255, 0) 36%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 36%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)),
     var(--surface);
   border: 1px solid var(--border);
@@ -159,7 +159,7 @@
 
 :global(body.light) .marketBanner {
   background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0) 38%),
+    linear-gradient(135deg, rgba(148, 163, 184, 0.10), rgba(255, 255, 255, 0) 38%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 250, 252, 0.98)),
     var(--surface);
   box-shadow: 0 18px 42px rgba(15, 23, 42, 0.1);
@@ -181,7 +181,7 @@
   inset: 0;
   background: radial-gradient(
     ellipse at 0% 50%,
-    rgba(59, 130, 246, 0.11) 0%,
+    rgba(148, 163, 184, 0.09) 0%,
     transparent 70%
   );
   pointer-events: none;
@@ -190,7 +190,7 @@
 :global(body.light) .bannerScoreBlock::before {
   background: radial-gradient(
     ellipse at 0% 50%,
-    rgba(59, 130, 246, 0.14) 0%,
+    rgba(148, 163, 184, 0.12) 0%,
     transparent 68%
   );
 }
@@ -457,10 +457,10 @@
 .opportunityPanel {
   margin-bottom: 30px;
   padding: 18px;
-  border: 1px solid rgba(59, 130, 246, 0.18);
+  border: 1px solid var(--border);
   border-radius: calc(var(--card-radius) + 2px);
   background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.10), rgba(255, 255, 255, 0.012) 46%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012) 46%),
     var(--surface);
 }
 
@@ -478,7 +478,7 @@
   gap: 10px;
   text-align: left;
   background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.11), rgba(255, 255, 255, 0.014) 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.014) 60%),
     var(--surface2);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
@@ -615,7 +615,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  box-shadow: 0 0 18px currentColor;
+  box-shadow: none;
 }
 
 .queueStock {

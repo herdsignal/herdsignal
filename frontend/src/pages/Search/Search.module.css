@@ -33,7 +33,7 @@
   border: 1px solid var(--border);
   border-radius: calc(var(--card-radius) + 4px);
   background:
-    radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.12), transparent 30%),
+    radial-gradient(circle at 10% 10%, rgba(148, 163, 184, 0.10), transparent 30%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.006)),
     var(--surface);
   box-shadow: 0 24px 54px rgba(0, 0, 0, 0.18);
@@ -99,7 +99,7 @@
   box-shadow: none;
   transition: border-color 0.15s, background 0.15s;
 }
-.searchInput:focus { border-color: var(--flee); }
+.searchInput:focus { border-color: var(--border2); }
 .searchInput::placeholder { color: var(--text-3); }
 
 /* 돋보기 아이콘 */
