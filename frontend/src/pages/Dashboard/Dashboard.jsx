@@ -1255,11 +1255,12 @@ export default function Dashboard() {
           <div>
             <span>Signal Command Center</span>
             <strong>현재 시장 신호</strong>
+            <em>S&amp;P 500 흐름과 보유 종목 행동 대기열을 함께 확인합니다.</em>
           </div>
           <div className={styles.commandFrameMeta}>
             <span>{lastUpdated ? `업데이트 · ${fmtTime(lastUpdated)}` : '업데이트 대기'}</span>
             <button type="button" onClick={() => navigate('/herd-lab')}>
-              리포트 보기
+              모델 리포트
             </button>
           </div>
         </div>
@@ -1359,6 +1360,7 @@ export default function Dashboard() {
                   ? `${actionQueueCards.length}개 핵심 후보`
                   : '강한 행동 신호 없음'}
               </strong>
+              <em>매수권·익절권·목표비중 이탈을 우선 정렬</em>
             </div>
             <div className={styles.commandQueueList}>
               {actionQueueCards.length > 0 ? (
@@ -1401,8 +1403,8 @@ export default function Dashboard() {
                 })
               ) : (
                 <div className={styles.commandEmpty}>
-                  <strong>현재는 보유와 관찰 구간입니다.</strong>
-                  <span>Flee/Rush 또는 목표비중 이탈이 커질 때 대기열에 올라옵니다.</span>
+                  <strong>오늘 새로 할 행동은 없습니다.</strong>
+                  <span>장기투자 지표라 매일 신호가 나오지 않는 것이 정상입니다.</span>
                 </div>
               )}
             </div>
@@ -1454,7 +1456,7 @@ export default function Dashboard() {
                 className={styles.ledgerHistoryBtn}
                 onClick={() => setAssetPanelOpen(open => !open)}
               >
-                {assetPanelOpen ? '히스토리 닫기' : '히스토리'}
+                {assetPanelOpen ? '히스토리 닫기' : '자산 히스토리'}
               </button>
             </div>
           </div>

@@ -69,6 +69,7 @@ Rush    #EF4444  (레드)
 - AiRebalance(`/ai`), History(`/history`), Journal(`/journal`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
 - Dashboard (`/`)
   - Signal Command Center 구조: 시장 HERD 신호 → 3개 핵심 Action Queue → 포트폴리오 요약 바 → 보유 종목 테이블 순으로 표시
+  - Signal Command Center는 S&P 500 흐름과 보유 종목 행동 대기열을 함께 확인하는 화면이며, 장기투자 지표 특성상 강한 행동 신호가 없는 상태도 정상 상태로 표시한다.
   - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
   - 포트폴리오 요약 바 (총자산 + 주식 평가액 + 현금 보유액 + 오늘 등락)
   - 총자산 히스토리 버튼 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시. backend 히스토리 포인트에 현재 summary/cash 포인트를 합성해 현금 저장 직후에도 마지막 값이 즉시 반영된다.
