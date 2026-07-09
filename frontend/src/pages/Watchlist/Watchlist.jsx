@@ -25,7 +25,7 @@ import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
-import { formatSignalDuration } from '../../utils/signalDuration'
+import { formatSignalAgeLabel, formatSignalDuration } from '../../utils/signalDuration'
 import { opportunityRows } from '../../utils/portfolioTools'
 import styles    from './Watchlist.module.css'
 
@@ -530,7 +530,7 @@ export default function Watchlist() {
                       <em>{formatActionCode(item)}</em>
                       <small style={{ color: signal.color }}>
                         {formatActionBasis(item)} · HERD {Math.round(item.herdV4 ?? item.herdScore)}
-                        {formatSignalDuration(item) ? ` · ${formatSignalDuration(item)}` : ''}
+                        {formatSignalDuration(item) ? ` · ${formatSignalAgeLabel(item)}` : ''}
                       </small>
                     </button>
                   )
@@ -606,7 +606,7 @@ export default function Watchlist() {
                   </div>
 
                   <div className={styles.queueSignal}>
-                    <strong>{formatSignalDuration(item) ?? '신호 확인'}</strong>
+                    <strong>{formatSignalAgeLabel(item)}</strong>
                     <span>{formatActionBasis(item)}</span>
                   </div>
 

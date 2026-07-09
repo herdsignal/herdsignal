@@ -13,6 +13,43 @@ export function formatSignalDuration(data) {
   return `신호 ${days}일째`
 }
 
+export function getSignalDurationMeta(data) {
+  const days = validDays(data?.signalDurationDays)
+  if (!days) {
+    return {
+      label: '신호 확인',
+      detail: null,
+      tone: 'neutral',
+      days: null,
+    }
+  }
+
+  if (days <= 5) {
+    return {
+      label: '초입 신호',
+      detail: `신호 ${days}일째`,
+      tone: 'fresh',
+      days,
+    }
+  }
+
+  if (days <= 20) {
+    return {
+      label: '진행 신호',
+      detail: `신호 ${days}일째`,
+      tone: 'active',
+      days,
+    }
+  }
+
+  return {
+    label: '장기 지속',
+    detail: `신호 ${days}일째`,
+    tone: 'extended',
+    days,
+  }
+}
+
 export function formatStageDuration(data) {
   const days = validDays(data?.stageDurationDays)
   if (!days) return null
@@ -31,4 +68,9 @@ export function formatSignalDurationDetail(data) {
   if (signalDays) parts.push(`${signal} ${signalDays}일째`)
   if (stage && stageDays) parts.push(`${stage} ${stageDays}일째`)
   return parts.length > 0 ? parts.join(' · ') : null
+}
+
+export function formatSignalAgeLabel(data) {
+  const meta = getSignalDurationMeta(data)
+  return meta.detail ? `${meta.label} · ${meta.detail}` : meta.label
 }

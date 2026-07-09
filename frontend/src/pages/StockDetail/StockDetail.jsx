@@ -24,7 +24,7 @@ import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import SignalJournalModal from '../../components/SignalJournalModal/SignalJournalModal'
 import { buildDecision } from '../../utils/decision'
 import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
-import { formatSignalDurationDetail } from '../../utils/signalDuration'
+import { formatSignalAgeLabel, formatSignalDurationDetail } from '../../utils/signalDuration'
 import {
   formatJournalAmount,
   formatJournalPrice,
@@ -856,7 +856,7 @@ export default function StockDetail() {
                     </div>
                     {formatSignalDurationDetail(herdData) && (
                       <div className={styles.decisionBasis}>
-                        {formatSignalDurationDetail(herdData)}
+                        {formatSignalAgeLabel(herdData)}
                       </div>
                     )}
                   </div>
