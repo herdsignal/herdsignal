@@ -43,21 +43,26 @@ public class ActionDecisionService {
         TrendContext trend = calculateTrendContext(indicator);
         MomentumContext momentum = calculateMomentumContext(score, history);
         RegimeDecision regime = chooseRegime(herdScore, trend, momentum);
-        int actionScore = calculateActionScore(herdScore, dataQuality, trend.score(), momentum.score(), regime);
+        LifecycleContext lifecycle = calculateLifecycleContext(score, history);
+        RegimeDecision adjustedRegime = applyLifecycle(regime, lifecycle, herdScore);
+        int actionScore = calculateActionScore(herdScore, dataQuality, trend.score(), momentum.score(), adjustedRegime);
+        actionScore = clamp(actionScore + lifecycle.scoreAdjustment(), 0, 100);
 
         List<String> reasons = new ArrayList<>();
         reasons.add("HERD " + displayStage(score.getHerdStage()) + " 구간");
         reasons.add("장기 추세 품질 " + trend.score() + "/100");
         reasons.add(momentum.reason());
+        reasons.add(lifecycle.reason());
         reasons.add("데이터 품질 " + dataQuality + "/100");
-        reasons.add(regime.reason());
+        reasons.add(adjustedRegime.reason());
 
         List<String> warnings = new ArrayList<>(trend.warnings());
         warnings.addAll(momentum.warnings());
+        warnings.addAll(lifecycle.warnings());
         if (dataQuality < 65) {
             warnings.add("데이터 품질이 낮아 행동 비율을 보수적으로 해석해야 합니다.");
         }
-        if (regime.ratio() == 0.0 && ("Flee".equals(displayStage(score.getHerdStage()))
+        if (adjustedRegime.ratio() == 0.0 && ("Flee".equals(displayStage(score.getHerdStage()))
                 || "Scatter".equals(displayStage(score.getHerdStage())))) {
             warnings.add("낮은 HERD 점수지만 추세 훼손 가능성이 있어 관찰을 우선합니다.");
         }
@@ -68,14 +73,127 @@ public class ActionDecisionService {
                 .baseModelVersion(BASE_MODEL_VERSION)
                 .actionModelStatus(ACTION_MODEL_STATUS)
                 .actionScore(actionScore)
-                .actionGrade(actionGrade(actionScore, regime.ratio()))
-                .actionLabel(regime.label())
-                .actionRatio(BigDecimal.valueOf(regime.ratio()).setScale(2, RoundingMode.HALF_UP))
-                .actionRegime(regime.code())
-                .actionRegimeLabel(regime.regimeLabel())
+                .actionGrade(actionGrade(actionScore, adjustedRegime.ratio()))
+                .actionLabel(adjustedRegime.label())
+                .actionRatio(BigDecimal.valueOf(adjustedRegime.ratio()).setScale(2, RoundingMode.HALF_UP))
+                .actionRegime(adjustedRegime.code())
+                .actionRegimeLabel(adjustedRegime.regimeLabel())
                 .actionReasons(reasons)
                 .actionWarnings(warnings)
                 .build();
+    }
+
+    private LifecycleContext calculateLifecycleContext(HerdScore latest, List<HerdScore> history) {
+        if (latest.getScoreDate() == null || history == null || history.isEmpty()) {
+            return new LifecycleContext(0, 1.0, 0, "신호 지속일 데이터 부족", List.of());
+        }
+
+        String latestSignal = normalizedSignal(latest.getSignal());
+        LocalDate startedAt = latest.getScoreDate();
+        for (HerdScore row : history) {
+            if (row.getScoreDate() == null || row.getScoreDate().isAfter(latest.getScoreDate())) {
+                continue;
+            }
+            if (normalizedSignal(row.getSignal()).equals(latestSignal)) {
+                startedAt = row.getScoreDate();
+            } else {
+                break;
+            }
+        }
+
+        long days = Math.max(1, ChronoUnit.DAYS.between(startedAt, latest.getScoreDate()) + 1);
+        if (days <= 5) {
+            return new LifecycleContext(
+                    days,
+                    0.65,
+                    -8,
+                    "신호 초입 " + days + "일째",
+                    List.of("초입 신호는 확인 전까지 행동 비율을 낮춥니다.")
+            );
+        }
+        if (days <= 20) {
+            return new LifecycleContext(
+                    days,
+                    1.0,
+                    4,
+                    "신호 진행 " + days + "일째",
+                    List.of()
+            );
+        }
+        if (days <= 45) {
+            return new LifecycleContext(
+                    days,
+                    0.82,
+                    -3,
+                    "신호 성숙 " + days + "일째",
+                    List.of("이미 진행된 신호라 신규 행동은 분할 기준으로 제한합니다.")
+            );
+        }
+        return new LifecycleContext(
+                days,
+                0.55,
+                -10,
+                "신호 장기 지속 " + days + "일째",
+                List.of("장기 지속 신호는 추격 대응보다 다음 전환 확인이 우선입니다.")
+        );
+    }
+
+    private RegimeDecision applyLifecycle(RegimeDecision regime, LifecycleContext lifecycle, double herdScore) {
+        if (regime.ratio() == 0.0) {
+            return regime;
+        }
+
+        double adjustedRatio = BigDecimal.valueOf(regime.ratio() * lifecycle.ratioMultiplier())
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
+
+        if (lifecycle.signalDays() <= 5 && adjustedRatio > 0.0) {
+            return new RegimeDecision(
+                    regime.code() + "_FRESH",
+                    freshLabel(regime.label(), herdScore),
+                    regime.regimeLabel(),
+                    adjustedRatio,
+                    regime.reason() + " 단, 신호 초입이라 첫 행동 비율을 낮춥니다."
+            );
+        }
+
+        if (lifecycle.signalDays() > 45 && adjustedRatio > 0.0) {
+            return new RegimeDecision(
+                    regime.code() + "_EXTENDED",
+                    extendedLabel(regime.label(), herdScore),
+                    regime.regimeLabel(),
+                    adjustedRatio,
+                    regime.reason() + " 다만 오래 지속된 신호라 추격 비중을 제한합니다."
+            );
+        }
+
+        return new RegimeDecision(
+                regime.code(),
+                regime.label(),
+                regime.regimeLabel(),
+                adjustedRatio,
+                regime.reason()
+        );
+    }
+
+    private String freshLabel(String label, double herdScore) {
+        if (herdScore <= SCATTER_UPPER) {
+            return label.replace("적극 ", "").replace("후보", "확인");
+        }
+        if (herdScore >= DRIFT_LOWER) {
+            return label.replace("적극 ", "").replace("후보", "확인");
+        }
+        return label;
+    }
+
+    private String extendedLabel(String label, double herdScore) {
+        if (herdScore <= SCATTER_UPPER) {
+            return "추격매수 보류";
+        }
+        if (herdScore >= DRIFT_LOWER) {
+            return "분할 익절 유지";
+        }
+        return label;
     }
 
     private MomentumContext calculateMomentumContext(HerdScore latest, List<HerdScore> history) {
@@ -407,6 +525,10 @@ public class ActionDecisionService {
         return herdStage.startsWith("Herd ") ? herdStage.substring(5) : herdStage;
     }
 
+    private String normalizedSignal(String signal) {
+        return signal == null || signal.isBlank() ? "HOLD" : signal.trim().toUpperCase();
+    }
+
     private int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
@@ -418,6 +540,15 @@ public class ActionDecisionService {
             int score,
             double shortDelta,
             double monthDelta,
+            String reason,
+            List<String> warnings
+    ) {
+    }
+
+    private record LifecycleContext(
+            long signalDays,
+            double ratioMultiplier,
+            int scoreAdjustment,
             String reason,
             List<String> warnings
     ) {
