@@ -34,6 +34,7 @@ src/
 │   ├── currency.js 통화 변환
 │   ├── dataQuality.js HERD 데이터 품질 표시 문구/색상 공통 유틸
 │   ├── decision.js HERD 점수 + 보유/포트폴리오 컨텍스트 기반 행동 문장
+│   ├── herdMomentum.js HERD 히스토리 기반 최근 강도 변화 해석
 │   └── portfolioTools.js 목표비중·리밸런싱·매수 대기열 계산
 └── api/            Spring Boot API 호출
     └── herdApi.js
@@ -71,10 +72,10 @@ Rush    #EF4444  (레드)
 - Dashboard (`/`)
   - Signal Command Center 구조: 시장 HERD 신호 → 3개 핵심 Action Queue → 포트폴리오 요약 바 → 보유 종목 테이블 순으로 표시
   - Signal Command Center는 S&P 500 흐름과 보유 종목 행동 대기열을 함께 확인하는 화면이며, 장기투자 지표 특성상 강한 행동 신호가 없는 상태도 정상 상태로 표시한다.
-  - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
+  - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균 + 최근 강도 변화, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
   - 포트폴리오 요약 바 (총자산 + 주식 평가액 + 현금 보유액 + 오늘 등락)
   - 총자산 히스토리 버튼 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시. backend 히스토리 포인트에 현재 summary/cash 포인트를 합성해 현금 저장 직후에도 마지막 값이 즉시 반영된다.
-  - 자산 히스토리는 사용자가 기준일을 직접 관리하지 않고, 선택 기간의 시작값/현재값/총자산 변화(입출금 포함)/고점 대비/현금·주식 평가액을 표시한다.
+  - 자산 히스토리는 사용자가 기준일을 직접 관리하지 않고, 선택 기간의 시작값/현재값/주식 평가액 변화(현금 변동 제외)/총자산 변화(입출금 포함)/고점 대비/현금을 표시한다.
   - 현금 보유액 표시 및 편집 모드 입력/저장
   - HERD 판단 기록 전체 요약: `/api/journal` 기반 매수/익절 횟수·금액·평균 익절률·최근 기록 표시
   - KRW/USD 통화 토글
@@ -92,10 +93,10 @@ Rush    #EF4444  (레드)
   - 보유 종목 액션은 HERD 신호와 현재 비중/목표 비중 차이를 함께 본다. 예: ADD 신호여도 목표비중을 초과하면 `WAIT`, SELL/REDUCE 신호와 목표비중 초과가 겹치면 비중 축소 우선으로 표시한다.
 - StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
-  - Action Layer 행동 점수/행동 비율/세부 국면 표시
+  - Action Layer 행동 점수/행동 비율/세부 국면/최근 HERD 강도 변화 표시
   - 현재 HERD 판단을 움직인 핵심 근거 데이터 보드
   - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
-  - 최근 3년 HERD 신호 신뢰도 데이터 보드
+  - 최근 3년 HERD 신호 신뢰도 데이터 보드(Flee/Rush 적중률, 신호 이후 수익/낙폭, MDD 개선, 수익률 보존)
   - 1M/3M/1Y/3Y HERD Index 히스토리 차트
   - Fundamental Guard: 시가총액/PER/EPS/영업이익률/매출 기반 재무 경고 필터
   - HERD 판단 기록: 매수/보류/익절 판단 시 가격·수량·총액·수익률·메모를 DB `signal_journal`에 저장하고, 매수/익절 횟수·금액·평균 익절률을 요약 표시
@@ -138,6 +139,7 @@ Rush    #EF4444  (레드)
   - `/api/journal` 전체 기록을 종목/액션/가격/수량/총액/수익률/HERD/날짜 테이블로 표시
   - 전체/매수/익절/보류 필터와 매수·익절 금액, 평균 익절률 요약 표시
   - Dashboard 판단 기록 요약에서 진입하며, 사이드바에는 노출하지 않는다.
+  - 가격·수량·금액·수익률·HERD 점수·신호 지속일·메모를 장기 판단 로그로 표시한다.
 - AiRebalance (`/ai`)
   - 목표 비중·현금 목표·리밸런싱 예산 설정
   - 보수적/표준/공격적 리밸런싱 강도 선택
@@ -163,9 +165,9 @@ Rush    #EF4444  (레드)
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - StockDetail 상단 회사명/섹터/로고는 `GET /api/stocks/{ticker}/herd` 응답의 `companyName`/`sector`/`logoUrl`을 사용한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, `src/utils/dataQuality.js` 기준으로 낮은 품질만 `데이터 제한/부족`과 제한 사유를 표시한다.
-- HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수를 보여준다.
+- HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수를 보여준다.
 - Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 사용하며, frontend에서는 actionScore를 `강도`로 표시하고 별도 행동 점수 계산을 하지 않는다.
-- Dashboard/Watchlist/StockDetail은 backend 응답의 `signalDurationDays`/`stageDurationDays`를 사용해 현재 HERD 신호가 며칠째 이어지는지 표시한다.
+- Dashboard/Watchlist/StockDetail은 backend 응답의 `signalDurationDays`/`stageDurationDays`를 사용해 현재 HERD 신호가 초입/진행/장기 지속 중 어디에 있는지 표시한다.
 - Search에서 포트폴리오/관심종목 추가는 HERD 데이터가 준비된 종목만 허용한다. 포트폴리오 추가 성공 시 Dashboard localStorage 캐시(`hs_portfolio_realtime`, `hs_portfolio_herd`, `hs_cache_time`)를 비우고 평단가·수량 입력 모달을 연다.
 - Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 하루 경계는 backend에서 KST 22:30 기준으로 계산한다.
 - Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.

@@ -131,7 +131,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - 기본 대상: 포트폴리오 + 관심종목 + SPY (`--all-stocks` 명시 시 stocks 활성 종목 포함)
   - 과거 EPS/섹터 승수는 1.0으로 저장해 미래 데이터 누수를 피함
 - HERD 신호 신뢰도 계산 (`data/herd/signal_reliability.py`)
-  - 저장된 HERD 히스토리와 yfinance 가격으로 Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수 계산
+  - 저장된 HERD 히스토리와 yfinance 가격으로 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수 계산
   - DB 스키마 변경 없는 on-demand 분석
 - 백테스트 코드 (backtest_v3.py, backtest_v4.py 기반)
 
@@ -150,18 +150,18 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 
 **frontend/**
 
-- Dashboard: S&P 500 Herd Flow 배너(Overview 애니메이션 + Timeline HERD 히스토리), 총자산/현금 포함 포트폴리오 평가 요약, 편집 모드 현금 입력, 1개월/1년/전체 총자산 히스토리 차트(입출금 포함 총자산 변화로 표시), HERD 판단 기록 전체 요약, KRW/USD 통화 토글, 핵심 리밸런싱 체크, HERD 신호와 목표비중 차이를 함께 반영한 보유 종목 액션 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침 피드백
+- Dashboard: S&P 500 Herd Flow 배너(Overview 애니메이션 + Timeline HERD 히스토리 + HERD 강도 변화), 총자산/현금 포함 포트폴리오 평가 요약, 편집 모드 현금 입력, 1개월/1년/전체 자산 히스토리 차트(입출금 포함 총자산 흐름과 주식 평가액 변화 분리 표시), HERD 판단 기록 전체 요약, KRW/USD 통화 토글, 핵심 리밸런싱 체크, HERD 신호와 목표비중 차이를 함께 반영한 보유 종목 액션 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침 피드백
 - StockDetail: HERD v4 점수·단계·신호, HERD_v6 Action Layer 행동 비율, 현재 신호 근거 데이터 보드, 지표 분해·보정 승수, 현재 신호 기준 신뢰도, HERD Index 히스토리 차트, Fundamental Guard, DB 기반 HERD 판단 기록(가격·수량·총액·수익률·메모)과 기록 요약
-- StockDetail: 최근 3년 HERD 신호 신뢰도 데이터 보드(Flee/Rush 적중률, MDD 개선, 수익률 보존, 연간 행동 수)
+- StockDetail: 최근 3년 HERD 신호 신뢰도 데이터 보드(Flee/Rush 적중률, 매수 후 1/3/6개월 평균 수익률, 익절 후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수)
 - HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공. frontend에서는 낮은 품질만 `데이터 제한/부족`과 제한 사유로 표시한다.
 - HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v6는 HERD_v4 점수에 Progressive Action Layer를 얹은 응답 시점 행동 모델이다.
 - HERD Action Layer: HERD 점수·지표 분해값·데이터 품질·최근 HERD 변화율을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. frontend에서는 actionScore를 `강도`로 표시하고, DB 저장 없이 backend 응답 시점에 계산한다.
-- HERD 신호 지속 기간: backend가 저장된 HERD 히스토리 기준으로 현재 signal/stage 시작일과 지속 일수를 응답하고, frontend는 보유종목/관심종목/상세 화면에 `신호 N일째`를 표시한다.
+- HERD 신호 지속 기간: backend가 저장된 HERD 히스토리 기준으로 현재 signal/stage 시작일과 지속 일수를 응답하고, frontend는 보유종목/관심종목/상세 화면에 `초입 신호/진행 신호/장기 지속`으로 해석해 표시한다.
 - Search: Finnhub 심볼 검색 API, Inclusion Check 상태 패널, 디바운스 검색, HERD 미리보기, 편입 판단, HERD 준비됨/계산 필요/데이터 부족 상태 표시, 최근 검색, 포트폴리오/관심종목 추가, 포트폴리오 추가 후 평단가·수량 입력 연결
 - Watchlist: S&P 500 Herd Flow 배너, Buy Queue/Observe/Overheat 요약 보드, Flee/Scatter 우선 기회 대기열, 매수 후보 우선 Action Queue 리스트, 삭제
 - StockAvatar: 회사 로고 URL이 있으면 로고 표시, 없거나 이미지 로딩 실패 시 티커 배지 fallback
 - HERD Lab: 현재 HERD 모델 버전 검증 히어로 보드, 핵심 성과 수치, 종목별 백테스트 verdict, 5단계 행동 매트릭스. 표시 데이터는 `frontend/src/data/herdModelReport.js`에서 관리한다.
-- Journal: StockDetail에서 저장한 HERD 판단 기록 전체 목록과 매수/익절 요약을 `signal_journal` DB 기반으로 표시
+- Journal: StockDetail에서 저장한 HERD 판단 기록 전체 목록과 매수/익절 요약을 `signal_journal` DB 기반으로 표시하며, 가격·수량·금액·수익률·HERD·신호 지속일·메모를 함께 보여준다.
 - 사이드바 노출 MVP 메뉴: 대시보드, 관심 종목, 종목 검색, HERD Lab
 - 보류/내부 접근 라우트: AiRebalance(`/ai`), History(`/history`), Journal(`/journal`), HerdFlowPreview(`/herd-flow`)
 

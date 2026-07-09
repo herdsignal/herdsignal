@@ -42,10 +42,11 @@ The `Herd Flow` animation visualizes these stages as particle distribution. Flee
 
 ## Core Features
 
-- **Dashboard**: S&P 500 Herd Flow banner, portfolio valuation with cash, asset history, core rebalance check, and holding-level HERD action cards
+- **Dashboard**: S&P 500 Herd Flow banner, signal momentum, portfolio valuation with cash, cash-aware asset history, core rebalance check, and holding-level HERD action cards
 - **Watchlist**: opportunity queue and HERD cards sorted by long-term add/trim timing priority
 - **Search**: ticker/company search, HERD preview, recent searches, and portfolio/watchlist add actions
-- **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, signal reliability board, HERD Index history, Fundamental Guard, and indicator breakdown
+- **Stock Detail**: HERD v4 score, HERD_v5 Action Layer guidance, signal reliability board, post-signal performance metrics, HERD Index history, Fundamental Guard, and indicator breakdown
+- **Journal**: database-backed decision log for buy/hold/trim records with price, quantity, amount, profit rate, HERD score, signal age, and memo
 - **HERD Lab**: model version, backtest summary, action matrix, and validation data for the HERD methodology
 
 ---
@@ -99,6 +100,8 @@ Python calculates and stores data. Spring Boot serves database-backed APIs. Reac
 - `GET /api/portfolio/cash`
 - `PUT /api/portfolio/cash`
 - `GET /api/portfolio/realtime`
+- `GET /api/journal`
+- `POST /api/journal`
 - `GET /api/watchlist`
 - `GET /api/watchlist/herd`
 
@@ -126,7 +129,7 @@ HERD v4 applies two multipliers to the base score:
 
 The final score is stored in `herd_scores.herd_score`. The API also exposes `herdV4`, `herdBase`, `epsMultiplier`, and `sectorMultiplier`.
 
-Signal reliability is calculated separately from data quality. It compares saved HERD history with later price movement and reports Flee hit rate, Rush hit rate, MDD improvement, return preservation, and annual action count.
+Signal reliability is calculated separately from data quality. It compares saved HERD history with later price movement and reports Flee hit rate, Rush hit rate, post-buy 1/3/6-month returns, post-trim 1/3-month drawdowns, MDD improvement, return preservation, and annual action count.
 
 ---
 
@@ -186,6 +189,7 @@ The frontend usually runs at `http://localhost:5173`.
 ## Current Limitations
 
 - The MVP is intentionally focused on HERD-based add/hold/trim timing, not full portfolio management.
+- Asset history separates cash-inclusive total asset flow from stock valuation movement, but full time-weighted performance still requires explicit deposit/withdrawal events.
 - The Rebalance Plan, legacy History page, and Herd Flow Preview routes exist, but they are hidden from the main sidebar.
 - Target weights are edited from Dashboard cards and stored in localStorage, not in the database.
 - Authentication, multi-user support, brokerage integration, and deployment are not implemented yet.
