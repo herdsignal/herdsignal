@@ -18,12 +18,6 @@ const herdModelReport = {
     { label: '연평균 행동', value: '8.5회', sub: '10년 평균', tone: 'slate' },
     { label: '표본', value: '5종목', sub: 'NVDA/MSFT/AAPL/JPM/SPY', tone: 'orange' },
   ],
-  targets: [
-    { label: 'Return Capture', actual: '70.2%', target: '70%+', result: 'PASS', tone: 'pass' },
-    { label: 'MDD Defense', actual: '+5.5%p', target: '5%p+', result: 'PASS', tone: 'pass' },
-    { label: 'Action Density', actual: '8.5/년', target: '12/년 이하', result: 'PASS', tone: 'pass' },
-    { label: 'Outlier Risk', actual: 'NVDA 37.2%', target: '40%+', result: 'WATCH', tone: 'watch' },
-  ],
   rows: [
     { ticker: 'NVDA', buyHold: '+16,667.5%', action: '+6,196.5%', capture: '37.2%', mdd: '+10.3%p', actions: '9.0/년', verdict: '방어 우선', tone: 'watch' },
     { ticker: 'MSFT', buyHold: '+762.3%', action: '+709.5%', capture: '93.1%', mdd: '+3.8%p', actions: '8.7/년', verdict: '우수', tone: 'pass' },

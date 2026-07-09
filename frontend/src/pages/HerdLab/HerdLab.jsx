@@ -8,7 +8,6 @@ import herdModelReport from '../../data/herdModelReport'
 const {
   model: MODEL,
   metrics: METRICS,
-  targets: TARGETS,
   rows: TEST_ROWS,
   stages: STAGES,
   weights: WEIGHTS,
@@ -41,7 +40,8 @@ export default function HerdLab() {
         <div className={styles.labHeroMain}>
           <span>Current Model</span>
           <strong>{MODEL.version}</strong>
-          <em>{MODEL.name} · {MODEL.status}</em>
+          <em>{MODEL.name} · 검증 기간 {MODEL.period}</em>
+          <small>{MODEL.base} · {MODEL.status}</small>
         </div>
         <div className={styles.labHeroMetrics}>
           {METRICS.map((metric) => (
@@ -52,38 +52,6 @@ export default function HerdLab() {
             </div>
           ))}
         </div>
-      </section>
-
-      <section className={styles.modelStrip}>
-        <div>
-          <span>Model</span>
-          <strong>{MODEL.version}</strong>
-        </div>
-        <div>
-          <span>Period</span>
-          <strong>{MODEL.period}</strong>
-        </div>
-        <div>
-          <span>Input</span>
-          <strong>{MODEL.base}</strong>
-        </div>
-        <div>
-          <span>Status</span>
-          <strong>{MODEL.status}</strong>
-        </div>
-      </section>
-
-      <section className={styles.targetGrid}>
-        {TARGETS.map((target) => (
-          <div key={target.label} className={styles.targetCard}>
-            <div>
-              <span>{target.label}</span>
-              <strong>{target.actual}</strong>
-              <em>목표 {target.target}</em>
-            </div>
-            <b className={styles[target.tone]}>{target.result}</b>
-          </div>
-        ))}
       </section>
 
       <section className={styles.card}>

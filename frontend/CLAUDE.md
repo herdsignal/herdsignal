@@ -126,7 +126,8 @@ Rush    #EF4444  (레드)
 - HerdLab (`/herd-lab`)
   - 현재 HERD 모델 버전(`HERD_v5`) 검증 히어로 보드
   - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
-  - 목표 대비 PASS/WATCH 판정과 종목별 백테스트 verdict 표시
+  - 모델 버전/검증 기간/수익률 보존/MDD 개선/연간 행동 수를 상단 보드에 압축 표시
+  - 종목별 백테스트 verdict 표시
   - HERD 5단계 행동 매트릭스와 v4 가중치 표시
   - 설명문은 최소화하고 모델 버전·검증 기간·핵심 성과 수치 중심으로 표시
   - 표시 데이터는 `src/data/herdModelReport.js`에서 관리하며 JSX에 백테스트 숫자를 직접 하드코딩하지 않는다.
