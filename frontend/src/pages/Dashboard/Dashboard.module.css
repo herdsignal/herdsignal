@@ -419,6 +419,104 @@
   color: #22C55E;
 }
 
+.alertPanel {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+  padding: 16px 18px;
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  border-radius: var(--card-radius);
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.01)),
+    var(--surface);
+}
+
+:global(body.light) .alertPanel {
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.68)),
+    var(--surface);
+}
+
+.alertPanelHead {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+}
+
+.alertPanelHead span,
+.alertItem span {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.alertPanelHead strong {
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.alertList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.alertItem {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--t-fast), transform var(--t-fast), background var(--t-fast);
+}
+
+.alertItem:hover {
+  transform: translateY(-1px);
+  border-color: rgba(96, 165, 250, 0.36);
+  background: rgba(96, 165, 250, 0.06);
+}
+
+.alertItem strong {
+  overflow: hidden;
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.alertItem em {
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.alertItem_high span {
+  color: var(--rush);
+}
+
+.alertItem_medium span {
+  color: var(--drift);
+}
+
+.alertItem_low span {
+  color: var(--scatter);
+}
+
 .commandFrame {
   display: grid;
   gap: 0;
@@ -2065,6 +2163,14 @@
   }
 
   .riskList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .alertPanel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .alertList {
     grid-template-columns: minmax(0, 1fr);
   }
 

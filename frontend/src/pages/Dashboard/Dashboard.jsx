@@ -47,6 +47,7 @@ import {
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
+import { alertSeverityLabel, buildPortfolioAlerts } from '../../utils/alertRules'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { getHerdMomentum } from '../../utils/herdMomentum'
@@ -1127,6 +1128,10 @@ export default function Dashboard() {
     () => portfolioRiskWarnings(rows, summary),
     [rows, summary]
   )
+  const portfolioAlerts = useMemo(
+    () => buildPortfolioAlerts(rows, riskWarnings),
+    [rows, riskWarnings]
+  )
   const actionQueueCards = useMemo(() => {
     const rowMap = new Map(rows.map((row) => [row.ticker, row]))
     return sortedPortfolio
@@ -1839,6 +1844,29 @@ export default function Dashboard() {
                     <strong>{item.value}</strong>
                     <em>{item.detail}</em>
                   </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {summary && portfolioAlerts.length > 0 && (
+            <div className={styles.alertPanel}>
+              <div className={styles.alertPanelHead}>
+                <span>알림 조건</span>
+                <strong>{portfolioAlerts.length}개 활성</strong>
+              </div>
+              <div className={styles.alertList}>
+                {portfolioAlerts.slice(0, 3).map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`${styles.alertItem} ${styles[`alertItem_${item.severity?.toLowerCase()}`] || ''}`}
+                    onClick={() => item.ticker ? navigate(`/stock/${item.ticker}`) : null}
+                  >
+                    <span>{alertSeverityLabel(item.severity)}</span>
+                    <strong>{item.title}</strong>
+                    <em>{item.value} · {item.detail}</em>
+                  </button>
                 ))}
               </div>
             </div>
