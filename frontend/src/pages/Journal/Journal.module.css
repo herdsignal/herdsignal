@@ -69,7 +69,7 @@
 
 .summaryGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 24px;
 }
@@ -223,27 +223,35 @@
 }
 
 .tradeStack,
-.signalStack {
+.signalStack,
+.resultStack {
   display: grid;
   gap: 4px;
   min-width: 0;
 }
 
 .tradeStack strong,
-.signalStack strong {
+.signalStack strong,
+.resultStack strong {
   color: var(--text-1);
   font-size: 12px;
   font-weight: 850;
 }
 
 .tradeStack span,
-.signalStack span {
+.signalStack span,
+.resultStack span,
+.resultStack em {
   overflow: hidden;
   color: var(--text-3);
   font-size: 11px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.resultStack em {
+  font-style: normal;
 }
 
 .memoCell {

@@ -17,7 +17,9 @@ export function summarizeSignalJournal(items) {
   const sells = logs.filter((item) => item.actionType === 'SELL')
   const holds = logs.filter((item) => item.actionType === 'HOLD')
   const profitValues = sells.map((item) => item.profitPct)
+  const outcomeValues = logs.map((item) => item.outcomePct)
   const avgProfitPct = average(profitValues)
+  const avgOutcomePct = average(outcomeValues)
 
   return {
     totalCount: logs.length,
@@ -27,7 +29,9 @@ export function summarizeSignalJournal(items) {
     buyAmount: sumBy(buys, 'amount'),
     sellAmount: sumBy(sells, 'amount'),
     avgProfitPct,
+    avgOutcomePct,
     hasProfitData: avgProfitPct != null,
+    hasOutcomeData: avgOutcomePct != null,
   }
 }
 
@@ -71,6 +75,10 @@ export function formatJournalProfit(value) {
   return `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
 }
 
+export function formatJournalOutcome(value) {
+  return formatJournalProfit(value)
+}
+
 export function formatJournalCount(value) {
   const n = Number(value)
   if (!Number.isFinite(n)) return '0회'
@@ -81,4 +89,11 @@ export function formatJournalDuration(value) {
   const n = Number(value)
   if (!Number.isFinite(n) || n <= 0) return null
   return `신호 ${Math.round(n).toLocaleString('ko-KR')}일째`
+}
+
+export function formatOutcomeDays(value) {
+  const n = Number(value)
+  if (!Number.isFinite(n) || n < 0) return null
+  if (n === 0) return '오늘 기록'
+  return `${Math.round(n).toLocaleString('ko-KR')}일 추적`
 }

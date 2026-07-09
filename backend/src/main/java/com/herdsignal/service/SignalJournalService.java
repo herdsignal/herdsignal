@@ -4,11 +4,13 @@ import com.herdsignal.domain.SignalJournal;
 import com.herdsignal.dto.SignalJournalRequest;
 import com.herdsignal.dto.SignalJournalResponse;
 import com.herdsignal.exception.ResourceNotFoundException;
+import com.herdsignal.repository.DailyPriceRepository;
 import com.herdsignal.repository.SignalJournalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import java.util.List;
 public class SignalJournalService {
 
     private final SignalJournalRepository signalJournalRepository;
+    private final DailyPriceRepository dailyPriceRepository;
 
     @Transactional(readOnly = true)
     public List<SignalJournalResponse> getJournals(String userId, String ticker) {
@@ -30,7 +33,7 @@ public class SignalJournalService {
                 : signalJournalRepository.findByUserIdAndTickerOrderByRecordedAtDesc(userId, normalizedTicker);
 
         return rows.stream()
-                .map(SignalJournalResponse::from)
+                .map((journal) -> SignalJournalResponse.from(journal, latestClose(journal.getTicker())))
                 .toList();
     }
 
@@ -63,7 +66,8 @@ public class SignalJournalService {
                 .updatedAt(now)
                 .build();
 
-        return SignalJournalResponse.from(signalJournalRepository.save(journal));
+        SignalJournal saved = signalJournalRepository.save(journal);
+        return SignalJournalResponse.from(saved, latestClose(saved.getTicker()));
     }
 
     @Transactional
@@ -105,5 +109,14 @@ public class SignalJournalService {
         String trimmed = value.trim();
         if (trimmed.isEmpty()) return null;
         return trimmed.length() > maxLength ? trimmed.substring(0, maxLength) : trimmed;
+    }
+
+    private BigDecimal latestClose(String ticker) {
+        if (ticker == null || ticker.isBlank()) return null;
+        return dailyPriceRepository.findTop2ByTickerOrderByPriceDateDesc(ticker).stream()
+                .filter((price) -> price.getClosePrice() != null)
+                .findFirst()
+                .map((price) -> price.getClosePrice())
+                .orElse(null);
     }
 }

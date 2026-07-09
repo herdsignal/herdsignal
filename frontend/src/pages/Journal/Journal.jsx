@@ -11,10 +11,12 @@ import {
   formatJournalAmount,
   formatJournalCount,
   formatJournalDuration,
+  formatJournalOutcome,
   formatJournalPrice,
   formatJournalProfit,
   formatJournalQuantity,
   formatJournalTime,
+  formatOutcomeDays,
   summarizeSignalJournal,
 } from '../../utils/signalJournal'
 import styles from './Journal.module.css'
@@ -114,6 +116,11 @@ export default function Journal() {
           <strong>{summary.hasProfitData ? formatJournalProfit(summary.avgProfitPct) : '—'}</strong>
           <em>익절 기록 기준</em>
         </div>
+        <div className={styles.summaryCard}>
+          <span>평균 추적 결과</span>
+          <strong>{summary.hasOutcomeData ? formatJournalOutcome(summary.avgOutcomePct) : '—'}</strong>
+          <em>현재 가격 기준</em>
+        </div>
       </div>
 
       <div className={styles.tableCard}>
@@ -145,7 +152,8 @@ export default function Journal() {
                   <th>종목</th>
                   <th>판단</th>
                   <th>체결 정보</th>
-                  <th>수익률</th>
+                  <th>기록 수익률</th>
+                  <th>현재 결과</th>
                   <th>HERD 신호</th>
                   <th>메모</th>
                   <th>날짜</th>
@@ -174,6 +182,20 @@ export default function Journal() {
                     </td>
                     <td className={Number(log.profitPct) >= 0 ? styles.positive : styles.negative}>
                       {formatJournalProfit(log.profitPct) ?? '—'}
+                    </td>
+                    <td>
+                      <div className={styles.resultStack}>
+                        <strong className={Number(log.outcomePct) >= 0 ? styles.positive : styles.negative}>
+                          {formatJournalOutcome(log.outcomePct) ?? '—'}
+                        </strong>
+                        <span>
+                          {log.outcomeLabel ?? '현재 결과'}
+                          {formatOutcomeDays(log.outcomeDays) ? ` · ${formatOutcomeDays(log.outcomeDays)}` : ''}
+                        </span>
+                        <em>
+                          {formatJournalAmount(log.outcomeAmount) ?? formatJournalPrice(log.currentPrice) ?? ''}
+                        </em>
+                      </div>
                     </td>
                     <td>
                       <div className={styles.signalStack}>
