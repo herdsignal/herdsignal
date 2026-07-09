@@ -363,6 +363,7 @@ HERD 판단 기록은 localStorage가 아니라 DB `signal_journal`과 backend `
 - `backtest_v5_volatility.py`는 v5 후보 검증용이며 운영 HERD 점수에는 미반영이다.
 - 로그인/멀티유저 UI는 없음. MVP는 `AppConstants.DEFAULT_USER_ID` 기반 `local` 사용자 고정.
 - SPY 배너의 SPY 종가, 1개월 수익률 표시는 아직 `—` placeholder.
+- 알림 시스템은 아직 구현하지 않는다. 실제 사용 루틴 검증 후 강한 Flee/Rush, 목표비중 이탈, 장기 신호 지속 같은 저빈도 조건만 대상으로 설계한다.
 
 ---
 

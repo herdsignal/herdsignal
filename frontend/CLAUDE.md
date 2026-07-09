@@ -158,6 +158,7 @@ Rush    #EF4444  (레드)
 - 목표 비중은 Dashboard 편집 모드와 AiRebalance에서 수정하며 `hs_target_weights` localStorage에 저장한다. 아직 DB 저장 기능은 없다.
 - 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
 - Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
+- 알림/루틴 UI는 아직 구현하지 않는다. 실제 사용 패턴 확인 후 강한 Flee/Rush, 목표비중 이탈, 장기 신호 지속 같은 저빈도 조건만 화면 또는 알림으로 확장한다.
 - StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
 - StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
 - StockDetail 상단 회사명/섹터/로고는 `GET /api/stocks/{ticker}/herd` 응답의 `companyName`/`sector`/`logoUrl`을 사용한다.
