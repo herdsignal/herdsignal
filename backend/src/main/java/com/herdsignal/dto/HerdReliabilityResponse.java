@@ -15,6 +15,12 @@ public class HerdReliabilityResponse {
     private String modelVersion;
     private Integer periodYears;
     private Integer historyCount;
+    private Integer fitScore;
+    private String sampleQuality;
+    private Integer totalSignalSamples;
+    private String buySignalEdge;
+    private String sellSignalEdge;
+    private String reliabilityVerdict;
 
     private Integer fleeSampleSize;
     private Double fleeHitRate;

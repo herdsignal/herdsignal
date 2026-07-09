@@ -72,12 +72,18 @@ def calculate_signal_reliability(ticker: str, years: int = 3) -> dict[str, Any]:
         signal_stats=signal_stats,
         strategy_stats=strategy_stats,
     )
+    confidence = _score_confidence(
+        history_count=len(score_frame),
+        signal_stats=signal_stats,
+        strategy_stats=strategy_stats,
+    )
 
     return _json_safe({
         "ticker": ticker,
         "model_version": "HERD_signal_reliability_v1",
         "period_years": years,
         "history_count": len(score_frame),
+        **confidence,
         "flee_sample_size": signal_stats["flee_sample_size"],
         "flee_hit_rate": signal_stats["flee_hit_rate"],
         "rush_sample_size": signal_stats["rush_sample_size"],
@@ -362,6 +368,109 @@ def _grade_reliability(
     return ("WATCH", "주의", "과거 성과가 충분히 강하지 않아 보조 지표로 봐야 합니다.")
 
 
+def _score_confidence(
+    history_count: int,
+    signal_stats: dict[str, Any],
+    strategy_stats: dict[str, Any],
+) -> dict[str, Any]:
+    total_samples = signal_stats["flee_sample_size"] + signal_stats["rush_sample_size"]
+    sample_quality = _sample_quality(history_count, total_samples)
+    buy_edge = _signal_edge(
+        hit_rate=signal_stats["flee_hit_rate"],
+        forward_value=signal_stats["buy_return_3m"],
+        positive_is_good=True,
+    )
+    sell_edge = _signal_edge(
+        hit_rate=signal_stats["rush_hit_rate"],
+        forward_value=signal_stats["sell_drawdown_3m"],
+        positive_is_good=False,
+    )
+
+    score = 0.0
+    score += min(20.0, history_count / 120 * 20)
+    score += min(15.0, total_samples / 8 * 15)
+    score += _edge_score(buy_edge, 15)
+    score += _edge_score(sell_edge, 15)
+
+    mdd_improvement = strategy_stats["mdd_improvement"]
+    if mdd_improvement is not None:
+        score += max(0.0, min(15.0, mdd_improvement / 8 * 15))
+
+    return_preservation = strategy_stats["return_preservation"]
+    if return_preservation is not None:
+        score += max(0.0, min(10.0, return_preservation / 80 * 10))
+
+    annual_actions = strategy_stats["annual_actions"]
+    if annual_actions is not None:
+        if 2 <= annual_actions <= 12:
+            score += 10
+        elif 1 <= annual_actions < 2 or 12 < annual_actions <= 18:
+            score += 5
+
+    fit_score = round(max(0.0, min(100.0, score)))
+    verdict = _confidence_verdict(fit_score, sample_quality, buy_edge, sell_edge)
+
+    return {
+        "fit_score": fit_score,
+        "sample_quality": sample_quality,
+        "total_signal_samples": total_samples,
+        "buy_signal_edge": buy_edge,
+        "sell_signal_edge": sell_edge,
+        "reliability_verdict": verdict,
+    }
+
+
+def _sample_quality(history_count: int, total_samples: int) -> str:
+    if history_count >= 120 and total_samples >= 8:
+        return "HIGH"
+    if history_count >= 40 and total_samples >= 4:
+        return "MEDIUM"
+    return "LOW"
+
+
+def _signal_edge(
+    hit_rate: float | None,
+    forward_value: float | None,
+    positive_is_good: bool,
+) -> str:
+    if hit_rate is None or forward_value is None:
+        return "INSUFFICIENT"
+
+    good_forward = forward_value >= 0 if positive_is_good else forward_value <= 0
+    weak_forward = forward_value > -2 if positive_is_good else forward_value < 2
+
+    if hit_rate >= 60 and good_forward:
+        return "POSITIVE"
+    if hit_rate >= 50 and weak_forward:
+        return "NEUTRAL"
+    return "NEGATIVE"
+
+
+def _edge_score(edge: str, max_score: float) -> float:
+    if edge == "POSITIVE":
+        return max_score
+    if edge == "NEUTRAL":
+        return max_score * 0.55
+    if edge == "NEGATIVE":
+        return max_score * 0.2
+    return 0.0
+
+
+def _confidence_verdict(
+    fit_score: int,
+    sample_quality: str,
+    buy_edge: str,
+    sell_edge: str,
+) -> str:
+    if sample_quality == "LOW":
+        return "표본이 부족해 방향성만 참고하세요."
+    if fit_score >= 75 and "NEGATIVE" not in (buy_edge, sell_edge):
+        return "이 종목은 HERD 신호와 과거 반응이 비교적 잘 맞았습니다."
+    if fit_score >= 55:
+        return "일부 신호는 유효하지만 포지션 크기를 보수적으로 잡는 편이 좋습니다."
+    return "HERD 신호 단독 판단보다 추세·재무 확인을 우선하세요."
+
+
 def _empty_strategy_stats() -> dict[str, Any]:
     return {
         "strategy_return": None,
@@ -380,6 +489,12 @@ def _limited_response(ticker: str, years: int, history_count: int, summary: str)
         "model_version": "HERD_signal_reliability_v1",
         "period_years": years,
         "history_count": history_count,
+        "fit_score": 0,
+        "sample_quality": "LOW",
+        "total_signal_samples": 0,
+        "buy_signal_edge": "INSUFFICIENT",
+        "sell_signal_edge": "INSUFFICIENT",
+        "reliability_verdict": summary,
         "flee_sample_size": 0,
         "flee_hit_rate": None,
         "rush_sample_size": 0,

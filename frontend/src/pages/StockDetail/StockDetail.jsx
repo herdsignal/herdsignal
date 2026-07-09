@@ -183,6 +183,39 @@ function formatActionMeta(data) {
   ].filter(Boolean).join(' · ')
 }
 
+function fmtReliabilityScore(value) {
+  const n = Number(value)
+  if (!Number.isFinite(n)) return '—'
+  return `${Math.round(n)}/100`
+}
+
+function sampleQualityLabel(value) {
+  switch (value) {
+    case 'HIGH': return '충분'
+    case 'MEDIUM': return '보통'
+    case 'LOW': return '부족'
+    default: return '—'
+  }
+}
+
+function signalEdgeLabel(value) {
+  switch (value) {
+    case 'POSITIVE': return '우위'
+    case 'NEUTRAL': return '중립'
+    case 'NEGATIVE': return '약함'
+    case 'INSUFFICIENT': return '표본 부족'
+    default: return '—'
+  }
+}
+
+function signalEdgeTone(value) {
+  switch (value) {
+    case 'POSITIVE': return 'buy'
+    case 'NEGATIVE': return 'sell'
+    default: return 'neutral'
+  }
+}
+
 function actionTone(grade, signal) {
   if (grade === 'STRONG_ACTION') return signal === 'SELL' ? 'var(--rush)' : 'var(--flee)'
   if (grade === 'ACTION') return signal === 'SELL' ? 'var(--drift)' : 'var(--scatter)'
@@ -423,7 +456,7 @@ function currentSignalReliability(herdData, reliability) {
       label: '현재 매수 신호',
       value: reliability.fleeHitRate,
       sample: reliability.fleeSampleSize,
-      caption: '과거 Flee/Scatter 이후 반등 기준',
+      caption: `매수 edge ${signalEdgeLabel(reliability.buySignalEdge)}`,
     }
   }
   if (signal === 'SELL' || signal === 'REDUCE') {
@@ -431,14 +464,15 @@ function currentSignalReliability(herdData, reliability) {
       label: '현재 익절 신호',
       value: reliability.rushHitRate,
       sample: reliability.rushSampleSize,
-      caption: '과거 Drift/Rush 이후 냉각 기준',
+      caption: `익절 edge ${signalEdgeLabel(reliability.sellSignalEdge)}`,
     }
   }
   return {
-    label: '현재 보유 신호',
-    value: reliability.returnPreservation,
-    sample: null,
-    caption: 'Action Layer 수익률 보존 기준',
+    label: '종목별 모델 적합도',
+    value: reliability.fitScore,
+    sample: reliability.totalSignalSamples,
+    caption: `표본 품질 ${sampleQualityLabel(reliability.sampleQuality)}`,
+    scoreValue: true,
   }
 }
 
@@ -474,6 +508,18 @@ function reliabilityEvidenceItems(reliability) {
       value: fmtReliabilityPct(reliability.sellDrawdown3m),
       caption: 'Drift/Rush 평균 저점',
       tone: Number(reliability.sellDrawdown3m) <= 0 ? 'sell' : 'neutral',
+    },
+    {
+      label: '매수 edge',
+      value: signalEdgeLabel(reliability.buySignalEdge),
+      caption: `${reliability.fleeSampleSize ?? 0}회 표본`,
+      tone: signalEdgeTone(reliability.buySignalEdge),
+    },
+    {
+      label: '익절 edge',
+      value: signalEdgeLabel(reliability.sellSignalEdge),
+      caption: `${reliability.rushSampleSize ?? 0}회 표본`,
+      tone: signalEdgeTone(reliability.sellSignalEdge),
     },
   ]
 }
@@ -1003,7 +1049,11 @@ export default function StockDetail() {
                       <div className={styles.currentReliability}>
                         <div>
                           <span>{currentReliability.label}</span>
-                          <strong>{fmtReliabilityPlainPct(currentReliability.value)}</strong>
+                          <strong>
+                            {currentReliability.scoreValue
+                              ? fmtReliabilityScore(currentReliability.value)
+                              : fmtReliabilityPlainPct(currentReliability.value)}
+                          </strong>
                         </div>
                         <em>
                           {currentReliability.caption}
@@ -1013,14 +1063,24 @@ export default function StockDetail() {
                     )}
                     <div className={styles.reliabilityGrid}>
                       <div className={styles.reliabilityItem}>
+                        <span>모델 적합도</span>
+                        <strong>{fmtReliabilityScore(reliability.fitScore)}</strong>
+                        <em>{reliability.reliabilityLabel}</em>
+                      </div>
+                      <div className={styles.reliabilityItem}>
+                        <span>표본 품질</span>
+                        <strong>{sampleQualityLabel(reliability.sampleQuality)}</strong>
+                        <em>{reliability.totalSignalSamples ?? 0}회</em>
+                      </div>
+                      <div className={styles.reliabilityItem}>
                         <span>Flee 적중률</span>
                         <strong>{fmtReliabilityPlainPct(reliability.fleeHitRate)}</strong>
-                        <em>{reliability.fleeSampleSize ?? 0}회</em>
+                        <em>{signalEdgeLabel(reliability.buySignalEdge)}</em>
                       </div>
                       <div className={styles.reliabilityItem}>
                         <span>Rush 적중률</span>
                         <strong>{fmtReliabilityPlainPct(reliability.rushHitRate)}</strong>
-                        <em>{reliability.rushSampleSize ?? 0}회</em>
+                        <em>{signalEdgeLabel(reliability.sellSignalEdge)}</em>
                       </div>
                       <div className={styles.reliabilityItem}>
                         <span>MDD 개선</span>
@@ -1053,7 +1113,7 @@ export default function StockDetail() {
                       </div>
                     )}
                     <div className={styles.reliabilitySummary}>
-                      {reliability.summary}
+                      {reliability.reliabilityVerdict ?? reliability.summary}
                     </div>
                   </>
                 ) : (
