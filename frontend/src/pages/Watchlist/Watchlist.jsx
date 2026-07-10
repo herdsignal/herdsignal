@@ -350,7 +350,6 @@ export default function Watchlist() {
   )
 
   const scoredWatchlist = useMemo(() => opportunityRows(watchlist), [watchlist])
-  const sortedWatchlist = useMemo(() => scoredWatchlist, [scoredWatchlist])
 
   const opportunityQueue = useMemo(() => (
     scoredWatchlist
@@ -554,7 +553,7 @@ export default function Watchlist() {
               <span>준비도</span>
               <span>업데이트</span>
             </div>
-            {sortedWatchlist.map((item) => {
+            {scoredWatchlist.map((item) => {
               const color      = stageColor(item.herdStage)
               const badge      = badgeStyle(item.herdStage)
               const signal     = signalStyle(item.signal)

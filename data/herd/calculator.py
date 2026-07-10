@@ -7,6 +7,8 @@ herd/calculator.py — HERD Index 합산 계산기
 import logging
 from typing import TypedDict
 
+import pandas as pd
+
 from config.settings import HERD_THRESHOLDS, HERD_WEIGHTS
 from collectors.finnhub_collector import get_eps_surprise_multiplier
 from collectors.sector_collector import get_sector_multiplier
@@ -142,7 +144,7 @@ def _safe_sector_multiplier(ticker: str) -> float:
         return 1.0
 
 
-def run(ticker: str) -> HerdResult:
+def run(ticker: str, df: pd.DataFrame | None = None) -> HerdResult:
     """
     티커 하나를 입력받아 전체 파이프라인을 실행하고 HERD 결과를 반환한다.
 
@@ -150,6 +152,7 @@ def run(ticker: str) -> HerdResult:
 
     Args:
         ticker: 주식 티커 (예: "AAPL")
+        df: 이미 수집한 OHLCV 데이터. 없을 때만 yfinance에서 수집한다.
 
     Returns:
         HerdResult 딕셔너리
@@ -159,12 +162,13 @@ def run(ticker: str) -> HerdResult:
     """
     logger.info(f"[{ticker}] HERD Index 계산 시작")
 
-    # 1. 일봉 데이터 수집
-    try:
-        df = collect(ticker)
-    except Exception as e:
-        logger.error(f"[{ticker}] 데이터 수집 실패: {e}")
-        raise RuntimeError(f"[{ticker}] 데이터 수집 실패") from e
+    # 1. 일봉 데이터 수집 (호출자가 저장용으로 받은 데이터를 그대로 재사용)
+    if df is None:
+        try:
+            df = collect(ticker)
+        except Exception as e:
+            logger.error(f"[{ticker}] 데이터 수집 실패: {e}")
+            raise RuntimeError(f"[{ticker}] 데이터 수집 실패") from e
 
     # 2. 6개 지표 계산 — 각각 개별 예외처리 후 한 번에 실패 판단
     indicator_funcs = {

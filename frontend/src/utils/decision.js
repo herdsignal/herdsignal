@@ -4,11 +4,7 @@
  * 운영 HERD 점수는 변경하지 않는다.
  * 화면에서만 보유 여부와 포트폴리오 비중을 함께 해석한다.
  */
-
-export function normalizeStage(stage) {
-  const s = (stage || '').toLowerCase()
-  return s.startsWith('herd ') ? s.slice(5) : s
-}
+import { normalizeStage } from './herdStage'
 
 export function signalDesc(signal) {
   switch (signal) {

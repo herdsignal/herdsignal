@@ -15,6 +15,9 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     /** 티커로 단일 종목 조회 */
     Optional<Stock> findByTicker(String ticker);
 
+    /** 여러 티커의 메타데이터 일괄 조회. */
+    List<Stock> findByTickerIn(List<String> tickers);
+
     /** 추적 활성 종목 전체 조회 */
     List<Stock> findByIsActiveTrue();
 }

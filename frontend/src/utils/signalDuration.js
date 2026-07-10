@@ -50,12 +50,6 @@ export function getSignalDurationMeta(data) {
   }
 }
 
-export function formatStageDuration(data) {
-  const days = validDays(data?.stageDurationDays)
-  if (!days) return null
-  return `단계 ${days}일째`
-}
-
 export function formatSignalDurationDetail(data) {
   const signalDays = validDays(data?.signalDurationDays)
   const stageDays = validDays(data?.stageDurationDays)

@@ -70,7 +70,7 @@ function modeMultiplier(mode) {
   }
 }
 
-export function equalTargetWeight(count) {
+function equalTargetWeight(count) {
   return count > 0 ? 100 / count : 0
 }
 

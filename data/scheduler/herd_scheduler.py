@@ -146,7 +146,7 @@ def run_herd_job() -> None:
         logger.info(f"[Tier1][{ticker}] ─ 처리 시작 ({idx}/{total})")
         try:
             df          = collect(ticker)
-            herd_result = run(ticker)
+            herd_result = run(ticker, df)
             ok          = save_herd_result(ticker, herd_result, df)
 
             if ok:
@@ -280,8 +280,9 @@ def calculate_on_demand(ticker: str, force: bool = False) -> dict:
 
     # 데이터 수집 + HERD 계산 + DB 저장
     df          = collect(ticker)
-    herd_result = run(ticker)
-    save_herd_result(ticker, herd_result, df)
+    herd_result = run(ticker, df)
+    if not save_herd_result(ticker, herd_result, df):
+        raise RuntimeError(f"[{ticker}] HERD 계산 결과 DB 저장 실패")
 
     logger.info(
         f"[Tier2][{ticker}] ✅ 계산 완료 — "

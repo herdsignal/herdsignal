@@ -29,6 +29,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -62,11 +64,9 @@ public class HerdService {
      */
     public PortfolioHerdResponse getPortfolioHerd(String userId) {
         List<UserPortfolio> portfolio = portfolioRepository.findByUserId(userId);
-
-        List<HerdScoreResponse> herdScores = portfolio.stream()
-                .map(p -> buildHerdScoreResponse(p.getTicker()))
-                .filter(Objects::nonNull)  // 데이터 없는 종목 제외
-                .toList();
+        List<HerdScoreResponse> herdScores = getHerdByTickers(portfolio.stream()
+                .map(UserPortfolio::getTicker)
+                .toList());
 
         return PortfolioHerdResponse.of(herdScores);
     }
@@ -99,10 +99,7 @@ public class HerdService {
             }
         }
 
-        List<HerdScoreResponse> herdScores = portfolio.stream()
-                .map(p -> buildHerdScoreResponse(p.getTicker()))
-                .filter(Objects::nonNull)
-                .toList();
+        List<HerdScoreResponse> herdScores = getHerdByTickers(tickers);
 
         return PortfolioHerdResponse.of(herdScores);
     }
@@ -390,8 +387,44 @@ public class HerdService {
      * @param tickers 조회할 티커 심볼 목록
      */
     public List<HerdScoreResponse> getHerdByTickers(List<String> tickers) {
-        return tickers.stream()
-                .map(this::buildHerdScoreResponse)
+        List<String> normalizedTickers = tickers.stream()
+                .filter(Objects::nonNull)
+                .map(String::toUpperCase)
+                .distinct()
+                .toList();
+        if (normalizedTickers.isEmpty()) {
+            return List.of();
+        }
+
+        Map<String, List<HerdScore>> historyByTicker = herdScoreRepository
+                .findByTickerInOrderByTickerAscScoreDateDesc(normalizedTickers)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        HerdScore::getTicker,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+        Map<String, HerdIndicator> indicatorByTicker = herdIndicatorRepository
+                .findLatestByTickers(normalizedTickers)
+                .stream()
+                .collect(Collectors.toMap(HerdIndicator::getTicker, indicator -> indicator));
+        Map<String, Stock> stockByTicker = stockRepository.findByTickerIn(normalizedTickers)
+                .stream()
+                .collect(Collectors.toMap(Stock::getTicker, stock -> stock));
+
+        return normalizedTickers.stream()
+                .map(ticker -> {
+                    List<HerdScore> history = historyByTicker.get(ticker);
+                    if (history == null || history.isEmpty()) {
+                        return null;
+                    }
+                    return buildResponse(
+                            history.get(0),
+                            indicatorByTicker.get(ticker),
+                            history,
+                            stockByTicker.get(ticker)
+                    );
+                })
                 .filter(Objects::nonNull)
                 .toList();
     }
@@ -449,9 +482,19 @@ public class HerdService {
     /** HERD 점수 응답에 데이터 신뢰도 레이어를 붙인다. */
     private HerdScoreResponse buildResponse(HerdScore score, HerdIndicator indicator) {
         List<HerdScore> history = herdScoreRepository.findByTickerOrderByScoreDateDesc(score.getTicker());
+        Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
+        return buildResponse(score, indicator, history, stock);
+    }
+
+    /** 이미 일괄 조회한 데이터로 응답을 만들어 목록 API의 N+1 쿼리를 피한다. */
+    private HerdScoreResponse buildResponse(
+            HerdScore score,
+            HerdIndicator indicator,
+            List<HerdScore> history,
+            Stock stock
+    ) {
         HerdQuality quality = calculateQuality(score, indicator);
         ActionDecision actionDecision = actionDecisionService.decide(score, indicator, quality.score(), history);
-        Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
         HerdScoreResponse.SignalDuration signalDuration = calculateSignalDuration(score, history);
         return HerdScoreResponse.of(
                 score,

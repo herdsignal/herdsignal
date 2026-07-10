@@ -21,6 +21,9 @@ public interface HerdScoreRepository extends JpaRepository<HerdScore, Long> {
     /** 티커의 전체 HERD 점수 히스토리 조회 (최신순) */
     List<HerdScore> findByTickerOrderByScoreDateDesc(String ticker);
 
+    /** 여러 티커의 전체 히스토리를 한 번에 조회 (티커별 최신순). */
+    List<HerdScore> findByTickerInOrderByTickerAscScoreDateDesc(List<String> tickers);
+
     /** 티커의 특정 날짜 이후 HERD 점수 히스토리 조회 (날짜 오름차순) */
     @Query("SELECT h FROM HerdScore h WHERE h.ticker = :ticker AND h.scoreDate >= :cutoff ORDER BY h.scoreDate ASC")
     List<HerdScore> findHistoryByTickerSince(@Param("ticker") String ticker, @Param("cutoff") LocalDate cutoff);
