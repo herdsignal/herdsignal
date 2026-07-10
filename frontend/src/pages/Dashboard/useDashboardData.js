@@ -5,21 +5,18 @@ import {
   getPortfolioRealtime,
   getPortfolioHerd,
   getStockHerd,
-  getSpyHerdHistory,
   getPortfolioHistory,
   getCashBalance,
   updateCashBalance,
   getSignalJournal,
   removeFromPortfolio,
 } from '../../api/herdApi'
-import { fetchExchangeRate, formatKRW } from '../../utils/currency'
+import { formatKRW } from '../../utils/currency'
 import { buildPortfolioAlerts } from '../../utils/alertRules'
-import { getHerdMomentum } from '../../utils/herdMomentum'
 import {
   portfolioRows,
   portfolioRiskWarnings,
   readTargetWeights,
-  rebalanceIdeas,
   writeTargetWeights,
 } from '../../utils/portfolioTools'
 import { summarizeSignalJournal } from '../../utils/signalJournal'
@@ -27,18 +24,16 @@ import {
   API_HOST,
   CACHE_KEY_REALTIME,
   CACHE_KEY_HERD,
-  CACHE_KEY_SPY,
   CACHE_KEY_TIME,
   CACHE_KEY_PORTFOLIO_SORT,
   ASSET_HISTORY_PERIODS,
   readCache,
   writeCache,
-  spyHistoryCacheKey,
   ensureDashboardCacheVersion,
-  minSpyHistoryPoints,
-  isUsableSpyHistoryCache,
   normalizePortfolioSummary,
   saveCacheTime,
+  isDashboardCacheFresh,
+  clearPortfolioCaches,
   buildPositionAction,
   queuePriority,
   sortPortfolioItems,
@@ -47,31 +42,20 @@ import {
   normalizeHistoryPoint,
   currentAssetPoint,
   mergeCurrentAssetPoint,
-  averageScoreForLastDays,
 } from './dashboardModel'
+import { useDashboardMarketData } from './useDashboardMarketData'
 
 export function useDashboardData() {
 
   const [portfolio,      setPortfolio]      = useState([])
   const [summary,        setSummary]        = useState(null)
   const [herdMap,        setHerdMap]        = useState({})
-  const [spyData,        setSpyData]        = useState(null)
-  const [spyHistory,     setSpyHistory]     = useState([])
-  const [spyStatsHistory, setSpyStatsHistory] = useState([])
-  const [spyHistoryPeriod, setSpyHistoryPeriod] = useState('3y')
-  const [spyHistoryLoading, setSpyHistoryLoading] = useState(false)
-  const [spyTab,         setSpyTab]         = useState('overview')
-  /*
-   * SPY 데이터 ref 캐시 — React 18 Strict Mode가 effect를 cleanup → 재실행할 때
-   * state는 초기화되지만 ref는 유지된다. 두 번째 실행에서 ref 값을 즉시 state에 반영.
-   */
-  const spyDataCache    = useRef(null)
-  const spyHistoryCache = useRef({})
+  const market = useDashboardMarketData()
+  const { exchangeRate, updateSpyData } = market
   const [loading,        setLoading]        = useState(true)
   const [error,          setError]          = useState(null)
   const [modalTicker,    setModalTicker]    = useState(null)
   const [deletingTicker, setDeletingTicker] = useState(null)
-  const [exchangeRate,   setExchangeRate]   = useState(null)
   const [refreshing,     setRefreshing]     = useState(false)
   const [refreshNotice,  setRefreshNotice]  = useState(null)
   /*
@@ -100,6 +84,7 @@ export function useDashboardData() {
   const [assetHistoryError, setAssetHistoryError] = useState(null)
   const [signalLogs,     setSignalLogs]     = useState([])
   const refreshNoticeTimer = useRef(null)
+  const assetHistoryRequest = useRef(0)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -135,7 +120,11 @@ export function useDashboardData() {
       const cachedSummary = readCache(CACHE_KEY_REALTIME)
       const cachedHerd    = readCache(CACHE_KEY_HERD)
 
-      if (cachedSummary) {
+      const hasCompleteFreshCache = Boolean(
+        cachedSummary && cachedHerd && isDashboardCacheFresh()
+      )
+
+      if (hasCompleteFreshCache) {
         /* 캐시 히트 — 즉시 세팅 */
         setSummary(cachedSummary)
         const map = {}
@@ -163,7 +152,9 @@ export function useDashboardData() {
           writeCache(CACHE_KEY_HERD, herdData)
         }
         setHerdMap(map)
-        setLastUpdated(saveCacheTime())
+        if (summaryRes.status === 'fulfilled' || herdRes.status === 'fulfilled') {
+          setLastUpdated(saveCacheTime())
+        }
       }
 
       getCashBalance()
@@ -190,16 +181,19 @@ export function useDashboardData() {
   }, [])
 
   const fetchAssetHistory = useCallback(async () => {
+    const requestId = ++assetHistoryRequest.current
     setAssetHistoryLoading(true)
     setAssetHistoryError(null)
     try {
       const res = await getPortfolioHistory(assetHistoryPeriod)
       const points = (res.data?.data?.points ?? []).map(normalizeHistoryPoint)
-      setAssetHistory(points)
+      if (requestId === assetHistoryRequest.current) setAssetHistory(points)
     } catch {
-      setAssetHistoryError('자산 히스토리를 불러올 수 없습니다.')
+      if (requestId === assetHistoryRequest.current) {
+        setAssetHistoryError('자산 히스토리를 불러올 수 없습니다.')
+      }
     } finally {
-      setAssetHistoryLoading(false)
+      if (requestId === assetHistoryRequest.current) setAssetHistoryLoading(false)
     }
   }, [assetHistoryPeriod])
 
@@ -224,68 +218,6 @@ export function useDashboardData() {
 
   useEffect(() => () => {
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
-  }, [])
-
-  /*
-   * SPY 배너 — 포트폴리오 로딩과 완전히 분리.
-   * ref 캐시(Strict Mode 대응) → localStorage 캐시 → API 호출 순서로 처리.
-   * HERD 점수 + 선택 기간 히스토리 동시 로딩.
-   * Overview 통계는 1년 전 비교가 필요하므로 3Y 히스토리를 기준 데이터로 유지한다.
-   */
-  useEffect(() => {
-    const historyKey = spyHistoryCacheKey(spyHistoryPeriod)
-    const herdCached = spyDataCache.current ?? readCache(CACHE_KEY_SPY)
-    const rawHistoryCached =
-      spyHistoryCache.current[spyHistoryPeriod] ??
-      readCache(historyKey)
-    const historyCached =
-      isUsableSpyHistoryCache(spyHistoryPeriod, rawHistoryCached) ? rawHistoryCached : null
-
-    if (herdCached) {
-      spyDataCache.current = herdCached
-      setSpyData(herdCached)
-    }
-    if (historyCached) {
-      spyHistoryCache.current[spyHistoryPeriod] = historyCached
-      setSpyHistory(historyCached)
-      setSpyHistoryLoading(false)
-      if (spyHistoryPeriod === '3y') setSpyStatsHistory(historyCached)
-    }
-
-    if (herdCached && historyCached) return
-
-    if (!herdCached) {
-      getStockHerd('SPY')
-        .then((res) => {
-          const data = res.data?.data ?? null
-          spyDataCache.current = data
-          setSpyData(data)
-          writeCache(CACHE_KEY_SPY, data)
-        })
-        .catch(() => { /* SPY HERD 실패 시 배너 기본값(Calm/50) 유지 */ })
-    }
-
-    if (!historyCached) {
-      setSpyHistoryLoading(true)
-      setSpyHistory([])
-      getSpyHerdHistory(spyHistoryPeriod)
-        .then((res) => {
-          const points = res.data?.data?.points ?? []
-          spyHistoryCache.current[spyHistoryPeriod] = points
-          setSpyHistory(points)
-          writeCache(historyKey, points)
-          if (spyHistoryPeriod === '3y') {
-            setSpyStatsHistory(points)
-          }
-        })
-        .catch(() => { /* 히스토리 실패 시 Timeline 탭 빈 상태 유지 */ })
-        .finally(() => { setSpyHistoryLoading(false) })
-    }
-  }, [spyHistoryPeriod])
-
-  /* USD/KRW 환율 — 마운트 시 1회 조회 */
-  useEffect(() => {
-    fetchExchangeRate().then(setExchangeRate)
   }, [])
 
   /* ticker → 현재가 데이터 맵 (Python snake_case) */
@@ -370,9 +302,7 @@ export function useDashboardData() {
 
       if (spyRes.status === 'fulfilled') {
         const data = spyRes.value.data?.data ?? null
-        spyDataCache.current = data
-        setSpyData(data)
-        writeCache(CACHE_KEY_SPY, data)
+        updateSpyData(data)
       }
 
       /* 하나라도 성공했을 때만 헤더 "업데이트 · 오후 X:XX" 기준 갱신 */
@@ -386,7 +316,7 @@ export function useDashboardData() {
     } finally {
       setRefreshing(false)
     }
-  }, [cashBalance])
+  }, [cashBalance, updateSpyData])
 
   const handleCashSave = useCallback(async () => {
     const amount = Number(cashDraft || 0)
@@ -411,6 +341,9 @@ export function useDashboardData() {
         return next
       })
       if (assetPanelOpen) fetchAssetHistory()
+      setRefreshNotice('현금 보유액을 저장했습니다.')
+    } catch {
+      setRefreshNotice('현금 보유액 저장에 실패했습니다. 입력값과 서버 상태를 확인해주세요.')
     } finally {
       setCashSaving(false)
     }
@@ -424,8 +357,16 @@ export function useDashboardData() {
     try {
       await removeFromPortfolio(ticker)
       setPortfolio(prev => prev.filter(item => item.ticker !== ticker))
+      setTargetWeights(prev => {
+        const next = { ...prev }
+        delete next[ticker]
+        writeTargetWeights(next)
+        return next
+      })
+      clearPortfolioCaches()
+      await fetchData()
     } catch {
-      /* 삭제 실패 — 목록 그대로 유지 */
+      setRefreshNotice(`${ticker} 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.`)
     } finally {
       setDeletingTicker(null)
     }
@@ -436,26 +377,6 @@ export function useDashboardData() {
     localStorage.setItem(CACHE_KEY_PORTFOLIO_SORT, mode)
   }
 
-  const spyScore = spyData?.herdV4 ?? spyData?.herdScore ?? 50
-  const spyStage = spyData?.herdStage ?? 'Calm'
-
-  /* 히스토리 기준 평균 통계 (Overview 탭) */
-  const d1AvgPoint = useMemo(
-    () => averageScoreForLastDays(spyStatsHistory, 1, spyScore),
-    [spyStatsHistory, spyScore]
-  )
-  const m1AvgPoint = useMemo(
-    () => averageScoreForLastDays(spyStatsHistory, 30, spyScore),
-    [spyStatsHistory, spyScore]
-  )
-  const y1AvgPoint = useMemo(
-    () => averageScoreForLastDays(spyStatsHistory, 365, spyScore),
-    [spyStatsHistory, spyScore]
-  )
-  const spyMomentum = useMemo(
-    () => getHerdMomentum(spyStatsHistory, spyScore, spyStage),
-    [spyStatsHistory, spyScore, spyStage]
-  )
 
   const signalJournalSummary = useMemo(
     () => summarizeSignalJournal(signalLogs),
@@ -530,7 +451,6 @@ export function useDashboardData() {
     () => sortPortfolioItems(portfolio, rows, herdMap, portfolioSort),
     [portfolio, rows, herdMap, portfolioSort]
   )
-  const rebalanceRows = useMemo(() => rebalanceIdeas(rows), [rows])
   const riskWarnings = useMemo(
     () => portfolioRiskWarnings(rows, summary),
     [rows, summary]
@@ -618,13 +538,11 @@ export function useDashboardData() {
   }
 
   return {
-    portfolio, summary, herdMap, spyData,
-    spyHistory, spyStatsHistory,
-    spyHistoryPeriod, setSpyHistoryPeriod, spyHistoryLoading,
-    spyTab, setSpyTab,
+    portfolio, summary, herdMap,
+    ...market,
     loading, error,
     modalTicker, setModalTicker, deletingTicker,
-    exchangeRate, refreshing, refreshNotice, lastUpdated,
+    refreshing, refreshNotice, lastUpdated,
     currencyMode, editMode, setEditMode,
     portfolioSort, targetWeights,
     cashBalance, cashDraft, setCashDraft, cashSaving,
@@ -635,14 +553,12 @@ export function useDashboardData() {
     handleCurrencyToggle, displayAmount, displayPnl,
     handleRefresh, handleCashSave, handleDelete,
     handlePortfolioSortChange,
-    spyScore, spyStage, d1AvgPoint, m1AvgPoint, y1AvgPoint,
-    spyMomentum, signalJournalSummary, recentSignalLogs,
+    signalJournalSummary, recentSignalLogs,
     handleModalSaved, modalStock, rows, sortedPortfolio,
-    rebalanceRows, riskWarnings, portfolioAlerts, actionQueueCards,
+    riskWarnings, portfolioAlerts, actionQueueCards,
     assetChartHistory, assetLatest, assetFirst,
     totalFlowPct, investedChangePct, assetDrawdownPct,
     assetYDomain, assetPeriodLabel, assetStartLabel,
     handleTargetWeightChange,
   }
 }
-

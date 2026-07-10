@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   getStockHerd, addToPortfolio, addToWatchlist,
   getStockFinancials, getStockHerdHistory, getStockHerdReliability,
@@ -40,15 +40,30 @@ export function useStockDetail(ticker) {
   const [portfolioSummary, setPortfolioSummary]  = useState(null)
   const [signalLogs,       setSignalLogs]        = useState([])
   const [journalAction,    setJournalAction]     = useState(null)
+  const [actionError,      setActionError]       = useState(null)
+  const herdRequest = useRef(0)
+  const journalRequest = useRef(0)
 
   const normalizedTicker = ticker.toUpperCase()
 
+  useEffect(() => {
+    setHerdData(null)
+    setError(null)
+    setPortfolioStatus('idle')
+    setWatchlistStatus('idle')
+    setActionError(null)
+    setJournalAction(null)
+  }, [normalizedTicker])
+
   const fetchSignalLogs = useCallback(async () => {
+    const requestId = ++journalRequest.current
     try {
       const res = await getSignalJournal(normalizedTicker)
-      setSignalLogs((res.data?.data ?? []).slice(0, 5))
+      if (requestId === journalRequest.current) {
+        setSignalLogs((res.data?.data ?? []).slice(0, 5))
+      }
     } catch {
-      setSignalLogs([])
+      if (requestId === journalRequest.current) setSignalLogs([])
     }
   }, [normalizedTicker])
 
@@ -56,11 +71,13 @@ export function useStockDetail(ticker) {
 
   /* HERD 데이터 조회 */
   const fetchData = useCallback(async () => {
+    const requestId = ++herdRequest.current
     setLoading(true)
     setError(null)
     try {
       const res  = await getStockHerd(normalizedTicker)
       const data = res.data?.data
+      if (requestId !== herdRequest.current) return
       if (data) {
         setHerdData(data)
       } else {
@@ -69,9 +86,11 @@ export function useStockDetail(ticker) {
         )
       }
     } catch {
-      setError(`백엔드 서버에 연결할 수 없습니다.\n${API_HOST}이 실행 중인지 확인해주세요.`)
+      if (requestId === herdRequest.current) {
+        setError(`백엔드 서버에 연결할 수 없습니다.\n${API_HOST}이 실행 중인지 확인해주세요.`)
+      }
     } finally {
-      setLoading(false)
+      if (requestId === herdRequest.current) setLoading(false)
     }
   }, [normalizedTicker, ticker])
 
@@ -93,43 +112,55 @@ export function useStockDetail(ticker) {
 
   /* HERD 히스토리 — ticker 또는 기간 변경 시 재조회 */
   useEffect(() => {
+    let active = true
     setHistoryLoading(true)
     setHerdHistory([])
     getStockHerdHistory(normalizedTicker, historyPeriod)
-      .then((res) => { setHerdHistory(res.data?.data?.points ?? []) })
-      .catch(() => { setHerdHistory([]) })
-      .finally(() => { setHistoryLoading(false) })
+      .then((res) => { if (active) setHerdHistory(res.data?.data?.points ?? []) })
+      .catch(() => { if (active) setHerdHistory([]) })
+      .finally(() => { if (active) setHistoryLoading(false) })
+    return () => { active = false }
   }, [normalizedTicker, historyPeriod])
 
   /* HERD 신호 신뢰도 — 저장된 HERD 히스토리와 가격 데이터 기반 */
   useEffect(() => {
+    let active = true
     setReliabilityLoading(true)
     setReliability(null)
     getStockHerdReliability(normalizedTicker, 3)
-      .then((res) => { setReliability(res.data?.data ?? null) })
-      .catch(() => { setReliability(null) })
-      .finally(() => { setReliabilityLoading(false) })
+      .then((res) => { if (active) setReliability(res.data?.data ?? null) })
+      .catch(() => { if (active) setReliability(null) })
+      .finally(() => { if (active) setReliabilityLoading(false) })
+    return () => { active = false }
   }, [normalizedTicker])
 
   /* Fundamental Guard — HERD 판단을 막을 재무 경고만 확인 */
   useEffect(() => {
+    let active = true
     setFinancialsLoading(true)
     setFinancials(null)
     getStockFinancials(normalizedTicker)
-      .then((res) => { setFinancials(res.data?.data ?? null) })
-      .catch(() => { setFinancials(null) })
-      .finally(() => { setFinancialsLoading(false) })
+      .then((res) => { if (active) setFinancials(res.data?.data ?? null) })
+      .catch(() => { if (active) setFinancials(null) })
+      .finally(() => { if (active) setFinancialsLoading(false) })
+    return () => { active = false }
   }, [normalizedTicker])
 
   /* 포트폴리오 추가 */
   async function handleAddPortfolio() {
     if (portfolioStatus !== 'idle') return
     setPortfolioStatus('loading')
+    setActionError(null)
     try {
       await addToPortfolio(normalizedTicker)
       setPortfolioStatus('added')
     } catch (e) {
-      setPortfolioStatus(e.response?.status === 409 ? 'exists' : 'idle')
+      if (e.response?.status === 409) {
+        setPortfolioStatus('exists')
+      } else {
+        setPortfolioStatus('idle')
+        setActionError('포트폴리오에 추가하지 못했습니다. 잠시 후 다시 시도해주세요.')
+      }
     }
   }
 
@@ -137,11 +168,17 @@ export function useStockDetail(ticker) {
   async function handleAddWatchlist() {
     if (watchlistStatus !== 'idle') return
     setWatchlistStatus('loading')
+    setActionError(null)
     try {
       await addToWatchlist(normalizedTicker)
       setWatchlistStatus('added')
     } catch (e) {
-      setWatchlistStatus(e.response?.status === 409 ? 'exists' : 'idle')
+      if (e.response?.status === 409) {
+        setWatchlistStatus('exists')
+      } else {
+        setWatchlistStatus('idle')
+        setActionError('관심종목에 추가하지 못했습니다. 잠시 후 다시 시도해주세요.')
+      }
     }
   }
 
@@ -191,6 +228,7 @@ export function useStockDetail(ticker) {
   )
 
   async function handleJournalAction(actionType, details = {}) {
+    setActionError(null)
     try {
       const res = await createSignalJournal({
         ticker: normalizedTicker,
@@ -218,16 +256,19 @@ export function useStockDetail(ticker) {
       }
     } catch {
       await fetchSignalLogs()
+      setActionError('판단 기록을 저장하지 못했습니다.')
     }
     setJournalAction(null)
   }
 
   async function handleJournalDelete(id) {
+    setActionError(null)
     try {
       await deleteSignalJournal(id)
       setSignalLogs((prev) => prev.filter((log) => log.id !== id))
     } catch {
       await fetchSignalLogs()
+      setActionError('판단 기록을 삭제하지 못했습니다.')
     }
   }
   return {
@@ -246,6 +287,7 @@ export function useStockDetail(ticker) {
     signalLogs,
     journalAction,
     setJournalAction,
+    actionError,
     normalizedTicker,
     fetchData,
     handleAddPortfolio,
@@ -269,4 +311,3 @@ export function useStockDetail(ticker) {
     handleJournalDelete,
   }
 }
-

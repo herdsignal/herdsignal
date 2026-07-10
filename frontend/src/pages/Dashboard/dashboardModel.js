@@ -14,6 +14,7 @@ export const CACHE_KEY_TIME        = 'hs_cache_time'
 export const CACHE_KEY_VERSION     = 'hs_dashboard_cache_version'
 export const CACHE_KEY_PORTFOLIO_SORT = 'hs_dashboard_sort'
 export const DASHBOARD_CACHE_VERSION = 'v3-logo'
+export const DASHBOARD_CACHE_TTL_MS = 30 * 60 * 1000
 
 export const HISTORY_PERIODS = [
   { value: '1m', label: '1M' },
@@ -132,6 +133,25 @@ export function saveCacheTime() {
   const now = new Date()
   localStorage.setItem(CACHE_KEY_TIME, now.toISOString())
   return now
+}
+
+/** 현재가/HERD 묶음 캐시는 30분까지만 자동 재사용한다. */
+export function isDashboardCacheFresh(now = Date.now()) {
+  try {
+    const savedAt = new Date(localStorage.getItem(CACHE_KEY_TIME) || '').getTime()
+    return Number.isFinite(savedAt) && now - savedAt <= DASHBOARD_CACHE_TTL_MS
+  } catch {
+    return false
+  }
+}
+
+/** 서로 함께 사용되는 포트폴리오 캐시를 한 번에 무효화한다. */
+export function clearPortfolioCaches() {
+  try {
+    localStorage.removeItem(CACHE_KEY_REALTIME)
+    localStorage.removeItem(CACHE_KEY_HERD)
+    localStorage.removeItem(CACHE_KEY_TIME)
+  } catch { /* 브라우저 저장소 접근 실패는 다음 API 조회로 복구 */ }
 }
 
 /* ── 유틸 ─────────────────────────────────── */
@@ -511,5 +531,4 @@ export function averageScoreForLastDays(points, days, fallbackScore = null) {
   const score = values.reduce((sum, v) => sum + v, 0) / values.length
   return { score }
 }
-
 

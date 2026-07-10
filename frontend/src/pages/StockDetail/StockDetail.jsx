@@ -45,7 +45,6 @@ import {
   formatActionBasis,
   formatActionMeta,
   formatActionRatio,
-  formatActionScore,
   formatIndicator,
   formatMultiplier,
   fundamentalTone,
@@ -65,7 +64,7 @@ export default function StockDetail() {
     historyPeriod, setHistoryPeriod, historyLoading,
     reliability, reliabilityLoading,
     financials, financialsLoading,
-    signalLogs, journalAction, setJournalAction,
+    signalLogs, journalAction, setJournalAction, actionError,
     normalizedTicker, fetchData,
     handleAddPortfolio, handleAddWatchlist,
     herdScore, herdStage, stageDisp, color, sigStyle,
@@ -122,6 +121,10 @@ export default function StockDetail() {
           </button>
         </div>
       </div>
+
+      {actionError && (
+        <div className={styles.actionError} role="alert">{actionError}</div>
+      )}
 
       {/* ── 로딩 ── */}
       {loading && (

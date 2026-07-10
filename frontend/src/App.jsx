@@ -17,10 +17,18 @@ const HerdFlowPreview = lazy(() => import('./pages/HerdFlowPreview/HerdFlowPrevi
 const HerdLab = lazy(() => import('./pages/HerdLab/HerdLab'))
 const Journal = lazy(() => import('./pages/Journal/Journal'))
 
+function RouteFallback() {
+  return (
+    <div role="status" style={{ padding: '32px', color: 'var(--text-2)' }}>
+      화면 불러오는 중…
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={null}>
+      <Suspense fallback={<RouteFallback />}>
         <Routes>
           {/* Layout이 사이드바 + <Outlet>으로 모든 페이지를 감싼다 */}
           <Route element={<Layout />}>

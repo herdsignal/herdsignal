@@ -117,16 +117,6 @@ function stageDisplay(stage) {
   return stage.startsWith('Herd ') ? stage : `Herd ${stage}`
 }
 
-function stageDesc(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return '군중 밀집 · 적극 익절'
-    case 'drift':   return '쏠림 진행 · 일부 익절 고려'
-    case 'scatter': return '군중 흩어짐 · 분할 매수'
-    case 'flee':    return '군중 이탈 · 적극 매수'
-    default:        return '군중 균형 · 보유 유지'
-  }
-}
-
 function herdReadiness(data) {
   if (!data) {
     return {

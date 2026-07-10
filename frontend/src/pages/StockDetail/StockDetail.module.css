@@ -1197,3 +1197,12 @@
   transition: border-color 0.15s;
 }
 .retryBtn:hover { border-color: var(--text-3); }
+.actionError {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  color: var(--rush);
+  background: rgba(239, 68, 68, 0.08);
+  font-size: 13px;
+}
