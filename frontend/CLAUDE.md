@@ -19,8 +19,8 @@ src/
 │   ├── AvgPriceModal/ 평균 매수가·수량 수정 모달
 │   └── SignalJournalModal/ HERD 판단 기록 입력 모달
 ├── pages/          화면 단위
-│   ├── Dashboard/  포트폴리오 대시보드
-│   ├── StockDetail/ 종목 상세
+│   ├── Dashboard/  포트폴리오 대시보드 (화면/Dashboard.jsx, 상태/useDashboardData.js, 계산/dashboardModel.js)
+│   ├── StockDetail/ 종목 상세 (화면/StockDetail.jsx, 상태/useStockDetail.js, 계산/stockDetailModel.js)
 │   ├── Search/     종목 검색 & 추가
 │   ├── Watchlist/  관심 종목
 │   ├── HerdLab/    HERD 검증과 방법론
@@ -49,6 +49,12 @@ src/
 - 현재 UI 문구는 한국어 중심
 - 숫자 + 짧은 판단 문장을 함께 보여준다. 긴 설명문보다 행동 판단이 먼저 보여야 한다.
 - 모바일에서는 데스크톱 사이드바를 하단 탭 내비게이션으로 전환하고, Dashboard/Watchlist/Search/HerdLab 핵심 흐름을 먼저 보여준다.
+
+## 대형 페이지 구조 원칙
+- 페이지 JSX는 화면 조립과 이벤트 연결만 담당한다.
+- API 호출, 캐시, 로딩 상태, 파생 상태는 페이지별 `use*Data.js` 훅에서 관리한다.
+- 포맷팅, 정렬, 신호 해석처럼 React와 무관한 계산은 페이지별 `*Model.js`에 둔다.
+- 새 기능을 추가할 때 이 세 책임을 다시 한 파일에 섞지 않는다.
 
 ## HERD 5단계 색상
 ```
