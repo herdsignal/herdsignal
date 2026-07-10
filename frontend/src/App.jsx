@@ -3,7 +3,7 @@
  * Layout 컴포넌트 안에 모든 페이지를 중첩 라우트로 구성한다.
  */
 
-import { lazy, Suspense } from 'react'
+import { Component, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout     from './components/Layout/Layout'
 
@@ -25,11 +25,35 @@ function RouteFallback() {
   )
 }
 
+class RouteErrorBoundary extends Component {
+  state = { failed: false, message: '' }
+
+  static getDerivedStateFromError(error) {
+    return { failed: true, message: error?.message ?? '' }
+  }
+
+  componentDidCatch(error) {
+    console.error('페이지 렌더링 오류', error)
+  }
+
+  render() {
+    if (!this.state.failed) return this.props.children
+    return (
+      <div role="alert" style={{ padding: '32px', color: 'var(--text-1)' }}>
+        <p>화면을 표시하는 중 오류가 발생했습니다.</p>
+        {this.state.message && <p style={{ color: 'var(--text-3)' }}>{this.state.message}</p>}
+        <button type="button" onClick={() => window.location.reload()}>새로고침</button>
+      </div>
+    )
+  }
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<RouteFallback />}>
-        <Routes>
+      <RouteErrorBoundary>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
           {/* Layout이 사이드바 + <Outlet>으로 모든 페이지를 감싼다 */}
           <Route element={<Layout />}>
             <Route path="/"              element={<Dashboard />} />
@@ -42,8 +66,9 @@ export default function App() {
             <Route path="/ai"            element={<AiRebalance />} />
             <Route path="/herd-flow"     element={<HerdFlowPreview />} />
           </Route>
-        </Routes>
-      </Suspense>
+          </Routes>
+        </Suspense>
+      </RouteErrorBoundary>
     </BrowserRouter>
   )
 }

@@ -52,6 +52,8 @@ import {
   normalizeBar,
   reliabilityTone,
   sampleQualityLabel,
+  sectorMultiplierDesc,
+  signalEdgeLabel,
 } from './stockDetailModel'
 /* ── 컴포넌트 ─────────────────────────────── */
 

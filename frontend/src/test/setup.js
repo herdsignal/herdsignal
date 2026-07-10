@@ -14,6 +14,20 @@ const memoryStorage = {
 Object.defineProperty(window, 'localStorage', { value: memoryStorage, configurable: true })
 Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage, configurable: true })
 
+Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+  configurable: true,
+  value: () => ({
+    arc() {}, beginPath() {}, clearRect() {}, fill() {}, lineTo() {}, moveTo() {}, stroke() {},
+    fillStyle: '', strokeStyle: '', globalAlpha: 1, lineWidth: 1,
+  }),
+})
+
+globalThis.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
 beforeEach(() => {
   localStorage.clear()
 })

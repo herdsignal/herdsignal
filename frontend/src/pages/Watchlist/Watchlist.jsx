@@ -7,17 +7,16 @@
  *   - 삭제: removeFromWatchlist(ticker) → 성공 시 로컬 상태에서 즉시 제거
  *   - 빈 상태: "관심 종목이 없습니다" + 종목 검색 버튼
  *
- * API: getWatchlistHerd() + getStockHerd('SPY') — 병렬 호출
+ * API: getWatchlistHerd() + 공통 SPY 시장 데이터 훅
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate }   from 'react-router-dom'
 import {
   getWatchlistHerd,
-  getStockHerd,
-  getSpyHerdHistory,
   removeFromWatchlist,
 } from '../../api/herdApi'
+import { useDashboardMarketData } from '../Dashboard/useDashboardMarketData'
 import HerdDots  from '../../components/HerdDots/HerdDots'
 import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
@@ -164,31 +163,6 @@ function scoreToStage(score) {
   return stageLabelFromScore(score, true)
 }
 
-function averageScoreForLastDays(points, days, fallbackScore = null) {
-  if (!points?.length) return null
-  const now = new Date()
-  const cutoff = new Date(now)
-  cutoff.setDate(cutoff.getDate() - days)
-
-  const values = []
-  for (const p of points) {
-    const pointDate = new Date(`${p.date}T00:00:00`)
-    if (Number.isNaN(pointDate.getTime())) continue
-    if (pointDate >= cutoff && pointDate <= now && p.score != null) {
-      values.push(Number(p.score))
-    }
-  }
-
-  if (values.length === 0) {
-    const latest = points[points.length - 1]
-    const score = fallbackScore ?? latest?.score
-    return score == null ? null : { score }
-  }
-
-  const score = values.reduce((sum, v) => sum + v, 0) / values.length
-  return { score }
-}
-
 function BannerStat({ label, point }) {
   const stage = scoreToStage(point?.score)
 
@@ -216,23 +190,19 @@ function BannerStat({ label, point }) {
 
 export default function Watchlist() {
   const navigate = useNavigate()
+  const {
+    spyData, spyHistory, spyHistoryPeriod, setSpyHistoryPeriod,
+    spyHistoryLoading, spyTab, setSpyTab,
+    spyScore, spyStage, d1AvgPoint, m1AvgPoint, y1AvgPoint,
+  } = useDashboardMarketData()
 
   const [watchlist,      setWatchlist]      = useState([])
-  const [spyData,        setSpyData]        = useState(null)
-  const [spyHistory,     setSpyHistory]     = useState([])
-  const [spyStatsHistory, setSpyStatsHistory] = useState([])
-  const [spyHistoryPeriod, setSpyHistoryPeriod] = useState('3y')
-  const [spyHistoryLoading, setSpyHistoryLoading] = useState(false)
-  const [spyTab,         setSpyTab]         = useState('overview')
   const [loading,        setLoading]        = useState(true)
   const [refreshing,     setRefreshing]     = useState(false)
   const [refreshNotice,  setRefreshNotice]  = useState(null)
   const [error,          setError]          = useState(null)
   /* 삭제 중인 ticker — 중복 요청 방지 */
   const [deletingTicker, setDeletingTicker] = useState(null)
-  /* SPY 데이터 ref 캐시 — Dashboard와 동일한 StrictMode 대응 */
-  const spyDataCache = useRef(null)
-  const spyHistoryCache = useRef({})
   const refreshNoticeTimer = useRef(null)
 
   const today = new Date().toLocaleDateString('ko-KR', {
@@ -280,45 +250,6 @@ export default function Watchlist() {
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
   }, [])
 
-  /*
-   * SPY 배너 — Dashboard와 동일한 구조.
-   * ref 캐시로 StrictMode 이중 실행 시 state 재설정 문제 방지.
-   */
-  useEffect(() => {
-    const historyCached = spyHistoryCache.current[spyHistoryPeriod]
-
-    if (spyDataCache.current && historyCached) {
-      setSpyData(spyDataCache.current)
-      setSpyHistory(historyCached)
-      if (spyHistoryPeriod === '3y') setSpyStatsHistory(historyCached)
-      return
-    }
-
-    if (!spyDataCache.current) {
-      getStockHerd('SPY')
-        .then((res) => {
-          const data = res.data?.data ?? null
-          spyDataCache.current = data
-          setSpyData(data)
-        })
-        .catch(() => { /* SPY 실패 시 배너 기본값(Calm/50) 유지 */ })
-    } else {
-      setSpyData(spyDataCache.current)
-    }
-
-    setSpyHistoryLoading(true)
-    setSpyHistory([])
-    getSpyHerdHistory(spyHistoryPeriod)
-      .then((res) => {
-        const points = res.data?.data?.points ?? []
-        spyHistoryCache.current[spyHistoryPeriod] = points
-        setSpyHistory(points)
-        if (spyHistoryPeriod === '3y') setSpyStatsHistory(points)
-      })
-      .catch(() => { /* 히스토리 실패 시 Timeline 탭 빈 상태 유지 */ })
-      .finally(() => setSpyHistoryLoading(false))
-  }, [spyHistoryPeriod])
-
   /* 관심 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 */
   async function handleDelete(e, ticker) {
     e.stopPropagation()
@@ -333,21 +264,6 @@ export default function Watchlist() {
       setDeletingTicker(null)
     }
   }
-
-  const spyScore = spyData?.herdV4 ?? spyData?.herdScore ?? 50
-  const spyStage = spyData?.herdStage ?? 'Calm'
-  const d1AvgPoint = useMemo(
-    () => averageScoreForLastDays(spyStatsHistory, 1, spyScore),
-    [spyStatsHistory, spyScore]
-  )
-  const m1AvgPoint = useMemo(
-    () => averageScoreForLastDays(spyStatsHistory, 30, spyScore),
-    [spyStatsHistory, spyScore]
-  )
-  const y1AvgPoint = useMemo(
-    () => averageScoreForLastDays(spyStatsHistory, 365, spyScore),
-    [spyStatsHistory, spyScore]
-  )
 
   const scoredWatchlist = useMemo(() => opportunityRows(watchlist), [watchlist])
 

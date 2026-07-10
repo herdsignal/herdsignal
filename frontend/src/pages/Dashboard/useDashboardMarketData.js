@@ -43,19 +43,16 @@ export function useDashboardMarketData() {
       setSpyHistoryLoading(false)
       if (spyHistoryPeriod === '3y') setSpyStatsHistory(historyCached)
     }
-    if (herdCached && historyCached) return
-
-    if (!herdCached) {
-      getStockHerd('SPY')
-        .then((res) => {
-          if (requestId !== requestSequence.current) return
-          const data = res.data?.data ?? null
-          spyDataCache.current = data
-          setSpyData(data)
-          writeCache(CACHE_KEY_SPY, data)
-        })
-        .catch(() => {})
-    }
+    // 캐시는 즉시 표시용일 뿐, 화면 진입 시 백엔드 최신값으로 항상 재검증한다.
+    getStockHerd('SPY')
+      .then((res) => {
+        if (requestId !== requestSequence.current) return
+        const data = res.data?.data ?? null
+        spyDataCache.current = data
+        setSpyData(data)
+        writeCache(CACHE_KEY_SPY, data)
+      })
+      .catch(() => {})
 
     if (!historyCached) {
       setSpyHistoryLoading(true)
