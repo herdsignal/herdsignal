@@ -142,6 +142,8 @@ OOS 실패 진단은 `cd data && .venv/bin/python herd/diagnose_validation_v2.py
 
 횡보장 행동 억제 단독 실험은 `.venv/bin/python herd/experiment_sideways_filter.py --full`로 재현합니다. 63거래일 절대수익률 5% 이하·추세 품질 35~65를 횡보로 보고 행동 비율을 0/0.5/0.75/1.0 중 학습구간에서만 선택했습니다. 220개 rolling OOS에서 수익 개선 10.5%, 악화 9.1%, MDD 개선 2.7%, 악화 8.2%, 거래 감소 중앙값 0회로 효과가 불충분해 운영 모델에는 채택하지 않았습니다. 결과는 `data/reports/validation_v2/sideways_experiment.json`에 보존합니다.
 
+Risk Cap 단독 실험은 `.venv/bin/python herd/experiment_risk_cap.py --full`로 재현합니다. 기존 신호 방향은 유지하고 약한 추세의 추가매수와 강한 추세의 익절 비율에만 balanced/strict 상한을 적용했습니다. 220개 rolling OOS 중 학습단계에서 미적용을 선택한 구간이 171개였고, 실제 결과가 달라진 OOS는 8개뿐이었습니다. 수익 개선 0%, 악화 1.8%, MDD 개선 0.9%, 악화 0.5%로 효과가 없어 운영 모델에 채택하지 않았습니다. v6.1 비율이 이미 작고 OOS MDD 대부분이 초기 전액 보유 노출에서 발생해 행동 비율 상한만으로는 해결되지 않았습니다. 결과는 `data/reports/validation_v2/risk_cap_experiment.json`에 보존합니다.
+
 신호 신뢰도는 데이터 품질과 별도로 계산합니다. 저장된 HERD 히스토리와 이후 가격 흐름을 비교해 Flee 적중률, Rush 적중률, 매수 신호 이후 1/3/6개월 평균 수익률, 익절 신호 이후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 표본 품질, 매수/익절 edge를 보여줍니다.
 
 ---
