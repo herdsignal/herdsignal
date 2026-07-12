@@ -134,6 +134,7 @@ def _trend_frame(close: pd.Series) -> pd.DataFrame:
         "ma200_deviation": ma200_deviation,
         "position_52w": position_52w,
         "trend_quality": trend_quality.clip(0, 100),
+        "return_63d": close.pct_change(63) * 100,
     })
 
 

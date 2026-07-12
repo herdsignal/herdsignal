@@ -140,6 +140,8 @@ HERD_v6.1 행동 모델은 v4 상태 점수 위에 5일·20일 변화 속도와 
 
 OOS 실패 진단은 `cd data && .venv/bin/python herd/diagnose_validation_v2.py`로 실행합니다. `data/reports/validation_v2/oos_diagnostics.json`과 `oos_failures.csv`에는 섹터·연도·시장 국면·선택 파라미터별 결과, 반복 실패 종목, 심각 실패 구간이 기록됩니다. 0.05%p 이내 차이는 동등으로 처리합니다. 현재 440구간 중 수익 악화 37.3%, MDD 악화 53.4%, 두 지표 모두 Fixed 이상인 구간은 35.9%입니다. 가장 취약한 영역은 에너지 섹터(MDD 악화 82.5%)와 상승장 MDD 방어(MDD 악화 65.3%), 횡보장 수익 악화(51.2%)입니다.
 
+횡보장 행동 억제 단독 실험은 `.venv/bin/python herd/experiment_sideways_filter.py --full`로 재현합니다. 63거래일 절대수익률 5% 이하·추세 품질 35~65를 횡보로 보고 행동 비율을 0/0.5/0.75/1.0 중 학습구간에서만 선택했습니다. 220개 rolling OOS에서 수익 개선 10.5%, 악화 9.1%, MDD 개선 2.7%, 악화 8.2%, 거래 감소 중앙값 0회로 효과가 불충분해 운영 모델에는 채택하지 않았습니다. 결과는 `data/reports/validation_v2/sideways_experiment.json`에 보존합니다.
+
 신호 신뢰도는 데이터 품질과 별도로 계산합니다. 저장된 HERD 히스토리와 이후 가격 흐름을 비교해 Flee 적중률, Rush 적중률, 매수 신호 이후 1/3/6개월 평균 수익률, 익절 신호 이후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 표본 품질, 매수/익절 edge를 보여줍니다.
 
 ---
