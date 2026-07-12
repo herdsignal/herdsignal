@@ -189,7 +189,14 @@ export default function StockDetail() {
 
               {/* 우: HerdDots + 스펙트럼 */}
               <div className={styles.herdAnimSide}>
-                <HerdDots score={herdScore} fill dotCount={55} />
+                <HerdDots
+                  score={herdScore}
+                  momentum={herdMomentum.delta ?? (herdScore - 50) / 3}
+                  actionRatio={herdData.actionRatio ?? 0}
+                  enhanced
+                  fill
+                  dotCount={55}
+                />
                 {/* 하단 고정: SpectrumBar + 5단계 라벨 */}
                 <div className={styles.herdAnimBottom}>
                   <SpectrumBar score={herdScore} height={3} />

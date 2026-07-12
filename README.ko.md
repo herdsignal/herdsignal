@@ -45,7 +45,7 @@ HERD Index는 개별 주식의 군중심리를 **0-100 점수**로 나타내는 
 - **Dashboard**: S&P 500 Herd Flow 배너, HERD 강도 변화, 현금 포함 포트폴리오 평가 요약, 입출금 착시를 줄인 자산 히스토리, 핵심 리밸런싱 체크, 리스크/알림 조건, 보유 종목 HERD 행동 카드
 - **Watchlist**: 장기 추가매수/익절 우선순위와 신호 준비도 기반 매수 대기열
 - **Search**: 티커/회사명 검색, HERD 미리보기, 최근 검색, 포트폴리오/관심종목 추가
-- **StockDetail**: HERD v4 점수, HERD_v6 Progressive Action Layer 판단, 신호 신뢰도 보드, 신호 이후 실제 성과 지표, HERD Index 히스토리, Fundamental Guard, 지표 분해
+- **StockDetail**: HERD v4 점수, HERD_v6.1 Validated Progressive Action Layer 판단, 신호 신뢰도 보드, 신호 이후 실제 성과 지표, HERD Index 히스토리, Fundamental Guard, 지표 분해
 - **Journal**: 매수/보류/익절 판단을 가격, 수량, 금액, 수익률, HERD 점수, 신호 지속일, 메모와 함께 DB에 저장하는 판단 기록장
 - **HERD Lab**: 모델 버전, 백테스트 요약, 신뢰 체크, Action Matrix, HERD 방법론 검증 데이터
 - **Responsive UI**: 데스크톱 사이드바와 모바일 하단 탭을 함께 지원하는 반응형 화면
@@ -129,6 +129,16 @@ v4는 기본 점수에 두 가지 보정 승수를 곱합니다.
 - 섹터 상대 강도: 종목 90일 수익률과 섹터 ETF 90일 수익률 비교
 
 최종 점수는 `herd_scores.herd_score`에 저장되며, API는 `herdV4`, `herdBase`, `epsMultiplier`, `sectorMultiplier`를 함께 제공합니다.
+
+HERD_v6.1 행동 모델은 v4 상태 점수 위에 5일·20일 변화 속도와 가속도, 단계 경계 ±2pt 안정화, 신호 생애주기, 데이터·이력 신뢰도 보정을 적용합니다. 섹터 편향 검증용 55종목 히스토리는 `cd data && python herd/history_backfill.py --validation-universe --years 10 --freq weekly`로 누적하고, `python herd/backtest_action_layer.py --full`로 전체 유니버스를 검사합니다. 새 모델의 정확도는 확장 백테스트와 실사용 표본이 통과하기 전까지 확정 성과로 표시하지 않습니다.
+
+### Phase A · Validation v2
+
+현실적인 검증은 `cd data && .venv/bin/python herd/backtest_validation_v2.py --full`로 실행합니다. 신호일 종가로 판단하고 다음 거래일 시가에 수수료 0.1%와 기본 슬리피지 10bp를 적용하며, JSON/CSV 결과를 `data/reports/validation_v2/`에 저장합니다. 리포트에는 평균 외에 보존율 중앙값, 하위 10%, 개선 종목 비율, MDD 개선 중앙값, anchored/rolling Walk-forward 결과, 운영 저장 점수 재계산 일치 검사가 포함됩니다.
+
+2026-07-12 기준 55종목 실행 결과는 전체기간 중앙 보존율 63.8%, 기존 Fixed HERD 대비 개선 종목 74.5%, MDD 개선 중앙값 8.1%p였습니다. 과거 섹터 ETF 상대강도는 각 날짜까지의 90거래일 데이터만으로 복원했습니다. 학습구간에서만 제한 후보를 선택한 440개 Walk-forward OOS 구간에서는 개선 비율 36.4%, MDD 개선 중앙값 1.3%p로 낮아져 현재 v6.1은 미래구간 채택 기준 미달입니다. 최초 실행 후 잠근 최근 12개월 Blind Holdout은 중앙 보존율 91.1%, 개선 비율 56.4%, MDD 개선 중앙값 2.5%p였습니다. Blind 결과는 `--unlock-blind`를 명시하지 않는 한 다시 계산하지 않습니다. 이 결과는 현재 생존 대형주 중심 유니버스이며, 과거 EPS는 발표일 원천 데이터가 없어 명시적으로 제외했습니다.
+
+OOS 실패 진단은 `cd data && .venv/bin/python herd/diagnose_validation_v2.py`로 실행합니다. `data/reports/validation_v2/oos_diagnostics.json`과 `oos_failures.csv`에는 섹터·연도·시장 국면·선택 파라미터별 결과, 반복 실패 종목, 심각 실패 구간이 기록됩니다. 0.05%p 이내 차이는 동등으로 처리합니다. 현재 440구간 중 수익 악화 37.3%, MDD 악화 53.4%, 두 지표 모두 Fixed 이상인 구간은 35.9%입니다. 가장 취약한 영역은 에너지 섹터(MDD 악화 82.5%)와 상승장 MDD 방어(MDD 악화 65.3%), 횡보장 수익 악화(51.2%)입니다.
 
 신호 신뢰도는 데이터 품질과 별도로 계산합니다. 저장된 HERD 히스토리와 이후 가격 흐름을 비교해 Flee 적중률, Rush 적중률, 매수 신호 이후 1/3/6개월 평균 수익률, 익절 신호 이후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 표본 품질, 매수/익절 edge를 보여줍니다.
 

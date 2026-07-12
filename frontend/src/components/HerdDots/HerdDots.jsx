@@ -135,6 +135,9 @@ export default function HerdDots({
   height   = 100,
   dotCount = 20,
   fill     = false,
+  enhanced = false,
+  momentum = 0,
+  actionRatio = 0,
 }) {
   const canvasRef = useRef(null)
 
@@ -143,10 +146,14 @@ export default function HerdDots({
     if (!canvas) return
 
     const ctx     = canvas.getContext('2d')
+    if (!ctx) return
     const dpr     = window.devicePixelRatio || 1
     const color   = getColor(score)
     const profile = getFlowProfile(score)
     const cluster = score / 100          // 0(Flee) → 1(Rush)
+    const direction = Math.max(-20, Math.min(20, momentum)) / 20
+    const activeRatio = Math.max(0, Math.min(1, actionRatio))
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
     let dots = []
     let rafId
@@ -154,7 +161,7 @@ export default function HerdDots({
 
     /* 점 배열 초기화 */
     function initDots() {
-      return Array.from({ length: dotCount }, () => {
+      return Array.from({ length: dotCount }, (_, index) => {
         const target = randomTarget(profile)
         return {
           x:  target.tx + (Math.random() - 0.5) * profile.spreadX * 0.2,
@@ -169,6 +176,7 @@ export default function HerdDots({
             : profile.mode === 'cluster'
               ? 0.35 + Math.random() * 0.45
               : 0.55 + Math.random() * 0.9,
+          active: index < Math.round(dotCount * activeRatio),
           /* 물리 픽셀 기준 반지름 */
           r:  (
             profile.mode === 'flee'
@@ -194,7 +202,7 @@ export default function HerdDots({
 
     /* 애니메이션 루프 */
     function draw() {
-      tick += 1
+      tick += reduceMotion ? 0 : 1
       const W = canvas.width
       const H = canvas.height
       ctx.clearRect(0, 0, W, H)
@@ -213,6 +221,7 @@ export default function HerdDots({
         /* Flee는 화면 전체에 분산되고, Rush는 좁은 군집으로 수렴한다. */
         d.vx += (targetX - d.x) * profile.pull + noiseX
         d.vy += (targetY - d.y) * profile.pull * 0.72 + noiseY
+        if (enhanced) d.vx += direction * 0.000035
 
         d.x += d.vx
         d.y += d.vy
@@ -235,26 +244,39 @@ export default function HerdDots({
           d.vy = (d.vy / spd) * profile.maxV
         }
 
-        if (profile.trail > 0 && d.prevX != null) {
+        const trailAlpha = enhanced
+          ? Math.max(profile.trail, Math.abs(direction) * 0.13)
+          : profile.trail
+        if (trailAlpha > 0 && d.prevX != null) {
           ctx.beginPath()
           ctx.moveTo(d.prevX * W, d.prevY * H)
           ctx.lineTo(d.x * W, d.y * H)
           ctx.strokeStyle = color
-          ctx.globalAlpha = profile.trail
+          ctx.globalAlpha = trailAlpha
           ctx.lineWidth = Math.max(1, d.r * 0.45)
           ctx.stroke()
           ctx.globalAlpha = 1
         }
 
+        if (enhanced && d.active) {
+          const pulse = 1 + Math.sin(tick * 0.045 + d.phase) * 0.18
+          ctx.beginPath()
+          ctx.arc(d.x * W, d.y * H, d.r * 2.8 * pulse, 0, Math.PI * 2)
+          ctx.strokeStyle = color
+          ctx.lineWidth = Math.max(1, d.r * 0.3)
+          ctx.globalAlpha = 0.18
+          ctx.stroke()
+        }
+
         ctx.beginPath()
-        ctx.arc(d.x * W, d.y * H, d.r, 0, Math.PI * 2)
+        ctx.arc(d.x * W, d.y * H, d.r * (d.active ? 1.12 : 1), 0, Math.PI * 2)
         ctx.fillStyle   = color
         ctx.globalAlpha = profile.alpha + cluster * 0.08
         ctx.fill()
         ctx.globalAlpha = 1
       })
 
-      rafId = requestAnimationFrame(draw)
+      if (!reduceMotion) rafId = requestAnimationFrame(draw)
     }
 
     /* 초기 설정 및 시작 */
@@ -277,7 +299,7 @@ export default function HerdDots({
       cancelAnimationFrame(rafId)
       if (ro) ro.disconnect()
     }
-  }, [score, width, height, dotCount, fill])
+  }, [score, width, height, dotCount, fill, enhanced, momentum, actionRatio])
 
   /* fill 모드: position:absolute로 부모를 꽉 채움 */
   if (fill) {

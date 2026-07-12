@@ -16,6 +16,7 @@ herd/backtest_action_layer.py — HERD Action Layer 사전 검증 백테스트
 """
 
 import logging
+import argparse
 import sys
 import warnings
 from dataclasses import dataclass, field
@@ -41,9 +42,14 @@ from herd.backtest_v3 import (                                         # noqa: E
     _run_strategy_b,
     _sell,
 )
+from herd.validation_universe import TICKERS as DIVERSE_TICKERS, UNIVERSE_VERSION  # noqa: E402
+from config.database import create_db_engine, get_session_factory  # noqa: E402
+from init_db import HerdScore  # noqa: E402
+
+_SessionFactory = get_session_factory(create_db_engine())
 
 
-TICKERS = ["NVDA", "MSFT", "AAPL", "JPM", "SPY"]
+SMOKE_TICKERS = ["NVDA", "MSFT", "AAPL", "JPM", "SPY"]
 DATA_PERIOD = "10y"
 
 RUSH_THRESHOLD = 75.0
@@ -139,7 +145,7 @@ def _action_decision(score: float, ctx: pd.Series, profile: str) -> tuple[str, s
     trend = float(ctx.get("trend_quality", 50) or 50)
     ma200_dev = float(ctx.get("ma200_deviation", 0) or 0)
 
-    if profile == "balanced":
+    if profile in {"balanced", "v61"}:
         if score >= RUSH_THRESHOLD:
             if trend >= 75 and ma200_dev < 45:
                 return "HEALTHY_RUSH", "SELL", 0.05
@@ -205,13 +211,33 @@ def _run_action_layer(close: pd.Series, herd: pd.Series, profile: str) -> Action
 
     last_sell_pos = -SIGNAL_COOLDOWN - 1
     last_buy_pos = -SIGNAL_COOLDOWN - 1
+    previous_score: float | None = None
+    previous_action = "HOLD"
+    action_days = 0
 
     for i, (date, price) in enumerate(close.items()):
         price = float(price)
         score = float(herd.get(date, float("nan")))
 
         if pd.notna(score):
-            regime, action, ratio = _action_decision(score, trend.loc[date], profile)
+            decision_score = score
+            if profile == "v61" and previous_score is not None:
+                for boundary in (FLEE_THRESHOLD, SCATTER_UPPER, DRIFT_LOWER, RUSH_THRESHOLD):
+                    if abs(score - boundary) <= 2 and (score - boundary) * (previous_score - boundary) < 0:
+                        decision_score = boundary - 0.01 if previous_score < boundary else boundary + 0.01
+                        break
+
+            regime, action, ratio = _action_decision(decision_score, trend.loc[date], profile)
+            if action == previous_action:
+                action_days += 1
+            else:
+                previous_action = action
+                action_days = 1
+
+            if profile == "v61" and ratio > 0:
+                lifecycle_factor = 0.65 if action_days <= 5 else 1.0 if action_days <= 20 else 0.82 if action_days <= 45 else 0.55
+                ratio = round(ratio * lifecycle_factor, 2)
+
             result.stats.mark(regime)
 
             sell_ok = (i - last_sell_pos) > SIGNAL_COOLDOWN
@@ -237,6 +263,8 @@ def _run_action_layer(close: pd.Series, herd: pd.Series, profile: str) -> Action
                 last_buy_pos = i
                 result.stats.actions += 1
                 result.stats.buy_actions += 1
+
+            previous_score = score
 
         result.portfolio_values.append(cash + shares * price)
 
@@ -275,16 +303,32 @@ def _period_years(period: str) -> float:
     return 1.0
 
 
-def run_one(ticker: str) -> dict:
+def _stored_herd_series(ticker: str, dates: pd.DatetimeIndex) -> pd.Series:
+    """백필된 주간 점수만 사용하고 다음 거래일까지 forward-fill한다."""
+    with _SessionFactory() as session:
+        rows = (session.query(HerdScore)
+                .filter(HerdScore.ticker == ticker)
+                .order_by(HerdScore.score_date.asc()).all())
+    series = pd.Series(
+        {pd.Timestamp(row.score_date): float(row.herd_score) for row in rows},
+        name="herd_score",
+        dtype=float,
+    )
+    if series.empty:
+        raise ValueError("저장된 HERD 백필 데이터 없음")
+    return series.reindex(dates.union(series.index)).sort_index().ffill().reindex(dates)
+
+
+def run_one(ticker: str, *, stored: bool = False) -> dict:
     """단일 티커의 A/B/D 비교 결과를 만든다."""
     df = collect(ticker, period=DATA_PERIOD)
     close = _close_series(df)
-    herd = _build_herd_series(df).reindex(close.index).ffill()
+    herd = _stored_herd_series(ticker, close.index) if stored else _build_herd_series(df).reindex(close.index).ffill()
 
     buyhold = _run_strategy_a(close)
     fixed = _run_strategy_b(close, herd)
     growth = _run_action_layer(close, herd, "growth")
-    balanced = _run_action_layer(close, herd, "balanced")
+    balanced = _run_action_layer(close, herd, "v61")
 
     buyhold_return = buyhold.return_pct()
     fixed_return = fixed.return_pct()
@@ -332,20 +376,25 @@ def run_one(ticker: str) -> dict:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="HERD Action Layer walk-forward 후보 검증")
+    parser.add_argument("--full", action="store_true", help="전 섹터 50+ 종목 검증")
+    parser.add_argument("--tickers", nargs="+", help="검증할 티커 직접 지정")
+    args = parser.parse_args()
+    tickers = args.tickers or (DIVERSE_TICKERS if args.full else SMOKE_TICKERS)
     print("HERD Action Layer 사전 백테스트")
-    print(f"대상: {', '.join(TICKERS)} | 기간: {DATA_PERIOD}")
+    print(f"대상: {len(tickers)}종목 | 기간: {DATA_PERIOD} | 유니버스: {UNIVERSE_VERSION}")
     print("D/E 전략은 HERD 점수와 가격 기반 추세 품질로 매수/익절 비율을 동적으로 조정합니다.\n")
 
     rows: list[dict] = []
-    for ticker in TICKERS:
+    for ticker in tickers:
         try:
             print(f"[{ticker}] 계산 중...", end=" ", flush=True)
-            row = run_one(ticker)
+            row = run_one(ticker, stored=args.full)
             rows.append(row)
             print(
                 f"완료 | B {_fmt_pct(row['fixed_return'])} → "
                 f"D {_fmt_pct(row['growth_return'])} / "
-                f"E {_fmt_pct(row['balanced_return'])}"
+                f"v6.1 {_fmt_pct(row['balanced_return'])}"
             )
         except Exception as e:
             print(f"실패: {e}")
@@ -372,7 +421,7 @@ def main() -> None:
         )
 
     print("\n2) Balanced Action Layer 행동 통계")
-    header = "Ticker | Actions | Buy | Sell | SkipSell | HealthyRush | CrowdedRush | OppFlee | BrokenFlee"
+    header = "Ticker | v6.1 Actions | Buy | Sell | SkipSell | HealthyRush | CrowdedRush | OppFlee | BrokenFlee"
     print(header)
     print("-" * len(header))
     for row in rows:
@@ -392,21 +441,21 @@ def main() -> None:
     print(f"- Buy & Hold 평균 수익률: {_fmt_pct(_avg(rows, 'buyhold_return'))}")
     print(f"- Fixed HERD 평균 수익률: {_fmt_pct(_avg(rows, 'fixed_return'))}")
     print(f"- Growth Action 평균 수익률: {_fmt_pct(_avg(rows, 'growth_return'))}")
-    print(f"- Balanced Action 평균 수익률: {_fmt_pct(_avg(rows, 'balanced_return'))}")
+    print(f"- HERD v6.1 평균 수익률: {_fmt_pct(_avg(rows, 'balanced_return'))}")
     print(f"- Growth Action 수익률 변화: {_fmt_pct(_avg(rows, 'growth_delta'))}")
-    print(f"- Balanced Action 수익률 변화: {_fmt_pct(_avg(rows, 'balanced_delta'))}")
+    print(f"- HERD v6.1 수익률 변화: {_fmt_pct(_avg(rows, 'balanced_delta'))}")
     print(f"- Fixed 수익률 보존율: {_fmt_pct(_avg(rows, 'fixed_capture'))}")
     print(f"- Growth Action 수익률 보존율: {_fmt_pct(_avg(rows, 'growth_capture'))}")
-    print(f"- Balanced Action 수익률 보존율: {_fmt_pct(_avg(rows, 'balanced_capture'))}")
+    print(f"- HERD v6.1 수익률 보존율: {_fmt_pct(_avg(rows, 'balanced_capture'))}")
     print(f"- Fixed MDD 개선: {_fmt_pct(_avg(rows, 'fixed_mdd_improvement'))}")
     print(f"- Growth Action MDD 개선: {_fmt_pct(_avg(rows, 'growth_mdd_improvement'))}")
-    print(f"- Balanced Action MDD 개선: {_fmt_pct(_avg(rows, 'balanced_mdd_improvement'))}")
+    print(f"- HERD v6.1 MDD 개선: {_fmt_pct(_avg(rows, 'balanced_mdd_improvement'))}")
     print(f"- Growth Action 평균 거래 수: {_fmt_num(_avg(rows, 'growth_actions'))}")
-    print(f"- Balanced Action 평균 거래 수: {_fmt_num(_avg(rows, 'balanced_actions'))}")
+    print(f"- HERD v6.1 평균 거래 수: {_fmt_num(_avg(rows, 'balanced_actions'))}")
     years = _period_years(DATA_PERIOD)
     balanced_actions = _avg(rows, "balanced_actions")
     annual_actions = balanced_actions / years if balanced_actions is not None else None
-    print(f"- Balanced Action 연평균 거래 수: {_fmt_num(annual_actions)}")
+    print(f"- HERD v6.1 연평균 거래 수: {_fmt_num(annual_actions)}")
 
     print("\n판정 기준")
     print("- 채택 후보: Action 수익률 보존율 70% 이상 + MDD 개선 5%p 이상")

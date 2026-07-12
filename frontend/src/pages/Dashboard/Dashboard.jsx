@@ -220,7 +220,14 @@ export default function Dashboard() {
               <em>{stageDesc(spyStage)}</em>
             </div>
             <div className={styles.mobileSignalFlow}>
-              <HerdDots score={spyScore} fill dotCount={52} />
+              <HerdDots
+                score={spyScore}
+                momentum={spyMomentum.delta ?? (spyScore - 50) / 3}
+                actionRatio={spyData?.actionRatio ?? 0}
+                enhanced
+                fill
+                dotCount={52}
+              />
               <div className={styles.mobileSpectrum}>
                 <SpectrumBar score={spyScore} height={3} />
               </div>
@@ -410,7 +417,14 @@ export default function Dashboard() {
             {spyTab === 'overview' && (
               <div className={styles.bannerOverview}>
                 <div className={styles.bannerAnimBlock}>
-                  <HerdDots score={spyScore} fill dotCount={84} />
+                  <HerdDots
+                    score={spyScore}
+                    momentum={spyMomentum.delta ?? (spyScore - 50) / 3}
+                    actionRatio={spyData?.actionRatio ?? 0}
+                    enhanced
+                    fill
+                    dotCount={84}
+                  />
                   <div className={styles.bannerAnimLabel}>
                     <span>← Flee · 군중 이탈</span>
                     <span>Rush · 군중 밀집 →</span>

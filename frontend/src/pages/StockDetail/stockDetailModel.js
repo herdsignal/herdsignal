@@ -139,7 +139,7 @@ export function formatActionBasis(data) {
 
 export function formatActionMeta(data) {
   return [
-    data?.actionModelVersion ?? 'HERD_v5',
+    data?.actionModelVersion ?? 'HERD_v6.1',
     formatActionScore(data?.actionScore),
   ].filter(Boolean).join(' · ')
 }
@@ -509,5 +509,4 @@ export const BTN_LABELS = {
     exists:  '이미 추가됨',
   },
 }
-
 

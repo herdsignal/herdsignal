@@ -61,7 +61,7 @@ def _load_stock_profile(ticker: str) -> dict:
         return {}
 
 
-def _upsert_stock(session, ticker: str) -> None:
+def _upsert_stock(session, ticker: str, *, enrich_missing: bool = True) -> None:
     """
     stocks 테이블에 종목이 없으면 INSERT, 있으면 updated_at만 갱신.
     name / sector / market_cap_category는 별도 메타데이터 수집 단계에서 채울 예정.
@@ -72,7 +72,7 @@ def _upsert_stock(session, ticker: str) -> None:
     profile = None
 
     if obj is None:
-        profile = _load_stock_profile(ticker)
+        profile = _load_stock_profile(ticker) if enrich_missing else {}
         session.add(Stock(
             ticker     = ticker,
             name       = profile.get("name"),
@@ -84,7 +84,7 @@ def _upsert_stock(session, ticker: str) -> None:
         ))
         logger.info(f"[{ticker}] stocks INSERT")
     else:
-        if not obj.name or not obj.sector or not obj.logo_url:
+        if enrich_missing and (not obj.name or not obj.sector or not obj.logo_url):
             profile = _load_stock_profile(ticker)
             obj.name = obj.name or profile.get("name")
             obj.sector = obj.sector or profile.get("sector")
@@ -282,7 +282,9 @@ def save_herd_for_date(ticker: str, herd_result: dict, score_date: date) -> bool
 
     with _SessionFactory() as session:
         try:
-            _upsert_stock(session, ticker)
+            # 과거 날짜마다 회사 프로필 API를 재호출하지 않는다.
+            # 최신 운영 저장/프로필 백필 단계가 메타데이터를 담당한다.
+            _upsert_stock(session, ticker, enrich_missing=False)
             _upsert_herd_score(
                 session, ticker,
                 herd_result["score"],

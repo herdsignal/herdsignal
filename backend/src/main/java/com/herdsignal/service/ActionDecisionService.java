@@ -23,8 +23,8 @@ public class ActionDecisionService {
     private static final double SCATTER_UPPER = 40.0;
     private static final double DRIFT_LOWER = 60.0;
     private static final double RUSH_THRESHOLD = 75.0;
-    private static final String ACTION_MODEL_VERSION = "HERD_v6";
-    private static final String ACTION_MODEL_NAME = "Progressive Action Layer";
+    private static final String ACTION_MODEL_VERSION = "HERD_v6.1";
+    private static final String ACTION_MODEL_NAME = "Validated Progressive Action Layer";
     private static final String BASE_MODEL_VERSION = "HERD_v4";
     private static final String ACTION_MODEL_STATUS = "MVP_VALIDATION";
 
@@ -38,13 +38,16 @@ public class ActionDecisionService {
             Integer qualityScore,
             List<HerdScore> history
     ) {
-        double herdScore = score.getHerdScore().doubleValue();
+        double rawHerdScore = score.getHerdScore().doubleValue();
         int dataQuality = qualityScore != null ? qualityScore : 50;
         TrendContext trend = calculateTrendContext(indicator);
         MomentumContext momentum = calculateMomentumContext(score, history);
+        ScoreContext stabilized = stabilizeScore(rawHerdScore, score.getScoreDate(), history);
+        double herdScore = stabilized.score();
         RegimeDecision regime = chooseRegime(herdScore, trend, momentum);
         LifecycleContext lifecycle = calculateLifecycleContext(score, history);
         RegimeDecision adjustedRegime = applyLifecycle(regime, lifecycle, herdScore);
+        adjustedRegime = applyConfidence(adjustedRegime, dataQuality, momentum);
         int actionScore = calculateActionScore(herdScore, dataQuality, trend.score(), momentum.score(), adjustedRegime);
         actionScore = clamp(actionScore + lifecycle.scoreAdjustment(), 0, 100);
 
@@ -52,6 +55,7 @@ public class ActionDecisionService {
         reasons.add("HERD " + displayStage(score.getHerdStage()) + " 구간");
         reasons.add("장기 추세 품질 " + trend.score() + "/100");
         reasons.add(momentum.reason());
+        reasons.add(stabilized.reason());
         reasons.add(lifecycle.reason());
         reasons.add("데이터 품질 " + dataQuality + "/100");
         reasons.add(adjustedRegime.reason());
@@ -81,6 +85,34 @@ public class ActionDecisionService {
                 .actionReasons(reasons)
                 .actionWarnings(warnings)
                 .build();
+    }
+
+    /** 경계 ±2pt에서는 직전 구간을 유지해 하루 단위 신호 뒤집힘을 줄인다. */
+    private ScoreContext stabilizeScore(double current, LocalDate latestDate, List<HerdScore> history) {
+        HerdScore previous = previousScore(history, latestDate);
+        if (previous == null || previous.getHerdScore() == null) {
+            return new ScoreContext(current, "단계 안정화 비교 이력 부족");
+        }
+        double before = previous.getHerdScore().doubleValue();
+        double[] boundaries = {FLEE_THRESHOLD, SCATTER_UPPER, DRIFT_LOWER, RUSH_THRESHOLD};
+        for (double boundary : boundaries) {
+            if (Math.abs(current - boundary) <= 2.0 && (current - boundary) * (before - boundary) < 0) {
+                double stable = before < boundary ? boundary - 0.01 : boundary + 0.01;
+                return new ScoreContext(stable, String.format("경계 안정화 적용 %.1f→%.1f", before, current));
+            }
+        }
+        return new ScoreContext(current, "단계 안정화 변동 없음");
+    }
+
+    /** 데이터와 변화 이력이 약할수록 행동 비율만 축소하고 시장 상태 자체는 보존한다. */
+    private RegimeDecision applyConfidence(RegimeDecision regime, int dataQuality, MomentumContext momentum) {
+        if (regime.ratio() == 0.0) return regime;
+        double qualityFactor = dataQuality >= 85 ? 1.0 : dataQuality >= 65 ? 0.85 : dataQuality >= 50 ? 0.65 : 0.40;
+        double historyFactor = momentum.observations() >= 20 ? 1.0 : momentum.observations() >= 5 ? 0.85 : 0.65;
+        double ratio = BigDecimal.valueOf(regime.ratio() * qualityFactor * historyFactor)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        return new RegimeDecision(regime.code(), regime.label(), regime.regimeLabel(), ratio,
+                regime.reason() + String.format(" 신뢰도 보정 %.0f%%를 적용합니다.", qualityFactor * historyFactor * 100));
     }
 
     private LifecycleContext calculateLifecycleContext(HerdScore latest, List<HerdScore> history) {
@@ -198,7 +230,7 @@ public class ActionDecisionService {
 
     private MomentumContext calculateMomentumContext(HerdScore latest, List<HerdScore> history) {
         if (history == null || history.size() < 2 || latest.getScoreDate() == null) {
-            return new MomentumContext(50, 0.0, 0.0, "HERD 변화 데이터 부족", List.of("HERD 변화율 데이터가 부족해 현재 점수 중심으로 해석합니다."));
+            return new MomentumContext(50, 0.0, 0.0, 0.0, 0, "HERD 변화 데이터 부족", List.of("HERD 변화율 데이터가 부족해 현재 점수 중심으로 해석합니다."));
         }
 
         HerdScore previous = null;
@@ -219,12 +251,17 @@ public class ActionDecisionService {
         }
 
         if (previous == null) {
-            return new MomentumContext(50, 0.0, 0.0, "HERD 변화 데이터 부족", List.of("직전 HERD 포인트가 없어 변화율을 보수적으로 봅니다."));
+            return new MomentumContext(50, 0.0, 0.0, 0.0, history.size(), "HERD 변화 데이터 부족", List.of("직전 HERD 포인트가 없어 변화율을 보수적으로 봅니다."));
         }
 
         HerdScore baseline = monthAgo != null ? monthAgo : previous;
         double shortDelta = latest.getHerdScore().doubleValue() - previous.getHerdScore().doubleValue();
         double monthDelta = latest.getHerdScore().doubleValue() - baseline.getHerdScore().doubleValue();
+        HerdScore fiveDay = scoreNearDays(history, latestDate, 5);
+        HerdScore twentyDay = scoreNearDays(history, latestDate, 20);
+        double fastDelta = fiveDay == null ? shortDelta : latest.getHerdScore().doubleValue() - fiveDay.getHerdScore().doubleValue();
+        double slowDelta = twentyDay == null ? monthDelta : latest.getHerdScore().doubleValue() - twentyDay.getHerdScore().doubleValue();
+        double acceleration = fastDelta - (slowDelta / 4.0);
 
         int momentumScore = 50;
         if (monthDelta >= 12) momentumScore = 85;
@@ -235,8 +272,23 @@ public class ActionDecisionService {
         String direction = monthDelta > 1
                 ? "상승"
                 : monthDelta < -1 ? "둔화" : "유지";
-        String reason = String.format("HERD 최근 변화 %.1fpt(%s)", monthDelta, direction);
-        return new MomentumContext(momentumScore, shortDelta, monthDelta, reason, List.of());
+        String reason = String.format("HERD 5일 %.1fpt · 20일 %.1fpt · 가속도 %.1f(%s)", fastDelta, slowDelta, acceleration, direction);
+        return new MomentumContext(momentumScore, shortDelta, monthDelta, acceleration, history.size(), reason, List.of());
+    }
+
+    private HerdScore previousScore(List<HerdScore> history, LocalDate latestDate) {
+        if (history == null) return null;
+        return history.stream().filter(row -> row.getScoreDate() != null && row.getHerdScore() != null
+                        && (latestDate == null || row.getScoreDate().isBefore(latestDate)))
+                .max((a, b) -> a.getScoreDate().compareTo(b.getScoreDate())).orElse(null);
+    }
+
+    private HerdScore scoreNearDays(List<HerdScore> history, LocalDate latestDate, int days) {
+        LocalDate target = latestDate.minusDays(days);
+        return history.stream()
+                .filter(row -> row.getScoreDate() != null && row.getHerdScore() != null && row.getScoreDate().isBefore(latestDate))
+                .min((a, b) -> Long.compare(Math.abs(ChronoUnit.DAYS.between(a.getScoreDate(), target)), Math.abs(ChronoUnit.DAYS.between(b.getScoreDate(), target))))
+                .orElse(null);
     }
 
     private TrendContext calculateTrendContext(HerdIndicator indicator) {
@@ -540,9 +592,14 @@ public class ActionDecisionService {
             int score,
             double shortDelta,
             double monthDelta,
+            double acceleration,
+            int observations,
             String reason,
             List<String> warnings
     ) {
+    }
+
+    private record ScoreContext(double score, String reason) {
     }
 
     private record LifecycleContext(

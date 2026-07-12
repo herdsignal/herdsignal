@@ -37,6 +37,7 @@ from config.settings import (  # noqa: E402
 )
 from herd.calculator import IndicatorValues, calc_herd_scores, get_stage  # noqa: E402
 from herd.saver import save_herd_for_date  # noqa: E402
+from herd.validation_universe import TICKERS as VALIDATION_TICKERS  # noqa: E402
 from indicators.ma200_weekly import calc_ma200_weekly  # noqa: E402
 from indicators.price_position import calc_52w_position, calc_ma200_deviation  # noqa: E402
 from indicators.rsi import calc_monthly_rsi, calc_weekly_rsi  # noqa: E402
@@ -279,6 +280,11 @@ def main() -> None:
         action="store_true",
         help="stocks 활성 종목까지 포함해 전체 백필. 오래 걸릴 수 있음",
     )
+    parser.add_argument(
+        "--validation-universe",
+        action="store_true",
+        help="v6.1 섹터 분산 55종목 유니버스 백필",
+    )
     parser.add_argument("--years", type=int, default=HERD_BACKFILL_YEARS)
     parser.add_argument("--freq", choices=sorted(SUPPORTED_FREQS), default=HERD_BACKFILL_FREQ)
     parser.add_argument("--source-period", default=HERD_BACKFILL_SOURCE_PERIOD)
@@ -287,7 +293,9 @@ def main() -> None:
     args = parser.parse_args()
 
     tickers = _normalize_tickers(args.tickers)
-    if args.all_stocks:
+    if args.validation_universe:
+        tickers = VALIDATION_TICKERS
+    elif args.all_stocks:
         tickers = _fetch_tracked_tickers(include_stocks=True)
     elif args.all_tracked or not tickers:
         tickers = _fetch_tracked_tickers(include_stocks=False)

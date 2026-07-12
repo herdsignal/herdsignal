@@ -193,7 +193,7 @@ export default function Watchlist() {
   const {
     spyData, spyHistory, spyHistoryPeriod, setSpyHistoryPeriod,
     spyHistoryLoading, spyTab, setSpyTab,
-    spyScore, spyStage, d1AvgPoint, m1AvgPoint, y1AvgPoint,
+    spyScore, spyStage, d1AvgPoint, m1AvgPoint, y1AvgPoint, spyMomentum,
   } = useDashboardMarketData()
 
   const [watchlist,      setWatchlist]      = useState([])
@@ -334,7 +334,14 @@ export default function Watchlist() {
           {spyTab === 'overview' && (
             <div className={styles.bannerOverview}>
               <div className={styles.bannerAnimBlock}>
-                <HerdDots score={spyScore} fill dotCount={84} />
+                <HerdDots
+                  score={spyScore}
+                  momentum={spyMomentum.delta ?? (spyScore - 50) / 3}
+                  actionRatio={spyData?.actionRatio ?? 0}
+                  enhanced
+                  fill
+                  dotCount={84}
+                />
                 <div className={styles.bannerAnimLabel}>
                   <span>← Flee · 군중 이탈</span>
                   <span>Rush · 군중 밀집 →</span>
