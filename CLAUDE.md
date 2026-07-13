@@ -370,7 +370,7 @@ HERD 판단 기록은 localStorage가 아니라 DB `signal_journal`과 backend `
 
 ## README와 현재 코드의 차이
 
-- README.md / README.ko.md는 2026-07-05 기준 현재 MVP 상태를 반영한다.
+- README.md는 현재 구현과 모델 검증 상태를 반영하는 한국어 단일 문서로 관리한다.
 - 공개 소개 문서에서는 운영 중인 HERD v4, Herd Flow, HERD_v6 Action Layer, Dashboard/Watchlist/Search/HERD Lab 중심 MVP만 전면에 둔다.
 - README에서 구현 완료로 보이면 안 되는 항목은 Claude API 기반 AI 리밸런싱, 멀티유저/인증, 증권사 연동, 배포다.
 - StockDetail은 가격 차트가 아니라 HERD Index 히스토리 차트를 보여준다.
