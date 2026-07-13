@@ -18,6 +18,7 @@ from collectors.stock_collector import collect
 from config.database import create_db_engine, get_session_factory
 from herd.backtest_action_layer import _action_decision, _stored_herd_series, _trend_frame
 from herd.action_accuracy import evaluate_action_accuracy
+from herd.parameter_stability import analyze_parameter_stability
 from herd.calculator import calc_herd_scores
 from herd.validation_universe import TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
 from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
@@ -223,6 +224,7 @@ def main() -> None:
         "execution": {"signal": "close", "fill": "next_open", **config.__dict__},
         "score_parity": score_parity_audit(tickers),
         "walk_forward_summary": summarize(fold_rows) if fold_rows else {},
+        "parameter_stability": analyze_parameter_stability(fold_rows),
         "point_in_time_sector": True,
         "eps_history": "excluded_until_filing-date-source-is-available",
         "blind_holdout": {"locked": True, "reused": blind_locked, "path": str(blind_path)},
