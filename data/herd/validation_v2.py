@@ -10,7 +10,7 @@ import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from statistics import median
-from typing import Callable
+from typing import Callable, Literal
 
 import pandas as pd
 
@@ -23,6 +23,24 @@ class ExecutionConfig:
     fee_rate: float = 0.001
     slippage_bps: float = 10.0
     cooldown_days: int = 20
+
+
+InvestorScenario = Literal["existing_holder", "new_entry", "monthly_dca", "target_rebalance"]
+
+
+@dataclass(frozen=True)
+class InvestorConfig:
+    """투자자 상황별 초기 노출과 정기 자금 흐름 설정."""
+
+    scenario: InvestorScenario = "existing_holder"
+    monthly_contribution: float = 500.0
+    target_stock_weight: float = 0.7
+
+    def __post_init__(self) -> None:
+        if self.monthly_contribution < 0:
+            raise ValueError("월 적립액은 0 이상이어야 합니다.")
+        if not 0 <= self.target_stock_weight <= 1:
+            raise ValueError("목표 주식 비중은 0과 1 사이여야 합니다.")
 
 
 @dataclass
@@ -45,16 +63,21 @@ class ValidationResult:
     portfolio_values: list[float]
     trades: list[Trade] = field(default_factory=list)
     initial_value: float = 10_000.0
+    performance_values: list[float] = field(default_factory=list)
+    contributions: float = 0.0
+    investor_scenario: InvestorScenario = "existing_holder"
 
     @property
     def return_pct(self) -> float:
-        return (self.portfolio_values[-1] / self.initial_value - 1) * 100 if self.portfolio_values else 0.0
+        values = self.performance_values or self.portfolio_values
+        return (values[-1] / self.initial_value - 1) * 100 if values else 0.0
 
     @property
     def mdd(self) -> float:
-        peak = self.portfolio_values[0] if self.portfolio_values else 0.0
+        values = self.performance_values or self.portfolio_values
+        peak = values[0] if values else 0.0
         worst = 0.0
-        for value in self.portfolio_values:
+        for value in values:
             peak = max(peak, value)
             if peak > 0:
                 worst = min(worst, (value - peak) / peak * 100)
@@ -100,6 +123,7 @@ def run_realistic_strategy(
     trend: pd.DataFrame,
     decide: DecisionFn,
     config: ExecutionConfig = ExecutionConfig(),
+    investor: InvestorConfig = InvestorConfig(),
 ) -> ValidationResult:
     """당일 종가 신호를 다음 거래일 시가에 비용 포함 체결한다."""
     frame = normalize_price_frame(prices)
@@ -107,10 +131,17 @@ def run_realistic_strategy(
     trend = trend.reindex(frame.index).ffill()
     cash = config.initial_cash
     first_open = float(frame.iloc[0]["Open"])
-    initial_fee = cash * config.fee_rate
-    shares = (cash - initial_fee) / (first_open * (1 + config.slippage_bps / 10_000))
-    cash = 0.0
+    shares = 0.0
+    initial_weight = 1.0 if investor.scenario in {"existing_holder", "monthly_dca"} else (
+        investor.target_stock_weight if investor.scenario == "target_rebalance" else 0.0
+    )
+    if initial_weight > 0:
+        spend = cash * initial_weight
+        initial_fee = spend * config.fee_rate
+        shares = (spend - initial_fee) / (first_open * (1 + config.slippage_bps / 10_000))
+        cash -= spend
     values: list[float] = []
+    performance_values: list[float] = []
     trades: list[Trade] = []
     pending: tuple[str, float, pd.Timestamp, float] | None = None
     previous_score: float | None = None
@@ -118,11 +149,45 @@ def run_realistic_strategy(
     action_days = 0
     last_buy = -config.cooldown_days - 1
     last_sell = -config.cooldown_days - 1
+    contributed = 0.0
+    performance_index = config.initial_cash
+    previous_value = config.initial_cash
+    previous_month: tuple[int, int] | None = None
+
+    def trade_to_weight(raw_open: float, target_weight: float) -> None:
+        nonlocal cash, shares
+        total = cash + shares * raw_open
+        target_stock = total * target_weight
+        current_stock = shares * raw_open
+        if current_stock < target_stock and cash > 0:
+            spend = min(cash, target_stock - current_stock)
+            fee = spend * config.fee_rate
+            execution = raw_open * (1 + config.slippage_bps / 10_000)
+            shares += max(0.0, spend - fee) / execution
+            cash -= spend
+        elif current_stock > target_stock and shares > 0:
+            quantity = min(shares, (current_stock - target_stock) / raw_open)
+            execution = raw_open * (1 - config.slippage_bps / 10_000)
+            gross = quantity * execution
+            shares -= quantity
+            cash += gross * (1 - config.fee_rate)
 
     for i, (date, row) in enumerate(frame.iterrows()):
+        raw_open = float(row["Open"])
+        month = (date.year, date.month)
+        external_flow = 0.0
+        if previous_month is not None and month != previous_month:
+            if investor.scenario == "monthly_dca" and investor.monthly_contribution > 0:
+                external_flow = investor.monthly_contribution
+                cash += external_flow
+                contributed += external_flow
+                trade_to_weight(raw_open, 1.0)
+            elif investor.scenario == "target_rebalance":
+                trade_to_weight(raw_open, investor.target_stock_weight)
+        previous_month = month
+
         if pending is not None:
             side, ratio, signal_date, reference = pending
-            raw_open = float(row["Open"])
             slip = config.slippage_bps / 10_000
             execution = raw_open * (1 + slip if side == "BUY" else 1 - slip)
             if side == "BUY" and cash > 1:
@@ -146,7 +211,13 @@ def run_realistic_strategy(
             pending = None
 
         close = float(row["Close"])
-        values.append(cash + shares * close)
+        value = cash + shares * close
+        base = previous_value + external_flow
+        if base > 0:
+            performance_index *= value / base
+        previous_value = value
+        values.append(value)
+        performance_values.append(performance_index)
         score = herd.get(date)
         if pd.isna(score) or i == len(frame) - 1:
             continue
@@ -162,7 +233,10 @@ def run_realistic_strategy(
             pending = (action, ratio, date, close)
             last_sell = i
 
-    return ValidationResult(ticker, str(frame.index[0].date()), str(frame.index[-1].date()), values, trades, config.initial_cash)
+    return ValidationResult(
+        ticker, str(frame.index[0].date()), str(frame.index[-1].date()), values, trades,
+        config.initial_cash, performance_values, contributed, investor.scenario,
+    )
 
 
 def build_folds(index: pd.DatetimeIndex, mode: str, train_years: int = 4, test_years: int = 1) -> list[dict]:

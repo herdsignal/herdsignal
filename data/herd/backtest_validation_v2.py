@@ -19,7 +19,7 @@ from config.database import create_db_engine, get_session_factory
 from herd.backtest_action_layer import _action_decision, _stored_herd_series, _trend_frame
 from herd.calculator import calc_herd_scores
 from herd.validation_universe import TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
-from herd.validation_v2 import ExecutionConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
+from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
 from init_db import HerdIndicator, HerdScore
 
 _SessionFactory = get_session_factory(create_db_engine())
@@ -62,14 +62,51 @@ def buyhold_return(frame: pd.DataFrame, config: ExecutionConfig) -> tuple[float,
     return (values[-1] / config.initial_cash - 1) * 100, mdd
 
 
-def run_period(ticker: str, frame: pd.DataFrame, herd: pd.Series, config: ExecutionConfig, ratio_scale: float = 1.0) -> dict:
+def evaluate_investor_scenarios(
+    ticker: str,
+    prices: pd.DataFrame,
+    herd: pd.Series,
+    trend: pd.DataFrame,
+    config: ExecutionConfig,
+    ratio_scale: float,
+) -> dict[str, dict]:
+    """동일 Action Layer를 투자자 상황별로 분리해 비교한다."""
+    scenarios = (
+        InvestorConfig("existing_holder"),
+        InvestorConfig("new_entry"),
+        InvestorConfig("monthly_dca"),
+        InvestorConfig("target_rebalance"),
+    )
+    results: dict[str, dict] = {}
+    for investor in scenarios:
+        result = run_realistic_strategy(
+            ticker, prices, herd, trend, make_v61_decision(ratio_scale), config, investor,
+        )
+        results[investor.scenario] = {
+            "return": result.return_pct,
+            "mdd": result.mdd,
+            "final_value": result.portfolio_values[-1],
+            "external_contributions": result.contributions,
+            "actions": len(result.trades),
+        }
+    return results
+
+
+def run_period(
+    ticker: str,
+    frame: pd.DataFrame,
+    herd: pd.Series,
+    config: ExecutionConfig,
+    ratio_scale: float = 1.0,
+    include_investor_scenarios: bool = False,
+) -> dict:
     prices = normalize_price_frame(frame)
     trend = _trend_frame(prices["Close"])
     fixed = run_realistic_strategy(ticker, prices, herd, trend, fixed_decision, config)
     v61 = run_realistic_strategy(ticker, prices, herd, trend, make_v61_decision(ratio_scale), config)
     bh_return, bh_mdd = buyhold_return(prices, config)
     capture = v61.return_pct / bh_return * 100 if bh_return else None
-    return {
+    row = {
         "ticker": ticker,
         "start": v61.start,
         "end": v61.end,
@@ -86,6 +123,11 @@ def run_period(ticker: str, frame: pd.DataFrame, herd: pd.Series, config: Execut
         "ratio_scale": ratio_scale,
         "cooldown_days": config.cooldown_days,
     }
+    if include_investor_scenarios:
+        row["investor_scenarios"] = evaluate_investor_scenarios(
+            ticker, prices, herd, trend, config, ratio_scale,
+        )
+    return row
 
 
 def select_on_train(ticker: str, frame: pd.DataFrame, herd: pd.Series, base_config: ExecutionConfig) -> tuple[float, int]:
@@ -149,7 +191,7 @@ def main() -> None:
             herd = apply_point_in_time_sector(herd, multiplier)
             valid = herd.notna()
             frame, herd = frame.loc[valid], herd.loc[valid]
-            rows.append(run_period(ticker, frame, herd, config))
+            rows.append(run_period(ticker, frame, herd, config, include_investor_scenarios=True))
             blind_start = frame.index.max() - pd.DateOffset(years=1)
             research_frame, research_herd = frame.loc[frame.index < blind_start], herd.loc[herd.index < blind_start]
             for mode in ("anchored", "rolling"):
@@ -181,6 +223,13 @@ def main() -> None:
         "eps_history": "excluded_until_filing-date-source-is-available",
         "blind_holdout": {"locked": True, "reused": blind_locked, "path": str(blind_path)},
         "survivorship_bias_warning": "현재 생존 대형주 중심 유니버스",
+        "investor_scenarios": {
+            "existing_holder": "초기 주식 100% 보유",
+            "new_entry": "초기 현금 100%, HERD BUY 신호부터 진입",
+            "monthly_dca": "초기 보유 후 월 500달러 정기 투자",
+            "target_rebalance": "월별 주식 70%·현금 30% 목표 비중 복원",
+            "performance_method": "외부 납입금 조정 일별 성과지수",
+        },
     }
     if not blind_locked:
         output_dir.mkdir(parents=True, exist_ok=True)

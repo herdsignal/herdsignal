@@ -2,10 +2,14 @@ import unittest
 
 import pandas as pd
 
-from herd.validation_v2 import ExecutionConfig, apply_point_in_time_sector, build_folds, point_in_time_sector_multiplier, run_realistic_strategy, summarize
+from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, point_in_time_sector_multiplier, run_realistic_strategy, summarize
 
 
 class ValidationV2Test(unittest.TestCase):
+    @staticmethod
+    def _hold(_score, _trend, _previous, _days):
+        return "HOLD", 0
+
     def test_executes_signal_on_next_open_with_costs(self):
         dates = pd.date_range("2020-01-01", periods=4, freq="B")
         prices = pd.DataFrame({"Open": [100, 110, 120, 130], "Close": [105, 115, 125, 135]}, index=dates)
@@ -47,6 +51,44 @@ class ValidationV2Test(unittest.TestCase):
         self.assertLess(multiplier.iloc[99], 1.0)
         adjusted = apply_point_in_time_sector(pd.Series(50.0, index=dates), multiplier)
         self.assertLess(adjusted.iloc[-1], 50.0)
+
+    def test_new_entry_stays_in_cash_without_buy_signal(self):
+        dates = pd.date_range("2020-01-01", periods=4, freq="B")
+        prices = pd.DataFrame({"Open": [100, 90, 80, 70], "Close": [100, 90, 80, 70]}, index=dates)
+        herd = pd.Series(50.0, index=dates)
+        trend = pd.DataFrame({"trend_quality": 50}, index=dates)
+        result = run_realistic_strategy(
+            "TEST", prices, herd, trend, self._hold, investor=InvestorConfig("new_entry"),
+        )
+        self.assertEqual(result.portfolio_values, [10_000.0] * 4)
+        self.assertEqual(result.mdd, 0.0)
+
+    def test_monthly_dca_adjusts_return_for_external_contributions(self):
+        dates = pd.to_datetime(["2020-01-31", "2020-02-03", "2020-03-02"])
+        prices = pd.DataFrame({"Open": [100, 100, 100], "Close": [100, 100, 100]}, index=dates)
+        herd = pd.Series(50.0, index=dates)
+        trend = pd.DataFrame({"trend_quality": 50}, index=dates)
+        result = run_realistic_strategy(
+            "TEST", prices, herd, trend, self._hold,
+            ExecutionConfig(fee_rate=0, slippage_bps=0),
+            InvestorConfig("monthly_dca", monthly_contribution=500),
+        )
+        self.assertEqual(result.contributions, 1_000.0)
+        self.assertEqual(result.portfolio_values[-1], 11_000.0)
+        self.assertAlmostEqual(result.return_pct, 0.0)
+
+    def test_target_rebalance_starts_at_configured_weight(self):
+        dates = pd.date_range("2020-01-01", periods=2, freq="B")
+        prices = pd.DataFrame({"Open": [100, 100], "Close": [100, 100]}, index=dates)
+        herd = pd.Series(50.0, index=dates)
+        trend = pd.DataFrame({"trend_quality": 50}, index=dates)
+        result = run_realistic_strategy(
+            "TEST", prices, herd, trend, self._hold,
+            ExecutionConfig(fee_rate=0, slippage_bps=0),
+            InvestorConfig("target_rebalance", target_stock_weight=0.7),
+        )
+        self.assertEqual(result.portfolio_values, [10_000.0, 10_000.0])
+        self.assertEqual(result.investor_scenario, "target_rebalance")
 
 
 if __name__ == "__main__":
