@@ -17,6 +17,7 @@ if str(_DATA_DIR) not in sys.path:
 from collectors.stock_collector import collect
 from config.database import create_db_engine, get_session_factory
 from herd.backtest_action_layer import _action_decision, _stored_herd_series, _trend_frame
+from herd.action_accuracy import evaluate_action_accuracy
 from herd.calculator import calc_herd_scores
 from herd.validation_universe import TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
 from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
@@ -126,6 +127,9 @@ def run_period(
     if include_investor_scenarios:
         row["investor_scenarios"] = evaluate_investor_scenarios(
             ticker, prices, herd, trend, config, ratio_scale,
+        )
+        row["action_accuracy"] = evaluate_action_accuracy(
+            prices, herd, trend, make_v61_decision(ratio_scale), config.cooldown_days,
         )
     return row
 
