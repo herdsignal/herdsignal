@@ -19,6 +19,7 @@ from config.database import create_db_engine, get_session_factory
 from herd.backtest_action_layer import _action_decision, _stored_herd_series, _trend_frame
 from herd.action_accuracy import evaluate_action_accuracy
 from herd.parameter_stability import analyze_parameter_stability
+from herd.overfitting_metrics import analyze_overfitting
 from herd.calculator import calc_herd_scores
 from herd.validation_universe import TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
 from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
@@ -135,17 +136,21 @@ def run_period(
     return row
 
 
-def select_on_train(ticker: str, frame: pd.DataFrame, herd: pd.Series, base_config: ExecutionConfig) -> tuple[float, int]:
+def select_on_train(ticker: str, frame: pd.DataFrame, herd: pd.Series, base_config: ExecutionConfig) -> tuple[float, int, list[dict]]:
     """제한된 후보 중 학습구간 위험조정 결과가 가장 안정적인 하나를 고른다."""
     candidates = ((scale, cooldown) for scale in (0.8, 1.0, 1.2) for cooldown in (15, 20, 30))
     best, best_score = (1.0, 20), float("-inf")
+    history: list[dict] = []
     for scale, cooldown in candidates:
         config = ExecutionConfig(base_config.initial_cash, base_config.fee_rate, base_config.slippage_bps, cooldown)
         result = run_period(ticker, frame, herd, config, scale)
         objective = result["v61_return"] + result["v61_mdd"] * 0.5
+        history.append({"candidate_id": f"scale={scale}|cooldown={cooldown}", "ratio_scale": scale,
+                        "cooldown_days": cooldown, "objective": objective,
+                        "return": result["v61_return"], "mdd": result["v61_mdd"]})
         if objective > best_score:
             best, best_score = (scale, cooldown), objective
-    return best
+    return best[0], best[1], history
 
 
 def score_parity_audit(tickers: list[str], tolerance: float = 0.02) -> dict:
@@ -179,7 +184,7 @@ def main() -> None:
     args = parser.parse_args()
     tickers = args.tickers or (TICKERS if args.full else ["SPY", "NVDA", "MSFT", "JPM", "AAPL"])
     config = ExecutionConfig(slippage_bps=args.slippage_bps)
-    rows, fold_rows, blind_rows = [], [], []
+    rows, fold_rows, blind_rows, experiment_history = [], [], [], []
     output_dir = Path(args.output)
     blind_path = output_dir / "blind_holdout.json"
     blind_locked = blind_path.exists() and not args.unlock_blind
@@ -204,12 +209,15 @@ def main() -> None:
                     train_mask = (research_frame.index.year >= fold["train_start"]) & (research_frame.index.year <= fold["train_end"])
                     test_mask = (research_frame.index.year >= fold["test_start"]) & (research_frame.index.year <= fold["test_end"])
                     if train_mask.sum() < 200 or test_mask.sum() < 50: continue
-                    scale, cooldown = select_on_train(ticker, research_frame.loc[train_mask], research_herd.loc[train_mask], config)
+                    scale, cooldown, candidates = select_on_train(ticker, research_frame.loc[train_mask], research_herd.loc[train_mask], config)
+                    evaluation_id = f"{ticker}|{mode}|{fold['test_start']}"
+                    experiment_history.extend({**candidate, "evaluation_id": evaluation_id, "ticker": ticker,
+                                               "mode": mode, "test_start": fold["test_start"]} for candidate in candidates)
                     fold_config = ExecutionConfig(config.initial_cash, config.fee_rate, config.slippage_bps, cooldown)
                     result = run_period(ticker, research_frame.loc[test_mask], research_herd.loc[test_mask], fold_config, scale)
                     fold_rows.append({**fold, "selection_scope": "train_only", **result})
             if not blind_locked:
-                scale, cooldown = select_on_train(ticker, research_frame, research_herd, config)
+                scale, cooldown, _candidates = select_on_train(ticker, research_frame, research_herd, config)
                 blind_mask = frame.index >= blind_start
                 blind_config = ExecutionConfig(config.initial_cash, config.fee_rate, config.slippage_bps, cooldown)
                 blind_rows.append(run_period(ticker, frame.loc[blind_mask], herd.loc[blind_mask], blind_config, scale))
@@ -225,6 +233,7 @@ def main() -> None:
         "score_parity": score_parity_audit(tickers),
         "walk_forward_summary": summarize(fold_rows) if fold_rows else {},
         "parameter_stability": analyze_parameter_stability(fold_rows),
+        "overfitting": analyze_overfitting(experiment_history, fold_rows),
         "point_in_time_sector": True,
         "eps_history": "excluded_until_filing-date-source-is-available",
         "blind_holdout": {"locked": True, "reused": blind_locked, "path": str(blind_path)},
