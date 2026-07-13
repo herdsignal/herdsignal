@@ -135,6 +135,8 @@ def _trend_frame(close: pd.Series) -> pd.DataFrame:
         "position_52w": position_52w,
         "trend_quality": trend_quality.clip(0, 100),
         "return_63d": close.pct_change(63) * 100,
+        "return_21d": close.pct_change(21) * 100,
+        "drawdown_52w": (close / high_52w - 1) * 100,
     })
 
 

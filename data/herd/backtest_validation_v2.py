@@ -21,6 +21,7 @@ from herd.action_accuracy import evaluate_action_accuracy
 from herd.parameter_stability import analyze_parameter_stability
 from herd.overfitting_metrics import analyze_overfitting
 from herd.point_in_time_universe import audit_survivorship_coverage, load_universe_history
+from herd.healthy_rush import healthy_rush_decision
 from herd.calculator import calc_herd_scores
 from herd.validation_universe import TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
 from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
@@ -44,6 +45,13 @@ def make_v61_decision(ratio_scale: float = 1.0):
             factor = 0.65 if days <= 5 else 1.0 if days <= 20 else 0.82 if days <= 45 else 0.55
             ratio = round(min(0.5, ratio * factor * ratio_scale), 2)
         return action, ratio
+    return decide
+
+
+def make_healthy_rush_candidate(ratio_scale: float = 1.0):
+    baseline = make_v61_decision(ratio_scale)
+    def decide(score: float, trend: pd.Series, previous: float | None, action_days: int) -> tuple[str, float]:
+        return healthy_rush_decision(score, trend, lambda: baseline(score, trend, previous, action_days))
     return decide
 
 
@@ -108,6 +116,7 @@ def run_period(
     trend = _trend_frame(prices["Close"])
     fixed = run_realistic_strategy(ticker, prices, herd, trend, fixed_decision, config)
     v61 = run_realistic_strategy(ticker, prices, herd, trend, make_v61_decision(ratio_scale), config)
+    rush_candidate = run_realistic_strategy(ticker, prices, herd, trend, make_healthy_rush_candidate(ratio_scale), config)
     bh_return, bh_mdd = buyhold_return(prices, config)
     capture = v61.return_pct / bh_return * 100 if bh_return else None
     row = {
@@ -124,6 +133,11 @@ def run_period(
         "v61_mdd_improvement": v61.mdd - bh_mdd,
         "v61_actions": len(v61.trades),
         "v61_total_cost": v61.total_cost,
+        "healthy_rush_return": rush_candidate.return_pct,
+        "healthy_rush_mdd": rush_candidate.mdd,
+        "healthy_rush_return_delta": rush_candidate.return_pct - v61.return_pct,
+        "healthy_rush_mdd_delta": rush_candidate.mdd - v61.mdd,
+        "healthy_rush_actions": len(rush_candidate.trades),
         "ratio_scale": ratio_scale,
         "cooldown_days": config.cooldown_days,
     }
