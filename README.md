@@ -258,12 +258,6 @@ npm run build
 
 ---
 
-## 로드맵
-
-제품 방향과 우선순위는 [ROADMAP.md](./ROADMAP.md)에 정리되어 있습니다.
-
----
-
 ## 라이선스
 
 MIT

@@ -375,7 +375,6 @@ HERD 판단 기록은 localStorage가 아니라 DB `signal_journal`과 backend `
 - README에서 구현 완료로 보이면 안 되는 항목은 Claude API 기반 AI 리밸런싱, 멀티유저/인증, 증권사 연동, 배포다.
 - StockDetail은 가격 차트가 아니라 HERD Index 히스토리 차트를 보여준다.
 - 뉴스/애널리스트/내부자 거래/가격 히스토리 API는 현재 backend 공개 API에서 제거했다. 필요하면 별도 기능으로 재도입한다.
-- README의 로드맵은 ROADMAP.md와 역할이 겹치지 않게 간결화한다.
 
 ---
 
