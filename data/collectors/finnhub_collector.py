@@ -11,11 +11,12 @@ collectors/finnhub_collector.py — Finnhub API 데이터 수집
 
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 import sys
 
 import requests
+import pandas as pd
 
 _DATA_DIR = Path(__file__).resolve().parent.parent
 if str(_DATA_DIR) not in sys.path:
@@ -31,10 +32,6 @@ logger = logging.getLogger(__name__)
 _BASE_URL      = "https://finnhub.io/api/v1"
 _REQUEST_DELAY = 0.5   # 호출 간 최소 대기 (초) — 분당 60회 제한 준수
 _TIMEOUT       = 10    # HTTP 요청 타임아웃 (초)
-
-# 실적 발표는 분기 마감 후 평균 45일 내 공표 → look-ahead bias 방지 기준일
-_EARNINGS_REPORT_LAG_DAYS = 45
-
 
 # ──────────────────────────────────────────────
 # 내부 헬퍼 — HTTP 요청
@@ -268,10 +265,9 @@ def get_earnings_history(ticker: str) -> list[dict]:
     백테스트에서 look-ahead bias를 방지하기 위해
     각 분기의 "데이터 사용 가능 날짜"를 함께 제공한다.
 
-    Look-ahead bias 방지 로직:
-    - Finnhub API는 실적 발표일(report date)을 직접 제공하지 않음
-    - 분기 마감일(period) + 45일을 보수적 발표 추정일로 사용
-    - 백테스트에서 이 날짜 이후 데이터만 해당 분기 서프라이즈 참조 가능
+    Finnhub 응답에는 실제 발표일이 없으므로 분기 마감일을 발표일로 추정하지 않는다.
+    이 반환값은 최신 운영 승수에는 사용할 수 있지만 과거 백테스트에서는
+    announcement_date와 신뢰 가능한 date_source가 보강되기 전까지 제외한다.
 
     Args:
         ticker: 종목 티커
@@ -284,7 +280,8 @@ def get_earnings_history(ticker: str) -> list[dict]:
                 "actual":       1.64,             # EPS 실제값
                 "estimate":     1.60,             # EPS 예상값
                 "surprise_pct": 2.5,              # 서프라이즈 % (None 가능)
-                "available_after": datetime(...), # 이 날짜 이후부터 사용 가능
+                "announcement_date": None,
+                "date_source": "finnhub_period_only",
             },
             ...
         ]
@@ -307,22 +304,14 @@ def get_earnings_history(ticker: str) -> list[dict]:
         else:
             surprise_pct = None
 
-        # 데이터 사용 가능 날짜 = 분기 마감 + 45일
-        if period:
-            try:
-                period_dt     = datetime.strptime(period, "%Y-%m-%d")
-                available_after = period_dt + timedelta(days=_EARNINGS_REPORT_LAG_DAYS)
-            except ValueError:
-                available_after = None
-        else:
-            available_after = None
-
         records.append({
             "period":          period,
             "actual":          actual,
             "estimate":        estimate,
             "surprise_pct":    surprise_pct,
-            "available_after": available_after,
+            "announcement_date": None,
+            "date_source":     "finnhub_period_only",
+            "available_after": None,
         })
 
     logger.info(f"[{ticker}] 실적 히스토리 {len(records)}개 수집 완료")
@@ -338,7 +327,7 @@ def get_surprise_at_date(
 ) -> float | None:
     """
     특정 날짜 기준으로 사용 가능한 가장 최근 EPS 서프라이즈를 반환한다.
-    look-ahead bias 방지: available_after <= target_date 인 첫 번째 항목만 사용.
+    look-ahead bias 방지: 실제 announcement_date가 검증된 항목만 사용.
 
     Args:
         earnings_history: get_earnings_history() 반환값 (최신 → 과거 순)
@@ -348,9 +337,10 @@ def get_surprise_at_date(
         사용 가능한 가장 최근 서프라이즈 % (없으면 None)
     """
     for record in earnings_history:
-        available = record.get("available_after")
+        available = record.get("announcement_date")
         if available is None:
             continue
+        available = pd.Timestamp(available).to_pydatetime() if not isinstance(available, datetime) else available
         # available_after가 target_date 이전이면 이 데이터를 사용할 수 있음
         if available <= target_date:
             return record["surprise_pct"]
