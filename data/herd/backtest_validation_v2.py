@@ -20,6 +20,7 @@ from herd.backtest_action_layer import _action_decision, _stored_herd_series, _t
 from herd.action_accuracy import evaluate_action_accuracy
 from herd.parameter_stability import analyze_parameter_stability
 from herd.overfitting_metrics import analyze_overfitting
+from herd.point_in_time_universe import audit_survivorship_coverage, load_universe_history
 from herd.calculator import calc_herd_scores
 from herd.validation_universe import TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
 from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
@@ -237,7 +238,9 @@ def main() -> None:
         "point_in_time_sector": True,
         "eps_history": "excluded_until_filing-date-source-is-available",
         "blind_holdout": {"locked": True, "reused": blind_locked, "path": str(blind_path)},
-        "survivorship_bias_warning": "현재 생존 대형주 중심 유니버스",
+        "survivorship_coverage": audit_survivorship_coverage(
+            load_universe_history(_DATA_DIR / "herd" / "universe_history.csv"), tickers,
+        ),
         "investor_scenarios": {
             "existing_holder": "초기 주식 100% 보유",
             "new_entry": "초기 현금 100%, HERD BUY 신호부터 진입",
