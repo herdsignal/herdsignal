@@ -77,6 +77,21 @@ class ValidationV2Test(unittest.TestCase):
         self.assertEqual(result.portfolio_values[-1], 11_000.0)
         self.assertAlmostEqual(result.return_pct, 0.0)
 
+    def test_monthly_dca_does_not_reinvest_existing_cash(self):
+        dates = pd.to_datetime(["2020-01-31", "2020-02-03", "2020-02-04"])
+        prices = pd.DataFrame({"Open": [100, 100, 50], "Close": [100, 100, 50]}, index=dates)
+        herd = pd.Series([80.0, 80.0, 80.0], index=dates)
+        trend = pd.DataFrame({"trend_quality": 50}, index=dates)
+        def sell(_score, _trend, _previous, _days): return "SELL", 0.5
+        result = run_realistic_strategy(
+            "TEST", prices, herd, trend, sell,
+            ExecutionConfig(fee_rate=0, slippage_bps=0, cooldown_days=20),
+            InvestorConfig("monthly_dca", monthly_contribution=500),
+        )
+        self.assertEqual(result.contributions, 500)
+        self.assertEqual(result.portfolio_values[-1], 7_750)
+        self.assertEqual(len(result.trades), 1)
+
     def test_target_rebalance_starts_at_configured_weight(self):
         dates = pd.date_range("2020-01-01", periods=2, freq="B")
         prices = pd.DataFrame({"Open": [100, 100], "Close": [100, 100]}, index=dates)

@@ -32,6 +32,9 @@ logger = logging.getLogger(__name__)
 _BASE_URL      = "https://finnhub.io/api/v1"
 _REQUEST_DELAY = 0.5   # 호출 간 최소 대기 (초) — 분당 60회 제한 준수
 _TIMEOUT       = 10    # HTTP 요청 타임아웃 (초)
+_TRUSTED_EARNINGS_DATE_SOURCES = {
+    "sec_filing", "company_ir", "exchange_release", "licensed_earnings_feed",
+}
 
 # ──────────────────────────────────────────────
 # 내부 헬퍼 — HTTP 요청
@@ -337,6 +340,8 @@ def get_surprise_at_date(
         사용 가능한 가장 최근 서프라이즈 % (없으면 None)
     """
     for record in earnings_history:
+        if record.get("date_source") not in _TRUSTED_EARNINGS_DATE_SOURCES:
+            continue
         available = record.get("announcement_date")
         if available is None:
             continue

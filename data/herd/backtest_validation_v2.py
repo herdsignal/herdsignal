@@ -121,14 +121,13 @@ def run_period(
     ratio_scale: float = 1.0,
     include_investor_scenarios: bool = False,
     sector_ratio_factor: pd.Series | None = None,
+    include_research_candidates: bool = False,
 ) -> dict:
     prices = normalize_price_frame(frame)
     trend = _trend_frame(prices["Close"])
     trend["sector_ratio_factor"] = 1.0 if sector_ratio_factor is None else sector_ratio_factor.reindex(trend.index).ffill().fillna(1.0)
     fixed = run_realistic_strategy(ticker, prices, herd, trend, fixed_decision, config)
     v61 = run_realistic_strategy(ticker, prices, herd, trend, make_v61_decision(ratio_scale), config)
-    rush_candidate = run_realistic_strategy(ticker, prices, herd, trend, make_healthy_rush_candidate(ratio_scale), config)
-    sector_candidate = run_realistic_strategy(ticker, prices, herd, trend, make_sector_candidate(ratio_scale), config)
     bh_return, bh_mdd = buyhold_return(prices, config)
     capture = v61.return_pct / bh_return * 100 if bh_return else None
     row = {
@@ -145,18 +144,27 @@ def run_period(
         "v61_mdd_improvement": v61.mdd - bh_mdd,
         "v61_actions": len(v61.trades),
         "v61_total_cost": v61.total_cost,
-        "healthy_rush_return": rush_candidate.return_pct,
-        "healthy_rush_mdd": rush_candidate.mdd,
-        "healthy_rush_return_delta": rush_candidate.return_pct - v61.return_pct,
-        "healthy_rush_mdd_delta": rush_candidate.mdd - v61.mdd,
-        "healthy_rush_actions": len(rush_candidate.trades),
-        "sector_candidate_return": sector_candidate.return_pct,
-        "sector_candidate_mdd": sector_candidate.mdd,
-        "sector_candidate_return_delta": sector_candidate.return_pct - v61.return_pct,
-        "sector_candidate_mdd_delta": sector_candidate.mdd - v61.mdd,
         "ratio_scale": ratio_scale,
         "cooldown_days": config.cooldown_days,
     }
+    if include_research_candidates:
+        rush_candidate = run_realistic_strategy(
+            ticker, prices, herd, trend, make_healthy_rush_candidate(ratio_scale), config,
+        )
+        sector_candidate = run_realistic_strategy(
+            ticker, prices, herd, trend, make_sector_candidate(ratio_scale), config,
+        )
+        row.update({
+            "healthy_rush_return": rush_candidate.return_pct,
+            "healthy_rush_mdd": rush_candidate.mdd,
+            "healthy_rush_return_delta": rush_candidate.return_pct - v61.return_pct,
+            "healthy_rush_mdd_delta": rush_candidate.mdd - v61.mdd,
+            "healthy_rush_actions": len(rush_candidate.trades),
+            "sector_candidate_return": sector_candidate.return_pct,
+            "sector_candidate_mdd": sector_candidate.mdd,
+            "sector_candidate_return_delta": sector_candidate.return_pct - v61.return_pct,
+            "sector_candidate_mdd_delta": sector_candidate.mdd - v61.mdd,
+        })
     if include_investor_scenarios:
         row["investor_scenarios"] = evaluate_investor_scenarios(
             ticker, prices, herd, trend, config, ratio_scale,
@@ -238,7 +246,7 @@ def main() -> None:
             valid = herd.notna()
             frame, herd = frame.loc[valid], herd.loc[valid]
             rows.append(run_period(ticker, frame, herd, config, include_investor_scenarios=True,
-                                   sector_ratio_factor=sector_ratio_factor))
+                                   sector_ratio_factor=sector_ratio_factor, include_research_candidates=True))
             blind_start = frame.index.max() - pd.DateOffset(years=1)
             research_frame, research_herd = frame.loc[frame.index < blind_start], herd.loc[herd.index < blind_start]
             for mode in ("anchored", "rolling"):
@@ -252,7 +260,8 @@ def main() -> None:
                                                "mode": mode, "test_start": fold["test_start"]} for candidate in candidates)
                     fold_config = ExecutionConfig(config.initial_cash, config.fee_rate, config.slippage_bps, cooldown)
                     result = run_period(ticker, research_frame.loc[test_mask], research_herd.loc[test_mask], fold_config, scale,
-                                        sector_ratio_factor=sector_ratio_factor.loc[research_frame.index[test_mask]])
+                                        sector_ratio_factor=sector_ratio_factor.loc[research_frame.index[test_mask]],
+                                        include_research_candidates=True)
                     fold_rows.append({**fold, "selection_scope": "train_only", **result})
             if not blind_locked:
                 scale, cooldown, _candidates = select_on_train(ticker, research_frame, research_herd, config)

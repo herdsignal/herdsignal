@@ -176,20 +176,11 @@ def run_realistic_strategy(
         raw_open = float(row["Open"])
         month = (date.year, date.month)
         external_flow = 0.0
-        if previous_month is not None and month != previous_month:
-            if investor.scenario == "monthly_dca" and investor.monthly_contribution > 0:
-                external_flow = investor.monthly_contribution
-                cash += external_flow
-                contributed += external_flow
-                trade_to_weight(raw_open, 1.0)
-            elif investor.scenario == "target_rebalance":
-                trade_to_weight(raw_open, investor.target_stock_weight)
-        previous_month = month
-
         if pending is not None:
             side, ratio, signal_date, reference = pending
             slip = config.slippage_bps / 10_000
             execution = raw_open * (1 + slip if side == "BUY" else 1 - slip)
+            executed = False
             if side == "BUY" and cash > 1:
                 spend = cash * ratio
                 fee = spend * config.fee_rate
@@ -197,6 +188,7 @@ def run_realistic_strategy(
                 shares += quantity
                 cash -= spend
                 slippage_cost = quantity * abs(execution - raw_open)
+                executed = quantity > 0
             elif side == "SELL" and shares > 0:
                 quantity = shares * ratio
                 gross = quantity * execution
@@ -204,11 +196,26 @@ def run_realistic_strategy(
                 shares -= quantity
                 cash += gross - fee
                 slippage_cost = quantity * abs(execution - raw_open)
+                executed = quantity > 0
             else:
                 fee = slippage_cost = 0.0
-            if fee > 0:
+            if executed:
                 trades.append(Trade(str(signal_date.date()), str(date.date()), side, ratio, reference, execution, fee, slippage_cost))
             pending = None
+
+        if previous_month is not None and month != previous_month:
+            if investor.scenario == "monthly_dca" and investor.monthly_contribution > 0:
+                external_flow = investor.monthly_contribution
+                cash += external_flow
+                contributed += external_flow
+                spend = min(cash, external_flow)
+                fee = spend * config.fee_rate
+                execution = raw_open * (1 + config.slippage_bps / 10_000)
+                shares += max(0.0, spend - fee) / execution
+                cash -= spend
+            elif investor.scenario == "target_rebalance":
+                trade_to_weight(raw_open, investor.target_stock_weight)
+        previous_month = month
 
         close = float(row["Close"])
         value = cash + shares * close

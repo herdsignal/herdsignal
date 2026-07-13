@@ -3,6 +3,7 @@ import unittest
 import pandas as pd
 
 from herd.earnings_point_in_time import build_eps_multiplier_series, validate_earnings_record
+from collectors.finnhub_collector import get_surprise_at_date
 
 
 class EarningsPointInTimeTest(unittest.TestCase):
@@ -28,6 +29,11 @@ class EarningsPointInTimeTest(unittest.TestCase):
         series, audit = build_eps_multiplier_series([record], pd.to_datetime(["2024-05-01"]))
         self.assertEqual(series.iloc[0], 1.0)
         self.assertEqual(audit["status"], "EXCLUDED_NO_TRUSTED_ANNOUNCEMENT_DATES")
+
+    def test_date_lookup_rejects_untrusted_source(self):
+        record = {"announcement_date": "2024-04-20", "actual": 2, "estimate": 1,
+                  "surprise_pct": 100, "date_source": "estimated_lag"}
+        self.assertIsNone(get_surprise_at_date([record], pd.Timestamp("2024-05-01").to_pydatetime()))
 
 
 if __name__ == "__main__": unittest.main()
