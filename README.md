@@ -1,263 +1,201 @@
 # HerdSignal
 
-> 미국주식 장기투자자를 위한 데이터 기반 타이밍 도구
+> 미국 주식 장기투자자를 위한 데이터 기반 타이밍 도구
 
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?logo=springboot&logoColor=white)
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
-![MariaDB](https://img.shields.io/badge/MariaDB-10.x-003545?logo=mariadb&logoColor=white)
+HerdSignal은 보유하거나 관심 있는 종목의 시장 과열도를 0~100점으로 보여주고,
+장기투자자가 **추가매수·보유·일부 익절** 중 어떤 행동을 검토할지 정리해 주는 서비스입니다.
 
----
+주가를 예측하거나 정답을 알려주는 서비스가 아니라, 여러 지표를 한 화면에 모아
+감정적인 매매를 줄이고 판단 근거를 기록하는 것을 목표로 만들었습니다.
 
-## 만든 이유
+> 현재 개인 프로젝트이자 연구용 서비스입니다. 화면의 행동 정보는 투자 권유가 아닙니다.
 
-HerdSignal은 장기투자자가 보유 종목의 매수, 보유, 일부 익절 타이밍을 감이 아니라 데이터로 판단하도록 돕는 프로젝트입니다.
+## 주요 기능
 
-개별 종목의 HERD Index와 포트폴리오 맥락을 함께 보여주고, 점수를 실제 행동 문장으로 번역합니다.
-단순 포트폴리오 트래커보다 “지금 더 살지, 유지할지, 일부 줄일지”를 정리하는 판단 도구를 지향합니다.
+- **Dashboard**: 포트폴리오 현황, SPY Herd Flow, 행동 대기열과 리스크 확인
+- **Watchlist**: 관심 종목의 추가매수·익절 우선순위 비교
+- **Stock Detail**: HERD 점수, 행동 근거, 신뢰도, 과거 흐름과 재무정보 확인
+- **Search**: 티커와 회사명 검색, 포트폴리오·관심 종목 추가
+- **Journal**: 매수·보유·익절 판단과 당시 근거 기록
+- **HERD Lab**: 모델 상태와 백테스트 결과, 검증 한계 공개
 
----
+## HERD Index
 
-## HERD Index란?
+HERD Index는 RSI, 장기 이동평균, 연중 가격 위치 등을 종목의 과거 흐름과 비교해
+군중의 이탈과 밀집 정도를 0~100점으로 표현합니다.
 
-HERD Index는 개별 주식의 군중심리를 **0-100 점수**로 나타내는 지표입니다. 절대값이 아니라 해당 종목의 과거 흐름 대비 백분위수로 정규화하기 때문에, 성장주와 방어주를 같은 공식으로 비교할 수 있습니다.
-
-운영 계산은 기본 5년 가격 데이터를 사용합니다. v3 기본 점수에 EPS 서프라이즈와 섹터 상대 강도 보정 승수를 적용해 최종 v4 점수를 저장합니다.
-
-### 5단계
-
-| 점수 | 단계 | 의미 | 행동 |
+| 점수 | 단계 | 해석 | 검토 행동 |
 | --- | --- | --- | --- |
-| 0-15 | Flee | 군중 이탈 | 적극 매수 검토 |
-| 15-40 | Scatter | 군중 흩어짐 | 분할 매수 검토 |
-| 40-60 | Calm | 군중 균형 | 보유 유지 |
-| 60-75 | Drift | 군중 쏠림 | 일부 익절 고려 |
-| 75-100 | Rush | 군중 밀집 | 적극 익절 고려 |
+| 0~15 | Flee | 군중 이탈 | 적극적인 추가매수 검토 |
+| 15~40 | Scatter | 군중 흩어짐 | 분할매수 검토 |
+| 40~60 | Calm | 균형 구간 | 현재 비중 유지 |
+| 60~75 | Drift | 군중 쏠림 | 일부 익절 검토 |
+| 75~100 | Rush | 군중 밀집 | 적극적인 익절 검토 |
 
-`Herd Flow` 애니메이션은 이 단계를 점의 분포로 표현합니다. Flee는 전 영역에 듬성듬성 흩어지고, Rush는 좁은 영역에 촘촘하게 밀집합니다.
+`Herd Flow`는 이 다섯 단계를 점의 움직임으로 시각화합니다. Flee에서는 점들이 넓게
+흩어지고 Rush로 갈수록 한곳에 밀집되어, 점수의 의미를 숫자보다 직관적으로 확인할 수 있습니다.
 
----
+## 모델 상태
 
-## 핵심 기능
+HerdSignal은 상태 점수와 행동 모델을 구분합니다.
 
-- **Dashboard**: S&P 500 Herd Flow 배너, HERD 강도 변화, 현금 포함 포트폴리오 평가 요약, 입출금 착시를 줄인 자산 히스토리, 핵심 리밸런싱 체크, 리스크/알림 조건, 보유 종목 HERD 행동 카드
-- **Watchlist**: 장기 추가매수/익절 우선순위와 신호 준비도 기반 매수 대기열
-- **Search**: 티커/회사명 검색, HERD 미리보기, 최근 검색, 포트폴리오/관심종목 추가
-- **StockDetail**: 운영 HERD v4 상태 점수, 연구 검증 중인 HERD v6.1 Action Layer, OOS 검증 상태, 신호 신뢰도 보드, 신호 이후 실제 성과, HERD Index 히스토리, Fundamental Guard, 지표 분해
-- **Journal**: 매수/보류/익절 판단을 가격, 수량, 금액, 수익률, HERD 점수, 신호 지속일, 메모와 함께 DB에 저장하는 판단 기록장
-- **HERD Lab**: 모델 버전, 백테스트 요약, 신뢰 체크, Action Matrix, HERD 방법론 검증 데이터
-- **Responsive UI**: 데스크톱 사이드바와 모바일 하단 탭을 함께 지원하는 반응형 화면
+- **HERD v4**: 현재 서비스에서 사용하는 종목 상태 점수
+- **HERD v6.1 Action Layer**: 점수를 행동 비율로 바꾸는 연구 모델
+- **현재 상태**: `RESEARCH_VALIDATION`
 
----
+v6.1은 55종목과 Walk-forward OOS 검증을 진행했지만 아직 운영 채택 기준에는 미달했습니다.
+따라서 화면에서도 확정 매매 추천이 아닌 참고용 행동 정보로 표시합니다.
+
+검증 과정에서는 다음 항목을 함께 확인합니다.
+
+- 기존 보유자, 신규 진입자, 정기 적립식, 목표 비중형 시나리오
+- BUY·SELL 이후 1·3·6개월 성과와 시장 국면별 적중률
+- 파라미터 선택 안정성, CSCV/PBO, Deflated Sharpe Ratio
+- 거래 수수료, 슬리피지, 다음 거래일 시가 체결
+- Healthy Rush와 에너지·소재 비율 보정 연구 후보
+
+상세 결과는 `data/reports/validation_v2/`에 저장됩니다.
 
 ## 기술 스택
 
-| 계층 | 기술 | 역할 |
-| --- | --- | --- |
-| data | Python 3.12, yfinance, pandas-ta, APScheduler, Finnhub | 수집, 계산, 저장 |
-| backend | Spring Boot 3.x, JPA, MariaDB, Gradle | DB 조회, REST API, Python on-demand 실행 |
-| frontend | React 18, Vite 6, Recharts, Axios | 반응형 대시보드 UI |
-| database | MariaDB | HERD, 포트폴리오, 관심종목, 자산 히스토리 저장 |
+| 영역 | 기술 |
+| --- | --- |
+| Frontend | React 18, Vite 6, Recharts, Axios |
+| Backend | Java 17, Spring Boot 3, Spring Data JPA, Gradle |
+| Data | Python 3.12, pandas, yfinance, Finnhub, APScheduler |
+| Database | MariaDB |
 
----
-
-## 아키텍처
+## 구조
 
 ```text
 yfinance / Finnhub
-        |
-        v
-Python data engine
-        |
-        v
+        │
+        ▼
+Python Data Engine ── 수집·지표 계산·스케줄링
+        │
+        ▼
 MariaDB
-        |
-        v
-Spring Boot REST API
-        |
-        v
-React frontend
+        │
+        ▼
+Spring Boot API
+        │
+        ▼
+React Web App
 ```
 
-Python은 계산과 저장을 담당하고, Spring Boot는 DB 데이터를 API로 서빙합니다. React는 API를 호출해 화면만 구성합니다.
+- Python은 주가 수집, HERD 계산과 정기 작업을 담당합니다.
+- Spring Boot는 저장된 데이터와 포트폴리오 기능을 REST API로 제공합니다.
+- React는 Dashboard, Watchlist와 종목 상세 화면을 구성합니다.
 
----
+## 로컬 실행
 
-## 주요 API
-
-- `GET /api/stocks/{ticker}/herd`
-- `POST /api/stocks/{ticker}/herd/refresh`
-- `GET /api/stocks/search?q=apple`
-- `GET /api/stocks/{ticker}/financials`
-- `GET /api/stocks/{ticker}/herd/history?period=1m|3m|1y|3y`
-- `GET /api/stocks/{ticker}/herd/reliability?years=3`
-- `GET /api/portfolio`
-- `GET /api/portfolio/herd`
-- `POST /api/portfolio/herd/refresh`
-- `GET /api/portfolio/summary`
-- `GET /api/portfolio/history?period=month|year|all`
-- `GET /api/portfolio/cash`
-- `PUT /api/portfolio/cash`
-- `GET /api/portfolio/realtime`
-- `GET /api/journal`
-- `POST /api/journal`
-- `GET /api/watchlist`
-- `GET /api/watchlist/herd`
-
-현재 MVP backend API는 HERD, 검색, 재무정보, 포트폴리오, 관심종목 중심으로만 노출합니다.
-
-종목 HERD 응답은 운영 점수 모델과 연구 행동 모델을 분리합니다.
-
-- `operationalModelVersion`: 현재 운영 상태 점수인 `HERD_v4`
-- `actionModelVersion`: 행동 연구 모델인 `HERD_v6.1`
-- `actionModelStatus`: 채택 기준 통과 전까지 `RESEARCH_VALIDATION`
-- `actionDisclaimer`: 확정 매매 추천이 아니라는 안내
-- `oosValidationSummary`: 공개 Walk-forward OOS 결과 요약
-
----
-
-## HERD 알고리즘
-
-기본 점수는 아래 지표들의 백분위수 정규화 가중합입니다.
-
-| 지표 | 가중치 | 설명 |
-| --- | ---: | --- |
-| 월봉 RSI | 24% | 장기 모멘텀 |
-| 200주 MA 위치 | 20% | 장기 추세 위치 |
-| 주봉 RSI | 19% | 중기 모멘텀 |
-| 52주 위치 | 19% | 연간 가격 범위 내 위치 |
-| MA200 이격도 | 18% | 200일 추세 대비 거리 |
-| 거래량 강도 | 0% | 계산은 유지, 운영 점수 미반영 |
-
-v4는 기본 점수에 두 가지 보정 승수를 곱합니다.
-
-- EPS 서프라이즈: 최근 4분기 beat/miss 흐름
-- 섹터 상대 강도: 종목 90일 수익률과 섹터 ETF 90일 수익률 비교
-
-최종 점수는 `herd_scores.herd_score`에 저장되며, API는 `herdV4`, `herdBase`, `epsMultiplier`, `sectorMultiplier`를 함께 제공합니다.
-
-HERD_v6.1 행동 모델은 v4 상태 점수 위에 5일·20일 변화 속도와 가속도, 단계 경계 ±2pt 안정화, 신호 생애주기, 데이터·이력 신뢰도 보정을 적용합니다. 섹터 편향 검증용 55종목 히스토리는 `cd data && python herd/history_backfill.py --validation-universe --years 10 --freq weekly`로 누적하고, `python herd/backtest_action_layer.py --full`로 전체 유니버스를 검사합니다. 새 모델의 정확도는 확장 백테스트와 실사용 표본이 통과하기 전까지 확정 성과로 표시하지 않습니다.
-
-### Phase A · Validation v2
-
-현실적인 검증은 `cd data && .venv/bin/python herd/backtest_validation_v2.py --full`로 실행합니다. 신호일 종가로 판단하고 다음 거래일 시가에 수수료 0.1%와 기본 슬리피지 10bp를 적용하며, JSON/CSV 결과를 `data/reports/validation_v2/`에 저장합니다. 리포트에는 평균 외에 보존율 중앙값, 하위 10%, 개선 종목 비율, MDD 개선 중앙값, anchored/rolling Walk-forward 결과, 운영 저장 점수 재계산 일치 검사가 포함됩니다.
-
-2026-07-12 기준 55종목 실행 결과는 전체기간 중앙 보존율 63.8%, 기존 Fixed HERD 대비 개선 종목 74.5%, MDD 개선 중앙값 8.1%p였습니다. 과거 섹터 ETF 상대강도는 각 날짜까지의 90거래일 데이터만으로 복원했습니다. 학습구간에서만 제한 후보를 선택한 440개 Walk-forward OOS 구간에서는 개선 비율 36.4%, MDD 개선 중앙값 1.3%p로 낮아져 현재 v6.1은 미래구간 채택 기준 미달입니다. 최초 실행 후 잠근 최근 12개월 Blind Holdout은 중앙 보존율 91.1%, 개선 비율 56.4%, MDD 개선 중앙값 2.5%p였습니다. Blind 결과는 `--unlock-blind`를 명시하지 않는 한 다시 계산하지 않습니다. 이 결과는 현재 생존 대형주 중심 유니버스이며, 과거 EPS는 발표일 원천 데이터가 없어 명시적으로 제외했습니다.
-
-OOS 실패 진단은 `cd data && .venv/bin/python herd/diagnose_validation_v2.py`로 실행합니다. `data/reports/validation_v2/oos_diagnostics.json`과 `oos_failures.csv`에는 섹터·연도·시장 국면·선택 파라미터별 결과, 반복 실패 종목, 심각 실패 구간이 기록됩니다. 0.05%p 이내 차이는 동등으로 처리합니다. 현재 440구간 중 수익 악화 37.3%, MDD 악화 53.4%, 두 지표 모두 Fixed 이상인 구간은 35.9%입니다. 가장 취약한 영역은 에너지 섹터(MDD 악화 82.5%)와 상승장 MDD 방어(MDD 악화 65.3%), 횡보장 수익 악화(51.2%)입니다.
-
-횡보장 행동 억제 단독 실험은 `.venv/bin/python herd/experiment_sideways_filter.py --full`로 재현합니다. 63거래일 절대수익률 5% 이하·추세 품질 35~65를 횡보로 보고 행동 비율을 0/0.5/0.75/1.0 중 학습구간에서만 선택했습니다. 220개 rolling OOS에서 수익 개선 10.5%, 악화 9.1%, MDD 개선 2.7%, 악화 8.2%, 거래 감소 중앙값 0회로 효과가 불충분해 운영 모델에는 채택하지 않았습니다. 결과는 `data/reports/validation_v2/sideways_experiment.json`에 보존합니다.
-
-Risk Cap 단독 실험은 `.venv/bin/python herd/experiment_risk_cap.py --full`로 재현합니다. 기존 신호 방향은 유지하고 약한 추세의 추가매수와 강한 추세의 익절 비율에만 balanced/strict 상한을 적용했습니다. 220개 rolling OOS 중 학습단계에서 미적용을 선택한 구간이 171개였고, 실제 결과가 달라진 OOS는 8개뿐이었습니다. 수익 개선 0%, 악화 1.8%, MDD 개선 0.9%, 악화 0.5%로 효과가 없어 운영 모델에 채택하지 않았습니다. v6.1 비율이 이미 작고 OOS MDD 대부분이 초기 전액 보유 노출에서 발생해 행동 비율 상한만으로는 해결되지 않았습니다. 결과는 `data/reports/validation_v2/risk_cap_experiment.json`에 보존합니다.
-
-검증 리포트는 투자자 상황을 기존 보유자, 신규 진입자, 월 정기 적립식, 주식 70%·현금 30% 목표 비중형으로 분리합니다. 신규 진입자는 HERD 매수 신호 전까지 현금을 유지하며, 적립식 성과는 외부 납입금을 수익으로 오인하지 않도록 납입금 조정 성과지수로 수익률과 MDD를 계산합니다. 따라서 초기 전액 보유 이전의 시장 하락을 모든 사용자에게 동일한 Action Layer 손실로 귀속하지 않습니다.
-
-각 v6.1 행동은 포트폴리오 총수익과 별도로 평가합니다. BUY/SELL 이후 1·3·6개월 수익률과 낙폭, 해당 비율만큼 행동하지 않았을 때 대비한 반사실 효과를 기록하고, 행동 비율·신호 초입/진행/성숙/장기 지속·HERD 단계·시장 국면별 3개월 적중률을 `action_accuracy`에 제공합니다. 아직 평가 기간이 지나지 않은 행동은 적중률 분모에서 제외합니다.
-
-Walk-forward 파라미터 안정성은 Ratio scale·Cooldown 선택 빈도, 동일 종목의 다음 fold 유지율, 조합별 위험조정 목적함수 중앙값과 최상위 값의 고립된 급등 여부를 검사합니다. 선택이 분산되거나 다음 fold 유지율이 낮으면 리포트의 `parameter_stability.recommendation`을 `USE_FIXED_PARAMETERS`로 표시해 자동 최적화를 운영 근거로 사용하지 않습니다.
-
-과최적화 진단은 학습 때 시험한 9개 파라미터 후보의 결과를 fold마다 전부 보존합니다. 이 이력으로 CSCV 분할에서 학습 최상위 후보의 OOS 순위를 측정한 PBO, 시험 횟수·왜도·첨도를 보정한 Deflated Sharpe Ratio, 후보별 목적함수 평균과 표준편차 민감도 표를 생성합니다. DSR 95% 미만 또는 PBO 50% 이상은 채택 근거로 사용하지 않습니다.
-
-과거 EPS 보정은 실제 발표일, 당시 actual EPS, 당시 consensus EPS와 발표일 출처가 모두 있는 레코드만 허용합니다. SEC 공시·기업 IR·거래소 공시·계약된 실적 피드 외의 추정 발표일은 거부합니다. 현재 Finnhub 무료 응답은 분기 마감일만 제공하므로 임의의 `분기 말 + 45일` 보정을 제거했으며, 신뢰 가능한 발표일 원천을 확보하기 전까지 과거 백테스트 EPS 승수는 1.0으로 유지합니다.
-
-생존자 편향 검증용 `data/herd/universe_history.csv`는 종목별 지수 편입일·편출일·당시 섹터·편출 사유·출처를 저장합니다. 검증기는 해당 날짜에 실제 포함된 종목만 선택할 수 있으며 합병·상장폐지·편출 종목의 커버리지를 감사합니다. 현재 파일은 스키마만 준비된 상태이므로 리포트는 `SURVIVORSHIP_BIAS_REMAINS`를 명시하며, 신뢰할 수 있는 과거 구성 데이터가 채워지기 전에는 현재 55종목 결과를 편향 해소 결과로 표시하지 않습니다.
-
-Healthy Rush 연구 후보는 Rush를 강한 추세 유지, 상승 연장, 과열 둔화, 추세 훼손으로 나눕니다. `EXTENDING_RUSH`는 보유를 유지하고, `EXHAUSTED_RUSH`는 10% 이내 일부 익절, `BREAKING_RUSH`는 20% 축소합니다. 운영 v6.1을 덮어쓰지 않고 동일 검증 구간에서 `healthy_rush_return_delta`와 `healthy_rush_mdd_delta`로 병렬 비교하며 채택 기준 통과 전까지 연구 후보로 유지합니다.
-
-에너지·소재 보정 후보는 별도 섹터 모델을 만들지 않고 공통 v6.1 Action Ratio에만 0.9~1.1 배 제한 승수를 적용합니다. 종목 대 섹터 ETF 63일 상대강도, 섹터 ETF 대 SPY 상대강도, 섹터 ETF 200일 추세와 종목 63일 실현 변동성을 각 시점까지의 데이터로 계산합니다. 다른 섹터에는 항상 1.0을 적용하며 OOS 결과는 `sector_candidate_*` 필드로 기존 v6.1과 비교합니다.
-
-실서비스 응답은 `operationalModelVersion=HERD_v4`와 `actionModelStatus=RESEARCH_VALIDATION`을 분리해 제공합니다. v6.1 Action Layer는 Walk-forward OOS 채택 기준 미달 상태이며, 종목 상세와 HERD Lab에는 확정 매매 추천이 아니라 연구 중인 행동 보조 정보라는 문구와 OOS 요약을 함께 표시합니다.
-
-신호 신뢰도는 데이터 품질과 별도로 계산합니다. 저장된 HERD 히스토리와 이후 가격 흐름을 비교해 Flee 적중률, Rush 적중률, 매수 신호 이후 1/3/6개월 평균 수익률, 익절 신호 이후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 표본 품질, 매수/익절 edge를 보여줍니다.
-
----
-
-## 실행 방법
-
-### 사전 준비
+### 준비물
 
 - Python 3.12
-- Java 17+
-- MariaDB
-- Node.js 18+
+- Java 17 이상
+- Node.js 18 이상
+- MariaDB 10 이상
 
-### 1. 데이터베이스
+### 1. 환경변수
 
 ```bash
-mysql -u root -p
+cp .env.example .env
+```
+
+`.env`에 MariaDB 접속 정보와 필요한 API 키를 입력합니다. 실제 키가 들어간 `.env`는
+Git에 커밋하지 않습니다.
+
+### 2. 데이터베이스
+
+```sql
 CREATE DATABASE herdsignal CHARACTER SET utf8mb4;
 CREATE USER 'herdsignal'@'localhost' IDENTIFIED BY 'your_password';
 GRANT ALL PRIVILEGES ON herdsignal.* TO 'herdsignal'@'localhost';
 ```
 
-### 2. 데이터 엔진
+### 3. 데이터 엔진
 
 ```bash
-cp .env.example .env
 cd data
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 cd ..
+
 ./scripts/run-data.sh init_db.py
 ./scripts/run-data.sh setup_default_tickers.py
 ./scripts/run-data.sh scheduler/herd_scheduler.py --run-now
 ./scripts/run-data.sh scheduler/herd_scheduler.py
 ```
 
-### 3. 백엔드
+### 4. 백엔드
 
 ```bash
 ./scripts/run-backend.sh
 ```
 
-API 서버는 `http://localhost:8080`에서 실행됩니다.
+백엔드 API는 `http://localhost:8080`에서 실행됩니다.
 
-### 4. 프론트엔드
+### 5. 프론트엔드
 
 ```bash
 cd frontend
 npm install
 cd ..
+
 ./scripts/run-frontend.sh
 ```
 
-프론트엔드는 기본적으로 `http://localhost:5173`에서 실행됩니다.
+웹 서비스는 `http://localhost:5173`에서 확인할 수 있습니다.
 
-### 5. 테스트
+## 테스트
 
 ```bash
+# Python
 cd data
 .venv/bin/python -m unittest discover -s tests -p 'test_*.py'
 
+# Backend
 cd ../backend
 ./gradlew test
 
+# Frontend
 cd ../frontend
 npm run lint
 npm test -- --run
 npm run build
 ```
 
-현재 기준으로 Python 데이터 테스트 42개와 프론트엔드 테스트 8개가 있으며, Spring Boot 테스트·ESLint·프로덕션 빌드까지 함께 검사합니다.
+## 주요 API
 
----
+| Method | URL | 설명 |
+| --- | --- | --- |
+| GET | `/api/stocks/{ticker}/herd` | 종목 HERD 점수와 행동 정보 |
+| POST | `/api/stocks/{ticker}/herd/refresh` | 종목 데이터 갱신 |
+| GET | `/api/stocks/{ticker}/herd/history` | HERD 점수 히스토리 |
+| GET | `/api/stocks/{ticker}/herd/reliability` | 과거 신호 신뢰도 |
+| GET | `/api/stocks/search?q=apple` | 종목 검색 |
+| GET | `/api/portfolio` | 포트폴리오 조회 |
+| GET | `/api/portfolio/summary` | 포트폴리오 요약 |
+| GET | `/api/watchlist` | 관심 종목 조회 |
+| GET | `/api/journal` | 판단 기록 조회 |
+| POST | `/api/journal` | 판단 기록 저장 |
 
 ## 현재 한계
 
-- MVP는 전체 포트폴리오 관리가 아니라 HERD 기반 추가매수/보유/익절 타이밍 판단에 집중합니다.
-- 자산 히스토리는 입출금 포함 총자산 흐름과 주식 평가액 변화를 분리해서 보여주지만, 완전한 시간가중 수익률 계산은 별도 입출금 이벤트 기록이 필요합니다.
-- 리밸런싱 플랜, 기존 자산 기록, Herd Flow Preview 라우트는 존재하지만 메인 사이드바에서는 숨겨져 있습니다.
-- 목표 비중은 Dashboard 카드 편집에서 수정하며 localStorage에 저장됩니다. DB 저장은 아직 없습니다.
-- 로그인, 멀티유저, 증권사 연동, 배포는 아직 구현되지 않았습니다.
-- 포트폴리오 입력은 현재 수동 입력 기준입니다. 공식 증권사 API나 더 간단한 import 흐름은 이후 검토합니다.
-- v5 변동성 레이어는 백테스트 후보이며 운영 HERD 점수에는 반영되지 않았습니다.
-- HERD v6.1 Action Layer는 440개 Walk-forward OOS 구간에서 아직 채택 기준에 미달해 연구 검증 상태로 제공합니다.
-- 과거 EPS는 신뢰 가능한 실제 발표일 원천이 확보되기 전까지 백테스트에서 중립 승수 1.0을 사용합니다.
-- 과거 지수 편출·합병·상장폐지 종목 데이터가 아직 채워지지 않아 생존자 편향이 남아 있습니다.
-- Healthy Rush와 에너지·소재 비율 보정은 운영 규칙이 아니라 기존 v6.1과 병렬 비교하는 연구 후보입니다.
+- 로그인과 멀티유저 기능이 없는 로컬 MVP입니다.
+- 포트폴리오는 직접 입력해야 하며 증권사 계좌와 연동되지 않습니다.
+- HERD v6.1은 연구 검증 중이며 실제 수익을 보장하지 않습니다.
+- 과거 EPS는 신뢰할 수 있는 실제 발표일 데이터가 없어 백테스트에서 중립 처리합니다.
+- 과거 편출·합병·상장폐지 종목 데이터가 부족해 생존자 편향이 남아 있습니다.
+- 목표 비중 일부는 브라우저 `localStorage`에 저장되며 DB 동기화가 아직 없습니다.
 
----
+## 프로젝트에서 중요하게 생각한 것
 
-## 라이선스
+- 결과가 좋아 보이는 백테스트보다 미래 데이터 누수를 막는 것
+- 평균 수익률 하나보다 실패한 종목과 시장 구간을 함께 공개하는 것
+- 모델이 확실하지 않을 때 연구 상태라고 명확히 표시하는 것
+- 복잡한 금융 지표를 실제로 이해할 수 있는 화면과 문장으로 바꾸는 것
+
+## License
 
 MIT
