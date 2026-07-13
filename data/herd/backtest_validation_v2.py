@@ -23,12 +23,14 @@ from herd.overfitting_metrics import analyze_overfitting
 from herd.point_in_time_universe import audit_survivorship_coverage, load_universe_history
 from herd.healthy_rush import healthy_rush_decision
 from herd.calculator import calc_herd_scores
-from herd.validation_universe import TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
+from herd.validation_universe import SECTOR_UNIVERSE, TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
+from herd.sector_ratio_adjustment import apply_sector_ratio, build_sector_ratio_factor
 from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
 from init_db import HerdIndicator, HerdScore
 
 _SessionFactory = get_session_factory(create_db_engine())
 BOUNDARIES = (15.0, 40.0, 60.0, 75.0)
+TICKER_GROUP = {ticker: group for group, members in SECTOR_UNIVERSE.items() for ticker in members}
 
 
 def make_v61_decision(ratio_scale: float = 1.0):
@@ -52,6 +54,13 @@ def make_healthy_rush_candidate(ratio_scale: float = 1.0):
     baseline = make_v61_decision(ratio_scale)
     def decide(score: float, trend: pd.Series, previous: float | None, action_days: int) -> tuple[str, float]:
         return healthy_rush_decision(score, trend, lambda: baseline(score, trend, previous, action_days))
+    return decide
+
+
+def make_sector_candidate(ratio_scale: float = 1.0):
+    baseline = make_v61_decision(ratio_scale)
+    def decide(score: float, trend: pd.Series, previous: float | None, action_days: int) -> tuple[str, float]:
+        return apply_sector_ratio(*baseline(score, trend, previous, action_days), trend)
     return decide
 
 
@@ -111,12 +120,15 @@ def run_period(
     config: ExecutionConfig,
     ratio_scale: float = 1.0,
     include_investor_scenarios: bool = False,
+    sector_ratio_factor: pd.Series | None = None,
 ) -> dict:
     prices = normalize_price_frame(frame)
     trend = _trend_frame(prices["Close"])
+    trend["sector_ratio_factor"] = 1.0 if sector_ratio_factor is None else sector_ratio_factor.reindex(trend.index).ffill().fillna(1.0)
     fixed = run_realistic_strategy(ticker, prices, herd, trend, fixed_decision, config)
     v61 = run_realistic_strategy(ticker, prices, herd, trend, make_v61_decision(ratio_scale), config)
     rush_candidate = run_realistic_strategy(ticker, prices, herd, trend, make_healthy_rush_candidate(ratio_scale), config)
+    sector_candidate = run_realistic_strategy(ticker, prices, herd, trend, make_sector_candidate(ratio_scale), config)
     bh_return, bh_mdd = buyhold_return(prices, config)
     capture = v61.return_pct / bh_return * 100 if bh_return else None
     row = {
@@ -138,6 +150,10 @@ def run_period(
         "healthy_rush_return_delta": rush_candidate.return_pct - v61.return_pct,
         "healthy_rush_mdd_delta": rush_candidate.mdd - v61.mdd,
         "healthy_rush_actions": len(rush_candidate.trades),
+        "sector_candidate_return": sector_candidate.return_pct,
+        "sector_candidate_mdd": sector_candidate.mdd,
+        "sector_candidate_return_delta": sector_candidate.return_pct - v61.return_pct,
+        "sector_candidate_mdd_delta": sector_candidate.mdd - v61.mdd,
         "ratio_scale": ratio_scale,
         "cooldown_days": config.cooldown_days,
     }
@@ -214,9 +230,15 @@ def main() -> None:
                 etf_cache[sector_etf] = normalize_price_frame(collect(sector_etf, period="10y"))
             multiplier = point_in_time_sector_multiplier(frame["Close"], etf_cache[sector_etf]["Close"])
             herd = apply_point_in_time_sector(herd, multiplier)
+            if "SPY" not in etf_cache:
+                etf_cache["SPY"] = normalize_price_frame(collect("SPY", period="10y"))
+            sector_ratio_factor = build_sector_ratio_factor(
+                frame["Close"], etf_cache[sector_etf]["Close"], etf_cache["SPY"]["Close"], TICKER_GROUP.get(ticker, ""),
+            )
             valid = herd.notna()
             frame, herd = frame.loc[valid], herd.loc[valid]
-            rows.append(run_period(ticker, frame, herd, config, include_investor_scenarios=True))
+            rows.append(run_period(ticker, frame, herd, config, include_investor_scenarios=True,
+                                   sector_ratio_factor=sector_ratio_factor))
             blind_start = frame.index.max() - pd.DateOffset(years=1)
             research_frame, research_herd = frame.loc[frame.index < blind_start], herd.loc[herd.index < blind_start]
             for mode in ("anchored", "rolling"):
@@ -229,7 +251,8 @@ def main() -> None:
                     experiment_history.extend({**candidate, "evaluation_id": evaluation_id, "ticker": ticker,
                                                "mode": mode, "test_start": fold["test_start"]} for candidate in candidates)
                     fold_config = ExecutionConfig(config.initial_cash, config.fee_rate, config.slippage_bps, cooldown)
-                    result = run_period(ticker, research_frame.loc[test_mask], research_herd.loc[test_mask], fold_config, scale)
+                    result = run_period(ticker, research_frame.loc[test_mask], research_herd.loc[test_mask], fold_config, scale,
+                                        sector_ratio_factor=sector_ratio_factor.loc[research_frame.index[test_mask]])
                     fold_rows.append({**fold, "selection_scope": "train_only", **result})
             if not blind_locked:
                 scale, cooldown, _candidates = select_on_train(ticker, research_frame, research_herd, config)
