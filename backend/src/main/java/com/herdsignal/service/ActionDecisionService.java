@@ -26,7 +26,7 @@ public class ActionDecisionService {
     private static final String ACTION_MODEL_VERSION = "HERD_v6.1";
     private static final String ACTION_MODEL_NAME = "Validated Progressive Action Layer";
     private static final String BASE_MODEL_VERSION = "HERD_v4";
-    private static final String ACTION_MODEL_STATUS = "MVP_VALIDATION";
+    private static final String ACTION_MODEL_STATUS = "RESEARCH_VALIDATION";
 
     public ActionDecision decide(HerdScore score, HerdIndicator indicator, Integer qualityScore) {
         return decide(score, indicator, qualityScore, List.of());

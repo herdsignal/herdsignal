@@ -96,6 +96,15 @@ public class HerdScoreResponse {
     /** 행동 모델 검증 상태 */
     private String actionModelStatus;
 
+    /** 실서비스에서 점수 상태를 제공하는 운영 모델 */
+    private String operationalModelVersion;
+
+    /** Action Layer 사용상 주의 문구 */
+    private String actionDisclaimer;
+
+    /** 최신 공개 OOS 검증 요약 */
+    private String oosValidationSummary;
+
     /** 행동 점수 (0~100) */
     private Integer actionScore;
 
@@ -249,6 +258,10 @@ public class HerdScoreResponse {
                 .qualitySummary(qualitySummary)
                 .qualityFlags(qualityFlags)
                 .qualityReasons(qualityReasons);
+
+        builder.operationalModelVersion("HERD_v4")
+               .actionDisclaimer("연구 검증 중인 행동 보조 정보이며 확정 매매 추천이 아닙니다.")
+               .oosValidationSummary("Walk-forward OOS 440구간: 기존 모델 대비 수익 개선 36.4%, MDD 개선 중앙값 1.3%p");
 
         if (actionDecision != null) {
             builder.actionModelVersion(actionDecision.getActionModelVersion())

@@ -218,6 +218,11 @@ export default function StockDetail() {
                 <div className={styles.cardMeta}>{formatActionMeta(herdData)}</div>
               </div>
               <div className={styles.cardBody}>
+                {herdData.actionModelStatus === 'RESEARCH_VALIDATION' && (
+                  <div className={styles.actionWarningList} role="status">
+                    <span>{herdData.actionDisclaimer ?? '연구 검증 중인 행동 보조 정보입니다.'}</span>
+                  </div>
+                )}
                 <div className={styles.decisionHero}>
                   <div>
                     <div className={styles.decisionLabel}>타이밍 액션</div>
@@ -255,6 +260,9 @@ export default function StockDetail() {
                       <span key={warning}>{warning}</span>
                     ))}
                   </div>
+                )}
+                {herdData.oosValidationSummary && (
+                  <div className={styles.decisionBasis}>{herdData.oosValidationSummary}</div>
                 )}
               </div>
             </div>

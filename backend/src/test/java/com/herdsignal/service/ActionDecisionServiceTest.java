@@ -24,6 +24,7 @@ class ActionDecisionServiceTest {
         ActionDecision lowQuality = service.decide(latest, null, 40, history);
 
         assertThat(highQuality.getActionModelVersion()).isEqualTo("HERD_v6.1");
+        assertThat(highQuality.getActionModelStatus()).isEqualTo("RESEARCH_VALIDATION");
         assertThat(lowQuality.getActionRatio()).isLessThan(highQuality.getActionRatio());
     }
 
