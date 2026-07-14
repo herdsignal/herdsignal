@@ -23,6 +23,6 @@ public class AuthController {
 
     @GetMapping("/csrf")
     public ResponseEntity<ApiResponse<String>> csrf(CsrfToken csrfToken) {
-        return ResponseEntity.ok(ApiResponse.success(csrfToken.getToken()));
+        return ResponseEntity.ok(ApiResponse.success(csrfToken == null ? null : csrfToken.getToken()));
     }
 }

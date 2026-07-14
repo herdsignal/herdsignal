@@ -28,6 +28,9 @@ public class OidcAppUserService extends OidcUserService {
         if (email == null || email.isBlank()) {
             throw new OAuth2AuthenticationException("Google 계정 이메일을 확인할 수 없습니다.");
         }
+        if (!Boolean.TRUE.equals(oidcUser.getEmailVerified())) {
+            throw new OAuth2AuthenticationException("검증된 Google 계정 이메일이 필요합니다.");
+        }
 
         LocalDateTime now = LocalDateTime.now();
         AppUser user = repository.findByProviderAndProviderSubject("GOOGLE", subject)

@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,5 +35,18 @@ class SecurityConfigTest {
     void googleLoginEndpointStartsAuthorizationFlow() throws Exception {
         mockMvc.perform(get("/oauth2/authorization/google"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void anonymousMutationIsRejected() throws Exception {
+        mockMvc.perform(post("/api/portfolio"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void csrfEndpointIssuesTokenForBrowserSession() throws Exception {
+        mockMvc.perform(get("/api/auth/csrf"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
     }
 }

@@ -26,28 +26,36 @@ public class CurrentUserService {
     public String userIdOrNull() {
         if (!authEnabled) return "local";
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof OidcUser oidcUser)) {
+        if (!isOidcAuthentication(authentication)) {
             return null;
         }
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         return findGoogleUser(oidcUser.getSubject()).getId();
     }
 
     public AuthUserResponse currentUser() {
         if (!authEnabled) return AuthUserResponse.local();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()
-                || !(authentication.getPrincipal() instanceof OidcUser oidcUser)) {
+        if (!isOidcAuthentication(authentication)) {
             return AuthUserResponse.anonymous();
         }
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         return AuthUserResponse.authenticated(findGoogleUser(oidcUser.getSubject()));
     }
 
     private AppUser requireUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof OidcUser oidcUser)) {
+        if (!isOidcAuthentication(authentication)) {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         return findGoogleUser(oidcUser.getSubject());
+    }
+
+    private boolean isOidcAuthentication(Authentication authentication) {
+        return authentication != null
+                && authentication.isAuthenticated()
+                && authentication.getPrincipal() instanceof OidcUser;
     }
 
     private AppUser findGoogleUser(String subject) {
