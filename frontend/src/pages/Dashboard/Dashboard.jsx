@@ -33,8 +33,6 @@ import {
   ReferenceLine,
 } from 'recharts'
 import { alertSeverityLabel } from '../../utils/alertRules'
-import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
-import { formatSignalAgeLabel } from '../../utils/signalDuration'
 import {
   formatJournalAmount,
   formatJournalCount,
@@ -44,23 +42,18 @@ import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import HerdDots      from '../../components/HerdDots/HerdDots'
 import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
 import SpectrumBar   from '../../components/SpectrumBar/SpectrumBar'
-import StockAvatar   from '../../components/StockAvatar/StockAvatar'
 import styles        from './Dashboard.module.css'
+import DashboardHoldings from './DashboardHoldings'
 import { useDashboardData } from './useDashboardData'
 
 import {
   HISTORY_PERIODS,
   ASSET_HISTORY_PERIODS,
-  PORTFOLIO_SORT_OPTIONS,
   REFRESH_SCOPE_TITLE,
   stageColor,
   stageDesc,
   signalStyle,
-  badgeStyle,
-  buildPositionAction,
   fmtPct,
-  fmtShares,
-  fmtWeightGap,
   pctColor,
   fmtTime,
   fmtAxisDate,
@@ -887,190 +880,26 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* ── 종목 카드 그리드 ── */}
-      {!loading && !error && portfolio.length > 0 && (
-        <>
-          <div className={styles.sectionRow}>
-            <div className={styles.sectionTitle}>보유 종목 · {portfolio.length}</div>
-            <div className={styles.sortTabs} aria-label="보유 종목 정렬">
-              {PORTFOLIO_SORT_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  className={`${styles.sortTab} ${portfolioSort === option.value ? styles.sortTabActive : ''}`}
-                  onClick={() => handlePortfolioSortChange(option.value)}
-                  type="button"
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.holdingsTable}>
-            <div className={styles.holdingsHeader}>
-              <span>종목</span>
-              <span>보유 비중</span>
-              <span>평가금액</span>
-              <span>수익률</span>
-              <span>HERD</span>
-              <span>신호</span>
-            </div>
-            {sortedPortfolio.map((item) => {
-              const row       = rows.find((r) => r.ticker === item.ticker)
-              const herd      = herdMap[item.ticker]
-              const stage     = herd?.herdStage ?? 'Calm'
-              const color     = stageColor(stage)
-              const badge     = badgeStyle(stage)
-              const signal    = signalStyle(herd?.signal)
-              const stageName = stage.startsWith('Herd ') ? stage.slice(5) : stage
-              const herdScore = herd ? Math.round(herd.herdV4 ?? herd.herdScore) : null
-              const positionAction = herd ? buildPositionAction(herd, row) : null
-              const actionColor = positionAction?.muted ? 'var(--calm)' : signal.color
-
-              const price       = priceMap[item.ticker]
-              const hasAvgPrice = item.avgPrice != null && item.quantity != null
-              const isDeleting  = deletingTicker === item.ticker
-
-              /* 종목 손익 = 평가금액 - 매입금액(평단가 × 수량) */
-              const pnlUsd = (hasAvgPrice && price)
-                ? price.market_value - item.avgPrice * item.quantity
-                : null
-
-              return (
-                <div
-                  key={item.ticker}
-                  className={`${styles.holdingRow} ${editMode ? styles.holdingRowEdit : ''}`}
-                  onClick={editMode ? undefined : () => navigate(`/stock/${item.ticker}`)}
-                  style={{ opacity: isDeleting ? 0.4 : 1 }}
-                >
-                  <div className={styles.cardStripe} style={{ background: color, color }} />
-
-                  {editMode && (
-                    <button
-                      className={styles.cardDeleteBtn}
-                      style={{ opacity: 1 }}
-                      onClick={e => handleDelete(e, item.ticker)}
-                      disabled={!!deletingTicker}
-                      title={`${item.ticker} 포트폴리오에서 삭제`}
-                    >
-                      {isDeleting ? '…' : '✕'}
-                    </button>
-                  )}
-
-                  <div className={styles.holdingStockCell}>
-                    <StockAvatar
-                      ticker={item.ticker}
-                      logoUrl={herd?.logoUrl}
-                      tone={badge}
-                      size="lg"
-                    />
-                    <div className={styles.holdingStockText}>
-                      <strong>{item.ticker}</strong>
-                      <span style={{ color }}>
-                        {stageName}
-                        {herdScore != null ? ` · HERD ${herdScore}` : ''}
-                      </span>
-                      {shouldShowQuality(herd) && (
-                        <em
-                          style={{ color: qualityColor(herd.qualityLevel) }}
-                          title={qualityReasonText(herd)}
-                        >
-                          {qualityWarningText(herd)}
-                        </em>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className={styles.holdingMetric}>
-                    <span>{row ? `${row.currentWeight.toFixed(1)}%` : '—'}</span>
-                    <em>{row ? `목표 ${row.targetWeight.toFixed(1)}%` : '목표 —'}</em>
-                    {row && <small>{fmtWeightGap(row)}</small>}
-                  </div>
-
-                  <div className={styles.holdingMetric}>
-                    <span>{price ? displayAmount(price.market_value) : '—'}</span>
-                    <em>{hasAvgPrice ? `보유 ${fmtShares(item.quantity)}` : '수량 미입력'}</em>
-                    {hasAvgPrice && <small>평단 {displayAmount(item.avgPrice)}</small>}
-                  </div>
-
-                  <div className={styles.holdingMetric}>
-                    <span style={{ color: pctColor(price?.return_pct) }}>
-                      {price ? fmtPct(price.return_pct) : '—'}
-                    </span>
-                    <em style={{ color: pctColor(price?.return_pct) }}>
-                      {pnlUsd != null ? displayPnl(pnlUsd) : '평단 필요'}
-                    </em>
-                    {price && (
-                      <small style={{ color: pctColor(price.daily_change_pct) }}>
-                        오늘 {fmtPct(price.daily_change_pct)}
-                      </small>
-                    )}
-                  </div>
-
-                  <div className={styles.holdingHerdCell}>
-                    {herd ? (
-                      <>
-                        <strong style={{ color }}>{herdScore}</strong>
-                        <span style={{ color }}>{stageName}</span>
-                        {formatSignalAgeLabel(herd) && <em>{formatSignalAgeLabel(herd)}</em>}
-                      </>
-                    ) : (
-                      <span className={styles.cardDash}>—</span>
-                    )}
-                  </div>
-
-                  <div className={styles.holdingActionCell}>
-                    {herd ? (
-                      <>
-                        <strong style={{ color: actionColor }}>{positionAction.code}</strong>
-                        <span>{positionAction.text}</span>
-                        <em>{positionAction.basis}</em>
-                      </>
-                    ) : (
-                      <span className={styles.cardDash}>—</span>
-                    )}
-                  </div>
-
-                  {editMode && (
-                    <div className={styles.holdingEditTray} onClick={e => e.stopPropagation()}>
-                      <button
-                        className={styles.cardInputBtn}
-                        onClick={e => {
-                          e.stopPropagation()
-                          setModalTicker(item.ticker)
-                        }}
-                      >
-                        {hasAvgPrice ? '평단·수량 수정' : '평단·수량 입력'}
-                      </button>
-                      {row && (
-                        <div className={styles.targetEditRow}>
-                          <label className={styles.targetLabel} htmlFor={`target-${item.ticker}`}>
-                            목표 비중
-                          </label>
-                          <div className={styles.targetInputWrap}>
-                            <input
-                              id={`target-${item.ticker}`}
-                              className={styles.targetInput}
-                              type="number"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value={targetWeights[item.ticker] ?? ''}
-                              placeholder={row.targetWeight.toFixed(0)}
-                              onChange={e => handleTargetWeightChange(item.ticker, e.target.value)}
-                              aria-label={`${item.ticker} 목표 비중`}
-                            />
-                            <span>%</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </>
+      {/* ── 보유 종목 ── */}
+      {!loading && !error && (
+        <DashboardHoldings
+          portfolio={portfolio}
+          sortedPortfolio={sortedPortfolio}
+          rows={rows}
+          herdMap={herdMap}
+          priceMap={priceMap}
+          portfolioSort={portfolioSort}
+          editMode={editMode}
+          deletingTicker={deletingTicker}
+          targetWeights={targetWeights}
+          displayAmount={displayAmount}
+          displayPnl={displayPnl}
+          onSortChange={handlePortfolioSortChange}
+          onDelete={handleDelete}
+          onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
+          onEditHolding={setModalTicker}
+          onTargetWeightChange={handleTargetWeightChange}
+        />
       )}
 
       {/* ── 빈 상태 ── */}
