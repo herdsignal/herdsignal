@@ -134,6 +134,9 @@ CREATE USER 'herdsignal'@'localhost' IDENTIFIED BY 'your_password';
 GRANT ALL PRIVILEGES ON herdsignal.* TO 'herdsignal'@'localhost';
 ```
 
+테이블은 백엔드 시작 시 Flyway가 자동으로 생성하고 변경 이력을 관리합니다. 기존 DB는
+첫 실행 때 현재 스키마를 기준으로 등록되므로 데이터가 삭제되지 않습니다.
+
 ### 3. 데이터 엔진
 
 ```bash
@@ -142,7 +145,6 @@ python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 cd ..
 
-./scripts/run-data.sh init_db.py
 ./scripts/run-data.sh setup_default_tickers.py
 ./scripts/run-data.sh scheduler/herd_scheduler.py --run-now
 ./scripts/run-data.sh scheduler/herd_scheduler.py

@@ -18,6 +18,12 @@ spring:
         # Spring Boot 3.x에서 MariaDB는 dialect 자동 감지 — 명시 불필요
         format_sql: true
 
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+
   # DevTools: 클래스 변경 시 자동 재시작 (개발 환경 전용)
   devtools:
     restart:
