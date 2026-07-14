@@ -97,6 +97,12 @@ React Web App
 - Node.js 18 이상
 - MariaDB 10 이상
 
+전체 변경 사항은 아래 한 명령으로 백엔드·프론트엔드·데이터 엔진까지 검증할 수 있습니다.
+
+```bash
+./scripts/verify.sh
+```
+
 ### 1. 환경변수
 
 ```bash
