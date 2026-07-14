@@ -22,16 +22,6 @@
  */
 
 import { useNavigate } from 'react-router-dom'
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine,
-} from 'recharts'
 import { alertSeverityLabel } from '../../utils/alertRules'
 import {
   formatJournalAmount,
@@ -45,11 +35,11 @@ import SpectrumBar   from '../../components/SpectrumBar/SpectrumBar'
 import styles        from './Dashboard.module.css'
 import DashboardHoldings from './DashboardHoldings'
 import DashboardMobile from './DashboardMobile'
+import DashboardAssetHistory from './DashboardAssetHistory'
 import { useDashboardData } from './useDashboardData'
 
 import {
   HISTORY_PERIODS,
-  ASSET_HISTORY_PERIODS,
   REFRESH_SCOPE_TITLE,
   stageColor,
   stageDesc,
@@ -57,38 +47,10 @@ import {
   fmtPct,
   pctColor,
   fmtTime,
-  fmtAxisDate,
   fmtScoreDate,
   scoreToColor,
   scoreToStage,
 } from './dashboardModel'
-function AssetHistoryTooltip({ active, payload, label, displayAmount }) {
-  if (!active || !payload?.length) return null
-  const date = new Date(label)
-  const dateText = Number.isNaN(date.getTime())
-    ? label
-    : date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
-  const row = payload[0]?.payload
-
-  return (
-    <div className={styles.assetTooltip}>
-      <div className={styles.assetTooltipDate}>{dateText}</div>
-      <div className={styles.assetTooltipRow}>
-        <span>총자산</span>
-        <strong>{displayAmount(row?.totalAssetValue)}</strong>
-      </div>
-      <div className={styles.assetTooltipRow}>
-        <span>주식 평가액</span>
-        <strong>{displayAmount(row?.investedValue)}</strong>
-      </div>
-      <div className={styles.assetTooltipRow}>
-        <span>현금</span>
-        <strong>{displayAmount(row?.cashBalance)}</strong>
-      </div>
-    </div>
-  )
-}
-
 /**
  * SPY scoreDate 스마트 포맷 (KST 기준).
  * - 오늘: "오늘 HH:MM"  (fetchTime이 있으면 그 시각, 없으면 현재 시각)
@@ -143,7 +105,7 @@ export default function Dashboard() {
     spyMomentum, signalJournalSummary, recentSignalLogs,
     handleModalSaved, modalStock, rows, sortedPortfolio,
     riskWarnings, portfolioAlerts, actionQueueCards,
-    assetChartHistory, assetLatest, assetFirst,
+    assetChartHistory, assetLatest, assetFirst, assetStartValue,
     totalFlowPct, investedChangePct, assetDrawdownPct,
     assetYDomain, assetPeriodLabel, assetStartLabel,
     handleTargetWeightChange,
@@ -497,126 +459,25 @@ export default function Dashboard() {
           )}
 
           {assetPanelOpen && (
-            <div className={styles.assetPanel}>
-              <div className={styles.assetPanelHeader}>
-                <div>
-                  <div className={styles.assetPanelLabel}>Asset History · {assetPeriodLabel}</div>
-                  <div className={styles.assetPanelTitle}>
-                    {assetLatest ? displayAmount(assetLatest.totalAssetValue) : displayAmount(summary.total_value)}
-                  </div>
-                  <div className={styles.assetPanelSub}>
-                    총자산은 입출금 포함 · 투자 변화는 주식 평가액 기준 · 기간 시작 {assetStartLabel}
-                    {assetFirst?.totalAssetValue != null ? ` · ${displayAmount(assetFirst.totalAssetValue)}` : ''}
-                  </div>
-                </div>
-                <div className={styles.assetPeriodToggle}>
-                  {ASSET_HISTORY_PERIODS.map((p) => (
-                    <button
-                      key={p.value}
-                      type="button"
-                      className={`${styles.assetPeriodBtn} ${assetHistoryPeriod === p.value ? styles.assetPeriodBtnActive : ''}`}
-                      onClick={() => setAssetHistoryPeriod(p.value)}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.assetStats}>
-                <div>
-                  <span>주식 평가액 변화</span>
-                  <strong style={{ color: pctColor(investedChangePct) }}>{fmtPct(investedChangePct)}</strong>
-                  <em>현금 변동 제외</em>
-                </div>
-                <div>
-                  <span>총자산 변화</span>
-                  <strong style={{ color: pctColor(totalFlowPct) }}>{fmtPct(totalFlowPct)}</strong>
-                  <em>입출금 포함</em>
-                </div>
-                <div>
-                  <span>고점 대비</span>
-                  <strong style={{ color: pctColor(assetDrawdownPct) }}>{fmtPct(assetDrawdownPct)}</strong>
-                  <em>현재 총자산 기준</em>
-                </div>
-                <div>
-                  <span>현재 현금</span>
-                  <strong>{displayAmount(summary.cash_balance ?? cashBalance)}</strong>
-                  <em>총자산에 포함</em>
-                </div>
-              </div>
-
-              {assetHistoryLoading && (
-                <div className={styles.assetState}>히스토리 로딩 중…</div>
-              )}
-              {!assetHistoryLoading && assetHistoryError && (
-                <div className={styles.assetState}>{assetHistoryError}</div>
-              )}
-              {!assetHistoryLoading && !assetHistoryError && assetChartHistory.length === 0 && (
-                <div className={styles.assetState}>아직 자산 히스토리가 없습니다.</div>
-              )}
-              {!assetHistoryLoading && !assetHistoryError && assetChartHistory.length > 0 && (
-                <ResponsiveContainer width="100%" height={240}>
-                  <LineChart
-                    data={assetChartHistory}
-                    margin={{ top: 12, right: 14, left: 0, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="4 6" stroke="var(--border)" vertical={false} />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={fmtAxisDate}
-                      tick={{ fontSize: 11, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickMargin={8}
-                    />
-                    <YAxis
-                      domain={assetYDomain}
-                      tickFormatter={(v) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v}`}
-                      tick={{ fontSize: 11, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                      axisLine={false}
-                      tickLine={false}
-                      width={56}
-                    />
-                    <Tooltip content={<AssetHistoryTooltip displayAmount={displayAmount} />} />
-                    {summary.total_cost != null && (
-                      <ReferenceLine
-                        y={summary.total_cost}
-                        stroke="rgba(163, 170, 184, 0.55)"
-                        strokeDasharray="4 4"
-                      />
-                    )}
-                    {assetStartValue != null && (
-                      <ReferenceLine
-                        y={assetStartValue}
-                        stroke="rgba(59, 130, 246, 0.45)"
-                        strokeDasharray="5 5"
-                      />
-                    )}
-                    <Line
-                      type="monotone"
-                      dataKey="totalAssetValue"
-                      stroke="var(--flee)"
-                      strokeWidth={2.5}
-                      dot={assetChartHistory.length === 1
-                        ? { r: 5, fill: 'var(--flee)', strokeWidth: 0 }
-                        : false
-                      }
-                      activeDot={{ r: 5, strokeWidth: 0 }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="investedValue"
-                      stroke="var(--calm)"
-                      strokeWidth={1.8}
-                      strokeDasharray="5 5"
-                      dot={false}
-                      activeDot={{ r: 4, strokeWidth: 0 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
-            </div>
+            <DashboardAssetHistory
+              summary={summary}
+              cashBalance={cashBalance}
+              history={assetChartHistory}
+              latest={assetLatest}
+              first={assetFirst}
+              startValue={assetStartValue}
+              totalFlowPct={totalFlowPct}
+              investedChangePct={investedChangePct}
+              drawdownPct={assetDrawdownPct}
+              yDomain={assetYDomain}
+              period={assetHistoryPeriod}
+              periodLabel={assetPeriodLabel}
+              startLabel={assetStartLabel}
+              loading={assetHistoryLoading}
+              error={assetHistoryError}
+              displayAmount={displayAmount}
+              onPeriodChange={setAssetHistoryPeriod}
+            />
           )}
 
           {exchangeRate != null && (

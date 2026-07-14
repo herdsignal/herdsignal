@@ -54,5 +54,6 @@ describe('useDashboardData cache recovery', () => {
     expect(api.getPortfolioSummary).toHaveBeenCalledTimes(1)
     expect(api.getPortfolioHerd).toHaveBeenCalledTimes(1)
     expect(result.current.herdMap.AAPL?.herdScore).toBe(40)
+    expect(result.current).toHaveProperty('assetStartValue', null)
   })
 })

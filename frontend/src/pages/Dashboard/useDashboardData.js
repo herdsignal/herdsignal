@@ -556,7 +556,7 @@ export function useDashboardData() {
     signalJournalSummary, recentSignalLogs,
     handleModalSaved, modalStock, rows, sortedPortfolio,
     riskWarnings, portfolioAlerts, actionQueueCards,
-    assetChartHistory, assetLatest, assetFirst,
+    assetChartHistory, assetLatest, assetFirst, assetStartValue,
     totalFlowPct, investedChangePct, assetDrawdownPct,
     assetYDomain, assetPeriodLabel, assetStartLabel,
     handleTargetWeightChange,
