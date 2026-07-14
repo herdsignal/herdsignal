@@ -6,9 +6,12 @@
 import { Component, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout     from './components/Layout/Layout'
+import { AuthProvider } from './auth/AuthContext'
+import ProtectedRoute from './auth/ProtectedRoute'
 
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'))
 const PublicHome = lazy(() => import('./pages/PublicHome/PublicHome'))
+const Login = lazy(() => import('./pages/Login/Login'))
 const StockDetail = lazy(() => import('./pages/StockDetail/StockDetail'))
 const Search = lazy(() => import('./pages/Search/Search'))
 const Watchlist = lazy(() => import('./pages/Watchlist/Watchlist'))
@@ -52,10 +55,13 @@ class RouteErrorBoundary extends Component {
 export default function App() {
   return (
     <BrowserRouter>
+      <AuthProvider>
       <RouteErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
           <Route path="/" element={<PublicHome />} />
+          <Route path="/login" element={<Login />} />
+          <Route element={<ProtectedRoute />}>
           {/* Layout이 사이드바 + <Outlet>으로 모든 페이지를 감싼다 */}
           <Route element={<Layout />}>
             <Route path="/app"           element={<Dashboard />} />
@@ -68,9 +74,11 @@ export default function App() {
             <Route path="/ai"            element={<AiRebalance />} />
             <Route path="/herd-flow"     element={<HerdFlowPreview />} />
           </Route>
+          </Route>
           </Routes>
         </Suspense>
       </RouteErrorBoundary>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

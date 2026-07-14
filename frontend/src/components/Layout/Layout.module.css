@@ -201,6 +201,16 @@
   margin-top: auto;
 }
 
+.userSummary { display: flex; align-items: center; gap: 9px; min-width: 0; margin-bottom: 9px; padding: 9px; border: 1px solid var(--border); border-radius: 11px; }
+.userSummary > img, .userSummary > span { width: 28px; height: 28px; flex: 0 0 auto; border-radius: 50%; object-fit: cover; }
+.userSummary > span { display: grid; place-items: center; background: var(--surface3); color: var(--text-2); font-size: 11px; font-weight: 800; }
+.userSummary div { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.userSummary strong, .userSummary em { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.userSummary strong { color: var(--text-1); font-size: 10px; }
+.userSummary em { color: var(--text-3); font-size: 8px; font-style: normal; }
+.logoutBtn { width: 100%; margin-bottom: 6px; padding: 9px 11px; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--text-3); font: 700 10px 'Inter', sans-serif; text-align: left; cursor: pointer; }
+.logoutBtn:hover { color: var(--text-1); border-color: var(--border2); }
+
 .themeBtn {
   width: 100%;
   text-align: left;

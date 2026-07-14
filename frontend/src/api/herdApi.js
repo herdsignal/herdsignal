@@ -10,14 +10,25 @@ import axios from 'axios'
  * 개발: Vite proxy(/api → localhost:8080)를 통해 같은 origin으로 요청 → CORS 불필요.
  * 프로덕션: VITE_API_BASE_URL 환경변수에 실제 API 서버 URL 지정.
  */
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+const AUTH_BASE_URL = import.meta.env.VITE_AUTH_BASE_URL
+  || (import.meta.env.DEV ? 'http://localhost:8080' : BASE_URL)
 
 /** axios 인스턴스 — 공통 설정 적용 */
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 10_000,
+  withCredentials: true,
+  withXSRFToken: true,
   headers: { 'Content-Type': 'application/json' },
 })
+
+/* ── 인증 ──────────────────────────────────── */
+
+export const getCurrentUser = () => api.get('/api/auth/me')
+export const prepareCsrf = () => api.get('/api/auth/csrf')
+export const logout = () => api.post('/api/auth/logout')
+export const googleLoginUrl = () => `${AUTH_BASE_URL}/oauth2/authorization/google`
 
 /* ── 포트폴리오 ─────────────────────────────── */
 

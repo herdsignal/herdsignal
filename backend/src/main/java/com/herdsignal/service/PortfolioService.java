@@ -329,13 +329,16 @@ public class PortfolioService {
     /**
      * 실시간 포트폴리오 조회.
      *
-     * ProcessBuilder로 Python calculate_current_portfolio('local')를 호출하고
+     * ProcessBuilder로 Python calculate_current_portfolio(userId)를 호출하고
      * JSON 결과를 파싱해 반환한다.
      * 타임아웃 30초. 초과하면 프로세스를 강제 종료하고 예외를 던진다.
      *
      * @return Python이 반환한 포트폴리오 Map (total_value, stocks 등)
      */
-    public Map<String, Object> getRealtimePortfolio() {
+    public Map<String, Object> getRealtimePortfolio(String userId) {
+        if (userId == null || !userId.matches("[A-Za-z0-9_-]{1,50}")) {
+            throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
+        }
         // 프로젝트 루트: backend/의 부모 디렉터리
         Path projectRoot = Paths.get(System.getProperty("user.dir")).getParent();
         Path pythonExe   = projectRoot.resolve("data/.venv/bin/python3.12");
@@ -345,7 +348,7 @@ public class PortfolioService {
             "import sys, json",
             "sys.path.insert(0, 'data')",
             "from scheduler.herd_scheduler import calculate_current_portfolio",
-            "print(json.dumps(calculate_current_portfolio('local')))"
+            "print(json.dumps(calculate_current_portfolio('" + userId + "')))"
         );
 
         ProcessBuilder pb = new ProcessBuilder(pythonExe.toString(), "-c", script);

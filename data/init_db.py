@@ -26,7 +26,29 @@ logger = logging.getLogger(__name__)
 
 
 # ──────────────────────────────────────────────
-# 1. 종목 마스터 (stocks)
+# 1. 로그인 사용자 (app_users)
+# ──────────────────────────────────────────────
+class AppUser(Base):
+    """Google 로그인으로 생성되는 서비스 사용자."""
+    __tablename__ = "app_users"
+    __table_args__ = (
+        UniqueConstraint("provider", "provider_subject", name="uk_app_users_provider_subject"),
+        Index("ix_app_users_email", "email"),
+    )
+
+    id                = Column(String(36),   primary_key=True)
+    provider          = Column(String(20),   nullable=False)
+    provider_subject  = Column(String(100),  nullable=False)
+    email             = Column(String(255),  nullable=False)
+    display_name      = Column(String(100),  nullable=False)
+    profile_image_url = Column(String(1000), nullable=True)
+    role              = Column(String(20),   nullable=False, default="USER")
+    created_at        = Column(DateTime,     nullable=False, default=datetime.utcnow)
+    last_login_at     = Column(DateTime,     nullable=False, default=datetime.utcnow)
+
+
+# ──────────────────────────────────────────────
+# 2. 종목 마스터 (stocks)
 # ──────────────────────────────────────────────
 class Stock(Base):
     """미국주식 종목 마스터. 서비스에서 추적하는 모든 종목을 등록."""
@@ -274,7 +296,7 @@ class SignalJournal(Base):
 SQLITE_PATH = "herdsignal_test.db"
 
 MODELS = [
-    Stock, HerdScore, HerdIndicator, DailyPrice,
+    AppUser, Stock, HerdScore, HerdIndicator, DailyPrice,
     UserPortfolio, InvestorProfile, UserWatchlist, UserCashBalance, UserCashHistory, PortfolioHistory,
     SignalJournal,
 ]

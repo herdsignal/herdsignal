@@ -106,6 +106,26 @@ cp .env.example .env
 `.env`에 MariaDB 접속 정보와 필요한 API 키를 입력합니다. 실제 키가 들어간 `.env`는
 Git에 커밋하지 않습니다.
 
+Google 로그인을 사용할 때는 Google Cloud에서 OAuth 웹 클라이언트를 만들고 승인된
+리디렉션 URI에 아래 주소를 등록합니다.
+
+```text
+http://localhost:8080/login/oauth2/code/google
+```
+
+이후 `.env`에 값을 입력합니다.
+
+```env
+AUTH_ENABLED=true
+GOOGLE_CLIENT_ID=발급받은_클라이언트_ID
+GOOGLE_CLIENT_SECRET=발급받은_클라이언트_보안키
+FRONTEND_URL=http://localhost:5173
+HERDSIGNAL_OWNER_EMAIL=내_구글_이메일
+```
+
+`HERDSIGNAL_OWNER_EMAIL`과 로그인한 Google 이메일이 같으면 기존 `local` 포트폴리오와
+관심종목, 투자 기록을 첫 로그인 때 해당 계정에 한 번 연결합니다.
+
 ### 2. 데이터베이스
 
 ```sql
@@ -183,10 +203,12 @@ npm run build
 | GET    | `/api/investor-profile`                 | 개인 행동 기준 조회         |
 | PUT    | `/api/investor-profile`                 | 개인 행동 기준 수정         |
 | POST   | `/api/journal`                          | 판단 기록 저장             |
+| GET    | `/api/auth/me`                          | 현재 로그인 사용자          |
+| POST   | `/api/auth/logout`                      | 로그아웃                    |
 
 ## 현재 한계
 
-- 로그인과 멀티유저 기능이 없는 로컬 MVP입니다.
+- Google 로그인은 지원하지만 계정 연결·탈퇴 같은 회원 관리 기능은 아직 없습니다.
 - 포트폴리오는 직접 입력해야 하며 증권사 계좌와 연동되지 않습니다.
 - HERD v6.1은 연구 검증 중이며 실제 수익을 보장하지 않습니다.
 - 과거 EPS는 신뢰할 수 있는 실제 발표일 데이터가 없어 백테스트에서 중립 처리합니다.

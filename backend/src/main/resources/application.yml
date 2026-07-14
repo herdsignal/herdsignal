@@ -23,6 +23,15 @@ spring:
     restart:
       enabled: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:disabled}
+            client-secret: ${GOOGLE_CLIENT_SECRET:disabled}
+            scope: openid,profile,email
+
 server:
   port: 8080
 
@@ -33,3 +42,7 @@ logging:
 
 herdsignal:
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}
+  auth:
+    enabled: ${AUTH_ENABLED:false}
+    frontend-url: ${FRONTEND_URL:http://localhost:5173}
+    owner-email: ${HERDSIGNAL_OWNER_EMAIL:}

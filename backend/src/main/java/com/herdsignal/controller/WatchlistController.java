@@ -1,11 +1,11 @@
 package com.herdsignal.controller;
 
-import com.herdsignal.config.AppConstants;
 import com.herdsignal.domain.UserWatchlist;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.WatchlistAddRequest;
 import com.herdsignal.dto.WatchlistHerdResponse;
 import com.herdsignal.service.WatchlistService;
+import com.herdsignal.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * 관심 종목 CRUD + HERD 조회 API 컨트롤러.
- * MVP에서 userId는 모든 엔드포인트에서 AppConstants.DEFAULT_USER_ID 고정.
+ * 사용자 식별은 현재 로그인 세션에서 가져온다.
  */
 @RestController
 @RequestMapping("/api/watchlist")
@@ -23,6 +23,7 @@ import java.util.List;
 public class WatchlistController {
 
     private final WatchlistService watchlistService;
+    private final CurrentUserService currentUserService;
 
     /**
      * GET /api/watchlist
@@ -30,7 +31,7 @@ public class WatchlistController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserWatchlist>>> getWatchlist() {
-        List<UserWatchlist> watchlist = watchlistService.getWatchlist(AppConstants.DEFAULT_USER_ID);
+        List<UserWatchlist> watchlist = watchlistService.getWatchlist(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(watchlist));
     }
 
@@ -41,7 +42,7 @@ public class WatchlistController {
      */
     @GetMapping("/herd")
     public ResponseEntity<ApiResponse<WatchlistHerdResponse>> getWatchlistHerd() {
-        WatchlistHerdResponse response = watchlistService.getWatchlistHerd(AppConstants.DEFAULT_USER_ID);
+        WatchlistHerdResponse response = watchlistService.getWatchlistHerd(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -53,7 +54,7 @@ public class WatchlistController {
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> addStock(
             @RequestBody WatchlistAddRequest request) {
-        watchlistService.addStock(AppConstants.DEFAULT_USER_ID, request);
+        watchlistService.addStock(currentUserService.requireUserId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null));
     }
 
@@ -64,7 +65,7 @@ public class WatchlistController {
      */
     @DeleteMapping("/{ticker}")
     public ResponseEntity<Void> removeStock(@PathVariable String ticker) {
-        watchlistService.removeStock(AppConstants.DEFAULT_USER_ID, ticker);
+        watchlistService.removeStock(currentUserService.requireUserId(), ticker);
         return ResponseEntity.noContent().build();
     }
 }

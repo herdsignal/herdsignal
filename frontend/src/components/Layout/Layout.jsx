@@ -7,9 +7,11 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import herdSignalMark from '../../assets/brand/herdsignal-mark.svg'
+import { useAuth } from '../../auth/AuthContext'
 import styles from './Layout.module.css'
 
 export default function Layout() {
+  const { user, signOut } = useAuth()
   /* body.light 클래스로 라이트모드 전환 */
   const [isDark, setIsDark] = useState(() => {
     return localStorage.getItem('herdsignal_theme') !== 'light'
@@ -76,6 +78,13 @@ export default function Layout() {
 
         {/* 하단 — 테마 토글 */}
         <div className={styles.sidebarBottom}>
+          <div className={styles.userSummary}>
+            {user?.profileImageUrl
+              ? <img src={user.profileImageUrl} alt="" referrerPolicy="no-referrer" />
+              : <span>{(user?.displayName || 'U').slice(0, 1)}</span>}
+            <div><strong>{user?.displayName}</strong><em>{user?.developmentMode ? '개발 모드' : user?.email}</em></div>
+          </div>
+          {!user?.developmentMode && <button className={styles.logoutBtn} onClick={signOut}>로그아웃</button>}
           <button
             className={styles.themeBtn}
             onClick={() => setIsDark((d) => !d)}

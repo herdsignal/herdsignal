@@ -1,0 +1,9 @@
+.page { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 15%, rgba(59,130,246,.1), transparent 30%), #0a0f16; color: #f5f7fa; }
+.card { width: min(100%, 400px); padding: 38px; border: 1px solid rgba(148,163,184,.2); border-radius: 16px; background: #111823; box-shadow: 0 28px 70px rgba(0,0,0,.28); text-align: center; }
+.card img { width: 142px; }
+.card h1 { margin: 32px 0 12px; font: 700 26px 'Space Grotesk', sans-serif; }
+.card p { color: #929caa; font-size: 13px; line-height: 1.7; word-break: keep-all; }
+.googleButton { display: flex; align-items: center; justify-content: center; gap: 11px; margin-top: 28px; padding: 13px 18px; border: 1px solid #d7dce3; border-radius: 9px; background: #fff; color: #1f2937; font-size: 13px; font-weight: 800; }
+.googleButton span { display: grid; width: 20px; height: 20px; place-items: center; color: #4285f4; font-size: 16px; font-weight: 900; }
+.back { display: inline-block; margin-top: 20px; color: #7f8a99; font-size: 11px; }
+.error { margin-top: 18px; padding: 10px; border: 1px solid rgba(239,68,68,.25); border-radius: 8px; background: rgba(239,68,68,.08); color: #fca5a5; font-size: 11px; }

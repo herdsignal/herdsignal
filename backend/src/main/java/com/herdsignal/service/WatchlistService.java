@@ -94,7 +94,7 @@ public class WatchlistService {
                 .map(UserWatchlist::getTicker)
                 .toList();
 
-        List<HerdScoreResponse> herdScores = herdService.getHerdByTickers(tickers);
+        List<HerdScoreResponse> herdScores = herdService.getHerdByTickers(tickers, userId);
         return WatchlistHerdResponse.of(herdScores);
     }
 }

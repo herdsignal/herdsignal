@@ -1,9 +1,9 @@
 package com.herdsignal.controller;
 
-import com.herdsignal.config.AppConstants;
 import com.herdsignal.domain.UserPortfolio;
 import com.herdsignal.dto.*;
 import com.herdsignal.service.PortfolioService;
+import com.herdsignal.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * 포트폴리오 종목 CRUD + 요약/히스토리 API 컨트롤러.
- * MVP에서 userId는 모든 엔드포인트에서 AppConstants.DEFAULT_USER_ID 고정.
+ * 사용자 식별은 현재 로그인 세션에서 가져온다.
  */
 @RestController
 @RequestMapping("/api/portfolio")
@@ -22,6 +22,7 @@ import java.util.Map;
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
+    private final CurrentUserService currentUserService;
 
     /**
      * GET /api/portfolio
@@ -29,7 +30,7 @@ public class PortfolioController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserPortfolio>>> getPortfolio() {
-        List<UserPortfolio> portfolio = portfolioService.getPortfolio(AppConstants.DEFAULT_USER_ID);
+        List<UserPortfolio> portfolio = portfolioService.getPortfolio(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(portfolio));
     }
 
@@ -41,7 +42,7 @@ public class PortfolioController {
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> addStock(
             @RequestBody PortfolioAddRequest request) {
-        portfolioService.addStock(AppConstants.DEFAULT_USER_ID, request);
+        portfolioService.addStock(currentUserService.requireUserId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null));
     }
 
@@ -52,7 +53,7 @@ public class PortfolioController {
      */
     @DeleteMapping("/{ticker}")
     public ResponseEntity<Void> removeStock(@PathVariable String ticker) {
-        portfolioService.removeStock(AppConstants.DEFAULT_USER_ID, ticker);
+        portfolioService.removeStock(currentUserService.requireUserId(), ticker);
         return ResponseEntity.noContent().build();
     }
 
@@ -64,7 +65,7 @@ public class PortfolioController {
     @GetMapping("/summary")
     public ResponseEntity<ApiResponse<PortfolioSummaryResponse>> getPortfolioSummary() {
         PortfolioSummaryResponse response =
-                portfolioService.getPortfolioSummary(AppConstants.DEFAULT_USER_ID);
+                portfolioService.getPortfolioSummary(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -77,7 +78,7 @@ public class PortfolioController {
     public ResponseEntity<ApiResponse<PortfolioHistoryResponse>> getPortfolioHistory(
             @RequestParam(defaultValue = "month") String period) {
         PortfolioHistoryResponse response =
-                portfolioService.getPortfolioHistory(AppConstants.DEFAULT_USER_ID, period);
+                portfolioService.getPortfolioHistory(currentUserService.requireUserId(), period);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -88,7 +89,7 @@ public class PortfolioController {
     @GetMapping("/cash")
     public ResponseEntity<ApiResponse<CashBalanceResponse>> getCashBalance() {
         CashBalanceResponse response =
-                portfolioService.getCashBalance(AppConstants.DEFAULT_USER_ID);
+                portfolioService.getCashBalance(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -100,7 +101,7 @@ public class PortfolioController {
     public ResponseEntity<ApiResponse<CashBalanceResponse>> updateCashBalance(
             @RequestBody CashBalanceRequest request) {
         CashBalanceResponse response =
-                portfolioService.updateCashBalance(AppConstants.DEFAULT_USER_ID, request);
+                portfolioService.updateCashBalance(currentUserService.requireUserId(), request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -113,7 +114,7 @@ public class PortfolioController {
     public ResponseEntity<ApiResponse<Void>> updateAvgPrice(
             @PathVariable String ticker,
             @RequestBody AvgPriceUpdateRequest request) {
-        portfolioService.updateAvgPrice(AppConstants.DEFAULT_USER_ID, ticker, request);
+        portfolioService.updateAvgPrice(currentUserService.requireUserId(), ticker, request);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
@@ -125,7 +126,7 @@ public class PortfolioController {
      */
     @GetMapping("/realtime")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getRealtimePortfolio() {
-        Map<String, Object> result = portfolioService.getRealtimePortfolio();
+        Map<String, Object> result = portfolioService.getRealtimePortfolio(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 }

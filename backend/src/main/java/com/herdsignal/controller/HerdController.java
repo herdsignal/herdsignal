@@ -1,6 +1,5 @@
 package com.herdsignal.controller;
 
-import com.herdsignal.config.AppConstants;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.HerdHistoryResponse;
 import com.herdsignal.dto.HerdReliabilityResponse;
@@ -12,6 +11,7 @@ import com.herdsignal.service.FinancialsService;
 import com.herdsignal.service.FinnhubService;
 import com.herdsignal.service.HerdReliabilityService;
 import com.herdsignal.service.HerdService;
+import com.herdsignal.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +29,7 @@ public class HerdController {
     private final FinancialsService  financialsService;
     private final FinnhubService     finnhubService;
     private final HerdReliabilityService herdReliabilityService;
+    private final CurrentUserService currentUserService;
 
     /**
      * GET /api/stocks/search?q=apple
@@ -44,22 +45,22 @@ public class HerdController {
     /**
      * GET /api/portfolio/herd
      * 포트폴리오 전체 종목의 최신 HERD 점수 조회.
-     * MVP에서 userId는 AppConstants.DEFAULT_USER_ID 고정.
+     * 로그인 사용자의 포트폴리오를 조회한다.
      */
     @GetMapping("/portfolio/herd")
     public ResponseEntity<ApiResponse<PortfolioHerdResponse>> getPortfolioHerd() {
-        PortfolioHerdResponse response = herdService.getPortfolioHerd(AppConstants.DEFAULT_USER_ID);
+        PortfolioHerdResponse response = herdService.getPortfolioHerd(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     /**
      * POST /api/portfolio/herd/refresh
      * 포트폴리오 전체 종목의 HERD 점수를 강제 재계산 후 조회.
-     * 수동 새로고침 전용이며 MVP에서 userId는 AppConstants.DEFAULT_USER_ID 고정.
+     * 수동 새로고침 전용이며 로그인 사용자의 포트폴리오에 적용한다.
      */
     @PostMapping("/portfolio/herd/refresh")
     public ResponseEntity<ApiResponse<PortfolioHerdResponse>> refreshPortfolioHerd() {
-        PortfolioHerdResponse response = herdService.refreshPortfolioHerd(AppConstants.DEFAULT_USER_ID);
+        PortfolioHerdResponse response = herdService.refreshPortfolioHerd(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -71,7 +72,8 @@ public class HerdController {
     @GetMapping("/stocks/{ticker}/herd")
     public ResponseEntity<ApiResponse<HerdScoreResponse>> getStockHerd(
             @PathVariable String ticker) {
-        HerdScoreResponse response = herdService.getStockHerd(ticker.toUpperCase());
+        HerdScoreResponse response = herdService.getStockHerd(
+                ticker.toUpperCase(), currentUserService.userIdOrNull());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -82,7 +84,8 @@ public class HerdController {
     @PostMapping("/stocks/{ticker}/herd/refresh")
     public ResponseEntity<ApiResponse<HerdScoreResponse>> refreshStockHerd(
             @PathVariable String ticker) {
-        HerdScoreResponse response = herdService.refreshStockHerd(ticker.toUpperCase());
+        HerdScoreResponse response = herdService.refreshStockHerd(
+                ticker.toUpperCase(), currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

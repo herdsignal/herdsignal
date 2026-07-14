@@ -5,7 +5,6 @@ import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.Stock;
 import com.herdsignal.domain.UserPortfolio;
 import com.herdsignal.domain.InvestorProfile;
-import com.herdsignal.config.AppConstants;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.dto.ActionDecision;
@@ -69,7 +68,7 @@ public class HerdService {
         List<UserPortfolio> portfolio = portfolioRepository.findByUserId(userId);
         List<HerdScoreResponse> herdScores = getHerdByTickers(portfolio.stream()
                 .map(UserPortfolio::getTicker)
-                .toList());
+                .toList(), userId);
 
         return PortfolioHerdResponse.of(herdScores);
     }
@@ -102,7 +101,7 @@ public class HerdService {
             }
         }
 
-        List<HerdScoreResponse> herdScores = getHerdByTickers(tickers);
+        List<HerdScoreResponse> herdScores = getHerdByTickers(tickers, userId);
 
         return PortfolioHerdResponse.of(herdScores);
     }
@@ -123,7 +122,7 @@ public class HerdService {
      * @param ticker 티커 심볼 (대문자)
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public HerdScoreResponse getStockHerd(String ticker) {
+    public HerdScoreResponse getStockHerd(String ticker, String userId) {
         // ── 1. DB 조회 (Tier 1: 스케줄러가 미리 계산한 데이터) ────────────
         Optional<HerdScore> scoreOpt =
                 herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker);
@@ -154,7 +153,7 @@ public class HerdService {
                 .findTopByTickerOrderByScoreDateDesc(ticker)
                 .orElse(null);
 
-        return buildResponse(scoreOpt.get(), indicator);
+        return buildResponse(scoreOpt.get(), indicator, userId);
     }
 
     /**
@@ -164,7 +163,7 @@ public class HerdService {
      * @param ticker 티커 심볼 (대문자)
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public HerdScoreResponse refreshStockHerd(String ticker) {
+    public HerdScoreResponse refreshStockHerd(String ticker, String userId) {
         try {
             triggerPythonOnDemand(ticker, true);
         } catch (Exception e) {
@@ -186,7 +185,7 @@ public class HerdService {
                 .findTopByTickerOrderByScoreDateDesc(ticker)
                 .orElse(null);
 
-        return buildResponse(scoreOpt.get(), indicator);
+        return buildResponse(scoreOpt.get(), indicator, userId);
     }
 
     /**
@@ -389,7 +388,7 @@ public class HerdService {
      *
      * @param tickers 조회할 티커 심볼 목록
      */
-    public List<HerdScoreResponse> getHerdByTickers(List<String> tickers) {
+    public List<HerdScoreResponse> getHerdByTickers(List<String> tickers, String userId) {
         List<String> normalizedTickers = tickers.stream()
                 .filter(Objects::nonNull)
                 .map(String::toUpperCase)
@@ -414,8 +413,8 @@ public class HerdService {
         Map<String, Stock> stockByTicker = stockRepository.findByTickerIn(normalizedTickers)
                 .stream()
                 .collect(Collectors.toMap(Stock::getTicker, stock -> stock));
-        InvestorProfile profile = investorProfileService.forDecision(AppConstants.DEFAULT_USER_ID);
-        var heldTickers = portfolioRepository.findByUserId(AppConstants.DEFAULT_USER_ID).stream()
+        InvestorProfile profile = userId == null ? null : investorProfileService.forDecision(userId);
+        var heldTickers = userId == null ? java.util.Set.<String>of() : portfolioRepository.findByUserId(userId).stream()
                 .map(UserPortfolio::getTicker)
                 .collect(Collectors.toSet());
 
@@ -485,16 +484,16 @@ public class HerdService {
                 .findTopByTickerOrderByScoreDateDesc(ticker)
                 .orElse(null);
 
-        return buildResponse(score.get(), indicator);
+        return buildResponse(score.get(), indicator, null);
     }
 
     /** HERD 점수 응답에 데이터 신뢰도 레이어를 붙인다. */
-    private HerdScoreResponse buildResponse(HerdScore score, HerdIndicator indicator) {
+    private HerdScoreResponse buildResponse(HerdScore score, HerdIndicator indicator, String userId) {
         List<HerdScore> history = herdScoreRepository.findByTickerOrderByScoreDateDesc(score.getTicker());
         Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
-        InvestorProfile profile = investorProfileService.forDecision(AppConstants.DEFAULT_USER_ID);
-        boolean currentlyHeld = portfolioRepository.existsByUserIdAndTicker(
-                AppConstants.DEFAULT_USER_ID, score.getTicker());
+        InvestorProfile profile = userId == null ? null : investorProfileService.forDecision(userId);
+        boolean currentlyHeld = userId != null && portfolioRepository.existsByUserIdAndTicker(
+                userId, score.getTicker());
         return buildResponse(score, indicator, history, stock, profile, currentlyHeld);
     }
 
