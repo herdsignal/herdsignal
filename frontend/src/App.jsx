@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout     from './components/Layout/Layout'
 
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'))
+const PublicHome = lazy(() => import('./pages/PublicHome/PublicHome'))
 const StockDetail = lazy(() => import('./pages/StockDetail/StockDetail'))
 const Search = lazy(() => import('./pages/Search/Search'))
 const Watchlist = lazy(() => import('./pages/Watchlist/Watchlist'))
@@ -54,9 +55,10 @@ export default function App() {
       <RouteErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
+          <Route path="/" element={<PublicHome />} />
           {/* Layout이 사이드바 + <Outlet>으로 모든 페이지를 감싼다 */}
           <Route element={<Layout />}>
-            <Route path="/"              element={<Dashboard />} />
+            <Route path="/app"           element={<Dashboard />} />
             <Route path="/stock/:ticker" element={<StockDetail />} />
             <Route path="/search"        element={<Search />} />
             <Route path="/watchlist"     element={<Watchlist />} />

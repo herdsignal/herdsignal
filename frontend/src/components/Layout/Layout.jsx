@@ -35,7 +35,7 @@ export default function Layout() {
         <nav className={styles.navGroup}>
           <div className={styles.navLabel}>포트폴리오</div>
           <NavLink
-            to="/"
+            to="/app"
             end
             className={({ isActive }) =>
               `${styles.navItem} ${isActive ? styles.active : ''}`

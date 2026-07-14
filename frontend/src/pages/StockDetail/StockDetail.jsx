@@ -82,7 +82,7 @@ export default function StockDetail() {
 
       {/* ── 브레드크럼 ── */}
       <div className={styles.breadcrumb}>
-        <span className={styles.breadcrumbLink} onClick={() => navigate('/')}>
+        <span className={styles.breadcrumbLink} onClick={() => navigate('/app')}>
           포트폴리오
         </span>
         <span className={styles.breadcrumbSep}>/</span>
