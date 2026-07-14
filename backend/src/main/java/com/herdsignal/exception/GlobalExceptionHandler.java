@@ -1,8 +1,10 @@
 package com.herdsignal.exception;
 
 import com.herdsignal.dto.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * Controller에서 발생하는 모든 예외를 ApiResponse 형태로 통일해 반환.
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     /**
@@ -55,14 +58,25 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.fail(e.getMessage()));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .orElse("요청 값을 확인해 주세요.");
+        return ResponseEntity.badRequest().body(ApiResponse.fail(message));
+    }
+
     /**
      * 나머지 모든 예외 → HTTP 500.
      * 예상치 못한 서버 오류를 클라이언트에게 안전하게 반환.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
+        String errorId = java.util.UUID.randomUUID().toString().substring(0, 8);
+        log.error("예상하지 못한 서버 오류 [errorId={}]", errorId, e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.fail("서버 내부 오류: " + e.getMessage()));
+                .body(ApiResponse.fail("서버 내부 오류가 발생했습니다. 오류 ID: " + errorId));
     }
 }

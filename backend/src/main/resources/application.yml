@@ -43,8 +43,17 @@ server:
 
 logging:
   level:
-    com.herdsignal: DEBUG
+    com.herdsignal: ${LOG_LEVEL:INFO}
     org.hibernate.SQL: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
 
 herdsignal:
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}
