@@ -1,11 +1,26 @@
+import tempfile
 import unittest
+from pathlib import Path
 
 import pandas as pd
 
-from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, point_in_time_sector_multiplier, run_realistic_strategy, summarize
+from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, fold_masks, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
 
 
 class ValidationV2Test(unittest.TestCase):
+    def test_csv_report_excludes_nested_detail(self):
+        with tempfile.TemporaryDirectory() as directory:
+            _, csv_path = write_report(
+                Path(directory), {}, [{
+                    "ticker": "SPY", "v61_capture": 100, "v61_mdd_improvement": 1,
+                    "v61_return": 2, "fixed_return": 1, "detail": {"events": [1]},
+                }], [],
+            )
+            columns = pd.read_csv(csv_path).columns.tolist()
+        self.assertIn("ticker", columns)
+        self.assertIn("v61_return", columns)
+        self.assertNotIn("detail", columns)
+
     @staticmethod
     def _hold(_score, _trend, _previous, _days):
         return "HOLD", 0
@@ -31,6 +46,20 @@ class ValidationV2Test(unittest.TestCase):
         self.assertEqual(anchored[0]["train_start"], 2016)
         self.assertEqual(rolling[-1]["train_start"], 2021)
         self.assertLess(anchored[0]["train_end"], anchored[0]["test_start"])
+
+    def test_fold_masks_apply_oos_embargo(self):
+        index = pd.date_range("2020-01-01", "2021-12-31", freq="B")
+        fold = {"train_start": 2020, "train_end": 2020, "test_start": 2021, "test_end": 2021}
+        train, test = fold_masks(index, fold, embargo_days=20)
+        self.assertEqual(int(train.sum()), len(index[index.year == 2020]))
+        self.assertEqual(int(test.sum()), len(index[index.year == 2021]) - 20)
+        self.assertGreater(test[test].index.min(), index[index.year == 2021][19])
+
+    def test_fold_masks_reject_negative_embargo(self):
+        with self.assertRaises(ValueError):
+            fold_masks(pd.date_range("2020-01-01", periods=2), {
+                "train_start": 2019, "train_end": 2019, "test_start": 2020, "test_end": 2020,
+            }, embargo_days=-1)
 
     def test_summary_uses_median_and_improvement_rate(self):
         rows = [

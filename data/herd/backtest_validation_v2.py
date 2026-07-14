@@ -25,7 +25,7 @@ from herd.healthy_rush import healthy_rush_decision
 from herd.calculator import calc_herd_scores
 from herd.validation_universe import SECTOR_UNIVERSE, TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
 from herd.sector_ratio_adjustment import apply_sector_ratio, build_sector_ratio_factor
-from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
+from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, fold_masks, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
 from init_db import HerdIndicator, HerdScore
 
 _SessionFactory = get_session_factory(create_db_engine())
@@ -218,12 +218,19 @@ def main() -> None:
     parser.add_argument("--full", action="store_true")
     parser.add_argument("--tickers", nargs="+")
     parser.add_argument("--slippage-bps", type=float, default=10.0)
+    parser.add_argument("--embargo-days", type=int, default=20, help="학습 종료와 OOS 시작 사이에서 제외할 거래일")
+    parser.add_argument("--min-coverage", type=float, default=0.95, help="성공해야 하는 최소 종목 비율")
     parser.add_argument("--output", default="reports/validation_v2")
     parser.add_argument("--unlock-blind", action="store_true", help="잠긴 최근 12개월 결과를 의도적으로 다시 생성")
     args = parser.parse_args()
     tickers = args.tickers or (TICKERS if args.full else ["SPY", "NVDA", "MSFT", "JPM", "AAPL"])
     config = ExecutionConfig(slippage_bps=args.slippage_bps)
+    if not 0 < args.min_coverage <= 1:
+        parser.error("--min-coverage는 0 초과 1 이하여야 합니다.")
+    if args.embargo_days < 0:
+        parser.error("--embargo-days는 0 이상이어야 합니다.")
     rows, fold_rows, blind_rows, experiment_history = [], [], [], []
+    failures: list[dict[str, str]] = []
     output_dir = Path(args.output)
     blind_path = output_dir / "blind_holdout.json"
     blind_locked = blind_path.exists() and not args.unlock_blind
@@ -251,8 +258,7 @@ def main() -> None:
             research_frame, research_herd = frame.loc[frame.index < blind_start], herd.loc[herd.index < blind_start]
             for mode in ("anchored", "rolling"):
                 for fold in build_folds(research_frame.index, mode):
-                    train_mask = (research_frame.index.year >= fold["train_start"]) & (research_frame.index.year <= fold["train_end"])
-                    test_mask = (research_frame.index.year >= fold["test_start"]) & (research_frame.index.year <= fold["test_end"])
+                    train_mask, test_mask = fold_masks(research_frame.index, fold, args.embargo_days)
                     if train_mask.sum() < 200 or test_mask.sum() < 50: continue
                     scale, cooldown, candidates = select_on_train(ticker, research_frame.loc[train_mask], research_herd.loc[train_mask], config)
                     evaluation_id = f"{ticker}|{mode}|{fold['test_start']}"
@@ -271,12 +277,25 @@ def main() -> None:
             print(f"[{ticker}] 완료")
         except Exception as exc:
             print(f"[{ticker}] 실패: {exc}")
+            failures.append({"ticker": ticker, "error": str(exc)})
+
+    coverage = len(rows) / len(tickers) if tickers else 0.0
+    run_status = "COMPLETE" if coverage >= args.min_coverage else "INCOMPLETE"
 
     metadata = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "model": "HERD_v6.1",
         "universe": UNIVERSE_VERSION,
         "execution": {"signal": "close", "fill": "next_open", **config.__dict__},
+        "validation_run": {
+            "status": run_status,
+            "requested_tickers": len(tickers),
+            "completed_tickers": len(rows),
+            "coverage": coverage,
+            "minimum_coverage": args.min_coverage,
+            "failed_tickers": failures,
+            "embargo_days": args.embargo_days,
+        },
         "score_parity": score_parity_audit(tickers),
         "walk_forward_summary": summarize(fold_rows) if fold_rows else {},
         "parameter_stability": analyze_parameter_stability(fold_rows),
@@ -302,6 +321,10 @@ def main() -> None:
     print("요약:", summarize(rows))
     print("점수 일치:", metadata["score_parity"])
     print("리포트:", json_path, csv_path)
+    if run_status != "COMPLETE":
+        raise SystemExit(
+            f"검증 완주율 {coverage:.1%}가 최소 기준 {args.min_coverage:.1%}보다 낮습니다."
+        )
 
 
 if __name__ == "__main__":

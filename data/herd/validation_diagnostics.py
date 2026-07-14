@@ -102,6 +102,6 @@ def write_diagnostics(source: Path, output_dir: Path) -> tuple[Path, Path]:
     failures = [row for row in report["rows"] if not row["joint_pass"]]
     if failures:
         with csv_path.open("w", newline="", encoding="utf-8") as handle:
-            writer = csv.DictWriter(handle, fieldnames=failures[0].keys())
+            writer = csv.DictWriter(handle, fieldnames=failures[0].keys(), lineterminator="\n")
             writer.writeheader(); writer.writerows(failures)
     return json_path, csv_path

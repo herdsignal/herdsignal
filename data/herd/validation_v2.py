@@ -261,6 +261,27 @@ def build_folds(index: pd.DatetimeIndex, mode: str, train_years: int = 4, test_y
     return folds
 
 
+def fold_masks(
+    index: pd.DatetimeIndex,
+    fold: dict,
+    embargo_days: int = 0,
+) -> tuple[pd.Series, pd.Series]:
+    """Fold의 학습/검증 마스크를 만들고 검증 시작부에 거래일 embargo를 둔다."""
+    if embargo_days < 0:
+        raise ValueError("embargo_days는 0 이상이어야 합니다.")
+    train_mask = pd.Series(
+        (index.year >= fold["train_start"]) & (index.year <= fold["train_end"]),
+        index=index,
+    )
+    test_mask = pd.Series(
+        (index.year >= fold["test_start"]) & (index.year <= fold["test_end"]),
+        index=index,
+    )
+    test_positions = test_mask[test_mask].index[:embargo_days]
+    test_mask.loc[test_positions] = False
+    return train_mask, test_mask
+
+
 def summarize(rows: list[dict], candidate_prefix: str = "v61", baseline_prefix: str = "fixed") -> dict:
     captures = [r[f"{candidate_prefix}_capture"] for r in rows if r.get(f"{candidate_prefix}_capture") is not None]
     mdd_gains = [r[f"{candidate_prefix}_mdd_improvement"] for r in rows]
@@ -284,5 +305,11 @@ def write_report(output_dir: Path, metadata: dict, rows: list[dict], folds: list
     json_path = output_dir / "validation_v2.json"
     csv_path = output_dir / "validation_v2.csv"
     json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    pd.DataFrame(rows).to_csv(csv_path, index=False)
+    # 상세 시나리오와 행동 이벤트는 JSON에 보존한다. 중첩 객체를 CSV 한 셀에
+    # 문자열로 중복 저장하면 파일만 커지고 표 분석에도 적합하지 않다.
+    csv_rows = [
+        {key: value for key, value in row.items() if not isinstance(value, (dict, list))}
+        for row in rows
+    ]
+    pd.DataFrame(csv_rows).to_csv(csv_path, index=False, lineterminator="\n")
     return json_path, csv_path

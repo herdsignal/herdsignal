@@ -36,6 +36,7 @@ from config.settings import (  # noqa: E402
     HERD_BACKFILL_YEARS,
 )
 from herd.calculator import IndicatorValues, calc_herd_scores, get_stage  # noqa: E402
+from herd.history_readiness import is_history_ready  # noqa: E402
 from herd.saver import save_herd_for_date  # noqa: E402
 from herd.validation_universe import TICKERS as VALIDATION_TICKERS  # noqa: E402
 from indicators.ma200_weekly import calc_ma200_weekly  # noqa: E402
@@ -122,6 +123,9 @@ def _candidate_dates(df: pd.DataFrame, start_date: date, freq: str) -> list[pd.T
         .dropna()
         .index
     )
+    # 진행 중인 주/월의 resample 라벨은 마지막 실제 거래일보다 미래일 수 있다.
+    # 완료되지 않은 기간을 확정 히스토리로 저장하지 않는다.
+    dates = dates[dates <= indexed.index.max()]
 
     # 리샘플 bucket 라벨이 실제 휴장일일 수 있어, 각 bucket의 마지막 실제 거래일로 보정한다.
     candidates: list[pd.Timestamp] = []
@@ -209,6 +213,10 @@ def backfill_ticker(
             continue
 
         df_slice = df[df["Date"] <= ts].copy()
+        if not is_history_ready(df_slice):
+            skipped += 1
+            continue
+
         try:
             result = _calculate_for_slice(ticker, df_slice)
             if dry_run:
@@ -222,9 +230,9 @@ def backfill_ticker(
             else:
                 failed += 1
         except Exception as e:
-            # 초기 구간 데이터 부족은 정상적으로 발생할 수 있으므로 해당 날짜만 건너뛴다.
+            # 최소 이력을 충족한 이후의 실패만 실제 계산 오류로 집계한다.
             failed += 1
-            logger.debug(f"[{ticker}] {score_date} 백필 실패: {e}")
+            logger.warning(f"[{ticker}] {score_date} 백필 실패: {e}")
 
         if idx % 20 == 0 or idx == total:
             logger.info(
