@@ -116,4 +116,9 @@ export const getStockHerdReliability = (ticker, years = 3) =>
 export const getSpyHerdHistory = (period = '3y') =>
   getStockHerdHistory('SPY', period)
 
+/* ── 모델 검증 ─────────────────────────────── */
+
+/** 최신 전체 백테스트 리포트의 HERD Lab용 요약 조회 */
+export const getModelValidationReport = () => api.get('/api/model/validation')
+
 export default api

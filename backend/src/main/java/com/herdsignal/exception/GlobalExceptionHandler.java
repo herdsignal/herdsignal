@@ -46,6 +46,15 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.fail(e.getMessage()));
     }
 
+    /** 검증 리포트 미생성·손상 → HTTP 503. */
+    @ExceptionHandler(ModelReportUnavailableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleModelReportUnavailable(
+            ModelReportUnavailableException e) {
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ApiResponse.fail(e.getMessage()));
+    }
+
     /**
      * 나머지 모든 예외 → HTTP 500.
      * 예상치 못한 서버 오류를 클라이언트에게 안전하게 반환.

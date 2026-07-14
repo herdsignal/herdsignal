@@ -2,15 +2,14 @@
  * HerdLab.jsx — HERD Index 검증 데이터 보드 (/herd-lab)
  */
 
-import styles from './HerdLab.module.css'
+import { useEffect, useState } from 'react'
+import { getModelValidationReport } from '../../api/herdApi'
 import herdModelReport from '../../data/herdModelReport'
+import styles from './HerdLab.module.css'
+import { presentValidationReport } from './herdModelPresentation'
 
 const {
-  model: MODEL,
-  metrics: METRICS,
-  trustChecks: TRUST_CHECKS,
-  modelNotes: MODEL_NOTES,
-  rows: TEST_ROWS,
+  model: MODEL_BASE,
   stages: STAGES,
   weights: WEIGHTS,
 } = herdModelReport
@@ -28,25 +27,57 @@ function mddWidth(value) {
 }
 
 export default function HerdLab() {
+  const [report, setReport] = useState(null)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    getModelValidationReport()
+      .then(({ data }) => {
+        if (active) setReport(presentValidationReport(data.data))
+      })
+      .catch((requestError) => {
+        if (active) setError(requestError.response?.data?.message || '검증 리포트를 불러오지 못했습니다.')
+      })
+    return () => { active = false }
+  }, [])
+
+  if (error) {
+    return (
+      <div className={styles.page}>
+        <section className={styles.card} role="alert">
+          <div className={styles.cardHead}><span>HERD LAB</span><strong>리포트 조회 실패</strong></div>
+          <p>{error}</p>
+        </section>
+      </div>
+    )
+  }
+
+  if (!report) {
+    return <div className={styles.page}><p>최신 검증 리포트를 불러오는 중입니다.</p></div>
+  }
+
+  const { model, metrics, trustChecks, modelNotes, rows } = report
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
         <div>
           <span>HERD LAB</span>
-          <h1>{MODEL.version}</h1>
+          <h1>{model.version}</h1>
         </div>
-        <p>{MODEL.name} · 검증 기간 {MODEL.period}</p>
+        <p>{MODEL_BASE.name} · {model.generatedAt} 갱신</p>
       </header>
 
       <section className={styles.labHero}>
         <div className={styles.labHeroMain}>
           <span>Current Model</span>
-          <strong>{MODEL.version}</strong>
-          <em>{MODEL.name} · 검증 기간 {MODEL.period}</em>
-          <small>{MODEL.base} · {MODEL.status}</small>
+          <strong>{model.version}</strong>
+          <em>{MODEL_BASE.name} · 검증 기간 {model.period}</em>
+          <small>{MODEL_BASE.base} · {MODEL_BASE.status}</small>
         </div>
         <div className={styles.labHeroMetrics}>
-          {METRICS.map((metric) => (
+          {metrics.map((metric) => (
             <div key={metric.label}>
               <span>{metric.label}</span>
               <strong className={styles[metric.tone]}>{metric.value}</strong>
@@ -57,7 +88,7 @@ export default function HerdLab() {
       </section>
 
       <section className={styles.trustStrip}>
-        {TRUST_CHECKS.map((item) => (
+        {trustChecks.map((item) => (
           <div key={item.label}>
             <span>{item.label}</span>
             <strong>{item.value}</strong>
@@ -81,7 +112,7 @@ export default function HerdLab() {
             <span>행동</span>
             <span>판정</span>
           </div>
-          {TEST_ROWS.map((row) => (
+          {rows.map((row) => (
             <div key={row.ticker} className={styles.tr}>
               <span><strong>{row.ticker}</strong></span>
               <span>{row.buyHold}</span>
@@ -143,7 +174,7 @@ export default function HerdLab() {
           <strong>검증 수치와 운영 보정 분리</strong>
         </div>
         <div className={styles.modelNotes}>
-          {MODEL_NOTES.map((note, index) => (
+          {modelNotes.map((note, index) => (
             <div key={note}>
               <span>{index + 1}</span>
               <strong>{note}</strong>
