@@ -62,6 +62,7 @@ public class ModelValidationReportService {
         JsonNode overfitting = required(metadata, "overfitting");
         JsonNode cscv = required(overfitting, "cscv");
         JsonNode dsr = required(overfitting, "deflated_sharpe");
+        JsonNode gate = required(metadata, "adoption_gate");
 
         List<ModelValidationReportResponse.TickerResult> tickers = new ArrayList<>();
         for (JsonNode row : required(root, "rows")) {
@@ -89,6 +90,12 @@ public class ModelValidationReportService {
                 new ModelValidationReportResponse.Overfitting(
                         integer(overfitting, "parameters_tested"), number(cscv, "pbo"),
                         text(cscv, "status"), number(dsr, "probability"), text(dsr, "status")
+                ),
+                new ModelValidationReportResponse.AdoptionGate(
+                        text(gate, "policy_version"), text(gate, "status"),
+                        bool(gate, "eligible_for_human_review"),
+                        bool(gate, "automatic_production_promotion"),
+                        strings(required(gate, "failed_criteria"))
                 ),
                 required(metadata, "score_parity").path("passed").asBoolean(false),
                 text(required(metadata, "survivorship_coverage"), "status"),
@@ -133,5 +140,11 @@ public class ModelValidationReportService {
     private static double numberValue(JsonNode node, String field) {
         Double value = number(node, field);
         return value == null ? 0.0 : value;
+    }
+
+    private static List<String> strings(JsonNode node) {
+        List<String> values = new ArrayList<>();
+        node.forEach(value -> values.add(value.asText()));
+        return List.copyOf(values);
     }
 }

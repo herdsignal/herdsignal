@@ -14,6 +14,7 @@ export function presentValidationReport(report) {
   const run = report.validationRun
   const stability = report.parameterStability
   const dsrPassed = report.overfitting?.deflatedSharpeStatus === 'PASS'
+  const gate = report.adoptionGate
   const generatedAt = report.generatedAt
     ? new Date(report.generatedAt).toLocaleString('ko-KR')
     : '생성 시각 없음'
@@ -23,6 +24,7 @@ export function presentValidationReport(report) {
       version: report.modelVersion,
       period: '전체 저장 기간',
       generatedAt,
+      status: gate?.status ?? 'RESEARCH_VALIDATION',
     },
     metrics: [
       { label: 'OOS 수익 개선', value: formatPercent(walk?.improvementRate), sub: `${walk?.samples ?? 0}개 Walk-forward 구간`, tone: 'blue' },
@@ -42,6 +44,9 @@ export function presentValidationReport(report) {
       stability?.singleParameterSpike
         ? '특정 파라미터에서 성과가 튀어 고정 파라미터 사용이 권고됩니다.'
         : '인접 파라미터에서도 결과가 비교적 안정적입니다.',
+      gate?.eligibleForHumanReview
+        ? `게이트 ${gate.policyVersion}을 통과해 운영 승격 검토가 가능합니다. 자동 운영 전환은 하지 않습니다.`
+        : `게이트 ${gate?.policyVersion ?? '미설정'} 미통과: ${(gate?.failedCriteria ?? []).join(', ') || '판정 정보 없음'}`,
       '표시되는 행동은 확정 매매 추천이 아니라 장기투자 판단을 돕는 연구 정보입니다.',
     ],
     rows: (report.tickers ?? []).map((row) => {

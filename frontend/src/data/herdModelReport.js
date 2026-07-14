@@ -6,7 +6,6 @@ const herdModelReport = {
   model: {
     name: 'Validated Progressive Action Layer',
     base: 'HERD_v4 score + v5 validation',
-    status: 'RESEARCH_VALIDATION',
   },
   stages: [
     { stage: 'Flee', range: '0-15', action: '추가매수', ratio: '8-22%', tone: 'flee' },

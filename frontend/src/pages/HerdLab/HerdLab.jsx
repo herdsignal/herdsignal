@@ -74,7 +74,7 @@ export default function HerdLab() {
           <span>Current Model</span>
           <strong>{model.version}</strong>
           <em>{MODEL_BASE.name} · 검증 기간 {model.period}</em>
-          <small>{MODEL_BASE.base} · {MODEL_BASE.status}</small>
+          <small>{MODEL_BASE.base} · {model.status}</small>
         </div>
         <div className={styles.labHeroMetrics}>
           {metrics.map((metric) => (

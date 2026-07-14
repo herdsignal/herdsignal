@@ -12,6 +12,7 @@ public record ModelValidationReportResponse(
         PerformanceSummary walkForward,
         ParameterStability parameterStability,
         Overfitting overfitting,
+        AdoptionGate adoptionGate,
         boolean scoreParityPassed,
         String survivorshipStatus,
         List<TickerResult> tickers
@@ -45,6 +46,14 @@ public record ModelValidationReportResponse(
             String pboStatus,
             Double deflatedSharpeProbability,
             String deflatedSharpeStatus
+    ) {}
+
+    public record AdoptionGate(
+            String policyVersion,
+            String status,
+            boolean eligibleForHumanReview,
+            boolean automaticProductionPromotion,
+            List<String> failedCriteria
     ) {}
 
     public record TickerResult(

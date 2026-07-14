@@ -30,6 +30,7 @@ class ModelValidationReportServiceTest {
                     "walk_forward_summary": {"ticker_count":440,"capture_median":99.1,"mdd_improvement_median":0.9,"improvement_rate":36.4,"worst_ticker":"META"},
                     "parameter_stability": {"samples":440,"transition_stability":{"same_parameter_rate":59.4},"single_parameter_spike":true,"recommendation":"USE_FIXED_PARAMETERS"},
                     "overfitting": {"parameters_tested":9,"cscv":{"pbo":0.0,"status":"ACCEPTABLE"},"deflated_sharpe":{"probability":0.0,"status":"FAIL"}},
+                    "adoption_gate": {"policy_version":"2026.07-v1","status":"RESEARCH_VALIDATION","eligible_for_human_review":false,"automatic_production_promotion":false,"failed_criteria":["deflated_sharpe"]},
                     "score_parity": {"passed":true},
                     "survivorship_coverage": {"status":"SURVIVORSHIP_BIAS_REMAINS"}
                   },
@@ -47,6 +48,7 @@ class ModelValidationReportServiceTest {
         assertThat(first.modelVersion()).isEqualTo("HERD_v6.1");
         assertThat(first.validationRun().coverage()).isEqualTo(1.0);
         assertThat(first.walkForward().samples()).isEqualTo(440);
+        assertThat(first.adoptionGate().failedCriteria()).containsExactly("deflated_sharpe");
         assertThat(first.tickers()).singleElement().extracting(
                 ModelValidationReportResponse.TickerResult::ticker).isEqualTo("SPY");
         assertThat(second).isSameAs(first);

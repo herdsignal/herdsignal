@@ -184,6 +184,88 @@
       "monthly_dca": "초기 보유 후 월 500달러 정기 투자",
       "target_rebalance": "월별 주식 70%·현금 30% 목표 비중 복원",
       "performance_method": "외부 납입금 조정 일별 성과지수"
+    },
+    "adoption_gate": {
+      "policy_version": "2026.07-v1",
+      "status": "RESEARCH_VALIDATION",
+      "eligible_for_human_review": false,
+      "automatic_production_promotion": false,
+      "failed_criteria": [
+        "oos_improvement_rate",
+        "bottom_decile_capture",
+        "parameter_stability",
+        "no_single_parameter_spike",
+        "deflated_sharpe",
+        "survivorship"
+      ],
+      "criteria": [
+        {
+          "name": "validation_complete",
+          "passed": true,
+          "actual": "COMPLETE",
+          "threshold": "COMPLETE"
+        },
+        {
+          "name": "coverage",
+          "passed": true,
+          "actual": 1.0,
+          "threshold": ">=0.95"
+        },
+        {
+          "name": "score_parity",
+          "passed": true,
+          "actual": true,
+          "threshold": true
+        },
+        {
+          "name": "oos_improvement_rate",
+          "passed": false,
+          "actual": 36.36363636363637,
+          "threshold": ">=60.0"
+        },
+        {
+          "name": "oos_mdd_improvement",
+          "passed": true,
+          "actual": 0.9165874123849438,
+          "threshold": ">=0.0"
+        },
+        {
+          "name": "bottom_decile_capture",
+          "passed": false,
+          "actual": 44.15373579481389,
+          "threshold": ">=60.0"
+        },
+        {
+          "name": "parameter_stability",
+          "passed": false,
+          "actual": 59.3939393939394,
+          "threshold": ">=70.0"
+        },
+        {
+          "name": "no_single_parameter_spike",
+          "passed": false,
+          "actual": true,
+          "threshold": false
+        },
+        {
+          "name": "pbo",
+          "passed": true,
+          "actual": 0.0,
+          "threshold": "<=0.2"
+        },
+        {
+          "name": "deflated_sharpe",
+          "passed": false,
+          "actual": 0.0,
+          "threshold": ">=0.95"
+        },
+        {
+          "name": "survivorship",
+          "passed": false,
+          "actual": "SURVIVORSHIP_BIAS_REMAINS",
+          "threshold": "POINT_IN_TIME_READY"
+        }
+      ]
     }
   },
   "summary": {

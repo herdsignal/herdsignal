@@ -20,6 +20,7 @@ from herd.backtest_action_layer import _action_decision, _stored_herd_series, _t
 from herd.action_accuracy import evaluate_action_accuracy
 from herd.parameter_stability import analyze_parameter_stability
 from herd.overfitting_metrics import analyze_overfitting
+from herd.model_adoption_gate import evaluate_adoption_gate
 from herd.point_in_time_universe import audit_survivorship_coverage, load_universe_history
 from herd.healthy_rush import healthy_rush_decision
 from herd.calculator import calc_herd_scores
@@ -314,6 +315,7 @@ def main() -> None:
             "performance_method": "외부 납입금 조정 일별 성과지수",
         },
     }
+    metadata["adoption_gate"] = evaluate_adoption_gate(metadata)
     if not blind_locked:
         output_dir.mkdir(parents=True, exist_ok=True)
         blind_path.write_text(json.dumps({"created_at": metadata["generated_at"], "summary": summarize(blind_rows), "rows": blind_rows}, ensure_ascii=False, indent=2), encoding="utf-8")
