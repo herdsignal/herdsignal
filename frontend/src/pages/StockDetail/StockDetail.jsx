@@ -17,16 +17,10 @@ import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import SignalJournalModal from '../../components/SignalJournalModal/SignalJournalModal'
 import { qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { formatSignalAgeLabel, formatSignalDurationDetail } from '../../utils/signalDuration'
-import {
-  formatJournalAmount,
-  formatJournalPrice,
-  formatJournalProfit,
-  formatJournalQuantity,
-  formatJournalTime,
-  formatJournalCount,
-} from '../../utils/signalJournal'
 import styles      from './StockDetail.module.css'
 import { useStockDetail } from './useStockDetail'
+import StockDetailFundamentals from './StockDetailFundamentals'
+import StockDetailJournal from './StockDetailJournal'
 
 import {
   BTN_LABELS,
@@ -36,9 +30,6 @@ import {
   epsMultiplierDesc,
   evidenceTone,
   fmtAnnualActions,
-  fmtCurrencyCompact,
-  fmtFinancePct,
-  fmtNumber,
   fmtReliabilityPct,
   fmtReliabilityPlainPct,
   fmtReliabilityScore,
@@ -47,7 +38,6 @@ import {
   formatActionRatio,
   formatIndicator,
   formatMultiplier,
-  fundamentalTone,
   getTimingSignal,
   normalizeBar,
   reliabilityTone,
@@ -487,138 +477,18 @@ export default function StockDetail() {
               </div>
             </div>
 
-            {/* Fundamental Guard 카드 */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div>
-                  <div className={styles.cardTitle}>재무 가드</div>
-                  <div className={styles.cardMeta}>HERD 신호 보조 필터</div>
-                </div>
-                {!financialsLoading && (
-                  <div
-                    className={styles.fundamentalBadge}
-                    style={{
-                      color: fundamentalTone(fundamentalGuard.level),
-                      borderColor: fundamentalTone(fundamentalGuard.level),
-                    }}
-                  >
-                    {fundamentalGuard.label}
-                  </div>
-                )}
-              </div>
-              <div className={styles.cardBodySmall}>
-                {financialsLoading ? (
-                  <div className={styles.chartEmpty}>로딩 중…</div>
-                ) : (
-                  <>
-                    <div className={styles.fundamentalSummary}>
-                      {fundamentalGuard.summary}
-                    </div>
-                    <div className={styles.fundamentalGrid}>
-                      <div className={styles.fundamentalItem}>
-                        <span>시가총액</span>
-                        <strong>{fmtCurrencyCompact(financials?.marketCap)}</strong>
-                      </div>
-                      <div className={styles.fundamentalItem}>
-                        <span>PER</span>
-                        <strong>{fmtNumber(financials?.trailingPe)}</strong>
-                      </div>
-                      <div className={styles.fundamentalItem}>
-                        <span>EPS</span>
-                        <strong>{fmtNumber(financials?.eps, 2)}</strong>
-                      </div>
-                      <div className={styles.fundamentalItem}>
-                        <span>영업이익률</span>
-                        <strong>{fmtFinancePct(financials?.operatingMargin)}</strong>
-                      </div>
-                      <div className={styles.fundamentalItem}>
-                        <span>매출</span>
-                        <strong>{fmtCurrencyCompact(financials?.totalRevenue)}</strong>
-                      </div>
-                    </div>
-                    {fundamentalGuard.reasons.length > 0 && (
-                      <div className={styles.fundamentalReasons}>
-                        {fundamentalGuard.reasons.map((reason) => (
-                          <span key={reason}>{reason}</span>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
+            <StockDetailFundamentals
+              loading={financialsLoading}
+              financials={financials}
+              guard={fundamentalGuard}
+            />
 
-            {/* 내 판단 기록 카드 */}
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div>
-                  <div className={styles.cardTitle}>내 판단 기록</div>
-                  <div className={styles.cardMeta}>HERD 신호를 보고 남긴 실사용 로그</div>
-                </div>
-                <div className={styles.cardMeta}>{formatJournalCount(journalSummary.totalCount)}</div>
-              </div>
-              <div className={styles.cardBodySmall}>
-                <div className={styles.journalSummaryGrid}>
-                  <div className={styles.journalSummaryItem}>
-                    <span>매수 기록</span>
-                    <strong>{formatJournalCount(journalSummary.buyCount)}</strong>
-                    <em>{formatJournalAmount(journalSummary.buyAmount) ?? '$0'}</em>
-                  </div>
-                  <div className={styles.journalSummaryItem}>
-                    <span>익절 기록</span>
-                    <strong>{formatJournalCount(journalSummary.sellCount)}</strong>
-                    <em>{formatJournalAmount(journalSummary.sellAmount) ?? '$0'}</em>
-                  </div>
-                  <div className={styles.journalSummaryItem}>
-                    <span>평균 익절률</span>
-                    <strong>{journalSummary.hasProfitData ? formatJournalProfit(journalSummary.avgProfitPct) : '—'}</strong>
-                    <em>입력 기록 기준</em>
-                  </div>
-                </div>
-                <div className={styles.journalActions}>
-                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('BUY')}>
-                    매수 기록
-                  </button>
-                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('HOLD')}>
-                    보류 기록
-                  </button>
-                  <button type="button" className={styles.journalBtn} onClick={() => setJournalAction('SELL')}>
-                    익절 기록
-                  </button>
-                </div>
-                {signalLogs.length > 0 ? (
-                  <div className={styles.journalList}>
-                    {signalLogs.slice(0, 3).map((log) => (
-                      <div key={log.id} className={styles.journalItem}>
-                        <span>{formatJournalTime(log.recordedAt ?? log.createdAt)}</span>
-                        <strong>{log.actionLabel}</strong>
-                        <em>
-                          {[
-                            formatJournalPrice(log.price),
-                            formatJournalQuantity(log.quantity),
-                            formatJournalAmount(log.amount),
-                            formatJournalProfit(log.profitPct),
-                          ].filter(Boolean).join(' · ') || `HERD ${log.herdScore} · ${log.signalLabel}`}
-                        </em>
-                        {log.memo && <small>{log.memo}</small>}
-                        <button
-                          type="button"
-                          className={styles.journalDelete}
-                          onClick={() => handleJournalDelete(log.id)}
-                          aria-label={`${log.actionLabel} 삭제`}
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className={styles.journalEmpty}>
-                    아직 기록이 없습니다.
-                  </div>
-                )}
-              </div>
-            </div>
+            <StockDetailJournal
+              summary={journalSummary}
+              logs={signalLogs}
+              onCreate={setJournalAction}
+              onDelete={handleJournalDelete}
+            />
 
           </div>
         </div>
