@@ -26,6 +26,12 @@ public class ActionDecision {
     /** 행동 모델 검증 상태 */
     private String actionModelStatus;
 
+    /** 개인화에 적용된 투자 방식 코드 */
+    private String investorStrategy;
+
+    /** 개인화 투자 방식 표시명 */
+    private String investorStrategyLabel;
+
     /** 행동 점수 (0~100) */
     private Integer actionScore;
 

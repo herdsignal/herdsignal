@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import { getModelValidationReport } from '../../api/herdApi'
+import { getInvestorProfile, getModelValidationReport, updateInvestorProfile } from '../../api/herdApi'
 import herdModelReport from '../../data/herdModelReport'
 import styles from './HerdLab.module.css'
 import { presentValidationReport } from './herdModelPresentation'
@@ -29,6 +29,8 @@ function mddWidth(value) {
 export default function HerdLab() {
   const [report, setReport] = useState(null)
   const [error, setError] = useState('')
+  const [profile, setProfile] = useState(null)
+  const [profileStatus, setProfileStatus] = useState('')
 
   useEffect(() => {
     let active = true
@@ -41,6 +43,38 @@ export default function HerdLab() {
       })
     return () => { active = false }
   }, [])
+
+  useEffect(() => {
+    let active = true
+    getInvestorProfile()
+      .then(({ data }) => { if (active) setProfile(data.data) })
+      .catch(() => { if (active) setProfileStatus('투자 설정을 불러오지 못했습니다.') })
+    return () => { active = false }
+  }, [])
+
+  const changeProfile = (field, value) => {
+    setProfile((current) => ({ ...current, [field]: value }))
+    setProfileStatus('')
+  }
+
+  const saveProfile = async (event) => {
+    event.preventDefault()
+    setProfileStatus('저장 중...')
+    try {
+      const payload = {
+        ...profile,
+        timeHorizonYears: Number(profile.timeHorizonYears),
+        liquidityBufferMonths: Number(profile.liquidityBufferMonths),
+        maxActionRatio: Number(profile.maxActionRatio),
+        targetEquityRatio: Number(profile.targetEquityRatio),
+      }
+      const { data } = await updateInvestorProfile(payload)
+      setProfile(data.data)
+      setProfileStatus('저장했습니다. 다음 HERD 조회부터 적용됩니다.')
+    } catch (requestError) {
+      setProfileStatus(requestError.response?.data?.message || '투자 설정을 저장하지 못했습니다.')
+    }
+  }
 
   if (error) {
     return (
@@ -95,6 +129,34 @@ export default function HerdLab() {
             <em>{item.sub}</em>
           </div>
         ))}
+      </section>
+
+      <section className={styles.card}>
+        <div className={styles.cardHead}>
+          <span>나의 행동 기준</span>
+          <strong>HERD 점수는 유지하고 행동 비율만 조정</strong>
+        </div>
+        {profile ? (
+          <form className={styles.profileForm} onSubmit={saveProfile}>
+            <label><span>투자 방식</span><select value={profile.strategy} onChange={(event) => changeProfile('strategy', event.target.value)}>
+              <option value="EXISTING_HOLDER">기존 보유자</option>
+              <option value="NEW_ENTRY">신규 진입자</option>
+              <option value="MONTHLY_DCA">정기 적립식</option>
+              <option value="TARGET_REBALANCE">목표 비중 리밸런싱</option>
+            </select></label>
+            <label><span>위험 허용도</span><select value={profile.riskTolerance} onChange={(event) => changeProfile('riskTolerance', event.target.value)}>
+              <option value="CONSERVATIVE">보수적</option>
+              <option value="BALANCED">균형</option>
+              <option value="GROWTH">성장형</option>
+            </select></label>
+            <label><span>투자 기간(년)</span><input type="number" min="1" max="50" value={profile.timeHorizonYears} onChange={(event) => changeProfile('timeHorizonYears', event.target.value)} /></label>
+            <label><span>생활비 여유(개월)</span><input type="number" min="0" max="60" value={profile.liquidityBufferMonths} onChange={(event) => changeProfile('liquidityBufferMonths', event.target.value)} /></label>
+            <label><span>1회 최대 행동(%)</span><input type="number" min="1" max="30" value={Math.round(Number(profile.maxActionRatio) * 100)} onChange={(event) => changeProfile('maxActionRatio', Number(event.target.value) / 100)} /></label>
+            <label><span>목표 주식비중(%)</span><input type="number" min="10" max="100" value={Math.round(Number(profile.targetEquityRatio) * 100)} onChange={(event) => changeProfile('targetEquityRatio', Number(event.target.value) / 100)} /></label>
+            <button type="submit">행동 기준 저장</button>
+            {profileStatus && <em role="status">{profileStatus}</em>}
+          </form>
+        ) : <p>{profileStatus || '투자 설정을 불러오는 중입니다.'}</p>}
       </section>
 
       <section className={styles.card}>

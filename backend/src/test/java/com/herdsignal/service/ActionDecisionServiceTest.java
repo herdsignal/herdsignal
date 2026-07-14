@@ -1,6 +1,7 @@
 package com.herdsignal.service;
 
 import com.herdsignal.domain.HerdScore;
+import com.herdsignal.domain.InvestorProfile;
 import com.herdsignal.dto.ActionDecision;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,56 @@ class ActionDecisionServiceTest {
 
         assertThat(decision.getActionRegime()).isEqualTo("NORMAL_SCATTER");
         assertThat(decision.getActionReasons()).anyMatch(reason -> reason.contains("경계 안정화 적용"));
+    }
+
+    @Test
+    void blocksBuyWhenLiquidityBufferIsTooLow() {
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 12, "Flee", "BUY");
+        InvestorProfile profile = profile("NEW_ENTRY", "GROWTH", 10, 2, "0.30");
+
+        ActionDecision decision = service.decide(
+                latest, null, 90, historyUntil(latest.getScoreDate(), 25, 18, "Flee", "BUY"),
+                profile, false);
+
+        assertThat(decision.getActionRatio()).isZero();
+        assertThat(decision.getActionLabel()).isEqualTo("현금 여유 확보 우선");
+        assertThat(decision.getActionWarnings()).anyMatch(warning -> warning.contains("생활비 여유"));
+    }
+
+    @Test
+    void givesDifferentCapsForNewEntryAndMonthlyDca() {
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 8, "Flee", "BUY");
+        List<HerdScore> history = historyUntil(latest.getScoreDate(), 25, 18, "Flee", "BUY");
+
+        ActionDecision entry = service.decide(
+                latest, null, 90, history, profile("NEW_ENTRY", "GROWTH", 10, 6, "0.30"), false);
+        ActionDecision dca = service.decide(
+                latest, null, 90, history, profile("MONTHLY_DCA", "GROWTH", 10, 6, "0.30"), true);
+
+        assertThat(entry.getActionRatio()).isEqualByComparingTo("0.10");
+        assertThat(dca.getActionRatio()).isEqualByComparingTo("0.05");
+        assertThat(entry.getInvestorStrategyLabel()).isEqualTo("신규 진입자");
+        assertThat(dca.getActionLabel()).isEqualTo("정기 적립 우선");
+    }
+
+    @Test
+    void explainsTargetWeightForRebalancingProfile() {
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 80, "Rush", "SELL");
+        InvestorProfile profile = profile("TARGET_REBALANCE", "BALANCED", 10, 6, "0.15");
+
+        ActionDecision decision = service.decide(latest, null, 90, List.of(), profile, true);
+
+        assertThat(decision.getActionLabel()).isEqualTo("목표 비중 확인");
+        assertThat(decision.getActionWarnings()).anyMatch(warning -> warning.contains("목표 70%"));
+    }
+
+    private static InvestorProfile profile(
+            String strategy, String risk, int horizon, int liquidity, String maxRatio) {
+        return InvestorProfile.builder()
+                .userId("local").strategy(strategy).riskTolerance(risk)
+                .timeHorizonYears(horizon).liquidityBufferMonths(liquidity)
+                .maxActionRatio(new BigDecimal(maxRatio)).targetEquityRatio(new BigDecimal("0.70"))
+                .build();
     }
 
     private static List<HerdScore> historyUntil(LocalDate latest, int count, double start, String stage, String signal) {

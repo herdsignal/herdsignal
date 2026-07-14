@@ -15,7 +15,7 @@ import sys
 from datetime import datetime
 
 from sqlalchemy import (
-    BigInteger, Boolean, Column, DateTime, Date,
+    BigInteger, Boolean, Column, DateTime, Date, Integer,
     Index, String, UniqueConstraint, text,
 )
 from sqlalchemy import Numeric as Decimal
@@ -134,6 +134,21 @@ class UserPortfolio(Base):
     created_at  = Column(DateTime,       nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
     updated_at  = Column(DateTime,       nullable=False, default=datetime.utcnow,
                          onupdate=datetime.utcnow,                              comment="마지막 수정 시각 (UTC)")
+
+
+class InvestorProfile(Base):
+    """로그인 도입 전 local 사용자에게 적용할 행동 보조 설정."""
+    __tablename__ = "investor_profiles"
+
+    user_id = Column(String(50), primary_key=True, comment="사용자 ID")
+    strategy = Column(String(30), nullable=False, default="EXISTING_HOLDER")
+    risk_tolerance = Column(String(20), nullable=False, default="BALANCED")
+    time_horizon_years = Column(Integer, nullable=False, default=10)
+    liquidity_buffer_months = Column(Integer, nullable=False, default=6)
+    max_action_ratio = Column(Decimal(5, 4), nullable=False, default=0.15)
+    target_equity_ratio = Column(Decimal(5, 4), nullable=False, default=0.70)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 # ──────────────────────────────────────────────
@@ -260,7 +275,7 @@ SQLITE_PATH = "herdsignal_test.db"
 
 MODELS = [
     Stock, HerdScore, HerdIndicator, DailyPrice,
-    UserPortfolio, UserWatchlist, UserCashBalance, UserCashHistory, PortfolioHistory,
+    UserPortfolio, InvestorProfile, UserWatchlist, UserCashBalance, UserCashHistory, PortfolioHistory,
     SignalJournal,
 ]
 

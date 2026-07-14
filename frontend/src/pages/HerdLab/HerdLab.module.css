@@ -431,6 +431,50 @@
   text-align: right;
 }
 
+.profileForm {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 22px;
+}
+
+.profileForm label {
+  display: grid;
+  gap: 7px;
+}
+
+.profileForm label span,
+.profileForm > em {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.profileForm select,
+.profileForm input {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface2);
+  color: var(--text-1);
+  padding: 11px 12px;
+}
+
+.profileForm button {
+  width: fit-content;
+  border: 0;
+  border-radius: 10px;
+  background: var(--flee);
+  color: white;
+  padding: 11px 16px;
+  cursor: pointer;
+}
+
+.profileForm > em {
+  grid-column: span 2;
+  align-self: center;
+  font-style: normal;
+}
+
 @media (max-width: 1180px) {
   .labHero {
     grid-template-columns: minmax(0, 1fr);
@@ -450,6 +494,15 @@
 }
 
 @media (max-width: 760px) {
+  .profileForm {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .profileForm > em {
+    grid-column: auto;
+  }
+
   .header {
     align-items: flex-start;
     flex-direction: column;

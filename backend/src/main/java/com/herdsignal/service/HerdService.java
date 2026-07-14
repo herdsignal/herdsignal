@@ -4,6 +4,8 @@ import com.herdsignal.domain.HerdIndicator;
 import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.Stock;
 import com.herdsignal.domain.UserPortfolio;
+import com.herdsignal.domain.InvestorProfile;
+import com.herdsignal.config.AppConstants;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.dto.ActionDecision;
@@ -54,6 +56,7 @@ public class HerdService {
     private final HerdIndicatorRepository herdIndicatorRepository;
     private final StockRepository stockRepository;
     private final ActionDecisionService actionDecisionService;
+    private final InvestorProfileService investorProfileService;
 
     /**
      * 포트폴리오 전체 HERD 조회.
@@ -411,6 +414,10 @@ public class HerdService {
         Map<String, Stock> stockByTicker = stockRepository.findByTickerIn(normalizedTickers)
                 .stream()
                 .collect(Collectors.toMap(Stock::getTicker, stock -> stock));
+        InvestorProfile profile = investorProfileService.forDecision(AppConstants.DEFAULT_USER_ID);
+        var heldTickers = portfolioRepository.findByUserId(AppConstants.DEFAULT_USER_ID).stream()
+                .map(UserPortfolio::getTicker)
+                .collect(Collectors.toSet());
 
         return normalizedTickers.stream()
                 .map(ticker -> {
@@ -422,7 +429,9 @@ public class HerdService {
                             history.get(0),
                             indicatorByTicker.get(ticker),
                             history,
-                            stockByTicker.get(ticker)
+                            stockByTicker.get(ticker),
+                            profile,
+                            heldTickers.contains(ticker)
                     );
                 })
                 .filter(Objects::nonNull)
@@ -483,7 +492,10 @@ public class HerdService {
     private HerdScoreResponse buildResponse(HerdScore score, HerdIndicator indicator) {
         List<HerdScore> history = herdScoreRepository.findByTickerOrderByScoreDateDesc(score.getTicker());
         Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
-        return buildResponse(score, indicator, history, stock);
+        InvestorProfile profile = investorProfileService.forDecision(AppConstants.DEFAULT_USER_ID);
+        boolean currentlyHeld = portfolioRepository.existsByUserIdAndTicker(
+                AppConstants.DEFAULT_USER_ID, score.getTicker());
+        return buildResponse(score, indicator, history, stock, profile, currentlyHeld);
     }
 
     /** 이미 일괄 조회한 데이터로 응답을 만들어 목록 API의 N+1 쿼리를 피한다. */
@@ -491,10 +503,13 @@ public class HerdService {
             HerdScore score,
             HerdIndicator indicator,
             List<HerdScore> history,
-            Stock stock
+            Stock stock,
+            InvestorProfile profile,
+            boolean currentlyHeld
     ) {
         HerdQuality quality = calculateQuality(score, indicator);
-        ActionDecision actionDecision = actionDecisionService.decide(score, indicator, quality.score(), history);
+        ActionDecision actionDecision = actionDecisionService.decide(
+                score, indicator, quality.score(), history, profile, currentlyHeld);
         HerdScoreResponse.SignalDuration signalDuration = calculateSignalDuration(score, history);
         return HerdScoreResponse.of(
                 score,

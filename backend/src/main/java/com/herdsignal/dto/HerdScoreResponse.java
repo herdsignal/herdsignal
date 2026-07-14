@@ -96,6 +96,12 @@ public class HerdScoreResponse {
     /** 행동 모델 검증 상태 */
     private String actionModelStatus;
 
+    /** 개인화에 적용된 투자 방식 코드 */
+    private String investorStrategy;
+
+    /** 개인화 투자 방식 표시명 */
+    private String investorStrategyLabel;
+
     /** 실서비스에서 점수 상태를 제공하는 운영 모델 */
     private String operationalModelVersion;
 
@@ -261,13 +267,15 @@ public class HerdScoreResponse {
 
         builder.operationalModelVersion("HERD_v4")
                .actionDisclaimer("연구 검증 중인 행동 보조 정보이며 확정 매매 추천이 아닙니다.")
-               .oosValidationSummary("Walk-forward OOS 440구간: 기존 모델 대비 수익 개선 36.4%, MDD 개선 중앙값 1.3%p");
+               .oosValidationSummary("최신 전체 OOS 수치와 채택 게이트 결과는 HERD Lab에서 확인할 수 있습니다.");
 
         if (actionDecision != null) {
             builder.actionModelVersion(actionDecision.getActionModelVersion())
                    .actionModelName(actionDecision.getActionModelName())
                    .baseModelVersion(actionDecision.getBaseModelVersion())
                    .actionModelStatus(actionDecision.getActionModelStatus())
+                   .investorStrategy(actionDecision.getInvestorStrategy())
+                   .investorStrategyLabel(actionDecision.getInvestorStrategyLabel())
                    .actionScore(actionDecision.getActionScore())
                    .actionGrade(actionDecision.getActionGrade())
                    .actionLabel(actionDecision.getActionLabel())

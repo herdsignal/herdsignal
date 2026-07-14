@@ -121,4 +121,10 @@ export const getSpyHerdHistory = (period = '3y') =>
 /** 최신 전체 백테스트 리포트의 HERD Lab용 요약 조회 */
 export const getModelValidationReport = () => api.get('/api/model/validation')
 
+/* ── 투자자 행동 설정 ──────────────────────── */
+
+export const getInvestorProfile = () => api.get('/api/investor-profile')
+
+export const updateInvestorProfile = (profile) => api.put('/api/investor-profile', profile)
+
 export default api
