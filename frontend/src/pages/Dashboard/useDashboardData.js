@@ -20,15 +20,18 @@ import {
   writeTargetWeights,
 } from '../../utils/portfolioTools'
 import { summarizeSignalJournal } from '../../utils/signalJournal'
+import { useAuth } from '../../auth/AuthContext'
 import {
   API_HOST,
   CACHE_KEY_REALTIME,
   CACHE_KEY_HERD,
+  CACHE_KEY_HERD_TIME,
   CACHE_KEY_TIME,
   CACHE_KEY_PORTFOLIO_SORT,
   ASSET_HISTORY_PERIODS,
-  readCache,
-  writeCache,
+  readUserCache,
+  writeUserCache,
+  userCacheKey,
   ensureDashboardCacheVersion,
   normalizePortfolioSummary,
   saveCacheTime,
@@ -47,6 +50,9 @@ import { useDashboardMarketData } from './useDashboardMarketData'
 
 export function useDashboardData() {
 
+  const { user } = useAuth()
+  const userId = user?.id
+
   const [portfolio,      setPortfolio]      = useState([])
   const [summary,        setSummary]        = useState(null)
   const [herdMap,        setHerdMap]        = useState({})
@@ -63,7 +69,7 @@ export function useDashboardData() {
    * 캐시 없으면 null (헤더에 업데이트 시각 미표시).
    */
   const [lastUpdated,    setLastUpdated]    = useState(() => {
-    const t = localStorage.getItem(CACHE_KEY_TIME)
+    const t = localStorage.getItem(userCacheKey(CACHE_KEY_TIME, userId))
     return t ? new Date(t) : null
   })
   const [currencyMode,   setCurrencyMode]   = useState(
@@ -85,10 +91,32 @@ export function useDashboardData() {
   const [signalLogs,     setSignalLogs]     = useState([])
   const refreshNoticeTimer = useRef(null)
   const assetHistoryRequest = useRef(0)
+  const summaryRequest = useRef(0)
+  const lastSummaryValidation = useRef(0)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
+
+  /** DB 종가 요약을 재검증한다. 캐시는 화면 선표시용이며 성공한 최신 요청만 반영한다. */
+  const revalidatePortfolioSummary = useCallback(async ({ force = false } = {}) => {
+    const now = Date.now()
+    if (!force && now - lastSummaryValidation.current < 60_000) return false
+    lastSummaryValidation.current = now
+    const requestId = ++summaryRequest.current
+
+    try {
+      const response = await getPortfolioSummary()
+      if (requestId !== summaryRequest.current) return false
+      const data = normalizePortfolioSummary(response.data?.data ?? null)
+      setSummary(data)
+      writeUserCache(CACHE_KEY_REALTIME, userId, data)
+      setLastUpdated(saveCacheTime(userId))
+      return true
+    } catch {
+      return false
+    }
+  }, [userId])
 
   /* ── 포트폴리오 데이터 로딩 (캐시 우선) ── */
   const fetchData = useCallback(async () => {
@@ -113,48 +141,36 @@ export function useDashboardData() {
       }
 
       /*
-       * (2) 실시간 가격 / HERD 점수 — localStorage 캐시 우선.
-       *     캐시 있으면 API 호출 없이 즉시 세팅 (새로고침 버튼으로만 갱신 가능).
-       *     캐시 없으면 API 호출 후 저장.
+       * (2) 가격 / HERD 점수 — 사용자별 localStorage 캐시를 먼저 표시.
+       *     가격은 항상 DB 최신값으로 재검증하고 HERD만 30분 캐시한다.
        */
-      const cachedSummary = readCache(CACHE_KEY_REALTIME)
-      const cachedHerd    = readCache(CACHE_KEY_HERD)
+      const cachedSummary = readUserCache(CACHE_KEY_REALTIME, userId)
+      const cachedHerd    = readUserCache(CACHE_KEY_HERD, userId)
+      const hasFreshHerdCache = Boolean(cachedHerd && isDashboardCacheFresh(userId))
 
-      const hasCompleteFreshCache = Boolean(
-        cachedSummary && cachedHerd && isDashboardCacheFresh()
-      )
-
-      if (hasCompleteFreshCache) {
-        /* 캐시 히트 — 즉시 세팅 */
-        setSummary(cachedSummary)
+      // 가격 캐시는 API 응답을 기다리는 동안 즉시 표시한다.
+      if (cachedSummary) setSummary(cachedSummary)
+      if (hasFreshHerdCache) {
         const map = {}
-        if (cachedHerd?.stocks) {
-          cachedHerd.stocks.forEach((h) => { map[h.ticker] = h })
-        }
+        cachedHerd.stocks?.forEach((h) => { map[h.ticker] = h })
         setHerdMap(map)
-        /* lastUpdated는 state 초기화 시 hs_cache_time에서 이미 읽음 */
-      } else {
-        /* 캐시 미스 — API 호출 (첫 방문 케이스) */
-        const [summaryRes, herdRes] = await Promise.allSettled([
-          getPortfolioSummary(),
-          getPortfolioHerd(),
-        ])
-        if (summaryRes.status === 'fulfilled') {
-          const data = normalizePortfolioSummary(summaryRes.value.data?.data ?? null)
-          setSummary(data)
-          writeCache(CACHE_KEY_REALTIME, data)
-        }
+      }
+
+      // DB 가격 요약은 캐시 유무와 관계없이 진입 시 항상 최신값을 확인한다.
+      const [, herdRes] = await Promise.allSettled([
+        revalidatePortfolioSummary({ force: true }),
+        hasFreshHerdCache ? Promise.resolve(null) : getPortfolioHerd(),
+      ])
+      if (!hasFreshHerdCache) {
         const map = {}
         if (herdRes.status === 'fulfilled') {
           const herdData = herdRes.value?.data?.data ?? null
           const herdStocks = herdData?.stocks ?? []
           herdStocks.forEach((h) => { map[h.ticker] = h })
-          writeCache(CACHE_KEY_HERD, herdData)
+          writeUserCache(CACHE_KEY_HERD, userId, herdData)
+          saveCacheTime(userId, CACHE_KEY_HERD_TIME)
         }
         setHerdMap(map)
-        if (summaryRes.status === 'fulfilled' || herdRes.status === 'fulfilled') {
-          setLastUpdated(saveCacheTime())
-        }
       }
 
       getCashBalance()
@@ -178,7 +194,7 @@ export function useDashboardData() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [userId, revalidatePortfolioSummary])
 
   const fetchAssetHistory = useCallback(async () => {
     const requestId = ++assetHistoryRequest.current
@@ -202,6 +218,18 @@ export function useDashboardData() {
   }, [assetPanelOpen, fetchAssetHistory])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  useEffect(() => {
+    const revalidateOnReturn = () => {
+      if (document.visibilityState === 'visible') revalidatePortfolioSummary()
+    }
+    window.addEventListener('focus', revalidateOnReturn)
+    document.addEventListener('visibilitychange', revalidateOnReturn)
+    return () => {
+      window.removeEventListener('focus', revalidateOnReturn)
+      document.removeEventListener('visibilitychange', revalidateOnReturn)
+    }
+  }, [revalidatePortfolioSummary])
 
   useEffect(() => {
     const syncSignalLogs = () => {
@@ -270,6 +298,8 @@ export function useDashboardData() {
    * 종목 목록은 추가/삭제 시에만 바뀌고, 히스토리는 최초 로딩 캐시로 충분하다.
    */
   const handleRefresh = useCallback(async () => {
+    const priceRequestId = ++summaryRequest.current
+    lastSummaryValidation.current = Date.now()
     setRefreshing(true)
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
     setRefreshNotice('현재가 조회 · HERD DB 조회 · SPY 확인 중')
@@ -287,8 +317,11 @@ export function useDashboardData() {
           data.total_value = Number(data.invested_value ?? data.total_value ?? 0) + Number(cashBalance ?? 0)
           data.total_asset_value = data.total_value
         }
-        setSummary(data)
-        writeCache(CACHE_KEY_REALTIME, data)
+        if (priceRequestId === summaryRequest.current) {
+          setSummary(data)
+          writeUserCache(CACHE_KEY_REALTIME, userId, data)
+          setLastUpdated(saveCacheTime(userId))
+        }
       }
 
       if (herdRes.status === 'fulfilled') {
@@ -296,7 +329,8 @@ export function useDashboardData() {
         const herdData = herdRes.value?.data?.data ?? null
         const herdStocks = herdData?.stocks ?? []
         herdStocks.forEach((h) => { map[h.ticker] = h })
-        writeCache(CACHE_KEY_HERD, herdData)
+        writeUserCache(CACHE_KEY_HERD, userId, herdData)
+        saveCacheTime(userId, CACHE_KEY_HERD_TIME)
         setHerdMap(map)
       }
 
@@ -305,10 +339,6 @@ export function useDashboardData() {
         updateSpyData(data)
       }
 
-      /* 하나라도 성공했을 때만 헤더 "업데이트 · 오후 X:XX" 기준 갱신 */
-      if ([priceRes, herdRes, spyRes].some((res) => res.status === 'fulfilled')) {
-        setLastUpdated(saveCacheTime())
-      }
       setRefreshNotice(refreshResultText(priceRes, herdRes, spyRes))
       refreshNoticeTimer.current = setTimeout(() => {
         setRefreshNotice(null)
@@ -316,7 +346,7 @@ export function useDashboardData() {
     } finally {
       setRefreshing(false)
     }
-  }, [cashBalance, updateSpyData])
+  }, [cashBalance, updateSpyData, userId])
 
   const handleCashSave = useCallback(async () => {
     const amount = Number(cashDraft || 0)
@@ -337,7 +367,7 @@ export function useDashboardData() {
           total_value: investedValue + saved,
           total_asset_value: investedValue + saved,
         }
-        writeCache(CACHE_KEY_REALTIME, next)
+        writeUserCache(CACHE_KEY_REALTIME, userId, next)
         return next
       })
       if (assetPanelOpen) fetchAssetHistory()
@@ -347,7 +377,7 @@ export function useDashboardData() {
     } finally {
       setCashSaving(false)
     }
-  }, [cashDraft, cashSaving, assetPanelOpen, fetchAssetHistory])
+  }, [cashDraft, cashSaving, assetPanelOpen, fetchAssetHistory, userId])
 
   /* 포트폴리오 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 (낙관적 업데이트) */
   async function handleDelete(e, ticker) {
@@ -363,7 +393,7 @@ export function useDashboardData() {
         writeTargetWeights(next)
         return next
       })
-      clearPortfolioCaches()
+      clearPortfolioCaches(userId)
       await fetchData()
     } catch {
       setRefreshNotice(`${ticker} 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.`)
@@ -432,7 +462,7 @@ export function useDashboardData() {
           total_return_pct: newTotalReturnPct,
         }
         /* 캐시도 함께 갱신 — 다음 방문 시 수정된 수익률 표시 */
-        writeCache(CACHE_KEY_REALTIME, next)
+        writeUserCache(CACHE_KEY_REALTIME, userId, next)
         return next
       })
     } else {
@@ -440,7 +470,7 @@ export function useDashboardData() {
     }
 
     setModalTicker(null)
-  }, [modalTicker, priceMap, portfolio, fetchData, cashBalance])
+  }, [modalTicker, priceMap, portfolio, fetchData, cashBalance, userId])
 
   const modalStock = portfolio.find((p) => p.ticker === modalTicker)
   const rows = useMemo(

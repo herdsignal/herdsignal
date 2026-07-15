@@ -354,6 +354,7 @@ def calculate_current_portfolio(user_id: str) -> dict:
                     "avg_price":        float,
                     "quantity":         float,
                     "current_price":    float,
+                    "price_date":       str,
                     "market_value":     float,
                     "return_pct":       float,
                     "daily_change_pct": float,
@@ -436,6 +437,7 @@ def calculate_current_portfolio(user_id: str) -> dict:
             "avg_price":        avg_price,
             "quantity":         quantity,
             "current_price":    round(current_price,    4),
+            "price_date":       price_data["price_date"],
             "market_value":     round(market_value,     2),
             "return_pct":       round(return_pct,       4),
             "daily_change_pct": round(daily_change_pct, 4),
@@ -485,11 +487,14 @@ def calculate_current_portfolio(user_id: str) -> dict:
         f"총 평가 ${total_value:,.2f}  수익률 {total_return_pct:.2f}%"
     )
 
+    market_data_date = min(stock["price_date"] for stock in stocks)
+
     return {
         "total_value":      round(total_value, 2),
         "total_cost":       round(total_cost,  2),
         "total_return_pct": round(total_return_pct, 4),
         "daily_change_pct": round(portfolio_daily,  4),
+        "market_data_date": market_data_date,
         "stocks":           stocks,
     }
 

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -41,6 +42,9 @@ public class PortfolioSummaryResponse {
      * 스냅샷이 1개뿐이면 0.0.
      */
     private BigDecimal dailyChangePct;
+
+    /** 모든 보유 종목에 공통으로 확보된 가장 최근 거래일 (종목별 기준일 중 최솟값) */
+    private LocalDate marketDataDate;
 
     /** 보유 종목별 평가 상세 목록 */
     private List<StockHoldingResponse> stocks;

@@ -18,6 +18,10 @@ vi.mock('../../api/herdApi', () => ({
   deleteSignalJournal: vi.fn(),
 }))
 
+vi.mock('../../auth/AuthContext', () => ({
+  useAuth: () => ({ user: { authenticated: true, id: 'user-1' } }),
+}))
+
 const response = (data) => Promise.resolve({ data: { data } })
 
 beforeEach(() => {

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * 보유 종목 1개의 평가 정보 응답 DTO.
@@ -24,6 +25,9 @@ public class StockHoldingResponse {
 
     /** 현재가 (daily_prices 최신 종가) */
     private BigDecimal currentPrice;
+
+    /** 현재가가 기록된 실제 미국장 거래일 */
+    private LocalDate priceDate;
 
     /** 평가금액 = 현재가 × 수량 */
     private BigDecimal marketValue;

@@ -10,14 +10,14 @@
  *
  * 데이터 소스:
  *   - getPortfolio()          → 종목 목록 + avgPrice/quantity (항상 최신 호출)
- *   - getPortfolioSummary()   → DB 기준 포트폴리오 요약 (캐시 우선)
+ *   - getPortfolioSummary()   → DB 기준 포트폴리오 요약 (캐시 선표시 후 재검증)
  *   - getPortfolioRealtime()  → 새로고침 시 yfinance 현재가 기반 평가
  *   - getPortfolioHerd()      → HERD 점수 (캐시 우선)
  *   - getStockHerd('SPY')     → SPY 배너용 HERD (캐시 우선)
  *
  * 캐시 정책:
- *   최초 진입 → localStorage 캐시 있으면 즉시 표시 (realtime/herd API 호출 없음)
- *             → 캐시 없으면 API 호출 후 캐시 저장
+ *   최초 진입 → 사용자별 localStorage 가격 캐시를 먼저 표시하고 DB 최신값 재검증
+ *             → HERD 점수는 30분 캐시 사용
  *   새로고침 버튼 → API 강제 호출 → 결과 캐시 저장
  */
 
@@ -45,6 +45,7 @@ import {
   stageDesc,
   signalStyle,
   fmtPct,
+  fmtAxisDate,
   pctColor,
   fmtTime,
   fmtScoreDate,
@@ -124,6 +125,7 @@ export default function Dashboard() {
           {/* 마지막 캐시 저장 시각 — localStorage 'hs_cache_time' 기준 */}
           {lastUpdated && (
             <span className={styles.updateTime}>
+              {summary?.market_data_date && `종가 ${fmtAxisDate(summary.market_data_date)} · `}
               업데이트 · {fmtTime(lastUpdated)}
             </span>
           )}
@@ -184,7 +186,11 @@ export default function Dashboard() {
             <em>S&amp;P 500 흐름과 보유 종목 행동 대기열을 함께 확인합니다.</em>
           </div>
           <div className={styles.commandFrameMeta}>
-            <span>{lastUpdated ? `업데이트 · ${fmtTime(lastUpdated)}` : '업데이트 대기'}</span>
+            <span>
+              {lastUpdated
+                ? `${summary?.market_data_date ? `종가 ${fmtAxisDate(summary.market_data_date)} · ` : ''}업데이트 · ${fmtTime(lastUpdated)}`
+                : '업데이트 대기'}
+            </span>
             <button type="button" onClick={() => navigate('/herd-lab')}>
               모델 리포트
             </button>

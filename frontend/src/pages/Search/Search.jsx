@@ -23,6 +23,8 @@ import {
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { qualityReasonText, shouldShowQuality } from '../../utils/dataQuality'
+import { useAuth } from '../../auth/AuthContext'
+import { clearPortfolioCaches } from '../Dashboard/dashboardModel'
 import styles from './Search.module.css'
 
 /* ── 상수 ─────────────────────────────── */
@@ -48,11 +50,6 @@ const TICKER_NAMES = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticke
 
 /* localStorage 키 */
 const RECENT_KEY = 'hs_recent_searches'
-const PORTFOLIO_CACHE_KEYS = [
-  'hs_portfolio_realtime',
-  'hs_portfolio_herd',
-  'hs_cache_time',
-]
 
 /* ── 유틸 ─────────────────────────────── */
 
@@ -191,10 +188,6 @@ function saveToRecent(ticker) {
   localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 5)))
 }
 
-function clearPortfolioCache() {
-  PORTFOLIO_CACHE_KEYS.forEach((key) => localStorage.removeItem(key))
-}
-
 /** 추가 버튼 레이블 */
 function addBtnLabel(status, idleLabel) {
   if (status === 'loading') return '…'
@@ -206,6 +199,7 @@ function addBtnLabel(status, idleLabel) {
 /* ── 컴포넌트 ─────────────────────────── */
 
 export default function Search() {
+  const { user } = useAuth()
   const navigate = useNavigate()
   const inputRef = useRef(null)
 
@@ -345,7 +339,7 @@ export default function Search() {
       await addToPortfolio(ticker)
       setPortfolioStatus('added')
       setPortfolioTickers(prev => new Set([...prev, ticker]))
-      clearPortfolioCache()
+      clearPortfolioCaches(user?.id)
       setModalTicker(ticker)
     } catch (e) {
       setPortfolioStatus(e.response?.status === 409 ? 'exists' : 'idle')
@@ -639,7 +633,7 @@ export default function Search() {
           currentQuantity={null}
           onClose={() => setModalTicker(null)}
           onSaved={() => {
-            clearPortfolioCache()
+            clearPortfolioCaches(user?.id)
             setModalTicker(null)
           }}
         />

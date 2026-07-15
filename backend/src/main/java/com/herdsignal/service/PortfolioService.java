@@ -140,6 +140,11 @@ public class PortfolioService {
                 .map(holding -> buildStockHolding(holding, marketSessionDate))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+        LocalDate marketDataDate = stocks.stream()
+                .map(StockHoldingResponse::getPriceDate)
+                .filter(Objects::nonNull)
+                .min(LocalDate::compareTo)
+                .orElse(null);
 
         // 총액 집계: portfolio_history 최신 스냅샷 우선 사용
         BigDecimal totalValue;
@@ -198,6 +203,7 @@ public class PortfolioService {
                 .totalCost(totalCost.setScale(2, RoundingMode.HALF_UP))
                 .totalReturnPct(totalReturnPct.setScale(2, RoundingMode.HALF_UP))
                 .dailyChangePct(dailyChangePct.setScale(2, RoundingMode.HALF_UP))
+                .marketDataDate(marketDataDate)
                 .stocks(stocks)
                 .build();
     }
@@ -524,6 +530,7 @@ public class PortfolioService {
                 .avgPrice(avgPrice.setScale(2, RoundingMode.HALF_UP))
                 .quantity(quantity.setScale(4, RoundingMode.HALF_UP))
                 .currentPrice(currentPrice.setScale(2, RoundingMode.HALF_UP))
+                .priceDate(currentDailyPrice.getPriceDate())
                 .marketValue(marketValue.setScale(2, RoundingMode.HALF_UP))
                 .returnPct(returnPct.setScale(2, RoundingMode.HALF_UP))
                 .dailyChangePct(dailyChangePct.setScale(2, RoundingMode.HALF_UP))

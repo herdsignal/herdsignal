@@ -95,6 +95,7 @@ def get_current_prices(tickers: list) -> dict:
                 "price":      float,  # 최신 종가 (15분 지연)
                 "prev_close": float,  # 전일 종가
                 "change_pct": float,  # 전일 대비 등락률 (%)
+                "price_date": str,    # 가격 기준 미국장 날짜 (YYYY-MM-DD)
             },
             "AAPL": None,  # 조회 실패 시 None
             ...
@@ -169,6 +170,11 @@ def get_current_prices(tickers: list) -> dict:
                     "price":      round(current_price, 4),
                     "prev_close": round(prev_close, 4),
                     "change_pct": round(change_pct, 4),
+                    "price_date": (
+                        pd.Timestamp(latest_ts).tz_convert("America/New_York").date().isoformat()
+                        if pd.Timestamp(latest_ts).tzinfo is not None
+                        else pd.Timestamp(latest_ts).date().isoformat()
+                    ),
                 }
                 logger.info(
                     f"[price_collector][{ticker}] "

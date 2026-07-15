@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { getCurrentUser, logout as requestLogout, prepareCsrf } from '../api/herdApi'
+import { clearPortfolioCaches } from '../pages/Dashboard/dashboardModel'
 
 const AuthContext = createContext(null)
 
@@ -24,18 +25,22 @@ export function AuthProvider({ children }) {
     return () => { active = false }
   }, [])
 
-  async function signOut() {
+  const signOut = useCallback(async () => {
     setAuthError(null)
     try {
       await requestLogout()
+      clearPortfolioCaches(user?.id)
       setUser({ authenticated: false })
     } catch (error) {
       setAuthError('로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요.')
       throw error
     }
-  }
+  }, [user?.id])
 
-  const value = useMemo(() => ({ user, loading, authError, signOut }), [user, loading, authError])
+  const value = useMemo(
+    () => ({ user, loading, authError, signOut }),
+    [user, loading, authError, signOut]
+  )
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

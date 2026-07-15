@@ -5,6 +5,8 @@ import {
   getPortfolio, getPortfolioSummary,
   getSignalJournal, createSignalJournal, deleteSignalJournal,
 } from '../../api/herdApi'
+import { useAuth } from '../../auth/AuthContext'
+import { clearPortfolioCaches } from '../Dashboard/dashboardModel'
 import { buildDecision } from '../../utils/decision'
 import { qualityColor } from '../../utils/dataQuality'
 import { getHerdMomentum } from '../../utils/herdMomentum'
@@ -22,6 +24,8 @@ import {
 } from './stockDetailModel'
 
 export function useStockDetail(ticker) {
+
+  const { user } = useAuth()
 
   /* 상태 */
   const [herdData,         setHerdData]         = useState(null)
@@ -153,6 +157,7 @@ export function useStockDetail(ticker) {
     setActionError(null)
     try {
       await addToPortfolio(normalizedTicker)
+      clearPortfolioCaches(user?.id)
       setPortfolioStatus('added')
     } catch (e) {
       if (e.response?.status === 409) {
