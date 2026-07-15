@@ -15,6 +15,9 @@ import java.util.Optional;
  */
 public interface HerdScoreRepository extends JpaRepository<HerdScore, Long> {
 
+    @Query("SELECT MAX(h.scoreDate) FROM HerdScore h")
+    Optional<LocalDate> findLatestScoreDate();
+
     /** 티커의 가장 최신 날짜 HERD 점수 1건 조회 */
     Optional<HerdScore> findTopByTickerOrderByScoreDateDesc(String ticker);
 

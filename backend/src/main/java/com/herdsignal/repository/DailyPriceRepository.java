@@ -2,6 +2,7 @@ package com.herdsignal.repository;
 
 import com.herdsignal.domain.DailyPrice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,9 @@ import java.util.Optional;
  * 쓰기는 Python 스케줄러가 담당.
  */
 public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
+
+    @Query("SELECT MAX(d.priceDate) FROM DailyPrice d")
+    Optional<LocalDate> findLatestPriceDate();
 
     /**
      * 특정 종목의 최신 2일치 종가 조회 (오늘 + 전일).
