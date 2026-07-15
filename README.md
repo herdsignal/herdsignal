@@ -152,8 +152,8 @@ python3.12 -m venv .venv
 cd ..
 
 ./scripts/run-data.sh setup_default_tickers.py
-./scripts/run-data.sh scheduler/herd_scheduler.py --run-now
-./scripts/run-data.sh scheduler/herd_scheduler.py
+./scripts/run-scheduler-once.sh  # 즉시 1회 갱신
+./scripts/run-scheduler.sh       # 매일 예약 실행하는 데몬
 ```
 
 ### 4. 백엔드
@@ -175,6 +175,22 @@ cd ..
 ```
 
 웹 서비스는 `http://localhost:5173`에서 확인할 수 있습니다.
+
+백엔드와 프론트엔드를 한 터미널에서 함께 실행하려면 다음 명령을 사용합니다.
+
+```bash
+./scripts/start-local.sh
+```
+
+맥이 켜져 있는 동안 예약 스케줄러까지 계속 실행하려면 다음 옵션을 사용합니다.
+
+```bash
+./scripts/start-local.sh --with-scheduler
+```
+
+스케줄러는 기본적으로 미국 동부시간 장 마감 후 실행됩니다. 맥이 종료되거나 절전 상태이면
+예약 작업도 멈추므로, 필요한 날 직접 갱신하려면 `./scripts/run-scheduler-once.sh`를 실행합니다.
+대시보드에서는 최신 가격일, HERD 기준일, 마지막 실행 결과와 실패 종목을 확인할 수 있습니다.
 
 ## 테스트
 
@@ -208,6 +224,7 @@ npm run build
 | GET    | `/api/watchlist`                        | 관심 종목 조회             |
 | GET    | `/api/journal`                          | 판단 기록 조회             |
 | GET    | `/api/model/validation`                 | 최신 전체 검증 리포트 요약  |
+| GET    | `/api/system/data-status`               | 스케줄러·데이터 신선도 상태 |
 | GET    | `/api/investor-profile`                 | 개인 행동 기준 조회         |
 | PUT    | `/api/investor-profile`                 | 개인 행동 기준 수정         |
 | POST   | `/api/journal`                          | 판단 기록 저장             |
