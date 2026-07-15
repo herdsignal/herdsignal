@@ -7,6 +7,7 @@ import com.herdsignal.dto.DataFreshnessResponse;
 import com.herdsignal.repository.DailyPriceRepository;
 import com.herdsignal.repository.HerdScoreRepository;
 import com.herdsignal.repository.SchedulerRunRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class DataFreshnessService {
     private final ObjectMapper objectMapper;
     private final Clock clock;
 
+    @Autowired
     public DataFreshnessService(
             SchedulerRunRepository schedulerRunRepository,
             DailyPriceRepository dailyPriceRepository,
