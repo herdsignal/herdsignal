@@ -16,7 +16,7 @@ from datetime import datetime
 
 from sqlalchemy import (
     BigInteger, Boolean, Column, DateTime, Date, Integer,
-    Index, String, UniqueConstraint, text,
+    Index, String, Text, UniqueConstraint, text,
 )
 from sqlalchemy import Numeric as Decimal
 
@@ -134,6 +134,27 @@ class DailyPrice(Base):
     close_price = Column(Decimal(12, 4), nullable=True,                         comment="종가 (수정 종가)")
     volume      = Column(BigInteger,     nullable=True,                         comment="거래량")
     created_at  = Column(DateTime,       nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
+
+
+class SchedulerRun(Base):
+    """Tier1 스케줄러 실행 단위별 상태와 처리 결과."""
+    __tablename__ = "scheduler_runs"
+    __table_args__ = (
+        Index("ix_scheduler_runs_job_started", "job_name", "started_at"),
+        {"comment": "스케줄러 실행 이력"},
+    )
+
+    id             = Column(BigInteger, primary_key=True, autoincrement=True)
+    job_name       = Column(String(50), nullable=False)
+    trigger_type   = Column(String(20), nullable=False)
+    status         = Column(String(30), nullable=False)
+    started_at     = Column(DateTime, nullable=False, default=datetime.utcnow)
+    finished_at    = Column(DateTime, nullable=True)
+    total_count    = Column(Integer, nullable=False, default=0)
+    success_count  = Column(Integer, nullable=False, default=0)
+    failed_count   = Column(Integer, nullable=False, default=0)
+    failed_tickers = Column(Text, nullable=True)
+    error_message  = Column(Text, nullable=True)
 
 
 # ──────────────────────────────────────────────

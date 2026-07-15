@@ -21,9 +21,10 @@ Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
 """
 
 import argparse
+import json
 import logging
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -50,6 +51,7 @@ from init_db import (                                                   # noqa: 
     HerdIndicator,
     HerdScore,
     PortfolioHistory,
+    SchedulerRun,
     UserPortfolio,
     UserWatchlist,
 )
@@ -67,6 +69,7 @@ _ET = ZoneInfo("America/New_York")
 
 # on-demand 캐시를 식별하는 user_id
 _CACHE_USER_ID = "cache"
+_TIER1_JOB_NAME = "HERD_TIER1_DAILY"
 
 
 # ══════════════════════════════════════════════
@@ -113,7 +116,56 @@ def _fetch_tier1_tickers() -> list[str]:
     return tickers
 
 
-def run_herd_job() -> None:
+def _start_scheduler_run(trigger_type: str) -> int | None:
+    """실행 시작을 별도 트랜잭션으로 먼저 기록한다."""
+    try:
+        with _SessionFactory() as session:
+            run_row = SchedulerRun(
+                job_name=_TIER1_JOB_NAME,
+                trigger_type=trigger_type,
+                status="RUNNING",
+                started_at=datetime.utcnow(),
+            )
+            session.add(run_row)
+            session.commit()
+            return run_row.id
+    except Exception as exc:
+        logger.error(f"[Tier1] 실행 시작 이력 저장 실패: {exc}", exc_info=True)
+        return None
+
+
+def _finish_scheduler_run(
+    run_id: int | None,
+    status: str,
+    total_count: int = 0,
+    success_count: int = 0,
+    failed_tickers: list[str] | None = None,
+    error_message: str | None = None,
+) -> None:
+    """실행 결과를 저장한다. 이력 저장 실패가 본 잡 결과를 바꾸지는 않는다."""
+    if run_id is None:
+        return
+
+    failed = failed_tickers or []
+    try:
+        with _SessionFactory() as session:
+            run_row = session.get(SchedulerRun, run_id)
+            if run_row is None:
+                logger.error(f"[Tier1] 실행 이력 {run_id}을 찾을 수 없습니다.")
+                return
+            run_row.status = status
+            run_row.finished_at = datetime.utcnow()
+            run_row.total_count = total_count
+            run_row.success_count = success_count
+            run_row.failed_count = len(failed)
+            run_row.failed_tickers = json.dumps(failed) if failed else None
+            run_row.error_message = error_message[:2000] if error_message else None
+            session.commit()
+    except Exception as exc:
+        logger.error(f"[Tier1] 실행 완료 이력 저장 실패: {exc}", exc_info=True)
+
+
+def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
     """
     Tier 1 전체 HERD 계산·저장 잡.
     collect → calculator.run → saver.save_herd_result 순서로 티커별 실행.
@@ -122,20 +174,23 @@ def run_herd_job() -> None:
     logger.info("━" * 60)
     logger.info("[Tier1] HERD 자동 계산 잡 시작")
     logger.info("━" * 60)
+    run_id = _start_scheduler_run(trigger_type)
 
     # ── 1. 티커 목록 조회 ──────────────────────
     try:
         tickers = _fetch_tier1_tickers()
     except Exception as e:
         logger.error(f"[Tier1] 티커 목록 조회 실패 — 잡 중단: {e}", exc_info=True)
-        return
+        _finish_scheduler_run(run_id, "FAILED", error_message=str(e))
+        return {"status": "FAILED", "total": 0, "success": [], "failed": []}
 
     if not tickers:
         logger.warning(
             "[Tier1] 처리할 종목이 없습니다. "
             "user_portfolio 또는 user_watchlist에 종목을 추가하세요."
         )
-        return
+        _finish_scheduler_run(run_id, "SUCCESS")
+        return {"status": "SUCCESS", "total": 0, "success": [], "failed": []}
 
     # ── 2. 종목별 순차 처리 ────────────────────
     success_list: list[str] = []
@@ -177,6 +232,7 @@ def run_herd_job() -> None:
 
     # ── 4. 포트폴리오 스냅샷 저장 (local 사용자) ───────────────────
     # HERD 잡 완료 후 오늘의 포트폴리오 평가금액을 portfolio_history에 기록
+    snapshot_error: str | None = None
     try:
         result = calculate_portfolio_value("local")
         if result["stocks"]:
@@ -191,6 +247,26 @@ def run_herd_job() -> None:
     except Exception as e:
         # 포트폴리오 저장 실패가 HERD 잡 전체를 중단시키지 않도록 예외 격리
         logger.error(f"[Tier1] 포트폴리오 스냅샷 저장 실패: {e}", exc_info=True)
+        snapshot_error = str(e)
+
+    if failed_list or snapshot_error:
+        status = "FAILED" if total > 0 and not success_list else "PARTIAL_FAILURE"
+    else:
+        status = "SUCCESS"
+    _finish_scheduler_run(
+        run_id,
+        status,
+        total_count=total,
+        success_count=len(success_list),
+        failed_tickers=failed_list,
+        error_message=snapshot_error,
+    )
+    return {
+        "status": status,
+        "total": total,
+        "success": success_list,
+        "failed": failed_list,
+    }
 
 
 # ══════════════════════════════════════════════
@@ -514,6 +590,7 @@ def run_scheduler() -> None:
 
     scheduler.add_job(
         func               = run_herd_job,
+        kwargs             = {"trigger_type": "SCHEDULED"},
         trigger            = CronTrigger(
             hour     = SCHEDULER_HOUR_ET,
             minute   = SCHEDULER_MINUTE_ET,
@@ -563,6 +640,6 @@ if __name__ == "__main__":
 
     if args.run_now:
         logger.info("[--run-now] Tier1 즉시 실행 모드")
-        run_herd_job()
+        run_herd_job(trigger_type="MANUAL")
     else:
         run_scheduler()
