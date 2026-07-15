@@ -5,7 +5,8 @@ calculator.run() 반환값과 collect() DataFrame을 받아
 """
 
 import logging
-from datetime import date, datetime
+import math
+from datetime import UTC, date, datetime
 
 import pandas as pd
 from sqlalchemy.exc import SQLAlchemyError
@@ -30,7 +31,35 @@ _SessionFactory = get_session_factory(_engine)
 # ──────────────────────────────────────────────
 def _now() -> datetime:
     """현재 UTC 시각을 반환한다."""
-    return datetime.utcnow()
+    return datetime.now(UTC).replace(tzinfo=None)
+
+
+def _latest_valid_price(df: pd.DataFrame) -> tuple[pd.Series, date]:
+    """최신 행이 미완성 시세여도 가장 최근의 유효한 OHLC 행을 찾는다."""
+    required_columns = ("Open", "High", "Low", "Close")
+    missing_columns = [column for column in required_columns if column not in df.columns]
+    if missing_columns:
+        raise ValueError(f"필수 시세 컬럼 누락: {', '.join(missing_columns)}")
+
+    for position in range(len(df) - 1, -1, -1):
+        row = df.iloc[position]
+        try:
+            has_valid_ohlc = all(
+                not pd.isna(row[column]) and math.isfinite(float(row[column]))
+                for column in required_columns
+            )
+        except (TypeError, ValueError):
+            has_valid_ohlc = False
+
+        if not has_valid_ohlc:
+            continue
+
+        date_value = row["Date"] if "Date" in df.columns else df.index[position]
+        if pd.isna(date_value):
+            continue
+        return row, pd.Timestamp(date_value).date()
+
+    raise ValueError("저장할 수 있는 유효한 OHLC 시세가 없습니다.")
 
 
 def _derive_signal(score: float) -> str:
@@ -168,16 +197,10 @@ def _upsert_herd_indicators(session, ticker: str,
 
 def _upsert_daily_price(session, ticker: str, df: pd.DataFrame) -> None:
     """
-    daily_prices 테이블에 DataFrame 마지막 행(최신 거래일)을 UPSERT.
+    daily_prices 테이블에 가장 최근의 유효한 거래일을 UPSERT.
     Date가 컬럼인 경우와 인덱스인 경우 모두 처리.
     """
-    last = df.iloc[-1]
-
-    # Date 처리 — 컬럼 또는 DatetimeIndex 양쪽 대응
-    if "Date" in df.columns:
-        price_date = pd.Timestamp(last["Date"]).date()
-    else:
-        price_date = pd.Timestamp(df.index[-1]).date()
+    last, price_date = _latest_valid_price(df)
 
     obj = (session.query(DailyPrice)
            .filter_by(ticker=ticker, price_date=price_date)
@@ -189,7 +212,11 @@ def _upsert_daily_price(session, ticker: str, df: pd.DataFrame) -> None:
         "high_price" : round(float(last["High"]),  4),
         "low_price"  : round(float(last["Low"]),   4),
         "close_price": round(float(last["Close"]), 4),
-        "volume"     : int(last["Volume"]),
+        "volume"     : (
+            None
+            if "Volume" not in df.columns or pd.isna(last["Volume"])
+            else int(last["Volume"])
+        ),
     }
 
     if obj is None:

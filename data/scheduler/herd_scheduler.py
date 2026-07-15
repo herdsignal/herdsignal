@@ -24,7 +24,7 @@ import argparse
 import json
 import logging
 import sys
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -124,7 +124,7 @@ def _start_scheduler_run(trigger_type: str) -> int | None:
                 job_name=_TIER1_JOB_NAME,
                 trigger_type=trigger_type,
                 status="RUNNING",
-                started_at=datetime.utcnow(),
+                started_at=datetime.now(UTC).replace(tzinfo=None),
             )
             session.add(run_row)
             session.commit()
@@ -154,7 +154,7 @@ def _finish_scheduler_run(
                 logger.error(f"[Tier1] 실행 이력 {run_id}을 찾을 수 없습니다.")
                 return
             run_row.status = status
-            run_row.finished_at = datetime.utcnow()
+            run_row.finished_at = datetime.now(UTC).replace(tzinfo=None)
             run_row.total_count = total_count
             run_row.success_count = success_count
             run_row.failed_count = len(failed)
