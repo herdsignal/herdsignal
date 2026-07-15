@@ -29,6 +29,7 @@ export const getCurrentUser = () => api.get('/api/auth/me')
 export const prepareCsrf = () => api.get('/api/auth/csrf')
 export const logout = () => api.post('/api/auth/logout')
 export const googleLoginUrl = () => `${AUTH_BASE_URL}/oauth2/authorization/google`
+export const getDataStatus = () => api.get('/api/system/data-status')
 
 /* ── 포트폴리오 ─────────────────────────────── */
 

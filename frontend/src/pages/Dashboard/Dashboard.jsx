@@ -36,6 +36,7 @@ import styles        from './Dashboard.module.css'
 import DashboardHoldings from './DashboardHoldings'
 import DashboardMobile from './DashboardMobile'
 import DashboardAssetHistory from './DashboardAssetHistory'
+import DashboardDataStatus from './DashboardDataStatus'
 import { useDashboardData } from './useDashboardData'
 
 import {
@@ -86,7 +87,7 @@ function BannerStat({ label, point }) {
 export default function Dashboard() {
   const navigate = useNavigate()
   const {
-    portfolio, summary, herdMap, spyData,
+    portfolio, summary, herdMap, spyData, dataStatus, dataStatusError,
     spyHistory,
     spyHistoryPeriod, setSpyHistoryPeriod, spyHistoryLoading,
     spyTab, setSpyTab, loading, error,
@@ -154,6 +155,7 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <DashboardDataStatus status={dataStatus} failed={dataStatusError} />
 
       <DashboardMobile
         spyData={spyData}

@@ -23,6 +23,7 @@ vi.mock('../../api/herdApi', () => ({
   getCashBalance: vi.fn(),
   updateCashBalance: vi.fn(),
   getSignalJournal: vi.fn(),
+  getDataStatus: vi.fn(),
   removeFromPortfolio: vi.fn(),
 }))
 
@@ -47,6 +48,7 @@ beforeEach(() => {
   api.getSpyHerdHistory.mockReturnValue(response({ points: [] }))
   api.getCashBalance.mockReturnValue(response({ cashAmount: 0 }))
   api.getSignalJournal.mockReturnValue(response([]))
+  api.getDataStatus.mockReturnValue(response({ status: 'FRESH' }))
 })
 
 afterEach(() => cleanup())
@@ -64,6 +66,7 @@ describe('useDashboardData cache recovery', () => {
     expect(api.getPortfolioHerd).toHaveBeenCalledTimes(1)
     expect(result.current.herdMap.AAPL?.herdScore).toBe(40)
     expect(result.current).toHaveProperty('assetStartValue', 100)
+    expect(result.current.dataStatus?.status).toBe('FRESH')
   })
 
   it('revalidates the portfolio summary even when a cached summary exists', async () => {

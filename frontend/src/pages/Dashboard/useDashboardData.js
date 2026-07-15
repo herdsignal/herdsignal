@@ -9,6 +9,7 @@ import {
   getCashBalance,
   updateCashBalance,
   getSignalJournal,
+  getDataStatus,
   removeFromPortfolio,
 } from '../../api/herdApi'
 import { formatKRW } from '../../utils/currency'
@@ -89,6 +90,8 @@ export function useDashboardData() {
   const [assetHistoryLoading, setAssetHistoryLoading] = useState(false)
   const [assetHistoryError, setAssetHistoryError] = useState(null)
   const [signalLogs,     setSignalLogs]     = useState([])
+  const [dataStatus,     setDataStatus]     = useState(null)
+  const [dataStatusError, setDataStatusError] = useState(false)
   const refreshNoticeTimer = useRef(null)
   const assetHistoryRequest = useRef(0)
   const summaryRequest = useRef(0)
@@ -117,6 +120,16 @@ export function useDashboardData() {
       return false
     }
   }, [userId])
+
+  const fetchDataStatus = useCallback(async () => {
+    try {
+      const response = await getDataStatus()
+      setDataStatus(response.data?.data ?? null)
+      setDataStatusError(false)
+    } catch {
+      setDataStatusError(true)
+    }
+  }, [])
 
   /* ── 포트폴리오 데이터 로딩 (캐시 우선) ── */
   const fetchData = useCallback(async () => {
@@ -218,10 +231,14 @@ export function useDashboardData() {
   }, [assetPanelOpen, fetchAssetHistory])
 
   useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => { fetchDataStatus() }, [fetchDataStatus])
 
   useEffect(() => {
     const revalidateOnReturn = () => {
-      if (document.visibilityState === 'visible') revalidatePortfolioSummary()
+      if (document.visibilityState === 'visible') {
+        revalidatePortfolioSummary()
+        fetchDataStatus()
+      }
     }
     window.addEventListener('focus', revalidateOnReturn)
     document.addEventListener('visibilitychange', revalidateOnReturn)
@@ -229,7 +246,7 @@ export function useDashboardData() {
       window.removeEventListener('focus', revalidateOnReturn)
       document.removeEventListener('visibilitychange', revalidateOnReturn)
     }
-  }, [revalidatePortfolioSummary])
+  }, [revalidatePortfolioSummary, fetchDataStatus])
 
   useEffect(() => {
     const syncSignalLogs = () => {
@@ -568,7 +585,7 @@ export function useDashboardData() {
   }
 
   return {
-    portfolio, summary, herdMap,
+    portfolio, summary, herdMap, dataStatus, dataStatusError,
     ...market,
     loading, error,
     modalTicker, setModalTicker, deletingTicker,

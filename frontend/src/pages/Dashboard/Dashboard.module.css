@@ -83,6 +83,47 @@
   white-space: nowrap;
 }
 
+.dataStatusBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin: -10px 0 20px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text-2);
+  font-size: 11px;
+}
+
+.dataStatusBar strong {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dataStatusBar span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dataStatusBar em {
+  margin-left: auto;
+  color: var(--text-3);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.dataStatusFRESH strong { color: #22c55e; }
+.dataStatusWARNING strong { color: #f59e0b; }
+.dataStatusSTALE strong { color: #ef4444; }
+.dataStatusRUNNING strong { color: #60a5fa; }
+.dataStatusNO_DATA strong,
+.dataStatusUnknown strong { color: var(--text-3); }
+
 /* 새로고침 보조 버튼 — 종목 추가보다 덜 강조 */
 .btnRefresh {
   background: rgba(255, 255, 255, 0.02);
