@@ -143,6 +143,8 @@
   transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
 }
 
+.navIcon { display: none; font-size: 16px; line-height: 1; }
+
 .navItem::before {
   content: '';
   width: 7px;
@@ -316,7 +318,8 @@
     justify-content: center;
     padding: 8px 4px;
     margin: 0;
-    gap: 5px;
+    flex-direction: column;
+    gap: 4px;
     border-radius: 14px;
     font-size: 11px;
     line-height: 1.1;
@@ -325,10 +328,11 @@
   }
 
   .navItem::before {
-    width: 6px;
-    height: 6px;
-    box-shadow: none;
+    display: none;
   }
+
+  .navIcon { display: block; color: var(--text-3); font-size: 17px; }
+  .active .navIcon { color: var(--flee); }
 
   .active {
     box-shadow:

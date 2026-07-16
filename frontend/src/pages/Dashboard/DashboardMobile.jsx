@@ -21,14 +21,14 @@ export default function DashboardMobile({
 }) {
   return (
     <section className={styles.mobileDashboard} aria-label="모바일 대시보드">
+      {!loading && !error && portfolio.length > 0 && (
+        <MobileActionQueue cards={actionQueueCards} onNavigate={onNavigate} />
+      )}
       <MobileMarketSignal
         spyData={spyData} spyScore={spyScore} spyStage={spyStage}
         spyMomentum={spyMomentum} lastUpdated={lastUpdated}
         points={[d1AvgPoint, m1AvgPoint, y1AvgPoint]}
       />
-      {!loading && !error && portfolio.length > 0 && (
-        <MobileActionQueue cards={actionQueueCards} onNavigate={onNavigate} />
-      )}
       {summary && (
         <MobileAssetSummary
           summary={summary} displayAmount={displayAmount} cashBalance={cashBalance}

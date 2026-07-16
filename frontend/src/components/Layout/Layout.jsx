@@ -44,7 +44,7 @@ export default function Layout() {
               `${styles.navItem} ${isActive ? styles.active : ''}`
             }
           >
-            대시보드
+            <span className={styles.navIcon}>⌂</span><span>대시보드</span>
           </NavLink>
           <NavLink
             to="/watchlist"
@@ -52,7 +52,7 @@ export default function Layout() {
               `${styles.navItem} ${isActive ? styles.active : ''}`
             }
           >
-            매수 대기열
+            <span className={styles.navIcon}>◎</span><span>대기열</span>
           </NavLink>
         </nav>
 
@@ -65,7 +65,7 @@ export default function Layout() {
               `${styles.navItem} ${isActive ? styles.active : ''}`
             }
           >
-            종목 검색
+            <span className={styles.navIcon}>⌕</span><span>검색</span>
           </NavLink>
           <NavLink
             to="/herd-lab"
@@ -73,7 +73,7 @@ export default function Layout() {
               `${styles.navItem} ${isActive ? styles.active : ''}`
             }
           >
-            HERD Lab
+            <span className={styles.navIcon}>◇</span><span>HERD Lab</span>
           </NavLink>
           <NavLink
             to="/settings"
@@ -81,7 +81,7 @@ export default function Layout() {
               `${styles.navItem} ${isActive ? styles.active : ''}`
             }
           >
-            투자 설정
+            <span className={styles.navIcon}>⚙</span><span>설정</span>
           </NavLink>
         </nav>
 
