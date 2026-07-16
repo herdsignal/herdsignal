@@ -18,9 +18,18 @@ class PointInTimeUniverseTest(unittest.TestCase):
     def test_audit_requires_non_survivor_records(self):
         record = {"ticker": "OLD", "start_date": date(2010, 1, 1), "end_date": date(2020, 1, 1),
                   "sector": "Tech", "exit_reason": "delisted", "source": "index_provider"}
-        audit = audit_survivorship_coverage([record], ["NEW"])
+        audit = audit_survivorship_coverage(
+            [record], ["NEW"], minimum_non_survivors=1, minimum_historical_coverage=1.0,
+        )
         self.assertTrue(audit["point_in_time_ready"])
         self.assertEqual(audit["non_survivor_tickers"], 1)
+
+    def test_audit_does_not_claim_readiness_from_token_sample(self):
+        record = {"ticker": "OLD", "start_date": date(2010, 1, 1), "end_date": date(2020, 1, 1),
+                  "sector": "Tech", "exit_reason": "delisted", "source": "index_provider"}
+        audit = audit_survivorship_coverage([record], ["NEW"])
+        self.assertFalse(audit["point_in_time_ready"])
+        self.assertEqual(audit["status"], "SURVIVORSHIP_BIAS_REMAINS")
 
     def test_loader_rejects_invalid_exit_reason(self):
         content = "ticker,start_date,end_date,sector,exit_reason,source\nOLD,2010-01-01,2020-01-01,Tech,unknown,test\n"

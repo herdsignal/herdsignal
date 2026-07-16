@@ -26,5 +26,14 @@ class ParameterStabilityTest(unittest.TestCase):
         rows = [row(2020, 1.0, 20, 30), row(2021, 0.8, 20, 10)]
         self.assertTrue(analyze_parameter_stability(rows)["single_parameter_spike"])
 
+    def test_uses_train_selection_for_diagnostics_when_applied_values_are_fixed(self):
+        rows = [
+            {**row(2020, 1.0, 20), "selected_ratio_scale": 0.8, "selected_cooldown_days": 15},
+            {**row(2021, 1.0, 20), "selected_ratio_scale": 1.2, "selected_cooldown_days": 30},
+        ]
+        result = analyze_parameter_stability(rows)
+        self.assertEqual(result["transition_stability"]["same_parameter_rate"], 0)
+        self.assertEqual(result["recommendation"], "USE_FIXED_PARAMETERS")
+
 
 if __name__ == "__main__": unittest.main()

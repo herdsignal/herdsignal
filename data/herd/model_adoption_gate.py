@@ -38,6 +38,7 @@ def evaluate_adoption_gate(
     cscv = overfitting.get("cscv", {})
     dsr = overfitting.get("deflated_sharpe", {})
     survivorship = metadata.get("survivorship_coverage", {})
+    parameter_policy = metadata.get("parameter_policy", {})
 
     coverage = run.get("coverage")
     improvement_rate = walk.get("improvement_rate")
@@ -53,6 +54,10 @@ def evaluate_adoption_gate(
                    coverage, f">={thresholds.minimum_coverage}"),
         _criterion("score_parity", metadata.get("score_parity", {}).get("passed") is True,
                    metadata.get("score_parity", {}).get("passed"), True),
+        _criterion("fixed_parameter_policy",
+                   parameter_policy.get("mode") == "fixed"
+                   and parameter_policy.get("automatic_selection_applied") is False,
+                   parameter_policy.get("mode"), "fixed"),
         _criterion("oos_improvement_rate", improvement_rate is not None and improvement_rate >= thresholds.minimum_oos_improvement_rate,
                    improvement_rate, f">={thresholds.minimum_oos_improvement_rate}"),
         _criterion("oos_mdd_improvement", mdd_improvement is not None and mdd_improvement >= thresholds.minimum_oos_mdd_improvement,

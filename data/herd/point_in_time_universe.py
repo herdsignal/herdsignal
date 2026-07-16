@@ -36,16 +36,30 @@ def constituents_at(records: list[dict[str, Any]], as_of: date) -> list[str]:
                    if row["start_date"] <= as_of and (row["end_date"] is None or row["end_date"] >= as_of)})
 
 
-def audit_survivorship_coverage(records: list[dict[str, Any]], fixed_tickers: list[str]) -> dict[str, Any]:
+def audit_survivorship_coverage(
+    records: list[dict[str, Any]],
+    fixed_tickers: list[str],
+    minimum_non_survivors: int = 10,
+    minimum_historical_coverage: float = 0.5,
+) -> dict[str, Any]:
     exits = Counter(row["exit_reason"] for row in records if row["exit_reason"] != "active")
     historical = {row["ticker"] for row in records}
     fixed = set(fixed_tickers)
     non_survivors = historical - fixed
     has_dates = bool(records) and all(row.get("source") and row.get("sector") for row in records)
+    historical_coverage = len(historical) / len(fixed) if fixed else 0.0
+    ready = (
+        has_dates
+        and len(non_survivors) >= minimum_non_survivors
+        and historical_coverage >= minimum_historical_coverage
+    )
     return {
         "fixed_current_tickers": len(fixed), "historical_records": len(records),
         "historical_tickers": len(historical), "non_survivor_tickers": len(non_survivors),
+        "historical_coverage": historical_coverage,
+        "minimum_non_survivors": minimum_non_survivors,
+        "minimum_historical_coverage": minimum_historical_coverage,
         "exit_reason_counts": dict(sorted(exits.items())),
-        "point_in_time_ready": has_dates and bool(non_survivors),
-        "status": "POINT_IN_TIME_READY" if has_dates and non_survivors else "SURVIVORSHIP_BIAS_REMAINS",
+        "point_in_time_ready": ready,
+        "status": "POINT_IN_TIME_READY" if ready else "SURVIVORSHIP_BIAS_REMAINS",
     }

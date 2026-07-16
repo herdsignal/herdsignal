@@ -25,6 +25,7 @@ from herd.point_in_time_universe import audit_survivorship_coverage, load_univer
 from herd.healthy_rush import healthy_rush_decision
 from herd.calculator import calc_herd_scores
 from herd.validation_universe import SECTOR_UNIVERSE, TICKERS, TICKER_SECTOR_ETF, UNIVERSE_VERSION
+from herd.validation_policy import ValidationPolicy
 from herd.sector_ratio_adjustment import apply_sector_ratio, build_sector_ratio_factor
 from herd.validation_v2 import ExecutionConfig, InvestorConfig, apply_point_in_time_sector, build_folds, fold_masks, normalize_price_frame, point_in_time_sector_multiplier, run_realistic_strategy, summarize, write_report
 from init_db import HerdIndicator, HerdScore
@@ -176,10 +177,20 @@ def run_period(
     return row
 
 
-def select_on_train(ticker: str, frame: pd.DataFrame, herd: pd.Series, base_config: ExecutionConfig) -> tuple[float, int, list[dict]]:
+def select_on_train(
+    ticker: str,
+    frame: pd.DataFrame,
+    herd: pd.Series,
+    base_config: ExecutionConfig,
+    policy: ValidationPolicy = ValidationPolicy(),
+) -> tuple[float, int, list[dict]]:
     """제한된 후보 중 학습구간 위험조정 결과가 가장 안정적인 하나를 고른다."""
-    candidates = ((scale, cooldown) for scale in (0.8, 1.0, 1.2) for cooldown in (15, 20, 30))
-    best, best_score = (1.0, 20), float("-inf")
+    candidates = (
+        (scale, cooldown)
+        for scale in policy.candidate_ratio_scales
+        for cooldown in policy.candidate_cooldown_days
+    )
+    best, best_score = (policy.fixed_ratio_scale, policy.fixed_cooldown_days), float("-inf")
     history: list[dict] = []
     for scale, cooldown in candidates:
         config = ExecutionConfig(base_config.initial_cash, base_config.fee_rate, base_config.slippage_bps, cooldown)
@@ -223,9 +234,16 @@ def main() -> None:
     parser.add_argument("--min-coverage", type=float, default=0.95, help="성공해야 하는 최소 종목 비율")
     parser.add_argument("--output", default="reports/validation_v2")
     parser.add_argument("--unlock-blind", action="store_true", help="잠긴 최근 12개월 결과를 의도적으로 다시 생성")
+    parser.add_argument(
+        "--parameter-policy",
+        choices=("fixed", "train-selected"),
+        default="fixed",
+        help="fixed는 운영 검증 기본값, train-selected는 연구 실험 전용",
+    )
     args = parser.parse_args()
     tickers = args.tickers or (TICKERS if args.full else ["SPY", "NVDA", "MSFT", "JPM", "AAPL"])
     config = ExecutionConfig(slippage_bps=args.slippage_bps)
+    policy = ValidationPolicy(mode=args.parameter_policy)
     if not 0 < args.min_coverage <= 1:
         parser.error("--min-coverage는 0 초과 1 이하여야 합니다.")
     if args.embargo_days < 0:
@@ -261,7 +279,10 @@ def main() -> None:
                 for fold in build_folds(research_frame.index, mode):
                     train_mask, test_mask = fold_masks(research_frame.index, fold, args.embargo_days)
                     if train_mask.sum() < 200 or test_mask.sum() < 50: continue
-                    scale, cooldown, candidates = select_on_train(ticker, research_frame.loc[train_mask], research_herd.loc[train_mask], config)
+                    selected_scale, selected_cooldown, candidates = select_on_train(
+                        ticker, research_frame.loc[train_mask], research_herd.loc[train_mask], config, policy,
+                    )
+                    scale, cooldown = policy.applied_parameters(selected_scale, selected_cooldown)
                     evaluation_id = f"{ticker}|{mode}|{fold['test_start']}"
                     experiment_history.extend({**candidate, "evaluation_id": evaluation_id, "ticker": ticker,
                                                "mode": mode, "test_start": fold["test_start"]} for candidate in candidates)
@@ -269,9 +290,19 @@ def main() -> None:
                     result = run_period(ticker, research_frame.loc[test_mask], research_herd.loc[test_mask], fold_config, scale,
                                         sector_ratio_factor=sector_ratio_factor.loc[research_frame.index[test_mask]],
                                         include_research_candidates=True)
-                    fold_rows.append({**fold, "selection_scope": "train_only", **result})
+                    fold_rows.append({
+                        **fold,
+                        "selection_scope": "train_only",
+                        "parameter_policy": policy.mode,
+                        "selected_ratio_scale": selected_scale,
+                        "selected_cooldown_days": selected_cooldown,
+                        **result,
+                    })
             if not blind_locked:
-                scale, cooldown, _candidates = select_on_train(ticker, research_frame, research_herd, config)
+                selected_scale, selected_cooldown, _candidates = select_on_train(
+                    ticker, research_frame, research_herd, config, policy,
+                )
+                scale, cooldown = policy.applied_parameters(selected_scale, selected_cooldown)
                 blind_mask = frame.index >= blind_start
                 blind_config = ExecutionConfig(config.initial_cash, config.fee_rate, config.slippage_bps, cooldown)
                 blind_rows.append(run_period(ticker, frame.loc[blind_mask], herd.loc[blind_mask], blind_config, scale))
@@ -288,6 +319,7 @@ def main() -> None:
         "model": "HERD_v6.1",
         "universe": UNIVERSE_VERSION,
         "execution": {"signal": "close", "fill": "next_open", **config.__dict__},
+        "parameter_policy": policy.metadata(),
         "validation_run": {
             "status": run_status,
             "requested_tickers": len(tickers),

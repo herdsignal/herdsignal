@@ -7,6 +7,7 @@ def _passing_metadata() -> dict:
     return {
         "validation_run": {"status": "COMPLETE", "coverage": 1.0},
         "score_parity": {"passed": True},
+        "parameter_policy": {"mode": "fixed", "automatic_selection_applied": False},
         "walk_forward_summary": {
             "improvement_rate": 65.0,
             "mdd_improvement_median": 1.0,
