@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import herdSignalMark from '../../assets/brand/herdsignal-mark.svg'
 import { useAuth } from '../../auth/AuthContext'
+import ActionNotifications from '../ActionNotifications/ActionNotifications'
 import styles from './Layout.module.css'
 
 export default function Layout() {
@@ -78,6 +79,7 @@ export default function Layout() {
 
         {/* 하단 — 테마 토글 */}
         <div className={styles.sidebarBottom}>
+          <ActionNotifications />
           <div className={styles.userSummary}>
             {user?.profileImageUrl
               ? <img src={user.profileImageUrl} alt="" referrerPolicy="no-referrer" />
