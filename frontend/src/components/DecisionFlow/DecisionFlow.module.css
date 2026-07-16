@@ -1,0 +1,15 @@
+.flow { display: flex; align-items: stretch; gap: 8px; width: 100%; }
+.stepWrap { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.stepWrap:last-child { flex: 1.15; }
+.step { display: grid; gap: 4px; width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface2); }
+.step span { color: var(--text-3); font-size: 8px; font-weight: 800; text-transform: uppercase; }
+.step strong { overflow: hidden; color: var(--text-1); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.stepWrap:last-child .step { border-color: rgba(96, 165, 250, 0.28); background: rgba(59, 130, 246, 0.08); }
+.stepWrap i { color: var(--text-3); font-size: 10px; font-style: normal; }
+.compact .step { padding: 8px 9px; }
+
+@media (max-width: 760px) {
+  .flow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stepWrap, .stepWrap:last-child { display: block; }
+  .stepWrap i { display: none; }
+}

@@ -1,4 +1,5 @@
 import { pctColor, fmtPct, signalStyle } from './dashboardModel'
+import DecisionFlow from '../../components/DecisionFlow/DecisionFlow'
 import styles from './Dashboard.module.css'
 
 export default function DashboardTodayBrief({
@@ -64,6 +65,16 @@ export default function DashboardTodayBrief({
             </div>
           )}
         </div>
+        {cards[0] && (
+          <div className={styles.todayDecisionFlow}>
+            <DecisionFlow
+              herd={cards[0].herd}
+              currentWeight={cards[0].row.currentWeight}
+              targetWeight={cards[0].row.targetWeight}
+              compact
+            />
+          </div>
+        )}
       </div>
     </section>
   )
