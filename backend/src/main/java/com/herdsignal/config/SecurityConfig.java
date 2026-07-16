@@ -42,7 +42,7 @@ public class SecurityConfig {
                             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                             .sessionFixation().migrateSession())
                     .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/oauth2/**", "/login/**", "/error", "/actuator/health").permitAll()
+                            .requestMatchers("/oauth2/**", "/login/**", "/error", "/actuator/health/**").permitAll()
                             .requestMatchers("/api/auth/**", "/api/model/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/stocks/**").permitAll()
                             .anyRequest().authenticated())

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 @Service
 public class DataFreshnessService {
     private static final String JOB_NAME = "HERD_TIER1_DAILY";
+    private static final int MAX_RUNNING_HOURS = 2;
 
     private final SchedulerRunRepository schedulerRunRepository;
     private final DailyPriceRepository dailyPriceRepository;
@@ -76,7 +78,11 @@ public class DataFreshnessService {
     }
 
     private String determineStatus(SchedulerRun run, Integer priceAge, Integer scoreAge) {
-        if (run != null && "RUNNING".equals(run.getStatus())) return "RUNNING";
+        if (run != null && "RUNNING".equals(run.getStatus())) {
+            LocalDateTime staleBoundary = LocalDateTime.now(clock).minusHours(MAX_RUNNING_HOURS);
+            return run.getStartedAt().isBefore(staleBoundary) ? "FAILED" : "RUNNING";
+        }
+        if (run != null && "FAILED".equals(run.getStatus())) return "FAILED";
         if (priceAge == null || scoreAge == null) return "NO_DATA";
         int maxAge = Math.max(priceAge, scoreAge);
         if (maxAge > 2) return "STALE";
@@ -90,6 +96,7 @@ public class DataFreshnessService {
             case "WARNING" -> "일부 데이터 또는 최근 수집 결과를 확인하세요.";
             case "STALE" -> "데이터가 오래되었습니다. 스케줄러 실행이 필요합니다.";
             case "RUNNING" -> "스케줄러가 데이터를 업데이트하고 있습니다.";
+            case "FAILED" -> "최근 스케줄러 실행이 실패했거나 비정상적으로 오래 실행 중입니다.";
             default -> "아직 스케줄러 실행 이력이 충분하지 않습니다.";
         };
     }

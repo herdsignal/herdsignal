@@ -54,6 +54,11 @@ management:
   endpoint:
     health:
       show-details: never
+      probes:
+        enabled: true
+  health:
+    probes:
+      add-additional-paths: true
 
 herdsignal:
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}

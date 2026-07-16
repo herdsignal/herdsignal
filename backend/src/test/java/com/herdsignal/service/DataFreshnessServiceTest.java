@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
@@ -83,6 +84,29 @@ class DataFreshnessServiceTest {
                 .thenReturn(Optional.of(successfulRun));
 
         assertThat(service.getStatus().status()).isEqualTo("STALE");
+    }
+
+    @Test
+    void returnsFailedWhenSchedulerRunIsStuck() {
+        SchedulerRun running = run("RUNNING");
+        when(running.getStartedAt()).thenReturn(LocalDateTime.of(2026, 7, 15, 9, 0));
+        when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
+                .thenReturn(Optional.of(running));
+
+        assertThat(service.getStatus().status()).isEqualTo("FAILED");
+    }
+
+    @Test
+    void returnsFailedWhenLatestSchedulerRunFailed() {
+        SchedulerRun failed = run("FAILED");
+        when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
+                .thenReturn(Optional.of(failed));
+
+        assertThat(service.getStatus().status()).isEqualTo("FAILED");
     }
 
     private SchedulerRun run(String status) {

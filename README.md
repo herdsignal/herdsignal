@@ -192,6 +192,17 @@ cd ..
 예약 작업도 멈추므로, 필요한 날 직접 갱신하려면 `./scripts/run-scheduler-once.sh`를 실행합니다.
 대시보드에서는 최신 가격일, HERD 기준일, 마지막 실행 결과와 실패 종목을 확인할 수 있습니다.
 
+운영 상태와 DB 백업은 아래 명령으로 확인합니다.
+
+```bash
+./scripts/check-health.sh
+./scripts/backup-db.sh
+./scripts/verify-backup.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz
+```
+
+백업은 압축 후 체크섬을 함께 만들며 기본 14일 보관합니다. 보관 기간과 경로는 `.env`의
+`BACKUP_RETENTION_DAYS`, `BACKUP_DIR`로 바꿀 수 있습니다.
+
 ## 테스트
 
 ```bash
