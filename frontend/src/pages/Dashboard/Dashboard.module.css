@@ -453,11 +453,11 @@
 }
 
 .riskItem_clear {
-  border-left-color: #22C55E;
+  border-left-color: var(--status-success);
 }
 
 .riskItem_clear strong {
-  color: #22C55E;
+  color: var(--status-success);
 }
 
 .alertPanel {
@@ -1817,7 +1817,7 @@
 }
 .holdingRow:hover .cardDeleteBtn { opacity: 1; }
 .cardDeleteBtn:hover:not(:disabled) {
-  color: #EF4444;
+  color: var(--status-danger);
   border-color: rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.08);
 }
@@ -1941,9 +1941,9 @@
   flex-shrink: 0;
   padding: 6px 12px;
   border-radius: 6px;
-  border: 1px solid #3B82F6;
+  border: 1px solid var(--action-buy);
   background: transparent;
-  color: #60A5FA;
+  color: var(--action-add);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;

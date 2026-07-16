@@ -1,4 +1,5 @@
 import styles from './DecisionFlow.module.css'
+import { signalTone } from '../../utils/signalStyle'
 
 function trendLabel(herd) {
   const reason = herd?.actionReasons?.find((item) => item.startsWith('장기 추세 품질'))
@@ -16,6 +17,7 @@ function weightLabel(currentWeight, targetWeight) {
 export default function DecisionFlow({ herd, currentWeight, targetWeight, compact = false }) {
   const stage = (herd?.herdStage ?? 'Calm').replace(/^Herd /, '')
   const action = herd?.actionLabel ?? herd?.signal ?? '관찰'
+  const actionClass = styles[signalTone(herd?.signal)]
   const steps = [
     ['HERD', `${stage} ${Math.round(herd?.herdV4 ?? herd?.herdScore ?? 50)}`],
     ['추세', trendLabel(herd)],
@@ -27,7 +29,7 @@ export default function DecisionFlow({ herd, currentWeight, targetWeight, compac
     <div className={`${styles.flow} ${compact ? styles.compact : ''}`} aria-label="행동 판단 흐름">
       {steps.map(([label, value], index) => (
         <div className={styles.stepWrap} key={label}>
-          <div className={styles.step}>
+          <div className={`${styles.step} ${index === steps.length - 1 ? actionClass : ''}`}>
             <span>{label}</span>
             <strong>{value}</strong>
           </div>

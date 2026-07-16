@@ -26,6 +26,27 @@
   --drift:   #F97316;   /* 오렌지 — 60~75 */
   --rush:    #EF4444;   /* 레드 — 75~100 */
 
+  /* 행동·상태 의미 색상 */
+  --action-buy: #3B82F6;
+  --action-add: #60A5FA;
+  --action-hold: #A3AAB8;
+  --action-reduce: #F97316;
+  --action-sell: #EF4444;
+  --action-buy-soft: rgba(59, 130, 246, 0.12);
+  --action-add-soft: rgba(96, 165, 250, 0.12);
+  --action-hold-soft: rgba(163, 170, 184, 0.14);
+  --action-reduce-soft: rgba(249, 115, 22, 0.1);
+  --action-sell-soft: rgba(239, 68, 68, 0.1);
+
+  --status-success: #22C55E;
+  --status-warning: #F59E0B;
+  --status-danger: #EF4444;
+  --status-info: #60A5FA;
+  --status-success-soft: rgba(34, 197, 94, 0.1);
+  --status-warning-soft: rgba(245, 158, 11, 0.1);
+  --status-danger-soft: rgba(239, 68, 68, 0.1);
+  --status-info-soft: rgba(96, 165, 250, 0.1);
+
   /* 레이아웃 */
   --sidebar: 200px;
   --card-radius: 8px;
@@ -47,4 +68,6 @@ body.light {
   --text-2:   #475569;
   --text-3:   #7B8794;
   --calm:     #64748B;
+  --action-hold: #64748B;
+  --action-hold-soft: rgba(100, 116, 139, 0.12);
 }

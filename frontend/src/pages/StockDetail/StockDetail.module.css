@@ -344,7 +344,7 @@
 
 .decisionMomentum_positive {
   color: var(--positive);
-  border-color: rgba(34, 197, 94, 0.28);
+  border-color: color-mix(in srgb, var(--status-success) 28%, transparent);
 }
 
 .decisionMomentum_warning {

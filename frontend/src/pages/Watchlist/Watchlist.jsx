@@ -27,6 +27,7 @@ import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { formatSignalAgeLabel, formatSignalDuration } from '../../utils/signalDuration'
 import { actionBasisLabel, actionIntensityLabel } from '../../utils/actionIntensity'
 import { opportunityRows } from '../../utils/portfolioTools'
+import { signalStyle } from '../../utils/signalStyle'
 import styles    from './Watchlist.module.css'
 
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
@@ -69,18 +70,6 @@ function stageDesc(stage) {
     case 'scatter': return '군중 흩어짐 · 분할 매수'
     case 'flee':    return '군중 이탈 · 적극 매수'
     default:        return '군중 균형 · 보유 유지'
-  }
-}
-
-/** signal → 배지 배경색 + 텍스트 색 */
-function signalStyle(signal) {
-  switch (signal) {
-    case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: '#EF4444' }
-    case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',   color: '#F97316' }
-    case 'HOLD':   return { bg: 'rgba(163,170,184,0.14)', color: 'var(--calm)' }
-    case 'ADD':    return { bg: 'rgba(96,165,250,0.12)',  color: '#60A5FA' }
-    case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6' }
-    default:       return { bg: 'rgba(163,170,184,0.14)', color: 'var(--calm)' }
   }
 }
 

@@ -698,7 +698,7 @@
 .queueDeleteBtn:hover:not(:disabled) {
   border-color: rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.08);
-  color: #EF4444;
+  color: var(--status-danger);
 }
 
 .queueDeleteBtn:disabled {

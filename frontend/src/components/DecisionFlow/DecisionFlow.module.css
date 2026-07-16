@@ -4,7 +4,12 @@
 .step { display: grid; gap: 4px; width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface2); }
 .step span { color: var(--text-3); font-size: 8px; font-weight: 800; text-transform: uppercase; }
 .step strong { overflow: hidden; color: var(--text-1); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-.stepWrap:last-child .step { border-color: rgba(96, 165, 250, 0.28); background: rgba(59, 130, 246, 0.08); }
+.step.buy { border-color: color-mix(in srgb, var(--action-buy) 32%, transparent); background: var(--action-buy-soft); }
+.step.buy strong { color: var(--action-buy); }
+.step.hold { border-color: color-mix(in srgb, var(--action-hold) 28%, transparent); background: var(--action-hold-soft); }
+.step.hold strong { color: var(--action-hold); }
+.step.reduce { border-color: color-mix(in srgb, var(--action-reduce) 32%, transparent); background: var(--action-reduce-soft); }
+.step.reduce strong { color: var(--action-reduce); }
 .stepWrap i { color: var(--text-3); font-size: 10px; font-style: normal; }
 .compact .step { padding: 8px 9px; }
 

@@ -1,4 +1,5 @@
 import { actionBasisLabel, actionIntensity } from '../../utils/actionIntensity'
+import { signalStyle as sharedSignalStyle } from '../../utils/signalStyle'
 
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
 export const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
@@ -46,14 +47,7 @@ export function stageColor(stage) {
 
 /** signal → 배지 배경/텍스트 색 */
 export function signalStyle(signal) {
-  switch (signal) {
-    case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',   color: 'var(--rush)' }
-    case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',  color: 'var(--drift)' }
-    case 'HOLD':   return { bg: 'rgba(113,113,122,0.1)', color: 'var(--calm)' }
-    case 'ADD':    return { bg: 'rgba(96,165,250,0.1)',  color: 'var(--scatter)' }
-    case 'BUY':    return { bg: 'rgba(59,130,246,0.12)', color: 'var(--flee)' }
-    default:       return { bg: 'rgba(113,113,122,0.1)', color: 'var(--calm)' }
-  }
+  return sharedSignalStyle(signal)
 }
 
 /** stage → 티커 배지 배경/텍스트 색 */

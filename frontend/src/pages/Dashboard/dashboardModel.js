@@ -1,6 +1,7 @@
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { actionBasisLabel, actionIntensityLabel } from '../../utils/actionIntensity'
+import { signalStyle as sharedSignalStyle } from '../../utils/signalStyle'
 
 export const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
@@ -205,14 +206,7 @@ export function stageDesc(stage) {
 
 /** signal → 배지 배경·텍스트 색 */
 export function signalStyle(signal) {
-  switch (signal) {
-    case 'SELL':   return { bg: 'rgba(239,68,68,0.1)',    color: '#EF4444' }
-    case 'REDUCE': return { bg: 'rgba(249,115,22,0.1)',   color: '#F97316' }
-    case 'HOLD':   return { bg: 'rgba(163,170,184,0.14)', color: 'var(--calm)' }
-    case 'ADD':    return { bg: 'rgba(96,165,250,0.12)',  color: '#60A5FA' }
-    case 'BUY':    return { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6' }
-    default:       return { bg: 'rgba(163,170,184,0.14)', color: 'var(--calm)' }
-  }
+  return sharedSignalStyle(signal)
 }
 
 /** stage → 티커 배지 배경·텍스트 색 */
