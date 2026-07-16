@@ -3,19 +3,17 @@
  */
 
 import { useEffect, useState } from 'react'
-import { getInvestorProfile, getModelValidationReport, updateInvestorProfile } from '../../api/herdApi'
+import { getModelValidationReport } from '../../api/herdApi'
 import herdModelReport from '../../data/herdModelReport'
 import styles from './HerdLab.module.css'
 import { presentValidationReport } from './herdModelPresentation'
-import { ActionGuide, ActionOutcomesPanel, InvestorProfilePanel, MethodologyPanel, ValidationPanel } from './HerdLabSections'
+import { ActionOutcomesPanel, MethodologyPanel, ValidationPanel } from './HerdLabSections'
 
 const { model: MODEL_BASE } = herdModelReport
 
 export default function HerdLab() {
   const [report, setReport] = useState(null)
   const [error, setError] = useState('')
-  const [profile, setProfile] = useState(null)
-  const [profileStatus, setProfileStatus] = useState('')
 
   useEffect(() => {
     let active = true
@@ -28,38 +26,6 @@ export default function HerdLab() {
       })
     return () => { active = false }
   }, [])
-
-  useEffect(() => {
-    let active = true
-    getInvestorProfile()
-      .then(({ data }) => { if (active) setProfile(data.data) })
-      .catch(() => { if (active) setProfileStatus('투자 설정을 불러오지 못했습니다.') })
-    return () => { active = false }
-  }, [])
-
-  const changeProfile = (field, value) => {
-    setProfile((current) => ({ ...current, [field]: value }))
-    setProfileStatus('')
-  }
-
-  const saveProfile = async (event) => {
-    event.preventDefault()
-    setProfileStatus('저장 중...')
-    try {
-      const payload = {
-        ...profile,
-        timeHorizonYears: Number(profile.timeHorizonYears),
-        liquidityBufferMonths: Number(profile.liquidityBufferMonths),
-        maxActionRatio: Number(profile.maxActionRatio),
-        targetEquityRatio: Number(profile.targetEquityRatio),
-      }
-      const { data } = await updateInvestorProfile(payload)
-      setProfile(data.data)
-      setProfileStatus('저장했습니다. 다음 HERD 조회부터 적용됩니다.')
-    } catch (requestError) {
-      setProfileStatus(requestError.response?.data?.message || '투자 설정을 저장하지 못했습니다.')
-    }
-  }
 
   if (error) {
     return <div className={styles.page}><section className={styles.panel} role="alert"><p className={styles.inlineStatus}>{error}</p></section></div>
@@ -95,8 +61,6 @@ export default function HerdLab() {
         </div>
       </section>
 
-      <InvestorProfilePanel profile={profile} status={profileStatus} onChange={changeProfile} onSubmit={saveProfile} />
-      <ActionGuide />
       <ActionOutcomesPanel outcomes={actionOutcomes} />
       <ValidationPanel sectors={featuredSectors} rows={rows} />
       <MethodologyPanel modelNotes={modelNotes} />

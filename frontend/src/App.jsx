@@ -20,6 +20,7 @@ const AiRebalance = lazy(() => import('./pages/AiRebalance/AiRebalance'))
 const HerdFlowPreview = lazy(() => import('./pages/HerdFlowPreview/HerdFlowPreview'))
 const HerdLab = lazy(() => import('./pages/HerdLab/HerdLab'))
 const Journal = lazy(() => import('./pages/Journal/Journal'))
+const Settings = lazy(() => import('./pages/Settings/Settings'))
 
 function RouteFallback() {
   return (
@@ -71,6 +72,7 @@ export default function App() {
             <Route path="/history"       element={<History />} />
             <Route path="/herd-lab"      element={<HerdLab />} />
             <Route path="/journal"       element={<Journal />} />
+            <Route path="/settings"      element={<Settings />} />
             <Route path="/ai"            element={<AiRebalance />} />
             <Route path="/herd-flow"     element={<HerdFlowPreview />} />
           </Route>

@@ -75,6 +75,14 @@ export default function Layout() {
           >
             HERD Lab
           </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `${styles.navItem} ${isActive ? styles.active : ''}`
+            }
+          >
+            투자 설정
+          </NavLink>
         </nav>
 
         {/* 하단 — 테마 토글 */}
