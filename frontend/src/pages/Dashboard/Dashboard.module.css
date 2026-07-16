@@ -3106,3 +3106,78 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+.todayBrief {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.todayConclusion,
+.todayPriority {
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--surface);
+}
+
+.todayConclusion {
+  padding: 24px;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(59, 130, 246, 0.14), transparent 34%),
+    var(--surface);
+}
+
+.todayConclusion > span,
+.todayPriority header span {
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.todayConclusion h2 {
+  margin-top: 10px;
+  color: var(--text-1);
+  font-size: 25px;
+  letter-spacing: -0.04em;
+}
+
+.todayConclusion p {
+  margin-top: 8px;
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.todayPortfolio {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.todayPortfolio strong { color: var(--text-1); font-size: 19px; }
+.todayPortfolio em { font-size: 11px; font-style: normal; font-weight: 800; }
+.todayPriority { padding: 18px; }
+.todayPriority header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.todayPriority header div { display: flex; align-items: baseline; gap: 8px; }
+.todayPriority header strong { color: var(--text-1); font-size: 13px; }
+.todayPriority header em { color: var(--text-3); font-size: 9px; font-style: normal; }
+.todayPriorityList { display: grid; gap: 6px; }
+.todayPriorityList > button { display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px; width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface2); color: inherit; text-align: left; cursor: pointer; }
+.todayPriorityList > button:hover { border-color: var(--border2); transform: translateY(-1px); }
+.todayPriorityList > button div { display: flex; flex-direction: column; gap: 3px; }
+.todayPriorityList > button div:last-child { align-items: flex-end; text-align: right; }
+.todayPriorityList strong { color: var(--text-1); font-size: 12px; }
+.todayPriorityList span { color: var(--text-3); font-size: 9px; }
+.todayEmpty { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 24px 12px; border: 1px dashed var(--border); border-radius: 11px; color: var(--text-3); text-align: center; }
+.todayEmpty strong { color: var(--text-2); font-size: 12px; }
+.todayEmpty span { font-size: 10px; }
+
+@media (max-width: 1100px) {
+  .todayBrief { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .todayBrief { display: none; }
+}

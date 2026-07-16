@@ -37,6 +37,7 @@ import DashboardHoldings from './DashboardHoldings'
 import DashboardMobile from './DashboardMobile'
 import DashboardAssetHistory from './DashboardAssetHistory'
 import DashboardDataStatus from './DashboardDataStatus'
+import DashboardTodayBrief from './DashboardTodayBrief'
 import { useDashboardData } from './useDashboardData'
 
 import {
@@ -44,7 +45,6 @@ import {
   REFRESH_SCOPE_TITLE,
   stageColor,
   stageDesc,
-  signalStyle,
   fmtPct,
   fmtAxisDate,
   pctColor,
@@ -180,6 +180,16 @@ export default function Dashboard() {
         onNavigate={navigate}
       />
 
+      {!loading && !error && portfolio.length > 0 && (
+        <DashboardTodayBrief
+          cards={actionQueueCards}
+          alerts={portfolioAlerts}
+          summary={summary}
+          displayAmount={displayAmount}
+          onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
+        />
+      )}
+
       <div className={styles.commandFrame}>
         <div className={styles.commandFrameTop}>
           <div>
@@ -297,67 +307,6 @@ export default function Dashboard() {
             )}
           </div>
         </div>
-
-        {/* ── 행동 대기열 — 장기투자 관찰 후보를 먼저 보여준다 ── */}
-        {!loading && !error && portfolio.length > 0 && (
-          <div className={styles.commandQueue}>
-            <div className={styles.commandQueueHead}>
-              <span>Action Queue</span>
-              <strong>
-                {actionQueueCards.length > 0
-                  ? `${actionQueueCards.length}개 핵심 후보`
-                  : '강한 행동 신호 없음'}
-              </strong>
-              <em>매수권·익절권·목표비중 이탈을 우선 정렬</em>
-            </div>
-            <div className={styles.commandQueueList}>
-              {actionQueueCards.length > 0 ? (
-                actionQueueCards.map((card) => {
-                  const actionColor = card.action.muted
-                    ? 'var(--calm)'
-                    : signalStyle(card.herd.signal).color
-                  const cardTone = card.action.code.startsWith('SELL') || card.action.code.startsWith('REDUCE')
-                    ? styles.commandTicketSell
-                    : card.action.code.startsWith('ADD') || card.action.code.startsWith('BUY')
-                      ? styles.commandTicketBuy
-                      : styles.commandTicketHold
-
-                  return (
-                  <button
-                    key={card.ticker}
-                    type="button"
-                    className={`${styles.commandTicket} ${cardTone}`}
-                    onClick={() => navigate(`/stock/${card.ticker}`)}
-                  >
-                    <span className={styles.commandActionIcon} style={{ color: actionColor }}>
-                      {card.action.code.startsWith('SELL') || card.action.code.startsWith('REDUCE') ? '↓' : card.action.code.startsWith('HOLD') || card.action.code.startsWith('WAIT') ? '○' : '↑'}
-                    </span>
-                    <div className={styles.commandTicketMain}>
-                      <strong style={{ color: actionColor }}>{card.action.code}</strong>
-                      <span>{card.ticker}</span>
-                      <em>{card.stage} · HERD {card.score}</em>
-                    </div>
-                    <div className={styles.commandTicketMeta}>
-                      <span>{card.action.text}</span>
-                      <small>{card.row.currentWeight.toFixed(1)}% / {card.row.targetWeight.toFixed(1)}%</small>
-                      {card.price && (
-                        <small style={{ color: pctColor(card.price.daily_change_pct) }}>
-                          오늘 {fmtPct(card.price.daily_change_pct)}
-                        </small>
-                      )}
-                    </div>
-                  </button>
-                  )
-                })
-              ) : (
-                <div className={styles.commandEmpty}>
-                  <strong>오늘 새로 할 행동은 없습니다.</strong>
-                  <span>장기투자 지표라 매일 신호가 나오지 않는 것이 정상입니다.</span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {summary && (
           <div className={styles.portfolioSummaryBar}>
