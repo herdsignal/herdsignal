@@ -52,7 +52,7 @@ public class ActionDecisionService {
     ) {
         return decide(
                 score, indicator, qualityScore, history, profile, currentlyHeld,
-                ActionCooldownContext.none());
+                ActionCooldownContext.none(), PortfolioActionContext.unavailable());
     }
 
     public ActionDecision decide(
@@ -63,6 +63,21 @@ public class ActionDecisionService {
             InvestorProfile profile,
             boolean currentlyHeld,
             ActionCooldownContext cooldownContext
+    ) {
+        return decide(
+                score, indicator, qualityScore, history, profile, currentlyHeld,
+                cooldownContext, PortfolioActionContext.unavailable());
+    }
+
+    public ActionDecision decide(
+            HerdScore score,
+            HerdIndicator indicator,
+            Integer qualityScore,
+            List<HerdScore> history,
+            InvestorProfile profile,
+            boolean currentlyHeld,
+            ActionCooldownContext cooldownContext,
+            PortfolioActionContext portfolioContext
     ) {
         double rawHerdScore = score.getHerdScore().doubleValue();
         int dataQuality = qualityScore != null ? qualityScore : 50;
@@ -76,6 +91,13 @@ public class ActionDecisionService {
         adjustedRegime = applyConfidence(adjustedRegime, dataQuality, momentum);
         ProfileAdjustment profileAdjustment = applyInvestorProfile(adjustedRegime, profile, currentlyHeld, herdScore);
         adjustedRegime = profileAdjustment.regime();
+        PortfolioAdjustment portfolioAdjustment = applyPortfolioContext(
+                adjustedRegime,
+                portfolioContext == null ? PortfolioActionContext.unavailable() : portfolioContext,
+                profile,
+                herdScore
+        );
+        adjustedRegime = portfolioAdjustment.regime();
         CooldownAdjustment cooldownAdjustment = applyCooldown(
                 adjustedRegime,
                 cooldownContext == null ? ActionCooldownContext.none() : cooldownContext,
@@ -94,6 +116,9 @@ public class ActionDecisionService {
         reasons.add("데이터 품질 " + dataQuality + "/100");
         reasons.add(adjustedRegime.reason());
         reasons.add(profileAdjustment.reason());
+        if (portfolioAdjustment.reason() != null) {
+            reasons.add(portfolioAdjustment.reason());
+        }
         if (cooldownAdjustment.reason() != null) {
             reasons.add(cooldownAdjustment.reason());
         }
@@ -102,6 +127,7 @@ public class ActionDecisionService {
         warnings.addAll(momentum.warnings());
         warnings.addAll(lifecycle.warnings());
         warnings.addAll(profileAdjustment.warnings());
+        warnings.addAll(portfolioAdjustment.warnings());
         warnings.addAll(cooldownAdjustment.warnings());
         if (dataQuality < 65) {
             warnings.add("데이터 품질이 낮아 행동 비율을 보수적으로 해석해야 합니다.");
@@ -129,7 +155,106 @@ public class ActionDecisionService {
                 .actionCooldownActive(cooldownAdjustment.cooldown().active())
                 .actionCooldownRemainingDays(cooldownAdjustment.cooldown().remainingTradingDays())
                 .lastActionDate(cooldownAdjustment.cooldown().lastActionDate())
+                .currentTickerWeight(ratioValue(
+                        portfolioAdjustment.context(), portfolioAdjustment.context().currentTickerWeight()))
+                .currentEquityRatio(ratioValue(
+                        portfolioAdjustment.context(), portfolioAdjustment.context().currentEquityRatio()))
+                .targetEquityRatio(ratioValue(
+                        portfolioAdjustment.context(), portfolioAdjustment.context().targetEquityRatio()))
                 .build();
+    }
+
+    private PortfolioAdjustment applyPortfolioContext(
+            RegimeDecision regime,
+            PortfolioActionContext context,
+            InvestorProfile profile,
+            double herdScore
+    ) {
+        if (!context.available() || regime.ratio() == 0.0) {
+            return new PortfolioAdjustment(regime, context, null, List.of());
+        }
+
+        boolean buySide = herdScore <= SCATTER_UPPER;
+        if (buySide && context.currentTickerWeight() >= 0.25) {
+            return blockedByPortfolio(
+                    regime, context, "종목 비중 상한 도달",
+                    String.format("현재 종목 비중 %.1f%% · 상한 25%%",
+                            context.currentTickerWeight() * 100),
+                    "단일 종목 집중도가 높아 추가매수를 제한합니다.");
+        }
+        if (buySide && context.currentEquityRatio() >= context.targetEquityRatio() + 0.03) {
+            return blockedByPortfolio(
+                    regime, context, "목표 주식 비중 초과",
+                    String.format("현재 주식 비중 %.1f%% · 목표 %.1f%%",
+                            context.currentEquityRatio() * 100,
+                            context.targetEquityRatio() * 100),
+                    "전체 주식 비중이 목표 범위를 초과해 추가매수를 제한합니다.");
+        }
+        if (buySide && context.currentTickerWeight() >= 0.15) {
+            double reducedRatio = BigDecimal.valueOf(regime.ratio() * 0.5)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .doubleValue();
+            RegimeDecision reduced = new RegimeDecision(
+                    regime.code() + "_CONCENTRATION",
+                    regime.label(),
+                    regime.regimeLabel(),
+                    reducedRatio,
+                    regime.reason() + " 현재 종목 집중도를 반영해 행동 비율을 절반으로 줄입니다."
+            );
+            return new PortfolioAdjustment(
+                    reduced,
+                    context,
+                    String.format("현재 종목 비중 %.1f%% · 집중도 보정 50%%",
+                            context.currentTickerWeight() * 100),
+                    List.of("종목 비중이 15% 이상이라 추가매수 강도를 낮춥니다.")
+            );
+        }
+
+        String strategy = profile == null ? "EXISTING_HOLDER" : profile.getStrategy();
+        if (!buySide
+                && "TARGET_REBALANCE".equals(strategy)
+                && herdScore < RUSH_THRESHOLD
+                && context.currentEquityRatio() <= context.targetEquityRatio() - 0.03) {
+            return blockedByPortfolio(
+                    regime, context, "목표 비중 회복 우선",
+                    String.format("현재 주식 비중 %.1f%% · 목표 %.1f%%",
+                            context.currentEquityRatio() * 100,
+                            context.targetEquityRatio() * 100),
+                    "주식 비중이 목표보다 낮아 Drift 단계의 추가 축소를 보류합니다.");
+        }
+
+        return new PortfolioAdjustment(
+                regime,
+                context,
+                String.format("현재 종목 %.1f%% · 주식 %.1f%% / 목표 %.1f%%",
+                        context.currentTickerWeight() * 100,
+                        context.currentEquityRatio() * 100,
+                        context.targetEquityRatio() * 100),
+                List.of()
+        );
+    }
+
+    private PortfolioAdjustment blockedByPortfolio(
+            RegimeDecision regime,
+            PortfolioActionContext context,
+            String label,
+            String reason,
+            String warning
+    ) {
+        RegimeDecision blocked = new RegimeDecision(
+                regime.code() + "_PORTFOLIO_LIMIT",
+                label,
+                regime.regimeLabel(),
+                0.0,
+                regime.reason() + " 실제 포트폴리오 비중 제한을 적용합니다."
+        );
+        return new PortfolioAdjustment(blocked, context, reason, List.of(warning));
+    }
+
+    private BigDecimal ratioValue(PortfolioActionContext context, double value) {
+        return context.available()
+                ? BigDecimal.valueOf(value).setScale(4, RoundingMode.HALF_UP)
+                : null;
     }
 
     private CooldownAdjustment applyCooldown(
@@ -797,6 +922,14 @@ public class ActionDecisionService {
     private record CooldownAdjustment(
             RegimeDecision regime,
             ActionCooldownContext.Cooldown cooldown,
+            String reason,
+            List<String> warnings
+    ) {
+    }
+
+    private record PortfolioAdjustment(
+            RegimeDecision regime,
+            PortfolioActionContext context,
             String reason,
             List<String> warnings
     ) {

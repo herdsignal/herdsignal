@@ -65,4 +65,13 @@ public class ActionDecision {
 
     /** 최근 동일 방향 실제 행동 날짜 */
     private LocalDate lastActionDate;
+
+    /** 현재 총자산 대비 해당 종목 비중 */
+    private BigDecimal currentTickerWeight;
+
+    /** 현재 총자산 대비 전체 주식 비중 */
+    private BigDecimal currentEquityRatio;
+
+    /** 사용자 목표 주식 비중 */
+    private BigDecimal targetEquityRatio;
 }

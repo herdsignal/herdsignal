@@ -132,6 +132,45 @@ class ActionDecisionServiceTest {
         assertThat(decision.getActionCooldownActive()).isFalse();
     }
 
+    @Test
+    void blocksBuyWhenTickerWeightIsAlreadyConcentrated() {
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 8, "Flee", "BUY");
+        PortfolioActionContext portfolio = new PortfolioActionContext(
+                true, 0.28, 0.65, 0.70);
+
+        ActionDecision decision = service.decide(
+                latest,
+                null,
+                90,
+                historyUntil(latest.getScoreDate(), 25, 18, "Flee", "BUY"),
+                profile("EXISTING_HOLDER", "GROWTH", 10, 6, "0.30"),
+                true,
+                ActionCooldownContext.none(),
+                portfolio
+        );
+
+        assertThat(decision.getActionRatio()).isZero();
+        assertThat(decision.getActionLabel()).isEqualTo("종목 비중 상한 도달");
+        assertThat(decision.getCurrentTickerWeight()).isEqualByComparingTo("0.2800");
+    }
+
+    @Test
+    void reducesBuyStrengthWhenTickerWeightExceedsFifteenPercent() {
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 8, "Flee", "BUY");
+        List<HerdScore> history = historyUntil(latest.getScoreDate(), 25, 18, "Flee", "BUY");
+        InvestorProfile profile = profile("EXISTING_HOLDER", "GROWTH", 10, 6, "0.30");
+
+        ActionDecision withoutPortfolio = service.decide(
+                latest, null, 90, history, profile, true);
+        ActionDecision concentrated = service.decide(
+                latest, null, 90, history, profile, true,
+                ActionCooldownContext.none(),
+                new PortfolioActionContext(true, 0.18, 0.60, 0.70));
+
+        assertThat(concentrated.getActionRatio()).isLessThan(withoutPortfolio.getActionRatio());
+        assertThat(concentrated.getActionWarnings()).anyMatch(warning -> warning.contains("15%"));
+    }
+
     private static InvestorProfile profile(
             String strategy, String risk, int horizon, int liquidity, String maxRatio) {
         return InvestorProfile.builder()

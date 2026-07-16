@@ -54,4 +54,18 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("""
+            SELECT d
+            FROM DailyPrice d
+            WHERE d.ticker IN :tickers
+              AND d.closePrice IS NOT NULL
+              AND d.priceDate = (
+                  SELECT MAX(d2.priceDate)
+                  FROM DailyPrice d2
+                  WHERE d2.ticker = d.ticker
+                    AND d2.closePrice IS NOT NULL
+              )
+            """)
+    List<DailyPrice> findLatestByTickers(@Param("tickers") List<String> tickers);
 }

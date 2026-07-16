@@ -144,6 +144,15 @@ public class HerdScoreResponse {
     /** 최근 동일 방향 실제 행동 날짜 */
     private LocalDate lastActionDate;
 
+    /** 현재 총자산 대비 해당 종목 비중 */
+    private BigDecimal currentTickerWeight;
+
+    /** 현재 총자산 대비 전체 주식 비중 */
+    private BigDecimal currentEquityRatio;
+
+    /** 사용자 목표 주식 비중 */
+    private BigDecimal targetEquityRatio;
+
     /* ── 지표 분해값 (HerdIndicator로부터, 없으면 null) ── */
 
     /** 주봉 RSI 백분위 정규화값 */
@@ -295,7 +304,10 @@ public class HerdScoreResponse {
                    .actionWarnings(actionDecision.getActionWarnings())
                    .actionCooldownActive(actionDecision.getActionCooldownActive())
                    .actionCooldownRemainingDays(actionDecision.getActionCooldownRemainingDays())
-                   .lastActionDate(actionDecision.getLastActionDate());
+                   .lastActionDate(actionDecision.getLastActionDate())
+                   .currentTickerWeight(actionDecision.getCurrentTickerWeight())
+                   .currentEquityRatio(actionDecision.getCurrentEquityRatio())
+                   .targetEquityRatio(actionDecision.getTargetEquityRatio());
         }
 
         // 지표 분해값이 있는 경우에만 채움
