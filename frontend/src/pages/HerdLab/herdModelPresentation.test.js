@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatPercent, presentValidationReport } from './herdModelPresentation'
+import { formatPercent, presentValidationReport, summarizeFeaturedSectors } from './herdModelPresentation'
 
 describe('HERD Lab report presentation', () => {
   it('formats missing and signed percentages safely', () => {
@@ -25,5 +25,24 @@ describe('HERD Lab report presentation', () => {
     expect(result.rows[0].verdict).toBe('기준 통과')
     expect(result.model.status).toBe('RESEARCH_VALIDATION')
     expect(result.modelNotes).toContain('게이트 2026.07-v1 미통과: deflated_sharpe')
+    expect(result.featuredSectors).toHaveLength(6)
+  })
+
+  it('summarizes representative sectors with median validation results', () => {
+    const result = summarizeFeaturedSectors([
+      { ticker: 'NVDA', capture: '+70%', mdd: '+4%p', verdict: '기준 통과' },
+      { ticker: 'AAPL', capture: '+50%', mdd: '+2%p', verdict: '추가 검증' },
+      { ticker: 'JPM', capture: '+80%', mdd: '+6%p', verdict: '기준 통과' },
+    ])
+
+    expect(result[0]).toMatchObject({
+      name: '기술',
+      representative: 'NVDA',
+      count: 2,
+      capture: '+60%',
+      mdd: '+3%p',
+      passed: 1,
+    })
+    expect(result[1]).toMatchObject({ name: '금융', representative: 'JPM', count: 1 })
   })
 })
