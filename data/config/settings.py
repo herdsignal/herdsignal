@@ -171,6 +171,11 @@ HERD_BACKFILL_SOURCE_PERIOD = os.getenv("HERD_BACKFILL_SOURCE_PERIOD", "10y")
 SCHEDULER_HOUR_ET   = int(os.getenv("SCHEDULER_HOUR_ET",   "16"))  # 16시 (오후 4시)
 SCHEDULER_MINUTE_ET = int(os.getenv("SCHEDULER_MINUTE_ET", "30"))  # 30분
 
+# 장애 알림 웹훅. 비워두면 외부 알림을 보내지 않는다.
+ALERT_WEBHOOK_URL = os.getenv("ALERT_WEBHOOK_URL", "").strip()
+ALERT_NOTIFY_SUCCESS = os.getenv("ALERT_NOTIFY_SUCCESS", "false").lower() == "true"
+ALERT_TIMEOUT_SECONDS = float(os.getenv("ALERT_TIMEOUT_SECONDS", "5"))
+
 
 # ──────────────────────────────────────────────
 # 로깅 설정

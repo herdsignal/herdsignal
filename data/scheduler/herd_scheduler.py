@@ -40,10 +40,14 @@ from collectors.price_collector import get_current_prices              # noqa: E
 from collectors.stock_collector import collect                          # noqa: E402
 from config.database import create_db_engine, get_session_factory      # noqa: E402
 from config.settings import (                                           # noqa: E402
+    ALERT_NOTIFY_SUCCESS,
+    ALERT_TIMEOUT_SECONDS,
+    ALERT_WEBHOOK_URL,
     CACHE_DAYS,
     SCHEDULER_HOUR_ET,
     SCHEDULER_MINUTE_ET,
 )
+from scheduler.incident_alerts import IncidentAlertConfig, send_scheduler_alert  # noqa: E402
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
@@ -70,6 +74,19 @@ _ET = ZoneInfo("America/New_York")
 # on-demand 캐시를 식별하는 user_id
 _CACHE_USER_ID = "cache"
 _TIER1_JOB_NAME = "HERD_TIER1_DAILY"
+_ALERT_CONFIG = IncidentAlertConfig(
+    webhook_url=ALERT_WEBHOOK_URL,
+    notify_success=ALERT_NOTIFY_SUCCESS,
+    timeout_seconds=ALERT_TIMEOUT_SECONDS,
+)
+
+
+def _notify_scheduler_result(result: dict) -> None:
+    """외부 알림 장애가 본 스케줄러 결과에 영향을 주지 않도록 격리한다."""
+    try:
+        send_scheduler_alert(result, _ALERT_CONFIG)
+    except Exception as exc:
+        logger.error("[Alert] 예상하지 못한 알림 오류: %s", exc, exc_info=True)
 
 
 # ══════════════════════════════════════════════
@@ -182,7 +199,9 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
     except Exception as e:
         logger.error(f"[Tier1] 티커 목록 조회 실패 — 잡 중단: {e}", exc_info=True)
         _finish_scheduler_run(run_id, "FAILED", error_message=str(e))
-        return {"status": "FAILED", "total": 0, "success": [], "failed": []}
+        result = {"status": "FAILED", "total": 0, "success": [], "failed": []}
+        _notify_scheduler_result(result)
+        return result
 
     if not tickers:
         logger.warning(
@@ -190,7 +209,9 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
             "user_portfolio 또는 user_watchlist에 종목을 추가하세요."
         )
         _finish_scheduler_run(run_id, "SUCCESS")
-        return {"status": "SUCCESS", "total": 0, "success": [], "failed": []}
+        result = {"status": "SUCCESS", "total": 0, "success": [], "failed": []}
+        _notify_scheduler_result(result)
+        return result
 
     # ── 2. 종목별 순차 처리 ────────────────────
     success_list: list[str] = []
@@ -261,12 +282,14 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         failed_tickers=failed_list,
         error_message=snapshot_error,
     )
-    return {
+    result = {
         "status": status,
         "total": total,
         "success": success_list,
         "failed": failed_list,
     }
+    _notify_scheduler_result(result)
+    return result
 
 
 # ══════════════════════════════════════════════

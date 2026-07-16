@@ -203,6 +203,9 @@ cd ..
 백업은 압축 후 체크섬을 함께 만들며 기본 14일 보관합니다. 보관 기간과 경로는 `.env`의
 `BACKUP_RETENTION_DAYS`, `BACKUP_DIR`로 바꿀 수 있습니다.
 
+`ALERT_WEBHOOK_URL`을 설정하면 스케줄러 실패·부분 실패를 Slack 또는 Discord 웹훅으로
+받을 수 있습니다. 성공 알림은 기본적으로 보내지 않습니다.
+
 ## 테스트
 
 ```bash
