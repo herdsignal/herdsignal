@@ -87,6 +87,14 @@ export const updateCashBalance = (cashAmount) =>
 export const updateAvgPrice = (ticker, avgPrice, quantity) =>
   api.patch(`/api/portfolio/${ticker}/avg-price`, { avgPrice, quantity })
 
+export const updateTargetWeight = (ticker, targetWeight) =>
+  api.patch(`/api/portfolio/${ticker}/target-weight`, { targetWeight })
+
+export const getRebalanceSettings = () => api.get('/api/portfolio/rebalance-settings')
+
+export const updateRebalanceSettings = (settings) =>
+  api.put('/api/portfolio/rebalance-settings', settings)
+
 /* ── HERD 판단 기록 ────────────────────────── */
 
 /** 전체 또는 특정 종목 HERD 판단 기록 조회 */

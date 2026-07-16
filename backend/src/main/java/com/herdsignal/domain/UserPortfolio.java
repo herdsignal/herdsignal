@@ -48,6 +48,10 @@ public class UserPortfolio {
     @Column(name = "quantity", precision = 12, scale = 4)
     private BigDecimal quantity;
 
+    /** 총자산 대비 종목 목표 비중 (0~1) */
+    @Column(name = "target_weight", precision = 5, scale = 4)
+    private BigDecimal targetWeight;
+
     /** 메모 */
     @Column(name = "memo", length = 200)
     private String memo;

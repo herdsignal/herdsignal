@@ -4,6 +4,7 @@ import com.herdsignal.domain.UserPortfolio;
 import com.herdsignal.dto.*;
 import com.herdsignal.service.PortfolioService;
 import com.herdsignal.service.CurrentUserService;
+import com.herdsignal.service.InvestorProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class PortfolioController {
 
     private final PortfolioService portfolioService;
     private final CurrentUserService currentUserService;
+    private final InvestorProfileService investorProfileService;
 
     /**
      * GET /api/portfolio
@@ -116,6 +118,30 @@ public class PortfolioController {
             @RequestBody AvgPriceUpdateRequest request) {
         portfolioService.updateAvgPrice(currentUserService.requireUserId(), ticker, request);
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @PatchMapping("/{ticker}/target-weight")
+    public ResponseEntity<ApiResponse<Void>> updateTargetWeight(
+            @PathVariable String ticker,
+            @RequestBody TargetWeightRequest request) {
+        portfolioService.updateTargetWeight(
+                currentUserService.requireUserId(), ticker, request);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @GetMapping("/rebalance-settings")
+    public ResponseEntity<ApiResponse<RebalanceSettingsResponse>> getRebalanceSettings() {
+        return ResponseEntity.ok(ApiResponse.success(
+                RebalanceSettingsResponse.from(
+                        investorProfileService.forDecision(currentUserService.requireUserId()))));
+    }
+
+    @PutMapping("/rebalance-settings")
+    public ResponseEntity<ApiResponse<RebalanceSettingsResponse>> updateRebalanceSettings(
+            @RequestBody RebalanceSettingsRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(
+                investorProfileService.updateRebalanceSettings(
+                        currentUserService.requireUserId(), request)));
     }
 
     /**

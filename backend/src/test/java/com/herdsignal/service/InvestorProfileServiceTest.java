@@ -1,6 +1,7 @@
 package com.herdsignal.service;
 
 import com.herdsignal.dto.InvestorProfileRequest;
+import com.herdsignal.dto.RebalanceSettingsRequest;
 import com.herdsignal.repository.InvestorProfileRepository;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 class InvestorProfileServiceTest {
     private final InvestorProfileRepository repository = mock(InvestorProfileRepository.class);
@@ -30,6 +32,25 @@ class InvestorProfileServiceTest {
         assertThatThrownBy(() -> service.update("local", request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("투자 방식");
+    }
+
+    @Test
+    void savesRebalanceSettingsInUserProfile() {
+        when(repository.findById("local")).thenReturn(Optional.empty());
+        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        var response = service.updateRebalanceSettings(
+                "local",
+                new RebalanceSettingsRequest(
+                        new BigDecimal("2500"),
+                        new BigDecimal("0.15"),
+                        "aggressive"
+                )
+        );
+
+        org.assertj.core.api.Assertions.assertThat(response.budget()).isEqualByComparingTo("2500.00");
+        org.assertj.core.api.Assertions.assertThat(response.cashTargetRatio()).isEqualByComparingTo("0.15");
+        org.assertj.core.api.Assertions.assertThat(response.mode()).isEqualTo("AGGRESSIVE");
     }
 
     private InvestorProfileRequest request(String maxRatio) {

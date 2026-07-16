@@ -11,14 +11,14 @@ import {
   getPortfolio,
   getPortfolioHerd,
   getPortfolioSummary,
+  getRebalanceSettings,
+  updateRebalanceSettings,
+  updateTargetWeight as saveTargetWeight,
 } from '../../api/herdApi'
 import {
   buildRebalancePlan,
   portfolioRows,
-  readRebalanceSettings,
-  readTargetWeights,
-  writeRebalanceSettings,
-  writeTargetWeights,
+  targetWeightsFromPortfolio,
 } from '../../utils/portfolioTools'
 import styles from './AiRebalance.module.css'
 
@@ -64,12 +64,8 @@ export default function AiRebalance() {
   const [herdMap, setHerdMap] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [targetWeights, setTargetWeights] = useState(() => readTargetWeights())
-  const [settings, setSettings] = useState(() => ({
-    budget: readRebalanceSettings().budget ?? 1000,
-    cashTargetPct: readRebalanceSettings().cashTargetPct ?? 10,
-    mode: readRebalanceSettings().mode ?? 'standard',
-  }))
+  const [targetWeights, setTargetWeights] = useState({})
+  const [settings, setSettings] = useState({ budget: 1000, cashTargetPct: 10, mode: 'standard' })
 
   useEffect(() => {
     setLoading(true)
@@ -77,14 +73,17 @@ export default function AiRebalance() {
       getPortfolio(),
       getPortfolioSummary(),
       getPortfolioHerd(),
-    ]).then(([portfolioRes, summaryRes, herdRes]) => {
+      getRebalanceSettings(),
+    ]).then(([portfolioRes, summaryRes, herdRes, settingsRes]) => {
       if (portfolioRes.status !== 'fulfilled') {
         setError('포트폴리오 데이터를 불러오지 못했습니다.')
         return
       }
 
       const rawPortfolio = portfolioRes.value.data?.data
-      setPortfolio(Array.isArray(rawPortfolio) ? rawPortfolio : [])
+      const nextPortfolio = Array.isArray(rawPortfolio) ? rawPortfolio : []
+      setPortfolio(nextPortfolio)
+      setTargetWeights(targetWeightsFromPortfolio(nextPortfolio))
 
       if (summaryRes.status === 'fulfilled') {
         setSummary(normalizeSummary(summaryRes.value.data?.data ?? null))
@@ -95,6 +94,14 @@ export default function AiRebalance() {
         const stocks = herdRes.value.data?.data?.stocks ?? []
         stocks.forEach((item) => { map[item.ticker] = item })
         setHerdMap(map)
+      }
+      if (settingsRes.status === 'fulfilled') {
+        const saved = settingsRes.value.data?.data
+        setSettings({
+          budget: Number(saved?.budget ?? 1000),
+          cashTargetPct: Number(saved?.cashTargetRatio ?? 0.10) * 100,
+          mode: String(saved?.mode ?? 'STANDARD').toLowerCase(),
+        })
       }
     }).finally(() => { setLoading(false) })
   }, [])
@@ -119,13 +126,18 @@ export default function AiRebalance() {
 
   function updateSettings(next) {
     setSettings(next)
-    writeRebalanceSettings(next)
+    updateRebalanceSettings({
+      budget: Number(next.budget),
+      cashTargetRatio: Number(next.cashTargetPct) / 100,
+      mode: String(next.mode).toUpperCase(),
+    }).catch(() => setError('리밸런싱 설정을 저장하지 못했습니다.'))
   }
 
   function updateTargetWeight(ticker, value) {
     const next = { ...targetWeights, [ticker]: value }
     setTargetWeights(next)
-    writeTargetWeights(next)
+    saveTargetWeight(ticker, Number(value) / 100)
+      .catch(() => setError(`${ticker} 목표 비중을 저장하지 못했습니다.`))
   }
 
   function equalizeTargets() {
@@ -133,7 +145,8 @@ export default function AiRebalance() {
     const next = {}
     portfolio.forEach((item) => { next[item.ticker] = weight })
     setTargetWeights(next)
-    writeTargetWeights(next)
+    Promise.all(portfolio.map((item) => saveTargetWeight(item.ticker, Number(weight) / 100)))
+      .catch(() => setError('균등 목표 비중을 저장하지 못했습니다.'))
     updateSettings({ ...settings, cashTargetPct: 10 })
   }
 

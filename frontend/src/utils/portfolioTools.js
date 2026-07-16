@@ -4,35 +4,13 @@
  * DB/API 변경 없이 frontend에서 기존 포트폴리오, HERD, 히스토리 데이터를 조합한다.
  */
 
-export const TARGET_WEIGHTS_KEY = 'hs_target_weights'
-export const REBALANCE_SETTINGS_KEY = 'hs_rebalance_settings'
-
-export function readTargetWeights() {
-  try {
-    return JSON.parse(localStorage.getItem(TARGET_WEIGHTS_KEY) || '{}')
-  } catch {
-    return {}
-  }
-}
-
-export function writeTargetWeights(weights) {
-  try {
-    localStorage.setItem(TARGET_WEIGHTS_KEY, JSON.stringify(weights))
-  } catch { /* localStorage 실패 무시 */ }
-}
-
-export function readRebalanceSettings() {
-  try {
-    return JSON.parse(localStorage.getItem(REBALANCE_SETTINGS_KEY) || '{}')
-  } catch {
-    return {}
-  }
-}
-
-export function writeRebalanceSettings(settings) {
-  try {
-    localStorage.setItem(REBALANCE_SETTINGS_KEY, JSON.stringify(settings))
-  } catch { /* localStorage 실패 무시 */ }
+export function targetWeightsFromPortfolio(portfolio) {
+  const weights = {}
+  ;(portfolio ?? []).forEach((item) => {
+    const value = item.targetWeight ?? item.target_weight
+    if (value != null) weights[item.ticker] = String(Number(value) * 100)
+  })
+  return weights
 }
 
 function num(value, fallback = 0) {

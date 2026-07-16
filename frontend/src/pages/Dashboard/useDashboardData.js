@@ -11,14 +11,14 @@ import {
   getSignalJournal,
   getDataStatus,
   removeFromPortfolio,
+  updateTargetWeight,
 } from '../../api/herdApi'
 import { formatKRW } from '../../utils/currency'
 import { buildPortfolioAlerts } from '../../utils/alertRules'
 import {
   portfolioRows,
   portfolioRiskWarnings,
-  readTargetWeights,
-  writeTargetWeights,
+  targetWeightsFromPortfolio,
 } from '../../utils/portfolioTools'
 import { summarizeSignalJournal } from '../../utils/signalJournal'
 import { useAuth } from '../../auth/AuthContext'
@@ -80,7 +80,7 @@ export function useDashboardData() {
   const [portfolioSort,  setPortfolioSort]  = useState(
     () => localStorage.getItem(CACHE_KEY_PORTFOLIO_SORT) || 'action'
   )
-  const [targetWeights,  setTargetWeights]  = useState(() => readTargetWeights())
+  const [targetWeights,  setTargetWeights]  = useState({})
   const [cashBalance,    setCashBalance]    = useState(0)
   const [cashDraft,      setCashDraft]      = useState('')
   const [cashSaving,     setCashSaving]     = useState(false)
@@ -93,6 +93,7 @@ export function useDashboardData() {
   const [dataStatus,     setDataStatus]     = useState(null)
   const [dataStatusError, setDataStatusError] = useState(false)
   const refreshNoticeTimer = useRef(null)
+  const targetWeightTimers = useRef({})
   const assetHistoryRequest = useRef(0)
   const summaryRequest = useRef(0)
   const lastSummaryValidation = useRef(0)
@@ -146,7 +147,9 @@ export function useDashboardData() {
       const portfolioRes = await getPortfolio().catch(() => null)
       if (portfolioRes) {
         const raw = portfolioRes.data?.data
-        setPortfolio(Array.isArray(raw) ? raw : [])
+        const nextPortfolio = Array.isArray(raw) ? raw : []
+        setPortfolio(nextPortfolio)
+        setTargetWeights(targetWeightsFromPortfolio(nextPortfolio))
       } else {
         setPortfolio([])
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
@@ -407,7 +410,6 @@ export function useDashboardData() {
       setTargetWeights(prev => {
         const next = { ...prev }
         delete next[ticker]
-        writeTargetWeights(next)
         return next
       })
       clearPortfolioCaches(userId)
@@ -581,7 +583,13 @@ export function useDashboardData() {
       next[ticker] = String(Math.min(100, Math.max(0, n)))
     }
     setTargetWeights(next)
-    writeTargetWeights(next)
+    clearTimeout(targetWeightTimers.current[ticker])
+    targetWeightTimers.current[ticker] = setTimeout(() => {
+      const targetWeight = value === '' ? 0 : Number(value) / 100
+      updateTargetWeight(ticker, targetWeight).catch(() => {
+        setRefreshNotice(`${ticker} 목표 비중 저장에 실패했습니다.`)
+      })
+    }, 400)
   }
 
   return {

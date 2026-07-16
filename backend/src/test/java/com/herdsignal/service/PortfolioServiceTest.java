@@ -3,6 +3,7 @@ package com.herdsignal.service;
 import com.herdsignal.domain.DailyPrice;
 import com.herdsignal.domain.UserPortfolio;
 import com.herdsignal.dto.PortfolioSummaryResponse;
+import com.herdsignal.dto.TargetWeightRequest;
 import com.herdsignal.repository.DailyPriceRepository;
 import com.herdsignal.repository.PortfolioHistoryRepository;
 import com.herdsignal.repository.UserCashBalanceRepository;
@@ -90,6 +91,18 @@ class PortfolioServiceTest {
         PortfolioSummaryResponse response = portfolioService.getPortfolioSummary("user-1");
 
         assertThat(response.getMarketDataDate()).isEqualTo(LocalDate.now().minusDays(1));
+    }
+
+    @Test
+    void persistsTargetWeightOnHolding() {
+        UserPortfolio holding = holding("NVDA");
+        when(portfolioRepository.findByUserIdAndTicker("user-1", "NVDA"))
+                .thenReturn(Optional.of(holding));
+
+        portfolioService.updateTargetWeight(
+                "user-1", "nvda", new TargetWeightRequest(new BigDecimal("0.25")));
+
+        assertThat(holding.getTargetWeight()).isEqualByComparingTo("0.2500");
     }
 
     private UserPortfolio holding(String ticker) {

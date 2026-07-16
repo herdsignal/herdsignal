@@ -332,6 +332,21 @@ public class PortfolioService {
         // @Transactional dirty checking — save() 불필요
     }
 
+    @Transactional
+    public void updateTargetWeight(String userId, String ticker, TargetWeightRequest request) {
+        if (request == null || request.targetWeight() == null
+                || request.targetWeight().compareTo(BigDecimal.ZERO) < 0
+                || request.targetWeight().compareTo(BigDecimal.ONE) > 0) {
+            throw new IllegalArgumentException("목표 비중은 0~100%여야 합니다.");
+        }
+        UserPortfolio portfolio = portfolioRepository
+                .findByUserIdAndTicker(userId, ticker.toUpperCase())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ticker.toUpperCase() + " 종목이 포트폴리오에 없습니다."));
+        portfolio.setTargetWeight(request.targetWeight().setScale(4, RoundingMode.HALF_UP));
+        portfolio.setUpdatedAt(LocalDateTime.now());
+    }
+
     /**
      * 실시간 포트폴리오 조회.
      *

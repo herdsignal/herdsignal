@@ -173,6 +173,7 @@ class UserPortfolio(Base):
     ticker      = Column(String(10),     nullable=False,                        comment="티커 심볼")
     avg_price   = Column(Decimal(12, 4), nullable=True,                         comment="평균 매수가 (USD)")
     quantity    = Column(Decimal(12, 4), nullable=True,                         comment="보유 수량 (소수점 지원)")
+    target_weight = Column(Decimal(5, 4), nullable=True,                        comment="총자산 대비 목표 비중")
     memo        = Column(String(200),    nullable=True,                         comment="메모")
     created_at  = Column(DateTime,       nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
     updated_at  = Column(DateTime,       nullable=False, default=datetime.utcnow,
@@ -190,6 +191,9 @@ class InvestorProfile(Base):
     liquidity_buffer_months = Column(Integer, nullable=False, default=6)
     max_action_ratio = Column(Decimal(5, 4), nullable=False, default=0.15)
     target_equity_ratio = Column(Decimal(5, 4), nullable=False, default=0.70)
+    rebalance_budget = Column(Decimal(15, 2), nullable=False, default=1000.00)
+    cash_target_ratio = Column(Decimal(5, 4), nullable=False, default=0.10)
+    rebalance_mode = Column(String(20), nullable=False, default="STANDARD")
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 

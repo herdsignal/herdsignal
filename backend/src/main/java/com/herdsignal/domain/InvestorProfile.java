@@ -46,6 +46,15 @@ public class InvestorProfile {
     @Column(name = "target_equity_ratio", nullable = false, precision = 5, scale = 4)
     private BigDecimal targetEquityRatio;
 
+    @Column(name = "rebalance_budget", nullable = false, precision = 15, scale = 2)
+    private BigDecimal rebalanceBudget;
+
+    @Column(name = "cash_target_ratio", nullable = false, precision = 5, scale = 4)
+    private BigDecimal cashTargetRatio;
+
+    @Column(name = "rebalance_mode", nullable = false, length = 20)
+    private String rebalanceMode;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
