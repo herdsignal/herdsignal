@@ -3,16 +3,19 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-echo "[1/4] Backend tests"
-(cd "$ROOT_DIR/backend" && ./gradlew test)
+echo "[1/5] Backend clean tests"
+(cd "$ROOT_DIR/backend" && ./gradlew clean test)
 
-echo "[2/4] Frontend tests"
+echo "[2/5] Frontend tests"
 (cd "$ROOT_DIR/frontend" && npm test -- --run)
 
-echo "[3/4] Frontend lint"
+echo "[3/5] Frontend lint"
 (cd "$ROOT_DIR/frontend" && npm run lint)
 
-echo "[4/4] Python data-engine tests"
+echo "[4/5] Frontend production build"
+(cd "$ROOT_DIR/frontend" && npm run build)
+
+echo "[5/5] Python data-engine tests"
 if [[ -x "$ROOT_DIR/data/.venv/bin/python" ]]; then
   PYTHON="$ROOT_DIR/data/.venv/bin/python"
 elif command -v python3.12 >/dev/null 2>&1; then

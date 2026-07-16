@@ -6,7 +6,7 @@ export default function ActionNotifications() {
   const [open, setOpen] = useState(false)
   const [acknowledged, setAcknowledged] = useState(false)
   const panelRef = useRef(null)
-  const { changes, summary, loading } = useActionNotifications()
+  const { changes, summary, loading, acknowledgeChanges } = useActionNotifications()
 
   useEffect(() => {
     if (!open) return undefined
@@ -17,9 +17,16 @@ export default function ActionNotifications() {
     return () => document.removeEventListener('pointerdown', close)
   }, [open])
 
+  useEffect(() => {
+    if (changes.length > 0) setAcknowledged(false)
+  }, [changes])
+
   const toggle = () => {
     setOpen((value) => !value)
-    if (!open) setAcknowledged(true)
+    if (!open) {
+      setAcknowledged(true)
+      acknowledgeChanges()
+    }
   }
 
   return (
