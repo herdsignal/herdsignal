@@ -4,9 +4,9 @@ import styles from './HerdLab.module.css'
 const { stages: STAGES, weights: WEIGHTS } = herdModelReport
 
 const ACTION_GUIDES = [
-  ['BUY', 'buy', '공포에는 확인하고 나눠 산다', 'Flee·낮은 Scatter에서 장기 추세가 살아 있거나 HERD 회복이 확인될 때 분할매수합니다.', '낮은 점수와 추세 훼손이 겹치면 관찰'],
-  ['HOLD', 'hold', '중립과 건강한 추세에서는 기다린다', 'Calm과 Healthy Drift·Rush에서는 불필요한 매매보다 기존 비중 유지를 우선합니다.', '행동하지 않는 것도 모델의 판단'],
-  ['REDUCE', 'reduce', '과열에는 둔화를 보고 나눠 판다', '과도한 이격, HERD 둔화, 장기 추세 약화가 겹칠 때 목표 비중까지 단계적으로 줄입니다.', 'Rush 진입만으로 전량 매도하지 않음'],
+  ['BUY', 'buy', 'Flee · Scatter', '추세 유지', '분할 매수'],
+  ['HOLD', 'hold', 'Calm · Healthy', '추세 지속', '비중 유지'],
+  ['REDUCE', 'reduce', 'Drift · Rush', '과열 둔화', '분할 익절'],
 ]
 
 const STRATEGY_LABELS = {
@@ -64,11 +64,18 @@ function NumberField({ label, unit, min, max, value, onChange }) {
 export function ActionGuide() {
   return (
     <section className={styles.panel}>
-      <SectionHead eyebrow="행동 기준" title="언제 사고, 기다리고, 줄이는가" meta="가능 여부 → 포지션 → HERD → 추세 → 비중 → 최근 행동 → 결정" />
+      <SectionHead eyebrow="행동 기준" title="HERD와 추세를 함께 확인" meta="점수만으로 행동하지 않음" />
+      <div className={styles.decisionRail} aria-label="행동 판단 순서">
+        <span>투자 가능</span><i>→</i><span>HERD</span><i>→</i><span>추세</span><i>→</i><span>비중</span><i>→</i><strong>행동</strong>
+      </div>
       <div className={styles.actionGuide}>
-        {ACTION_GUIDES.map(([code, tone, title, description, note]) => (
+        {ACTION_GUIDES.map(([code, tone, herd, confirmation, action]) => (
           <article key={code} className={styles[tone]}>
-            <span>{code}</span><strong>{title}</strong><p>{description}</p><em>{note}</em>
+            <span>{code}</span>
+            <div className={styles.actionFormula}>
+              <strong>{herd}</strong><i>+</i><em>{confirmation}</em><b>→</b>
+            </div>
+            <p>{action}</p>
           </article>
         ))}
       </div>

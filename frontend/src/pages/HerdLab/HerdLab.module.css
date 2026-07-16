@@ -103,12 +103,7 @@
 }
 
 .trustLine em {
-  overflow: hidden;
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: none;
 }
 
 .blue { color: var(--flee); }
@@ -251,6 +246,33 @@
   padding: 0 20px 20px;
 }
 
+.decisionRail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px 14px;
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.decisionRail span,
+.decisionRail strong {
+  padding: 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface2);
+}
+
+.decisionRail strong {
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--flee);
+}
+
+.decisionRail i {
+  font-style: normal;
+}
+
 .actionGuide article {
   min-width: 0;
   padding: 16px;
@@ -269,25 +291,35 @@
 }
 
 .actionGuide strong {
-  display: block;
-  margin-top: 11px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .actionGuide p {
-  margin-top: 7px;
-  color: var(--text-2);
-  font-size: 11px;
-  line-height: 1.5;
+  margin-top: 14px;
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
 }
 
-.actionGuide em {
-  display: block;
-  margin-top: 10px;
+.actionFormula {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.actionFormula em,
+.actionFormula i,
+.actionFormula b {
   color: var(--text-3);
-  font-size: 9px;
+  font-size: 10px;
   font-style: normal;
-  font-weight: 700;
+}
+
+.actionFormula em {
+  color: var(--text-2);
+  font-weight: 750;
 }
 
 .buy > span { color: var(--flee); background: rgba(59, 130, 246, 0.14); }
@@ -537,6 +569,7 @@
   .overview h1 { font-size: 34px; }
 
   .actionGuide,
+  .decisionRail,
   .sectorList,
   .methodGrid,
   .profileForm {
@@ -556,6 +589,10 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 7px;
+  }
+
+  .decisionRail {
+    flex-wrap: wrap;
   }
 
   .sectorList article { grid-template-columns: 115px minmax(0, 1fr); }
