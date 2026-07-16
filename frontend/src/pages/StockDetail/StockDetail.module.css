@@ -1206,3 +1206,28 @@
   background: rgba(239, 68, 68, 0.08);
   font-size: 13px;
 }
+.detailDisclosure {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.detailDisclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 17px 4px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.detailDisclosure > summary::-webkit-details-marker { display: none; }
+.detailDisclosure > summary div { display: flex; align-items: baseline; gap: 10px; }
+.detailDisclosure > summary span { color: var(--text-3); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.detailDisclosure > summary strong { color: var(--text-1); font-size: 13px; }
+.detailDisclosure > summary em { color: var(--text-3); font-size: 10px; font-style: normal; }
+.detailDisclosure[open] > summary em { font-size: 0; }
+.detailDisclosure[open] > summary em::after { content: '접기'; font-size: 10px; }
+.detailDisclosureBody { display: grid; gap: 16px; padding-bottom: 18px; }
+.detailDisclosureBody > .card,
+.detailDisclosureBody > section { margin-bottom: 0; }

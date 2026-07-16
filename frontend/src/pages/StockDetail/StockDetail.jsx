@@ -15,6 +15,7 @@ import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import SignalJournalModal from '../../components/SignalJournalModal/SignalJournalModal'
+import DecisionFlow from '../../components/DecisionFlow/DecisionFlow'
 import { qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { formatSignalAgeLabel, formatSignalDurationDetail } from '../../utils/signalDuration'
 import styles      from './StockDetail.module.css'
@@ -239,6 +240,7 @@ export default function StockDetail() {
                     {formatActionRatio(herdData.actionRatio)}
                   </div>
                 </div>
+                <DecisionFlow herd={herdData} />
                 <div className={styles.decisionList}>
                   {(herdData.actionReasons?.length ? herdData.actionReasons : decision.notes).slice(0, 2).map((note) => (
                     <div key={note} className={styles.decisionItem}>{note}</div>
@@ -257,6 +259,12 @@ export default function StockDetail() {
               </div>
             </div>
 
+            <details className={styles.detailDisclosure}>
+              <summary>
+                <div><span>상세 분석</span><strong>신호 근거·지표 분해·검증 결과</strong></div>
+                <em>펼쳐보기</em>
+              </summary>
+              <div className={styles.detailDisclosureBody}>
             {/* 신호 근거 카드 */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
@@ -444,6 +452,8 @@ export default function StockDetail() {
                 )}
               </div>
             </div>
+              </div>
+            </details>
 
             {/* HERD 히스토리 카드 */}
             <div className={styles.card}>
@@ -477,18 +487,26 @@ export default function StockDetail() {
               </div>
             </div>
 
-            <StockDetailFundamentals
-              loading={financialsLoading}
-              financials={financials}
-              guard={fundamentalGuard}
-            />
+            <details className={styles.detailDisclosure}>
+              <summary>
+                <div><span>투자 기록</span><strong>재무 가드·나의 판단 기록</strong></div>
+                <em>펼쳐보기</em>
+              </summary>
+              <div className={styles.detailDisclosureBody}>
+                <StockDetailFundamentals
+                  loading={financialsLoading}
+                  financials={financials}
+                  guard={fundamentalGuard}
+                />
 
-            <StockDetailJournal
-              summary={journalSummary}
-              logs={signalLogs}
-              onCreate={setJournalAction}
-              onDelete={handleJournalDelete}
-            />
+                <StockDetailJournal
+                  summary={journalSummary}
+                  logs={signalLogs}
+                  onCreate={setJournalAction}
+                  onDelete={handleJournalDelete}
+                />
+              </div>
+            </details>
 
           </div>
         </div>
