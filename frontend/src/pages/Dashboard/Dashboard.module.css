@@ -565,13 +565,35 @@
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: calc(var(--card-radius) + 4px);
-  background:
-    radial-gradient(circle at 58% 20%, rgba(251, 146, 60, 0.08), transparent 24%),
-    radial-gradient(circle at 38% 8%, rgba(148, 163, 184, 0.09), transparent 30%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.030), rgba(255, 255, 255, 0.008)),
-    var(--surface);
-  box-shadow: 0 28px 82px rgba(0, 0, 0, 0.28);
+  background: var(--surface);
+  box-shadow: none;
 }
+
+.supportingDetails {
+  margin-bottom: 18px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.supportingDetails > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 4px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.supportingDetails > summary::-webkit-details-marker { display: none; }
+.supportingDetails > summary div { display: flex; align-items: baseline; gap: 10px; }
+.supportingDetails > summary span { color: var(--text-3); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.supportingDetails > summary strong { color: var(--text-1); font-size: 13px; }
+.supportingDetails > summary em { color: var(--text-3); font-size: 10px; font-style: normal; }
+.supportingDetails[open] > summary em::after { content: ' · 닫기'; }
+.supportingDetailsBody { display: grid; gap: 10px; padding: 0 0 14px; }
+.supportingDetailsBody .riskPanel,
+.supportingDetailsBody .alertPanel,
+.supportingDetailsBody .journalOverview { margin-bottom: 0; border-color: var(--border); background: var(--surface2); box-shadow: none; }
 
 :global(body.light) .commandFrame {
   background:

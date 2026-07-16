@@ -22,12 +22,6 @@
  */
 
 import { useNavigate } from 'react-router-dom'
-import { alertSeverityLabel } from '../../utils/alertRules'
-import {
-  formatJournalAmount,
-  formatJournalCount,
-  formatJournalProfit,
-} from '../../utils/signalJournal'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import HerdDots      from '../../components/HerdDots/HerdDots'
 import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
@@ -38,6 +32,7 @@ import DashboardMobile from './DashboardMobile'
 import DashboardAssetHistory from './DashboardAssetHistory'
 import DashboardDataStatus from './DashboardDataStatus'
 import DashboardTodayBrief from './DashboardTodayBrief'
+import DashboardSupportingDetails from './DashboardSupportingDetails'
 import { useDashboardData } from './useDashboardData'
 
 import {
@@ -448,104 +443,14 @@ export default function Dashboard() {
             </div>
           )}
 
-          {summary && riskWarnings.length > 0 && (
-            <div className={styles.riskPanel}>
-              <div className={styles.riskPanelHead}>
-                <span>포트폴리오 리스크 체크</span>
-                <strong>{riskWarnings[0]?.level === 'CLEAR' ? '안정' : `${riskWarnings.length}개 점검`}</strong>
-              </div>
-              <div className={styles.riskList}>
-                {riskWarnings.map((item) => (
-                  <div
-                    key={`${item.title}-${item.value}`}
-                    className={`${styles.riskItem} ${styles[`riskItem_${item.level?.toLowerCase()}`] || ''}`}
-                  >
-                    <span>{item.title}</span>
-                    <strong>{item.value}</strong>
-                    <em>{item.detail}</em>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {summary && portfolioAlerts.length > 0 && (
-            <div className={styles.alertPanel}>
-              <div className={styles.alertPanelHead}>
-                <span>알림 조건</span>
-                <strong>{portfolioAlerts.length}개 활성</strong>
-              </div>
-              <div className={styles.alertList}>
-                {portfolioAlerts.slice(0, 3).map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className={`${styles.alertItem} ${styles[`alertItem_${item.severity?.toLowerCase()}`] || ''}`}
-                    onClick={() => item.ticker ? navigate(`/stock/${item.ticker}`) : null}
-                  >
-                    <span>{alertSeverityLabel(item.severity)}</span>
-                    <strong>{item.title}</strong>
-                    <em>{item.value} · {item.detail}</em>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {signalJournalSummary.totalCount > 0 && (
-            <div className={styles.journalOverview}>
-              <div className={styles.journalOverviewHead}>
-                <div>
-                  <span>판단 기록</span>
-                  <strong>{formatJournalCount(signalJournalSummary.totalCount)}</strong>
-                </div>
-                <button
-                  type="button"
-                  className={styles.journalOverviewLink}
-                  onClick={() => navigate('/journal')}
-                >
-                  전체 기록 보기
-                </button>
-              </div>
-              <div className={styles.journalOverviewStats}>
-                <div>
-                  <span>매수 총액</span>
-                  <strong>{formatJournalAmount(signalJournalSummary.buyAmount) ?? '$0'}</strong>
-                  <em>{formatJournalCount(signalJournalSummary.buyCount)}</em>
-                </div>
-                <div>
-                  <span>익절 총액</span>
-                  <strong>{formatJournalAmount(signalJournalSummary.sellAmount) ?? '$0'}</strong>
-                  <em>{formatJournalCount(signalJournalSummary.sellCount)}</em>
-                </div>
-                <div>
-                  <span>평균 익절률</span>
-                  <strong>
-                    {signalJournalSummary.hasProfitData
-                      ? formatJournalProfit(signalJournalSummary.avgProfitPct)
-                      : '—'}
-                  </strong>
-                  <em>익절 기록 기준</em>
-                </div>
-              </div>
-              {recentSignalLogs.length > 0 && (
-                <div className={styles.journalRecentList}>
-                  {recentSignalLogs.map((log) => (
-                    <button
-                      key={log.id}
-                      type="button"
-                      className={styles.journalRecentItem}
-                      onClick={() => navigate(`/stock/${log.ticker}`)}
-                    >
-                      <strong>{log.ticker}</strong>
-                      <span>{log.actionLabel ?? log.actionType ?? '기록'}</span>
-                      <em>{formatJournalAmount(log.amount) ?? `HERD ${log.herdScore ?? '—'}`}</em>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+          <DashboardSupportingDetails
+            riskWarnings={riskWarnings}
+            alerts={portfolioAlerts}
+            journalSummary={signalJournalSummary}
+            recentLogs={recentSignalLogs}
+            onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
+            onOpenJournal={() => navigate('/journal')}
+          />
         </>
       )}
 
