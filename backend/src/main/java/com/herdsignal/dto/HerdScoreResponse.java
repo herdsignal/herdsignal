@@ -135,6 +135,15 @@ public class HerdScoreResponse {
     /** 보수적으로 봐야 하는 이유 */
     private List<String> actionWarnings;
 
+    /** 최근 동일 방향 실제 행동으로 쿨다운이 적용됐는지 여부 */
+    private Boolean actionCooldownActive;
+
+    /** 동일 방향 행동까지 남은 거래일 */
+    private Integer actionCooldownRemainingDays;
+
+    /** 최근 동일 방향 실제 행동 날짜 */
+    private LocalDate lastActionDate;
+
     /* ── 지표 분해값 (HerdIndicator로부터, 없으면 null) ── */
 
     /** 주봉 RSI 백분위 정규화값 */
@@ -283,7 +292,10 @@ public class HerdScoreResponse {
                    .actionRegime(actionDecision.getActionRegime())
                    .actionRegimeLabel(actionDecision.getActionRegimeLabel())
                    .actionReasons(actionDecision.getActionReasons())
-                   .actionWarnings(actionDecision.getActionWarnings());
+                   .actionWarnings(actionDecision.getActionWarnings())
+                   .actionCooldownActive(actionDecision.getActionCooldownActive())
+                   .actionCooldownRemainingDays(actionDecision.getActionCooldownRemainingDays())
+                   .lastActionDate(actionDecision.getLastActionDate());
         }
 
         // 지표 분해값이 있는 경우에만 채움

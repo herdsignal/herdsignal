@@ -82,6 +82,56 @@ class ActionDecisionServiceTest {
         assertThat(decision.getActionWarnings()).anyMatch(warning -> warning.contains("목표 70%"));
     }
 
+    @Test
+    void blocksRepeatedBuyDuringCooldown() {
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 8, "Flee", "BUY");
+        ActionCooldownContext cooldown = new ActionCooldownContext(
+                new ActionCooldownContext.Cooldown(
+                        true, 6, 14, LocalDate.of(2026, 7, 2)),
+                ActionCooldownContext.Cooldown.none()
+        );
+
+        ActionDecision decision = service.decide(
+                latest,
+                null,
+                90,
+                historyUntil(latest.getScoreDate(), 25, 18, "Flee", "BUY"),
+                profile("EXISTING_HOLDER", "GROWTH", 10, 6, "0.30"),
+                true,
+                cooldown
+        );
+
+        assertThat(decision.getActionRatio()).isZero();
+        assertThat(decision.getActionRegime()).endsWith("_COOLDOWN");
+        assertThat(decision.getActionCooldownActive()).isTrue();
+        assertThat(decision.getActionCooldownRemainingDays()).isEqualTo(14);
+        assertThat(decision.getLastActionDate()).isEqualTo(LocalDate.of(2026, 7, 2));
+        assertThat(decision.getActionWarnings()).anyMatch(warning -> warning.contains("반복 행동"));
+    }
+
+    @Test
+    void buyCooldownDoesNotBlockSellDirection() {
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 88, "Rush", "SELL");
+        ActionCooldownContext cooldown = new ActionCooldownContext(
+                new ActionCooldownContext.Cooldown(
+                        true, 6, 14, LocalDate.of(2026, 7, 2)),
+                ActionCooldownContext.Cooldown.none()
+        );
+
+        ActionDecision decision = service.decide(
+                latest,
+                null,
+                90,
+                List.of(),
+                profile("EXISTING_HOLDER", "GROWTH", 10, 6, "0.30"),
+                true,
+                cooldown
+        );
+
+        assertThat(decision.getActionRatio()).isPositive();
+        assertThat(decision.getActionCooldownActive()).isFalse();
+    }
+
     private static InvestorProfile profile(
             String strategy, String risk, int horizon, int liquidity, String maxRatio) {
         return InvestorProfile.builder()

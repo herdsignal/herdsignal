@@ -50,6 +50,20 @@ public class ActionDecisionService {
             InvestorProfile profile,
             boolean currentlyHeld
     ) {
+        return decide(
+                score, indicator, qualityScore, history, profile, currentlyHeld,
+                ActionCooldownContext.none());
+    }
+
+    public ActionDecision decide(
+            HerdScore score,
+            HerdIndicator indicator,
+            Integer qualityScore,
+            List<HerdScore> history,
+            InvestorProfile profile,
+            boolean currentlyHeld,
+            ActionCooldownContext cooldownContext
+    ) {
         double rawHerdScore = score.getHerdScore().doubleValue();
         int dataQuality = qualityScore != null ? qualityScore : 50;
         TrendContext trend = calculateTrendContext(indicator);
@@ -62,6 +76,12 @@ public class ActionDecisionService {
         adjustedRegime = applyConfidence(adjustedRegime, dataQuality, momentum);
         ProfileAdjustment profileAdjustment = applyInvestorProfile(adjustedRegime, profile, currentlyHeld, herdScore);
         adjustedRegime = profileAdjustment.regime();
+        CooldownAdjustment cooldownAdjustment = applyCooldown(
+                adjustedRegime,
+                cooldownContext == null ? ActionCooldownContext.none() : cooldownContext,
+                herdScore
+        );
+        adjustedRegime = cooldownAdjustment.regime();
         int actionScore = calculateActionScore(herdScore, dataQuality, trend.score(), momentum.score(), adjustedRegime);
         actionScore = clamp(actionScore + lifecycle.scoreAdjustment(), 0, 100);
 
@@ -74,11 +94,15 @@ public class ActionDecisionService {
         reasons.add("데이터 품질 " + dataQuality + "/100");
         reasons.add(adjustedRegime.reason());
         reasons.add(profileAdjustment.reason());
+        if (cooldownAdjustment.reason() != null) {
+            reasons.add(cooldownAdjustment.reason());
+        }
 
         List<String> warnings = new ArrayList<>(trend.warnings());
         warnings.addAll(momentum.warnings());
         warnings.addAll(lifecycle.warnings());
         warnings.addAll(profileAdjustment.warnings());
+        warnings.addAll(cooldownAdjustment.warnings());
         if (dataQuality < 65) {
             warnings.add("데이터 품질이 낮아 행동 비율을 보수적으로 해석해야 합니다.");
         }
@@ -102,7 +126,48 @@ public class ActionDecisionService {
                 .actionRegimeLabel(adjustedRegime.regimeLabel())
                 .actionReasons(reasons)
                 .actionWarnings(warnings)
+                .actionCooldownActive(cooldownAdjustment.cooldown().active())
+                .actionCooldownRemainingDays(cooldownAdjustment.cooldown().remainingTradingDays())
+                .lastActionDate(cooldownAdjustment.cooldown().lastActionDate())
                 .build();
+    }
+
+    private CooldownAdjustment applyCooldown(
+            RegimeDecision regime,
+            ActionCooldownContext context,
+            double herdScore
+    ) {
+        boolean buySide = herdScore <= SCATTER_UPPER;
+        boolean sellSide = herdScore >= DRIFT_LOWER;
+        if (regime.ratio() == 0.0 || (!buySide && !sellSide)) {
+            return new CooldownAdjustment(regime, ActionCooldownContext.Cooldown.none(), null, List.of());
+        }
+
+        ActionCooldownContext.Cooldown cooldown = context.forBuySide(buySide);
+        if (!cooldown.active()) {
+            return new CooldownAdjustment(regime, cooldown, null, List.of());
+        }
+
+        String direction = buySide ? "매수" : "비중 축소";
+        RegimeDecision blocked = new RegimeDecision(
+                regime.code() + "_COOLDOWN",
+                "최근 " + direction + " 후 대기",
+                regime.regimeLabel(),
+                0.0,
+                regime.reason() + " 동일 방향의 최근 실제 행동으로 쿨다운을 적용합니다."
+        );
+        String reason = String.format(
+                "최근 %s %s · 쿨다운 %d거래일 남음",
+                direction,
+                cooldown.lastActionDate(),
+                cooldown.remainingTradingDays()
+        );
+        return new CooldownAdjustment(
+                blocked,
+                cooldown,
+                reason,
+                List.of("같은 방향의 반복 행동을 막기 위해 쿨다운 종료 전까지 비율을 0%로 제한합니다.")
+        );
     }
 
     private ProfileAdjustment applyInvestorProfile(
@@ -724,6 +789,14 @@ public class ActionDecisionService {
             RegimeDecision regime,
             String strategy,
             String strategyLabel,
+            String reason,
+            List<String> warnings
+    ) {
+    }
+
+    private record CooldownAdjustment(
+            RegimeDecision regime,
+            ActionCooldownContext.Cooldown cooldown,
             String reason,
             List<String> warnings
     ) {

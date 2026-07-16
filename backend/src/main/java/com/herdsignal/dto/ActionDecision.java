@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -55,4 +56,13 @@ public class ActionDecision {
 
     /** 보수적으로 봐야 하는 이유 */
     private List<String> actionWarnings;
+
+    /** 최근 동일 방향 실제 행동으로 쿨다운이 적용됐는지 여부 */
+    private Boolean actionCooldownActive;
+
+    /** 동일 방향 행동까지 남은 거래일 */
+    private Integer actionCooldownRemainingDays;
+
+    /** 최근 동일 방향 실제 행동 날짜 */
+    private LocalDate lastActionDate;
 }

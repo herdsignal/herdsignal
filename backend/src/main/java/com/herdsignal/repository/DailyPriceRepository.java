@@ -3,6 +3,7 @@ package com.herdsignal.repository;
 import com.herdsignal.domain.DailyPrice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -42,4 +43,15 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
             LocalDate priceDate
     );
 
+    @Query("""
+            SELECT DISTINCT d.priceDate
+            FROM DailyPrice d
+            WHERE d.priceDate > :startDate
+              AND d.priceDate <= :endDate
+            ORDER BY d.priceDate
+            """)
+    List<LocalDate> findObservedTradingDates(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

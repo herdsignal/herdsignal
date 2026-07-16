@@ -55,6 +55,7 @@ public class HerdService {
     private final HerdIndicatorRepository herdIndicatorRepository;
     private final StockRepository stockRepository;
     private final ActionDecisionService actionDecisionService;
+    private final ActionCooldownService actionCooldownService;
     private final InvestorProfileService investorProfileService;
 
     /**
@@ -417,6 +418,11 @@ public class HerdService {
         var heldTickers = userId == null ? java.util.Set.<String>of() : portfolioRepository.findByUserId(userId).stream()
                 .map(UserPortfolio::getTicker)
                 .collect(Collectors.toSet());
+        Map<String, LocalDate> scoreDates = historyByTicker.entrySet().stream()
+                .filter(entry -> !entry.getValue().isEmpty())
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0).getScoreDate()));
+        Map<String, ActionCooldownContext> cooldownByTicker = actionCooldownService.getContexts(
+                userId, normalizedTickers, scoreDates);
 
         return normalizedTickers.stream()
                 .map(ticker -> {
@@ -430,7 +436,8 @@ public class HerdService {
                             history,
                             stockByTicker.get(ticker),
                             profile,
-                            heldTickers.contains(ticker)
+                            heldTickers.contains(ticker),
+                            cooldownByTicker.getOrDefault(ticker, ActionCooldownContext.none())
                     );
                 })
                 .filter(Objects::nonNull)
@@ -494,7 +501,9 @@ public class HerdService {
         InvestorProfile profile = userId == null ? null : investorProfileService.forDecision(userId);
         boolean currentlyHeld = userId != null && portfolioRepository.existsByUserIdAndTicker(
                 userId, score.getTicker());
-        return buildResponse(score, indicator, history, stock, profile, currentlyHeld);
+        ActionCooldownContext cooldown = actionCooldownService.getContext(
+                userId, score.getTicker(), score.getScoreDate());
+        return buildResponse(score, indicator, history, stock, profile, currentlyHeld, cooldown);
     }
 
     /** 이미 일괄 조회한 데이터로 응답을 만들어 목록 API의 N+1 쿼리를 피한다. */
@@ -504,11 +513,12 @@ public class HerdService {
             List<HerdScore> history,
             Stock stock,
             InvestorProfile profile,
-            boolean currentlyHeld
+            boolean currentlyHeld,
+            ActionCooldownContext cooldown
     ) {
         HerdQuality quality = calculateQuality(score, indicator);
         ActionDecision actionDecision = actionDecisionService.decide(
-                score, indicator, quality.score(), history, profile, currentlyHeld);
+                score, indicator, quality.score(), history, profile, currentlyHeld, cooldown);
         HerdScoreResponse.SignalDuration signalDuration = calculateSignalDuration(score, history);
         return HerdScoreResponse.of(
                 score,
