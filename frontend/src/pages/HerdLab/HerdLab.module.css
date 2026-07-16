@@ -616,3 +616,13 @@
   .sectorList article { grid-template-columns: 1fr; }
   .sectorList dl { margin-top: 4px; }
 }
+.outcomeGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.outcomeGrid article { padding: 18px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface2); }
+.outcomeGrid span { display: block; color: var(--text-3); font-size: 10px; }
+.outcomeGrid strong { display: block; margin: 7px 0; color: var(--scatter); font-size: 24px; }
+.outcomeGrid p, .outcomeGrid em { display: block; color: var(--text-2); font-size: 10px; font-style: normal; line-height: 1.6; }
+.outcomeGrid em { color: var(--text-3); }
+
+@media (max-width: 760px) {
+  .outcomeGrid { grid-template-columns: 1fr; }
+}

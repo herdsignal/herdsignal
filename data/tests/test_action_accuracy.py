@@ -39,6 +39,12 @@ class ActionAccuracyTest(unittest.TestCase):
         self.assertIn("flee", summary["by_herd_stage"])
         self.assertIn("bull", summary["by_market_regime"])
 
+    def test_summary_reports_completed_samples_for_each_horizon(self):
+        def buy(_score, _trend, _previous, _days): return "BUY", 0.2
+        summary = summarize_action_accuracy(collect_action_events(self.prices, self.herd, self.trend, buy))
+        self.assertGreater(summary["horizons"]["1m"]["samples"], summary["horizons"]["6m"]["samples"])
+        self.assertEqual(summary["horizons"]["1m"]["hit_rate"], 100)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -266,6 +266,86 @@
           "threshold": "POINT_IN_TIME_READY"
         }
       ]
+    },
+    "action_outcomes": {
+      "event_count": 4196,
+      "horizons": {
+        "1m": {
+          "samples": 4145,
+          "hit_rate": 50.735826296743056,
+          "forward_return_mean": 1.4111807210975076,
+          "drawdown_mean": -4.827045804130643,
+          "counterfactual_delta_mean": 0.011259218413625722
+        },
+        "3m": {
+          "samples": 4051,
+          "hit_rate": 61.29350777585781,
+          "forward_return_mean": 4.781282469655042,
+          "drawdown_mean": -8.369016481874457,
+          "counterfactual_delta_mean": 0.04013472238456024
+        },
+        "6m": {
+          "samples": 3906,
+          "hit_rate": 48.07987711213518,
+          "forward_return_mean": 9.937330958573403,
+          "drawdown_mean": -11.290979191074914,
+          "counterfactual_delta_mean": 0.035564370703530676
+        }
+      },
+      "by_side": {
+        "BUY": {
+          "samples": 1841,
+          "horizons": {
+            "1m": {
+              "samples": 1820,
+              "hit_rate": 59.78021978021978,
+              "forward_return_mean": 1.6584302714930406,
+              "drawdown_mean": -5.095784818003347,
+              "counterfactual_delta_mean": 0.07885549973532975
+            },
+            "3m": {
+              "samples": 1782,
+              "hit_rate": 65.71268237934905,
+              "forward_return_mean": 5.424940566287279,
+              "drawdown_mean": -8.363183538208254,
+              "counterfactual_delta_mean": 0.28014586302420424
+            },
+            "6m": {
+              "samples": 1715,
+              "hit_rate": 69.27113702623907,
+              "forward_return_mean": 10.092038277754787,
+              "drawdown_mean": -11.057628903718397,
+              "counterfactual_delta_mean": 0.5357937077122283
+            }
+          }
+        },
+        "SELL": {
+          "samples": 2355,
+          "horizons": {
+            "1m": {
+              "samples": 2325,
+              "hit_rate": 43.655913978494624,
+              "forward_return_mean": 1.2176348364868108,
+              "drawdown_mean": -4.616678059937817,
+              "counterfactual_delta_mean": -0.041654859868310336
+            },
+            "3m": {
+              "samples": 2269,
+              "hit_rate": 57.822829440282064,
+              "forward_return_mean": 4.275773995349778,
+              "drawdown_mean": -8.373597489196262,
+              "counterfactual_delta_mean": -0.14836234796354272
+            },
+            "6m": {
+              "samples": 2191,
+              "hit_rate": 31.492469192149702,
+              "forward_return_mean": 9.816234175188615,
+              "drawdown_mean": -11.47363356935717,
+              "counterfactual_delta_mean": -0.3559889442074307
+            }
+          }
+        }
+      }
     }
   },
   "summary": {

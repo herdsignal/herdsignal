@@ -63,6 +63,7 @@ public class ModelValidationReportService {
         JsonNode cscv = required(overfitting, "cscv");
         JsonNode dsr = required(overfitting, "deflated_sharpe");
         JsonNode gate = required(metadata, "adoption_gate");
+        JsonNode actionOutcomes = metadata.path("action_outcomes").path("horizons");
 
         List<ModelValidationReportResponse.TickerResult> tickers = new ArrayList<>();
         for (JsonNode row : required(root, "rows")) {
@@ -97,10 +98,27 @@ public class ModelValidationReportService {
                         bool(gate, "automatic_production_promotion"),
                         strings(required(gate, "failed_criteria"))
                 ),
+                mapActionOutcomes(actionOutcomes),
                 required(metadata, "score_parity").path("passed").asBoolean(false),
                 text(required(metadata, "survivorship_coverage"), "status"),
                 List.copyOf(tickers)
         );
+    }
+
+    private List<ModelValidationReportResponse.ActionOutcome> mapActionOutcomes(JsonNode horizons) {
+        List<ModelValidationReportResponse.ActionOutcome> outcomes = new ArrayList<>();
+        for (String horizon : List.of("1m", "3m", "6m")) {
+            JsonNode node = horizons.path(horizon);
+            outcomes.add(new ModelValidationReportResponse.ActionOutcome(
+                    horizon,
+                    integer(node, "samples"),
+                    number(node, "hit_rate"),
+                    number(node, "forward_return_mean"),
+                    number(node, "drawdown_mean"),
+                    number(node, "counterfactual_delta_mean")
+            ));
+        }
+        return List.copyOf(outcomes);
     }
 
     private ModelValidationReportResponse.PerformanceSummary summary(JsonNode node) {

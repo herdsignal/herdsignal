@@ -56,6 +56,7 @@ def _event_metrics(close: pd.Series, position: int, side: str, ratio: float) -> 
             metrics[f"return_{label}"] = None
             metrics[f"drawdown_{label}"] = None
             metrics[f"counterfactual_delta_{label}"] = None
+            metrics[f"hit_{label}"] = None
             continue
         window = close.iloc[position : end_position + 1]
         forward_return = (float(window.iloc[-1]) / start - 1) * 100
@@ -63,6 +64,7 @@ def _event_metrics(close: pd.Series, position: int, side: str, ratio: float) -> 
         metrics[f"return_{label}"] = forward_return
         metrics[f"drawdown_{label}"] = drawdown
         metrics[f"counterfactual_delta_{label}"] = ratio * forward_return * (1 if side == "BUY" else -1)
+        metrics[f"hit_{label}"] = forward_return > 0 if side == "BUY" else forward_return < 0
     return metrics
 
 
@@ -97,13 +99,11 @@ def collect_action_events(
             continue
         last_action[action] = i
         metrics = _event_metrics(close, i, action, ratio)
-        primary = metrics["return_3m"]
-        hit = None if primary is None else (primary > 0 if action == "BUY" else primary < 0 or metrics["drawdown_3m"] <= -5)
         events.append({
             "date": str(date.date()), "side": action, "ratio": ratio, "score": score,
             "herd_stage": _herd_stage(score), "lifecycle": _lifecycle(action_days),
             "ratio_bucket": _ratio_bucket(ratio), "market_regime": _market_regime(trend.loc[date]),
-            "hit_3m": hit, **metrics,
+            **metrics,
         })
     return events
 
@@ -114,14 +114,29 @@ def _group_summary(events: list[dict[str, Any]], key: str) -> dict[str, dict[str
         groups[str(event[key])].append(event)
     result = {}
     for name, rows in sorted(groups.items()):
-        hits = [row["hit_3m"] for row in rows if row["hit_3m"] is not None]
-        deltas = [row["counterfactual_delta_3m"] for row in rows if row["counterfactual_delta_3m"] is not None]
         result[name] = {
             "samples": len(rows),
-            "hit_rate_3m": sum(hits) / len(hits) * 100 if hits else None,
-            "counterfactual_delta_3m_mean": mean(deltas) if deltas else None,
+            "horizons": {
+                label: _horizon_summary(rows, label)
+                for label in FORWARD_WINDOWS
+            },
         }
     return result
+
+
+def _horizon_summary(events: list[dict[str, Any]], label: str) -> dict[str, float | int | None]:
+    completed = [event for event in events if event[f"hit_{label}"] is not None]
+    hits = [event[f"hit_{label}"] for event in completed]
+    returns = [event[f"return_{label}"] for event in completed]
+    drawdowns = [event[f"drawdown_{label}"] for event in completed]
+    deltas = [event[f"counterfactual_delta_{label}"] for event in completed]
+    return {
+        "samples": len(completed),
+        "hit_rate": sum(hits) / len(hits) * 100 if hits else None,
+        "forward_return_mean": mean(returns) if returns else None,
+        "drawdown_mean": mean(drawdowns) if drawdowns else None,
+        "counterfactual_delta_mean": mean(deltas) if deltas else None,
+    }
 
 
 def summarize_action_accuracy(events: list[dict[str, Any]]) -> dict[str, Any]:
@@ -132,12 +147,49 @@ def summarize_action_accuracy(events: list[dict[str, Any]]) -> dict[str, Any]:
         "event_count": len(events),
         "completed_3m_count": len(completed),
         "hit_rate_3m": sum(hits) / len(hits) * 100 if hits else None,
+        "horizons": {
+            label: _horizon_summary(events, label)
+            for label in FORWARD_WINDOWS
+        },
         "by_side": _group_summary(events, "side"),
         "by_ratio": _group_summary(events, "ratio_bucket"),
         "by_lifecycle": _group_summary(events, "lifecycle"),
         "by_herd_stage": _group_summary(events, "herd_stage"),
         "by_market_regime": _group_summary(events, "market_regime"),
     }
+
+
+def summarize_many_action_accuracy(results: list[dict[str, Any]]) -> dict[str, Any]:
+    """종목별 행동 이벤트를 합쳐 전체 1·3·6개월 결과를 계산한다."""
+    events = [
+        _with_legacy_hits(event)
+        for result in results
+        for event in result.get("events", [])
+    ]
+    return {
+        "event_count": len(events),
+        "horizons": {
+            label: _horizon_summary(events, label)
+            for label in FORWARD_WINDOWS
+        },
+        "by_side": _group_summary(events, "side"),
+    }
+
+
+def _with_legacy_hits(event: dict[str, Any]) -> dict[str, Any]:
+    """이전 리포트의 이벤트에도 새 기간별 적중 필드를 복원한다."""
+    normalized = dict(event)
+    for label in FORWARD_WINDOWS:
+        key = f"hit_{label}"
+        if key in normalized:
+            continue
+        forward_return = normalized.get(f"return_{label}")
+        normalized[key] = (
+            None if forward_return is None
+            else forward_return > 0 if normalized.get("side") == "BUY"
+            else forward_return < 0
+        )
+    return normalized
 
 
 def evaluate_action_accuracy(

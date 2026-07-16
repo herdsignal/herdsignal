@@ -117,6 +117,24 @@ export function ValidationPanel({ sectors, rows }) {
   )
 }
 
+export function ActionOutcomesPanel({ outcomes }) {
+  return (
+    <section className={styles.panel}>
+      <SectionHead eyebrow="행동 사후 평가" title="행동 후 실제 결과" meta="완료된 관측만 집계" />
+      <div className={styles.outcomeGrid}>
+        {outcomes.map((outcome) => (
+          <article key={outcome.horizon}>
+            <span>{outcome.horizon}</span>
+            <strong>{outcome.hitRate}</strong>
+            <p>{outcome.samples}회 · 미행동 대비 {outcome.delta}</p>
+            <em>평균 경로 낙폭 {outcome.drawdown}</em>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function Bar({ className, width }) {
   return <i className={className}><b style={{ width: `${width}%` }} /></i>
 }

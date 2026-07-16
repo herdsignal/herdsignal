@@ -120,5 +120,12 @@ export function presentValidationReport(report) {
     ],
     rows,
     featuredSectors: summarizeFeaturedSectors(rows),
+    actionOutcomes: (report.actionOutcomes ?? []).map((outcome) => ({
+      horizon: ({ '1m': '1개월', '3m': '3개월', '6m': '6개월' })[outcome.horizon] ?? outcome.horizon,
+      samples: outcome.samples ?? 0,
+      hitRate: formatPercent(outcome.hitRate),
+      delta: formatPercent(outcome.counterfactualDeltaMean),
+      drawdown: formatPercent(outcome.drawdownMean),
+    })),
   }
 }

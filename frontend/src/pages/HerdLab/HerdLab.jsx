@@ -7,7 +7,7 @@ import { getInvestorProfile, getModelValidationReport, updateInvestorProfile } f
 import herdModelReport from '../../data/herdModelReport'
 import styles from './HerdLab.module.css'
 import { presentValidationReport } from './herdModelPresentation'
-import { ActionGuide, InvestorProfilePanel, MethodologyPanel, ValidationPanel } from './HerdLabSections'
+import { ActionGuide, ActionOutcomesPanel, InvestorProfilePanel, MethodologyPanel, ValidationPanel } from './HerdLabSections'
 
 const { model: MODEL_BASE } = herdModelReport
 
@@ -69,7 +69,7 @@ export default function HerdLab() {
     return <div className={styles.page}><p>최신 검증 리포트를 불러오는 중입니다.</p></div>
   }
 
-  const { model, metrics, trustChecks, modelNotes, rows, featuredSectors } = report
+  const { model, metrics, trustChecks, modelNotes, rows, featuredSectors, actionOutcomes } = report
 
   return (
     <div className={styles.page}>
@@ -97,6 +97,7 @@ export default function HerdLab() {
 
       <InvestorProfilePanel profile={profile} status={profileStatus} onChange={changeProfile} onSubmit={saveProfile} />
       <ActionGuide />
+      <ActionOutcomesPanel outcomes={actionOutcomes} />
       <ValidationPanel sectors={featuredSectors} rows={rows} />
       <MethodologyPanel modelNotes={modelNotes} />
     </div>

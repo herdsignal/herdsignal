@@ -17,7 +17,7 @@ if str(_DATA_DIR) not in sys.path:
 from collectors.stock_collector import collect
 from config.database import create_db_engine, get_session_factory
 from herd.backtest_action_layer import _action_decision, _stored_herd_series, _trend_frame
-from herd.action_accuracy import evaluate_action_accuracy
+from herd.action_accuracy import evaluate_action_accuracy, summarize_many_action_accuracy
 from herd.parameter_stability import analyze_parameter_stability
 from herd.overfitting_metrics import analyze_overfitting
 from herd.model_adoption_gate import evaluate_adoption_gate
@@ -332,6 +332,9 @@ def main() -> None:
         "score_parity": score_parity_audit(tickers),
         "walk_forward_summary": summarize(fold_rows) if fold_rows else {},
         "parameter_stability": analyze_parameter_stability(fold_rows),
+        "action_outcomes": summarize_many_action_accuracy([
+            row["action_accuracy"] for row in rows if "action_accuracy" in row
+        ]),
         "overfitting": analyze_overfitting(experiment_history, fold_rows),
         "point_in_time_sector": True,
         "eps_history": "excluded_until_filing-date-source-is-available",

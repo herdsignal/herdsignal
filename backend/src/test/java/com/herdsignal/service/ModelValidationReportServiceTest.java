@@ -31,6 +31,7 @@ class ModelValidationReportServiceTest {
                     "parameter_stability": {"samples":440,"transition_stability":{"same_parameter_rate":59.4},"single_parameter_spike":true,"recommendation":"USE_FIXED_PARAMETERS"},
                     "overfitting": {"parameters_tested":9,"cscv":{"pbo":0.0,"status":"ACCEPTABLE"},"deflated_sharpe":{"probability":0.0,"status":"FAIL"}},
                     "adoption_gate": {"policy_version":"2026.07-v1","status":"RESEARCH_VALIDATION","eligible_for_human_review":false,"automatic_production_promotion":false,"failed_criteria":["deflated_sharpe"]},
+                    "action_outcomes": {"horizons":{"1m":{"samples":100,"hit_rate":61.0,"forward_return_mean":2.0,"drawdown_mean":-4.0,"counterfactual_delta_mean":0.3},"3m":{"samples":80,"hit_rate":64.0},"6m":{"samples":60,"hit_rate":68.0}}},
                     "score_parity": {"passed":true},
                     "survivorship_coverage": {"status":"SURVIVORSHIP_BIAS_REMAINS"}
                   },
@@ -49,6 +50,8 @@ class ModelValidationReportServiceTest {
         assertThat(first.validationRun().coverage()).isEqualTo(1.0);
         assertThat(first.walkForward().samples()).isEqualTo(440);
         assertThat(first.adoptionGate().failedCriteria()).containsExactly("deflated_sharpe");
+        assertThat(first.actionOutcomes()).hasSize(3);
+        assertThat(first.actionOutcomes().get(0).samples()).isEqualTo(100);
         assertThat(first.tickers()).singleElement().extracting(
                 ModelValidationReportResponse.TickerResult::ticker).isEqualTo("SPY");
         assertThat(second).isSameAs(first);

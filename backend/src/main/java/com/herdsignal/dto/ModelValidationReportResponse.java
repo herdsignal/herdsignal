@@ -13,6 +13,7 @@ public record ModelValidationReportResponse(
         ParameterStability parameterStability,
         Overfitting overfitting,
         AdoptionGate adoptionGate,
+        List<ActionOutcome> actionOutcomes,
         boolean scoreParityPassed,
         String survivorshipStatus,
         List<TickerResult> tickers
@@ -54,6 +55,15 @@ public record ModelValidationReportResponse(
             boolean eligibleForHumanReview,
             boolean automaticProductionPromotion,
             List<String> failedCriteria
+    ) {}
+
+    public record ActionOutcome(
+            String horizon,
+            int samples,
+            Double hitRate,
+            Double forwardReturnMean,
+            Double drawdownMean,
+            Double counterfactualDeltaMean
     ) {}
 
     public record TickerResult(
