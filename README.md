@@ -132,6 +132,10 @@ HERDSIGNAL_OWNER_EMAIL=내_구글_이메일
 `HERDSIGNAL_OWNER_EMAIL`과 로그인한 Google 이메일이 같으면 기존 `local` 포트폴리오와
 관심종목, 투자 기록을 첫 로그인 때 해당 계정에 한 번 연결합니다.
 
+로그인 세션은 MariaDB에 저장되어 백엔드를 재시작해도 유지됩니다. 기본값은 마지막 사용 후
+30일 만료, 브라우저 쿠키 최대 180일이며 배포 환경에서는 `SESSION_COOKIE_SECURE=true`로
+설정해야 합니다.
+
 ### 2. 데이터베이스
 
 ```sql

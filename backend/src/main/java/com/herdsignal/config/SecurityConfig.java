@@ -58,7 +58,7 @@ public class SecurityConfig {
                                     response.setStatus(HttpServletResponse.SC_NO_CONTENT))
                             .invalidateHttpSession(true)
                             .clearAuthentication(true)
-                            .deleteCookies("JSESSIONID"))
+                            .deleteCookies("HERDSIGNAL_SESSION", "JSESSIONID"))
                     .exceptionHandling(exceptions -> exceptions
                             .authenticationEntryPoint((request, response, exception) ->
                                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED)));
