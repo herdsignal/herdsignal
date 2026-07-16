@@ -25,6 +25,7 @@ import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { formatSignalAgeLabel, formatSignalDuration } from '../../utils/signalDuration'
+import { actionBasisLabel, actionIntensityLabel } from '../../utils/actionIntensity'
 import { opportunityRows } from '../../utils/portfolioTools'
 import styles    from './Watchlist.module.css'
 
@@ -104,30 +105,17 @@ function formatActionScore(value) {
 function formatActionText(item) {
   const action = item?.actionLabel ?? decisionSignalDesc(item?.signal)
   const strength = formatActionScore(item?.actionScore)
-  const ratio = Number(item?.actionRatio ?? 0)
-  const ratioText = Number.isFinite(ratio) && ratio > 0 ? `${Math.round(ratio * 100)}%` : null
-  return [strength, ratioText, action].filter(Boolean).join(' · ')
+  return [strength, actionIntensityLabel(item), action].filter(Boolean).join(' · ')
 }
 
 function formatActionBasis(item) {
-  const ratio = Number(item?.actionRatio ?? 0)
-  if (!Number.isFinite(ratio) || ratio <= 0) return '현재 비중 유지'
-
-  const pct = Math.round(ratio * 100)
-  if (item?.signal === 'BUY' || item?.signal === 'ADD') {
-    return `목표 투자금 기준 ${pct}% 분할 투입`
-  }
-  if (item?.signal === 'SELL' || item?.signal === 'REDUCE') {
-    return `보유 평가금액 기준 ${pct}% 축소`
-  }
-  return '현재 비중 유지'
+  return actionBasisLabel(item)
 }
 
 function formatActionCode(item) {
   if (!item?.signal) return 'HOLD'
-  const ratio = Number(item.actionRatio ?? 0)
-  if (!Number.isFinite(ratio) || ratio <= 0) return item.signal
-  return `${item.signal} ${Math.round(ratio * 100)}%`
+  const intensity = actionIntensityLabel(item)
+  return intensity === '관찰' ? item.signal : `${item.signal} · ${intensity}`
 }
 
 /** scoreDate → 한국어 날짜 문자열 */

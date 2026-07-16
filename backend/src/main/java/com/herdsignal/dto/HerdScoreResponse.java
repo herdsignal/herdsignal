@@ -153,6 +153,10 @@ public class HerdScoreResponse {
     /** 사용자 목표 주식 비중 */
     private BigDecimal targetEquityRatio;
 
+    private String actionIntensity;
+
+    private String actionIntensityLabel;
+
     /* ── 지표 분해값 (HerdIndicator로부터, 없으면 null) ── */
 
     /** 주봉 RSI 백분위 정규화값 */
@@ -307,7 +311,9 @@ public class HerdScoreResponse {
                    .lastActionDate(actionDecision.getLastActionDate())
                    .currentTickerWeight(actionDecision.getCurrentTickerWeight())
                    .currentEquityRatio(actionDecision.getCurrentEquityRatio())
-                   .targetEquityRatio(actionDecision.getTargetEquityRatio());
+                   .targetEquityRatio(actionDecision.getTargetEquityRatio())
+                   .actionIntensity(actionDecision.getActionIntensity())
+                   .actionIntensityLabel(actionDecision.getActionIntensityLabel());
         }
 
         // 지표 분해값이 있는 경우에만 채움

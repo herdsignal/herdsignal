@@ -1,3 +1,5 @@
+import { actionBasisLabel, actionIntensity } from '../../utils/actionIntensity'
+
 /* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
 export const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
@@ -118,23 +120,11 @@ export function formatActionScore(value) {
 }
 
 export function formatActionRatio(value) {
-  const n = Number(value ?? 0)
-  if (n <= 0) return '관찰'
-  return `${Math.round(n * 100)}%`
+  return actionIntensity(value).label
 }
 
 export function formatActionBasis(data) {
-  const ratio = Number(data?.actionRatio ?? 0)
-  if (!Number.isFinite(ratio) || ratio <= 0) return '현재 비중 유지'
-
-  const pct = Math.round(ratio * 100)
-  if (data?.signal === 'BUY' || data?.signal === 'ADD') {
-    return `목표 투자금 기준 ${pct}% 분할 투입`
-  }
-  if (data?.signal === 'SELL' || data?.signal === 'REDUCE') {
-    return `보유 평가금액 기준 ${pct}% 축소`
-  }
-  return '현재 비중 유지'
+  return actionBasisLabel(data)
 }
 
 export function formatActionMeta(data) {
@@ -509,4 +499,3 @@ export const BTN_LABELS = {
     exists:  '이미 추가됨',
   },
 }
-

@@ -1,5 +1,6 @@
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
+import { actionBasisLabel, actionIntensityLabel } from '../../utils/actionIntensity'
 
 export const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
@@ -239,24 +240,13 @@ export function formatActionText(herd) {
 }
 
 export function formatActionBasis(herd) {
-  const ratio = Number(herd?.actionRatio ?? 0)
-  if (!Number.isFinite(ratio) || ratio <= 0) return '현재 비중 유지'
-
-  const pct = Math.round(ratio * 100)
-  if (herd?.signal === 'BUY' || herd?.signal === 'ADD') {
-    return `목표 투자금 기준 ${pct}% 분할 투입`
-  }
-  if (herd?.signal === 'SELL' || herd?.signal === 'REDUCE') {
-    return `보유 평가금액 기준 ${pct}% 축소`
-  }
-  return '현재 비중 유지'
+  return actionBasisLabel(herd)
 }
 
 export function formatActionCode(herd) {
   if (!herd?.signal) return 'HOLD'
-  const ratio = Number(herd.actionRatio ?? 0)
-  if (!Number.isFinite(ratio) || ratio <= 0) return herd.signal
-  return `${herd.signal} ${Math.round(ratio * 100)}%`
+  const intensity = actionIntensityLabel(herd)
+  return intensity === '관찰' ? herd.signal : `${herd.signal} · ${intensity}`
 }
 
 export function positionGap(row) {

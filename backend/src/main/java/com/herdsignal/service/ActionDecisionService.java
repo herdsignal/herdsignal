@@ -161,7 +161,16 @@ public class ActionDecisionService {
                         portfolioAdjustment.context(), portfolioAdjustment.context().currentEquityRatio()))
                 .targetEquityRatio(ratioValue(
                         portfolioAdjustment.context(), portfolioAdjustment.context().targetEquityRatio()))
+                .actionIntensity(actionIntensity(adjustedRegime.ratio()).code())
+                .actionIntensityLabel(actionIntensity(adjustedRegime.ratio()).label())
                 .build();
+    }
+
+    private ActionIntensity actionIntensity(double ratio) {
+        if (ratio <= 0.0) return new ActionIntensity("NONE", "관찰");
+        if (ratio <= 0.05) return new ActionIntensity("LOW", "낮음");
+        if (ratio <= 0.15) return new ActionIntensity("MEDIUM", "중간");
+        return new ActionIntensity("HIGH", "높음");
     }
 
     private PortfolioAdjustment applyPortfolioContext(
@@ -933,5 +942,8 @@ public class ActionDecisionService {
             String reason,
             List<String> warnings
     ) {
+    }
+
+    private record ActionIntensity(String code, String label) {
     }
 }

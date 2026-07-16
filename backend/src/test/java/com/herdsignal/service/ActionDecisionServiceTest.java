@@ -26,6 +26,7 @@ class ActionDecisionServiceTest {
 
         assertThat(highQuality.getActionModelVersion()).isEqualTo("HERD_v6.1");
         assertThat(highQuality.getActionModelStatus()).isEqualTo("RESEARCH_VALIDATION");
+        assertThat(highQuality.getActionIntensity()).isIn("LOW", "MEDIUM", "HIGH");
         assertThat(lowQuality.getActionRatio()).isLessThan(highQuality.getActionRatio());
     }
 

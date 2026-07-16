@@ -74,4 +74,8 @@ public class ActionDecision {
 
     /** 사용자 목표 주식 비중 */
     private BigDecimal targetEquityRatio;
+
+    private String actionIntensity;
+
+    private String actionIntensityLabel;
 }
