@@ -71,6 +71,44 @@ class IdentityTransitionReconciliationTest(unittest.TestCase):
         self.assertEqual(2, audit["reclassified_candidate_rows"])
         self.assertEqual(1, audit["remaining_non_official_rows"])
 
+    def test_defers_many_old_symbols_converging_to_one_new_symbol(self):
+        reconciliation = [
+            {
+                "candidate_effective_date": "2022-04-11",
+                "action": "REMOVE",
+                "ticker": ticker,
+                "status": "NO_OFFICIAL_DOCUMENT_MATCH",
+            }
+            for ticker in ("DISCA", "DISCK")
+        ] + [{
+            "candidate_effective_date": "2022-04-11",
+            "action": "ADD",
+            "ticker": "WBD",
+            "status": "NO_OFFICIAL_DOCUMENT_MATCH",
+        }]
+        evidence = [
+            {
+                "candidate_cik": "1437107",
+                "old_candidate_date": "2022-04-11",
+                "new_candidate_date": "2022-04-11",
+                "old_ticker": ticker,
+                "new_ticker": "WBD",
+                "resolved_effective_date": "2022-04-11",
+                "identity_status": "SEC_IDENTITY_AND_EFFECTIVE_DATE_VERIFIED",
+            }
+            for ticker in ("DISCA", "DISCK")
+        ]
+
+        updated, transitions, audit = reconcile_identity_transitions(
+            reconciliation, evidence
+        )
+
+        self.assertEqual([], transitions)
+        self.assertTrue(all(
+            row["status"] == "NO_OFFICIAL_DOCUMENT_MATCH" for row in updated
+        ))
+        self.assertEqual(1, audit["complex_identity_groups_deferred"])
+
 
 if __name__ == "__main__":
     unittest.main()

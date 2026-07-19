@@ -19,7 +19,11 @@ from herd.spglobal_prose_event_verifier import DATE_PATTERN, parse_date_mention
 SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik}.json"
 SUBMISSION_FILE_URL = "https://data.sec.gov/submissions/{name}"
 ARCHIVE_URL = "https://www.sec.gov/Archives/edgar/data/{cik}/{accession}/{document}"
-FORMS = {"10-K", "10-K/A", "10-Q", "10-Q/A", "8-K", "8-K/A"}
+FORMS = {
+    "10-K", "10-K/A", "10-Q", "10-Q/A", "8-K", "8-K/A",
+    "424B3",
+}
+PERIODIC_FORMS = {"10-K", "10-K/A", "10-Q", "10-Q/A"}
 
 
 class SecTradingSymbolError(RuntimeError):
@@ -43,7 +47,11 @@ def filing_rows(payload: dict) -> list[dict]:
 
 
 def select_surrounding_filings(
-    rows: list[dict], event_date: date, *, window_days: int = 240
+    rows: list[dict],
+    event_date: date,
+    *,
+    window_days: int = 240,
+    filings_per_side: int = 8,
 ) -> list[dict]:
     eligible = [
         row for row in rows
@@ -55,13 +63,30 @@ def select_surrounding_filings(
         (row for row in eligible if row["filing_date"] <= event_date.isoformat()),
         key=lambda row: row["filing_date"],
         reverse=True,
-    )[:3]
+    )
     after = sorted(
         (row for row in eligible if row["filing_date"] > event_date.isoformat()),
         key=lambda row: row["filing_date"],
-    )[:3]
+    )[:filings_per_side]
+    periodic_before = [
+        row for row in before if row["form"] in PERIODIC_FORMS
+    ][:3]
+    periodic_after = [
+        row for row in eligible
+        if row["filing_date"] > event_date.isoformat()
+        and row["form"] in PERIODIC_FORMS
+    ]
+    periodic_after.sort(key=lambda row: row["filing_date"])
     return sorted(
-        {row["accession_number"]: row for row in before + after}.values(),
+        {
+            row["accession_number"]: row
+            for row in (
+                before[:filings_per_side]
+                + after
+                + periodic_before
+                + periodic_after[:3]
+            )
+        }.values(),
         key=lambda row: row["filing_date"],
     )
 
@@ -108,15 +133,16 @@ def extract_symbol_change_dates(content: bytes, new_ticker: str) -> list[str]:
             max(0, local_ticker_start - 100):local_ticker_start + 100
         ]
         if not re.search(
-            r"(?:ticker|trading symbol|trade under|trading under)",
+            r"(?:ticker|trading symbol|trade under|trading under|under the symbol)",
             ticker_anchor,
             re.IGNORECASE,
         ):
             continue
         if not re.search(
             r"(?:new ticker symbol|begin trading|began trading|"
-            r"trading under|ticker symbol change|"
-            r"(?:ticker|trading symbol).{0,40}(?:change|changed))",
+            r"commence[ds]? trading|trading under|ticker symbol change|"
+            r"(?:ticker|trading symbol).{0,40}(?:change|changed)|"
+            r"(?:change|changed|changing).{0,40}(?:ticker|trading symbol))",
             context,
             re.IGNORECASE,
         ):

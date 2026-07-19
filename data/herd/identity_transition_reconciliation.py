@@ -36,9 +36,24 @@ def reconcile_identity_transitions(
             row["new_ticker"].upper(), row["resolved_effective_date"],
         )
         grouped.setdefault(key, []).append(row)
+    complex_groups = {
+        (cik, new_ticker, effective_date)
+        for cik, _old_ticker, new_ticker, effective_date in grouped
+        if len({
+            old
+            for group_cik, old, group_new, group_date in grouped
+            if (
+                group_cik == cik
+                and group_new == new_ticker
+                and group_date == effective_date
+            )
+        }) > 1
+    }
     transitions = []
     consumed = set()
     for (cik, old_ticker, new_ticker, effective_date), matches in grouped.items():
+        if (cik, new_ticker, effective_date) in complex_groups:
+            continue
         chosen = min(
             matches,
             key=lambda row: (
@@ -104,6 +119,7 @@ def reconcile_identity_transitions(
         "candidate_events": len(updated),
         "verified_identity_transitions": len(transitions),
         "reclassified_candidate_rows": len(consumed),
+        "complex_identity_groups_deferred": len(complex_groups),
         "remaining_non_official_rows": sum(
             row["status"] not in {
                 "OFFICIAL_TABLE_EXACT",

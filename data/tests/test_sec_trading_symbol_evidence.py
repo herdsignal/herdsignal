@@ -26,6 +26,32 @@ class SecTradingSymbolEvidenceTest(unittest.TestCase):
             ["2022-06-09"], extract_symbol_change_dates(content, "META")
         )
 
+    def test_extracts_reverse_change_phrase_and_commenced_trading(self):
+        reverse = (
+            b"<p>We are changing our ticker to BALL effective May 10, 2022.</p>"
+        )
+        commenced = (
+            b"<p>On April 11, 2022, WBD common stock commenced trading on "
+            b"Nasdaq under the ticker symbol WBD.</p>"
+        )
+
+        self.assertEqual(
+            ["2022-05-10"], extract_symbol_change_dates(reverse, "BALL")
+        )
+        self.assertEqual(
+            ["2022-04-11"], extract_symbol_change_dates(commenced, "WBD")
+        )
+
+    def test_extracts_began_trading_under_symbol_wording(self):
+        content = (
+            b"<p>Truist began trading on the New York Stock Exchange under "
+            b"the symbol TFC on December 9, 2019.</p>"
+        )
+
+        self.assertEqual(
+            ["2019-12-09"], extract_symbol_change_dates(content, "TFC")
+        )
+
     def test_prefers_date_nearest_ticker_change_over_name_change_date(self):
         content = (
             b"<p>Effective August 8, 2019, the company changed its name. "
@@ -49,6 +75,42 @@ class SecTradingSymbolEvidenceTest(unittest.TestCase):
         ]
         selected = select_surrounding_filings(rows, date(2022, 6, 9))
         self.assertEqual(4, len(selected))
+
+    def test_selects_enough_filings_to_reach_quarterly_confirmation(self):
+        rows = [
+            {
+                "accession_number": str(i),
+                "filing_date": f"2022-06-{i:02d}",
+                "form": "8-K" if i < 9 else "10-Q",
+                "primary_document": "x.htm",
+            }
+            for i in range(1, 10)
+        ]
+
+        selected = select_surrounding_filings(rows, date(2022, 6, 1))
+
+        self.assertEqual(9, len(selected))
+        self.assertIn("9", {row["accession_number"] for row in selected})
+
+    def test_preserves_periodic_report_when_many_current_reports_follow(self):
+        rows = [{
+            "accession_number": "quarterly",
+            "filing_date": "2022-08-10",
+            "form": "10-Q",
+            "primary_document": "quarterly.htm",
+        }] + [
+            {
+                "accession_number": f"current-{day}",
+                "filing_date": f"2022-07-{day:02d}",
+                "form": "8-K",
+                "primary_document": "current.htm",
+            }
+            for day in range(2, 12)
+        ]
+
+        selected = select_surrounding_filings(rows, date(2022, 7, 1))
+
+        self.assertIn("quarterly", {row["accession_number"] for row in selected})
 
     def test_reads_supplemental_submission_shape(self):
         rows = filing_rows({
