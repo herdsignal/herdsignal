@@ -1,0 +1,21 @@
+{
+  "policy_version": "2026.07-v2",
+  "holdout_id": "HERD_VNEXT_UNASSIGNED",
+  "status": "NOT_OPENED_PREREQUISITES_FAILED",
+  "evaluation_count": 0,
+  "candidate_id": null,
+  "passed": null,
+  "sealed_data_accessed": false,
+  "prerequisites": {
+    "candidate_passed_pre_holdout_gate": false,
+    "point_in_time_data_ready": false,
+    "walk_forward_and_era_validation_complete": false
+  },
+  "failed_prerequisites": [
+    "candidate_passed_pre_holdout_gate",
+    "point_in_time_data_ready",
+    "walk_forward_and_era_validation_complete"
+  ],
+  "legacy_v61_holdout_reusable": false,
+  "automatic_promotion": false
+}
