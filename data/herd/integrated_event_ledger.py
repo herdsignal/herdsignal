@@ -47,7 +47,18 @@ def build_integrated_ledger(
     form25_classification: list[dict],
     merger_classification: list[dict],
     identity_transitions: list[dict] | None = None,
+    reconstruction_anomalies: list[dict] | None = None,
 ) -> tuple[list[dict], dict]:
+    quarantined_keys = {
+        (
+            row["candidate_effective_date"],
+            row["action"].upper(),
+            row["ticker"].upper(),
+        )
+        for row in reconstruction_anomalies or []
+        if str(row.get("exclude_from_official_ledger", "")).lower() == "true"
+        or row.get("exclude_from_official_ledger") is True
+    }
     cik_by_event = {event_key(row): row for row in cik_events}
     form25_by_url = {
         row["filing_url"]: row["classification_status"]
@@ -72,6 +83,13 @@ def build_integrated_ledger(
     rows = []
     for candidate in reconciliation:
         if candidate["status"] == "VERIFIED_IDENTITY_CHANGE_COMPONENT":
+            continue
+        source_key = (
+            candidate["candidate_effective_date"],
+            candidate["action"].upper(),
+            candidate["ticker"].upper(),
+        )
+        if source_key in quarantined_keys:
             continue
         key = candidate_key(candidate)
         official_resolved = candidate["status"] in RESOLVED_S_AND_P
@@ -153,6 +171,7 @@ def build_integrated_ledger(
         "candidate_events": len(rows),
         "source_candidate_rows": len(reconciliation),
         "identity_transitions": len(identity_transitions or []),
+        "quarantined_source_artifacts": len(quarantined_keys),
         "event_statuses": dict(statuses),
         "verified_official_events": verified,
         "events_with_common_form25": sum(row["common_equity_form25"] for row in rows),
@@ -193,6 +212,7 @@ def main() -> None:
     parser.add_argument("merger_classification", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--identity-transitions", type=Path)
+    parser.add_argument("--reconstruction-anomalies", type=Path)
     args = parser.parse_args()
     rows, audit = build_integrated_ledger(
         read_csv(args.reconciliation),
@@ -201,6 +221,8 @@ def main() -> None:
         read_csv(args.form25_classification),
         read_csv(args.merger_classification),
         read_csv(args.identity_transitions) if args.identity_transitions else None,
+        read_csv(args.reconstruction_anomalies)
+        if args.reconstruction_anomalies else None,
     )
     write_csv(args.output, rows)
     print(json.dumps(audit, ensure_ascii=False))

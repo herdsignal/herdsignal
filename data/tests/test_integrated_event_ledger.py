@@ -73,6 +73,29 @@ class IntegratedEventLedgerTest(unittest.TestCase):
         self.assertEqual("VERIFIED_IDENTITY_CHANGE", rows[0]["event_status"])
         self.assertTrue(audit["replay_ready"])
 
+    def test_excludes_audited_zero_effect_source_artifact(self):
+        reconciliation = [{
+            "candidate_effective_date": "2023-05-09",
+            "resolved_effective_date": "",
+            "action": "ADD",
+            "ticker": "BRK.B",
+            "status": "NO_OFFICIAL_DOCUMENT_MATCH",
+        }]
+        anomalies = [{
+            "candidate_effective_date": "2023-05-09",
+            "action": "ADD",
+            "ticker": "BRK.B",
+            "exclude_from_official_ledger": True,
+        }]
+
+        rows, audit = build_integrated_ledger(
+            reconciliation, [], [], [], [],
+            reconstruction_anomalies=anomalies,
+        )
+
+        self.assertEqual([], rows)
+        self.assertEqual(1, audit["quarantined_source_artifacts"])
+
 
 if __name__ == "__main__":
     unittest.main()
