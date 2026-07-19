@@ -128,31 +128,53 @@ def mention_matches_candidate(
 def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
     before = text[max(0, ticker_match.start() - 650):ticker_match.start()]
     after = text[ticker_match.end():min(len(text), ticker_match.end() + 650)]
-    # 복수 교체 문장에서 `will replace` 앞에 나열된 ticker는 편입 종목이다.
-    # 이전 문장의 `will replace`를 현재 ticker의 동사로 오인하지 않도록
-    # 현재 ticker 뒤 같은 문장에 오는 동사를 먼저 판정한다.
-    next_replace = re.search(r"\bwill replace\b", after[:240], re.IGNORECASE)
-    if (
-        next_replace
-        and "." not in after[:next_replace.start()]
-        and not re.search(
-            r"\bS&P 500\b", after[:next_replace.start()], re.IGNORECASE
-        )
-    ):
-        return "ADD"
-    # 교체 대상 ticker 뒤에는 새 구성 종목의 "will be added" 설명이 다시
-    # 등장할 수 있다. 따라서 ticker를 감싼 교체 관계를 먼저 판정한다.
     replacement_start = before.lower().rfind("will replace")
     replacement_tail = (
         before[replacement_start + len("will replace"):]
         if replacement_start >= 0 else ""
     )
+    tail_without_abbreviations = re.sub(
+        r"\b(?:Inc|Corp|Ltd|plc|Co|St)\.",
+        "",
+        replacement_tail,
+        flags=re.IGNORECASE,
+    )
+    tail_without_abbreviations = re.sub(
+        r"\b[A-Z]\.(?=\s|$)", "", tail_without_abbreviations
+    )
     if (
         replacement_start >= 0
         and not ANY_EXCHANGE_TICKER.search(replacement_tail)
+        and "." not in tail_without_abbreviations
         and re.search(r"in (?:the )?S&P 500", after[:220], re.IGNORECASE)
     ):
         return "REMOVE"
+    # 복수 교체 문장에서 `will replace` 앞에 나열된 ticker는 편입 종목이다.
+    # 이전 문장의 `will replace`를 현재 ticker의 동사로 오인하지 않도록
+    # 현재 ticker 뒤 같은 문장에 오는 동사를 먼저 판정한다.
+    next_replace = re.search(r"\bwill replace\b", after[:240], re.IGNORECASE)
+    replacement_prefix = (
+        after[:next_replace.start()] if next_replace else ""
+    )
+    prefix_without_abbreviations = re.sub(
+        r"\b(?:Inc|Corp|Ltd|plc|Co|St)\.",
+        "",
+        replacement_prefix,
+        flags=re.IGNORECASE,
+    )
+    prefix_without_abbreviations = re.sub(
+        r"\b[A-Z]\.(?=\s|$)", "", prefix_without_abbreviations
+    )
+    if (
+        next_replace
+        and "." not in prefix_without_abbreviations
+        and not re.search(
+            r"\bS&P 500\b", replacement_prefix, re.IGNORECASE
+        )
+    ):
+        return "ADD"
+    # 교체 대상 ticker 뒤에는 새 구성 종목의 "will be added" 설명이 다시
+    # 등장할 수 있다. 따라서 ticker를 감싼 교체 관계를 먼저 판정한다.
     if replacement_start >= 0 and re.search(
         r"respectively\s+in (?:the )?S&P 500", after[:600], re.IGNORECASE
     ):
@@ -201,6 +223,12 @@ def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
         return "ADD"
     if re.search(
         r"(?:will be removed from|will leave)\s+(?:the\s+)?S&P 500",
+        after[:350],
+        re.IGNORECASE,
+    ):
+        return "REMOVE"
+    if re.search(
+        r"will no longer be eligible for inclusion in (?:the\s+)?S&P 500",
         after[:350],
         re.IGNORECASE,
     ):

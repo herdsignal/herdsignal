@@ -300,6 +300,52 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
                 "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
             )
 
+    def test_company_abbreviation_does_not_end_plural_replacement_clause(self):
+        release = {
+            "published_date": "2017-03-10",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "The changes are effective prior to the open on Monday, March 20. "
+                "Advanced Micro Devices Inc. (NASD: AMD), Raymond James "
+                "Financial Inc. (NYSE: RJF) and Alexandria Real Estate Equities "
+                "Inc. (NYSE: ARE) will replace Urban Outfitters Inc. "
+                "(NASD: URBN), Frontier Communications Corp. (NASD: FTR) and "
+                "First Solar Inc. (NASD: FSLR) respectively in the S&P 500."
+            ),
+        }
+
+        for ticker in ("AMD", "RJF", "ARE"):
+            result = verify_candidate(
+                {"effective_date": "2017-03-20", "action": "ADD", "ticker": ticker},
+                release,
+            )
+            self.assertEqual(
+                "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+            )
+
+    def test_does_not_attach_previous_sentence_replacement_to_addition(self):
+        release = {
+            "published_date": "2017-02-23",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "Old Company will replace Another Company. S&P MidCap 400 "
+                "constituent Regency Centers Corp. (NYSE: REG) will replace "
+                "Endo International (NASD: ENDP) in the S&P 500 effective "
+                "prior to the open on Thursday, March 2."
+            ),
+        }
+
+        result = verify_candidate(
+            {"effective_date": "2017-03-02", "action": "ADD", "ticker": "REG"},
+            release,
+        )
+
+        self.assertEqual(
+            "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+        )
+
     def test_classifies_plural_replacement_targets_as_removals(self):
         release = {
             "published_date": "2017-07-19",
@@ -322,6 +368,44 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
             self.assertEqual(
                 "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
             )
+
+    def test_company_initials_do_not_hide_replacement_removal(self):
+        release = {
+            "published_date": "2017-08-24",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "c" * 64,
+            "text": (
+                "SBA Communications Corp. (NASD: SBAC) will replace "
+                "E. I. du Pont de Nemours and Co. (NYSE: DD) in the S&P 500 "
+                "effective prior to the open on Friday, September 1."
+            ),
+        }
+        result = verify_candidate(
+            {"effective_date": "2017-09-01", "action": "REMOVE", "ticker": "DD"},
+            release,
+        )
+        self.assertEqual(
+            "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+        )
+
+    def test_no_longer_eligible_is_removal(self):
+        release = {
+            "published_date": "2018-06-25",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "d" * 64,
+            "text": (
+                "Keurig Dr Pepper Inc. and its ticker symbol (NYSE: KDP) "
+                "will no longer be eligible for inclusion in the S&P 500 "
+                "prior to the open on Monday, July 2."
+            ),
+        }
+        result = verify_candidate(
+            {"effective_date": "2018-07-02", "action": "REMOVE", "ticker": "KDP"},
+            release,
+        )
+        self.assertEqual(
+            "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+        )
 
 
 if __name__ == "__main__":
