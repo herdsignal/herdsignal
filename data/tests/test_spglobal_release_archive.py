@@ -1,11 +1,17 @@
 import sys
+import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest.mock import Mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from herd.spglobal_release_archive import discover_release_links
+from herd.spglobal_release_archive import (
+    ReleaseArchiveError,
+    collect_direct_release_corpus,
+    discover_release_links,
+)
 
 
 class SpglobalReleaseArchiveTest(unittest.TestCase):
@@ -43,6 +49,51 @@ class SpglobalReleaseArchiveTest(unittest.TestCase):
         """
         rows = discover_release_links(source, date(2017, 1, 1), date(2017, 12, 31))
         self.assertEqual(1, len(rows))
+
+    def test_archives_explicit_official_release_with_hash(self):
+        response = Mock()
+        response.content = b"<html>official</html>"
+        response.headers = {"Content-Type": "text/html"}
+        response.raise_for_status = Mock()
+        session = Mock()
+        session.headers = {}
+        session.get.return_value = response
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            claims = root / "claims.csv"
+            claims.write_text(
+                "published_date,title,source_url\n"
+                "2016-10-24,HCP,"
+                "https://press.spglobal.com/2016-10-24-HCP\n",
+                encoding="utf-8",
+            )
+            manifest = collect_direct_release_corpus(
+                claims,
+                root / "corpus",
+                user_agent="Research contact test@example.com",
+                session=session,
+            )
+            self.assertEqual(1, manifest["release_documents"])
+            self.assertEqual(1, len(list((root / "corpus/evidence").iterdir())))
+
+    def test_rejects_nonofficial_direct_release(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            claims = root / "claims.csv"
+            claims.write_text(
+                "published_date,title,source_url\n"
+                "2016-10-24,HCP,https://example.com/2016-10-24-HCP\n",
+                encoding="utf-8",
+            )
+            session = Mock()
+            session.headers = {}
+            with self.assertRaises(ReleaseArchiveError):
+                collect_direct_release_corpus(
+                    claims,
+                    root / "corpus",
+                    user_agent="Research contact test@example.com",
+                    session=session,
+                )
 
 
 if __name__ == "__main__":

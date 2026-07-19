@@ -10,8 +10,11 @@ import re
 import time
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
+
+from herd.sec_master_index import resolve_user_agent
 from lxml import html
 
 ARCHIVE_URL = "https://press.spglobal.com/index.php?l=100&o={offset}&s=2429"
@@ -32,6 +35,9 @@ CHANGE_TITLE_PATTERNS = (
 
 class ReleaseArchiveError(RuntimeError):
     pass
+
+
+OFFICIAL_RELEASE_HOSTS = {"press.spglobal.com"}
 
 
 def discover_release_links(content: bytes, start_date: date, end_date: date) -> list[dict]:
@@ -133,23 +139,108 @@ def collect_release_corpus(
     return manifest
 
 
+def collect_direct_release_corpus(
+    claims_path: Path,
+    output_dir: Path,
+    *,
+    user_agent: str,
+    delay_seconds: float = 0.2,
+    session: requests.Session | None = None,
+) -> dict:
+    """명시한 S&P 보도자료 URL을 원문·해시와 함께 고정한다."""
+    if len(user_agent.strip()) < 10:
+        raise ReleaseArchiveError("a descriptive user agent is required")
+    destination = Path(output_dir)
+    if destination.exists():
+        raise ReleaseArchiveError("output directory already exists")
+    with Path(claims_path).open(encoding="utf-8", newline="") as handle:
+        claims = list(csv.DictReader(handle))
+    required = {"published_date", "title", "source_url"}
+    if not claims or not required.issubset(claims[0]):
+        raise ReleaseArchiveError("direct release claims schema mismatch")
+
+    client = session or requests.Session()
+    client.headers["User-Agent"] = user_agent
+    rows = []
+    documents = []
+    for claim in claims:
+        published = date.fromisoformat(claim["published_date"])
+        source_url = claim["source_url"].strip()
+        if urlparse(source_url).hostname not in OFFICIAL_RELEASE_HOSTS:
+            raise ReleaseArchiveError(f"non-official release host: {source_url}")
+        match = RELEASE_DATE.search(source_url)
+        if not match or date.fromisoformat(match.group(1)) != published:
+            raise ReleaseArchiveError("release URL date does not match published_date")
+        response = client.get(source_url, timeout=60)
+        response.raise_for_status()
+        digest = hashlib.sha256(response.content).hexdigest()
+        suffix = (
+            ".pdf"
+            if "pdf" in response.headers.get("Content-Type", "").lower()
+            else ".html"
+        )
+        documents.append((digest, suffix, response.content))
+        rows.append({
+            **claim,
+            "status": "DIRECT_OFFICIAL_SOURCE_ARCHIVED",
+            "source_sha256": digest,
+        })
+        if session is None:
+            time.sleep(delay_seconds)
+
+    evidence_dir = destination / "evidence"
+    evidence_dir.mkdir(parents=True)
+    for digest, suffix, content in documents:
+        (evidence_dir / f"{digest}{suffix}").write_bytes(content)
+    index_path = destination / "release_index.csv"
+    fields = list(rows[0])
+    with index_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+    manifest = {
+        "source": "S&P Global direct public press release URLs",
+        "release_documents": len(rows),
+        "use": "OFFICIAL_DOCUMENT_ARCHIVE; claims require independent verification",
+        "index_sha256": hashlib.sha256(index_path.read_bytes()).hexdigest(),
+    }
+    (destination / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return manifest
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output_dir", type=Path)
-    parser.add_argument("--start", type=date.fromisoformat, required=True)
-    parser.add_argument("--end", type=date.fromisoformat, required=True)
-    parser.add_argument("--user-agent", required=True)
+    parser.add_argument("--start", type=date.fromisoformat)
+    parser.add_argument("--end", type=date.fromisoformat)
+    parser.add_argument("--user-agent")
+    parser.add_argument("--env-file", type=Path)
+    parser.add_argument("--direct-claims", type=Path)
     args = parser.parse_args()
-    print(json.dumps(
-        collect_release_corpus(
+    user_agent = (
+        args.user_agent
+        or resolve_user_agent(args.env_file or Path(".env"))
+    )
+    if not args.direct_claims and (not args.start or not args.end):
+        parser.error("--start and --end are required for archive discovery")
+    collector = (
+        collect_direct_release_corpus(
+            args.direct_claims,
+            args.output_dir,
+            user_agent=user_agent,
+        )
+        if args.direct_claims
+        else collect_release_corpus(
             args.output_dir,
             start_date=args.start,
             end_date=args.end,
-            user_agent=args.user_agent,
-        ),
-        ensure_ascii=False,
-        indent=2,
-    ))
+            user_agent=user_agent,
+        )
+    )
+    print(json.dumps(collector, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

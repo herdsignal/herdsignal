@@ -19,6 +19,38 @@ VERIFIED_STATUSES = {
     "VERIFIED_IDENTITY_CHANGE",
     "VERIFIED_CORPORATE_CONTINUITY",
 }
+VERIFIED_BASELINE_STATUS = "VERIFIED_BASELINE_CONTINUITY_BACKCAST"
+
+
+def apply_baseline_corrections(
+    baseline: set[str],
+    corrections: list[dict],
+    *,
+    as_of: date,
+) -> tuple[set[str], dict]:
+    corrected = {ticker.upper() for ticker in baseline}
+    applied = []
+    for row in corrections:
+        if row.get("event_status") != VERIFIED_BASELINE_STATUS:
+            raise ConstituentReplayError("unverified baseline correction")
+        if row.get("promotion_scope") != "DIAGNOSTIC_BASELINE_ONLY":
+            raise ConstituentReplayError("baseline correction scope must remain diagnostic")
+        if row.get("inference") != "true":
+            raise ConstituentReplayError("baseline correction must disclose inference")
+        correction_date = date.fromisoformat(row["as_of"])
+        if correction_date > as_of:
+            continue
+        ticker = row["ticker"].upper()
+        if row["action"] != "ADD" or ticker in corrected:
+            raise ConstituentReplayError(f"invalid baseline correction: {ticker}")
+        corrected.add(ticker)
+        applied.append(ticker)
+    return corrected, {
+        "baseline_count_raw": len(baseline),
+        "baseline_corrections": len(applied),
+        "baseline_correction_tickers": sorted(applied),
+        "baseline_correction_scope": "DIAGNOSTIC_BASELINE_ONLY",
+    }
 
 
 def replay_events(
@@ -134,11 +166,23 @@ def main() -> None:
     parser.add_argument("output")
     parser.add_argument("--as-of", type=date.fromisoformat, required=True)
     parser.add_argument("--diagnostic", action="store_true")
+    parser.add_argument("--baseline-corrections")
     args = parser.parse_args()
     baseline = load_baseline_from_intervals(args.baseline_intervals, args.as_of)
+    correction_audit = {}
+    if args.baseline_corrections:
+        baseline, correction_audit = apply_baseline_corrections(
+            baseline,
+            read_csv(args.baseline_corrections),
+            as_of=args.as_of,
+        )
     snapshots, audit = replay_events(
         baseline, read_csv(args.ledger), allow_diagnostic=args.diagnostic
     )
+    audit.update(correction_audit)
+    if correction_audit.get("baseline_corrections"):
+        audit["diagnostic_only"] = True
+        audit["replay_complete"] = False
     with open(args.output, "w", encoding="utf-8") as handle:
         json.dump(
             {"audit": audit, "snapshots": snapshots},

@@ -1,6 +1,11 @@
 import unittest
+from datetime import date
 
-from herd.daily_constituent_replay import ConstituentReplayError, replay_events
+from herd.daily_constituent_replay import (
+    ConstituentReplayError,
+    apply_baseline_corrections,
+    replay_events,
+)
 
 
 class DailyConstituentReplayTest(unittest.TestCase):
@@ -83,6 +88,41 @@ class DailyConstituentReplayTest(unittest.TestCase):
         )
         self.assertEqual(["NEW"], snapshots[0]["added"])
         self.assertTrue(audit["replay_complete"])
+
+    def test_applies_disclosed_diagnostic_baseline_correction(self):
+        corrected, audit = apply_baseline_corrections(
+            {"AAA"},
+            [{
+                "as_of": "2016-07-18",
+                "ticker": "HCP",
+                "action": "ADD",
+                "event_status": "VERIFIED_BASELINE_CONTINUITY_BACKCAST",
+                "inference": "true",
+                "promotion_scope": "DIAGNOSTIC_BASELINE_ONLY",
+            }],
+            as_of=date(2016, 7, 18),
+        )
+        self.assertEqual({"AAA", "HCP"}, corrected)
+        self.assertEqual(1, audit["baseline_corrections"])
+        self.assertEqual(
+            "DIAGNOSTIC_BASELINE_ONLY",
+            audit["baseline_correction_scope"],
+        )
+
+    def test_rejects_baseline_correction_as_official_promotion(self):
+        with self.assertRaises(ConstituentReplayError):
+            apply_baseline_corrections(
+                {"AAA"},
+                [{
+                    "as_of": "2016-07-18",
+                    "ticker": "HCP",
+                    "action": "ADD",
+                    "event_status": "VERIFIED_BASELINE_CONTINUITY_BACKCAST",
+                    "inference": "true",
+                    "promotion_scope": "OFFICIAL",
+                }],
+                as_of=date(2016, 7, 18),
+            )
 
 
 if __name__ == "__main__":
