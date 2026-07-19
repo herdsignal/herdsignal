@@ -82,3 +82,11 @@ Buy & Hold의 상승 복리를 더 크게 잃는다.
   `survivorship_safe=false` 유지
 - 다음 작업은 102건의 미일치 원인 조사, 295건의 원문 검토 자동 보조,
   SEC CIK 기반 합병·상장폐지 연결이다.
+
+### 발표일 기준 기업 데이터 진행
+
+- SEC Company Facts와 submissions accession 결합기 구현
+- `acceptanceDateTime` 이후에만 재무 관측값이 보이도록 조회 경계 고정
+- 수정공시는 과거 값을 덮어쓰지 않고 별도 버전으로 보존
+- 접수 시각이 없는 관측값은 엄격 모드에서 제외
+- 실제 유니버스 전체 수집과 과거 CIK 연결은 아직 미완료

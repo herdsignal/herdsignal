@@ -125,7 +125,21 @@ PDF/표 형식, 공개본 오류 또는 아카이브 검색 누락을 별도로 
 SEC EDGAR `submissions`의 접수 시각과 `companyfacts`의 `filed`, `accn`,
 `form`, `fy`, `fp`, 기간 정보를 함께 저장한다. 동일 기간의 수정 공시는
 이전 값을 덮어쓰지 않고 별도 버전으로 보존한다. 특정 날짜의 값은
-`filed <= as_of`인 레코드 중 당시 최신 공시만 선택한다.
+accession number가 일치하고 `acceptanceDateTime <= as_of`인 레코드만
+선택한다.
+
+`sec_point_in_time_fundamentals.py`는 다음을 강제한다.
+
+- 기본 submissions와 과거 filings 조각의 accession–접수 시각 색인
+- Company Facts 관측값과 accession 결합
+- 수정공시를 포함한 모든 버전 보존
+- timezone 없는 조회 시각 거부
+- 접수 시각을 연결하지 못한 관측값의 엄격 모드 제외
+- 하나라도 접수 시각이 누락되면 `point_in_time_ready=false`
+
+Company Facts의 `filed` 날짜만으로 장중 공개 시각을 추정하지 않는다.
+실제 SEC 수집에는 식별 가능한 User-Agent와 공정 접근 속도 제한을
+적용하고, 원본 JSON·SHA-256·수집 시각을 함께 보관해야 한다.
 
 과거 컨센서스 EPS는 SEC 데이터에 없으므로 별도 라이선스 원천 없이는
 구현 완료로 처리하지 않는다.
