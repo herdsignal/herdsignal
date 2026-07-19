@@ -11,8 +11,15 @@ from typing import Any
 
 @dataclass(frozen=True)
 class AdoptionThresholds:
-    version: str = "2026.07-v1"
+    version: str = "2026.07-v2"
     minimum_coverage: float = 0.95
+    minimum_universe_size: int = 55
+    minimum_oos_years: float = 5.0
+    minimum_median_excess_cagr: float = 0.0
+    minimum_positive_excess_rate: float = 60.0
+    minimum_upside_capture: float = 0.85
+    maximum_downside_capture: float = 0.90
+    minimum_cost_stress_excess_cagr: float = 0.0
     minimum_oos_improvement_rate: float = 60.0
     minimum_oos_mdd_improvement: float = 0.0
     minimum_bottom_decile_capture: float = 60.0
@@ -39,8 +46,18 @@ def evaluate_adoption_gate(
     dsr = overfitting.get("deflated_sharpe", {})
     survivorship = metadata.get("survivorship_coverage", {})
     parameter_policy = metadata.get("parameter_policy", {})
+    benchmark = metadata.get("benchmark_summary", {})
+    cost_stress = metadata.get("cost_stress", {})
+    blind = metadata.get("blind_holdout", {})
 
     coverage = run.get("coverage")
+    universe_size = run.get("universe_size")
+    oos_years = run.get("oos_years")
+    median_excess_cagr = benchmark.get("median_excess_cagr")
+    positive_excess_rate = benchmark.get("positive_excess_rate")
+    upside_capture = benchmark.get("median_upside_capture")
+    downside_capture = benchmark.get("median_downside_capture")
+    stressed_excess_cagr = cost_stress.get("median_excess_cagr")
     improvement_rate = walk.get("improvement_rate")
     mdd_improvement = walk.get("mdd_improvement_median")
     bottom_capture = walk.get("capture_bottom_decile_mean")
@@ -52,12 +69,32 @@ def evaluate_adoption_gate(
         _criterion("validation_complete", run.get("status") == "COMPLETE", run.get("status"), "COMPLETE"),
         _criterion("coverage", coverage is not None and coverage >= thresholds.minimum_coverage,
                    coverage, f">={thresholds.minimum_coverage}"),
+        _criterion("universe_size", universe_size is not None and universe_size >= thresholds.minimum_universe_size,
+                   universe_size, f">={thresholds.minimum_universe_size}"),
+        _criterion("oos_years", oos_years is not None and oos_years >= thresholds.minimum_oos_years,
+                   oos_years, f">={thresholds.minimum_oos_years}"),
         _criterion("score_parity", metadata.get("score_parity", {}).get("passed") is True,
                    metadata.get("score_parity", {}).get("passed"), True),
         _criterion("fixed_parameter_policy",
                    parameter_policy.get("mode") == "fixed"
                    and parameter_policy.get("automatic_selection_applied") is False,
                    parameter_policy.get("mode"), "fixed"),
+        _criterion("median_excess_cagr",
+                   median_excess_cagr is not None and median_excess_cagr > thresholds.minimum_median_excess_cagr,
+                   median_excess_cagr, f">{thresholds.minimum_median_excess_cagr}"),
+        _criterion("positive_excess_rate",
+                   positive_excess_rate is not None and positive_excess_rate >= thresholds.minimum_positive_excess_rate,
+                   positive_excess_rate, f">={thresholds.minimum_positive_excess_rate}"),
+        _criterion("upside_capture",
+                   upside_capture is not None and upside_capture >= thresholds.minimum_upside_capture,
+                   upside_capture, f">={thresholds.minimum_upside_capture}"),
+        _criterion("downside_capture",
+                   downside_capture is not None and downside_capture <= thresholds.maximum_downside_capture,
+                   downside_capture, f"<={thresholds.maximum_downside_capture}"),
+        _criterion("cost_stress",
+                   stressed_excess_cagr is not None
+                   and stressed_excess_cagr > thresholds.minimum_cost_stress_excess_cagr,
+                   stressed_excess_cagr, f">{thresholds.minimum_cost_stress_excess_cagr}"),
         _criterion("oos_improvement_rate", improvement_rate is not None and improvement_rate >= thresholds.minimum_oos_improvement_rate,
                    improvement_rate, f">={thresholds.minimum_oos_improvement_rate}"),
         _criterion("oos_mdd_improvement", mdd_improvement is not None and mdd_improvement >= thresholds.minimum_oos_mdd_improvement,
@@ -74,6 +111,16 @@ def evaluate_adoption_gate(
                    dsr_probability, f">={thresholds.minimum_dsr_probability}"),
         _criterion("survivorship", survivorship.get("point_in_time_ready") is True,
                    survivorship.get("status"), "POINT_IN_TIME_READY"),
+        _criterion("blind_holdout_single_use",
+                   blind.get("status") == "COMPLETE"
+                   and blind.get("evaluation_count") == 1
+                   and blind.get("passed") is True,
+                   {
+                       "status": blind.get("status"),
+                       "evaluation_count": blind.get("evaluation_count"),
+                       "passed": blind.get("passed"),
+                   },
+                   {"status": "COMPLETE", "evaluation_count": 1, "passed": True}),
     ]
     failed = [item["name"] for item in criteria if not item["passed"]]
     eligible = not failed
