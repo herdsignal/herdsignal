@@ -68,6 +68,10 @@ management:
 
 herdsignal:
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}
+  shadow:
+    enabled: ${HERD_SHADOW_ENABLED:false}
+    candidate-id: ${HERD_SHADOW_CANDIDATE_ID:}
+    holdout-passed: ${HERD_SHADOW_HOLDOUT_PASSED:false}
   auth:
     enabled: ${AUTH_ENABLED:false}
     frontend-url: ${FRONTEND_URL:http://localhost:5173}
