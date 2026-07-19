@@ -49,7 +49,17 @@ class ConstituentBlockerBacklogTest(unittest.TestCase):
                 "residual_category": "OFFICIAL_DOCUMENT_MISSING",
             },
         ]
-        rows, audit = build_blocker_backlog(ledger, residual)
+        rows, audit = build_blocker_backlog(
+            ledger,
+            residual,
+            identity_evidence=[{
+                "old_candidate_date": "2020-01-02",
+                "new_candidate_date": "2020-01-03",
+                "old_ticker": "OLD",
+                "new_ticker": "NEW",
+                "identity_status": "SEC_IDENTITY_AND_EFFECTIVE_DATE_VERIFIED",
+            }],
+        )
         by_ticker = {row["ticker"]: row for row in rows}
         self.assertEqual(
             "OFFICIAL_MEMBERSHIP_SEMANTICS_REVIEW",
@@ -65,6 +75,33 @@ class ConstituentBlockerBacklogTest(unittest.TestCase):
         )
         self.assertTrue(all(row["promotion_allowed"] == "false" for row in rows))
         self.assertEqual(3, audit["classified_blockers"])
+
+    def test_does_not_treat_date_proximity_as_company_continuity(self):
+        ledger = [
+            {
+                "candidate_effective_date": "2020-01-02",
+                "action": "REMOVE",
+                "ticker": "UNRELATED",
+                "event_status": "UNRESOLVED",
+            },
+            {
+                "candidate_effective_date": "2020-01-03",
+                "action": "ADD",
+                "ticker": "OTHER",
+                "event_status": "UNRESOLVED",
+            },
+        ]
+        residual = [{
+            "candidate_effective_date": row["candidate_effective_date"],
+            "action": row["action"],
+            "ticker": row["ticker"],
+            "residual_category": "OFFICIAL_DOCUMENT_MISSING",
+        } for row in ledger]
+        rows, _ = build_blocker_backlog(ledger, residual)
+        self.assertEqual(
+            {"PROXIMITY_PAIR_TRIAGE"},
+            {row["workstream"] for row in rows},
+        )
 
     def test_fails_when_blocker_has_no_residual_classification(self):
         with self.assertRaises(BlockerBacklogError):

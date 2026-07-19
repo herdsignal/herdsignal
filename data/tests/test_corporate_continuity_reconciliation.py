@@ -98,6 +98,26 @@ class CorporateContinuityReconciliationTest(unittest.TestCase):
             "VERIFIED_CORPORATE_CONTINUITY_COMPONENT", target["status"]
         )
 
+    def test_same_cik_membership_continuity_requires_sp_and_sec(self):
+        claims = [{
+            "candidate_effective_date": "2019-11-05",
+            "action": "ADD",
+            "ticker": "NEW",
+            "continuity_type": "SAME_CIK_MEMBERSHIP_CONTINUITY",
+            "old_ticker": "OLD",
+            "effective_date": "2019-11-05",
+            "cik": "123",
+            "sp_source_url": self.sp_url,
+            "filing_url": self.sec_url,
+            "required_sp_terms": "Prior Corp.||in the S&P 500||Post-merger",
+            "required_sec_terms": "changed its name||ticker symbol NEW",
+        }]
+        _, events, audit = verify_and_reconcile(
+            self.reconciliation, claims, self.sp, self.sec
+        )
+        self.assertEqual("RENAME", events[0]["action"])
+        self.assertEqual(2, audit["reclassified_candidate_rows"])
+
     def test_fails_closed_when_required_term_is_absent(self):
         claims = [{
             "candidate_effective_date": "2019-11-05",

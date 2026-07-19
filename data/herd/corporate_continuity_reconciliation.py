@@ -14,7 +14,11 @@ from urllib.parse import urlparse
 from lxml import html
 
 
-CONTINUITY_TYPES = {"SAME_CIK_RENAME", "SUCCESSOR_MEMBERSHIP"}
+CONTINUITY_TYPES = {
+    "SAME_CIK_RENAME",
+    "SAME_CIK_MEMBERSHIP_CONTINUITY",
+    "SUCCESSOR_MEMBERSHIP",
+}
 VERIFIED_COMPONENT = "VERIFIED_CORPORATE_CONTINUITY_COMPONENT"
 
 
@@ -135,7 +139,10 @@ def verify_and_reconcile(
         require_terms(sec_item[0], claim["required_sec_terms"], label="SEC")
 
         sp_sha = ""
-        if continuity_type == "SUCCESSOR_MEMBERSHIP":
+        if continuity_type in {
+            "SAME_CIK_MEMBERSHIP_CONTINUITY",
+            "SUCCESSOR_MEMBERSHIP",
+        }:
             sp_url = claim["sp_source_url"]
             sp_item = sp_evidence.get(sp_url)
             if not sp_item:
@@ -156,13 +163,21 @@ def verify_and_reconcile(
             "REMOVE",
             claim["old_ticker"].upper(),
         )
-        if continuity_type == "SAME_CIK_RENAME" and old_key in rows_by_key:
+        if continuity_type in {
+            "SAME_CIK_RENAME",
+            "SAME_CIK_MEMBERSHIP_CONTINUITY",
+        } and old_key in rows_by_key:
             consumed[old_key] = claim
         events.append({
             "event_type": continuity_type,
             "effective_date": claim["effective_date"],
             "action": (
-                "RENAME" if continuity_type == "SAME_CIK_RENAME" else "ADD"
+                "RENAME"
+                if continuity_type in {
+                    "SAME_CIK_RENAME",
+                    "SAME_CIK_MEMBERSHIP_CONTINUITY",
+                }
+                else "ADD"
             ),
             "ticker": claim["ticker"].upper(),
             "old_ticker": claim["old_ticker"].upper(),

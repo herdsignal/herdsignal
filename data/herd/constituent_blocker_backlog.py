@@ -36,6 +36,7 @@ def build_blocker_backlog(
     ledger: list[dict],
     residual_classification: list[dict],
     *,
+    identity_evidence: list[dict] | None = None,
     pair_window_days: int = 3,
 ) -> tuple[list[dict], dict]:
     blockers = [
@@ -54,6 +55,18 @@ def build_blocker_backlog(
         (date.fromisoformat(row["candidate_effective_date"]), row)
         for row in blockers
     ]
+    verified_identity_keys = set()
+    for identity in identity_evidence or []:
+        if identity.get("identity_status") != "SEC_IDENTITY_AND_EFFECTIVE_DATE_VERIFIED":
+            continue
+        old_ticker = identity.get("old_ticker", "").upper()
+        new_ticker = identity.get("new_ticker", "").upper()
+        old_date = identity.get("old_candidate_date", "")
+        new_date = identity.get("new_candidate_date", "")
+        if old_ticker and old_date:
+            verified_identity_keys.add((old_date, "REMOVE", old_ticker))
+        if new_ticker and new_date:
+            verified_identity_keys.add((new_date, "ADD", new_ticker))
     rows = []
     for event_date, source in dated:
         key = _key(source)
@@ -67,10 +80,14 @@ def build_blocker_backlog(
             workstream = "OFFICIAL_MEMBERSHIP_SEMANTICS_REVIEW"
             evidence = "S&P_ACTION_EFFECTIVE_SESSION_AND_MEMBERSHIP_LANGUAGE"
             priority = "P0"
-        elif opposite:
+        elif key in verified_identity_keys:
             workstream = "CORPORATE_ACTION_CONTINUITY_REVIEW"
             evidence = "SEC_CIK_TICKER_OR_MERGER_EVIDENCE_AND_S&P_CONTINUITY"
             priority = "P1"
+        elif opposite:
+            workstream = "PROXIMITY_PAIR_TRIAGE"
+            evidence = "COMPANY_IDENTITY_BEFORE_CORPORATE_ACTION_REVIEW"
+            priority = "P2"
         else:
             workstream = "OFFICIAL_DOCUMENT_DISCOVERY"
             evidence = "S&P_RELEASE_OR_INDEX_ANNOUNCEMENT_URL_AND_SHA256"
@@ -120,10 +137,14 @@ def main() -> None:
     parser.add_argument("integrated_ledger", type=Path)
     parser.add_argument("residual_classification", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--identity-evidence", type=Path)
     args = parser.parse_args()
     rows, audit = build_blocker_backlog(
         read_csv(args.integrated_ledger),
         read_csv(args.residual_classification),
+        identity_evidence=(
+            read_csv(args.identity_evidence) if args.identity_evidence else None
+        ),
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8", newline="") as handle:
