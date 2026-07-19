@@ -24,7 +24,7 @@ def normalize_cell(value: str) -> str:
 
 
 def parse_effective_date(value: str) -> str:
-    normalized = re.sub(r"\bSept\.?", "Sep", normalize_cell(value)).replace(".", "")
+    normalized = re.sub(r"\bSept(?:\.|\b)", "Sep", normalize_cell(value)).replace(".", "")
     normalized = re.sub(r"([A-Za-z])(\d)", r"\1 \2", normalized)
     normalized = re.sub(r",\s*", ", ", normalized)
     for pattern in (
