@@ -58,3 +58,5 @@ data/walk_forward/*
 !data/walk_forward/README.md
 data/reference/point_in_time/*
 !data/reference/point_in_time/README.md
+data/reference/sec/*
+!data/reference/sec/README.md
