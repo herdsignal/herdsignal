@@ -26,6 +26,15 @@ class SecTradingSymbolEvidenceTest(unittest.TestCase):
             ["2022-06-09"], extract_symbol_change_dates(content, "META")
         )
 
+    def test_prefers_date_nearest_ticker_change_over_name_change_date(self):
+        content = (
+            b"<p>Effective August 8, 2019, the company changed its name. "
+            b"The NYSE ticker was changed to GL on August 9, 2019.</p>"
+        )
+        self.assertEqual(
+            ["2019-08-09"], extract_symbol_change_dates(content, "GL")
+        )
+
     def test_selects_filings_on_both_sides(self):
         rows = [
             {

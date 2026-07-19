@@ -103,20 +103,40 @@ def extract_symbol_change_dates(content: bytes, new_ticker: str) -> list[str]:
             max(0, ticker_match.start() - 420):
             min(len(text), ticker_match.end() + 420)
         ]
+        local_ticker_start = ticker_match.start() - max(0, ticker_match.start() - 420)
+        ticker_anchor = context[
+            max(0, local_ticker_start - 100):local_ticker_start + 100
+        ]
+        if not re.search(
+            r"(?:ticker|trading symbol|trade under|trading under)",
+            ticker_anchor,
+            re.IGNORECASE,
+        ):
+            continue
         if not re.search(
             r"(?:new ticker symbol|begin trading|began trading|"
-            r"trading under|ticker symbol change)",
+            r"trading under|ticker symbol change|"
+            r"(?:ticker|trading symbol).{0,40}(?:change|changed))",
             context,
             re.IGNORECASE,
         ):
             continue
+        candidates = []
         for match in DATE_PATTERN.finditer(context):
             if not re.search(r"\b\d{4}\b", match.group()):
                 continue
             try:
-                dates.add(parse_date_mention(match.group()).isoformat())
+                parsed = parse_date_mention(match.group()).isoformat()
             except Exception:
                 continue
+            distance = min(
+                abs(match.start() - local_ticker_start),
+                abs(match.end() - local_ticker_start),
+            )
+            candidates.append((distance, parsed))
+        if candidates:
+            nearest = min(distance for distance, _ in candidates)
+            dates.update(value for distance, value in candidates if distance == nearest)
     return sorted(dates)
 
 
