@@ -1,0 +1,281 @@
+{
+  "report_version": "2026.07-v1",
+  "candidate_count": 4,
+  "candidate_evaluations": 220,
+  "cross_sectional_cscv": {
+    "splits": 200,
+    "pbo": 0.0,
+    "median_logit": 1.9459101490553132,
+    "status": "ACCEPTABLE"
+  },
+  "deflated_sharpe_by_candidate": {
+    "B0": {
+      "observations": 55,
+      "trials": 4,
+      "sharpe": -0.382487450688183,
+      "expected_max_sharpe": 1.0521228241882976,
+      "probability": 0.0,
+      "status": "FAIL"
+    },
+    "B1": {
+      "observations": 55,
+      "trials": 4,
+      "sharpe": -0.6535781725068462,
+      "expected_max_sharpe": 1.0521228241882976,
+      "probability": 0.0,
+      "status": "FAIL"
+    },
+    "B2": {
+      "observations": 55,
+      "trials": 4,
+      "sharpe": -0.7428264039568524,
+      "expected_max_sharpe": 1.0521228241882976,
+      "probability": 0.0,
+      "status": "FAIL"
+    },
+    "B3": {
+      "observations": 55,
+      "trials": 4,
+      "sharpe": -0.8042214351138204,
+      "expected_max_sharpe": 1.0521228241882976,
+      "probability": 0.0,
+      "status": "FAIL"
+    }
+  },
+  "sensitivity": {
+    "B0": {
+      "samples": 55,
+      "mean": -0.008551975788812553,
+      "std": 0.022358840200967584
+    },
+    "B1": {
+      "samples": 55,
+      "mean": -0.01842349135469502,
+      "std": 0.02818865765365203
+    },
+    "B2": {
+      "samples": 55,
+      "mean": -0.021749434878775654,
+      "std": 0.029279296970223186
+    },
+    "B3": {
+      "samples": 55,
+      "mean": -0.024473573860504992,
+      "std": 0.0304313871676913
+    }
+  },
+  "sector_results": {
+    "benchmark": {
+      "B0": {
+        "median_excess_cagr": -0.005045084407864664,
+        "positive_rate": 0.0
+      },
+      "B1": {
+        "median_excess_cagr": -0.00984908440456811,
+        "positive_rate": 0.0
+      },
+      "B2": {
+        "median_excess_cagr": -0.01507406918197185,
+        "positive_rate": 0.0
+      },
+      "B3": {
+        "median_excess_cagr": -0.01507406918197185,
+        "positive_rate": 0.0
+      }
+    },
+    "technology": {
+      "B0": {
+        "median_excess_cagr": -0.010572978163067348,
+        "positive_rate": 0.5
+      },
+      "B1": {
+        "median_excess_cagr": -0.024804227000084,
+        "positive_rate": 0.16666666666666666
+      },
+      "B2": {
+        "median_excess_cagr": -0.024647782456243994,
+        "positive_rate": 0.3333333333333333
+      },
+      "B3": {
+        "median_excess_cagr": -0.03616586531382571,
+        "positive_rate": 0.16666666666666666
+      }
+    },
+    "communication": {
+      "B0": {
+        "median_excess_cagr": -0.005782473914458297,
+        "positive_rate": 0.2
+      },
+      "B1": {
+        "median_excess_cagr": -0.003482773243736692,
+        "positive_rate": 0.4
+      },
+      "B2": {
+        "median_excess_cagr": -0.003976424661403355,
+        "positive_rate": 0.4
+      },
+      "B3": {
+        "median_excess_cagr": -0.0014912505149003996,
+        "positive_rate": 0.4
+      }
+    },
+    "consumer_discretionary": {
+      "B0": {
+        "median_excess_cagr": 0.0027967887515809586,
+        "positive_rate": 0.6
+      },
+      "B1": {
+        "median_excess_cagr": -0.007076216955659742,
+        "positive_rate": 0.4
+      },
+      "B2": {
+        "median_excess_cagr": -0.004592032847682059,
+        "positive_rate": 0.4
+      },
+      "B3": {
+        "median_excess_cagr": -0.004592032847682059,
+        "positive_rate": 0.4
+      }
+    },
+    "consumer_staples": {
+      "B0": {
+        "median_excess_cagr": 0.0006463570863959323,
+        "positive_rate": 0.6
+      },
+      "B1": {
+        "median_excess_cagr": -0.014648361242400654,
+        "positive_rate": 0.0
+      },
+      "B2": {
+        "median_excess_cagr": -0.022926409343100085,
+        "positive_rate": 0.0
+      },
+      "B3": {
+        "median_excess_cagr": -0.02427562067862188,
+        "positive_rate": 0.0
+      }
+    },
+    "financials": {
+      "B0": {
+        "median_excess_cagr": -0.0033981130545124305,
+        "positive_rate": 0.2
+      },
+      "B1": {
+        "median_excess_cagr": -0.02250655589025663,
+        "positive_rate": 0.0
+      },
+      "B2": {
+        "median_excess_cagr": -0.02890882240481707,
+        "positive_rate": 0.0
+      },
+      "B3": {
+        "median_excess_cagr": -0.03143641640661898,
+        "positive_rate": 0.0
+      }
+    },
+    "healthcare": {
+      "B0": {
+        "median_excess_cagr": -0.003994270584176451,
+        "positive_rate": 0.2
+      },
+      "B1": {
+        "median_excess_cagr": -0.01840462325479697,
+        "positive_rate": 0.2
+      },
+      "B2": {
+        "median_excess_cagr": -0.019662518186951417,
+        "positive_rate": 0.2
+      },
+      "B3": {
+        "median_excess_cagr": -0.020932185956574534,
+        "positive_rate": 0.2
+      }
+    },
+    "industrials": {
+      "B0": {
+        "median_excess_cagr": 0.0052169271389477245,
+        "positive_rate": 0.6
+      },
+      "B1": {
+        "median_excess_cagr": -0.020212635249992505,
+        "positive_rate": 0.2
+      },
+      "B2": {
+        "median_excess_cagr": -0.033211446476893336,
+        "positive_rate": 0.2
+      },
+      "B3": {
+        "median_excess_cagr": -0.033211446476893336,
+        "positive_rate": 0.0
+      }
+    },
+    "energy": {
+      "B0": {
+        "median_excess_cagr": -0.004982724502822,
+        "positive_rate": 0.4
+      },
+      "B1": {
+        "median_excess_cagr": -0.05084081304064192,
+        "positive_rate": 0.0
+      },
+      "B2": {
+        "median_excess_cagr": -0.059307929406144044,
+        "positive_rate": 0.0
+      },
+      "B3": {
+        "median_excess_cagr": -0.06563040001727982,
+        "positive_rate": 0.0
+      }
+    },
+    "utilities_real_estate": {
+      "B0": {
+        "median_excess_cagr": 0.002472871106604324,
+        "positive_rate": 0.8
+      },
+      "B1": {
+        "median_excess_cagr": -0.0169251308907461,
+        "positive_rate": 0.0
+      },
+      "B2": {
+        "median_excess_cagr": -0.022555710487284886,
+        "positive_rate": 0.0
+      },
+      "B3": {
+        "median_excess_cagr": -0.021719400329753613,
+        "positive_rate": 0.0
+      }
+    },
+    "materials": {
+      "B0": {
+        "median_excess_cagr": 0.002933060679139343,
+        "positive_rate": 0.6
+      },
+      "B1": {
+        "median_excess_cagr": -0.021355276418433267,
+        "positive_rate": 0.0
+      },
+      "B2": {
+        "median_excess_cagr": -0.023574661986309975,
+        "positive_rate": 0.0
+      },
+      "B3": {
+        "median_excess_cagr": -0.023574661986309975,
+        "positive_rate": 0.0
+      }
+    }
+  },
+  "parameter_stability": {
+    "mode": "FIXED_BY_CONSTRUCTION",
+    "automatic_selection": false,
+    "selection_stability": "NOT_APPLICABLE_NO_FOLD_SELECTION"
+  },
+  "walk_forward": {
+    "status": "INSUFFICIENT_DATA",
+    "reason": "candidate report does not contain chronological train/test fold returns"
+  },
+  "era_validation": {
+    "status": "INSUFFICIENT_DATA",
+    "reason": "candidate report does not contain subperiod return series"
+  },
+  "decision": "FAIL_CLOSED"
+}

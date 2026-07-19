@@ -35,9 +35,9 @@ def cscv_pbo(history: list[dict], max_splits: int = 200) -> dict[str, Any]:
         rank = ordered.index(selected) + 1
         percentile = (rank - 0.5) / len(candidates)
         logits.append(math.log(percentile / (1 - percentile)))
-    pbo = sum(value <= 0 for value in logits) / len(logits) * 100
+    pbo = sum(value <= 0 for value in logits) / len(logits)
     return {"splits": len(logits), "pbo": pbo, "median_logit": sorted(logits)[len(logits) // 2],
-            "status": "HIGH_RISK" if pbo >= 50 else "ACCEPTABLE"}
+            "status": "HIGH_RISK" if pbo >= 0.5 else "ACCEPTABLE"}
 
 
 def deflated_sharpe_ratio(returns_pct: list[float], trials: int) -> dict[str, float | int | None | str]:
@@ -59,10 +59,10 @@ def deflated_sharpe_ratio(returns_pct: list[float], trials: int) -> dict[str, fl
         + gamma * normal.inv_cdf(1 - 1 / (effective_trials * math.e))
     )
     denominator = math.sqrt(max(1e-12, 1 - skew * sharpe + (kurtosis - 1) * sharpe * sharpe / 4))
-    probability = normal.cdf((sharpe - expected_max) * math.sqrt(n - 1) / denominator) * 100
+    probability = normal.cdf((sharpe - expected_max) * math.sqrt(n - 1) / denominator)
     return {"observations": n, "trials": effective_trials, "sharpe": sharpe,
             "expected_max_sharpe": expected_max, "probability": probability,
-            "status": "PASS" if probability >= 95 else "FAIL"}
+            "status": "PASS" if probability >= 0.95 else "FAIL"}
 
 
 def sensitivity_table(history: list[dict]) -> dict[str, dict[str, float | int]]:

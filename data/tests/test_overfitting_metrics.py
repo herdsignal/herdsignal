@@ -14,11 +14,15 @@ class OverfittingMetricsTest(unittest.TestCase):
         result = cscv_pbo(history)
         self.assertGreater(result["splits"], 0)
         self.assertIsNotNone(result["pbo"])
+        self.assertGreaterEqual(result["pbo"], 0.0)
+        self.assertLessEqual(result["pbo"], 1.0)
 
     def test_dsr_records_trial_penalty(self):
         result = deflated_sharpe_ratio([1, 2, -1, 3, 1, 2], 9)
         self.assertEqual(result["trials"], 9)
         self.assertIn(result["status"], {"PASS", "FAIL"})
+        self.assertGreaterEqual(result["probability"], 0.0)
+        self.assertLessEqual(result["probability"], 1.0)
 
     def test_report_contains_history_count_and_sensitivity(self):
         history = [{"evaluation_id": fold, "candidate_id": candidate, "objective": fold + index}
