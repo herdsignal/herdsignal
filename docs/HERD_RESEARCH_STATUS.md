@@ -98,6 +98,8 @@ Buy & Hold의 상승 복리를 더 크게 잃는다.
 - S&P–SEC 통합 사건 원장 397건 생성
 - 공식 검증 157건, SEC 기업행동 증거 연결 42건
 - 검토 필요 151건과 미연결 89건 때문에 구성 재생 게이트 미통과
+- 공개 기준 구성 진단 재생에서 없는 ticker 편출 16건, 중복 편입 4건 발견
+- 진단 결과는 `replay_complete=false`, 공식 일별 구성으로 승격하지 않음
 - SEC Company Facts와 submissions accession 결합기 구현
 - `acceptanceDateTime` 이후에만 재무 관측값이 보이도록 조회 경계 고정
 - 수정공시는 과거 값을 덮어쓰지 않고 별도 버전으로 보존
