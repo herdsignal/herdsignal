@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from herd.official_constituent_ledger import (
     OfficialLedgerError,
     audit_candidate_coverage,
+    build_verification_backlog,
     load_official_ledger,
     replay_membership,
     verify_evidence,
@@ -67,6 +68,22 @@ class OfficialConstituentLedgerTest(unittest.TestCase):
             )
             self.assertFalse(audit["complete"])
             self.assertEqual(audit["coverage"], 0.5)
+
+    def test_builds_bounded_official_verification_backlog(self):
+        with TemporaryDirectory() as directory:
+            events = load_official_ledger(self._ledger(Path(directory)))
+            from datetime import date
+            backlog = build_verification_backlog(
+                [
+                    {"effective_date": "2024-01-05", "event": "ADD", "ticker": "NEW"},
+                    {"effective_date": "2010-01-01", "event": "REMOVE", "ticker": "OLD"},
+                ],
+                events,
+                start_date=date(2020, 1, 1),
+                end_date=date(2025, 1, 1),
+            )
+            self.assertEqual(len(backlog), 1)
+            self.assertEqual(backlog[0]["status"], "VERIFIED_OFFICIAL")
 
 
 if __name__ == "__main__":

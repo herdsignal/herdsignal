@@ -165,6 +165,68 @@ def audit_candidate_coverage(
     }
 
 
+def build_verification_backlog(
+    candidate_events: list[dict],
+    official_events: list[ConstituentEvent],
+    *,
+    start_date: date,
+    end_date: date,
+) -> list[dict]:
+    official = {
+        (event.effective_date.isoformat(), event.action, event.ticker): event
+        for event in official_events
+    }
+    backlog = []
+    seen = set()
+    for row in candidate_events:
+        effective = date.fromisoformat(row["effective_date"])
+        if not start_date <= effective <= end_date:
+            continue
+        key = (effective.isoformat(), row["event"], row["ticker"].upper())
+        if key in seen:
+            continue
+        seen.add(key)
+        evidence = official.get(key)
+        backlog.append(
+            {
+                "effective_date": key[0],
+                "action": key[1],
+                "ticker": key[2],
+                "status": "VERIFIED_OFFICIAL" if evidence else "MISSING_OFFICIAL_EVIDENCE",
+                "announcement_date": evidence.announcement_date.isoformat() if evidence else "",
+                "company_name": evidence.company_name if evidence else "",
+                "source_url": evidence.source_url if evidence else "",
+                "source_sha256": evidence.source_sha256 if evidence else "",
+            }
+        )
+    return sorted(backlog, key=lambda row: (row["effective_date"], row["action"], row["ticker"]))
+
+
+def load_candidate_events(path: Path) -> list[dict]:
+    with Path(path).open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        required = {"effective_date", "event", "ticker"}
+        if not required.issubset(reader.fieldnames or []):
+            raise OfficialLedgerError("candidate event schema mismatch")
+        rows = []
+        for row in reader:
+            if row["event"] not in ALLOWED_ACTIONS:
+                raise OfficialLedgerError(f"invalid candidate action: {row['event']}")
+            date.fromisoformat(row["effective_date"])
+            rows.append({key: row[key] for key in required})
+        return rows
+
+
+def write_verification_backlog(path: Path, backlog: list[dict]) -> None:
+    if not backlog:
+        raise OfficialLedgerError("verification backlog is empty")
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    with Path(path).open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(backlog[0]))
+        writer.writeheader()
+        writer.writerows(backlog)
+
+
 def write_replay_report(path: Path, snapshots: list[dict], summary: dict) -> None:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     Path(path).write_text(
