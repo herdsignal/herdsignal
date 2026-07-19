@@ -88,6 +88,7 @@ Buy & Hold의 상승 복리를 더 크게 잃는다.
 
 ### 발표일 기준 기업 데이터 진행
 
+- SEC EDGAR 분기별 master index 41개, 11,017,497행 수집 및 해시 검증
 - SEC Company Facts와 submissions accession 결합기 구현
 - `acceptanceDateTime` 이후에만 재무 관측값이 보이도록 조회 경계 고정
 - 수정공시는 과거 값을 덮어쓰지 않고 별도 버전으로 보존
