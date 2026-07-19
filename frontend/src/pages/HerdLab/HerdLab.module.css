@@ -626,3 +626,28 @@
 @media (max-width: 760px) {
   .outcomeGrid { grid-template-columns: 1fr; }
 }
+.shadowStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  color: var(--text3);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.shadowStatus i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.shadowStatus strong {
+  color: var(--text2);
+  font-size: inherit;
+}
+
+.shadowStatus.active {
+  color: var(--blue);
+}

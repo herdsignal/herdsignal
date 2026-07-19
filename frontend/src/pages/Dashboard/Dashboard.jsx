@@ -208,7 +208,7 @@ export default function Dashboard() {
         <div className={styles.marketBanner}>
           {/* 좌: 점수·단계 블록 */}
           <div className={styles.bannerScoreBlock}>
-            <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
+            <div className={styles.bannerEyebrow}>SPY · S&amp;P 500 · 운영 HERD v4</div>
             <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
               {spyData ? Math.round(spyScore) : '—'}
             </div>
