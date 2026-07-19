@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 
@@ -43,6 +43,8 @@ def normalize_companyfacts(
     acceptance_index: dict[str, str],
     *,
     strict_acceptance: bool = True,
+    filed_from: date | None = None,
+    filed_to: date | None = None,
 ) -> tuple[list[dict], dict]:
     cik = f"{int(payload['cik']):010d}"
     rows = []
@@ -51,6 +53,15 @@ def normalize_companyfacts(
         for concept, detail in concepts.items():
             for unit, observations in detail.get("units", {}).items():
                 for observation in observations:
+                    filed_value = observation.get("filed", "")
+                    if filed_from and (
+                        not filed_value or date.fromisoformat(filed_value) < filed_from
+                    ):
+                        continue
+                    if filed_to and (
+                        not filed_value or date.fromisoformat(filed_value) > filed_to
+                    ):
+                        continue
                     accession = observation.get("accn", "")
                     accepted_at = acceptance_index.get(accession, "")
                     if not accepted_at:

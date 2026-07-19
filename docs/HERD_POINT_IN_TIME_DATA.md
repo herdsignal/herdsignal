@@ -256,3 +256,25 @@ SEC 증거가 있어도 자동 문구 분류 단계에서는
 저장하지 않는다. 재생 엔진은 REMOVE 후 ADD 순서를 강제하고, 완전하지
 않은 원장은 기본 모드에서 즉시 거부한다. 위 오류 20건은 ticker 변경,
 공개본 기준일 오류 또는 미해결 이벤트의 연쇄 영향 조사 목록이다.
+
+### SEC PIT corpus 최종 감사
+
+유일 CIK 후보 157개에 대해 2016-07-18~2026-07-17 범위의 submissions,
+Company Facts와 필요한 과거 filing 조각을 고정했다.
+
+- CIK: 157개
+- 원본 JSON: 362개
+- 과거 submissions 조각: 52개
+- 원본 크기: 506,466,890바이트
+- SHA-256 불일치: 0건
+- Company Facts 미제공: 4개 CIK
+- 접수 시각이 연결된 재무 관측값: 2,119,906개
+- 접수 시각 미연결: 0개
+- CIK별 PIT 준비 완료: 153개
+- 전체 `pit_ready=false`
+
+Company Facts 404는 빈 재무 데이터로 대체하지 않고
+`COMPANYFACTS_UNAVAILABLE`로 보존한다. 제공된 153개 CIK는 최근 10년
+관측값의 accession이 모두 `acceptanceDateTime`에 연결됐다. 그러나 4개
+CIK의 공식 재무 데이터가 없고 S&P 구성 원장도 미완성이므로 전체 연구
+데이터는 아직 채택 검증에 사용할 수 없다.
