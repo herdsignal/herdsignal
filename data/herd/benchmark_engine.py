@@ -226,6 +226,97 @@ def simulate(
     )
 
 
+def simulate_fractional_actions(
+    name: str,
+    prices: pd.DataFrame,
+    actions: pd.DataFrame,
+    *,
+    config: BenchmarkConfig | None = None,
+) -> SimulationResult:
+    """BUY는 현금, SELL은 보유 주식의 지정 비율만큼 다음 시가에 실행한다."""
+    cfg = config or BenchmarkConfig()
+    frame = _price_frame(prices)
+    action_frame = actions.copy()
+    action_frame.index = pd.to_datetime(action_frame.index)
+    action_frame = action_frame.reindex(frame.index)
+    if not {"action", "ratio"}.issubset(action_frame.columns):
+        raise ValueError("actions must contain action and ratio columns")
+
+    cash = cfg.initial_cash
+    shares = 0.0
+    trades: list[Trade] = []
+    equity_values: list[float] = []
+    returns: list[float] = []
+    exposures: list[float] = []
+    cash_values: list[float] = []
+    previous_equity = cfg.initial_cash
+    daily_cash_rate = (1 + cfg.annual_cash_yield) ** (1 / TRADING_DAYS) - 1
+
+    cash, shares, initial_trade = _execute_target(
+        cash=cash, shares=shares, open_price=float(frame["Open"].iloc[0]),
+        target_weight=cfg.initial_weight, config=cfg, signal_date=None,
+        execution_date=frame.index[0],
+    )
+    if initial_trade:
+        trades.append(initial_trade)
+
+    for position, (date, row) in enumerate(frame.iterrows()):
+        signal_position = position - cfg.execution_lag
+        if signal_position >= 0:
+            signal_date = frame.index[signal_position]
+            signal = action_frame.iloc[signal_position]
+            action = str(signal.get("action", "HOLD")).upper()
+            ratio_value = signal.get("ratio", 0.0)
+            ratio = float(ratio_value) if pd.notna(ratio_value) else 0.0
+            if not 0 <= ratio <= 1:
+                raise ValueError("action ratio must be between 0 and 1")
+
+            open_price = float(row["Open"])
+            if action == "BUY" and ratio > 0 and cash > 0:
+                execution_price = open_price * (1 + cfg.slippage_rate)
+                budget = cash * ratio
+                notional = budget / (1 + cfg.fee_rate)
+                trade_shares = notional / execution_price
+                fee = notional * cfg.fee_rate
+                cash -= notional + fee
+                shares += trade_shares
+                target = shares * open_price / (cash + shares * open_price)
+                trades.append(Trade(signal_date, date, action, trade_shares,
+                                    execution_price, notional, fee, target))
+            elif action == "SELL" and ratio > 0 and shares > 0:
+                execution_price = open_price * (1 - cfg.slippage_rate)
+                trade_shares = shares * ratio
+                notional = trade_shares * execution_price
+                fee = notional * cfg.fee_rate
+                cash += notional - fee
+                shares -= trade_shares
+                target = shares * open_price / (cash + shares * open_price)
+                trades.append(Trade(signal_date, date, action, trade_shares,
+                                    execution_price, notional, fee, target))
+            elif action not in {"BUY", "SELL", "HOLD", "NAN"}:
+                raise ValueError(f"unsupported action: {action}")
+
+        cash *= 1 + daily_cash_rate
+        equity = cash + shares * float(row["Close"])
+        equity_values.append(equity)
+        returns.append(equity / previous_equity - 1.0)
+        exposures.append(shares * float(row["Close"]) / equity if equity > 0 else 0.0)
+        cash_values.append(cash)
+        previous_equity = equity
+
+    index = frame.index
+    return SimulationResult(
+        name=name,
+        equity=pd.Series(equity_values, index=index, name=name),
+        daily_returns=pd.Series(returns, index=index, name=name),
+        exposure=pd.Series(exposures, index=index, name=name),
+        cash=pd.Series(cash_values, index=index, name=name),
+        external_flows=pd.Series(0.0, index=index),
+        trades=trades,
+        contributed_capital=cfg.initial_cash,
+    )
+
+
 def buy_and_hold(
     prices: pd.DataFrame,
     *,

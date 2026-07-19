@@ -11,6 +11,7 @@ from herd.benchmark_engine import (
     buy_and_hold,
     performance_metrics,
     simulate,
+    simulate_fractional_actions,
 )
 
 
@@ -98,6 +99,23 @@ class BenchmarkEngineTest(unittest.TestCase):
             "upside_capture", "downside_capture", "turnover", "excess_cagr",
         ):
             self.assertIn(key, metrics)
+
+    def test_fractional_action_executes_next_day_and_uses_holding_fraction(self):
+        prices = _prices([100, 100, 100])
+        actions = pd.DataFrame(
+            {"action": ["SELL", "HOLD", "HOLD"], "ratio": [0.25, 0.0, 0.0]},
+            index=prices.index,
+        )
+        result = simulate_fractional_actions(
+            "legacy",
+            prices,
+            actions,
+            config=BenchmarkConfig(fee_rate=0.0, slippage_rate=0.0),
+        )
+
+        sell = result.trades[-1]
+        self.assertEqual(sell.execution_date, prices.index[1])
+        self.assertAlmostEqual(sell.shares, result.trades[0].shares * 0.25)
 
 
 if __name__ == "__main__":
