@@ -1,0 +1,5877 @@
+{
+  "inventory": [
+    {
+      "key": "monthly_rsi",
+      "model": "v4 base",
+      "family": "price_momentum",
+      "formula": "14-month RSI",
+      "horizon": "14 months",
+      "normalization": "expanding own-history percentile",
+      "weight": 0.24,
+      "source": "adjusted OHLCV / yfinance",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "high: weekly RSI, price position"
+    },
+    {
+      "key": "weekly_rsi",
+      "model": "v4 base",
+      "family": "price_momentum",
+      "formula": "14-week RSI",
+      "horizon": "14 weeks",
+      "normalization": "expanding own-history percentile",
+      "weight": 0.19,
+      "source": "adjusted OHLCV / yfinance",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "high: monthly RSI, price position"
+    },
+    {
+      "key": "position_52w",
+      "model": "v4 base",
+      "family": "price_position",
+      "formula": "(close-252d low)/(252d high-252d low)",
+      "horizon": "252 trading days",
+      "normalization": "expanding own-history percentile",
+      "weight": 0.19,
+      "source": "adjusted OHLCV / yfinance",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "high: RSI, MA200 deviation"
+    },
+    {
+      "key": "ma200_deviation",
+      "model": "v4 base",
+      "family": "price_trend",
+      "formula": "(close/SMA200)-1",
+      "horizon": "200 trading days",
+      "normalization": "expanding own-history percentile",
+      "weight": 0.18,
+      "source": "adjusted OHLCV / yfinance",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "high: 52w position, weekly MA"
+    },
+    {
+      "key": "volume_strength",
+      "model": "v4 base",
+      "family": "participation",
+      "formula": "SMA5(volume)/SMA20(volume)",
+      "horizon": "5/20 trading days",
+      "normalization": "expanding own-history percentile",
+      "weight": 0.0,
+      "source": "adjusted volume / yfinance",
+      "point_in_time_status": "available",
+      "operating_status": "disabled(weight=0)",
+      "duplicate_risk": "low"
+    },
+    {
+      "key": "ma200_weekly",
+      "model": "v4 base",
+      "family": "price_trend",
+      "formula": "weekly close/SMA200w",
+      "horizon": "200 weeks; shorter listing uses available history",
+      "normalization": "expanding own-history percentile",
+      "weight": 0.2,
+      "source": "adjusted OHLCV / yfinance",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "high: MA200 deviation, RSI"
+    },
+    {
+      "key": "eps_multiplier",
+      "model": "v4 multiplier",
+      "family": "fundamental_event",
+      "formula": "latest consecutive 2-4 quarterly EPS beats/misses",
+      "horizon": "latest 4 quarters",
+      "normalization": "fixed multiplier 0.85-1.15",
+      "weight": null,
+      "source": "Finnhub stock/earnings",
+      "point_in_time_status": "unavailable: announcement date absent",
+      "operating_status": "latest score only",
+      "duplicate_risk": "medium: also reused inside v6.1 trend quality"
+    },
+    {
+      "key": "sector_multiplier",
+      "model": "v4 multiplier",
+      "family": "relative_strength",
+      "formula": "stock return - sector ETF return",
+      "horizon": "90 calendar/trading observations",
+      "normalization": "fixed multiplier 0.90-1.10",
+      "weight": null,
+      "source": "yfinance + Finnhub sector",
+      "point_in_time_status": "partially available",
+      "operating_status": "latest score only",
+      "duplicate_risk": "medium: reused inside v6.1 trend quality"
+    },
+    {
+      "key": "stabilized_herd",
+      "model": "v6.1",
+      "family": "state_stability",
+      "formula": "keep previous side within ±2pt boundary crossing",
+      "horizon": "previous observation",
+      "normalization": "rule",
+      "weight": null,
+      "source": "herd_scores DB",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "derived directly from v4"
+    },
+    {
+      "key": "trend_quality",
+      "model": "v6.1",
+      "family": "price_trend",
+      "formula": "MA200w + MA200 deviation + 52w position + sector + EPS rules",
+      "horizon": "mixed",
+      "normalization": "0-100 rule score",
+      "weight": null,
+      "source": "herd_indicators DB",
+      "point_in_time_status": "mixed",
+      "operating_status": "active",
+      "duplicate_risk": "very high: reuses five v4 inputs"
+    },
+    {
+      "key": "herd_momentum",
+      "model": "v6.1",
+      "family": "score_momentum",
+      "formula": "HERD 5d/20d change and acceleration",
+      "horizon": "5/20 calendar days",
+      "normalization": "threshold score 15/30/50/70/85",
+      "weight": null,
+      "source": "herd_scores DB",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "very high: derivative of v4"
+    },
+    {
+      "key": "lifecycle",
+      "model": "v6.1",
+      "family": "state_duration",
+      "formula": "same signal duration buckets 1-5/6-20/21-45/>45d",
+      "horizon": "1-45+ days",
+      "normalization": "ratio multiplier 0.65/1.0/0.82/0.55",
+      "weight": null,
+      "source": "herd_scores DB",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "medium: derived from v4 stage"
+    },
+    {
+      "key": "data_quality",
+      "model": "v6.1",
+      "family": "reliability",
+      "formula": "freshness/completeness quality score",
+      "horizon": "latest data",
+      "normalization": "ratio gate",
+      "weight": null,
+      "source": "service data checks",
+      "point_in_time_status": "available",
+      "operating_status": "active gate",
+      "duplicate_risk": "not directional; must stay outside HERD"
+    },
+    {
+      "key": "investor_profile",
+      "model": "v6.1",
+      "family": "personal",
+      "formula": "strategy/risk/horizon/liquidity limits",
+      "horizon": "user setting",
+      "normalization": "ratio cap",
+      "weight": null,
+      "source": "user DB",
+      "point_in_time_status": "not market data",
+      "operating_status": "active",
+      "duplicate_risk": "must stay outside HERD"
+    },
+    {
+      "key": "portfolio_context",
+      "model": "v6.1",
+      "family": "personal",
+      "formula": "holding/target/cash context",
+      "horizon": "current portfolio",
+      "normalization": "ratio cap",
+      "weight": null,
+      "source": "user DB",
+      "point_in_time_status": "not market data",
+      "operating_status": "active",
+      "duplicate_risk": "must stay outside HERD"
+    },
+    {
+      "key": "cooldown",
+      "model": "v6.1",
+      "family": "execution",
+      "formula": "recent same-direction action limit",
+      "horizon": "recent actions",
+      "normalization": "ratio gate",
+      "weight": null,
+      "source": "signal journal DB",
+      "point_in_time_status": "available",
+      "operating_status": "active",
+      "duplicate_risk": "execution rule, not HERD evidence"
+    }
+  ],
+  "settings": {
+    "period": "10y",
+    "threshold": 0.7,
+    "tickers": [
+      "SPY",
+      "QQQ",
+      "IWM",
+      "DIA",
+      "AAPL",
+      "MSFT",
+      "NVDA",
+      "AVGO",
+      "ORCL",
+      "CRM",
+      "GOOGL",
+      "META",
+      "NFLX",
+      "DIS",
+      "TMUS",
+      "AMZN",
+      "TSLA",
+      "HD",
+      "MCD",
+      "NKE",
+      "WMT",
+      "COST",
+      "PG",
+      "KO",
+      "PEP",
+      "JPM",
+      "BAC",
+      "GS",
+      "V",
+      "MA",
+      "LLY",
+      "UNH",
+      "JNJ",
+      "ABBV",
+      "MRK",
+      "GE",
+      "CAT",
+      "HON",
+      "UNP",
+      "BA",
+      "XOM",
+      "CVX",
+      "COP",
+      "SLB",
+      "EOG",
+      "NEE",
+      "DUK",
+      "SO",
+      "AMT",
+      "PLD",
+      "LIN",
+      "APD",
+      "SHW",
+      "FCX",
+      "NEM"
+    ]
+  },
+  "ticker_reports": {
+    "SPY": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5582,
+          "position_52w": 0.558,
+          "ma200_deviation": 0.4498,
+          "volume_strength": 0.0488,
+          "ma200_weekly": 0.7448
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5582,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.7778,
+          "ma200_deviation": 0.8474,
+          "volume_strength": -0.0948,
+          "ma200_weekly": 0.7099
+        },
+        "position_52w": {
+          "monthly_rsi": 0.558,
+          "weekly_rsi": 0.7778,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8304,
+          "volume_strength": -0.2232,
+          "ma200_weekly": 0.6936
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.4498,
+          "weekly_rsi": 0.8474,
+          "position_52w": 0.8304,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.1219,
+          "ma200_weekly": 0.723
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0488,
+          "weekly_rsi": -0.0948,
+          "position_52w": -0.2232,
+          "ma200_deviation": -0.1219,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.088
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7448,
+          "weekly_rsi": 0.7099,
+          "position_52w": 0.6936,
+          "ma200_deviation": 0.723,
+          "volume_strength": -0.088,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8474,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8304,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7778,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7448,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.723,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7099,
+          "severity": "high"
+        }
+      ]
+    },
+    "QQQ": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5347,
+          "position_52w": 0.5354,
+          "ma200_deviation": 0.4518,
+          "volume_strength": 0.0706,
+          "ma200_weekly": 0.803
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5347,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8008,
+          "ma200_deviation": 0.8616,
+          "volume_strength": -0.0177,
+          "ma200_weekly": 0.7068
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5354,
+          "weekly_rsi": 0.8008,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8095,
+          "volume_strength": -0.1628,
+          "ma200_weekly": 0.689
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.4518,
+          "weekly_rsi": 0.8616,
+          "position_52w": 0.8095,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0926,
+          "ma200_weekly": 0.6746
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0706,
+          "weekly_rsi": -0.0177,
+          "position_52w": -0.1628,
+          "ma200_deviation": -0.0926,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0348
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.803,
+          "weekly_rsi": 0.7068,
+          "position_52w": 0.689,
+          "ma200_deviation": 0.6746,
+          "volume_strength": -0.0348,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8616,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8095,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.803,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8008,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7068,
+          "severity": "high"
+        }
+      ]
+    },
+    "IWM": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6584,
+          "position_52w": 0.7117,
+          "ma200_deviation": 0.6631,
+          "volume_strength": -0.0179,
+          "ma200_weekly": 0.8008
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6584,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8744,
+          "ma200_deviation": 0.9081,
+          "volume_strength": -0.0795,
+          "ma200_weekly": 0.8309
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7117,
+          "weekly_rsi": 0.8744,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9293,
+          "volume_strength": -0.0863,
+          "ma200_weekly": 0.8261
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6631,
+          "weekly_rsi": 0.9081,
+          "position_52w": 0.9293,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.056,
+          "ma200_weekly": 0.8377
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0179,
+          "weekly_rsi": -0.0795,
+          "position_52w": -0.0863,
+          "ma200_deviation": -0.056,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0501
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8008,
+          "weekly_rsi": 0.8309,
+          "position_52w": 0.8261,
+          "ma200_deviation": 0.8377,
+          "volume_strength": -0.0501,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9293,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9081,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8744,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8377,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8309,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8261,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8008,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7117,
+          "severity": "high"
+        }
+      ]
+    },
+    "DIA": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6299,
+          "position_52w": 0.5063,
+          "ma200_deviation": 0.5275,
+          "volume_strength": 0.0557,
+          "ma200_weekly": 0.7266
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6299,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.7959,
+          "ma200_deviation": 0.8644,
+          "volume_strength": -0.0782,
+          "ma200_weekly": 0.7642
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5063,
+          "weekly_rsi": 0.7959,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8642,
+          "volume_strength": -0.0939,
+          "ma200_weekly": 0.7049
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.5275,
+          "weekly_rsi": 0.8644,
+          "position_52w": 0.8642,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0847,
+          "ma200_weekly": 0.7895
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0557,
+          "weekly_rsi": -0.0782,
+          "position_52w": -0.0939,
+          "ma200_deviation": -0.0847,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0668
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7266,
+          "weekly_rsi": 0.7642,
+          "position_52w": 0.7049,
+          "ma200_deviation": 0.7895,
+          "volume_strength": -0.0668,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8644,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8642,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7959,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7895,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7642,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7266,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7049,
+          "severity": "high"
+        }
+      ]
+    },
+    "AAPL": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6209,
+          "position_52w": 0.6326,
+          "ma200_deviation": 0.7067,
+          "volume_strength": 0.0341,
+          "ma200_weekly": 0.7981
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6209,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8575,
+          "ma200_deviation": 0.8792,
+          "volume_strength": -0.0468,
+          "ma200_weekly": 0.8387
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6326,
+          "weekly_rsi": 0.8575,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8561,
+          "volume_strength": -0.0463,
+          "ma200_weekly": 0.7603
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7067,
+          "weekly_rsi": 0.8792,
+          "position_52w": 0.8561,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0701,
+          "ma200_weekly": 0.8761
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0341,
+          "weekly_rsi": -0.0468,
+          "position_52w": -0.0463,
+          "ma200_deviation": -0.0701,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0484
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7981,
+          "weekly_rsi": 0.8387,
+          "position_52w": 0.7603,
+          "ma200_deviation": 0.8761,
+          "volume_strength": -0.0484,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8792,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8761,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8575,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8561,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8387,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7981,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7603,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7067,
+          "severity": "high"
+        }
+      ]
+    },
+    "MSFT": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.741,
+          "position_52w": 0.7336,
+          "ma200_deviation": 0.7494,
+          "volume_strength": 0.0513,
+          "ma200_weekly": 0.8305
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.741,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8726,
+          "ma200_deviation": 0.9197,
+          "volume_strength": -0.0345,
+          "ma200_weekly": 0.8855
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7336,
+          "weekly_rsi": 0.8726,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9174,
+          "volume_strength": -0.0625,
+          "ma200_weekly": 0.8186
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7494,
+          "weekly_rsi": 0.9197,
+          "position_52w": 0.9174,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0482,
+          "ma200_weekly": 0.8569
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0513,
+          "weekly_rsi": -0.0345,
+          "position_52w": -0.0625,
+          "ma200_deviation": -0.0482,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0199
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8305,
+          "weekly_rsi": 0.8855,
+          "position_52w": 0.8186,
+          "ma200_deviation": 0.8569,
+          "volume_strength": -0.0199,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9197,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9174,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8855,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8726,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8569,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8305,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8186,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7494,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.741,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7336,
+          "severity": "high"
+        }
+      ]
+    },
+    "NVDA": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6028,
+          "position_52w": 0.5508,
+          "ma200_deviation": 0.6495,
+          "volume_strength": -0.0701,
+          "ma200_weekly": 0.8523
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6028,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.7795,
+          "ma200_deviation": 0.9169,
+          "volume_strength": -0.0432,
+          "ma200_weekly": 0.7482
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5508,
+          "weekly_rsi": 0.7795,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.7661,
+          "volume_strength": -0.0358,
+          "ma200_weekly": 0.6244
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6495,
+          "weekly_rsi": 0.9169,
+          "position_52w": 0.7661,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.045,
+          "ma200_weekly": 0.7703
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0701,
+          "weekly_rsi": -0.0432,
+          "position_52w": -0.0358,
+          "ma200_deviation": -0.045,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0515
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8523,
+          "weekly_rsi": 0.7482,
+          "position_52w": 0.6244,
+          "ma200_deviation": 0.7703,
+          "volume_strength": -0.0515,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9169,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8523,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7795,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7703,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.7661,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7482,
+          "severity": "high"
+        }
+      ]
+    },
+    "AVGO": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.411,
+          "position_52w": 0.3742,
+          "ma200_deviation": 0.5378,
+          "volume_strength": 0.004,
+          "ma200_weekly": 0.7058
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.411,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.7409,
+          "ma200_deviation": 0.8407,
+          "volume_strength": -0.0023,
+          "ma200_weekly": 0.7287
+        },
+        "position_52w": {
+          "monthly_rsi": 0.3742,
+          "weekly_rsi": 0.7409,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.7359,
+          "volume_strength": 0.0305,
+          "ma200_weekly": 0.5078
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.5378,
+          "weekly_rsi": 0.8407,
+          "position_52w": 0.7359,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0183,
+          "ma200_weekly": 0.8156
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.004,
+          "weekly_rsi": -0.0023,
+          "position_52w": 0.0305,
+          "ma200_deviation": -0.0183,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0402
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7058,
+          "weekly_rsi": 0.7287,
+          "position_52w": 0.5078,
+          "ma200_deviation": 0.8156,
+          "volume_strength": -0.0402,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8407,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8156,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7409,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.7359,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7287,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7058,
+          "severity": "high"
+        }
+      ]
+    },
+    "ORCL": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.7473,
+          "position_52w": 0.7118,
+          "ma200_deviation": 0.7929,
+          "volume_strength": -0.0546,
+          "ma200_weekly": 0.8779
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.7473,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8593,
+          "ma200_deviation": 0.9285,
+          "volume_strength": -0.035,
+          "ma200_weekly": 0.8499
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7118,
+          "weekly_rsi": 0.8593,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8998,
+          "volume_strength": -0.0161,
+          "ma200_weekly": 0.7717
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7929,
+          "weekly_rsi": 0.9285,
+          "position_52w": 0.8998,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0344,
+          "ma200_weekly": 0.8775
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0546,
+          "weekly_rsi": -0.035,
+          "position_52w": -0.0161,
+          "ma200_deviation": -0.0344,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0547
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8779,
+          "weekly_rsi": 0.8499,
+          "position_52w": 0.7717,
+          "ma200_deviation": 0.8775,
+          "volume_strength": -0.0547,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9285,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8998,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8779,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8775,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8593,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8499,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7929,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7717,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.7473,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7118,
+          "severity": "high"
+        }
+      ]
+    },
+    "CRM": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.7086,
+          "position_52w": 0.6733,
+          "ma200_deviation": 0.7594,
+          "volume_strength": -0.0544,
+          "ma200_weekly": 0.8231
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.7086,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8655,
+          "ma200_deviation": 0.9097,
+          "volume_strength": -0.0731,
+          "ma200_weekly": 0.78
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6733,
+          "weekly_rsi": 0.8655,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9347,
+          "volume_strength": -0.0801,
+          "ma200_weekly": 0.786
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7594,
+          "weekly_rsi": 0.9097,
+          "position_52w": 0.9347,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0704,
+          "ma200_weekly": 0.8092
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0544,
+          "weekly_rsi": -0.0731,
+          "position_52w": -0.0801,
+          "ma200_deviation": -0.0704,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0569
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8231,
+          "weekly_rsi": 0.78,
+          "position_52w": 0.786,
+          "ma200_deviation": 0.8092,
+          "volume_strength": -0.0569,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9347,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9097,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8655,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8231,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8092,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.786,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.78,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7594,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.7086,
+          "severity": "high"
+        }
+      ]
+    },
+    "GOOGL": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.7536,
+          "position_52w": 0.673,
+          "ma200_deviation": 0.7396,
+          "volume_strength": -0.011,
+          "ma200_weekly": 0.9118
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.7536,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8448,
+          "ma200_deviation": 0.9181,
+          "volume_strength": -0.0628,
+          "ma200_weekly": 0.8227
+        },
+        "position_52w": {
+          "monthly_rsi": 0.673,
+          "weekly_rsi": 0.8448,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8988,
+          "volume_strength": -0.0524,
+          "ma200_weekly": 0.7306
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7396,
+          "weekly_rsi": 0.9181,
+          "position_52w": 0.8988,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0462,
+          "ma200_weekly": 0.811
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.011,
+          "weekly_rsi": -0.0628,
+          "position_52w": -0.0524,
+          "ma200_deviation": -0.0462,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0491
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.9118,
+          "weekly_rsi": 0.8227,
+          "position_52w": 0.7306,
+          "ma200_deviation": 0.811,
+          "volume_strength": -0.0491,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9181,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.9118,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8988,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8448,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8227,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.811,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.7536,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7396,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7306,
+          "severity": "high"
+        }
+      ]
+    },
+    "META": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6645,
+          "position_52w": 0.7049,
+          "ma200_deviation": 0.6144,
+          "volume_strength": 0.0451,
+          "ma200_weekly": 0.8943
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6645,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8952,
+          "ma200_deviation": 0.9215,
+          "volume_strength": -0.0437,
+          "ma200_weekly": 0.6622
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7049,
+          "weekly_rsi": 0.8952,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8954,
+          "volume_strength": -0.0284,
+          "ma200_weekly": 0.6542
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6144,
+          "weekly_rsi": 0.9215,
+          "position_52w": 0.8954,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0282,
+          "ma200_weekly": 0.5662
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0451,
+          "weekly_rsi": -0.0437,
+          "position_52w": -0.0284,
+          "ma200_deviation": -0.0282,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0349
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8943,
+          "weekly_rsi": 0.6622,
+          "position_52w": 0.6542,
+          "ma200_deviation": 0.5662,
+          "volume_strength": -0.0349,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9215,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8954,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8952,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8943,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7049,
+          "severity": "high"
+        }
+      ]
+    },
+    "NFLX": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6419,
+          "position_52w": 0.7168,
+          "ma200_deviation": 0.5887,
+          "volume_strength": 0.0775,
+          "ma200_weekly": 0.8006
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6419,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8891,
+          "ma200_deviation": 0.9191,
+          "volume_strength": -0.0187,
+          "ma200_weekly": 0.6692
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7168,
+          "weekly_rsi": 0.8891,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8778,
+          "volume_strength": -0.0105,
+          "ma200_weekly": 0.6807
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.5887,
+          "weekly_rsi": 0.9191,
+          "position_52w": 0.8778,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0084,
+          "ma200_weekly": 0.6085
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0775,
+          "weekly_rsi": -0.0187,
+          "position_52w": -0.0105,
+          "ma200_deviation": -0.0084,
+          "volume_strength": 1.0,
+          "ma200_weekly": 0.0415
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8006,
+          "weekly_rsi": 0.6692,
+          "position_52w": 0.6807,
+          "ma200_deviation": 0.6085,
+          "volume_strength": 0.0415,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9191,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8891,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8778,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8006,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7168,
+          "severity": "high"
+        }
+      ]
+    },
+    "DIS": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6303,
+          "position_52w": 0.807,
+          "ma200_deviation": 0.6955,
+          "volume_strength": 0.0057,
+          "ma200_weekly": 0.8607
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6303,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8471,
+          "ma200_deviation": 0.9118,
+          "volume_strength": -0.035,
+          "ma200_weekly": 0.7156
+        },
+        "position_52w": {
+          "monthly_rsi": 0.807,
+          "weekly_rsi": 0.8471,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9135,
+          "volume_strength": -0.0402,
+          "ma200_weekly": 0.8748
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6955,
+          "weekly_rsi": 0.9118,
+          "position_52w": 0.9135,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0401,
+          "ma200_weekly": 0.7479
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0057,
+          "weekly_rsi": -0.035,
+          "position_52w": -0.0402,
+          "ma200_deviation": -0.0401,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0154
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8607,
+          "weekly_rsi": 0.7156,
+          "position_52w": 0.8748,
+          "ma200_deviation": 0.7479,
+          "volume_strength": -0.0154,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9135,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9118,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8748,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8607,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8471,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.807,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7479,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7156,
+          "severity": "high"
+        }
+      ]
+    },
+    "TMUS": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.77,
+          "position_52w": 0.7802,
+          "ma200_deviation": 0.8384,
+          "volume_strength": 0.0087,
+          "ma200_weekly": 0.8488
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.77,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8815,
+          "ma200_deviation": 0.9164,
+          "volume_strength": -0.0862,
+          "ma200_weekly": 0.7345
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7802,
+          "weekly_rsi": 0.8815,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9325,
+          "volume_strength": -0.0735,
+          "ma200_weekly": 0.6891
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.8384,
+          "weekly_rsi": 0.9164,
+          "position_52w": 0.9325,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0539,
+          "ma200_weekly": 0.7666
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0087,
+          "weekly_rsi": -0.0862,
+          "position_52w": -0.0735,
+          "ma200_deviation": -0.0539,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0569
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8488,
+          "weekly_rsi": 0.7345,
+          "position_52w": 0.6891,
+          "ma200_deviation": 0.7666,
+          "volume_strength": -0.0569,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9325,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9164,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8815,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8488,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8384,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7802,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.77,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7666,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7345,
+          "severity": "high"
+        }
+      ]
+    },
+    "AMZN": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5752,
+          "position_52w": 0.6739,
+          "ma200_deviation": 0.6077,
+          "volume_strength": 0.0221,
+          "ma200_weekly": 0.7248
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5752,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8661,
+          "ma200_deviation": 0.9171,
+          "volume_strength": 0.0017,
+          "ma200_weekly": 0.6953
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6739,
+          "weekly_rsi": 0.8661,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9086,
+          "volume_strength": 0.0231,
+          "ma200_weekly": 0.698
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6077,
+          "weekly_rsi": 0.9171,
+          "position_52w": 0.9086,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.006,
+          "ma200_weekly": 0.6794
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0221,
+          "weekly_rsi": 0.0017,
+          "position_52w": 0.0231,
+          "ma200_deviation": -0.006,
+          "volume_strength": 1.0,
+          "ma200_weekly": 0.0103
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7248,
+          "weekly_rsi": 0.6953,
+          "position_52w": 0.698,
+          "ma200_deviation": 0.6794,
+          "volume_strength": 0.0103,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9171,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9086,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8661,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7248,
+          "severity": "high"
+        }
+      ]
+    },
+    "TSLA": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6129,
+          "position_52w": 0.6703,
+          "ma200_deviation": 0.707,
+          "volume_strength": -0.096,
+          "ma200_weekly": 0.7617
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6129,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8688,
+          "ma200_deviation": 0.898,
+          "volume_strength": -0.144,
+          "ma200_weekly": 0.7725
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6703,
+          "weekly_rsi": 0.8688,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9435,
+          "volume_strength": -0.0829,
+          "ma200_weekly": 0.8005
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.707,
+          "weekly_rsi": 0.898,
+          "position_52w": 0.9435,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0918,
+          "ma200_weekly": 0.7883
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.096,
+          "weekly_rsi": -0.144,
+          "position_52w": -0.0829,
+          "ma200_deviation": -0.0918,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.1311
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7617,
+          "weekly_rsi": 0.7725,
+          "position_52w": 0.8005,
+          "ma200_deviation": 0.7883,
+          "volume_strength": -0.1311,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9435,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.898,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8688,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8005,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7883,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7725,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7617,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.707,
+          "severity": "high"
+        }
+      ]
+    },
+    "HD": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6523,
+          "position_52w": 0.731,
+          "ma200_deviation": 0.7557,
+          "volume_strength": 0.0102,
+          "ma200_weekly": 0.8363
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6523,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8478,
+          "ma200_deviation": 0.9042,
+          "volume_strength": -0.0508,
+          "ma200_weekly": 0.8329
+        },
+        "position_52w": {
+          "monthly_rsi": 0.731,
+          "weekly_rsi": 0.8478,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9112,
+          "volume_strength": -0.0581,
+          "ma200_weekly": 0.7775
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7557,
+          "weekly_rsi": 0.9042,
+          "position_52w": 0.9112,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0513,
+          "ma200_weekly": 0.8326
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0102,
+          "weekly_rsi": -0.0508,
+          "position_52w": -0.0581,
+          "ma200_deviation": -0.0513,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0301
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8363,
+          "weekly_rsi": 0.8329,
+          "position_52w": 0.7775,
+          "ma200_deviation": 0.8326,
+          "volume_strength": -0.0301,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9112,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9042,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8478,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8363,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8329,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8326,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7775,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7557,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.731,
+          "severity": "high"
+        }
+      ]
+    },
+    "MCD": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6558,
+          "position_52w": 0.5913,
+          "ma200_deviation": 0.6081,
+          "volume_strength": -0.0624,
+          "ma200_weekly": 0.8048
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6558,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8459,
+          "ma200_deviation": 0.8583,
+          "volume_strength": -0.1509,
+          "ma200_weekly": 0.8425
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5913,
+          "weekly_rsi": 0.8459,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8909,
+          "volume_strength": -0.1298,
+          "ma200_weekly": 0.7848
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6081,
+          "weekly_rsi": 0.8583,
+          "position_52w": 0.8909,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.1561,
+          "ma200_weekly": 0.7542
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0624,
+          "weekly_rsi": -0.1509,
+          "position_52w": -0.1298,
+          "ma200_deviation": -0.1561,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.1042
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8048,
+          "weekly_rsi": 0.8425,
+          "position_52w": 0.7848,
+          "ma200_deviation": 0.7542,
+          "volume_strength": -0.1042,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8909,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8583,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8459,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8425,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8048,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7848,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7542,
+          "severity": "high"
+        }
+      ]
+    },
+    "NKE": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.7951,
+          "position_52w": 0.8096,
+          "ma200_deviation": 0.8369,
+          "volume_strength": 0.0237,
+          "ma200_weekly": 0.8973
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.7951,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8691,
+          "ma200_deviation": 0.9229,
+          "volume_strength": -0.0863,
+          "ma200_weekly": 0.8988
+        },
+        "position_52w": {
+          "monthly_rsi": 0.8096,
+          "weekly_rsi": 0.8691,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9334,
+          "volume_strength": -0.0943,
+          "ma200_weekly": 0.8607
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.8369,
+          "weekly_rsi": 0.9229,
+          "position_52w": 0.9334,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0795,
+          "ma200_weekly": 0.8863
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0237,
+          "weekly_rsi": -0.0863,
+          "position_52w": -0.0943,
+          "ma200_deviation": -0.0795,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0555
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8973,
+          "weekly_rsi": 0.8988,
+          "position_52w": 0.8607,
+          "ma200_deviation": 0.8863,
+          "volume_strength": -0.0555,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9334,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9229,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8988,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8973,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8863,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8691,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8607,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8369,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8096,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.7951,
+          "severity": "high"
+        }
+      ]
+    },
+    "WMT": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6577,
+          "position_52w": 0.6092,
+          "ma200_deviation": 0.7631,
+          "volume_strength": 0.0324,
+          "ma200_weekly": 0.8959
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6577,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8566,
+          "ma200_deviation": 0.889,
+          "volume_strength": -0.0342,
+          "ma200_weekly": 0.6977
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6092,
+          "weekly_rsi": 0.8566,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8629,
+          "volume_strength": -0.0355,
+          "ma200_weekly": 0.6583
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7631,
+          "weekly_rsi": 0.889,
+          "position_52w": 0.8629,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0449,
+          "ma200_weekly": 0.8212
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0324,
+          "weekly_rsi": -0.0342,
+          "position_52w": -0.0355,
+          "ma200_deviation": -0.0449,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0218
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8959,
+          "weekly_rsi": 0.6977,
+          "position_52w": 0.6583,
+          "ma200_deviation": 0.8212,
+          "volume_strength": -0.0218,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8959,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.889,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8629,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8566,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8212,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7631,
+          "severity": "high"
+        }
+      ]
+    },
+    "COST": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.716,
+          "position_52w": 0.7004,
+          "ma200_deviation": 0.7807,
+          "volume_strength": 0.074,
+          "ma200_weekly": 0.879
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.716,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8943,
+          "ma200_deviation": 0.9376,
+          "volume_strength": -0.0117,
+          "ma200_weekly": 0.7787
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7004,
+          "weekly_rsi": 0.8943,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9154,
+          "volume_strength": -0.0268,
+          "ma200_weekly": 0.7227
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7807,
+          "weekly_rsi": 0.9376,
+          "position_52w": 0.9154,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0066,
+          "ma200_weekly": 0.8207
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.074,
+          "weekly_rsi": -0.0117,
+          "position_52w": -0.0268,
+          "ma200_deviation": -0.0066,
+          "volume_strength": 1.0,
+          "ma200_weekly": 0.0269
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.879,
+          "weekly_rsi": 0.7787,
+          "position_52w": 0.7227,
+          "ma200_deviation": 0.8207,
+          "volume_strength": 0.0269,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9376,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9154,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8943,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.879,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8207,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7807,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7787,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7227,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.716,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7004,
+          "severity": "high"
+        }
+      ]
+    },
+    "PG": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6587,
+          "position_52w": 0.6878,
+          "ma200_deviation": 0.6952,
+          "volume_strength": -0.0058,
+          "ma200_weekly": 0.8637
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6587,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.85,
+          "ma200_deviation": 0.9069,
+          "volume_strength": -0.0429,
+          "ma200_weekly": 0.8536
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6878,
+          "weekly_rsi": 0.85,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9386,
+          "volume_strength": -0.0307,
+          "ma200_weekly": 0.8158
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6952,
+          "weekly_rsi": 0.9069,
+          "position_52w": 0.9386,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0475,
+          "ma200_weekly": 0.8219
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0058,
+          "weekly_rsi": -0.0429,
+          "position_52w": -0.0307,
+          "ma200_deviation": -0.0475,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0133
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8637,
+          "weekly_rsi": 0.8536,
+          "position_52w": 0.8158,
+          "ma200_deviation": 0.8219,
+          "volume_strength": -0.0133,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9386,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9069,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8637,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8536,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.85,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8219,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8158,
+          "severity": "high"
+        }
+      ]
+    },
+    "KO": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.626,
+          "position_52w": 0.5147,
+          "ma200_deviation": 0.6792,
+          "volume_strength": -0.0235,
+          "ma200_weekly": 0.7111
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.626,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8284,
+          "ma200_deviation": 0.8564,
+          "volume_strength": -0.0686,
+          "ma200_weekly": 0.7729
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5147,
+          "weekly_rsi": 0.8284,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8582,
+          "volume_strength": -0.0633,
+          "ma200_weekly": 0.6496
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6792,
+          "weekly_rsi": 0.8564,
+          "position_52w": 0.8582,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0594,
+          "ma200_weekly": 0.8106
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0235,
+          "weekly_rsi": -0.0686,
+          "position_52w": -0.0633,
+          "ma200_deviation": -0.0594,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0608
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7111,
+          "weekly_rsi": 0.7729,
+          "position_52w": 0.6496,
+          "ma200_deviation": 0.8106,
+          "volume_strength": -0.0608,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8582,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8564,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8284,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8106,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7729,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7111,
+          "severity": "high"
+        }
+      ]
+    },
+    "PEP": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6336,
+          "position_52w": 0.7298,
+          "ma200_deviation": 0.6592,
+          "volume_strength": -0.0176,
+          "ma200_weekly": 0.8901
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6336,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8362,
+          "ma200_deviation": 0.9024,
+          "volume_strength": -0.1444,
+          "ma200_weekly": 0.8121
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7298,
+          "weekly_rsi": 0.8362,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9312,
+          "volume_strength": -0.0912,
+          "ma200_weekly": 0.843
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6592,
+          "weekly_rsi": 0.9024,
+          "position_52w": 0.9312,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0994,
+          "ma200_weekly": 0.8004
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0176,
+          "weekly_rsi": -0.1444,
+          "position_52w": -0.0912,
+          "ma200_deviation": -0.0994,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0857
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8901,
+          "weekly_rsi": 0.8121,
+          "position_52w": 0.843,
+          "ma200_deviation": 0.8004,
+          "volume_strength": -0.0857,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9312,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9024,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8901,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.843,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8362,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8121,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8004,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7298,
+          "severity": "high"
+        }
+      ]
+    },
+    "JPM": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5422,
+          "position_52w": 0.5664,
+          "ma200_deviation": 0.4632,
+          "volume_strength": 0.0685,
+          "ma200_weekly": 0.7597
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5422,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8024,
+          "ma200_deviation": 0.9073,
+          "volume_strength": -0.0483,
+          "ma200_weekly": 0.7292
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5664,
+          "weekly_rsi": 0.8024,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8006,
+          "volume_strength": -0.0326,
+          "ma200_weekly": 0.6252
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.4632,
+          "weekly_rsi": 0.9073,
+          "position_52w": 0.8006,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0622,
+          "ma200_weekly": 0.6985
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0685,
+          "weekly_rsi": -0.0483,
+          "position_52w": -0.0326,
+          "ma200_deviation": -0.0622,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0237
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7597,
+          "weekly_rsi": 0.7292,
+          "position_52w": 0.6252,
+          "ma200_deviation": 0.6985,
+          "volume_strength": -0.0237,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9073,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8024,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8006,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7597,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7292,
+          "severity": "high"
+        }
+      ]
+    },
+    "BAC": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6143,
+          "position_52w": 0.7251,
+          "ma200_deviation": 0.5741,
+          "volume_strength": 0.0418,
+          "ma200_weekly": 0.7473
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6143,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8795,
+          "ma200_deviation": 0.9166,
+          "volume_strength": -0.0361,
+          "ma200_weekly": 0.7203
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7251,
+          "weekly_rsi": 0.8795,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8936,
+          "volume_strength": -0.0325,
+          "ma200_weekly": 0.7568
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.5741,
+          "weekly_rsi": 0.9166,
+          "position_52w": 0.8936,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0389,
+          "ma200_weekly": 0.7439
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0418,
+          "weekly_rsi": -0.0361,
+          "position_52w": -0.0325,
+          "ma200_deviation": -0.0389,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0202
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7473,
+          "weekly_rsi": 0.7203,
+          "position_52w": 0.7568,
+          "ma200_deviation": 0.7439,
+          "volume_strength": -0.0202,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9166,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8936,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8795,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7568,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7473,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7439,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7251,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7203,
+          "severity": "high"
+        }
+      ]
+    },
+    "GS": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.658,
+          "position_52w": 0.6181,
+          "ma200_deviation": 0.6258,
+          "volume_strength": 0.0442,
+          "ma200_weekly": 0.7949
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.658,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8527,
+          "ma200_deviation": 0.9232,
+          "volume_strength": -0.0042,
+          "ma200_weekly": 0.7515
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6181,
+          "weekly_rsi": 0.8527,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.913,
+          "volume_strength": -0.0109,
+          "ma200_weekly": 0.7279
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6258,
+          "weekly_rsi": 0.9232,
+          "position_52w": 0.913,
+          "ma200_deviation": 1.0,
+          "volume_strength": 0.0026,
+          "ma200_weekly": 0.7769
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0442,
+          "weekly_rsi": -0.0042,
+          "position_52w": -0.0109,
+          "ma200_deviation": 0.0026,
+          "volume_strength": 1.0,
+          "ma200_weekly": 0.0041
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7949,
+          "weekly_rsi": 0.7515,
+          "position_52w": 0.7279,
+          "ma200_deviation": 0.7769,
+          "volume_strength": 0.0041,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9232,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.913,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8527,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7949,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7769,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7515,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7279,
+          "severity": "high"
+        }
+      ]
+    },
+    "V": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5596,
+          "position_52w": 0.5483,
+          "ma200_deviation": 0.6253,
+          "volume_strength": 0.0257,
+          "ma200_weekly": 0.8468
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5596,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8413,
+          "ma200_deviation": 0.8868,
+          "volume_strength": -0.0464,
+          "ma200_weekly": 0.6617
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5483,
+          "weekly_rsi": 0.8413,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9234,
+          "volume_strength": -0.0739,
+          "ma200_weekly": 0.6331
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6253,
+          "weekly_rsi": 0.8868,
+          "position_52w": 0.9234,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0666,
+          "ma200_weekly": 0.7023
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0257,
+          "weekly_rsi": -0.0464,
+          "position_52w": -0.0739,
+          "ma200_deviation": -0.0666,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0183
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8468,
+          "weekly_rsi": 0.6617,
+          "position_52w": 0.6331,
+          "ma200_deviation": 0.7023,
+          "volume_strength": -0.0183,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9234,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8868,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8468,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8413,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7023,
+          "severity": "high"
+        }
+      ]
+    },
+    "MA": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.678,
+          "position_52w": 0.7069,
+          "ma200_deviation": 0.6763,
+          "volume_strength": 0.0368,
+          "ma200_weekly": 0.8457
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.678,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8507,
+          "ma200_deviation": 0.8899,
+          "volume_strength": -0.0674,
+          "ma200_weekly": 0.721
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7069,
+          "weekly_rsi": 0.8507,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9379,
+          "volume_strength": -0.0675,
+          "ma200_weekly": 0.7495
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6763,
+          "weekly_rsi": 0.8899,
+          "position_52w": 0.9379,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0835,
+          "ma200_weekly": 0.7293
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0368,
+          "weekly_rsi": -0.0674,
+          "position_52w": -0.0675,
+          "ma200_deviation": -0.0835,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.049
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8457,
+          "weekly_rsi": 0.721,
+          "position_52w": 0.7495,
+          "ma200_deviation": 0.7293,
+          "volume_strength": -0.049,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9379,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8899,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8507,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8457,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7495,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7293,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.721,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7069,
+          "severity": "high"
+        }
+      ]
+    },
+    "LLY": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6824,
+          "position_52w": 0.6108,
+          "ma200_deviation": 0.7158,
+          "volume_strength": 0.0055,
+          "ma200_weekly": 0.8672
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6824,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8407,
+          "ma200_deviation": 0.9067,
+          "volume_strength": -0.0838,
+          "ma200_weekly": 0.8399
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6108,
+          "weekly_rsi": 0.8407,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8545,
+          "volume_strength": -0.0299,
+          "ma200_weekly": 0.7182
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7158,
+          "weekly_rsi": 0.9067,
+          "position_52w": 0.8545,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.028,
+          "ma200_weekly": 0.8258
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0055,
+          "weekly_rsi": -0.0838,
+          "position_52w": -0.0299,
+          "ma200_deviation": -0.028,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0491
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8672,
+          "weekly_rsi": 0.8399,
+          "position_52w": 0.7182,
+          "ma200_deviation": 0.8258,
+          "volume_strength": -0.0491,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9067,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8672,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8545,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8407,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8399,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8258,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7182,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7158,
+          "severity": "high"
+        }
+      ]
+    },
+    "UNH": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6059,
+          "position_52w": 0.6674,
+          "ma200_deviation": 0.6453,
+          "volume_strength": 0.0594,
+          "ma200_weekly": 0.8419
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6059,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8647,
+          "ma200_deviation": 0.896,
+          "volume_strength": -0.0762,
+          "ma200_weekly": 0.7921
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6674,
+          "weekly_rsi": 0.8647,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9326,
+          "volume_strength": -0.0843,
+          "ma200_weekly": 0.7661
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6453,
+          "weekly_rsi": 0.896,
+          "position_52w": 0.9326,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0538,
+          "ma200_weekly": 0.7649
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0594,
+          "weekly_rsi": -0.0762,
+          "position_52w": -0.0843,
+          "ma200_deviation": -0.0538,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0238
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8419,
+          "weekly_rsi": 0.7921,
+          "position_52w": 0.7661,
+          "ma200_deviation": 0.7649,
+          "volume_strength": -0.0238,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9326,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.896,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8647,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8419,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7921,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7661,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7649,
+          "severity": "high"
+        }
+      ]
+    },
+    "JNJ": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.672,
+          "position_52w": 0.7196,
+          "ma200_deviation": 0.7163,
+          "volume_strength": 0.0052,
+          "ma200_weekly": 0.8967
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.672,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8745,
+          "ma200_deviation": 0.9185,
+          "volume_strength": -0.0516,
+          "ma200_weekly": 0.8139
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7196,
+          "weekly_rsi": 0.8745,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9403,
+          "volume_strength": -0.0241,
+          "ma200_weekly": 0.8333
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7163,
+          "weekly_rsi": 0.9185,
+          "position_52w": 0.9403,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0426,
+          "ma200_weekly": 0.8304
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0052,
+          "weekly_rsi": -0.0516,
+          "position_52w": -0.0241,
+          "ma200_deviation": -0.0426,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0336
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8967,
+          "weekly_rsi": 0.8139,
+          "position_52w": 0.8333,
+          "ma200_deviation": 0.8304,
+          "volume_strength": -0.0336,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9403,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9185,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8967,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8745,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8333,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8304,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8139,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7196,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7163,
+          "severity": "high"
+        }
+      ]
+    },
+    "ABBV": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5664,
+          "position_52w": 0.5701,
+          "ma200_deviation": 0.6158,
+          "volume_strength": 0.0374,
+          "ma200_weekly": 0.7414
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5664,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.83,
+          "ma200_deviation": 0.8866,
+          "volume_strength": 0.022,
+          "ma200_weekly": 0.7171
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5701,
+          "weekly_rsi": 0.83,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8797,
+          "volume_strength": 0.0056,
+          "ma200_weekly": 0.6186
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6158,
+          "weekly_rsi": 0.8866,
+          "position_52w": 0.8797,
+          "ma200_deviation": 1.0,
+          "volume_strength": 0.0088,
+          "ma200_weekly": 0.7069
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0374,
+          "weekly_rsi": 0.022,
+          "position_52w": 0.0056,
+          "ma200_deviation": 0.0088,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0164
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7414,
+          "weekly_rsi": 0.7171,
+          "position_52w": 0.6186,
+          "ma200_deviation": 0.7069,
+          "volume_strength": -0.0164,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8866,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8797,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.83,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7414,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7171,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7069,
+          "severity": "high"
+        }
+      ]
+    },
+    "MRK": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.7307,
+          "position_52w": 0.8007,
+          "ma200_deviation": 0.7754,
+          "volume_strength": -0.0738,
+          "ma200_weekly": 0.8561
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.7307,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8905,
+          "ma200_deviation": 0.9311,
+          "volume_strength": -0.1104,
+          "ma200_weekly": 0.703
+        },
+        "position_52w": {
+          "monthly_rsi": 0.8007,
+          "weekly_rsi": 0.8905,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9432,
+          "volume_strength": -0.0879,
+          "ma200_weekly": 0.7506
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7754,
+          "weekly_rsi": 0.9311,
+          "position_52w": 0.9432,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.088,
+          "ma200_weekly": 0.6693
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0738,
+          "weekly_rsi": -0.1104,
+          "position_52w": -0.0879,
+          "ma200_deviation": -0.088,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0765
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8561,
+          "weekly_rsi": 0.703,
+          "position_52w": 0.7506,
+          "ma200_deviation": 0.6693,
+          "volume_strength": -0.0765,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9432,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9311,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8905,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8561,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8007,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7754,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7506,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.7307,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.703,
+          "severity": "high"
+        }
+      ]
+    },
+    "GE": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.682,
+          "position_52w": 0.6568,
+          "ma200_deviation": 0.661,
+          "volume_strength": 0.0094,
+          "ma200_weekly": 0.7311
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.682,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.7963,
+          "ma200_deviation": 0.9132,
+          "volume_strength": -0.048,
+          "ma200_weekly": 0.8845
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6568,
+          "weekly_rsi": 0.7963,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8157,
+          "volume_strength": -0.0818,
+          "ma200_weekly": 0.786
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.661,
+          "weekly_rsi": 0.9132,
+          "position_52w": 0.8157,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0574,
+          "ma200_weekly": 0.8165
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0094,
+          "weekly_rsi": -0.048,
+          "position_52w": -0.0818,
+          "ma200_deviation": -0.0574,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0295
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7311,
+          "weekly_rsi": 0.8845,
+          "position_52w": 0.786,
+          "ma200_deviation": 0.8165,
+          "volume_strength": -0.0295,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9132,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8845,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8165,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8157,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7963,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.786,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7311,
+          "severity": "high"
+        }
+      ]
+    },
+    "CAT": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.757,
+          "position_52w": 0.6675,
+          "ma200_deviation": 0.7872,
+          "volume_strength": 0.039,
+          "ma200_weekly": 0.8835
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.757,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8544,
+          "ma200_deviation": 0.9244,
+          "volume_strength": 0.0037,
+          "ma200_weekly": 0.9116
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6675,
+          "weekly_rsi": 0.8544,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8983,
+          "volume_strength": 0.0087,
+          "ma200_weekly": 0.8121
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7872,
+          "weekly_rsi": 0.9244,
+          "position_52w": 0.8983,
+          "ma200_deviation": 1.0,
+          "volume_strength": 0.0099,
+          "ma200_weekly": 0.9156
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.039,
+          "weekly_rsi": 0.0037,
+          "position_52w": 0.0087,
+          "ma200_deviation": 0.0099,
+          "volume_strength": 1.0,
+          "ma200_weekly": 0.0061
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8835,
+          "weekly_rsi": 0.9116,
+          "position_52w": 0.8121,
+          "ma200_deviation": 0.9156,
+          "volume_strength": 0.0061,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9244,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.9156,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.9116,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8983,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8835,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8544,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8121,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7872,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "weekly_rsi",
+          "spearman": 0.757,
+          "severity": "high"
+        }
+      ]
+    },
+    "HON": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6378,
+          "position_52w": 0.6761,
+          "ma200_deviation": 0.6664,
+          "volume_strength": 0.033,
+          "ma200_weekly": 0.7348
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6378,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.863,
+          "ma200_deviation": 0.8915,
+          "volume_strength": -0.033,
+          "ma200_weekly": 0.7724
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6761,
+          "weekly_rsi": 0.863,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9281,
+          "volume_strength": -0.0328,
+          "ma200_weekly": 0.7503
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6664,
+          "weekly_rsi": 0.8915,
+          "position_52w": 0.9281,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0192,
+          "ma200_weekly": 0.7769
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.033,
+          "weekly_rsi": -0.033,
+          "position_52w": -0.0328,
+          "ma200_deviation": -0.0192,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0092
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7348,
+          "weekly_rsi": 0.7724,
+          "position_52w": 0.7503,
+          "ma200_deviation": 0.7769,
+          "volume_strength": -0.0092,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9281,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8915,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.863,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7769,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7724,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7503,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7348,
+          "severity": "high"
+        }
+      ]
+    },
+    "UNP": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6587,
+          "position_52w": 0.6699,
+          "ma200_deviation": 0.651,
+          "volume_strength": 0.0231,
+          "ma200_weekly": 0.7718
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6587,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8306,
+          "ma200_deviation": 0.8764,
+          "volume_strength": -0.0523,
+          "ma200_weekly": 0.8581
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6699,
+          "weekly_rsi": 0.8306,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9331,
+          "volume_strength": -0.0521,
+          "ma200_weekly": 0.875
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.651,
+          "weekly_rsi": 0.8764,
+          "position_52w": 0.9331,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0524,
+          "ma200_weekly": 0.8639
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0231,
+          "weekly_rsi": -0.0523,
+          "position_52w": -0.0521,
+          "ma200_deviation": -0.0524,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0205
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7718,
+          "weekly_rsi": 0.8581,
+          "position_52w": 0.875,
+          "ma200_deviation": 0.8639,
+          "volume_strength": -0.0205,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9331,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8764,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.875,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8639,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8581,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8306,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7718,
+          "severity": "high"
+        }
+      ]
+    },
+    "BA": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.617,
+          "position_52w": 0.7354,
+          "ma200_deviation": 0.6062,
+          "volume_strength": -0.0088,
+          "ma200_weekly": 0.8119
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.617,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8413,
+          "ma200_deviation": 0.9009,
+          "volume_strength": -0.0805,
+          "ma200_weekly": 0.7771
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7354,
+          "weekly_rsi": 0.8413,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8809,
+          "volume_strength": -0.053,
+          "ma200_weekly": 0.8167
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6062,
+          "weekly_rsi": 0.9009,
+          "position_52w": 0.8809,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0782,
+          "ma200_weekly": 0.8032
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0088,
+          "weekly_rsi": -0.0805,
+          "position_52w": -0.053,
+          "ma200_deviation": -0.0782,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.032
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8119,
+          "weekly_rsi": 0.7771,
+          "position_52w": 0.8167,
+          "ma200_deviation": 0.8032,
+          "volume_strength": -0.032,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9009,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8809,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8413,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8167,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8119,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8032,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7771,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7354,
+          "severity": "high"
+        }
+      ]
+    },
+    "XOM": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6333,
+          "position_52w": 0.6829,
+          "ma200_deviation": 0.681,
+          "volume_strength": 0.0053,
+          "ma200_weekly": 0.7529
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6333,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8026,
+          "ma200_deviation": 0.8891,
+          "volume_strength": 0.0039,
+          "ma200_weekly": 0.7415
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6829,
+          "weekly_rsi": 0.8026,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8209,
+          "volume_strength": 0.0167,
+          "ma200_weekly": 0.6947
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.681,
+          "weekly_rsi": 0.8891,
+          "position_52w": 0.8209,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0329,
+          "ma200_weekly": 0.7615
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0053,
+          "weekly_rsi": 0.0039,
+          "position_52w": 0.0167,
+          "ma200_deviation": -0.0329,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0272
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7529,
+          "weekly_rsi": 0.7415,
+          "position_52w": 0.6947,
+          "ma200_deviation": 0.7615,
+          "volume_strength": -0.0272,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8891,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8209,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8026,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7615,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7529,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7415,
+          "severity": "high"
+        }
+      ]
+    },
+    "CVX": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5252,
+          "position_52w": 0.5199,
+          "ma200_deviation": 0.5706,
+          "volume_strength": 0.0244,
+          "ma200_weekly": 0.7046
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5252,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8473,
+          "ma200_deviation": 0.8819,
+          "volume_strength": 0.0225,
+          "ma200_weekly": 0.6574
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5199,
+          "weekly_rsi": 0.8473,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8973,
+          "volume_strength": 0.0128,
+          "ma200_weekly": 0.6023
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.5706,
+          "weekly_rsi": 0.8819,
+          "position_52w": 0.8973,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0312,
+          "ma200_weekly": 0.7034
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0244,
+          "weekly_rsi": 0.0225,
+          "position_52w": 0.0128,
+          "ma200_deviation": -0.0312,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0141
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7046,
+          "weekly_rsi": 0.6574,
+          "position_52w": 0.6023,
+          "ma200_deviation": 0.7034,
+          "volume_strength": -0.0141,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8973,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8819,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8473,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7046,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7034,
+          "severity": "high"
+        }
+      ]
+    },
+    "COP": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6255,
+          "position_52w": 0.6692,
+          "ma200_deviation": 0.6379,
+          "volume_strength": 0.0071,
+          "ma200_weekly": 0.7499
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6255,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8754,
+          "ma200_deviation": 0.8952,
+          "volume_strength": -0.0351,
+          "ma200_weekly": 0.7106
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6692,
+          "weekly_rsi": 0.8754,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9322,
+          "volume_strength": -0.0116,
+          "ma200_weekly": 0.7385
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6379,
+          "weekly_rsi": 0.8952,
+          "position_52w": 0.9322,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0248,
+          "ma200_weekly": 0.7788
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0071,
+          "weekly_rsi": -0.0351,
+          "position_52w": -0.0116,
+          "ma200_deviation": -0.0248,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0269
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7499,
+          "weekly_rsi": 0.7106,
+          "position_52w": 0.7385,
+          "ma200_deviation": 0.7788,
+          "volume_strength": -0.0269,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9322,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8952,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8754,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7788,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7499,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7385,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7106,
+          "severity": "high"
+        }
+      ]
+    },
+    "SLB": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6678,
+          "position_52w": 0.7827,
+          "ma200_deviation": 0.7229,
+          "volume_strength": -0.0149,
+          "ma200_weekly": 0.8282
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6678,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8841,
+          "ma200_deviation": 0.9211,
+          "volume_strength": -0.0342,
+          "ma200_weekly": 0.7321
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7827,
+          "weekly_rsi": 0.8841,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9294,
+          "volume_strength": -0.0184,
+          "ma200_weekly": 0.7947
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7229,
+          "weekly_rsi": 0.9211,
+          "position_52w": 0.9294,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0343,
+          "ma200_weekly": 0.7405
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0149,
+          "weekly_rsi": -0.0342,
+          "position_52w": -0.0184,
+          "ma200_deviation": -0.0343,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0293
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8282,
+          "weekly_rsi": 0.7321,
+          "position_52w": 0.7947,
+          "ma200_deviation": 0.7405,
+          "volume_strength": -0.0293,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9294,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9211,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8841,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8282,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7947,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7827,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7405,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7321,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7229,
+          "severity": "high"
+        }
+      ]
+    },
+    "EOG": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5397,
+          "position_52w": 0.5591,
+          "ma200_deviation": 0.553,
+          "volume_strength": 0.0092,
+          "ma200_weekly": 0.6278
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5397,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8568,
+          "ma200_deviation": 0.8848,
+          "volume_strength": -0.0919,
+          "ma200_weekly": 0.6918
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5591,
+          "weekly_rsi": 0.8568,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9243,
+          "volume_strength": -0.0977,
+          "ma200_weekly": 0.7148
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.553,
+          "weekly_rsi": 0.8848,
+          "position_52w": 0.9243,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.08,
+          "ma200_weekly": 0.7666
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0092,
+          "weekly_rsi": -0.0919,
+          "position_52w": -0.0977,
+          "ma200_deviation": -0.08,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0424
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.6278,
+          "weekly_rsi": 0.6918,
+          "position_52w": 0.7148,
+          "ma200_deviation": 0.7666,
+          "volume_strength": -0.0424,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9243,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8848,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8568,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7666,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7148,
+          "severity": "high"
+        }
+      ]
+    },
+    "NEE": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6298,
+          "position_52w": 0.5702,
+          "ma200_deviation": 0.6605,
+          "volume_strength": 0.0654,
+          "ma200_weekly": 0.8337
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6298,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8814,
+          "ma200_deviation": 0.9268,
+          "volume_strength": -0.0251,
+          "ma200_weekly": 0.8491
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5702,
+          "weekly_rsi": 0.8814,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9292,
+          "volume_strength": -0.0342,
+          "ma200_weekly": 0.8042
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6605,
+          "weekly_rsi": 0.9268,
+          "position_52w": 0.9292,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.034,
+          "ma200_weekly": 0.8409
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0654,
+          "weekly_rsi": -0.0251,
+          "position_52w": -0.0342,
+          "ma200_deviation": -0.034,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0107
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8337,
+          "weekly_rsi": 0.8491,
+          "position_52w": 0.8042,
+          "ma200_deviation": 0.8409,
+          "volume_strength": -0.0107,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9292,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9268,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8814,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8491,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8409,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8337,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8042,
+          "severity": "high"
+        }
+      ]
+    },
+    "DUK": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.599,
+          "position_52w": 0.5558,
+          "ma200_deviation": 0.6064,
+          "volume_strength": 0.0045,
+          "ma200_weekly": 0.7955
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.599,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8586,
+          "ma200_deviation": 0.8883,
+          "volume_strength": -0.095,
+          "ma200_weekly": 0.761
+        },
+        "position_52w": {
+          "monthly_rsi": 0.5558,
+          "weekly_rsi": 0.8586,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9042,
+          "volume_strength": -0.077,
+          "ma200_weekly": 0.6745
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.6064,
+          "weekly_rsi": 0.8883,
+          "position_52w": 0.9042,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0869,
+          "ma200_weekly": 0.7175
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0045,
+          "weekly_rsi": -0.095,
+          "position_52w": -0.077,
+          "ma200_deviation": -0.0869,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0896
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7955,
+          "weekly_rsi": 0.761,
+          "position_52w": 0.6745,
+          "ma200_deviation": 0.7175,
+          "volume_strength": -0.0896,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9042,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8883,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8586,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7955,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.761,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7175,
+          "severity": "high"
+        }
+      ]
+    },
+    "SO": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6214,
+          "position_52w": 0.591,
+          "ma200_deviation": 0.658,
+          "volume_strength": -0.0548,
+          "ma200_weekly": 0.8101
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6214,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8347,
+          "ma200_deviation": 0.8742,
+          "volume_strength": -0.1026,
+          "ma200_weekly": 0.8048
+        },
+        "position_52w": {
+          "monthly_rsi": 0.591,
+          "weekly_rsi": 0.8347,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8922,
+          "volume_strength": -0.0894,
+          "ma200_weekly": 0.7164
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.658,
+          "weekly_rsi": 0.8742,
+          "position_52w": 0.8922,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.1116,
+          "ma200_weekly": 0.8053
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0548,
+          "weekly_rsi": -0.1026,
+          "position_52w": -0.0894,
+          "ma200_deviation": -0.1116,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0816
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8101,
+          "weekly_rsi": 0.8048,
+          "position_52w": 0.7164,
+          "ma200_deviation": 0.8053,
+          "volume_strength": -0.0816,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8922,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8742,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8347,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8101,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8053,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8048,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7164,
+          "severity": "high"
+        }
+      ]
+    },
+    "AMT": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.597,
+          "position_52w": 0.7275,
+          "ma200_deviation": 0.5815,
+          "volume_strength": -0.0114,
+          "ma200_weekly": 0.7297
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.597,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8193,
+          "ma200_deviation": 0.8814,
+          "volume_strength": -0.0957,
+          "ma200_weekly": 0.7805
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7275,
+          "weekly_rsi": 0.8193,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9131,
+          "volume_strength": -0.1221,
+          "ma200_weekly": 0.7986
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.5815,
+          "weekly_rsi": 0.8814,
+          "position_52w": 0.9131,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.1183,
+          "ma200_weekly": 0.8008
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0114,
+          "weekly_rsi": -0.0957,
+          "position_52w": -0.1221,
+          "ma200_deviation": -0.1183,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.071
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7297,
+          "weekly_rsi": 0.7805,
+          "position_52w": 0.7986,
+          "ma200_deviation": 0.8008,
+          "volume_strength": -0.071,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9131,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8814,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8193,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8008,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7986,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7805,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7297,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7275,
+          "severity": "high"
+        }
+      ]
+    },
+    "PLD": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6582,
+          "position_52w": 0.616,
+          "ma200_deviation": 0.7342,
+          "volume_strength": 0.0835,
+          "ma200_weekly": 0.8443
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6582,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8785,
+          "ma200_deviation": 0.9198,
+          "volume_strength": -0.0123,
+          "ma200_weekly": 0.8718
+        },
+        "position_52w": {
+          "monthly_rsi": 0.616,
+          "weekly_rsi": 0.8785,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9099,
+          "volume_strength": -0.0206,
+          "ma200_weekly": 0.7584
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7342,
+          "weekly_rsi": 0.9198,
+          "position_52w": 0.9099,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0008,
+          "ma200_weekly": 0.8933
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0835,
+          "weekly_rsi": -0.0123,
+          "position_52w": -0.0206,
+          "ma200_deviation": -0.0008,
+          "volume_strength": 1.0,
+          "ma200_weekly": 0.0073
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8443,
+          "weekly_rsi": 0.8718,
+          "position_52w": 0.7584,
+          "ma200_deviation": 0.8933,
+          "volume_strength": 0.0073,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9198,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9099,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8933,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8785,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8718,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8443,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7584,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7342,
+          "severity": "high"
+        }
+      ]
+    },
+    "LIN": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.5862,
+          "position_52w": 0.4907,
+          "ma200_deviation": 0.465,
+          "volume_strength": 0.0456,
+          "ma200_weekly": 0.6308
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.5862,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.7889,
+          "ma200_deviation": 0.8216,
+          "volume_strength": -0.1087,
+          "ma200_weekly": 0.8237
+        },
+        "position_52w": {
+          "monthly_rsi": 0.4907,
+          "weekly_rsi": 0.7889,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.8775,
+          "volume_strength": -0.0709,
+          "ma200_weekly": 0.6993
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.465,
+          "weekly_rsi": 0.8216,
+          "position_52w": 0.8775,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.1013,
+          "ma200_weekly": 0.7844
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0456,
+          "weekly_rsi": -0.1087,
+          "position_52w": -0.0709,
+          "ma200_deviation": -0.1013,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0738
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.6308,
+          "weekly_rsi": 0.8237,
+          "position_52w": 0.6993,
+          "ma200_deviation": 0.7844,
+          "volume_strength": -0.0738,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.8775,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8237,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8216,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7889,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7844,
+          "severity": "high"
+        }
+      ]
+    },
+    "APD": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6242,
+          "position_52w": 0.7189,
+          "ma200_deviation": 0.7128,
+          "volume_strength": 0.0304,
+          "ma200_weekly": 0.8151
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6242,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8538,
+          "ma200_deviation": 0.8746,
+          "volume_strength": -0.04,
+          "ma200_weekly": 0.8298
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7189,
+          "weekly_rsi": 0.8538,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9309,
+          "volume_strength": -0.055,
+          "ma200_weekly": 0.8108
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7128,
+          "weekly_rsi": 0.8746,
+          "position_52w": 0.9309,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.046,
+          "ma200_weekly": 0.8083
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0304,
+          "weekly_rsi": -0.04,
+          "position_52w": -0.055,
+          "ma200_deviation": -0.046,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0493
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8151,
+          "weekly_rsi": 0.8298,
+          "position_52w": 0.8108,
+          "ma200_deviation": 0.8083,
+          "volume_strength": -0.0493,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9309,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.8746,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8538,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8298,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8151,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8108,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8083,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7189,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7128,
+          "severity": "high"
+        }
+      ]
+    },
+    "SHW": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6639,
+          "position_52w": 0.7162,
+          "ma200_deviation": 0.7069,
+          "volume_strength": 0.0123,
+          "ma200_weekly": 0.8401
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6639,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8771,
+          "ma200_deviation": 0.917,
+          "volume_strength": -0.0976,
+          "ma200_weekly": 0.8302
+        },
+        "position_52w": {
+          "monthly_rsi": 0.7162,
+          "weekly_rsi": 0.8771,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9539,
+          "volume_strength": -0.0726,
+          "ma200_weekly": 0.7877
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7069,
+          "weekly_rsi": 0.917,
+          "position_52w": 0.9539,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0576,
+          "ma200_weekly": 0.7992
+        },
+        "volume_strength": {
+          "monthly_rsi": 0.0123,
+          "weekly_rsi": -0.0976,
+          "position_52w": -0.0726,
+          "ma200_deviation": -0.0576,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0533
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.8401,
+          "weekly_rsi": 0.8302,
+          "position_52w": 0.7877,
+          "ma200_deviation": 0.7992,
+          "volume_strength": -0.0533,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9539,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.917,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8771,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8401,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8302,
+          "severity": "high"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.7992,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7877,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "position_52w",
+          "spearman": 0.7162,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7069,
+          "severity": "high"
+        }
+      ]
+    },
+    "FCX": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6394,
+          "position_52w": 0.6583,
+          "ma200_deviation": 0.7161,
+          "volume_strength": -0.0082,
+          "ma200_weekly": 0.9369
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6394,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.877,
+          "ma200_deviation": 0.9076,
+          "volume_strength": -0.0214,
+          "ma200_weekly": 0.7724
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6583,
+          "weekly_rsi": 0.877,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9393,
+          "volume_strength": -0.0516,
+          "ma200_weekly": 0.7685
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7161,
+          "weekly_rsi": 0.9076,
+          "position_52w": 0.9393,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0471,
+          "ma200_weekly": 0.8125
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.0082,
+          "weekly_rsi": -0.0214,
+          "position_52w": -0.0516,
+          "ma200_deviation": -0.0471,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0282
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.9369,
+          "weekly_rsi": 0.7724,
+          "position_52w": 0.7685,
+          "ma200_deviation": 0.8125,
+          "volume_strength": -0.0282,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9393,
+          "severity": "critical"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.9369,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9076,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.877,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8125,
+          "severity": "high"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7724,
+          "severity": "high"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.7685,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7161,
+          "severity": "high"
+        }
+      ]
+    },
+    "NEM": {
+      "observations": 1457,
+      "threshold": 0.7,
+      "correlation": {
+        "monthly_rsi": {
+          "monthly_rsi": 1.0,
+          "weekly_rsi": 0.6282,
+          "position_52w": 0.6993,
+          "ma200_deviation": 0.7193,
+          "volume_strength": -0.024,
+          "ma200_weekly": 0.7738
+        },
+        "weekly_rsi": {
+          "monthly_rsi": 0.6282,
+          "weekly_rsi": 1.0,
+          "position_52w": 0.8644,
+          "ma200_deviation": 0.9218,
+          "volume_strength": -0.0712,
+          "ma200_weekly": 0.8522
+        },
+        "position_52w": {
+          "monthly_rsi": 0.6993,
+          "weekly_rsi": 0.8644,
+          "position_52w": 1.0,
+          "ma200_deviation": 0.9157,
+          "volume_strength": -0.0859,
+          "ma200_weekly": 0.8351
+        },
+        "ma200_deviation": {
+          "monthly_rsi": 0.7193,
+          "weekly_rsi": 0.9218,
+          "position_52w": 0.9157,
+          "ma200_deviation": 1.0,
+          "volume_strength": -0.0916,
+          "ma200_weekly": 0.8606
+        },
+        "volume_strength": {
+          "monthly_rsi": -0.024,
+          "weekly_rsi": -0.0712,
+          "position_52w": -0.0859,
+          "ma200_deviation": -0.0916,
+          "volume_strength": 1.0,
+          "ma200_weekly": -0.0796
+        },
+        "ma200_weekly": {
+          "monthly_rsi": 0.7738,
+          "weekly_rsi": 0.8522,
+          "position_52w": 0.8351,
+          "ma200_deviation": 0.8606,
+          "volume_strength": -0.0796,
+          "ma200_weekly": 1.0
+        }
+      },
+      "duplicate_candidates": [
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.9218,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_deviation",
+          "spearman": 0.9157,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "position_52w",
+          "spearman": 0.8644,
+          "severity": "critical"
+        },
+        {
+          "left": "ma200_deviation",
+          "right": "ma200_weekly",
+          "spearman": 0.8606,
+          "severity": "critical"
+        },
+        {
+          "left": "weekly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.8522,
+          "severity": "critical"
+        },
+        {
+          "left": "position_52w",
+          "right": "ma200_weekly",
+          "spearman": 0.8351,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_weekly",
+          "spearman": 0.7738,
+          "severity": "high"
+        },
+        {
+          "left": "monthly_rsi",
+          "right": "ma200_deviation",
+          "spearman": 0.7193,
+          "severity": "high"
+        }
+      ]
+    }
+  },
+  "pooled_report": {
+    "observations": 80135,
+    "threshold": 0.7,
+    "correlation": {
+      "monthly_rsi": {
+        "monthly_rsi": 1.0,
+        "weekly_rsi": 0.612,
+        "position_52w": 0.6209,
+        "ma200_deviation": 0.6219,
+        "volume_strength": 0.0075,
+        "ma200_weekly": 0.7239
+      },
+      "weekly_rsi": {
+        "monthly_rsi": 0.612,
+        "weekly_rsi": 1.0,
+        "position_52w": 0.8545,
+        "ma200_deviation": 0.8983,
+        "volume_strength": -0.0517,
+        "ma200_weekly": 0.7506
+      },
+      "position_52w": {
+        "monthly_rsi": 0.6209,
+        "weekly_rsi": 0.8545,
+        "position_52w": 1.0,
+        "ma200_deviation": 0.9018,
+        "volume_strength": -0.0508,
+        "ma200_weekly": 0.7391
+      },
+      "ma200_deviation": {
+        "monthly_rsi": 0.6219,
+        "weekly_rsi": 0.8983,
+        "position_52w": 0.9018,
+        "ma200_deviation": 1.0,
+        "volume_strength": -0.0507,
+        "ma200_weekly": 0.773
+      },
+      "volume_strength": {
+        "monthly_rsi": 0.0075,
+        "weekly_rsi": -0.0517,
+        "position_52w": -0.0508,
+        "ma200_deviation": -0.0507,
+        "volume_strength": 1.0,
+        "ma200_weekly": -0.0343
+      },
+      "ma200_weekly": {
+        "monthly_rsi": 0.7239,
+        "weekly_rsi": 0.7506,
+        "position_52w": 0.7391,
+        "ma200_deviation": 0.773,
+        "volume_strength": -0.0343,
+        "ma200_weekly": 1.0
+      }
+    },
+    "duplicate_candidates": [
+      {
+        "left": "position_52w",
+        "right": "ma200_deviation",
+        "spearman": 0.9018,
+        "severity": "critical"
+      },
+      {
+        "left": "weekly_rsi",
+        "right": "ma200_deviation",
+        "spearman": 0.8983,
+        "severity": "critical"
+      },
+      {
+        "left": "weekly_rsi",
+        "right": "position_52w",
+        "spearman": 0.8545,
+        "severity": "critical"
+      },
+      {
+        "left": "ma200_deviation",
+        "right": "ma200_weekly",
+        "spearman": 0.773,
+        "severity": "high"
+      },
+      {
+        "left": "weekly_rsi",
+        "right": "ma200_weekly",
+        "spearman": 0.7506,
+        "severity": "high"
+      },
+      {
+        "left": "position_52w",
+        "right": "ma200_weekly",
+        "spearman": 0.7391,
+        "severity": "high"
+      },
+      {
+        "left": "monthly_rsi",
+        "right": "ma200_weekly",
+        "spearman": 0.7239,
+        "severity": "high"
+      }
+    ]
+  },
+  "failures": {},
+  "limitations": [
+    "correlation frame audits price-derived v4 inputs only",
+    "EPS and sector multipliers require point-in-time histories and are excluded",
+    "weekly MA audit starts after a full 200-week history; production short-history fallback is separately flagged"
+  ]
+}
