@@ -19,11 +19,15 @@ from init_db import DailyPrice, HerdIndicator, HerdScore, Stock
 
 logger = logging.getLogger(__name__)
 
-# ──────────────────────────────────────────────
-# 모듈 로드 시 엔진·세션 팩토리 1회 초기화
-# ──────────────────────────────────────────────
-_engine         = create_db_engine()
-_SessionFactory = get_session_factory(_engine)
+_SessionFactory = None
+
+
+def _get_session_factory():
+    """DB가 필요한 첫 저장 시점까지 연결을 지연한다."""
+    global _SessionFactory
+    if _SessionFactory is None:
+        _SessionFactory = get_session_factory(create_db_engine())
+    return _SessionFactory
 
 
 # ──────────────────────────────────────────────
@@ -262,7 +266,7 @@ def save_herd_result(ticker: str, herd_result: dict, df: pd.DataFrame) -> bool:
     indicators["eps_multiplier"] = herd_result.get("eps_multiplier", 1.0)
     indicators["sector_multiplier"] = herd_result.get("sector_multiplier", 1.0)
 
-    with _SessionFactory() as session:
+    with _get_session_factory()() as session:
         try:
             _upsert_stock(session, ticker)
             _upsert_herd_score(
@@ -307,7 +311,7 @@ def save_herd_for_date(ticker: str, herd_result: dict, score_date: date) -> bool
     indicators["eps_multiplier"] = herd_result.get("eps_multiplier", 1.0)
     indicators["sector_multiplier"] = herd_result.get("sector_multiplier", 1.0)
 
-    with _SessionFactory() as session:
+    with _get_session_factory()() as session:
         try:
             # 과거 날짜마다 회사 프로필 API를 재호출하지 않는다.
             # 최신 운영 저장/프로필 백필 단계가 메타데이터를 담당한다.

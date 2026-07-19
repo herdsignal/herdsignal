@@ -62,11 +62,15 @@ from init_db import (                                                   # noqa: 
 
 logger = logging.getLogger(__name__)
 
-# ──────────────────────────────────────────────
-# 모듈 로드 시 DB 엔진·세션 팩토리 1회 초기화
-# ──────────────────────────────────────────────
-_engine         = create_db_engine()
-_SessionFactory = get_session_factory(_engine)
+_SessionFactory = None
+
+
+def _get_session_factory():
+    """스케줄러 실행이나 DB 조회가 시작될 때 한 번만 연결한다."""
+    global _SessionFactory
+    if _SessionFactory is None:
+        _SessionFactory = get_session_factory(create_db_engine())
+    return _SessionFactory
 
 # 미국 동부시간 타임존 (EDT/EST 자동 전환)
 _ET = ZoneInfo("America/New_York")
@@ -106,7 +110,7 @@ def _fetch_tier1_tickers() -> list[str]:
     별도 설정 변경 없이 다음 스케줄 실행 시 자동으로 대상에 포함된다.
     중복 제거 후 알파벳 오름차순 반환.
     """
-    with _SessionFactory() as session:
+    with _get_session_factory()() as session:
         # user_portfolio: cache 사용자 제외한 전체
         portfolio_tickers = {
             row.ticker
@@ -136,7 +140,7 @@ def _fetch_tier1_tickers() -> list[str]:
 def _start_scheduler_run(trigger_type: str) -> int | None:
     """실행 시작을 별도 트랜잭션으로 먼저 기록한다."""
     try:
-        with _SessionFactory() as session:
+        with _get_session_factory()() as session:
             run_row = SchedulerRun(
                 job_name=_TIER1_JOB_NAME,
                 trigger_type=trigger_type,
@@ -165,7 +169,7 @@ def _finish_scheduler_run(
 
     failed = failed_tickers or []
     try:
-        with _SessionFactory() as session:
+        with _get_session_factory()() as session:
             run_row = session.get(SchedulerRun, run_id)
             if run_row is None:
                 logger.error(f"[Tier1] 실행 이력 {run_id}을 찾을 수 없습니다.")
@@ -325,7 +329,7 @@ def calculate_on_demand(ticker: str, force: bool = False) -> dict:
     cache_cutoff = date.today() - timedelta(days=CACHE_DAYS)
 
     # ── 1. 캐시 확인 ──────────────────────────
-    with _SessionFactory() as session:
+    with _get_session_factory()() as session:
         latest_score = (
             session.query(HerdScore)
             .filter(HerdScore.ticker == ticker)
@@ -464,7 +468,7 @@ def calculate_current_portfolio(user_id: str) -> dict:
     today = date.today()
 
     # ── 1. 보유 종목 조회 (avg_price·quantity 모두 있는 것만) ──────────────
-    with _SessionFactory() as session:
+    with _get_session_factory()() as session:
         holdings = (
             session.query(UserPortfolio)
             .filter(
@@ -560,7 +564,7 @@ def calculate_current_portfolio(user_id: str) -> dict:
     )
 
     # ── 5. portfolio_history UPSERT (오늘 날짜) ───────────────────────────
-    with _SessionFactory() as session:
+    with _get_session_factory()() as session:
         existing = (
             session.query(PortfolioHistory)
             .filter_by(user_id=user_id, snapshot_date=today)

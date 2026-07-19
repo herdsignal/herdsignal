@@ -22,9 +22,15 @@ from init_db import DailyPrice, PortfolioHistory, UserPortfolio    # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-# 모듈 로드 시 DB 엔진·세션 팩토리 1회 초기화
-_engine         = create_db_engine()
-_SessionFactory = get_session_factory(_engine)
+_SessionFactory = None
+
+
+def _get_session_factory():
+    """실제 포트폴리오 계산 전까지 DB 연결을 만들지 않는다."""
+    global _SessionFactory
+    if _SessionFactory is None:
+        _SessionFactory = get_session_factory(create_db_engine())
+    return _SessionFactory
 
 
 def calculate_portfolio_value(user_id: str) -> dict:
@@ -55,7 +61,7 @@ def calculate_portfolio_value(user_id: str) -> dict:
     """
     today = date.today()
 
-    with _SessionFactory() as session:
+    with _get_session_factory()() as session:
         # avg_price와 quantity 모두 존재하는 보유 종목만 조회
         # (관심종목은 avg_price/quantity가 NULL이므로 자동 제외)
         holdings = (
