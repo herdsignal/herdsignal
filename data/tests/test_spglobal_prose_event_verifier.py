@@ -356,13 +356,21 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
                 "A.O. Smith Corp. (NYSE: AOS) and Duke Realty Corp. (NYSE: DRE) "
                 "will replace Mallinckrodt plc (NYSE: MNK), Murphy Oil Corp. "
                 "(NYSE: MUR), Bed Bath & Beyond Inc. (NASD: BBBY) and "
-                "Transocean Ltd. (NYSE: RIG) respectively in the S&P 500 "
+                "Transocean Ltd. (NYSE: RIG) respectively, in the S&P 500 "
                 "effective prior to the open on Wednesday, July 26."
             ),
         }
         for ticker in ("MUR", "BBBY"):
             result = verify_candidate(
                 {"effective_date": "2017-07-26", "action": "REMOVE", "ticker": ticker},
+                release,
+            )
+            self.assertEqual(
+                "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+            )
+        for ticker in ("RMD", "PKG"):
+            result = verify_candidate(
+                {"effective_date": "2017-07-26", "action": "ADD", "ticker": ticker},
                 release,
             )
             self.assertEqual(
@@ -378,6 +386,27 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
                 "SBA Communications Corp. (NASD: SBAC) will replace "
                 "E. I. du Pont de Nemours and Co. (NYSE: DD) in the S&P 500 "
                 "effective prior to the open on Friday, September 1."
+            ),
+        }
+        result = verify_candidate(
+            {"effective_date": "2017-09-01", "action": "REMOVE", "ticker": "DD"},
+            release,
+        )
+        self.assertEqual(
+            "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+        )
+
+    def test_cross_index_clause_does_not_turn_removed_ticker_into_addition(self):
+        release = {
+            "published_date": "2017-08-24",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "e" * 64,
+            "text": (
+                "Charter Communications Inc. (NASD: CHTR) will replace "
+                "E. I. du Pont de Nemours and Co. (NYSE: DD) in the S&P 100, "
+                "and SBA Communications Corp. (NASD: SBAC) will replace "
+                "E. I. du Pont de Nemours in the S&P 500 effective prior to "
+                "the open on Friday, September 1."
             ),
         }
         result = verify_candidate(

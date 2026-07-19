@@ -140,15 +140,11 @@ def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
         flags=re.IGNORECASE,
     )
     tail_without_abbreviations = re.sub(
+        r"(?:\b[A-Z]\.){2,}", "", tail_without_abbreviations
+    )
+    tail_without_abbreviations = re.sub(
         r"\b[A-Z]\.(?=\s|$)", "", tail_without_abbreviations
     )
-    if (
-        replacement_start >= 0
-        and not ANY_EXCHANGE_TICKER.search(replacement_tail)
-        and "." not in tail_without_abbreviations
-        and re.search(r"in (?:the )?S&P 500", after[:220], re.IGNORECASE)
-    ):
-        return "REMOVE"
     # 복수 교체 문장에서 `will replace` 앞에 나열된 ticker는 편입 종목이다.
     # 이전 문장의 `will replace`를 현재 ticker의 동사로 오인하지 않도록
     # 현재 ticker 뒤 같은 문장에 오는 동사를 먼저 판정한다.
@@ -163,20 +159,32 @@ def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
         flags=re.IGNORECASE,
     )
     prefix_without_abbreviations = re.sub(
+        r"(?:\b[A-Z]\.){2,}", "", prefix_without_abbreviations
+    )
+    prefix_without_abbreviations = re.sub(
         r"\b[A-Z]\.(?=\s|$)", "", prefix_without_abbreviations
     )
     if (
         next_replace
         and "." not in prefix_without_abbreviations
         and not re.search(
-            r"\bS&P 500\b", replacement_prefix, re.IGNORECASE
+            r"\bS&P (?:100|500|MidCap 400|SmallCap 600)\b",
+            replacement_prefix,
+            re.IGNORECASE,
         )
     ):
         return "ADD"
+    if (
+        replacement_start >= 0
+        and not ANY_EXCHANGE_TICKER.search(replacement_tail)
+        and "." not in tail_without_abbreviations
+        and re.search(r"in (?:the )?S&P 500", after[:220], re.IGNORECASE)
+    ):
+        return "REMOVE"
     # 교체 대상 ticker 뒤에는 새 구성 종목의 "will be added" 설명이 다시
     # 등장할 수 있다. 따라서 ticker를 감싼 교체 관계를 먼저 판정한다.
     if replacement_start >= 0 and re.search(
-        r"respectively\s+in (?:the )?S&P 500", after[:600], re.IGNORECASE
+        r"respectively,?\s+in (?:the )?S&P 500", after[:600], re.IGNORECASE
     ):
         return "REMOVE"
     if re.search(
@@ -193,7 +201,9 @@ def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
         return "REMOVE"
     switching_start = before.lower().rfind("will switch places with")
     if switching_start >= 0 and re.search(
-        r"(?:respectively\s+)?in (?:the )?S&P 500", after[:350], re.IGNORECASE
+        r"(?:respectively,?\s+)?in (?:the )?S&P 500",
+        after[:350],
+        re.IGNORECASE,
     ):
         return "REMOVE"
     move_start = before.lower().rfind("will move to the s&p 500")
