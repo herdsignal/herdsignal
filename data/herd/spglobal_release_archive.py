@@ -16,7 +16,13 @@ from lxml import html
 
 ARCHIVE_URL = "https://press.spglobal.com/index.php?l=100&o={offset}&s=2429"
 RELEASE_DATE = re.compile(r"press\.spglobal\.com/(\d{4}-\d{2}-\d{2})-")
-KEYWORDS = ("join s&p 500", "s&p 500 changes", "s&p 500 quarterly", "replace")
+CHANGE_TITLE_PATTERNS = (
+    re.compile(r"(?:set to|to)\s+join\s+(?:the\s+)?s&p 500", re.IGNORECASE),
+    re.compile(r"set to\s+(?:the\s+)?s&p 500", re.IGNORECASE),
+    re.compile(r"(?:addition to|continues in)\s+(?:the\s+)?s&p 500", re.IGNORECASE),
+    re.compile(r"s&p 500\s+(?:changes|quarterly)", re.IGNORECASE),
+    re.compile(r"\breplace\b", re.IGNORECASE),
+)
 
 
 class ReleaseArchiveError(RuntimeError):
@@ -33,10 +39,9 @@ def discover_release_links(content: bytes, start_date: date, end_date: date) -> 
             continue
         published = date.fromisoformat(match.group(1))
         title = " ".join(anchor.text_content().split())
-        normalized = title.lower()
-        if not start_date <= published <= end_date or "s&p 500" not in normalized:
+        if not start_date <= published <= end_date or "s&p 500" not in title.lower():
             continue
-        if not any(keyword in normalized for keyword in KEYWORDS):
+        if not any(pattern.search(title) for pattern in CHANGE_TITLE_PATTERNS):
             continue
         found[url] = {
             "published_date": published.isoformat(),

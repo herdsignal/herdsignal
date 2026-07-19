@@ -23,6 +23,18 @@ class SpglobalReleaseArchiveTest(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["status"], "REQUIRES_EVENT_EXTRACTION")
 
+    def test_discovers_join_the_sp500_and_addition_titles(self):
+        source = b"""
+        <a href="https://press.spglobal.com/2016-08-25-Mettler-Toledo-Set-to-Join-the-S-P-500">
+          Mettler-Toledo Set to Join the S&amp;P 500
+        </a>
+        <a href="https://press.spglobal.com/2020-11-30-Tesla-Addition-to-S-P-500">
+          Implementation of Tesla's Addition to S&amp;P 500
+        </a>
+        """
+        rows = discover_release_links(source, date(2016, 1, 1), date(2021, 1, 1))
+        self.assertEqual(2, len(rows))
+
 
 if __name__ == "__main__":
     unittest.main()
