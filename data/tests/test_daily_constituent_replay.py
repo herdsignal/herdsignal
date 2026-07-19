@@ -48,6 +48,25 @@ class DailyConstituentReplayTest(unittest.TestCase):
         self.assertEqual(1, audit["errors"])
         self.assertFalse(audit["replay_complete"])
 
+    def test_replays_identity_change_without_changing_count(self):
+        snapshots, audit = replay_events(
+            {"FB", "AAA"},
+            [{
+                "event_type": "IDENTITY_CHANGE",
+                "effective_date": "2022-06-09",
+                "action": "RENAME",
+                "old_ticker": "FB",
+                "ticker": "META",
+                "event_status": "VERIFIED_IDENTITY_CHANGE",
+            }],
+            minimum_size=1,
+            maximum_size=3,
+        )
+        self.assertEqual(["META"], snapshots[0]["added"])
+        self.assertEqual(["FB"], snapshots[0]["removed"])
+        self.assertEqual(2, audit["final_count"])
+        self.assertTrue(audit["replay_complete"])
+
 
 if __name__ == "__main__":
     unittest.main()

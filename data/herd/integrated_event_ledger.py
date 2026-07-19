@@ -46,6 +46,7 @@ def build_integrated_ledger(
     form25_candidates: list[dict],
     form25_classification: list[dict],
     merger_classification: list[dict],
+    identity_transitions: list[dict] | None = None,
 ) -> tuple[list[dict], dict]:
     cik_by_event = {event_key(row): row for row in cik_events}
     form25_by_url = {
@@ -70,6 +71,8 @@ def build_integrated_ledger(
     }
     rows = []
     for candidate in reconciliation:
+        if candidate["status"] == "VERIFIED_IDENTITY_CHANGE_COMPONENT":
+            continue
         key = candidate_key(candidate)
         official_resolved = candidate["status"] in RESOLVED_S_AND_P
         cik = cik_by_event.get(key)
@@ -94,6 +97,7 @@ def build_integrated_ledger(
         else:
             cause = "CAUSE_NOT_CONFIRMED"
         rows.append({
+            "event_type": "MEMBERSHIP_CHANGE",
             "candidate_effective_date": candidate["candidate_effective_date"],
             "effective_date": key[0] if official_resolved else "",
             "action": key[1],
@@ -115,16 +119,40 @@ def build_integrated_ledger(
                 else ""
             ),
         })
+    for transition in identity_transitions or []:
+        rows.append({
+            "event_type": "IDENTITY_CHANGE",
+            "candidate_effective_date": transition["new_candidate_date"],
+            "effective_date": transition["effective_date"],
+            "action": "RENAME",
+            "ticker": transition["new_ticker"].upper(),
+            "old_ticker": transition["old_ticker"].upper(),
+            "company_name": "",
+            "event_status": "VERIFIED_IDENTITY_CHANGE",
+            "candidate_reconciliation_status": "VERIFIED_IDENTITY_CHANGE_COMPONENT",
+            "cik": transition["cik"],
+            "cik_link_status": "SEC_SAME_CIK_TRADING_SYMBOL_VERIFIED",
+            "corporate_action_evidence": "TICKER_IDENTITY_CONTINUITY",
+            "common_equity_form25": False,
+            "merger_completion_evidence": False,
+            "merger_agreement_evidence": False,
+            "sp_source_url": "",
+            "sp_source_sha256": "",
+            "review_status": "",
+        })
     statuses = Counter(row["event_status"] for row in rows)
     verified = sum(
         row["event_status"] in {
             "VERIFIED_OFFICIAL_EVENT",
             "OFFICIAL_EVENT_WITH_SEC_ACTION_EVIDENCE",
+            "VERIFIED_IDENTITY_CHANGE",
         }
         for row in rows
     )
     return rows, {
         "candidate_events": len(rows),
+        "source_candidate_rows": len(reconciliation),
+        "identity_transitions": len(identity_transitions or []),
         "event_statuses": dict(statuses),
         "verified_official_events": verified,
         "events_with_common_form25": sum(row["common_equity_form25"] for row in rows),
@@ -144,9 +172,14 @@ def read_csv(path: Path) -> list[dict]:
 def write_csv(path: Path, rows: list[dict]) -> None:
     if not rows:
         raise IntegratedLedgerError("integrated ledger is empty")
+    fields = []
+    for row in rows:
+        for field in row:
+            if field not in fields:
+                fields.append(field)
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with Path(path).open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
         writer.writerows(rows)
 
@@ -159,6 +192,7 @@ def main() -> None:
     parser.add_argument("form25_classification", type=Path)
     parser.add_argument("merger_classification", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--identity-transitions", type=Path)
     args = parser.parse_args()
     rows, audit = build_integrated_ledger(
         read_csv(args.reconciliation),
@@ -166,6 +200,7 @@ def main() -> None:
         read_csv(args.form25_candidates),
         read_csv(args.form25_classification),
         read_csv(args.merger_classification),
+        read_csv(args.identity_transitions) if args.identity_transitions else None,
     )
     write_csv(args.output, rows)
     print(json.dumps(audit, ensure_ascii=False))

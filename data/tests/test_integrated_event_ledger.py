@@ -46,6 +46,33 @@ class IntegratedEventLedgerTest(unittest.TestCase):
         self.assertFalse(audit["replay_ready"])
         self.assertFalse(audit["survivorship_safe"])
 
+    def test_collapses_identity_components_into_one_transition(self):
+        reconciliation = [
+            {
+                "candidate_effective_date": "2022-06-09",
+                "resolved_effective_date": "2022-06-09",
+                "action": action,
+                "ticker": ticker,
+                "status": "VERIFIED_IDENTITY_CHANGE_COMPONENT",
+            }
+            for action, ticker in (("REMOVE", "FB"), ("ADD", "META"))
+        ]
+        transitions = [{
+            "effective_date": "2022-06-09",
+            "old_candidate_date": "2022-06-09",
+            "new_candidate_date": "2022-06-09",
+            "old_ticker": "FB",
+            "new_ticker": "META",
+            "cik": "0001326801",
+        }]
+        rows, audit = build_integrated_ledger(
+            reconciliation, [], [], [], [], transitions
+        )
+        self.assertEqual(1, len(rows))
+        self.assertEqual("IDENTITY_CHANGE", rows[0]["event_type"])
+        self.assertEqual("VERIFIED_IDENTITY_CHANGE", rows[0]["event_status"])
+        self.assertTrue(audit["replay_ready"])
+
 
 if __name__ == "__main__":
     unittest.main()

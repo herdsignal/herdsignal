@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
+import json
 from collections import Counter, defaultdict
 from datetime import date
 
@@ -14,6 +16,7 @@ class ConstituentReplayError(RuntimeError):
 VERIFIED_STATUSES = {
     "VERIFIED_OFFICIAL_EVENT",
     "OFFICIAL_EVENT_WITH_SEC_ACTION_EVIDENCE",
+    "VERIFIED_IDENTITY_CHANGE",
 }
 
 
@@ -43,7 +46,24 @@ def replay_events(
         before = set(current)
         for event in sorted(events, key=lambda row: row["action"], reverse=True):
             ticker = event["ticker"].upper()
-            if event["action"] == "REMOVE":
+            if event.get("event_type") == "IDENTITY_CHANGE":
+                old_ticker = event.get("old_ticker", "").upper()
+                if not old_ticker or old_ticker not in current:
+                    errors.append({
+                        "effective_date": effective,
+                        "error": "RENAME_ABSENT_OLD_TICKER",
+                        "ticker": old_ticker,
+                    })
+                elif ticker in current and ticker != old_ticker:
+                    errors.append({
+                        "effective_date": effective,
+                        "error": "RENAME_EXISTING_NEW_TICKER",
+                        "ticker": ticker,
+                    })
+                else:
+                    current.remove(old_ticker)
+                    current.add(ticker)
+            elif event["action"] == "REMOVE":
                 if ticker not in current:
                     errors.append({
                         "effective_date": effective,
@@ -99,3 +119,33 @@ def load_baseline_from_intervals(path, as_of: date) -> set[str]:
             if start <= as_of and (end is None or as_of < end):
                 tickers.add(row["ticker"].upper())
     return tickers
+
+
+def read_csv(path) -> list[dict]:
+    with open(path, encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("baseline_intervals")
+    parser.add_argument("ledger")
+    parser.add_argument("output")
+    parser.add_argument("--as-of", type=date.fromisoformat, required=True)
+    parser.add_argument("--diagnostic", action="store_true")
+    args = parser.parse_args()
+    baseline = load_baseline_from_intervals(args.baseline_intervals, args.as_of)
+    snapshots, audit = replay_events(
+        baseline, read_csv(args.ledger), allow_diagnostic=args.diagnostic
+    )
+    with open(args.output, "w", encoding="utf-8") as handle:
+        json.dump(
+            {"audit": audit, "snapshots": snapshots},
+            handle, ensure_ascii=False, indent=2,
+        )
+        handle.write("\n")
+    print(json.dumps(audit, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()
