@@ -10,16 +10,22 @@ from pathlib import Path
 
 from lxml import html
 
+from herd.constituent_event_contract import (
+    ConstituentEventContractError,
+    classify_effective_timing,
+)
+
 EXCHANGE_TICKER = r"\((?:NYSE|NASD|NASDAQ|AMEX|OTC)\s*:\s*{ticker}\b[^)]*\)"
 DATE_PATTERN = re.compile(
     r"(?:January|February|March|April|May|June|July|August|September|Sept\.?|"
     r"October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|"
-    r"Aug\.?|Sep\.?|Oct\.?|Nov\.?|Dec\.?)\s+\d{1,2},?\s+\d{4}",
+    r"Aug\.?|Sep\.?|Oct\.?|Nov\.?|Dec\.?)\s+\d{1,2}(?:,?\s+\d{4})?",
     re.IGNORECASE,
 )
 QUALIFIER_PATTERN = re.compile(
     r"(?:effective|prior to (?:the )?open(?:ing)?|before (?:the )?market opens|"
-    r"after (?:the )?close(?: of trading)?)",
+    r"after (?:the )?close(?: of trading)?|at (?:the )?open(?: of trading)?|"
+    r"prior to (?:the )?market open)",
     re.IGNORECASE,
 )
 
@@ -33,7 +39,7 @@ def normalize_text(content: bytes) -> str:
     return " ".join(document.text_content().replace("\xa0", " ").split())
 
 
-def parse_date_mention(value: str) -> date:
+def parse_date_mention(value: str, *, published_date: date | None = None) -> date:
     normalized = re.sub(r"\bSept(?:\.|\b)", "Sep", value).replace(".", "")
     normalized = re.sub(r",\s*", ", ", normalized)
     for pattern in ("%B %d, %Y", "%b %d, %Y", "%B %d %Y", "%b %d %Y"):
@@ -41,20 +47,58 @@ def parse_date_mention(value: str) -> date:
             return datetime.strptime(normalized, pattern).date()
         except ValueError:
             continue
+    if published_date is not None:
+        for pattern in ("%B %d", "%b %d"):
+            try:
+                parsed = datetime.strptime(normalized, pattern)
+                inferred = date(published_date.year, parsed.month, parsed.day)
+                if inferred < published_date:
+                    inferred = date(published_date.year + 1, parsed.month, parsed.day)
+                return inferred
+            except ValueError:
+                continue
     raise ProseVerificationError(f"unsupported date mention: {value}")
 
 
-def qualified_dates(text: str, start: int, end: int) -> set[date]:
-    window_start = max(0, start - 500)
-    window_end = min(len(text), end + 500)
+def qualified_effective_mentions(
+    text: str,
+    start: int,
+    end: int,
+    *,
+    published_date: date,
+) -> set[tuple[date, str]]:
+    window_start = max(0, start - 800)
+    window_end = min(len(text), end + 800)
     window = text[window_start:window_end]
-    dates = set()
+    mentions = set()
     for match in DATE_PATTERN.finditer(window):
-        qualifier_start = max(0, match.start() - 100)
-        qualifier_end = min(len(window), match.end() + 30)
-        if QUALIFIER_PATTERN.search(window[qualifier_start:qualifier_end]):
-            dates.add(parse_date_mention(match.group()))
-    return dates
+        qualifier_start = max(0, match.start() - 130)
+        qualifier_end = min(len(window), match.end() + 40)
+        context = window[qualifier_start:qualifier_end]
+        if not QUALIFIER_PATTERN.search(context):
+            continue
+        try:
+            timing = classify_effective_timing(context)
+        except ConstituentEventContractError:
+            continue
+        mentions.add((
+            parse_date_mention(match.group(), published_date=published_date),
+            timing,
+        ))
+    return mentions
+
+
+def mention_matches_candidate(
+    stated_date: date,
+    timing: str,
+    candidate_session_date: date,
+) -> bool:
+    if timing in {"PRIOR_TO_OPEN", "UNSPECIFIED"}:
+        return stated_date == candidate_session_date
+    if timing == "AFTER_CLOSE":
+        gap = (candidate_session_date - stated_date).days
+        return 1 <= gap <= 4 and candidate_session_date.weekday() < 5
+    return False
 
 
 def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
@@ -86,13 +130,23 @@ def verify_candidate(event: dict, release: dict) -> dict:
     ticker = event["ticker"].upper()
     expected_action = event["action"]
     expected_date = date.fromisoformat(event["effective_date"])
+    published_date = date.fromisoformat(release["published_date"])
     pattern = re.compile(EXCHANGE_TICKER.format(ticker=re.escape(ticker)), re.IGNORECASE)
     outcomes = []
     for occurrence in pattern.finditer(release["text"]):
         action = classify_occurrence(release["text"], occurrence)
-        dates = qualified_dates(release["text"], occurrence.start(), occurrence.end())
-        if action == expected_action and expected_date in dates:
-            outcomes.append((occurrence, dates))
+        mentions = qualified_effective_mentions(
+            release["text"],
+            occurrence.start(),
+            occurrence.end(),
+            published_date=published_date,
+        )
+        matching_mentions = {
+            mention for mention in mentions
+            if mention_matches_candidate(mention[0], mention[1], expected_date)
+        }
+        if action == expected_action and len(matching_mentions) == 1:
+            outcomes.append((occurrence, matching_mentions))
     if len(outcomes) != 1:
         return {
             **event,
@@ -102,13 +156,17 @@ def verify_candidate(event: dict, release: dict) -> dict:
             "source_url": release["source_url"],
             "source_sha256": release["source_sha256"],
         }
-    occurrence, _ = outcomes[0]
+    occurrence, mentions = outcomes[0]
+    stated_date, timing = next(iter(mentions))
     return {
         **event,
         "announcement_date": release["published_date"],
+        "stated_effective_date": stated_date.isoformat(),
+        "effective_timing": timing,
+        "membership_session_date": event["effective_date"],
         "source_url": release["source_url"],
         "source_sha256": release["source_sha256"],
-        "extraction_method": "QUALIFIED_PROSE_V1",
+        "extraction_method": "QUALIFIED_PROSE_V2",
         "verification_status": "SEMANTICS_AND_DATE_VERIFIED",
         "context": release["text"][
             max(0, occurrence.start() - 180):min(len(release["text"]), occurrence.end() + 300)
@@ -150,20 +208,57 @@ def verify_suggestions(suggestions: list[dict], releases: dict[str, dict]) -> tu
     return results, {"suggestions": len(seen), "results": len(results), "statuses": statuses}
 
 
+def canonical_verified_events(rows: list[dict]) -> tuple[list[dict], list[dict]]:
+    grouped = {}
+    for row in rows:
+        if row["verification_status"] != "SEMANTICS_AND_DATE_VERIFIED":
+            continue
+        key = row["effective_date"], row["action"], row["ticker"]
+        grouped.setdefault(key, []).append(row)
+    canonical = []
+    conflicts = []
+    for key, matches in grouped.items():
+        semantics = {
+            (row["stated_effective_date"], row["effective_timing"])
+            for row in matches
+        }
+        if len(semantics) != 1:
+            conflicts.append({
+                "effective_date": key[0],
+                "action": key[1],
+                "ticker": key[2],
+                "reason": "CONFLICTING_OFFICIAL_EFFECTIVE_SEMANTICS",
+                "source_urls": "|".join(sorted(row["source_url"] for row in matches)),
+            })
+            continue
+        canonical.append(min(
+            matches,
+            key=lambda row: (row["announcement_date"], row["source_url"]),
+        ))
+    return sorted(
+        canonical,
+        key=lambda row: (row["effective_date"], row["action"], row["ticker"]),
+    ), conflicts
+
+
 def read_csv(path: Path) -> list[dict]:
     with Path(path).open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle))
 
 
 def write_verified(path: Path, rows: list[dict]) -> None:
-    verified = [
-        row for row in rows if row["verification_status"] == "SEMANTICS_AND_DATE_VERIFIED"
-    ]
+    verified, conflicts = canonical_verified_events(rows)
     if not verified:
         raise ProseVerificationError("no prose events passed verification")
+    if conflicts:
+        raise ProseVerificationError(
+            f"{len(conflicts)} official events have conflicting effective semantics"
+        )
     fields = [
-        "announcement_date", "effective_date", "action", "ticker", "source_url",
-        "source_sha256", "extraction_method", "verification_status", "context",
+        "announcement_date", "effective_date", "stated_effective_date",
+        "effective_timing", "membership_session_date", "action", "ticker",
+        "source_url", "source_sha256", "extraction_method", "verification_status",
+        "context",
     ]
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with Path(path).open("w", encoding="utf-8", newline="") as handle:
