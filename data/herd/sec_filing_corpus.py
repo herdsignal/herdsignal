@@ -6,6 +6,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import shutil
 import time
 import uuid
@@ -32,6 +33,8 @@ def collect_filing_corpus(
     user_agent: str,
     delay_seconds: float = 0.15,
 ) -> Path:
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{2,80}", snapshot_id):
+        raise SecFilingCorpusError("unsafe snapshot id")
     final = Path(output_root) / snapshot_id
     if final.exists():
         raise SecFilingCorpusError(f"snapshot already exists: {final}")
