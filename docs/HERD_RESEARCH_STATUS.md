@@ -68,3 +68,12 @@ Buy & Hold의 상승 복리를 더 크게 잃는다.
 
 다음 구현 우선순위는 모델 공식 추가가 아니라 1~3의 point-in-time 데이터
 기반 확보다.
+
+### Point-in-time 유니버스 진행
+
+- 공개 재구성본 정규화 파이프라인과 SHA-256 manifest 구현 완료
+- 1996~2025 공개본에서 고유 ticker 1,128개 확인
+- 구성 수가 442개까지 떨어지는 누락과 중복 날짜 2건 발견
+- 공개본은 `PIPELINE_AND_GAP_RESEARCH_ONLY`로 잠금
+- CRSP/WRDS `dsp500list_v2` 또는 S&P 라이선스 원천 확보 전
+  `survivorship_safe=false` 유지
