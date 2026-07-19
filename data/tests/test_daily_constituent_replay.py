@@ -89,6 +89,25 @@ class DailyConstituentReplayTest(unittest.TestCase):
         self.assertEqual(["NEW"], snapshots[0]["added"])
         self.assertTrue(audit["replay_complete"])
 
+    def test_replays_multi_class_identity_consolidation(self):
+        snapshots, audit = replay_events(
+            {"DISCA", "DISCK", "AAA"},
+            [{
+                "event_type": "IDENTITY_CHANGE",
+                "effective_date": "2022-04-11",
+                "action": "RENAME",
+                "old_ticker": "DISCA|DISCK",
+                "ticker": "WBD",
+                "event_status": "VERIFIED_CORPORATE_CONTINUITY",
+            }],
+            minimum_size=1,
+            maximum_size=3,
+        )
+        self.assertEqual(["WBD"], snapshots[0]["added"])
+        self.assertEqual(["DISCA", "DISCK"], snapshots[0]["removed"])
+        self.assertEqual(2, audit["final_count"])
+        self.assertTrue(audit["replay_complete"])
+
     def test_applies_disclosed_diagnostic_baseline_correction(self):
         corrected, audit = apply_baseline_corrections(
             {"AAA"},

@@ -80,21 +80,26 @@ def replay_events(
         for event in sorted(events, key=lambda row: row["action"], reverse=True):
             ticker = event["ticker"].upper()
             if event.get("event_type") == "IDENTITY_CHANGE":
-                old_ticker = event.get("old_ticker", "").upper()
-                if not old_ticker or old_ticker not in current:
+                old_tickers = [
+                    value.strip().upper()
+                    for value in event.get("old_ticker", "").split("|")
+                    if value.strip()
+                ]
+                absent = [value for value in old_tickers if value not in current]
+                if not old_tickers or absent:
                     errors.append({
                         "effective_date": effective,
                         "error": "RENAME_ABSENT_OLD_TICKER",
-                        "ticker": old_ticker,
+                        "ticker": "|".join(absent or old_tickers),
                     })
-                elif ticker in current and ticker != old_ticker:
+                elif ticker in current and ticker not in old_tickers:
                     errors.append({
                         "effective_date": effective,
                         "error": "RENAME_EXISTING_NEW_TICKER",
                         "ticker": ticker,
                     })
                 else:
-                    current.remove(old_ticker)
+                    current.difference_update(old_tickers)
                     current.add(ticker)
             elif event["action"] == "REMOVE":
                 if ticker not in current:

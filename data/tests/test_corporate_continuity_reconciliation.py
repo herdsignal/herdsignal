@@ -118,6 +118,40 @@ class CorporateContinuityReconciliationTest(unittest.TestCase):
         self.assertEqual("RENAME", events[0]["action"])
         self.assertEqual(2, audit["reclassified_candidate_rows"])
 
+    def test_consumes_multiple_share_classes(self):
+        reconciliation = [
+            {
+                "candidate_effective_date": "2022-04-11",
+                "action": action,
+                "ticker": ticker,
+                "status": "NO_OFFICIAL_DOCUMENT_MATCH",
+            }
+            for action, ticker in (
+                ("REMOVE", "DISCA"),
+                ("REMOVE", "DISCK"),
+                ("ADD", "WBD"),
+            )
+        ]
+        claims = [{
+            "candidate_effective_date": "2022-04-11",
+            "action": "ADD",
+            "ticker": "WBD",
+            "continuity_type": "SAME_CIK_MEMBERSHIP_CONTINUITY",
+            "old_ticker": "DISCA",
+            "old_tickers": "DISCA|DISCK",
+            "effective_date": "2022-04-11",
+            "cik": "1437107",
+            "sp_source_url": self.sp_url,
+            "filing_url": self.sec_url,
+            "required_sp_terms": "in the S&P 500||Post-merger",
+            "required_sec_terms": "ticker symbol NEW",
+        }]
+        _, events, audit = verify_and_reconcile(
+            reconciliation, claims, self.sp, self.sec
+        )
+        self.assertEqual("DISCA|DISCK", events[0]["old_ticker"])
+        self.assertEqual(3, audit["reclassified_candidate_rows"])
+
     def test_fails_closed_when_required_term_is_absent(self):
         claims = [{
             "candidate_effective_date": "2019-11-05",

@@ -99,6 +99,14 @@ def candidate_key(row: dict) -> tuple[str, str, str]:
     )
 
 
+def claim_old_tickers(claim: dict) -> list[str]:
+    tickers = claim.get("old_tickers", "") or claim["old_ticker"]
+    values = [ticker.strip().upper() for ticker in tickers.split("|") if ticker.strip()]
+    if not values or len(values) != len(set(values)):
+        raise CorporateContinuityError("invalid old_tickers")
+    return values
+
+
 def verify_and_reconcile(
     reconciliation: list[dict],
     claims: list[dict],
@@ -158,16 +166,18 @@ def verify_and_reconcile(
             sp_sha = sp_item[1]
 
         consumed[key] = claim
-        old_key = (
-            claim["candidate_effective_date"],
-            "REMOVE",
-            claim["old_ticker"].upper(),
-        )
         if continuity_type in {
             "SAME_CIK_RENAME",
             "SAME_CIK_MEMBERSHIP_CONTINUITY",
-        } and old_key in rows_by_key:
-            consumed[old_key] = claim
+        }:
+            for old_ticker in claim_old_tickers(claim):
+                old_key = (
+                    claim["candidate_effective_date"],
+                    "REMOVE",
+                    old_ticker,
+                )
+                if old_key in rows_by_key:
+                    consumed[old_key] = claim
         events.append({
             "event_type": continuity_type,
             "effective_date": claim["effective_date"],
@@ -180,7 +190,7 @@ def verify_and_reconcile(
                 else "ADD"
             ),
             "ticker": claim["ticker"].upper(),
-            "old_ticker": claim["old_ticker"].upper(),
+            "old_ticker": "|".join(claim_old_tickers(claim)),
             "candidate_effective_date": claim["candidate_effective_date"],
             "cik": claim["cik"].zfill(10),
             "verification_status": "CORPORATE_CONTINUITY_VERIFIED",

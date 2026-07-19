@@ -163,7 +163,10 @@ def build_integrated_ledger(
             "review_status": "",
         })
     for continuity in continuity_events or []:
-        same_cik = continuity["event_type"] == "SAME_CIK_RENAME"
+        same_cik = continuity["event_type"] in {
+            "SAME_CIK_RENAME",
+            "SAME_CIK_MEMBERSHIP_CONTINUITY",
+        }
         rows.append({
             "event_type": "IDENTITY_CHANGE" if same_cik else "MEMBERSHIP_CHANGE",
             "candidate_effective_date": continuity["candidate_effective_date"],

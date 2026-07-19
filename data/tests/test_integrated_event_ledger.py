@@ -129,6 +129,40 @@ class IntegratedEventLedgerTest(unittest.TestCase):
         self.assertEqual(1, audit["corporate_continuity_events"])
         self.assertTrue(audit["replay_ready"])
 
+    def test_maps_same_cik_membership_continuity_to_identity_change(self):
+        reconciliation = [
+            {
+                "candidate_effective_date": "2022-04-11",
+                "resolved_effective_date": "2022-04-11",
+                "action": action,
+                "ticker": ticker,
+                "status": "VERIFIED_CORPORATE_CONTINUITY_COMPONENT",
+            }
+            for action, ticker in (
+                ("REMOVE", "DISCA"),
+                ("REMOVE", "DISCK"),
+                ("ADD", "WBD"),
+            )
+        ]
+        continuity = [{
+            "event_type": "SAME_CIK_MEMBERSHIP_CONTINUITY",
+            "candidate_effective_date": "2022-04-11",
+            "effective_date": "2022-04-11",
+            "ticker": "WBD",
+            "old_ticker": "DISCA|DISCK",
+            "cik": "0001437107",
+            "sp_source_url": "https://press.spglobal.com/example",
+            "sp_source_sha256": "a" * 64,
+            "sec_source_url": "https://www.sec.gov/example",
+            "sec_source_sha256": "b" * 64,
+        }]
+        rows, _ = build_integrated_ledger(
+            reconciliation, [], [], [], [], continuity_events=continuity
+        )
+        self.assertEqual(1, len(rows))
+        self.assertEqual("IDENTITY_CHANGE", rows[0]["event_type"])
+        self.assertEqual("DISCA|DISCK", rows[0]["old_ticker"])
+
 
 if __name__ == "__main__":
     unittest.main()
