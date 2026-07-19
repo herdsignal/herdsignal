@@ -48,6 +48,7 @@ def build_integrated_ledger(
     merger_classification: list[dict],
     identity_transitions: list[dict] | None = None,
     reconstruction_anomalies: list[dict] | None = None,
+    continuity_events: list[dict] | None = None,
 ) -> tuple[list[dict], dict]:
     quarantined_keys = {
         (
@@ -82,7 +83,10 @@ def build_integrated_ledger(
     }
     rows = []
     for candidate in reconciliation:
-        if candidate["status"] == "VERIFIED_IDENTITY_CHANGE_COMPONENT":
+        if candidate["status"] in {
+            "VERIFIED_IDENTITY_CHANGE_COMPONENT",
+            "VERIFIED_CORPORATE_CONTINUITY_COMPONENT",
+        }:
             continue
         source_key = (
             candidate["candidate_effective_date"],
@@ -158,12 +162,45 @@ def build_integrated_ledger(
             "sp_source_sha256": "",
             "review_status": "",
         })
+    for continuity in continuity_events or []:
+        same_cik = continuity["event_type"] == "SAME_CIK_RENAME"
+        rows.append({
+            "event_type": "IDENTITY_CHANGE" if same_cik else "MEMBERSHIP_CHANGE",
+            "candidate_effective_date": continuity["candidate_effective_date"],
+            "effective_date": continuity["effective_date"],
+            "action": "RENAME" if same_cik else "ADD",
+            "ticker": continuity["ticker"].upper(),
+            "old_ticker": continuity["old_ticker"].upper(),
+            "company_name": "",
+            "event_status": "VERIFIED_CORPORATE_CONTINUITY",
+            "candidate_reconciliation_status": (
+                "VERIFIED_CORPORATE_CONTINUITY_COMPONENT"
+            ),
+            "cik": continuity["cik"],
+            "cik_link_status": (
+                "SEC_SAME_CIK_TRADING_SYMBOL_VERIFIED"
+                if same_cik else "SEC_SUCCESSOR_ENTITY_VERIFIED"
+            ),
+            "corporate_action_evidence": (
+                "TICKER_IDENTITY_CONTINUITY"
+                if same_cik else "S_AND_P_MEMBERSHIP_SUCCESSION"
+            ),
+            "common_equity_form25": False,
+            "merger_completion_evidence": not same_cik,
+            "merger_agreement_evidence": False,
+            "sp_source_url": continuity.get("sp_source_url", ""),
+            "sp_source_sha256": continuity.get("sp_source_sha256", ""),
+            "sec_source_url": continuity["sec_source_url"],
+            "sec_source_sha256": continuity["sec_source_sha256"],
+            "review_status": "",
+        })
     statuses = Counter(row["event_status"] for row in rows)
     verified = sum(
         row["event_status"] in {
             "VERIFIED_OFFICIAL_EVENT",
             "OFFICIAL_EVENT_WITH_SEC_ACTION_EVIDENCE",
             "VERIFIED_IDENTITY_CHANGE",
+            "VERIFIED_CORPORATE_CONTINUITY",
         }
         for row in rows
     )
@@ -171,6 +208,7 @@ def build_integrated_ledger(
         "candidate_events": len(rows),
         "source_candidate_rows": len(reconciliation),
         "identity_transitions": len(identity_transitions or []),
+        "corporate_continuity_events": len(continuity_events or []),
         "quarantined_source_artifacts": len(quarantined_keys),
         "event_statuses": dict(statuses),
         "verified_official_events": verified,
@@ -213,6 +251,7 @@ def main() -> None:
     parser.add_argument("output", type=Path)
     parser.add_argument("--identity-transitions", type=Path)
     parser.add_argument("--reconstruction-anomalies", type=Path)
+    parser.add_argument("--continuity-events", type=Path)
     args = parser.parse_args()
     rows, audit = build_integrated_ledger(
         read_csv(args.reconciliation),
@@ -223,6 +262,7 @@ def main() -> None:
         read_csv(args.identity_transitions) if args.identity_transitions else None,
         read_csv(args.reconstruction_anomalies)
         if args.reconstruction_anomalies else None,
+        read_csv(args.continuity_events) if args.continuity_events else None,
     )
     write_csv(args.output, rows)
     print(json.dumps(audit, ensure_ascii=False))

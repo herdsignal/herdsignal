@@ -96,6 +96,39 @@ class IntegratedEventLedgerTest(unittest.TestCase):
         self.assertEqual([], rows)
         self.assertEqual(1, audit["quarantined_source_artifacts"])
 
+    def test_replaces_continuity_components_with_verified_events(self):
+        reconciliation = [
+            {
+                "candidate_effective_date": "2019-11-05",
+                "resolved_effective_date": "2019-11-05",
+                "action": "ADD",
+                "ticker": "NEW",
+                "status": "VERIFIED_CORPORATE_CONTINUITY_COMPONENT",
+            }
+        ]
+        continuity = [{
+            "event_type": "SAME_CIK_RENAME",
+            "candidate_effective_date": "2019-11-05",
+            "effective_date": "2019-11-05",
+            "ticker": "NEW",
+            "old_ticker": "OLD",
+            "cik": "0000000001",
+            "sp_source_url": "",
+            "sp_source_sha256": "",
+            "sec_source_url": "https://www.sec.gov/example",
+            "sec_source_sha256": "a" * 64,
+        }]
+
+        rows, audit = build_integrated_ledger(
+            reconciliation, [], [], [], [], continuity_events=continuity
+        )
+
+        self.assertEqual(1, len(rows))
+        self.assertEqual("IDENTITY_CHANGE", rows[0]["event_type"])
+        self.assertEqual("VERIFIED_CORPORATE_CONTINUITY", rows[0]["event_status"])
+        self.assertEqual(1, audit["corporate_continuity_events"])
+        self.assertTrue(audit["replay_ready"])
+
 
 if __name__ == "__main__":
     unittest.main()

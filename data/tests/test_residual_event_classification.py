@@ -44,13 +44,17 @@ class ResidualEventClassificationTest(unittest.TestCase):
         self.assertFalse(audit["survivorship_safe"])
 
     def test_does_not_reclassify_verified_identity_components(self):
-        rows, audit = classify_residual_events([{
-            "candidate_effective_date": "2020-01-02", "action": "ADD",
-            "ticker": "NEW", "status": "VERIFIED_IDENTITY_CHANGE_COMPONENT",
-        }], [])
+        for status in (
+            "VERIFIED_IDENTITY_CHANGE_COMPONENT",
+            "VERIFIED_CORPORATE_CONTINUITY_COMPONENT",
+        ):
+            rows, audit = classify_residual_events([{
+                "candidate_effective_date": "2020-01-02", "action": "ADD",
+                "ticker": "NEW", "status": status,
+            }], [])
 
-        self.assertEqual([], rows)
-        self.assertEqual(0, audit["residual_events"])
+            self.assertEqual([], rows)
+            self.assertEqual(0, audit["residual_events"])
 
 
 if __name__ == "__main__":

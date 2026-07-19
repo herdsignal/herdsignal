@@ -67,6 +67,23 @@ class DailyConstituentReplayTest(unittest.TestCase):
         self.assertEqual(2, audit["final_count"])
         self.assertTrue(audit["replay_complete"])
 
+    def test_replays_verified_corporate_continuity(self):
+        snapshots, audit = replay_events(
+            {"OLD"},
+            [{
+                "event_type": "IDENTITY_CHANGE",
+                "effective_date": "2019-11-05",
+                "action": "RENAME",
+                "old_ticker": "OLD",
+                "ticker": "NEW",
+                "event_status": "VERIFIED_CORPORATE_CONTINUITY",
+            }],
+            minimum_size=1,
+            maximum_size=1,
+        )
+        self.assertEqual(["NEW"], snapshots[0]["added"])
+        self.assertTrue(audit["replay_complete"])
+
 
 if __name__ == "__main__":
     unittest.main()
