@@ -50,3 +50,9 @@ Thumbs.db
 # ── 로그 ──────────────────────────────────────
 *.log
 logs/
+
+# ── 재현 가능한 연구 산출물 (manifest 포함 로컬 보관) ──
+data/snapshots/*
+!data/snapshots/README.md
+data/walk_forward/*
+!data/walk_forward/README.md
