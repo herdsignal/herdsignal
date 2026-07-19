@@ -219,6 +219,46 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
                     "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
                 )
 
+    def test_does_not_attach_previous_replacement_clause_to_next_ticker(self):
+        release = {
+            "published_date": "2016-08-31",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "Kraft Heinz (NASD: KHC) will replace EMC Corp. (NYSE: EMC) "
+                "in the S&P 100, and Charter Communications (NASD: CHTR) will "
+                "replace EMC in the S&P 500 after the close on September 7."
+            ),
+        }
+        result = verify_candidate(
+            {"effective_date": "2016-09-08", "action": "ADD", "ticker": "CHTR"},
+            release,
+        )
+        self.assertEqual("SEMANTICS_AND_DATE_VERIFIED", result["verification_status"])
+
+    def test_classifies_multiple_replacements_with_respectively(self):
+        release = {
+            "published_date": "2020-06-12",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "The changes are effective prior to the open on Monday, June 22. "
+                "Tyler (NYSE: TYL), Bio-Rad (NYSE: BIO), and Teledyne "
+                "(NYSE: TDY) will move to the S&P 500, replacing Harley-Davidson "
+                "(NYSE: HOG), Nordstrom (NYSE: JWN), and Alliance Data "
+                "(NYSE: ADS) respectively."
+            ),
+        }
+        for ticker in ("HOG", "JWN", "ADS"):
+            with self.subTest(ticker=ticker):
+                result = verify_candidate(
+                    {"effective_date": "2020-06-22", "action": "REMOVE", "ticker": ticker},
+                    release,
+                )
+                self.assertEqual(
+                    "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

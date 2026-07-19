@@ -22,6 +22,7 @@ def reconcile_candidates(
     table_events: list[dict],
     prose_events: list[dict],
     suggestions: list[dict],
+    semantic_events: list[dict] | None = None,
     *,
     correction_window_days: int = 7,
 ) -> tuple[list[dict], dict]:
@@ -31,6 +32,19 @@ def reconcile_candidates(
     for row in table_events:
         table_by_identity.setdefault((row["action"], row["ticker"].upper()), []).append(row)
     suggestion_keys = {event_key(row) for row in suggestions}
+    semantic_by_candidate = {}
+    for row in semantic_events or []:
+        if row["extraction_status"] not in {
+            "OFFICIAL_SEMANTICS_MATCH_CANDIDATE",
+            "OFFICIAL_SEMANTICS_CONFLICTS_WITH_CANDIDATE",
+        }:
+            continue
+        semantic_key = (
+            row["candidate_effective_date"],
+            row["candidate_action"],
+            row["ticker"].upper(),
+        )
+        semantic_by_candidate.setdefault(semantic_key, []).append(row)
     reconciled = []
     for candidate in candidates:
         key = event_key(candidate)
@@ -58,6 +72,46 @@ def reconcile_candidates(
                 status = "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE"
             elif same_identity:
                 status = "DISTANT_SAME_TICKER_EVENT_REQUIRES_IDENTITY_REVIEW"
+            elif key in semantic_by_candidate:
+                semantics = {
+                    (
+                        row.get("official_action", ""),
+                        row.get("membership_session_date", ""),
+                        row.get("stated_effective_date", ""),
+                        row.get("effective_timing", ""),
+                        row.get("source_url", ""),
+                        row.get("source_sha256", ""),
+                    )
+                    for row in semantic_by_candidate[key]
+                }
+                same_action = {
+                    item for item in semantics
+                    if item[0] == key[1] and item[1]
+                }
+                if len(same_action) == 1:
+                    (
+                        action, membership_date, stated_date, timing,
+                        source_url, source_sha256,
+                    ) = next(iter(same_action))
+                    resolved = {
+                        "effective_date": membership_date,
+                        "announcement_date": min(
+                            row["announcement_date"]
+                            for row in semantic_by_candidate[key]
+                            if row.get("official_action") == action
+                            and row.get("membership_session_date") == membership_date
+                        ),
+                        "company_name": "",
+                        "source_url": source_url,
+                        "source_sha256": source_sha256,
+                        "stated_effective_date": stated_date,
+                        "effective_timing": timing,
+                    }
+                    status = "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE"
+                elif any(item[0] and item[0] != key[1] for item in semantics):
+                    status = "CANDIDATE_ACTION_CONFLICTS_WITH_OFFICIAL_PROSE"
+                else:
+                    status = "AMBIGUOUS_OFFICIAL_PROSE_SEMANTICS"
             elif key in suggestion_keys:
                 status = "OFFICIAL_DOCUMENT_TICKER_ONLY"
             else:
@@ -73,6 +127,12 @@ def reconcile_candidates(
                 "company_name": resolved.get("company_name", "") if resolved else "",
                 "source_url": resolved.get("source_url", "") if resolved else "",
                 "source_sha256": resolved.get("source_sha256", "") if resolved else "",
+                "stated_effective_date": (
+                    resolved.get("stated_effective_date", "") if resolved else ""
+                ),
+                "effective_timing": (
+                    resolved.get("effective_timing", "") if resolved else ""
+                ),
             }
         )
     statuses = Counter(row["status"] for row in reconciled)
@@ -80,6 +140,7 @@ def reconcile_candidates(
         "OFFICIAL_TABLE_EXACT",
         "OFFICIAL_PROSE_EXACT",
         "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
+        "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
     }
     return reconciled, {
         "candidate_events": len(reconciled),
@@ -112,12 +173,14 @@ def main() -> None:
     parser.add_argument("prose_events", type=Path)
     parser.add_argument("suggestions", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--semantic-events", type=Path)
     args = parser.parse_args()
     rows, audit = reconcile_candidates(
         read_csv(args.candidates),
         read_csv(args.table_events),
         read_csv(args.prose_events),
         read_csv(args.suggestions),
+        read_csv(args.semantic_events) if args.semantic_events else None,
     )
     write_reconciliation(args.output, rows)
     print(audit)

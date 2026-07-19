@@ -38,6 +38,57 @@ class OfficialCandidateReconciliationTest(unittest.TestCase):
         )
         self.assertFalse(audit["complete"])
 
+    def test_corrects_candidate_date_from_unambiguous_official_semantics(self):
+        rows, audit = reconcile_candidates(
+            [{"effective_date": "2017-07-25", "action": "REMOVE", "ticker": "RAI"}],
+            [],
+            [],
+            [],
+            [{
+                "candidate_effective_date": "2017-07-25",
+                "candidate_action": "REMOVE",
+                "ticker": "RAI",
+                "official_action": "REMOVE",
+                "membership_session_date": "2017-07-26",
+                "stated_effective_date": "2017-07-26",
+                "effective_timing": "PRIOR_TO_OPEN",
+                "announcement_date": "2017-07-19",
+                "source_url": "https://press.spglobal.com/example",
+                "source_sha256": "a" * 64,
+                "extraction_status": "OFFICIAL_SEMANTICS_CONFLICTS_WITH_CANDIDATE",
+            }],
+        )
+        self.assertEqual(
+            "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE", rows[0]["status"]
+        )
+        self.assertEqual("2017-07-26", rows[0]["resolved_effective_date"])
+        self.assertEqual(1, audit["resolved_events"])
+
+    def test_keeps_action_conflict_open(self):
+        rows, audit = reconcile_candidates(
+            [{"effective_date": "2023-06-04", "action": "ADD", "ticker": "DISH"}],
+            [],
+            [],
+            [],
+            [{
+                "candidate_effective_date": "2023-06-04",
+                "candidate_action": "ADD",
+                "ticker": "DISH",
+                "official_action": "REMOVE",
+                "membership_session_date": "2023-06-20",
+                "stated_effective_date": "2023-06-20",
+                "effective_timing": "PRIOR_TO_OPEN",
+                "announcement_date": "2023-06-02",
+                "source_url": "https://press.spglobal.com/example",
+                "source_sha256": "a" * 64,
+                "extraction_status": "OFFICIAL_SEMANTICS_CONFLICTS_WITH_CANDIDATE",
+            }],
+        )
+        self.assertEqual(
+            "CANDIDATE_ACTION_CONFLICTS_WITH_OFFICIAL_PROSE", rows[0]["status"]
+        )
+        self.assertEqual(0, audit["resolved_events"])
+
 
 if __name__ == "__main__":
     unittest.main()

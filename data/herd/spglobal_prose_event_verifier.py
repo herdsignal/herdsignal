@@ -16,6 +16,11 @@ from herd.constituent_event_contract import (
 )
 
 EXCHANGE_TICKER = r"\((?:NYSE|NASD|NASDAQ|AMEX|OTC)\s*:\s*{ticker}\b[^)]*\)"
+ANY_EXCHANGE_TICKER = re.compile(
+    r"\((?:NYSE(?:\s+MKT|\s+American)?|NASD|NASDAQ|AMEX|OTC)\s*:\s*"
+    r"[A-Z0-9.-]+\b[^)]*\)",
+    re.IGNORECASE,
+)
 DATE_PATTERN = re.compile(
     r"(?:January|February|March|April|May|June|July|August|September|Sept\.?|"
     r"October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|"
@@ -123,8 +128,18 @@ def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
     # 교체 대상 ticker 뒤에는 새 구성 종목의 "will be added" 설명이 다시
     # 등장할 수 있다. 따라서 ticker를 감싼 교체 관계를 먼저 판정한다.
     replacement_start = before.lower().rfind("will replace")
+    replacement_tail = (
+        before[replacement_start + len("will replace"):]
+        if replacement_start >= 0 else ""
+    )
+    if (
+        replacement_start >= 0
+        and not ANY_EXCHANGE_TICKER.search(replacement_tail)
+        and re.search(r"in (?:the )?S&P 500", after[:220], re.IGNORECASE)
+    ):
+        return "REMOVE"
     if replacement_start >= 0 and re.search(
-        r"in (?:the )?S&P 500", after[:220], re.IGNORECASE
+        r"respectively\s+in (?:the )?S&P 500", after[:600], re.IGNORECASE
     ):
         return "REMOVE"
     if re.search(
@@ -146,9 +161,10 @@ def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
         return "REMOVE"
     move_start = before.lower().rfind("will move to the s&p 500")
     switching_with_start = before.lower().rfind("switching places with")
+    replacing_start = before.lower().rfind("replacing")
     if (
         move_start >= 0
-        and switching_with_start > move_start
+        and max(switching_with_start, replacing_start) > move_start
         and re.search(r"(?:respectively)?", after[:220], re.IGNORECASE)
     ):
         return "REMOVE"
