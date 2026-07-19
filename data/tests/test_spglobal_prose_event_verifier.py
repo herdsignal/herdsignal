@@ -150,6 +150,75 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
             "CONFLICTING_OFFICIAL_EFFECTIVE_SEMANTICS", conflicts[0]["reason"]
         )
 
+    def test_classifies_replaced_ticker_as_remove_before_later_addition_copy(self):
+        release = {
+            "published_date": "2017-03-06",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "DISH Network Corp. (NASD: DISH) will replace Linear Technology "
+                "Corp. (NASD: LLTC) in the S&P 500 effective prior to the open "
+                "on Monday, March 13. DISH will be added to the S&P 500 GICS "
+                "Cable Sub-Industry index."
+            ),
+        }
+        result = verify_candidate(
+            {"effective_date": "2017-03-13", "action": "REMOVE", "ticker": "LLTC"},
+            release,
+        )
+        self.assertEqual("SEMANTICS_AND_DATE_VERIFIED", result["verification_status"])
+
+    def test_classifies_respectively_switch_groups(self):
+        release = {
+            "published_date": "2018-06-08",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "The changes will be effective prior to the open on Monday, "
+                "June 18. HollyFrontier Corp. (NYSE: HFC) and Broadridge "
+                "Financial Solutions Inc. (NYSE: BR) will switch places with "
+                "Acuity Brands Inc. (NYSE: AYI) and Range Resources Corp. "
+                "(NYSE: RRC) respectively in the S&P 500."
+            ),
+        }
+        for action, ticker in (
+            ("ADD", "HFC"), ("ADD", "BR"), ("REMOVE", "AYI"), ("REMOVE", "RRC"),
+        ):
+            with self.subTest(action=action, ticker=ticker):
+                result = verify_candidate(
+                    {"effective_date": "2018-06-18", "action": action, "ticker": ticker},
+                    release,
+                )
+                self.assertEqual(
+                    "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+                )
+
+    def test_classifies_move_and_switching_places_groups(self):
+        release = {
+            "published_date": "2019-12-13",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "The changes will be effective prior to the open on Monday, "
+                "December 23. Live Nation (NYSE: LYV), Zebra (NASD: ZBRA), and "
+                "STERIS (NYSE: STE) will move to the S&P 500, switching places "
+                "with AMG (NYSE: AMG), TripAdvisor (NASD: TRIP), and Macerich "
+                "(NYSE: MAC) respectively."
+            ),
+        }
+        for action, ticker in (
+            ("ADD", "LYV"), ("ADD", "ZBRA"), ("ADD", "STE"),
+            ("REMOVE", "AMG"), ("REMOVE", "TRIP"), ("REMOVE", "MAC"),
+        ):
+            with self.subTest(action=action, ticker=ticker):
+                result = verify_candidate(
+                    {"effective_date": "2019-12-23", "action": action, "ticker": ticker},
+                    release,
+                )
+                self.assertEqual(
+                    "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

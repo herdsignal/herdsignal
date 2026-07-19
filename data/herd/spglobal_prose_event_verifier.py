@@ -67,10 +67,12 @@ def qualified_effective_mentions(
     *,
     published_date: date,
 ) -> set[tuple[date, str]]:
-    window_start = max(0, start - 800)
-    window_end = min(len(text), end + 800)
+    window_start = max(0, start - 1600)
+    window_end = min(len(text), end + 1600)
     window = text[window_start:window_end]
-    mentions = set()
+    occurrence_start = start - window_start
+    occurrence_end = end - window_start
+    mentions = []
     for match in DATE_PATTERN.finditer(window):
         qualifier_start = max(0, match.start() - 130)
         qualifier_end = min(len(window), match.end() + 40)
@@ -81,11 +83,25 @@ def qualified_effective_mentions(
             timing = classify_effective_timing(context)
         except ConstituentEventContractError:
             continue
-        mentions.add((
+        if match.end() <= occurrence_start:
+            distance = occurrence_start - match.end()
+        elif match.start() >= occurrence_end:
+            distance = match.start() - occurrence_end
+        else:
+            distance = 0
+        mentions.append((
+            distance,
             parse_date_mention(match.group(), published_date=published_date),
             timing,
         ))
-    return mentions
+    if not mentions:
+        return set()
+    nearest_distance = min(item[0] for item in mentions)
+    return {
+        (stated_date, timing)
+        for distance, stated_date, timing in mentions
+        if distance == nearest_distance
+    }
 
 
 def mention_matches_candidate(
@@ -102,25 +118,61 @@ def mention_matches_candidate(
 
 
 def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
-    before = text[max(0, ticker_match.start() - 450):ticker_match.start()]
-    after = text[ticker_match.end():min(len(text), ticker_match.end() + 450)]
+    before = text[max(0, ticker_match.start() - 650):ticker_match.start()]
+    after = text[ticker_match.end():min(len(text), ticker_match.end() + 650)]
+    # 교체 대상 ticker 뒤에는 새 구성 종목의 "will be added" 설명이 다시
+    # 등장할 수 있다. 따라서 ticker를 감싼 교체 관계를 먼저 판정한다.
+    replacement_start = before.lower().rfind("will replace")
+    if replacement_start >= 0 and re.search(
+        r"in (?:the )?S&P 500", after[:220], re.IGNORECASE
+    ):
+        return "REMOVE"
     if re.search(
-        r"(?:will be added to|will join)\s+(?:the\s+)?S&P 500", after, re.IGNORECASE
+        r"(?:will be added to|will join)\s+(?:the\s+)?S&P 500",
+        after[:180],
+        re.IGNORECASE,
     ):
         return "ADD"
     if re.search(
-        r"will replace.{0,260}in (?:the )?S&P 500", after, re.IGNORECASE
+        r"which will be removed from (?:the\s+)?S&P 500",
+        after[:180],
+        re.IGNORECASE,
+    ):
+        return "REMOVE"
+    switching_start = before.lower().rfind("will switch places with")
+    if switching_start >= 0 and re.search(
+        r"(?:respectively\s+)?in (?:the )?S&P 500", after[:350], re.IGNORECASE
+    ):
+        return "REMOVE"
+    move_start = before.lower().rfind("will move to the s&p 500")
+    switching_with_start = before.lower().rfind("switching places with")
+    if (
+        move_start >= 0
+        and switching_with_start > move_start
+        and re.search(r"(?:respectively)?", after[:220], re.IGNORECASE)
+    ):
+        return "REMOVE"
+    if re.search(
+        r"will replace.{0,260}in (?:the )?S&P 500",
+        after[:400],
+        re.IGNORECASE,
+    ):
+        return "ADD"
+    if re.search(
+        r"will switch places with.{0,500}(?:respectively\s+)?"
+        r"in (?:the )?S&P 500",
+        after[:600],
+        re.IGNORECASE,
+    ):
+        return "ADD"
+    if re.search(
+        r"will move to (?:the )?S&P 500", after[:400], re.IGNORECASE
     ):
         return "ADD"
     if re.search(
         r"(?:will be removed from|will leave)\s+(?:the\s+)?S&P 500",
-        after,
+        after[:350],
         re.IGNORECASE,
-    ):
-        return "REMOVE"
-    replacement_start = before.lower().rfind("will replace")
-    if replacement_start >= 0 and re.search(
-        r"in (?:the )?S&P 500", after[:250], re.IGNORECASE
     ):
         return "REMOVE"
     return None

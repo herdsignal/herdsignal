@@ -5,6 +5,7 @@ from herd.constituent_event_contract import (
     build_official_event,
     classify_effective_timing,
     membership_session_date,
+    xnys_membership_session_date,
 )
 
 
@@ -27,6 +28,20 @@ class ConstituentEventContractTest(unittest.TestCase):
                 "AFTER_CLOSE",
                 ["2024-03-18", "2024-03-19"],
             ),
+        )
+
+    def test_classifies_prior_to_market_open_variant(self):
+        self.assertEqual(
+            "PRIOR_TO_OPEN",
+            classify_effective_timing(
+                "effective prior to the market open on Tuesday, November 13"
+            ),
+        )
+
+    def test_xnys_after_close_skips_labor_day(self):
+        self.assertEqual(
+            "2016-09-06",
+            xnys_membership_session_date("2016-09-02", "AFTER_CLOSE"),
         )
 
     def test_unspecified_timing_fails_closed(self):

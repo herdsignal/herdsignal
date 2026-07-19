@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from datetime import date
+from datetime import date, timedelta
 from urllib.parse import urlparse
 
 ACTION_VALUES = {"ADD", "REMOVE"}
@@ -17,6 +17,7 @@ SHA256 = re.compile(r"[0-9a-f]{64}")
 
 PRIOR_TO_OPEN = re.compile(
     r"(?:effective\s+)?prior to (?:the\s+)?open(?:ing)?|"
+    r"(?:effective\s+)?prior to (?:the\s+)?market open|"
     r"before (?:the\s+)?market opens|at the open",
     re.IGNORECASE,
 )
@@ -62,6 +63,26 @@ def membership_session_date(
         else [session for session in sessions if session > stated]
     )
     return eligible[0].isoformat() if eligible else None
+
+
+def xnys_membership_session_date(
+    stated_effective_date: str,
+    effective_timing: str,
+) -> str | None:
+    if effective_timing not in TIMING_VALUES:
+        raise ConstituentEventContractError(
+            f"unsupported effective timing: {effective_timing}"
+        )
+    if effective_timing == "UNSPECIFIED":
+        return None
+    import exchange_calendars as xcals
+
+    calendar = xcals.get_calendar("XNYS")
+    stated = date.fromisoformat(stated_effective_date)
+    lookup = stated if effective_timing == "PRIOR_TO_OPEN" else stated + timedelta(days=1)
+    return calendar.date_to_session(
+        lookup.isoformat(), direction="next"
+    ).date().isoformat()
 
 
 def validate_official_event(event: dict) -> None:
