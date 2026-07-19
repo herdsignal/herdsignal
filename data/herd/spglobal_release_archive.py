@@ -22,6 +22,11 @@ CHANGE_TITLE_PATTERNS = (
     re.compile(r"(?:addition to|continues in)\s+(?:the\s+)?s&p 500", re.IGNORECASE),
     re.compile(r"s&p 500\s+(?:changes|quarterly)", re.IGNORECASE),
     re.compile(r"\breplace\b", re.IGNORECASE),
+    re.compile(
+        r"s&p\s+(?:dow jones indices|u\.?s\.? indices).{0,100}"
+        r"(?:changes|adjustments|rebalance)",
+        re.IGNORECASE,
+    ),
 )
 
 
@@ -39,7 +44,18 @@ def discover_release_links(content: bytes, start_date: date, end_date: date) -> 
             continue
         published = date.fromisoformat(match.group(1))
         title = " ".join(anchor.text_content().split())
-        if not start_date <= published <= end_date or "s&p 500" not in title.lower():
+        normalized_title = title.lower()
+        broad_us_index_change = (
+            ("s&p u.s. indices" in normalized_title
+             or "s&p dow jones indices" in normalized_title)
+            and any(
+                term in normalized_title
+                for term in ("change", "adjustment", "rebalance")
+            )
+        )
+        if not start_date <= published <= end_date:
+            continue
+        if "s&p 500" not in normalized_title and not broad_us_index_change:
             continue
         if not any(pattern.search(title) for pattern in CHANGE_TITLE_PATTERNS):
             continue

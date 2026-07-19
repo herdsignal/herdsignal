@@ -35,6 +35,15 @@ class SpglobalReleaseArchiveTest(unittest.TestCase):
         rows = discover_release_links(source, date(2016, 1, 1), date(2021, 1, 1))
         self.assertEqual(2, len(rows))
 
+    def test_discovers_broad_us_indices_change_title(self):
+        source = b"""
+        <a href="https://press.spglobal.com/2017-03-10-S-P-Dow-Jones-Indices-Announces-Changes-to-U-S-Indices">
+          S&amp;P Dow Jones Indices Announces Changes to U.S. Indices
+        </a>
+        """
+        rows = discover_release_links(source, date(2017, 1, 1), date(2017, 12, 31))
+        self.assertEqual(1, len(rows))
+
 
 if __name__ == "__main__":
     unittest.main()

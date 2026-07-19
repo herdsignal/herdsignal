@@ -279,6 +279,50 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
                 "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
             )
 
+    def test_classifies_plural_replacement_sources_as_additions(self):
+        release = {
+            "published_date": "2017-06-09",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "S&P MidCap 400 constituents Align Technology Inc. (NASD: ALGN) "
+                "and ANSYS Inc. (NASD: ANSS) will replace Teradata Corp. "
+                "(NYSE: TDC) and Ryder System Inc. (NYSE: R) respectively in "
+                "the S&P 500 effective prior to the open on Monday, June 19."
+            ),
+        }
+        for ticker in ("ALGN", "ANSS"):
+            result = verify_candidate(
+                {"effective_date": "2017-06-19", "action": "ADD", "ticker": ticker},
+                release,
+            )
+            self.assertEqual(
+                "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+            )
+
+    def test_classifies_plural_replacement_targets_as_removals(self):
+        release = {
+            "published_date": "2017-07-19",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "b" * 64,
+            "text": (
+                "ResMed Inc. (NYSE: RMD), Packaging Corp. (NYSE: PKG), "
+                "A.O. Smith Corp. (NYSE: AOS) and Duke Realty Corp. (NYSE: DRE) "
+                "will replace Mallinckrodt plc (NYSE: MNK), Murphy Oil Corp. "
+                "(NYSE: MUR), Bed Bath & Beyond Inc. (NASD: BBBY) and "
+                "Transocean Ltd. (NYSE: RIG) respectively in the S&P 500 "
+                "effective prior to the open on Wednesday, July 26."
+            ),
+        }
+        for ticker in ("MUR", "BBBY"):
+            result = verify_candidate(
+                {"effective_date": "2017-07-26", "action": "REMOVE", "ticker": ticker},
+                release,
+            )
+            self.assertEqual(
+                "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

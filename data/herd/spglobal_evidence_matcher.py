@@ -10,7 +10,10 @@ from pathlib import Path
 
 from lxml import html
 
-EXCHANGE_TICKER = r"(?:NYSE|NASD|NASDAQ|AMEX|OTC)\s*:\s*{ticker}\b"
+EXCHANGE_TICKER = (
+    r"(?:NYSE(?:\s+(?:MKT|American))?|NASD|NASDAQ|AMEX|OTC)"
+    r"\s*:\s*{ticker}\b"
+)
 
 
 class EvidenceMatcherError(RuntimeError):
