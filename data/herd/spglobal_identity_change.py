@@ -21,7 +21,8 @@ NEW_TICKER_PATTERNS = (
     ),
 )
 ANY_TICKER = re.compile(
-    r"\((?:NYSE|NASD|NASDAQ|AMEX|OTC)\s*:\s*([A-Z][A-Z0-9.-]+)\)",
+    r"\((?:NYSE(?:\s+(?:MKT|American))?|NASD|NASDAQ|AMEX|OTC)"
+    r"\s*:\s*([A-Z][A-Z0-9.-]+)\)",
     re.IGNORECASE,
 )
 

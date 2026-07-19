@@ -259,6 +259,26 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
                     "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
                 )
 
+    def test_accepts_nyse_american_exchange_label(self):
+        release = {
+            "published_date": "2024-01-02",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "Example Corp. (NYSE American: EX) will replace Old Corp. "
+                "(NYSE MKT: OLD) in the S&P 500 effective prior to the open "
+                "on Monday, January 8."
+            ),
+        }
+        for action, ticker in (("ADD", "EX"), ("REMOVE", "OLD")):
+            result = verify_candidate(
+                {"effective_date": "2024-01-08", "action": action, "ticker": ticker},
+                release,
+            )
+            self.assertEqual(
+                "SEMANTICS_AND_DATE_VERIFIED", result["verification_status"]
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

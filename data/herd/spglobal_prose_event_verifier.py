@@ -15,7 +15,10 @@ from herd.constituent_event_contract import (
     classify_effective_timing,
 )
 
-EXCHANGE_TICKER = r"\((?:NYSE|NASD|NASDAQ|AMEX|OTC)\s*:\s*{ticker}\b[^)]*\)"
+EXCHANGE_TICKER = (
+    r"\((?:NYSE(?:\s+(?:MKT|American))?|NASD|NASDAQ|AMEX|OTC)"
+    r"\s*:\s*{ticker}\b[^)]*\)"
+)
 ANY_EXCHANGE_TICKER = re.compile(
     r"\((?:NYSE(?:\s+MKT|\s+American)?|NASD|NASDAQ|AMEX|OTC)\s*:\s*"
     r"[A-Z0-9.-]+\b[^)]*\)",
@@ -165,7 +168,6 @@ def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
     if (
         move_start >= 0
         and max(switching_with_start, replacing_start) > move_start
-        and re.search(r"(?:respectively)?", after[:220], re.IGNORECASE)
     ):
         return "REMOVE"
     if re.search(
