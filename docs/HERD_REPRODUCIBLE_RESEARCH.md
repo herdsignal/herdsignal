@@ -210,6 +210,27 @@ PYTHONPATH=. .venv/bin/python -m herd.evidence_family_validation \
 실행 manifest와 일별 수익률을 보존한다. 집계 결과만 저장한 과거 보고서는
 참고 기록일 뿐 차세대 HERD 채택 근거로 사용하지 않는다.
 
+## SEC PIT 가격·fold 연결
+
+가격 ticker를 current CIK 하나로 전체 과거에 소급하지 않는다. 먼저
+가격 스냅샷과 현재 CIK를 감사하고, corpus가 없는 CIK만 별도 수집한다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.sec_price_fold_link \
+  snapshots/yf-10y-20260719/manifest.json \
+  reference/sec/sec-current-20260719/ticker_cik_current.csv \
+  reference/sec/sec-pit-price51-20160718-20260717-20260721 \
+  walk_forward/fixed-b0-b3-20260719/folds.csv \
+  reports/sec_price_fold_link_v2.csv \
+  --additional-corpus \
+  reference/sec/sec-pit-157cik-20160718-20260717-20260719
+```
+
+ETF는 `NOT_APPLICABLE_ETF`, SEC 접수시각 미연결과 CIK 유효기간 오류는
+fail-closed로 처리한다. 접수 시각이 fold 경계보다 늦은 관측은 해당 fold에
+노출하지 않는다.
+
 ## 근거
 
 - scikit-learn `TimeSeriesSplit`: 시간 순서를 보존하고 train과 test 사이

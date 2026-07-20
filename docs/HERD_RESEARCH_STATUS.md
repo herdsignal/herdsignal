@@ -224,3 +224,20 @@ SEC PIT corpus는 확보했지만 기업별 시점 관측을 55종목 가격·fo
 - 유일 CIK 후보 157개의 SEC PIT corpus 362개 문서 수집·해시 고정
 - 재무 관측값 2,119,906개를 접수 시각에 연결, 미연결 0개
 - 153개 CIK는 PIT 준비 완료, Company Facts 미제공 4개 때문에 전체 게이트 미통과
+
+#### 55종목 가격·CIK·fold 연결
+
+- 가격 스냅샷 55종목을 기업 51개와 ETF 4개로 분리했다.
+- 과거 S&P 사건 조사용 SEC corpus는 가격 종목 중 TSLA만 포함해 별도
+  가격 유니버스 수집 대기열을 생성했다.
+- 부족한 50개 CIK의 submissions, Company Facts 및 기간 중 과거 filing
+  조각 237개, 269,030,552바이트를 별도 corpus로 해시 고정했다.
+- Company Facts를 제공하지 않은 CIK는 0개다.
+- 접수 시각이 확인된 사실만 각 fold 테스트 시작 전 UTC 경계로 조회한다.
+- 최신 fold 기준 49/51개 기업이 `PIT_FACTS_READY`다.
+- CRM은 Company Facts의 한 accession이 submissions에서 확인되지 않아
+  해당 accession 관측을 엄격 제외하고 차단한다.
+- XOM은 2026년 현재 CIK를 과거 fold에 소급한 current-ticker 매핑 오류로
+  차단한다. 과거 CIK 0000034088의 유효기간 연결이 필요하다.
+- ETF에는 기업 재무 안전장치를 적용하지 않는다.
+- 따라서 기업 안전장치 OOS 연구는 아직 `research_ready=false`다.
