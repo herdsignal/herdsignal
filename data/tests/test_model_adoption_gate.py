@@ -18,8 +18,13 @@ def _passing_metadata() -> dict:
             "positive_excess_rate": 63.0,
             "median_upside_capture": 0.91,
             "median_downside_capture": 0.78,
+            "median_average_exposure": 0.91,
         },
         "cost_stress": {"median_excess_cagr": 0.004},
+        "action_efficacy": {
+            "status": "COMPLETE",
+            "required_metrics_complete": True,
+        },
         "walk_forward_summary": {
             "improvement_rate": 65.0,
             "mdd_improvement_median": 1.0,
@@ -75,3 +80,16 @@ class ModelAdoptionGateTest(unittest.TestCase):
         result = evaluate_adoption_gate(metadata)
 
         self.assertIn("blind_holdout_single_use", result["failed_criteria"])
+
+    def test_low_exposure_or_incomplete_cycles_cannot_pass(self) -> None:
+        metadata = _passing_metadata()
+        metadata["benchmark_summary"]["median_average_exposure"] = 0.79
+        metadata["action_efficacy"]["required_metrics_complete"] = False
+
+        result = evaluate_adoption_gate(metadata)
+
+        self.assertIn("average_exposure", result["failed_criteria"])
+        self.assertIn(
+            "completed_action_cycle_metrics",
+            result["failed_criteria"],
+        )

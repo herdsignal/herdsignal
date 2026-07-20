@@ -1,0 +1,201 @@
+{
+  "registry_version": "2026.07-timing-v1",
+  "locked_at": "2026-07-21",
+  "status": "LOCKED_BEFORE_HYPOTHESIS_RESULTS",
+  "objective": {
+    "primary": "Increase long-horizon terminal wealth versus same-stock Buy & Hold through partial profit-taking and partial add-buy cycles.",
+    "subject": "A company already selected for long-term ownership.",
+    "herd_semantics": "Ordinal 0-100 crowd dispersion-to-crowding state; higher means more crowded, not higher expected return.",
+    "default_action": "HOLD",
+    "personal_inputs_in_score": false
+  },
+  "state_bands": [
+    {"name": "FLEE", "minimum": 0, "maximum": 15},
+    {"name": "SCATTER", "minimum": 16, "maximum": 40},
+    {"name": "CALM", "minimum": 41, "maximum": 59},
+    {"name": "DRIFT", "minimum": 60, "maximum": 74},
+    {"name": "RUSH", "minimum": 75, "maximum": 100}
+  ],
+  "evidence_families": [
+    {
+      "id": "PRICE_EXTENSION",
+      "role": "CROWDING_LEVEL",
+      "allowed_effect": "RAISE_OR_LOWER_HERD",
+      "candidate_features": [
+        "VOLATILITY_NORMALIZED_MA50_DISTANCE",
+        "VOLATILITY_NORMALIZED_MA200_DISTANCE",
+        "WEEKLY_RSI",
+        "MONTHLY_RSI",
+        "POSITION_IN_52_WEEK_RANGE"
+      ]
+    },
+    {
+      "id": "TREND_MATURITY",
+      "role": "RUSH_LIFECYCLE",
+      "allowed_effect": "CLASSIFY_HEALTHY_EXTENDING_EXHAUSTED_BREAKING",
+      "candidate_features": [
+        "SIX_MONTH_ABSOLUTE_MOMENTUM",
+        "TWELVE_MONTH_ABSOLUTE_MOMENTUM",
+        "MA50_SLOPE",
+        "MA200_SLOPE",
+        "FAST_SLOW_MOMENTUM_DECELERATION"
+      ]
+    },
+    {
+      "id": "PARTICIPATION",
+      "role": "TREND_CONFIDENCE",
+      "allowed_effect": "CONFIRM_OR_WEAKEN_OTHER_EVIDENCE",
+      "candidate_features": [
+        "STOCK_UP_DOWN_VOLUME_RATIO",
+        "STOCK_20_TO_120_DAY_VOLUME_RATIO",
+        "PIT_MARKET_ABOVE_MA200_BREADTH",
+        "PIT_SECTOR_ABOVE_MA200_BREADTH",
+        "EQUAL_WEIGHT_VS_CAP_WEIGHT_SPREAD"
+      ]
+    },
+    {
+      "id": "RELATIVE_OVERHEAT",
+      "role": "STOCK_SECTOR_MARKET_CONTEXT",
+      "allowed_effect": "DISTINGUISH_STRENGTH_FROM_EXHAUSTION",
+      "candidate_features": [
+        "STOCK_VS_SECTOR_SIX_MONTH_RETURN",
+        "STOCK_VS_SPY_SIX_MONTH_RETURN",
+        "SECTOR_VS_SPY_SIX_MONTH_RETURN",
+        "RELATIVE_STRENGTH_DECELERATION"
+      ]
+    },
+    {
+      "id": "MARKET_RISK",
+      "role": "ACTION_INTENSITY_CAP",
+      "allowed_effect": "LIMIT_ACTION_NOT_SET_DIRECTION",
+      "candidate_features": [
+        "SPY_MA200_REGIME",
+        "PIT_MARKET_BREADTH_REGIME",
+        "SIXTY_THREE_DAY_DOWNSIDE_VOLATILITY",
+        "TWELVE_MONTH_DRAWDOWN",
+        "DOWNSIDE_BETA_TO_SPY"
+      ]
+    },
+    {
+      "id": "BUSINESS_GUARD",
+      "role": "BLOCK_ADD_BUY",
+      "allowed_effect": "VETO_ADD_BUY_ONLY",
+      "candidate_features": [
+        "PIT_OPERATING_PROFITABILITY",
+        "PIT_OPERATING_CASH_FLOW_QUALITY",
+        "PIT_DEBT_BURDEN",
+        "PIT_SHARE_DILUTION",
+        "PIT_REVENUE_AND_MARGIN_DETERIORATION",
+        "PIT_LISTING_AND_GOING_CONCERN_RISK"
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "claim": "Volatility-normalized price extension is associated with subsequent 3-6 month reversal or drawdown.",
+      "required_families": ["PRICE_EXTENSION"],
+      "forward_horizons_months": [1, 3, 6],
+      "test_type": "MONOTONIC_BUCKET_AND_RANK_IC"
+    },
+    {
+      "id": "H2",
+      "claim": "Holding Healthy or Extending Rush outperforms immediate profit-taking, while Exhausted or Breaking Rush improves profit-taking efficacy.",
+      "required_families": ["PRICE_EXTENSION", "TREND_MATURITY"],
+      "forward_horizons_months": [1, 3, 6],
+      "test_type": "RUSH_LIFECYCLE_EVENT_STUDY"
+    },
+    {
+      "id": "H3",
+      "claim": "Fast momentum weakening before slow momentum improves detection of exhausted crowding.",
+      "required_families": ["TREND_MATURITY"],
+      "forward_horizons_months": [1, 3, 6],
+      "test_type": "DECELERATION_EVENT_STUDY"
+    },
+    {
+      "id": "H4",
+      "claim": "A decline explained by market and sector weakness has better add-buy outcomes than an idiosyncratic company decline.",
+      "required_families": ["RELATIVE_OVERHEAT", "MARKET_RISK"],
+      "forward_horizons_months": [3, 6, 12],
+      "test_type": "MARKET_SECTOR_RESIDUAL_DECLINE_STUDY"
+    },
+    {
+      "id": "H5",
+      "claim": "Blocking add-buys when point-in-time business condition deteriorates improves downside outcomes.",
+      "required_families": ["BUSINESS_GUARD"],
+      "forward_horizons_months": [3, 6, 12],
+      "test_type": "GUARDRAIL_ABLATION"
+    },
+    {
+      "id": "H6",
+      "claim": "Completed partial profit-take and re-entry cycles increase shares or terminal wealth versus no action.",
+      "required_families": ["PRICE_EXTENSION", "TREND_MATURITY", "BUSINESS_GUARD"],
+      "forward_horizons_months": [3, 6, 12],
+      "test_type": "COMPLETED_CYCLE_COUNTERFACTUAL"
+    },
+    {
+      "id": "H7",
+      "claim": "High-default-exposure continuous actions preserve compounding better than 0-50-100 exposure rules.",
+      "required_families": ["PRICE_EXTENSION", "TREND_MATURITY", "MARKET_RISK"],
+      "forward_horizons_months": [12],
+      "test_type": "EXPOSURE_RULE_ABLATION"
+    }
+  ],
+  "action_contract": {
+    "long_only": true,
+    "default_target_exposure_minimum": 0.9,
+    "research_target_exposure_floor": 0.4,
+    "maximum_monthly_change": 0.15,
+    "full_liquidation_allowed": false,
+    "rush_alone_can_sell": false,
+    "flee_alone_can_buy": false,
+    "business_guard_can_raise_herd": false,
+    "business_guard_can_block_add_buy": true,
+    "profit_take_requires": ["RUSH", "EXHAUSTED_OR_BREAKING_CONFIRMATION"],
+    "add_buy_requires": ["FLEE_OR_SCATTER", "BUSINESS_GUARD_PASS", "MARKET_OR_SECTOR_EXPLANATION"]
+  },
+  "evaluation_contract": {
+    "benchmark_scenarios": [
+      "EXISTING_HOLDER_FULLY_INVESTED",
+      "NEW_ENTRANT_CASH",
+      "MONTHLY_CONTRIBUTION"
+    ],
+    "execution": "NEXT_TRADING_DAY_OPEN",
+    "base_one_way_fee": 0.001,
+    "base_one_way_slippage": 0.0005,
+    "stress_one_way_fee": 0.002,
+    "stress_one_way_slippage": 0.0015,
+    "minimum_average_exposure": 0.8,
+    "primary_metrics": [
+      "TERMINAL_WEALTH",
+      "CAGR",
+      "EXCESS_CAGR",
+      "MAX_DRAWDOWN",
+      "CALMAR",
+      "SORTINO",
+      "UPSIDE_CAPTURE",
+      "DOWNSIDE_CAPTURE"
+    ],
+    "action_metrics": [
+      "PROFIT_TAKE_AVOIDED_DRAWDOWN_1_3_6M",
+      "ADD_BUY_FORWARD_RETURN_1_3_6_12M",
+      "MISSED_GAIN_AFTER_PROFIT_TAKE",
+      "ADVERSE_EXCURSION_AFTER_ADD_BUY",
+      "COMPLETED_CYCLE_WEALTH_DELTA",
+      "COMPLETED_CYCLE_SHARE_DELTA"
+    ],
+    "oos_only_for_candidate_adoption": true,
+    "blind_holdout_single_use": true
+  },
+  "forbidden_shortcuts": [
+    "TREAT_HIGH_RSI_AS_AUTOMATIC_SELL",
+    "TREAT_LOW_HERD_AS_AUTOMATIC_BUY",
+    "USE_FUTURE_FILING_INFORMATION",
+    "BACKFILL_REVISED_FUNDAMENTALS_BEFORE_ACCEPTANCE_TIME",
+    "OPTIMIZE_THRESHOLDS_ON_TEST_OR_HOLDOUT",
+    "COMBINE_UNVALIDATED_FAMILIES",
+    "DECLARE_SUCCESS_FROM_MDD_IMPROVEMENT_ALONE",
+    "IGNORE_REENTRY_AFTER_PROFIT_TAKING",
+    "EXCLUDE_FAILED_TICKERS_TO_RAISE_COVERAGE"
+  ]
+}

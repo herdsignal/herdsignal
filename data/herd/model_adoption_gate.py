@@ -11,7 +11,7 @@ from typing import Any
 
 @dataclass(frozen=True)
 class AdoptionThresholds:
-    version: str = "2026.07-v2"
+    version: str = "2026.07-v3"
     minimum_coverage: float = 0.95
     minimum_universe_size: int = 55
     minimum_oos_years: float = 5.0
@@ -20,6 +20,7 @@ class AdoptionThresholds:
     minimum_upside_capture: float = 0.85
     maximum_downside_capture: float = 0.90
     minimum_cost_stress_excess_cagr: float = 0.0
+    minimum_average_exposure: float = 0.80
     minimum_oos_improvement_rate: float = 60.0
     minimum_oos_mdd_improvement: float = 0.0
     minimum_bottom_decile_capture: float = 60.0
@@ -48,6 +49,7 @@ def evaluate_adoption_gate(
     parameter_policy = metadata.get("parameter_policy", {})
     benchmark = metadata.get("benchmark_summary", {})
     cost_stress = metadata.get("cost_stress", {})
+    action_efficacy = metadata.get("action_efficacy", {})
     blind = metadata.get("blind_holdout", {})
 
     coverage = run.get("coverage")
@@ -58,6 +60,7 @@ def evaluate_adoption_gate(
     upside_capture = benchmark.get("median_upside_capture")
     downside_capture = benchmark.get("median_downside_capture")
     stressed_excess_cagr = cost_stress.get("median_excess_cagr")
+    average_exposure = benchmark.get("median_average_exposure")
     improvement_rate = walk.get("improvement_rate")
     mdd_improvement = walk.get("mdd_improvement_median")
     bottom_capture = walk.get("capture_bottom_decile_mean")
@@ -95,6 +98,28 @@ def evaluate_adoption_gate(
                    stressed_excess_cagr is not None
                    and stressed_excess_cagr > thresholds.minimum_cost_stress_excess_cagr,
                    stressed_excess_cagr, f">{thresholds.minimum_cost_stress_excess_cagr}"),
+        _criterion(
+            "average_exposure",
+            average_exposure is not None
+            and average_exposure >= thresholds.minimum_average_exposure,
+            average_exposure,
+            f">={thresholds.minimum_average_exposure}",
+        ),
+        _criterion(
+            "completed_action_cycle_metrics",
+            action_efficacy.get("status") == "COMPLETE"
+            and action_efficacy.get("required_metrics_complete") is True,
+            {
+                "status": action_efficacy.get("status"),
+                "required_metrics_complete": action_efficacy.get(
+                    "required_metrics_complete"
+                ),
+            },
+            {
+                "status": "COMPLETE",
+                "required_metrics_complete": True,
+            },
+        ),
         _criterion("oos_improvement_rate", improvement_rate is not None and improvement_rate >= thresholds.minimum_oos_improvement_rate,
                    improvement_rate, f">={thresholds.minimum_oos_improvement_rate}"),
         _criterion("oos_mdd_improvement", mdd_improvement is not None and mdd_improvement >= thresholds.minimum_oos_mdd_improvement,
