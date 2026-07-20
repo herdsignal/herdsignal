@@ -1,6 +1,7 @@
 package com.herdsignal.service;
 
 import com.herdsignal.dto.ShadowModelStatusResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -12,15 +13,23 @@ public class ShadowModelStatusService {
     private final boolean enabled;
     private final String candidateId;
     private final boolean holdoutPassed;
+    private final OperationalPromotionGate promotionGate;
 
+    @Autowired
     public ShadowModelStatusService(
             @Value("${herdsignal.shadow.enabled:false}") boolean enabled,
             @Value("${herdsignal.shadow.candidate-id:}") String candidateId,
-            @Value("${herdsignal.shadow.holdout-passed:false}") boolean holdoutPassed
+            @Value("${herdsignal.shadow.holdout-passed:false}") boolean holdoutPassed,
+            OperationalPromotionGate promotionGate
     ) {
         this.enabled = enabled;
         this.candidateId = candidateId == null ? "" : candidateId.trim();
         this.holdoutPassed = holdoutPassed;
+        this.promotionGate = promotionGate;
+    }
+
+    ShadowModelStatusService(boolean enabled, String candidateId, boolean holdoutPassed) {
+        this(enabled, candidateId, holdoutPassed, ignored -> holdoutPassed);
     }
 
     public ShadowModelStatusResponse getStatus() {
@@ -31,11 +40,13 @@ public class ShadowModelStatusService {
                     "B0~B4가 사전 채택 기준을 통과하지 못해 shadow 계산을 시작하지 않습니다."
             );
         }
-        if (!StringUtils.hasText(candidateId) || !holdoutPassed) {
+        if (!StringUtils.hasText(candidateId)
+                || !holdoutPassed
+                || !promotionGate.isApproved(candidateId)) {
             return response(
                     "BLOCKED_INVALID_CONFIGURATION",
                     StringUtils.hasText(candidateId) ? candidateId : null,
-                    "후보 ID와 단일 Blind holdout 통과 기록이 모두 필요합니다."
+                    "후보 ID, 단일 Blind holdout, 최종 게이트와 사람 승인 기록이 모두 필요합니다."
             );
         }
         return response(

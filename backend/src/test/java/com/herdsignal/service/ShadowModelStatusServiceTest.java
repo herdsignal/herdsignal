@@ -25,6 +25,16 @@ class ShadowModelStatusServiceTest {
     }
 
     @Test
+    void flagsCannotBypassMissingPromotionApproval() {
+        ShadowModelStatusService service = new ShadowModelStatusService(
+                true, "B3", true, ignored -> false
+        );
+
+        assertThat(service.getStatus().shadowStatus())
+                .isEqualTo("BLOCKED_INVALID_CONFIGURATION");
+    }
+
+    @Test
     void qualifiedCandidateCanOnlyEnterShadowMode() {
         ShadowModelStatusService service = new ShadowModelStatusService(true, "B5", true);
 

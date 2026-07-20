@@ -37,18 +37,28 @@ public class ActionDecisionService {
     public ActionDecisionService(
             PersonalActionTranslator personalActionTranslator,
             @Value("${herdsignal.action.live-enabled:false}") boolean liveActionsEnabled,
-            @Value("${herdsignal.shadow.holdout-passed:false}") boolean holdoutPassed
+            @Value("${herdsignal.shadow.holdout-passed:false}") boolean holdoutPassed,
+            @Value("${herdsignal.shadow.candidate-id:}") String candidateId,
+            OperationalPromotionGate promotionGate
     ) {
         this.personalActionTranslator = personalActionTranslator;
-        this.liveActionsEnabled = liveActionsEnabled && holdoutPassed;
+        this.liveActionsEnabled = liveActionsEnabled
+                && holdoutPassed
+                && promotionGate.isApproved(candidateId);
     }
 
     ActionDecisionService() {
-        this(new PersonalActionTranslator(), false, false);
+        this(new PersonalActionTranslator(), false, false, "", ignored -> false);
     }
 
     ActionDecisionService(boolean liveActionsEnabled) {
-        this(new PersonalActionTranslator(), liveActionsEnabled, liveActionsEnabled);
+        this(
+                new PersonalActionTranslator(),
+                liveActionsEnabled,
+                liveActionsEnabled,
+                "TEST_CANDIDATE",
+                ignored -> liveActionsEnabled
+        );
     }
 
     public ActionDecision decide(HerdScore score, HerdIndicator indicator, Integer qualityScore) {
