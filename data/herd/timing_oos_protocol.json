@@ -1,0 +1,95 @@
+{
+  "protocol_version": "2026.07-role-correct-oos-v1",
+  "status": "LOCKED_BEFORE_OOS_RESULTS",
+  "objective": "Improve terminal wealth for an already-selected long-term holding through completed partial profit-take and re-entry cycles.",
+  "universe": {
+    "price_snapshot": "yf-10y-20260719",
+    "fold_source": "fixed-b0-b3-20260719/folds.csv",
+    "exclude_failed_tickers": false,
+    "survivorship_limitation": "Current 55-ticker universe; never label survivorship-safe."
+  },
+  "common_execution": {
+    "signal_frequency": "MONTH_END",
+    "execution": "NEXT_TRADING_DAY_OPEN",
+    "initial_exposure": 1.0,
+    "default_exposure": 0.9,
+    "minimum_exposure": 0.85,
+    "maximum_exposure": 1.0,
+    "maximum_monthly_change": 0.15,
+    "base_one_way_fee": 0.001,
+    "base_one_way_slippage": 0.0005,
+    "stress_one_way_fee": 0.002,
+    "stress_one_way_slippage": 0.0015
+  },
+  "tests": [
+    {
+      "id": "T_PRICE_EXTENSION",
+      "family": "PRICE_EXTENSION",
+      "standalone_test": "OOS_MONOTONIC_BUCKET_AND_RANK_IC",
+      "action_test": "NONE",
+      "reason": "Extension alone cannot trigger profit-taking."
+    },
+    {
+      "id": "T_TREND_MATURITY",
+      "family": "TREND_MATURITY",
+      "standalone_test": "OOS_CONTINUATION_AND_DECELERATION_EVENT_STUDY",
+      "action_test": "PRICE_EXTENSION_GATED_ABLATION",
+      "reason": "Maturity classifies a crowded state; it does not create crowding."
+    },
+    {
+      "id": "T_RELATIVE_OVERHEAT",
+      "family": "RELATIVE_OVERHEAT",
+      "standalone_test": "OOS_RESIDUAL_RETURN_BUCKET_AND_RANK_IC",
+      "action_test": "PRICE_EXTENSION_GATED_ABLATION",
+      "reason": "Relative strength distinguishes broad strength from stock-specific exhaustion."
+    },
+    {
+      "id": "T_PARTICIPATION",
+      "family": "PARTICIPATION",
+      "standalone_test": "OOS_CONFIRMATION_EVENT_STUDY",
+      "action_test": "PRICE_EXTENSION_AND_TREND_GATED_ABLATION",
+      "reason": "Participation confirms or weakens another signal and cannot set direction."
+    },
+    {
+      "id": "T_MARKET_RISK",
+      "family": "MARKET_RISK",
+      "standalone_test": "OOS_DOWNSIDE_REGIME_EVENT_STUDY",
+      "action_test": "ACTION_INTENSITY_CAP_ABLATION",
+      "reason": "Risk caps action size and cannot set buy or sell direction."
+    },
+    {
+      "id": "T_BUSINESS_GUARD",
+      "family": "BUSINESS_GUARD",
+      "standalone_test": "OOS_DETERIORATION_FORWARD_DOWNSIDE",
+      "action_test": "ADD_BUY_VETO_ABLATION",
+      "reason": "Business data may block an add-buy but cannot raise HERD."
+    }
+  ],
+  "action_candidate": {
+    "profit_take_requires": [
+      "PRICE_EXTENSION_CROWDED",
+      "TREND_EXHAUSTED_OR_BREAKING"
+    ],
+    "reentry_requires": [
+      "PRIOR_PROFIT_TAKE_CASH",
+      "FLEE_OR_SCATTER",
+      "MARKET_OR_SECTOR_EXPLAINED_WEAKNESS",
+      "BUSINESS_GUARD_PASS"
+    ],
+    "continuous_weight_rule": "Interpolate monthly inside [0.85,1.00]; never change more than 0.15.",
+    "forbidden": [
+      "SELL_FROM_HIGH_RSI_ALONE",
+      "BUY_FROM_LOW_HERD_ALONE",
+      "FULL_LIQUIDATION",
+      "UNVERIFIED_SEC_FACT_RESTORATION"
+    ]
+  },
+  "decision_order": [
+    "PREDICTIVE_ROLE_TEST",
+    "ROLE_CORRECT_ACTION_ABLATION",
+    "COMPLETED_CYCLE_TEST",
+    "BASE_COST_WALK_FORWARD",
+    "STRESS_COST_WALK_FORWARD",
+    "ADOPTION_GATE"
+  ]
+}
