@@ -135,6 +135,30 @@ class OfficialCandidateReconciliationTest(unittest.TestCase):
         )
         self.assertEqual(0, audit["resolved_events"])
 
+    def test_routes_unmatched_candidate_without_claiming_document_is_missing(self):
+        rows, audit = reconcile_candidates(
+            [{"effective_date": "2017-08-29", "action": "ADD", "ticker": "IQV"}],
+            [],
+            [],
+            [],
+            resolution_routes=[{
+                "candidate_effective_date": "2017-08-29",
+                "action": "ADD",
+                "ticker": "IQV",
+                "resolution_route": "TICKER_ALIAS",
+            }],
+        )
+        self.assertEqual("UNMATCHED_REQUIRES_TICKER_ALIAS", rows[0]["status"])
+        self.assertEqual("TICKER_ALIAS", rows[0]["resolution_route"])
+        self.assertEqual(0, audit["resolved_events"])
+
+    def test_marks_unknown_unmatched_candidate_for_triage(self):
+        rows, _ = reconcile_candidates(
+            [{"effective_date": "2020-01-02", "action": "ADD", "ticker": "NEW"}],
+            [], [], [],
+        )
+        self.assertEqual("UNMATCHED_REQUIRES_EVIDENCE_TRIAGE", rows[0]["status"])
+
 
 if __name__ == "__main__":
     unittest.main()

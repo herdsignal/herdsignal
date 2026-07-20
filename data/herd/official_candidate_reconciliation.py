@@ -13,6 +13,16 @@ class CandidateReconciliationError(RuntimeError):
     pass
 
 
+ROUTE_STATUSES = {
+    "TICKER_ALIAS": "UNMATCHED_REQUIRES_TICKER_ALIAS",
+    "SHARE_CLASS": "UNMATCHED_REQUIRES_SHARE_CLASS_NORMALIZATION",
+    "CORPORATE_ACTION_CHAIN": "UNMATCHED_REQUIRES_CORPORATE_ACTION_CHAIN",
+    "RECONSTRUCTION_ANOMALY": "UNMATCHED_RECONSTRUCTION_ANOMALY",
+    "OFFICIAL_SOURCE_GAP": "UNMATCHED_OFFICIAL_SOURCE_GAP",
+}
+UNCLASSIFIED_STATUS = "UNMATCHED_REQUIRES_EVIDENCE_TRIAGE"
+
+
 def event_key(row: dict) -> tuple[str, str, str]:
     effective_date = row.get("effective_date") or row.get("candidate_effective_date")
     if not effective_date:
@@ -27,6 +37,7 @@ def reconcile_candidates(
     suggestions: list[dict],
     semantic_events: list[dict] | None = None,
     reviewed_date_corrections: list[dict] | None = None,
+    resolution_routes: list[dict] | None = None,
     *,
     correction_window_days: int = 7,
 ) -> tuple[list[dict], dict]:
@@ -46,6 +57,19 @@ def reconcile_candidates(
     }
     if len(correction_by_candidate) != len(reviewed_date_corrections or []):
         raise CandidateReconciliationError("duplicate reviewed date correction")
+    route_by_candidate = {}
+    for row in resolution_routes or []:
+        key = (
+            row["candidate_effective_date"],
+            row["action"].upper(),
+            row["ticker"].upper(),
+        )
+        route = row["resolution_route"].upper()
+        if route not in ROUTE_STATUSES:
+            raise CandidateReconciliationError(f"unsupported resolution route: {route}")
+        if key in route_by_candidate:
+            raise CandidateReconciliationError("duplicate candidate resolution route")
+        route_by_candidate[key] = row
     semantic_by_candidate = {}
     for row in semantic_events or []:
         if row["extraction_status"] not in {
@@ -148,7 +172,11 @@ def reconcile_candidates(
             elif key in suggestion_keys:
                 status = "OFFICIAL_DOCUMENT_TICKER_ONLY"
             else:
-                status = "NO_OFFICIAL_DOCUMENT_MATCH"
+                route = route_by_candidate.get(key)
+                status = (
+                    ROUTE_STATUSES[route["resolution_route"].upper()]
+                    if route else UNCLASSIFIED_STATUS
+                )
         reconciled.append(
             {
                 "candidate_effective_date": key[0],
@@ -165,6 +193,9 @@ def reconcile_candidates(
                 ),
                 "effective_timing": (
                     resolved.get("effective_timing", "") if resolved else ""
+                ),
+                "resolution_route": (
+                    route_by_candidate.get(key, {}).get("resolution_route", "")
                 ),
             }
         )
@@ -209,6 +240,7 @@ def main() -> None:
     parser.add_argument("output", type=Path)
     parser.add_argument("--semantic-events", type=Path)
     parser.add_argument("--reviewed-date-corrections", type=Path)
+    parser.add_argument("--resolution-routes", type=Path)
     args = parser.parse_args()
     rows, audit = reconcile_candidates(
         read_csv(args.candidates),
@@ -218,6 +250,7 @@ def main() -> None:
         read_csv(args.semantic_events) if args.semantic_events else None,
         read_csv(args.reviewed_date_corrections)
         if args.reviewed_date_corrections else None,
+        read_csv(args.resolution_routes) if args.resolution_routes else None,
     )
     write_reconciliation(args.output, rows)
     print(audit)

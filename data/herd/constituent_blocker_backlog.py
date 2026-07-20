@@ -18,6 +18,38 @@ VERIFIED_EVENT_STATUSES = {
 OFFICIAL_SEMANTICS_CATEGORY = (
     "ACTUAL_MEMBERSHIP_CHANGE_REQUIRES_OFFICIAL_SEMANTICS"
 )
+ROUTED_WORKSTREAMS = {
+    "HISTORICAL_TICKER_ALIAS_REQUIRED": (
+        "TICKER_ALIAS_NORMALIZATION",
+        "VERIFIED_TICKER_HISTORY_AND_EFFECTIVE_INTERVAL",
+        "P0",
+    ),
+    "MULTI_CLASS_NORMALIZATION_REQUIRED": (
+        "SHARE_CLASS_NORMALIZATION",
+        "OFFICIAL_MULTI_CLASS_SYMBOL_EXPRESSION",
+        "P0",
+    ),
+    "CORPORATE_ACTION_CHAIN_REQUIRED": (
+        "CORPORATE_ACTION_CHAIN_RECONSTRUCTION",
+        "S&P_MEMBERSHIP_AND_SEC_CORPORATE_ACTION_TIMELINE",
+        "P0",
+    ),
+    "PUBLIC_RECONSTRUCTION_ANOMALY": (
+        "SOURCE_ANOMALY_QUARANTINE",
+        "SOURCE_CORRECTION_OR_INDEPENDENT_OFFICIAL_EVENT",
+        "P0",
+    ),
+    "OFFICIAL_SOURCE_GAP": (
+        "OFFICIAL_DOCUMENT_DISCOVERY",
+        "S&P_RELEASE_OR_INDEX_ANNOUNCEMENT_URL_AND_SHA256",
+        "P1",
+    ),
+    "EVIDENCE_TRIAGE_REQUIRED": (
+        "EVIDENCE_ROUTE_TRIAGE",
+        "CLASSIFY_BEFORE_EVIDENCE_COLLECTION",
+        "P1",
+    ),
+}
 
 
 class BlockerBacklogError(RuntimeError):
@@ -76,7 +108,11 @@ def build_blocker_backlog(
             if other["action"].upper() != source["action"].upper()
             and abs((other_date - event_date).days) <= pair_window_days
         ]
-        if residual["residual_category"] == OFFICIAL_SEMANTICS_CATEGORY:
+        if residual["residual_category"] in ROUTED_WORKSTREAMS:
+            workstream, evidence, priority = ROUTED_WORKSTREAMS[
+                residual["residual_category"]
+            ]
+        elif residual["residual_category"] == OFFICIAL_SEMANTICS_CATEGORY:
             workstream = "OFFICIAL_MEMBERSHIP_SEMANTICS_REVIEW"
             evidence = "S&P_ACTION_EFFECTIVE_SESSION_AND_MEMBERSHIP_LANGUAGE"
             priority = "P0"

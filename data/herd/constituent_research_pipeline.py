@@ -44,6 +44,7 @@ REQUIRED_INPUTS = {
     "suggestions",
     "semantic_events",
     "reviewed_date_corrections",
+    "resolution_routes",
     "identity_evidence",
     "continuity_claims",
     "sp_continuity_corpus",
@@ -227,6 +228,7 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
             read_csv(inputs["suggestions"]),
             read_csv(inputs["semantic_events"]),
             read_csv(inputs["reviewed_date_corrections"]),
+            read_csv(inputs["resolution_routes"]),
         )
         identity_rows, identity_events, identity_audit = (
             reconcile_identity_transitions(

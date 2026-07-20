@@ -2,8 +2,11 @@ import unittest
 
 from herd.residual_event_classification import (
     ACTUAL_MEMBERSHIP_CHANGE,
-    MISSING_OFFICIAL_DOCUMENT,
+    CORPORATE_ACTION_CHAIN_REQUIRED,
+    EVIDENCE_TRIAGE_REQUIRED,
     RECONSTRUCTION_ANOMALY,
+    SHARE_CLASS_REQUIRED,
+    TICKER_ALIAS_REQUIRED,
     UNCONFIRMED_IDENTITY_CHANGE,
     classify_residual_events,
 )
@@ -13,17 +16,21 @@ class ResidualEventClassificationTest(unittest.TestCase):
     def test_separates_four_fail_closed_resolution_categories(self):
         reconciliation = [
             {"candidate_effective_date": "2020-01-02", "action": "ADD",
-             "ticker": "NEW", "status": "NO_OFFICIAL_DOCUMENT_MATCH"},
+             "ticker": "NEW", "status": "UNMATCHED_REQUIRES_CORPORATE_ACTION_CHAIN"},
             {"candidate_effective_date": "2020-01-02", "action": "REMOVE",
-             "ticker": "OLD", "status": "NO_OFFICIAL_DOCUMENT_MATCH"},
+             "ticker": "OLD", "status": "UNMATCHED_REQUIRES_CORPORATE_ACTION_CHAIN"},
             {"candidate_effective_date": "2020-02-03", "action": "ADD",
              "ticker": "AAA", "status": "OFFICIAL_DOCUMENT_TICKER_ONLY"},
             {"candidate_effective_date": "2020-03-01", "action": "REMOVE",
-             "ticker": "BRK.B", "status": "NO_OFFICIAL_DOCUMENT_MATCH"},
+             "ticker": "BRK.B", "status": "UNMATCHED_RECONSTRUCTION_ANOMALY"},
             {"candidate_effective_date": "2020-03-02", "action": "ADD",
-             "ticker": "BRK-B", "status": "NO_OFFICIAL_DOCUMENT_MATCH"},
+             "ticker": "BRK-B", "status": "UNMATCHED_RECONSTRUCTION_ANOMALY"},
             {"candidate_effective_date": "2020-04-01", "action": "ADD",
-             "ticker": "MISS", "status": "NO_OFFICIAL_DOCUMENT_MATCH"},
+             "ticker": "MISS", "status": "UNMATCHED_REQUIRES_EVIDENCE_TRIAGE"},
+            {"candidate_effective_date": "2020-05-01", "action": "REMOVE",
+             "ticker": "UAA", "status": "UNMATCHED_REQUIRES_SHARE_CLASS_NORMALIZATION"},
+            {"candidate_effective_date": "2020-06-01", "action": "ADD",
+             "ticker": "IQV", "status": "UNMATCHED_REQUIRES_TICKER_ALIAS"},
         ]
         identity = [{
             "old_candidate_date": "2020-01-02", "new_candidate_date": "2020-01-02",
@@ -39,7 +46,9 @@ class ResidualEventClassificationTest(unittest.TestCase):
         self.assertEqual(ACTUAL_MEMBERSHIP_CHANGE, categories["AAA"])
         self.assertEqual(RECONSTRUCTION_ANOMALY, categories["BRK.B"])
         self.assertEqual(RECONSTRUCTION_ANOMALY, categories["BRK-B"])
-        self.assertEqual(MISSING_OFFICIAL_DOCUMENT, categories["MISS"])
+        self.assertEqual(EVIDENCE_TRIAGE_REQUIRED, categories["MISS"])
+        self.assertEqual(SHARE_CLASS_REQUIRED, categories["UAA"])
+        self.assertEqual(TICKER_ALIAS_REQUIRED, categories["IQV"])
         self.assertEqual(0, audit["promotion_allowed_events"])
         self.assertFalse(audit["survivorship_safe"])
 

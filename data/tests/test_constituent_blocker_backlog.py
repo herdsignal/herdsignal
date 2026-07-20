@@ -115,6 +115,23 @@ class ConstituentBlockerBacklogTest(unittest.TestCase):
                 [],
             )
 
+    def test_uses_reviewed_resolution_route_before_date_proximity(self):
+        ledger = [{
+            "candidate_effective_date": "2020-01-02",
+            "action": "ADD",
+            "ticker": "IQV",
+            "event_status": "UNRESOLVED",
+        }]
+        residual = [{
+            "candidate_effective_date": "2020-01-02",
+            "action": "ADD",
+            "ticker": "IQV",
+            "residual_category": "HISTORICAL_TICKER_ALIAS_REQUIRED",
+        }]
+        rows, _ = build_blocker_backlog(ledger, residual)
+        self.assertEqual("TICKER_ALIAS_NORMALIZATION", rows[0]["workstream"])
+        self.assertEqual("P0", rows[0]["priority"])
+
 
 if __name__ == "__main__":
     unittest.main()

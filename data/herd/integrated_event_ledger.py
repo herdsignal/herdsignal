@@ -107,7 +107,10 @@ def build_integrated_ledger(
             status = "OFFICIAL_EVENT_WITH_SEC_ACTION_EVIDENCE"
         elif official_resolved:
             status = "VERIFIED_OFFICIAL_EVENT"
-        elif candidate["status"] == "NO_OFFICIAL_DOCUMENT_MATCH":
+        elif (
+            candidate["status"].startswith("UNMATCHED_")
+            or candidate["status"] == "NO_OFFICIAL_DOCUMENT_MATCH"
+        ):
             status = "UNRESOLVED"
         else:
             status = "REQUIRES_REVIEW"

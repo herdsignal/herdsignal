@@ -23,7 +23,11 @@ RESOLVED_STATUSES = {
 ACTUAL_MEMBERSHIP_CHANGE = "ACTUAL_MEMBERSHIP_CHANGE_REQUIRES_OFFICIAL_SEMANTICS"
 UNCONFIRMED_IDENTITY_CHANGE = "UNCONFIRMED_TICKER_CHANGE"
 RECONSTRUCTION_ANOMALY = "PUBLIC_RECONSTRUCTION_ANOMALY"
-MISSING_OFFICIAL_DOCUMENT = "OFFICIAL_DOCUMENT_MISSING"
+TICKER_ALIAS_REQUIRED = "HISTORICAL_TICKER_ALIAS_REQUIRED"
+SHARE_CLASS_REQUIRED = "MULTI_CLASS_NORMALIZATION_REQUIRED"
+CORPORATE_ACTION_CHAIN_REQUIRED = "CORPORATE_ACTION_CHAIN_REQUIRED"
+OFFICIAL_SOURCE_GAP = "OFFICIAL_SOURCE_GAP"
+EVIDENCE_TRIAGE_REQUIRED = "EVIDENCE_TRIAGE_REQUIRED"
 
 
 class ResidualEventClassificationError(RuntimeError):
@@ -104,9 +108,24 @@ def classify_residual_events(
         }:
             category = ACTUAL_MEMBERSHIP_CHANGE
             required_evidence = "S&P_ACTION_AND_MEMBERSHIP_SESSION_SEMANTICS"
-        elif source["status"] == "NO_OFFICIAL_DOCUMENT_MATCH":
-            category = MISSING_OFFICIAL_DOCUMENT
+        elif source["status"] == "UNMATCHED_REQUIRES_TICKER_ALIAS":
+            category = TICKER_ALIAS_REQUIRED
+            required_evidence = "VERIFIED_TICKER_HISTORY_AND_EFFECTIVE_INTERVAL"
+        elif source["status"] == "UNMATCHED_REQUIRES_SHARE_CLASS_NORMALIZATION":
+            category = SHARE_CLASS_REQUIRED
+            required_evidence = "OFFICIAL_MULTI_CLASS_SYMBOL_EXPRESSION"
+        elif source["status"] == "UNMATCHED_REQUIRES_CORPORATE_ACTION_CHAIN":
+            category = CORPORATE_ACTION_CHAIN_REQUIRED
+            required_evidence = "S&P_MEMBERSHIP_AND_SEC_CORPORATE_ACTION_TIMELINE"
+        elif source["status"] == "UNMATCHED_RECONSTRUCTION_ANOMALY":
+            category = RECONSTRUCTION_ANOMALY
+            required_evidence = "SOURCE_CORRECTION_OR_INDEPENDENT_OFFICIAL_EVENT"
+        elif source["status"] == "UNMATCHED_OFFICIAL_SOURCE_GAP":
+            category = OFFICIAL_SOURCE_GAP
             required_evidence = "S&P_OFFICIAL_DOCUMENT_URL_AND_SHA256"
+        elif source["status"] == "UNMATCHED_REQUIRES_EVIDENCE_TRIAGE":
+            category = EVIDENCE_TRIAGE_REQUIRED
+            required_evidence = "CLASSIFY_BEFORE_EVIDENCE_COLLECTION"
         else:
             raise ResidualEventClassificationError(
                 f"unsupported reconciliation status: {source['status']}"

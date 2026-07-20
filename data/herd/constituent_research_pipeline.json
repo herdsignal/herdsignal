@@ -11,6 +11,7 @@
     "suggestions": "../reference/point_in_time/spglobal_evidence_suggestions_v4_20160718_20260717.csv",
     "semantic_events": "../reference/point_in_time/spglobal_candidate_semantics_v15_20160718_20260717.csv",
     "reviewed_date_corrections": "reviewed_official_date_corrections.csv",
+    "resolution_routes": "candidate_resolution_routes.csv",
     "identity_evidence": "../reference/sec/sec-trading-symbol-merged-v6-20160718-20260717-20260719.csv",
     "continuity_claims": "corporate_continuity_claims.csv",
     "sp_continuity_corpus": "../reference/point_in_time/spglobal-direct-continuity-v5-20260720",
