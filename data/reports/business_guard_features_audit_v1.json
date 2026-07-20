@@ -1,0 +1,18 @@
+{
+  "format_version": "herd-business-guard-features-v1",
+  "months": 120,
+  "protocol": {
+    "feature_count": 4,
+    "protocol_version": "2026.07-sec-pit-business-guard-v1",
+    "sha256": "95b33c3a31e78269a9033085de53b6647ce51d2748068e7497258a77f9446983",
+    "status": "LOCKED_BEFORE_OOS_RESULTS"
+  },
+  "rows": 6120,
+  "state_counts": {
+    "PASS": 5130,
+    "UNKNOWN": 575,
+    "VETO": 415
+  },
+  "strict_pit_rule": "SEC_ACCEPTANCE_DATETIME",
+  "tickers": 51
+}
