@@ -1,0 +1,38 @@
+{
+  "policy_version": "HERD_ENTRY_ADD_BUY_V1",
+  "status": "RESEARCH_POLICY_LOCKED",
+  "new_entry_requires": [
+    "PIT_EVIDENCE",
+    "FRESH_DATA",
+    "OOS_DIRECTION_EVIDENCE"
+  ],
+  "add_buy_requires": [
+    "EXISTING_HOLDER",
+    "PIT_EVIDENCE",
+    "FRESH_DATA",
+    "OOS_DIRECTION_EVIDENCE",
+    "MARKET_OR_SECTOR_EXPLAINED_WEAKNESS",
+    "DECLINE_STABILIZED",
+    "OOS_AUTHORIZED_BUSINESS_GUARD_PASS",
+    "SUPPORTED_COMPANY_TYPE_MODEL"
+  ],
+  "company_type_routes": {
+    "GENERAL_CORPORATE": "GENERIC_REVENUE_MARGIN_CASHFLOW_DEBT",
+    "BANK": "CAPITAL_ASSET_QUALITY_EARNINGS_LIQUIDITY",
+    "INSURANCE": "CAPITAL_RESERVES_UNDERWRITING_LIQUIDITY",
+    "REIT": "FFO_AFFO_OCCUPANCY_DEBT_MATURITY",
+    "UTILITY": "REGULATED_CASHFLOW_CAPEX_DEBT_COVERAGE"
+  },
+  "current_authorization": {
+    "new_entry": false,
+    "add_buy": false,
+    "generic_business_guard": false,
+    "specialized_company_models": []
+  },
+  "forbidden": [
+    "LOW_HERD_ALONE_AUTHORIZES_ENTRY",
+    "PRICE_DROP_ALONE_AUTHORIZES_ADD_BUY",
+    "GENERIC_DEBT_RATIO_APPLIED_TO_BANK_REIT_INSURANCE_OR_UTILITY",
+    "UNKNOWN_BUSINESS_STATE_TREATED_AS_PASS"
+  ]
+}
