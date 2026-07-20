@@ -252,6 +252,53 @@ class CorporateContinuityReconciliationTest(unittest.TestCase):
                 self.reconciliation, claims, self.sp, self.sec
             )
 
+    def test_consumes_cross_date_components_as_one_successor_event(self):
+        reconciliation = [
+            {
+                "candidate_effective_date": event_date,
+                "action": action,
+                "ticker": ticker,
+                "status": "UNMATCHED_REQUIRES_CORPORATE_ACTION_CHAIN",
+            }
+            for event_date, action, ticker in (
+                ("2024-07-09", "REMOVE", "WRK"),
+                ("2024-07-12", "ADD", "SW"),
+            )
+        ]
+        claims = [{
+            "candidate_effective_date": "2024-07-12",
+            "action": "ADD",
+            "ticker": "SW",
+            "continuity_type": "SUCCESSOR_MEMBERSHIP_CONTINUITY",
+            "old_ticker": "WRK",
+            "effective_date": "2024-07-08",
+            "index_effective_date": "2024-07-08",
+            "corporate_effective_date": "2024-07-05",
+            "trading_start_date": "2024-07-08",
+            "candidate_components": (
+                "2024-07-09:REMOVE:WRK|2024-07-12:ADD:SW"
+            ),
+            "cik": "2005951",
+            "sp_source_url": self.sp_url,
+            "filing_url": self.sec_url,
+            "required_sp_terms": "in the S&P 500||Post-merger",
+            "required_sec_terms": "ticker symbol NEW",
+        }]
+
+        rows, events, audit = verify_and_reconcile(
+            reconciliation, claims, self.sp, self.sec
+        )
+
+        self.assertEqual(
+            {
+                "VERIFIED_CORPORATE_CONTINUITY_COMPONENT",
+            },
+            {row["status"] for row in rows},
+        )
+        self.assertEqual("CORPORATE_SUCCESSION", events[0]["event_type"])
+        self.assertEqual("2024-07-08", events[0]["index_effective_date"])
+        self.assertEqual(2, audit["reclassified_candidate_rows"])
+
 
 if __name__ == "__main__":
     unittest.main()

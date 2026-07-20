@@ -146,6 +146,7 @@ def collect_direct_release_corpus(
     user_agent: str,
     delay_seconds: float = 0.2,
     session: requests.Session | None = None,
+    seed_corpus: Path | None = None,
 ) -> dict:
     """명시한 S&P 보도자료 URL을 원문·해시와 함께 고정한다."""
     if len(user_agent.strip()) < 10:
@@ -159,11 +160,22 @@ def collect_direct_release_corpus(
     if not claims or not required.issubset(claims[0]):
         raise ReleaseArchiveError("direct release claims schema mismatch")
 
+    seed_rows = []
+    seed_by_url = {}
+    if seed_corpus:
+        with (Path(seed_corpus) / "release_index.csv").open(
+            encoding="utf-8", newline=""
+        ) as handle:
+            seed_rows = list(csv.DictReader(handle))
+        seed_by_url = {row["source_url"]: row for row in seed_rows}
     client = session or requests.Session()
     client.headers["User-Agent"] = user_agent
     rows = []
     documents = []
-    for claim in claims:
+    claims_by_url = {
+        row["source_url"]: row for row in [*seed_rows, *claims]
+    }
+    for claim in claims_by_url.values():
         published = date.fromisoformat(claim["published_date"])
         source_url = claim["source_url"].strip()
         if urlparse(source_url).hostname not in OFFICIAL_RELEASE_HOSTS:
@@ -171,21 +183,41 @@ def collect_direct_release_corpus(
         match = RELEASE_DATE.search(source_url)
         if not match or date.fromisoformat(match.group(1)) != published:
             raise ReleaseArchiveError("release URL date does not match published_date")
-        response = client.get(source_url, timeout=60)
-        response.raise_for_status()
-        digest = hashlib.sha256(response.content).hexdigest()
-        suffix = (
-            ".pdf"
-            if "pdf" in response.headers.get("Content-Type", "").lower()
-            else ".html"
-        )
-        documents.append((digest, suffix, response.content))
+        seed = seed_by_url.get(source_url)
+        if seed:
+            matches = list(
+                (Path(seed_corpus) / "evidence").glob(
+                    f"{seed['source_sha256']}.*"
+                )
+            )
+            if len(matches) != 1:
+                raise ReleaseArchiveError(
+                    f"seed evidence missing: {source_url}"
+                )
+            content = matches[0].read_bytes()
+            digest = hashlib.sha256(content).hexdigest()
+            if digest != seed["source_sha256"]:
+                raise ReleaseArchiveError(
+                    f"seed evidence hash mismatch: {source_url}"
+                )
+            suffix = matches[0].suffix
+        else:
+            response = client.get(source_url, timeout=60)
+            response.raise_for_status()
+            content = response.content
+            digest = hashlib.sha256(content).hexdigest()
+            suffix = (
+                ".pdf"
+                if "pdf" in response.headers.get("Content-Type", "").lower()
+                else ".html"
+            )
+        documents.append((digest, suffix, content))
         rows.append({
             **claim,
             "status": "DIRECT_OFFICIAL_SOURCE_ARCHIVED",
             "source_sha256": digest,
         })
-        if session is None:
+        if session is None and not seed:
             time.sleep(delay_seconds)
 
     evidence_dir = destination / "evidence"
@@ -201,6 +233,8 @@ def collect_direct_release_corpus(
     manifest = {
         "source": "S&P Global direct public press release URLs",
         "release_documents": len(rows),
+        "seed_corpus": str(seed_corpus) if seed_corpus else "",
+        "seed_documents": len(seed_rows),
         "use": "OFFICIAL_DOCUMENT_ARCHIVE; claims require independent verification",
         "index_sha256": hashlib.sha256(index_path.read_bytes()).hexdigest(),
     }
@@ -219,6 +253,7 @@ def main() -> None:
     parser.add_argument("--user-agent")
     parser.add_argument("--env-file", type=Path)
     parser.add_argument("--direct-claims", type=Path)
+    parser.add_argument("--seed-corpus", type=Path)
     args = parser.parse_args()
     user_agent = (
         args.user_agent
@@ -231,6 +266,7 @@ def main() -> None:
             args.direct_claims,
             args.output_dir,
             user_agent=user_agent,
+            seed_corpus=args.seed_corpus,
         )
         if args.direct_claims
         else collect_release_corpus(

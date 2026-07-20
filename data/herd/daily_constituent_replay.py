@@ -23,6 +23,7 @@ VERIFIED_BASELINE_STATUS = "VERIFIED_BASELINE_CONTINUITY_BACKCAST"
 DEFAULT_EVENT_SEQUENCE = {
     "REMOVE": 10,
     "ADD": 20,
+    "SUCCESSION": 25,
     "RENAME": 30,
 }
 
@@ -94,7 +95,10 @@ def replay_events(
             ),
         ):
             ticker = event["ticker"].upper()
-            if event.get("event_type") == "IDENTITY_CHANGE":
+            if event.get("event_type") in {
+                "IDENTITY_CHANGE",
+                "CORPORATE_SUCCESSION",
+            }:
                 old_tickers = [
                     value.strip().upper()
                     for value in event.get("old_ticker", "").split("|")

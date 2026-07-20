@@ -189,6 +189,9 @@ def build_integrated_ledger(
             "review_status": "",
         })
     for continuity in continuity_events or []:
+        corporate_succession = (
+            continuity["event_type"] == "CORPORATE_SUCCESSION"
+        )
         same_cik = continuity["event_type"] in {
             "SAME_CIK_RENAME",
             "SAME_CIK_MEMBERSHIP_CONTINUITY",
@@ -197,7 +200,11 @@ def build_integrated_ledger(
             continuity["event_type"] == "SPINOFF_DUAL_MEMBERSHIP_ADDITION"
         )
         rows.append({
-            "event_type": "IDENTITY_CHANGE" if same_cik else "MEMBERSHIP_CHANGE",
+            "event_type": (
+                "CORPORATE_SUCCESSION"
+                if corporate_succession
+                else ("IDENTITY_CHANGE" if same_cik else "MEMBERSHIP_CHANGE")
+            ),
             "candidate_effective_date": continuity["candidate_effective_date"],
             "announcement_date": continuity.get("announcement_date", ""),
             "corporate_effective_date": continuity.get(
@@ -208,9 +215,13 @@ def build_integrated_ledger(
                 "index_effective_date", continuity["effective_date"]
             ),
             "effective_date": continuity["effective_date"],
-            "action": "RENAME" if same_cik else "ADD",
+            "action": (
+                "SUCCESSION"
+                if corporate_succession
+                else ("RENAME" if same_cik else "ADD")
+            ),
             "event_sequence": int(continuity.get("event_sequence") or (
-                30 if same_cik else 20
+                25 if corporate_succession else (30 if same_cik else 20)
             )),
             "ticker": continuity["ticker"].upper(),
             "old_ticker": continuity["old_ticker"].upper(),

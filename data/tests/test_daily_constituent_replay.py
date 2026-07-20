@@ -141,6 +141,28 @@ class DailyConstituentReplayTest(unittest.TestCase):
         self.assertEqual("2024-07-08", snapshots[0]["effective_date"])
         self.assertTrue(audit["replay_complete"])
 
+    def test_replays_corporate_succession_atomically(self):
+        snapshots, audit = replay_events(
+            {"MYL", "AAA"},
+            [{
+                "event_type": "CORPORATE_SUCCESSION",
+                "corporate_effective_date": "2020-11-16",
+                "trading_start_date": "2020-11-17",
+                "index_effective_date": "2020-11-17",
+                "effective_date": "2020-11-17",
+                "action": "SUCCESSION",
+                "old_ticker": "MYL",
+                "ticker": "VTRS",
+                "event_status": "VERIFIED_CORPORATE_CONTINUITY",
+            }],
+            minimum_size=1,
+            maximum_size=2,
+        )
+        self.assertEqual(["VTRS"], snapshots[0]["added"])
+        self.assertEqual(["MYL"], snapshots[0]["removed"])
+        self.assertEqual(0, audit["errors"])
+        self.assertTrue(audit["replay_complete"])
+
     def test_replays_multi_class_identity_consolidation(self):
         snapshots, audit = replay_events(
             {"DISCA", "DISCK", "AAA"},

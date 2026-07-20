@@ -21,6 +21,7 @@ CONTINUITY_TYPES = {
     "SUCCESSOR_MEMBERSHIP",
     "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
     "HISTORICAL_TICKER_ADMISSION_THEN_RENAME",
+    "SUCCESSOR_MEMBERSHIP_CONTINUITY",
 }
 VERIFIED_COMPONENT = "VERIFIED_CORPORATE_CONTINUITY_COMPONENT"
 
@@ -110,6 +111,33 @@ def claim_old_tickers(claim: dict) -> list[str]:
     return values
 
 
+def claim_candidate_keys(claim: dict) -> list[tuple[str, str, str]]:
+    encoded = (claim.get("candidate_components") or "").strip()
+    if not encoded:
+        return [candidate_key(claim)]
+    keys = []
+    for component in encoded.split("|"):
+        parts = [value.strip() for value in component.split(":", 2)]
+        if len(parts) != 3:
+            raise CorporateContinuityError(
+                f"invalid candidate component: {component}"
+            )
+        try:
+            date.fromisoformat(parts[0])
+        except ValueError as exc:
+            raise CorporateContinuityError(
+                f"invalid candidate component date: {component}"
+            ) from exc
+        if parts[1].upper() not in {"ADD", "REMOVE"} or not parts[2]:
+            raise CorporateContinuityError(
+                f"invalid candidate component: {component}"
+            )
+        keys.append((parts[0], parts[1].upper(), parts[2].upper()))
+    if len(keys) != len(set(keys)):
+        raise CorporateContinuityError("duplicate candidate components")
+    return keys
+
+
 def optional_iso_date(claim: dict, field: str) -> str:
     value = (claim.get(field) or "").strip()
     if value:
@@ -169,21 +197,26 @@ def verify_and_reconcile(
                 f"unsupported continuity type: {continuity_type}"
             )
         key = candidate_key(claim)
+        component_keys = claim_candidate_keys(claim)
         if claim_scope == "CANDIDATE":
-            candidate = rows_by_key.get(key)
-            if not candidate:
-                raise CorporateContinuityError(f"candidate not found: {key}")
-            if candidate["status"] in {
-                "OFFICIAL_TABLE_EXACT",
-                "OFFICIAL_PROSE_EXACT",
-                "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
-                "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
-                "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
-                "VERIFIED_IDENTITY_CHANGE_COMPONENT",
-            }:
-                raise CorporateContinuityError(
-                    f"claim targets an already resolved candidate: {key}"
-                )
+            for component_key in component_keys:
+                candidate = rows_by_key.get(component_key)
+                if not candidate:
+                    raise CorporateContinuityError(
+                        f"candidate not found: {component_key}"
+                    )
+                if candidate["status"] in {
+                    "OFFICIAL_TABLE_EXACT",
+                    "OFFICIAL_PROSE_EXACT",
+                    "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
+                    "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
+                    "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
+                    "VERIFIED_IDENTITY_CHANGE_COMPONENT",
+                }:
+                    raise CorporateContinuityError(
+                        "claim targets an already resolved candidate: "
+                        f"{component_key}"
+                    )
         sec_url = claim["filing_url"]
         sec_item = sec_evidence.get(sec_url)
         if not sec_item:
@@ -198,6 +231,7 @@ def verify_and_reconcile(
             "SUCCESSOR_MEMBERSHIP",
             "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
             "HISTORICAL_TICKER_ADMISSION_THEN_RENAME",
+            "SUCCESSOR_MEMBERSHIP_CONTINUITY",
         }:
             sp_url = claim["sp_source_url"]
             sp_item = sp_evidence.get(sp_url)
@@ -214,7 +248,12 @@ def verify_and_reconcile(
             sp_sha = sp_item[1]
 
         if claim_scope == "CANDIDATE":
-            consumed[key] = claim
+            for component_key in component_keys:
+                if component_key in consumed:
+                    raise CorporateContinuityError(
+                        f"candidate consumed by multiple claims: {component_key}"
+                    )
+                consumed[component_key] = claim
             if continuity_type in {
                 "SAME_CIK_RENAME",
                 "SAME_CIK_MEMBERSHIP_CONTINUITY",
@@ -282,6 +321,17 @@ def verify_and_reconcile(
                     "old_ticker": old_tickers[0],
                 },
             ])
+            continue
+        if continuity_type == "SUCCESSOR_MEMBERSHIP_CONTINUITY":
+            events.append({
+                **common_event,
+                **timeline_fields(claim),
+                "event_type": "CORPORATE_SUCCESSION",
+                "action": "SUCCESSION",
+                "event_sequence": 25,
+                "ticker": claim["ticker"].upper(),
+                "old_ticker": "|".join(claim_old_tickers(claim)),
+            })
             continue
         events.append({
             **common_event,
