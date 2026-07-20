@@ -117,6 +117,27 @@ Buy & Hold의 상승 복리를 더 크게 잃는다.
   12건이다. SEC 근거는 구성 적용일이 아니라 회사 동일성과 기업행동
   원인 보강에만 사용한다.
 
+#### 2026-07-20 단일 파이프라인 재검증
+
+- `NO_OFFICIAL_DOCUMENT_MATCH` 단일 분류를 폐기하고 별칭, 주식 클래스,
+  기업행동 chain, 재구성 오류, 공식 출처 누락으로 경로를 분리했다.
+- UA/UAA 복수 클래스 표를 독립 사건으로 정규화했다.
+- DOW·FOX·FOXA·IR 중복 편입과 잘못 생성된 KORS 제거 행은 공식 원문
+  URL과 사유가 있는 검토 원장에서만 격리된다.
+- CIK별 유효기간·predecessor·거래 시작일을 검증하는 시점별 ticker
+  별칭 원장을 추가했다. IQV는 소급 표기된 한 행 대신 `Q` 편입과
+  `Q→IQV` 변경으로 재생한다.
+- 합병일, 거래 시작일, 지수 적용일과 같은 날 사건 실행 순서를 분리했다.
+- 여러 날짜의 REMOVE/ADD 후보를 하나의 원자적
+  `CORPORATE_SUCCESSION`으로 소비할 수 있다.
+- Evergy는 2018-06-05 편입으로, Amcor는 2019-06-07 BMS 편입 후
+  2019-06-11 AMCR 승계로 공식 S&P·SEC 원문을 대조했다.
+- 최신 단일 실행 결과는 차단 8건, 재생 구조 오류 0건이다.
+- 잔여 사건은 LIN, BKR, MYL→VTRS, WRK→SW, PARA→PSKY다. BKR은
+  선행 BHI→BHGE 승계가 기준 구성에 없고, 세 합병 묶음은 SEC 회사
+  사건과 별도로 공식 지수 연속성 근거를 더 고정해야 한다.
+- 따라서 `replay_complete=false`, `survivorship_safe=false`를 유지한다.
+
 ### 발표일 기준 기업 데이터 진행
 
 - SEC EDGAR 분기별 master index 41개, 11,017,497행 수집 및 해시 검증
