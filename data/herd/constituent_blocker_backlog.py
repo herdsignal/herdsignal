@@ -15,6 +15,7 @@ VERIFIED_EVENT_STATUSES = {
     "VERIFIED_IDENTITY_CHANGE",
     "VERIFIED_CORPORATE_CONTINUITY",
 }
+DIAGNOSTIC_CONTINUITY_STATUS = "DIAGNOSTIC_CORPORATE_CONTINUITY"
 OFFICIAL_SEMANTICS_CATEGORY = (
     "ACTUAL_MEMBERSHIP_CHANGE_REQUIRES_OFFICIAL_SEMANTICS"
 )
@@ -79,7 +80,11 @@ def build_blocker_backlog(
     blocker_keys = {_key(row) for row in blockers}
     if len(blocker_keys) != len(blockers):
         raise BlockerBacklogError("duplicate blocker event")
-    missing = sorted(blocker_keys - residual_by_key.keys())
+    diagnostic_keys = {
+        _key(row) for row in blockers
+        if row["event_status"] == DIAGNOSTIC_CONTINUITY_STATUS
+    }
+    missing = sorted(blocker_keys - residual_by_key.keys() - diagnostic_keys)
     if missing:
         raise BlockerBacklogError(f"blockers missing classification: {missing}")
 
@@ -102,13 +107,19 @@ def build_blocker_backlog(
     rows = []
     for event_date, source in dated:
         key = _key(source)
-        residual = residual_by_key[key]
+        residual = residual_by_key.get(key, {
+            "residual_category": "INFERRED_INDEX_CONTINUITY_REQUIRES_DIRECT_EVIDENCE"
+        })
         opposite = [
             other for other_date, other in dated
             if other["action"].upper() != source["action"].upper()
             and abs((other_date - event_date).days) <= pair_window_days
         ]
-        if residual["residual_category"] in ROUTED_WORKSTREAMS:
+        if source["event_status"] == DIAGNOSTIC_CONTINUITY_STATUS:
+            workstream = "INDEX_CONTINUITY_EVIDENCE_UPGRADE"
+            evidence = "DIRECT_S&P_EVENT_OR_OFFICIAL_BEFORE_AND_AFTER_MEMBERSHIP"
+            priority = "P0"
+        elif residual["residual_category"] in ROUTED_WORKSTREAMS:
             workstream, evidence, priority = ROUTED_WORKSTREAMS[
                 residual["residual_category"]
             ]

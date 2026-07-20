@@ -37,7 +37,7 @@ class ReleaseArchiveError(RuntimeError):
     pass
 
 
-OFFICIAL_RELEASE_HOSTS = {"press.spglobal.com"}
+OFFICIAL_RELEASE_HOSTS = {"press.spglobal.com", "www.spglobal.com"}
 
 
 def discover_release_links(content: bytes, start_date: date, end_date: date) -> list[dict]:
@@ -180,9 +180,17 @@ def collect_direct_release_corpus(
         source_url = claim["source_url"].strip()
         if urlparse(source_url).hostname not in OFFICIAL_RELEASE_HOSTS:
             raise ReleaseArchiveError(f"non-official release host: {source_url}")
+        host = urlparse(source_url).hostname
         match = RELEASE_DATE.search(source_url)
-        if not match or date.fromisoformat(match.group(1)) != published:
-            raise ReleaseArchiveError("release URL date does not match published_date")
+        if host == "press.spglobal.com":
+            if not match or date.fromisoformat(match.group(1)) != published:
+                raise ReleaseArchiveError(
+                    "release URL date does not match published_date"
+                )
+        elif "/spdji/en/documents/" not in urlparse(source_url).path:
+            raise ReleaseArchiveError(
+                "S&P document URL is outside the official document path"
+            )
         seed = seed_by_url.get(source_url)
         if seed:
             matches = list(

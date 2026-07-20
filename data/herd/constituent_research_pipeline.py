@@ -285,6 +285,7 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
             baseline,
             read_csv(inputs["baseline_corrections"]),
             as_of=baseline_as_of,
+            official_evidence=sp_continuity_evidence,
         )
         snapshots, replay_audit = replay_events(
             baseline,

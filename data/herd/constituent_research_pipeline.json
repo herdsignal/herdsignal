@@ -16,8 +16,8 @@
     "ticker_alias_ledger": "ticker_alias_ledger.csv",
     "ticker_alias_claims": "ticker_alias_claims.csv",
     "continuity_claims": "corporate_continuity_claims.csv",
-    "sp_continuity_corpus": "../reference/point_in_time/spglobal-direct-continuity-v6-20260720",
-    "sec_continuity_corpus": "../reference/sec/corporate-continuity-v10-20260720",
+    "sp_continuity_corpus": "../reference/point_in_time/spglobal-direct-continuity-v7-20260720",
+    "sec_continuity_corpus": "../reference/sec/corporate-continuity-v11-20260720",
     "cik_events": "../reference/sec/sp500_table_event_cik_candidates_20160718_20260717.csv",
     "form25_candidates": "../reference/sec/sp500_form25_candidates_20160718_20260717.csv",
     "form25_classification": "../reference/sec/sp500_form25_classification_20160718_20260717.csv",
@@ -25,7 +25,7 @@
     "reconstruction_anomalies": "../reference/point_in_time/reconstruction_anomaly_audit_v5_20160718_20260717.csv",
     "reviewed_reconstruction_anomalies": "reviewed_reconstruction_anomalies.csv",
     "baseline_intervals": "../reference/point_in_time/community-sp500-1996-2026/memberships.csv.gz",
-    "baseline_corrections": "../reference/point_in_time/verified_baseline_corrections_v3_20160718.csv",
+    "baseline_corrections": "baseline_identity_restorations.csv",
     "previous_reconciliation": "../reference/point_in_time/official_candidate_reconciliation_v25_20160718_20260717.csv",
     "previous_replay": "../reference/point_in_time/diagnostic_replay_v10_20160718_20260717.json"
   }

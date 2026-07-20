@@ -19,7 +19,9 @@ VERIFIED_STATUSES = {
     "VERIFIED_IDENTITY_CHANGE",
     "VERIFIED_CORPORATE_CONTINUITY",
 }
+DIAGNOSTIC_EVENT_STATUSES = {"DIAGNOSTIC_CORPORATE_CONTINUITY"}
 VERIFIED_BASELINE_STATUS = "VERIFIED_BASELINE_CONTINUITY_BACKCAST"
+BASELINE_CORRECTION_TYPE = "RESTORE_MISSING_HISTORICAL_SECURITY"
 DEFAULT_EVENT_SEQUENCE = {
     "REMOVE": 10,
     "ADD": 20,
@@ -33,9 +35,11 @@ def apply_baseline_corrections(
     corrections: list[dict],
     *,
     as_of: date,
+    official_evidence: dict[str, tuple[bytes, str]] | None = None,
 ) -> tuple[set[str], dict]:
     corrected = {ticker.upper() for ticker in baseline}
     applied = []
+    restored_entities = set()
     for row in corrections:
         if row.get("event_status") != VERIFIED_BASELINE_STATUS:
             raise ConstituentReplayError("unverified baseline correction")
@@ -43,6 +47,26 @@ def apply_baseline_corrections(
             raise ConstituentReplayError("baseline correction scope must remain diagnostic")
         if row.get("inference") != "true":
             raise ConstituentReplayError("baseline correction must disclose inference")
+        if official_evidence is not None:
+            evidence = official_evidence.get(row.get("source_url", ""))
+            if (
+                not evidence
+                or evidence[1] != row.get("source_sha256", "").lower()
+            ):
+                raise ConstituentReplayError(
+                    "baseline correction evidence is not hash-pinned"
+                )
+        if row.get("correction_type") != BASELINE_CORRECTION_TYPE:
+            raise ConstituentReplayError("unsupported baseline correction type")
+        entity_id = row.get("entity_id", "").strip()
+        cik = row.get("cik", "").zfill(10)
+        if (
+            not entity_id
+            or entity_id in restored_entities
+            or len(cik) != 10
+            or not cik.isdigit()
+        ):
+            raise ConstituentReplayError("invalid baseline identity restoration")
         correction_date = date.fromisoformat(row["as_of"])
         if correction_date > as_of:
             continue
@@ -51,10 +75,12 @@ def apply_baseline_corrections(
             raise ConstituentReplayError(f"invalid baseline correction: {ticker}")
         corrected.add(ticker)
         applied.append(ticker)
+        restored_entities.add(entity_id)
     return corrected, {
         "baseline_count_raw": len(baseline),
         "baseline_corrections": len(applied),
         "baseline_correction_tickers": sorted(applied),
+        "baseline_restored_entities": sorted(restored_entities),
         "baseline_correction_scope": "DIAGNOSTIC_BASELINE_ONLY",
     }
 
@@ -76,9 +102,14 @@ def replay_events(
         )
     current = {ticker.upper() for ticker in baseline}
     events_by_date = defaultdict(list)
+    replayable_statuses = (
+        VERIFIED_STATUSES | DIAGNOSTIC_EVENT_STATUSES
+        if allow_diagnostic
+        else VERIFIED_STATUSES
+    )
     for row in ledger:
         index_date = row.get("index_effective_date") or row.get("effective_date")
-        if row["event_status"] in VERIFIED_STATUSES and index_date:
+        if row["event_status"] in replayable_statuses and index_date:
             events_by_date[index_date].append(row)
     snapshots = []
     errors = []
@@ -153,7 +184,14 @@ def replay_events(
         })
     return snapshots, {
         "baseline_count": len(baseline),
-        "verified_events": sum(len(rows) for rows in events_by_date.values()),
+        "verified_events": sum(
+            1 for row in ledger if row["event_status"] in VERIFIED_STATUSES
+        ),
+        "diagnostic_events_replayed": sum(
+            1 for row in ledger
+            if allow_diagnostic
+            and row["event_status"] in DIAGNOSTIC_EVENT_STATUSES
+        ),
         "blocked_events": len(blockers),
         "effective_dates": len(events_by_date),
         "final_count": len(current),

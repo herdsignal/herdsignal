@@ -187,7 +187,10 @@ class DailyConstituentReplayTest(unittest.TestCase):
             {"AAA"},
             [{
                 "as_of": "2016-07-18",
+                "entity_id": "HCP_LEGACY",
+                "cik": "0000765880",
                 "ticker": "HCP",
+                "correction_type": "RESTORE_MISSING_HISTORICAL_SECURITY",
                 "action": "ADD",
                 "event_status": "VERIFIED_BASELINE_CONTINUITY_BACKCAST",
                 "inference": "true",
@@ -208,7 +211,10 @@ class DailyConstituentReplayTest(unittest.TestCase):
                 {"AAA"},
                 [{
                     "as_of": "2016-07-18",
+                    "entity_id": "HCP_LEGACY",
+                    "cik": "0000765880",
                     "ticker": "HCP",
+                    "correction_type": "RESTORE_MISSING_HISTORICAL_SECURITY",
                     "action": "ADD",
                     "event_status": "VERIFIED_BASELINE_CONTINUITY_BACKCAST",
                     "inference": "true",

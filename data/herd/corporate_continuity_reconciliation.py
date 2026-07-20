@@ -24,6 +24,11 @@ CONTINUITY_TYPES = {
     "SUCCESSOR_MEMBERSHIP_CONTINUITY",
 }
 VERIFIED_COMPONENT = "VERIFIED_CORPORATE_CONTINUITY_COMPONENT"
+EVIDENCE_BASES = {
+    "DIRECT_SP_DJI_EVENT",
+    "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_SUCCESSION",
+    "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_EXPLICIT_INDEX_ENTRY",
+}
 
 
 class CorporateContinuityError(RuntimeError):
@@ -186,6 +191,13 @@ def verify_and_reconcile(
     consumed: dict[tuple[str, str, str], dict] = {}
     events = []
     for claim in claims:
+        evidence_basis = (
+            claim.get("evidence_basis") or "DIRECT_SP_DJI_EVENT"
+        ).upper()
+        if evidence_basis not in EVIDENCE_BASES:
+            raise CorporateContinuityError(
+                f"unsupported evidence basis: {evidence_basis}"
+            )
         claim_scope = (claim.get("claim_scope") or "CANDIDATE").upper()
         if claim_scope not in {"CANDIDATE", "STANDALONE"}:
             raise CorporateContinuityError(
@@ -240,9 +252,9 @@ def verify_and_reconcile(
                     f"S&P evidence not archived: {sp_url}"
                 )
             host = (urlparse(sp_url).hostname or "").lower()
-            if host != "press.spglobal.com":
+            if host not in {"press.spglobal.com", "www.spglobal.com"}:
                 raise CorporateContinuityError(
-                    "successor membership requires press.spglobal.com evidence"
+                    "successor membership requires official S&P DJI evidence"
                 )
             require_terms(sp_item[0], claim["required_sp_terms"], label="S&P")
             sp_sha = sp_item[1]
@@ -270,7 +282,13 @@ def verify_and_reconcile(
             "candidate_effective_date": claim["candidate_effective_date"],
             "claim_scope": claim_scope,
             "cik": claim["cik"].zfill(10),
-            "verification_status": "CORPORATE_CONTINUITY_VERIFIED",
+            "verification_status": (
+                "CORPORATE_CONTINUITY_INFERRED"
+                if evidence_basis
+                == "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_SUCCESSION"
+                else "CORPORATE_CONTINUITY_VERIFIED"
+            ),
+            "evidence_basis": evidence_basis,
             "sp_source_url": claim["sp_source_url"],
             "sp_source_sha256": sp_sha,
             "sec_source_url": sec_url,

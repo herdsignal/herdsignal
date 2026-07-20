@@ -95,6 +95,33 @@ class SpglobalReleaseArchiveTest(unittest.TestCase):
                     session=session,
                 )
 
+    def test_archives_official_spdji_pdf_document(self):
+        response = Mock()
+        response.content = b"%PDF-1.4 official"
+        response.headers = {"Content-Type": "application/pdf"}
+        response.raise_for_status = Mock()
+        session = Mock()
+        session.headers = {}
+        session.get.return_value = response
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            claims = root / "claims.csv"
+            claims.write_text(
+                "published_date,title,source_url\n"
+                "2018-01-24,PX,"
+                "https://www.spglobal.com/spdji/en/documents/"
+                "indexnews/announcements/px.pdf\n",
+                encoding="utf-8",
+            )
+            collect_direct_release_corpus(
+                claims,
+                root / "corpus",
+                user_agent="Research contact test@example.com",
+                session=session,
+            )
+            evidence = list((root / "corpus/evidence").iterdir())
+            self.assertEqual(".pdf", evidence[0].suffix)
+
 
 if __name__ == "__main__":
     unittest.main()

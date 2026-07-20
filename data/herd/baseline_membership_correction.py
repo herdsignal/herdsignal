@@ -1,27 +1,35 @@
-"""공식 사후 근거로 누락된 기준 구성 종목을 진단 범위에서만 보정한다."""
+"""공식 근거로 누락된 과거 증권을 기준 구성에 진단 범위로 복원한다."""
 
 from __future__ import annotations
 
 import argparse
 import csv
 import hashlib
+import io
 import json
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 
 from lxml import html
+from pypdf import PdfReader
 
 VERIFIED_STATUS = "VERIFIED_BASELINE_CONTINUITY_BACKCAST"
-OFFICIAL_HOST = "press.spglobal.com"
+CORRECTION_TYPE = "RESTORE_MISSING_HISTORICAL_SECURITY"
+OFFICIAL_HOSTS = {"press.spglobal.com", "www.spglobal.com"}
 
 
 class BaselineCorrectionError(RuntimeError):
     pass
 
 
-def _normalized_text(content: bytes) -> str:
-    return " ".join(html.fromstring(content).text_content().split()).casefold()
+def _normalized_text(content: bytes, suffix: str) -> str:
+    if suffix.lower() == ".pdf":
+        reader = PdfReader(io.BytesIO(content))
+        value = " ".join(page.extract_text() or "" for page in reader.pages)
+    else:
+        value = html.fromstring(content).text_content()
+    return " ".join(value.split()).casefold()
 
 
 def _read_csv(path: Path) -> list[dict]:
@@ -37,16 +45,30 @@ def verify_baseline_corrections(
 ) -> tuple[list[dict], dict]:
     releases = {row["source_url"]: row for row in release_index}
     corrections = []
+    seen_entities: set[str] = set()
+    seen_tickers: set[str] = set()
     for claim in claims:
         as_of = date.fromisoformat(claim["as_of"])
         evidence_date = date.fromisoformat(claim["evidence_date"])
         ticker = claim["ticker"].upper()
-        if claim["action"] != "ADD" or evidence_date < as_of:
-            raise BaselineCorrectionError("only forward-evidenced baseline ADD is supported")
+        entity_id = claim["entity_id"].strip()
+        cik = claim["cik"].zfill(10)
+        if (
+            claim["action"] != "ADD"
+            or claim["correction_type"] != CORRECTION_TYPE
+            or not entity_id
+            or len(cik) != 10
+            or not cik.isdigit()
+        ):
+            raise BaselineCorrectionError("invalid historical security restoration")
+        if entity_id in seen_entities or ticker in seen_tickers:
+            raise BaselineCorrectionError("duplicate baseline identity restoration")
+        seen_entities.add(entity_id)
+        seen_tickers.add(ticker)
         release = releases.get(claim["source_url"])
         if not release or release.get("status") != "DIRECT_OFFICIAL_SOURCE_ARCHIVED":
             raise BaselineCorrectionError(f"official release not archived: {ticker}")
-        if urlparse(claim["source_url"]).hostname != OFFICIAL_HOST:
+        if urlparse(claim["source_url"]).hostname not in OFFICIAL_HOSTS:
             raise BaselineCorrectionError(f"non-official source: {ticker}")
         if release["published_date"] != claim["evidence_date"]:
             raise BaselineCorrectionError(f"evidence date mismatch: {ticker}")
@@ -57,19 +79,20 @@ def verify_baseline_corrections(
         content = matches[0].read_bytes()
         if hashlib.sha256(content).hexdigest() != digest:
             raise BaselineCorrectionError(f"evidence hash mismatch: {ticker}")
-        text = _normalized_text(content)
+        text = _normalized_text(content, matches[0].suffix)
         required_terms = [
             term.strip() for term in claim["required_terms"].split("||") if term.strip()
         ]
         if not required_terms or not all(term.casefold() in text for term in required_terms):
             raise BaselineCorrectionError(f"required official language missing: {ticker}")
 
+        interval_start, interval_end = sorted((as_of, evidence_date))
         intervening = [
             row for row in candidate_events
             if row.get("ticker", "").upper() == ticker
             and row.get("action", row.get("event", "")).upper() in {"ADD", "REMOVE"}
             and row.get("effective_date")
-            and as_of < date.fromisoformat(row["effective_date"]) <= evidence_date
+            and interval_start < date.fromisoformat(row["effective_date"]) <= interval_end
         ]
         if intervening:
             raise BaselineCorrectionError(
@@ -77,12 +100,18 @@ def verify_baseline_corrections(
             )
         corrections.append({
             "as_of": as_of.isoformat(),
+            "entity_id": entity_id,
+            "cik": cik,
             "ticker": ticker,
+            "correction_type": CORRECTION_TYPE,
             "action": "ADD",
             "event_status": VERIFIED_STATUS,
             "evidence_date": evidence_date.isoformat(),
             "source_url": claim["source_url"],
             "source_sha256": digest,
+            "evidence_direction": (
+                "PRIOR_TO_BASELINE" if evidence_date <= as_of else "AFTER_BASELINE"
+            ),
             "inference": "true",
             "promotion_scope": "DIAGNOSTIC_BASELINE_ONLY",
         })

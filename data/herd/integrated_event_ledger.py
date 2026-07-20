@@ -189,6 +189,12 @@ def build_integrated_ledger(
             "review_status": "",
         })
     for continuity in continuity_events or []:
+        continuity_verified = (
+            continuity.get(
+                "verification_status", "CORPORATE_CONTINUITY_VERIFIED"
+            )
+            == "CORPORATE_CONTINUITY_VERIFIED"
+        )
         corporate_succession = (
             continuity["event_type"] == "CORPORATE_SUCCESSION"
         )
@@ -226,7 +232,11 @@ def build_integrated_ledger(
             "ticker": continuity["ticker"].upper(),
             "old_ticker": continuity["old_ticker"].upper(),
             "company_name": "",
-            "event_status": "VERIFIED_CORPORATE_CONTINUITY",
+            "event_status": (
+                "VERIFIED_CORPORATE_CONTINUITY"
+                if continuity_verified
+                else "DIAGNOSTIC_CORPORATE_CONTINUITY"
+            ),
             "candidate_reconciliation_status": (
                 "VERIFIED_CORPORATE_CONTINUITY_COMPONENT"
             ),
@@ -243,6 +253,9 @@ def build_integrated_ledger(
                     if dual_membership
                     else "S_AND_P_MEMBERSHIP_SUCCESSION"
                 )
+            ),
+            "continuity_evidence_basis": continuity.get(
+                "evidence_basis", "DIRECT_SP_DJI_EVENT"
             ),
             "common_equity_form25": False,
             "merger_completion_evidence": not same_cik and not dual_membership,
