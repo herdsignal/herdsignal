@@ -1,0 +1,54 @@
+{
+  "contract_version": "HERD_RESEARCH_INPUT_V1",
+  "status": "RESEARCH_ONLY_FAIL_CLOSED",
+  "research_period": {
+    "start": "2016-07-18",
+    "end": "2026-07-17"
+  },
+  "price_snapshot": {
+    "manifest_path": "data/snapshots/yf-10y-20260719/manifest.json",
+    "manifest_sha256": "d52c66c9f0359c02a0711dc9ca011ec11c0415fe406ef5f60a568264b3331bfb",
+    "required_snapshot_id": "yf-10y-20260719",
+    "required_coverage": 1.0,
+    "price_semantics": "YFINANCE_AUTO_ADJUSTED_OHLC_PROVIDER_SEMANTICS"
+  },
+  "constituent_snapshot": {
+    "manifest_path": "data/reference/point_in_time/pit-diagnostic-v1.1-20260720/manifest.json",
+    "manifest_sha256": "e1dcf55232df99cf47bcc12cdd9c2321b497a748b14fcf628a843f6ae13ba672",
+    "required_status": "PIT_DIAGNOSTIC_V1",
+    "survivorship_safe": false,
+    "maximum_replay_errors": 0,
+    "blocked_events": 4,
+    "allowed_use": "MODEL_ELIMINATION"
+  },
+  "sec_corpora": [
+    {
+      "manifest_path": "data/reference/sec/sec-pit-price51-20160718-20260717-20260721/manifest.json",
+      "manifest_sha256": "709687dd74bbbc8b26b0f7343ce27b9bbda13d984fb0557b3661d365c18695a3"
+    },
+    {
+      "manifest_path": "data/reference/sec/sec-pit-xom34088-20160718-20260717-20260721/manifest.json",
+      "manifest_sha256": "738470fd7068c88e849b70a71c5f04bac6c718396fdfb83adcfea1f4d3d5e03e"
+    }
+  ],
+  "cik_periods": {
+    "path": "data/herd/price_universe_cik_periods.csv",
+    "sha256": "73bb8455b4e24cde4417929afe817a69ed2c8e940f863cfb71531b74a5fb32e3"
+  },
+  "fold_link_audit": {
+    "path": "data/reports/sec_price_fold_link_v2.csv",
+    "sha256": "98fa9fe250bd53788037a389076fb3ead729da7498aa9b037652786531dccc6d"
+  },
+  "availability_rules": {
+    "sec_fact_available_from": "SEC_ACCEPTANCE_DATETIME",
+    "missing_acceptance": "EXCLUDE",
+    "missing_cik_mapping": "EXCLUDE",
+    "blocked_constituent_event": "SCENARIO_ONLY",
+    "future_restatement_backfill": false
+  },
+  "forbidden_uses": [
+    "FINAL_MODEL_ADOPTION",
+    "PRODUCTION_SIGNAL",
+    "SURVIVORSHIP_SAFE_CLAIM"
+  ]
+}

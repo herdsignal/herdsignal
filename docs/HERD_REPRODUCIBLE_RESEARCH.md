@@ -225,6 +225,23 @@ PYTHONPATH=. python -m herd.experiment_ledger
 탈락 가설을 다시 검증하려면 기존 행을 수정하지 않고, 경제적 가설 또는
 측정식이 무엇이 달라졌는지 명시한 새 사전등록과 새 행을 추가한다.
 
+## 10. 연구 입력 계약
+
+가격, S&P 구성, ticker–CIK 유효기간, SEC corpus와 fold 연결 결과는
+`herd/research_input_contract.json`에서 함께 고정한다. SEC 사실은
+`filed` 날짜가 아니라 EDGAR `ACCEPTANCE-DATETIME` 이후에만 사용할 수
+있다. 접수 시각·CIK·구성 사건이 불명확하면 보정하거나 추정하지 않고
+제외한다.
+
+```bash
+cd data
+PYTHONPATH=. python -m herd.research_input_contract --deep
+```
+
+`--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
+대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
+탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.
+
 ## SEC PIT 가격·fold 연결
 
 가격 ticker를 current CIK 하나로 전체 과거에 소급하지 않는다. 먼저
