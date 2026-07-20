@@ -11,6 +11,7 @@ def decide(
     candidate_report: dict,
     data_quality_report: dict,
     generalization_report: dict,
+    pre_holdout_gate: dict,
 ) -> dict:
     summaries = candidate_report.get("summary", {})
     passing_candidates = [
@@ -43,6 +44,12 @@ def decide(
     )
     prerequisites = {
         "candidate_passed_pre_holdout_gate": bool(passing_candidates),
+        "full_pre_holdout_gate_passed": (
+            pre_holdout_gate.get("stage") == "PRE_HOLDOUT"
+            and pre_holdout_gate.get("status") == "READY_FOR_BLIND_HOLDOUT"
+            and pre_holdout_gate.get("eligible_for_holdout") is True
+            and not pre_holdout_gate.get("failed_criteria")
+        ),
         "point_in_time_data_ready": point_in_time_ready,
         "walk_forward_and_era_validation_complete": walk_forward_ready,
     }
@@ -67,12 +74,14 @@ def main() -> None:
     parser.add_argument("--candidates", type=Path, required=True)
     parser.add_argument("--data-quality", type=Path, required=True)
     parser.add_argument("--generalization", type=Path, required=True)
+    parser.add_argument("--adoption-gate", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     report = decide(
         json.loads(args.candidates.read_text(encoding="utf-8")),
         json.loads(args.data_quality.read_text(encoding="utf-8")),
         json.loads(args.generalization.read_text(encoding="utf-8")),
+        json.loads(args.adoption_gate.read_text(encoding="utf-8")),
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

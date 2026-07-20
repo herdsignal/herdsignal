@@ -44,6 +44,19 @@ def _passing_metadata() -> dict:
 
 
 class ModelAdoptionGateTest(unittest.TestCase):
+    def test_complete_pre_holdout_gate_does_not_require_opening_holdout(self) -> None:
+        metadata = _passing_metadata()
+        metadata.pop("blind_holdout")
+
+        result = evaluate_adoption_gate(metadata, stage="PRE_HOLDOUT")
+
+        self.assertEqual(result["status"], "READY_FOR_BLIND_HOLDOUT")
+        self.assertTrue(result["eligible_for_holdout"])
+        self.assertFalse(result["eligible_for_human_review"])
+        self.assertNotIn("blind_holdout_single_use", [
+            criterion["name"] for criterion in result["criteria"]
+        ])
+
     def test_passing_model_becomes_review_candidate_not_production(self) -> None:
         result = evaluate_adoption_gate(_passing_metadata())
 

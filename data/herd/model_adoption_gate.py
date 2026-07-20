@@ -36,8 +36,12 @@ def _criterion(name: str, passed: bool, actual: Any, threshold: Any) -> dict[str
 def evaluate_adoption_gate(
     metadata: dict[str, Any],
     thresholds: AdoptionThresholds = AdoptionThresholds(),
+    *,
+    stage: str = "FINAL",
 ) -> dict[str, Any]:
     """검증 메타데이터를 fail-closed 방식으로 평가한다."""
+    if stage not in {"PRE_HOLDOUT", "FINAL"}:
+        raise ValueError("stage must be PRE_HOLDOUT or FINAL")
     run = metadata.get("validation_run", {})
     walk = metadata.get("walk_forward_summary", {})
     stability = metadata.get("parameter_stability", {})
@@ -136,23 +140,34 @@ def evaluate_adoption_gate(
                    dsr_probability, f">={thresholds.minimum_dsr_probability}"),
         _criterion("survivorship", survivorship.get("point_in_time_ready") is True,
                    survivorship.get("status"), "POINT_IN_TIME_READY"),
-        _criterion("blind_holdout_single_use",
-                   blind.get("status") == "COMPLETE"
-                   and blind.get("evaluation_count") == 1
-                   and blind.get("passed") is True,
-                   {
-                       "status": blind.get("status"),
-                       "evaluation_count": blind.get("evaluation_count"),
-                       "passed": blind.get("passed"),
-                   },
-                   {"status": "COMPLETE", "evaluation_count": 1, "passed": True}),
     ]
+    if stage == "FINAL":
+        criteria.append(
+            _criterion("blind_holdout_single_use",
+                       blind.get("status") == "COMPLETE"
+                       and blind.get("evaluation_count") == 1
+                       and blind.get("passed") is True,
+                       {
+                           "status": blind.get("status"),
+                           "evaluation_count": blind.get("evaluation_count"),
+                           "passed": blind.get("passed"),
+                       },
+                       {"status": "COMPLETE", "evaluation_count": 1, "passed": True})
+        )
     failed = [item["name"] for item in criteria if not item["passed"]]
     eligible = not failed
     return {
         "policy_version": thresholds.version,
-        "status": "PROMOTION_CANDIDATE" if eligible else "RESEARCH_VALIDATION",
-        "eligible_for_human_review": eligible,
+        "stage": stage,
+        "status": (
+            "READY_FOR_BLIND_HOLDOUT"
+            if eligible and stage == "PRE_HOLDOUT"
+            else "PROMOTION_CANDIDATE"
+            if eligible
+            else "RESEARCH_VALIDATION"
+        ),
+        "eligible_for_holdout": eligible if stage == "PRE_HOLDOUT" else False,
+        "eligible_for_human_review": eligible if stage == "FINAL" else False,
         "automatic_production_promotion": False,
         "failed_criteria": failed,
         "criteria": criteria,
