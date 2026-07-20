@@ -118,6 +118,31 @@ class CorporateContinuityReconciliationTest(unittest.TestCase):
         self.assertEqual("RENAME", events[0]["action"])
         self.assertEqual(2, audit["reclassified_candidate_rows"])
 
+    def test_standalone_continuity_adds_event_without_consuming_candidate(self):
+        claims = [{
+            "candidate_effective_date": "2016-11-01",
+            "action": "RENAME",
+            "ticker": "NEW",
+            "continuity_type": "SAME_CIK_MEMBERSHIP_CONTINUITY",
+            "old_ticker": "OLD",
+            "effective_date": "2016-11-01",
+            "cik": "123",
+            "sp_source_url": self.sp_url,
+            "filing_url": self.sec_url,
+            "required_sp_terms": "in the S&P 500||Post-merger",
+            "required_sec_terms": "ticker symbol NEW",
+            "claim_scope": "STANDALONE",
+        }]
+
+        rows, events, audit = verify_and_reconcile(
+            self.reconciliation, claims, self.sp, self.sec
+        )
+
+        self.assertEqual(self.reconciliation, rows)
+        self.assertEqual("STANDALONE", events[0]["claim_scope"])
+        self.assertEqual("RENAME", events[0]["action"])
+        self.assertEqual(0, audit["reclassified_candidate_rows"])
+
     def test_spinoff_dual_membership_addition_does_not_consume_old_ticker(self):
         claims = [{
             "candidate_effective_date": "2019-11-05",

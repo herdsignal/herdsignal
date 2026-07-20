@@ -120,26 +120,32 @@ def verify_and_reconcile(
     consumed: dict[tuple[str, str, str], dict] = {}
     events = []
     for claim in claims:
+        claim_scope = (claim.get("claim_scope") or "CANDIDATE").upper()
+        if claim_scope not in {"CANDIDATE", "STANDALONE"}:
+            raise CorporateContinuityError(
+                f"unsupported claim scope: {claim_scope}"
+            )
         continuity_type = claim["continuity_type"]
         if continuity_type not in CONTINUITY_TYPES:
             raise CorporateContinuityError(
                 f"unsupported continuity type: {continuity_type}"
             )
         key = candidate_key(claim)
-        candidate = rows_by_key.get(key)
-        if not candidate:
-            raise CorporateContinuityError(f"candidate not found: {key}")
-        if candidate["status"] in {
-            "OFFICIAL_TABLE_EXACT",
-            "OFFICIAL_PROSE_EXACT",
-            "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
-            "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
-            "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
-            "VERIFIED_IDENTITY_CHANGE_COMPONENT",
-        }:
-            raise CorporateContinuityError(
-                f"claim targets an already resolved candidate: {key}"
-            )
+        if claim_scope == "CANDIDATE":
+            candidate = rows_by_key.get(key)
+            if not candidate:
+                raise CorporateContinuityError(f"candidate not found: {key}")
+            if candidate["status"] in {
+                "OFFICIAL_TABLE_EXACT",
+                "OFFICIAL_PROSE_EXACT",
+                "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
+                "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
+                "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
+                "VERIFIED_IDENTITY_CHANGE_COMPONENT",
+            }:
+                raise CorporateContinuityError(
+                    f"claim targets an already resolved candidate: {key}"
+                )
         sec_url = claim["filing_url"]
         sec_item = sec_evidence.get(sec_url)
         if not sec_item:
@@ -168,19 +174,20 @@ def verify_and_reconcile(
             require_terms(sp_item[0], claim["required_sp_terms"], label="S&P")
             sp_sha = sp_item[1]
 
-        consumed[key] = claim
-        if continuity_type in {
-            "SAME_CIK_RENAME",
-            "SAME_CIK_MEMBERSHIP_CONTINUITY",
-        }:
-            for old_ticker in claim_old_tickers(claim):
-                old_key = (
-                    claim["candidate_effective_date"],
-                    "REMOVE",
-                    old_ticker,
-                )
-                if old_key in rows_by_key:
-                    consumed[old_key] = claim
+        if claim_scope == "CANDIDATE":
+            consumed[key] = claim
+            if continuity_type in {
+                "SAME_CIK_RENAME",
+                "SAME_CIK_MEMBERSHIP_CONTINUITY",
+            }:
+                for old_ticker in claim_old_tickers(claim):
+                    old_key = (
+                        claim["candidate_effective_date"],
+                        "REMOVE",
+                        old_ticker,
+                    )
+                    if old_key in rows_by_key:
+                        consumed[old_key] = claim
         events.append({
             "event_type": continuity_type,
             "effective_date": claim["effective_date"],
@@ -195,6 +202,7 @@ def verify_and_reconcile(
             "ticker": claim["ticker"].upper(),
             "old_ticker": "|".join(claim_old_tickers(claim)),
             "candidate_effective_date": claim["candidate_effective_date"],
+            "claim_scope": claim_scope,
             "cik": claim["cik"].zfill(10),
             "verification_status": "CORPORATE_CONTINUITY_VERIFIED",
             "sp_source_url": claim["sp_source_url"],
