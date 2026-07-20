@@ -32,13 +32,24 @@ def collect_filing_corpus(
     snapshot_id: str,
     user_agent: str,
     delay_seconds: float = 0.15,
+    seed_corpus: Path | None = None,
 ) -> Path:
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{2,80}", snapshot_id):
         raise SecFilingCorpusError("unsafe snapshot id")
     final = Path(output_root) / snapshot_id
     if final.exists():
         raise SecFilingCorpusError(f"snapshot already exists: {final}")
-    urls = sorted({row["filing_url"] for row in rows if row.get("filing_url")})
+    seed_rows = []
+    if seed_corpus:
+        with (Path(seed_corpus) / "index.csv").open(
+            encoding="utf-8", newline=""
+        ) as handle:
+            seed_rows = list(csv.DictReader(handle))
+    urls = sorted({
+        row["filing_url"]
+        for row in [*seed_rows, *rows]
+        if row.get("filing_url")
+    })
     if not urls:
         raise SecFilingCorpusError("no SEC filing URLs")
     temp = Path(output_root) / f".{snapshot_id}.tmp-{uuid.uuid4().hex}"
@@ -47,18 +58,31 @@ def collect_filing_corpus(
     session = requests.Session()
     session.headers.update({"User-Agent": user_agent, "Accept-Encoding": "gzip, deflate"})
     index = []
+    seed_by_url = {row["filing_url"]: row for row in seed_rows}
     try:
         for url in urls:
-            response = session.get(url, timeout=60)
-            response.raise_for_status()
-            digest = hashlib.sha256(response.content).hexdigest()
+            seed = seed_by_url.get(url)
+            if seed:
+                source = Path(seed_corpus) / seed["path"]
+                content = source.read_bytes()
+                digest = hashlib.sha256(content).hexdigest()
+                if digest != seed["source_sha256"]:
+                    raise SecFilingCorpusError(
+                        f"seed corpus hash mismatch: {url}"
+                    )
+            else:
+                response = session.get(url, timeout=60)
+                response.raise_for_status()
+                content = response.content
+                digest = hashlib.sha256(content).hexdigest()
             path = raw / f"{digest}.txt"
-            path.write_bytes(response.content)
+            path.write_bytes(content)
             index.append({
                 "filing_url": url, "source_sha256": digest,
-                "bytes": len(response.content), "path": f"raw/{path.name}",
+                "bytes": len(content), "path": f"raw/{path.name}",
             })
-            time.sleep(delay_seconds)
+            if not seed:
+                time.sleep(delay_seconds)
         with (temp / "index.csv").open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=list(index[0]))
             writer.writeheader()
@@ -71,6 +95,8 @@ def collect_filing_corpus(
             "user_agent_configured": True,
             "documents": len(index),
             "bytes": sum(row["bytes"] for row in index),
+            "seed_corpus": str(seed_corpus) if seed_corpus else "",
+            "seed_documents": len(seed_rows),
         }
         (temp / "manifest.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
@@ -97,10 +123,12 @@ def main() -> None:
         "--root", type=Path,
         default=Path(__file__).resolve().parent.parent / "reference" / "sec",
     )
+    parser.add_argument("--seed-corpus", type=Path)
     args = parser.parse_args()
     print(collect_filing_corpus(
         read_csv(args.input), args.root, snapshot_id=args.snapshot_id,
         user_agent=resolve_user_agent(args.env_file),
+        seed_corpus=args.seed_corpus,
     ))
 
 

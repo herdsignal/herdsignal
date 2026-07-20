@@ -32,6 +32,7 @@ from herd.residual_event_classification import (
     classify_residual_events,
 )
 from herd.share_class_normalization import normalize_share_class_events
+from herd.ticker_alias_ledger import reconcile_ticker_aliases
 
 
 class ConstituentResearchPipelineError(RuntimeError):
@@ -47,6 +48,8 @@ REQUIRED_INPUTS = {
     "reviewed_date_corrections",
     "resolution_routes",
     "identity_evidence",
+    "ticker_alias_ledger",
+    "ticker_alias_claims",
     "continuity_claims",
     "sp_continuity_corpus",
     "sec_continuity_corpus",
@@ -241,12 +244,26 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
                 read_csv(inputs["identity_evidence"]),
             )
         )
-        reconciliation, continuity_events, continuity_audit = verify_and_reconcile(
-            identity_rows,
-            read_csv(inputs["continuity_claims"]),
-            load_spglobal_corpus(inputs["sp_continuity_corpus"]),
-            load_sec_corpus(inputs["sec_continuity_corpus"]),
+        sp_continuity_evidence = load_spglobal_corpus(
+            inputs["sp_continuity_corpus"]
         )
+        sec_continuity_evidence = load_sec_corpus(
+            inputs["sec_continuity_corpus"]
+        )
+        alias_rows, alias_events, alias_audit = reconcile_ticker_aliases(
+            identity_rows,
+            read_csv(inputs["ticker_alias_claims"]),
+            read_csv(inputs["ticker_alias_ledger"]),
+            sp_continuity_evidence,
+            sec_continuity_evidence,
+        )
+        reconciliation, continuity_events, continuity_audit = verify_and_reconcile(
+            alias_rows,
+            read_csv(inputs["continuity_claims"]),
+            sp_continuity_evidence,
+            sec_continuity_evidence,
+        )
+        continuity_events = [*alias_events, *continuity_events]
         reconstruction_anomalies = (
             read_csv(inputs["reconstruction_anomalies"])
             + read_csv(inputs["reviewed_reconstruction_anomalies"])
@@ -359,6 +376,7 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
             "official": official_audit,
             "share_classes": share_class_audit,
             "identity": identity_audit,
+            "ticker_aliases": alias_audit,
             "continuity": continuity_audit,
             "ledger": ledger_audit,
             "replay": replay_audit,
