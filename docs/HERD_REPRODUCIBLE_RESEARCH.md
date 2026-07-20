@@ -242,6 +242,19 @@ PYTHONPATH=. python -m herd.research_input_contract --deep
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.
 
+## 11. 장기 라벨 OOS 분할
+
+라벨 길이가 다른 가격 타이밍과 기업 상태를 같은 fold로 평가하지 않는다.
+`herd/oos_fold_protocol.json`은 다음 두 lane을 고정한다.
+
+- `PRICE_TIMING_6M`: 126거래일 purge, 20거래일 embargo, 1년 test
+- `BUSINESS_STATE_12M`: 252거래일 purge, 20거래일 embargo, 2년 test
+
+test 구간은 서로 겹치지 않으며 미래 결과가 test 종료일을 넘는 사건은
+제외한다. 현재 10년 스냅샷은 가격 lane 5개로 기준을 충족하지만 기업
+상태 lane은 2개뿐이라 채택 검증에 사용할 수 없다. 이 부족을 해결하려고
+purge나 라벨을 사후 축소하지 않는다.
+
 ## SEC PIT 가격·fold 연결
 
 가격 ticker를 current CIK 하나로 전체 과거에 소급하지 않는다. 먼저
