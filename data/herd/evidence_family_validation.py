@@ -16,6 +16,7 @@ if str(_DATA_DIR) not in sys.path:
 
 from collectors.stock_collector import collect
 from herd.benchmark_engine import BenchmarkConfig, buy_and_hold, performance_metrics, simulate
+from herd.data_snapshot import load_snapshot
 from herd.validation_universe import SECTOR_UNIVERSE, TICKERS, UNIVERSE_VERSION
 
 FAMILIES = ("participation", "trend_relative_strength", "risk")
@@ -135,6 +136,7 @@ def evaluate(
     price_frames: dict[str, pd.DataFrame],
     *,
     config: BenchmarkConfig | None = None,
+    data_source: dict | None = None,
 ) -> dict:
     closes = pd.concat(
         {ticker: frame.set_index("Date")["Close"] for ticker, frame in price_frames.items()},
@@ -148,9 +150,13 @@ def evaluate(
     rows = []
     for ticker, raw in price_frames.items():
         prices = raw.set_index("Date")[["Open", "Close"]].sort_index()
-        start = max(score[ticker].first_valid_index() for score in scores.values())
-        if start is None:
+        starts = [
+            score[ticker].first_valid_index()
+            for score in scores.values()
+        ]
+        if any(start is None for start in starts):
             continue
+        start = max(starts)
         prices = prices.loc[start:]
         benchmark = buy_and_hold(prices, config=config)
         family_results = {}
@@ -162,20 +168,38 @@ def evaluate(
             family_results[family] = metrics
         rows.append({"ticker": ticker, "families": family_results})
     return {
-        "report_version": "2026.07-v1",
+        "report_version": "2026.07-v2",
         "universe_version": UNIVERSE_VERSION,
+        "data_source": data_source or {
+            "mode": "CALLER_PROVIDED",
+            "reproducible": False,
+        },
+        "research_scope": {
+            "selection_rule": "pre-fixed; no threshold fitting",
+            "interpretation": (
+                "screening evidence only; not an OOS model adoption result"
+            ),
+            "survivorship": (
+                "current fixed 55-ticker universe; bias remains"
+            ),
+        },
         "method": {
             "frequency": "month-end signal, next trading-day open execution",
             "exposure_rule": "score >=60: 100%, >=40: 50%, otherwise cash",
             "participation": "60% market breadth + 40% direction-confirmed volume rank",
             "trend_relative_strength": "50% 12-1 cross-sectional momentum + 50% 200DMA distance",
             "risk": "50% inverse downside-volatility rank + 50% drawdown resilience",
-            "business": "NOT_TESTABLE_WITHOUT_POINT_IN_TIME_FUNDAMENTALS",
+            "business": (
+                "PIT_CORPUS_AVAILABLE_NOT_JOINED_TO_PRICE_UNIVERSE"
+            ),
         },
         "summary": {family: _summary(rows, family) for family in FAMILIES},
         "business": {
-            "status": "BLOCKED_DATA_NOT_READY",
-            "reason": "point-in-time filings, announcement dates, and contemporaneous estimates unavailable",
+            "status": "BLOCKED_INTEGRATION_NOT_READY",
+            "reason": (
+                "SEC PIT corpus exists, but entity-period observations are "
+                "not yet joined to this price universe and fold contract"
+            ),
         },
         "rows": rows,
     }
@@ -195,12 +219,36 @@ def run(period: str = "10y") -> dict:
     return report
 
 
+def run_snapshot(snapshot_dir: Path) -> dict:
+    frames, manifest = load_snapshot(snapshot_dir)
+    report = evaluate(
+        frames,
+        data_source={
+            "mode": "IMMUTABLE_PRICE_SNAPSHOT",
+            "reproducible": True,
+            "snapshot_id": manifest["snapshot_id"],
+            "snapshot_sha256": manifest["snapshot_sha256"],
+            "coverage": manifest["coverage"],
+            "provider": manifest["source"]["provider"],
+            "auto_adjust": manifest["source"]["auto_adjust"],
+        },
+    )
+    report["failures"] = manifest["failures"]
+    return report
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--period", default="10y")
+    parser.add_argument("--snapshot", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    rendered = json.dumps(run(args.period), ensure_ascii=False, indent=2)
+    report = (
+        run_snapshot(args.snapshot)
+        if args.snapshot
+        else run(args.period)
+    )
+    rendered = json.dumps(report, ensure_ascii=False, indent=2)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered + "\n", encoding="utf-8")

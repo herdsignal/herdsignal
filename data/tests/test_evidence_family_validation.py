@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from herd.evidence_family_validation import (
     _predictive_metrics,
     build_evidence_scores,
+    evaluate,
     score_to_targets,
 )
 
@@ -68,6 +69,29 @@ class EvidenceFamilyValidationTest(unittest.TestCase):
 
         self.assertIn("forward_12m_rank_ic", result)
         self.assertIsNotNone(result["high_minus_low_12m_return"])
+
+    def test_evaluation_labels_screening_scope(self):
+        frames = {
+            ticker: pd.DataFrame({
+                "Date": self.closes.index,
+                "Open": self.closes[ticker].to_numpy(),
+                "Close": self.closes[ticker].to_numpy(),
+                "Volume": self.volumes[ticker].to_numpy(),
+            })
+            for ticker in self.closes
+        }
+
+        result = evaluate(
+            frames,
+            data_source={
+                "mode": "IMMUTABLE_PRICE_SNAPSHOT",
+                "reproducible": True,
+            },
+        )
+
+        self.assertEqual(result["report_version"], "2026.07-v2")
+        self.assertTrue(result["data_source"]["reproducible"])
+        self.assertIn("not an OOS", result["research_scope"]["interpretation"])
 
 
 if __name__ == "__main__":

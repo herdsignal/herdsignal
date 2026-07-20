@@ -188,7 +188,23 @@ PYTHONPATH=. .venv/bin/python -m herd.legacy_model_evaluation \
 coverage를 기록한다. 이 결과는 55개 현존 대형주의 가격 기반 재평가이며
 전체 과거 S&P 500의 생존자 편향 해소 결과가 아니다.
 
-## 7. 판정 원칙
+## 7. 증거군 단독 스크리닝
+
+기존 참여·추세/상대강도·위험 프록시를 같은 가격 스냅샷에서 분리해
+실행한다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.evidence_family_validation \
+  --snapshot snapshots/yf-10y-20260719 \
+  --output reports/evidence_family_validation_v2.json
+```
+
+이 실행은 사전 고정 프록시를 빠르게 탈락시키는 진단이다. 전체 기간
+결과이므로 OOS 채택 근거로 사용하지 않으며, 결과를 본 뒤 임계값을
+조정하지 않는다. 통과 가설만 별도 사전 등록 후 walk-forward로 보낸다.
+
+## 8. 판정 원칙
 
 스냅샷과 시간 분할은 모델 성능을 본 뒤 바꾸지 않는다. 후보가 탈락해도
 실행 manifest와 일별 수익률을 보존한다. 집계 결과만 저장한 과거 보고서는
