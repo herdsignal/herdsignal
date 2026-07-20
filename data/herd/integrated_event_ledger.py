@@ -262,6 +262,12 @@ def build_integrated_ledger(
             "merger_agreement_evidence": False,
             "sp_source_url": continuity.get("sp_source_url", ""),
             "sp_source_sha256": continuity.get("sp_source_sha256", ""),
+            "after_sp_source_url": continuity.get(
+                "after_sp_source_url", ""
+            ),
+            "after_sp_source_sha256": continuity.get(
+                "after_sp_source_sha256", ""
+            ),
             "sec_source_url": continuity["sec_source_url"],
             "sec_source_sha256": continuity["sec_source_sha256"],
             "review_status": "",

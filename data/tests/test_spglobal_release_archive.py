@@ -1,3 +1,5 @@
+import csv
+import hashlib
 import sys
 import tempfile
 import unittest
@@ -121,6 +123,55 @@ class SpglobalReleaseArchiveTest(unittest.TestCase):
             )
             evidence = list((root / "corpus/evidence").iterdir())
             self.assertEqual(".pdf", evidence[0].suffix)
+
+    def test_merges_seed_and_new_claims_with_different_columns(self):
+        response = Mock()
+        response.content = b"<html>new official release</html>"
+        response.headers = {"Content-Type": "text/html"}
+        response.raise_for_status = Mock()
+        session = Mock()
+        session.headers = {}
+        session.get.return_value = response
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            seed = root / "seed"
+            (seed / "evidence").mkdir(parents=True)
+            seed_content = b"<html>seed official release</html>"
+            seed_digest = hashlib.sha256(seed_content).hexdigest()
+            (seed / "evidence" / f"{seed_digest}.html").write_bytes(seed_content)
+            (seed / "release_index.csv").write_text(
+                "published_date,title,source_url,status,source_sha256\n"
+                "2016-10-24,HCP,"
+                "https://press.spglobal.com/2016-10-24-HCP,"
+                f"DIRECT_OFFICIAL_SOURCE_ARCHIVED,{seed_digest}\n",
+                encoding="utf-8",
+            )
+            claims = root / "claims.csv"
+            claims.write_text(
+                "published_date,title,source_url,collection_status\n"
+                "2026-07-14,Baker Hughes,"
+                "https://press.spglobal.com/2026-07-14-Baker-Hughes,"
+                "READY\n",
+                encoding="utf-8",
+            )
+
+            manifest = collect_direct_release_corpus(
+                claims,
+                root / "corpus",
+                user_agent="Research contact test@example.com",
+                session=session,
+                seed_corpus=seed,
+            )
+
+            with (root / "corpus/release_index.csv").open(
+                encoding="utf-8", newline=""
+            ) as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(2, manifest["release_documents"])
+            self.assertEqual(2, len(rows))
+            self.assertIn("collection_status", rows[0])
+            self.assertEqual("", rows[0]["collection_status"])
+            self.assertEqual("READY", rows[1]["collection_status"])
 
 
 if __name__ == "__main__":

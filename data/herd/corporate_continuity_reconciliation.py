@@ -27,6 +27,7 @@ VERIFIED_COMPONENT = "VERIFIED_CORPORATE_CONTINUITY_COMPONENT"
 EVIDENCE_BASES = {
     "DIRECT_SP_DJI_EVENT",
     "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_SUCCESSION",
+    "PRIOR_AND_AFTER_SP_DJI_MEMBERSHIP_PLUS_SEC_SUCCESSION",
     "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_EXPLICIT_INDEX_ENTRY",
     "SEC_CORPORATE_ACTION_ONLY",
 }
@@ -239,6 +240,8 @@ def verify_and_reconcile(
         require_terms(sec_item[0], claim["required_sec_terms"], label="SEC")
 
         sp_sha = ""
+        after_sp_url = (claim.get("after_sp_source_url") or "").strip()
+        after_sp_sha = ""
         if continuity_type in {
             "SAME_CIK_MEMBERSHIP_CONTINUITY",
             "SUCCESSOR_MEMBERSHIP",
@@ -259,6 +262,33 @@ def verify_and_reconcile(
                 )
             require_terms(sp_item[0], claim["required_sp_terms"], label="S&P")
             sp_sha = sp_item[1]
+            if evidence_basis == (
+                "PRIOR_AND_AFTER_SP_DJI_MEMBERSHIP_PLUS_SEC_SUCCESSION"
+            ):
+                if not after_sp_url:
+                    raise CorporateContinuityError(
+                        "prior-and-after evidence requires after_sp_source_url"
+                    )
+                after_sp_item = sp_evidence.get(after_sp_url)
+                if not after_sp_item:
+                    raise CorporateContinuityError(
+                        f"after S&P evidence not archived: {after_sp_url}"
+                    )
+                after_host = (
+                    urlparse(after_sp_url).hostname or ""
+                ).lower()
+                if after_host not in {
+                    "press.spglobal.com", "www.spglobal.com"
+                }:
+                    raise CorporateContinuityError(
+                        "after membership evidence must use official S&P DJI"
+                    )
+                require_terms(
+                    after_sp_item[0],
+                    claim.get("required_after_sp_terms", ""),
+                    label="after S&P",
+                )
+                after_sp_sha = after_sp_item[1]
 
         if claim_scope == "CANDIDATE":
             for component_key in component_keys:
@@ -294,6 +324,8 @@ def verify_and_reconcile(
             "evidence_basis": evidence_basis,
             "sp_source_url": claim["sp_source_url"],
             "sp_source_sha256": sp_sha,
+            "after_sp_source_url": after_sp_url,
+            "after_sp_source_sha256": after_sp_sha,
             "sec_source_url": sec_url,
             "sec_source_sha256": sec_item[1],
         }

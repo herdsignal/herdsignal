@@ -1,5 +1,6 @@
-published_date,title,source_url
-2013-06-03,Baker Hughes remains in S&P 500,https://press.spglobal.com/2013-06-03-General-Motors-Set-to-Join-S-P-100-500-American-International-Group-to-Join-S-P-100
-2018-01-24,Praxair listed in official S&P annual rebalance announcement,https://www.spglobal.com/spdji/en/documents/indexnews/announcements/20180124-651750/651750_spdaudp1.24.18rebalanceannouncement.pdf
-2018-10-30,WestRock confirmed as S&P 500 constituent,https://press.spglobal.com/2018-10-30-Keysight-Technologies-Set-to-Join-S-P-500-Ligand-Pharmaceuticals-to-Join-S-P-MidCap-400-Marcus-Millichap-and-Arcosa-to-Join-S-P-SmallCap-600
-2019-06-03,Bemis Set to Join S&P 500,https://press.spglobal.com/2019-06-03-Bemis-Set-to-Join-S-P-500-Mattel-to-Join-S-P-MidCap-400
+published_date,title,source_url,collection_status
+2013-06-03,Baker Hughes remains in S&P 500,https://press.spglobal.com/2013-06-03-General-Motors-Set-to-Join-S-P-100-500-American-International-Group-to-Join-S-P-100,READY
+2018-01-24,Praxair listed in official S&P annual rebalance announcement,https://www.spglobal.com/spdji/en/documents/indexnews/announcements/20180124-651750/651750_spdaudp1.24.18rebalanceannouncement.pdf,BLOCKED_WAF_403
+2018-10-30,WestRock confirmed as S&P 500 constituent,https://press.spglobal.com/2018-10-30-Keysight-Technologies-Set-to-Join-S-P-500-Ligand-Pharmaceuticals-to-Join-S-P-MidCap-400-Marcus-Millichap-and-Arcosa-to-Join-S-P-SmallCap-600,READY
+2019-06-03,Bemis Set to Join S&P 500,https://press.spglobal.com/2019-06-03-Bemis-Set-to-Join-S-P-500-Mattel-to-Join-S-P-MidCap-400,READY
+2026-07-14,Baker Hughes confirmed as S&P 500 constituent,https://press.spglobal.com/2026-07-14-BrightSpring-Health-Services-Set-to-Join-S-P-MidCap-400-and-Karman-Holdings-to-Join-S-P-SmallCap-600,READY

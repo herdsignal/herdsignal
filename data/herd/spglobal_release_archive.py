@@ -159,6 +159,14 @@ def collect_direct_release_corpus(
     required = {"published_date", "title", "source_url"}
     if not claims or not required.issubset(claims[0]):
         raise ReleaseArchiveError("direct release claims schema mismatch")
+    pending_claims = [
+        row for row in claims
+        if (row.get("collection_status") or "READY").upper() != "READY"
+    ]
+    claims = [
+        row for row in claims
+        if (row.get("collection_status") or "READY").upper() == "READY"
+    ]
 
     seed_rows = []
     seed_by_url = {}
@@ -233,7 +241,11 @@ def collect_direct_release_corpus(
     for digest, suffix, content in documents:
         (evidence_dir / f"{digest}{suffix}").write_bytes(content)
     index_path = destination / "release_index.csv"
-    fields = list(rows[0])
+    fields = []
+    for row in rows:
+        for field in row:
+            if field not in fields:
+                fields.append(field)
     with index_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
@@ -241,6 +253,14 @@ def collect_direct_release_corpus(
     manifest = {
         "source": "S&P Global direct public press release URLs",
         "release_documents": len(rows),
+        "pending_claims": len(pending_claims),
+        "pending_sources": [
+            {
+                "source_url": row["source_url"],
+                "collection_status": row.get("collection_status", ""),
+            }
+            for row in pending_claims
+        ],
         "seed_corpus": str(seed_corpus) if seed_corpus else "",
         "seed_documents": len(seed_rows),
         "use": "OFFICIAL_DOCUMENT_ARCHIVE; claims require independent verification",
