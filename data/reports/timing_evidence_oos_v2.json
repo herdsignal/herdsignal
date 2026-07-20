@@ -1,0 +1,58 @@
+{
+  "families": {
+    "MARKET_RISK": {
+      "decision": "PASS_STOCK_DOWNSIDE_COMPONENT_TO_CAP_ABLATION",
+      "passing_horizons": 2,
+      "required_horizons": 2
+    },
+    "PARTICIPATION": {
+      "decision": "REJECTED_PREDICTIVE_EVIDENCE",
+      "passing_horizons": 0,
+      "required_horizons": 2
+    },
+    "PRICE_EXTENSION": {
+      "decision": "REJECTED_PREDICTIVE_EVIDENCE",
+      "passing_horizons": 0,
+      "required_horizons": 2
+    },
+    "RELATIVE_OVERHEAT": {
+      "decision": "REJECTED_PREDICTIVE_EVIDENCE",
+      "passing_horizons": 0,
+      "required_horizons": 2
+    },
+    "TREND_MATURITY": {
+      "decision": "REJECTED_PREDICTIVE_EVIDENCE",
+      "passing_horizons": 0,
+      "required_horizons": 2
+    }
+  },
+  "folds_sha256": "c59b5fe832e87670190ecd07ece70d42b165fc062ab2577fa3081854f608a642",
+  "gate": {
+    "forward_horizons_months": [
+      1,
+      3,
+      6
+    ],
+    "inference_sample": "NON_OVERLAPPING_MONTHLY_CROSS_SECTIONAL_RANK_IC",
+    "maximum_adjusted_p_value": 0.1,
+    "minimum_directional_folds": 4,
+    "minimum_passing_horizons": 2,
+    "minimum_signed_median_rank_ic": 0.03,
+    "multiple_testing": "HOLM_WITHIN_FAMILY_HORIZONS"
+  },
+  "limitations": [
+    "Current fixed 55-ticker universe remains survivorship-biased.",
+    "Sector ETF PIT prices are absent; relative evidence uses SPY only.",
+    "MARKET_RISK pass covers stock downside-volatility and drawdown components; the common SPY regime needs a separate time-series test.",
+    "Business guard is evaluated in a separate SEC PIT stage."
+  ],
+  "protocol": {
+    "protocol_version": "2026.07-role-correct-oos-v2",
+    "sha256": "f84c4c19c107661ec15cbdf9e657d736d9117a503f4f146f11ad71a39dafbebd",
+    "status": "LOCKED_BEFORE_OOS_RESULTS",
+    "test_count": 6
+  },
+  "report_version": "herd-timing-evidence-oos-v2",
+  "snapshot_id": "yf-10y-20260719",
+  "snapshot_sha256": "d3a6b6cdacc604ce0c90e751c56210261b272501486bb6692e3bfd3a0905840b"
+}

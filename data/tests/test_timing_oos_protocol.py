@@ -13,6 +13,7 @@ class TimingOosProtocolTest(unittest.TestCase):
     def test_protocol_is_locked(self):
         _, audit = load_protocol()
         self.assertEqual(audit["test_count"], 6)
+        self.assertEqual(len(audit["sha256"]), 64)
 
     def test_participation_cannot_set_action_direction(self):
         protocol, _ = load_protocol()
@@ -29,4 +30,3 @@ class TimingOosProtocolTest(unittest.TestCase):
         changed["common_execution"]["minimum_exposure"] = 0.5
         with self.assertRaises(TimingHypothesisRegistryError):
             validate_protocol(changed)
-

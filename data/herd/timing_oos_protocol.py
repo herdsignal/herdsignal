@@ -5,7 +5,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from herd.timing_hypothesis_registry import TimingHypothesisRegistryError
+from herd.timing_hypothesis_registry import (
+    TimingHypothesisRegistryError,
+    registry_sha256,
+)
 
 PROTOCOL_PATH = Path(__file__).with_name("timing_oos_protocol.json")
 EXPECTED_FAMILIES = {
@@ -45,10 +48,22 @@ def validate_protocol(protocol: dict) -> dict:
     forbidden = set(protocol["action_candidate"].get("forbidden", []))
     if {"SELL_FROM_HIGH_RSI_ALONE", "FULL_LIQUIDATION"} - forbidden:
         raise TimingHypothesisRegistryError("unsafe action shortcut")
+    gate = protocol.get("predictive_gate", {})
+    if (
+        gate.get("forward_horizons_months") != [1, 3, 6]
+        or gate.get("minimum_signed_median_rank_ic", 0) < 0.03
+        or gate.get("minimum_directional_folds", 0) < 4
+        or gate.get("minimum_passing_horizons", 0) < 2
+        or gate.get("multiple_testing") != "HOLM_WITHIN_FAMILY_HORIZONS"
+        or gate.get("maximum_adjusted_p_value", 1) > 0.1
+        or "NON_OVERLAPPING" not in gate.get("inference_sample", "")
+    ):
+        raise TimingHypothesisRegistryError("predictive gate is too weak")
     return {
         "protocol_version": protocol["protocol_version"],
         "test_count": len(tests),
         "status": protocol["status"],
+        "sha256": registry_sha256(protocol),
     }
 
 
