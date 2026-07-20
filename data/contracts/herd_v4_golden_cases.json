@@ -1,0 +1,101 @@
+{
+  "contractVersion": "HERD_V4_CONTRACT_1",
+  "modelVersion": "HERD_v4",
+  "rounding": "PYTHON_HALF_EVEN_2DP",
+  "weights": {
+    "monthly_rsi": 0.24,
+    "weekly_rsi": 0.19,
+    "position_52w": 0.19,
+    "ma200_deviation": 0.18,
+    "volume_strength": 0.00,
+    "ma200_weekly": 0.20
+  },
+  "thresholds": {
+    "fleeInclusiveUpper": 15.0,
+    "scatterInclusiveUpper": 40.0,
+    "calmExclusiveUpper": 60.0,
+    "driftExclusiveUpper": 75.0
+  },
+  "cases": [
+    {
+      "id": "floor_clamp",
+      "indicators": {
+        "monthly_rsi": 0.0,
+        "weekly_rsi": 0.0,
+        "position_52w": 0.0,
+        "ma200_deviation": 0.0,
+        "volume_strength": 100.0,
+        "ma200_weekly": 0.0
+      },
+      "epsMultiplier": 0.85,
+      "sectorMultiplier": 0.90,
+      "expectedBase": 0.0,
+      "expectedV4": 0.0,
+      "expectedStage": "Herd Flee"
+    },
+    {
+      "id": "scatter",
+      "indicators": {
+        "monthly_rsi": 30.0,
+        "weekly_rsi": 30.0,
+        "position_52w": 30.0,
+        "ma200_deviation": 30.0,
+        "volume_strength": 0.0,
+        "ma200_weekly": 30.0
+      },
+      "epsMultiplier": 1.0,
+      "sectorMultiplier": 1.0,
+      "expectedBase": 30.0,
+      "expectedV4": 30.0,
+      "expectedStage": "Herd Scatter"
+    },
+    {
+      "id": "mixed_adjusted",
+      "indicators": {
+        "monthly_rsi": 80.0,
+        "weekly_rsi": 70.0,
+        "position_52w": 60.0,
+        "ma200_deviation": 40.0,
+        "volume_strength": 95.0,
+        "ma200_weekly": 30.0
+      },
+      "epsMultiplier": 0.90,
+      "sectorMultiplier": 0.95,
+      "expectedBase": 57.10,
+      "expectedV4": 48.82,
+      "expectedStage": "Herd Calm"
+    },
+    {
+      "id": "drift",
+      "indicators": {
+        "monthly_rsi": 65.0,
+        "weekly_rsi": 65.0,
+        "position_52w": 65.0,
+        "ma200_deviation": 65.0,
+        "volume_strength": 0.0,
+        "ma200_weekly": 65.0
+      },
+      "epsMultiplier": 1.0,
+      "sectorMultiplier": 1.0,
+      "expectedBase": 65.0,
+      "expectedV4": 65.0,
+      "expectedStage": "Herd Drift"
+    },
+    {
+      "id": "ceiling_clamp",
+      "indicators": {
+        "monthly_rsi": 95.0,
+        "weekly_rsi": 95.0,
+        "position_52w": 95.0,
+        "ma200_deviation": 95.0,
+        "volume_strength": 0.0,
+        "ma200_weekly": 95.0
+      },
+      "epsMultiplier": 1.15,
+      "sectorMultiplier": 1.10,
+      "expectedBase": 95.0,
+      "expectedV4": 100.0,
+      "expectedStage": "Herd Rush"
+    }
+  ]
+}

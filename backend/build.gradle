@@ -43,3 +43,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+sourceSets {
+	test {
+		resources {
+			srcDir '../data/contracts'
+		}
+	}
+}
