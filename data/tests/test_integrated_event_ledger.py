@@ -1,6 +1,6 @@
 import unittest
 
-from herd.integrated_event_ledger import build_integrated_ledger
+from herd.integrated_event_ledger import IntegratedLedgerError, build_integrated_ledger
 
 
 class IntegratedEventLedgerTest(unittest.TestCase):
@@ -95,6 +95,56 @@ class IntegratedEventLedgerTest(unittest.TestCase):
 
         self.assertEqual([], rows)
         self.assertEqual(1, audit["quarantined_source_artifacts"])
+
+    def test_requires_evidence_for_reviewed_source_error_quarantine(self):
+        reconciliation = [{
+            "candidate_effective_date": "2023-05-17",
+            "resolved_effective_date": "",
+            "action": "ADD",
+            "ticker": "DOW",
+            "status": "UNMATCHED_RECONSTRUCTION_ANOMALY",
+        }]
+        anomalies = [{
+            "candidate_effective_date": "2023-05-17",
+            "action": "ADD",
+            "ticker": "DOW",
+            "exclude_from_official_ledger": "true",
+            "review_status": "VERIFIED_SOURCE_ERROR",
+            "source_url": "",
+            "reason": "",
+        }]
+
+        with self.assertRaises(IntegratedLedgerError):
+            build_integrated_ledger(
+                reconciliation, [], [], [], [],
+                reconstruction_anomalies=anomalies,
+            )
+
+    def test_counts_evidence_backed_source_error_quarantine(self):
+        reconciliation = [{
+            "candidate_effective_date": "2023-05-17",
+            "resolved_effective_date": "",
+            "action": "ADD",
+            "ticker": "DOW",
+            "status": "UNMATCHED_RECONSTRUCTION_ANOMALY",
+        }]
+        anomalies = [{
+            "candidate_effective_date": "2023-05-17",
+            "action": "ADD",
+            "ticker": "DOW",
+            "exclude_from_official_ledger": "true",
+            "review_status": "VERIFIED_SOURCE_ERROR",
+            "source_url": "https://press.spglobal.com/example",
+            "reason": "verified duplicate",
+        }]
+
+        rows, audit = build_integrated_ledger(
+            reconciliation, [], [], [], [],
+            reconstruction_anomalies=anomalies,
+        )
+
+        self.assertEqual([], rows)
+        self.assertEqual(1, audit["reviewed_source_error_quarantines"])
 
     def test_replaces_continuity_components_with_verified_events(self):
         reconciliation = [

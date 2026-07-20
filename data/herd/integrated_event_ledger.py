@@ -61,6 +61,16 @@ def build_integrated_ledger(
         if str(row.get("exclude_from_official_ledger", "")).lower() == "true"
         or row.get("exclude_from_official_ledger") is True
     }
+    reviewed_quarantines = [
+        row for row in reconstruction_anomalies or []
+        if str(row.get("exclude_from_official_ledger", "")).lower() == "true"
+        and row.get("review_status") == "VERIFIED_SOURCE_ERROR"
+    ]
+    for row in reviewed_quarantines:
+        if not row.get("source_url") or not row.get("reason"):
+            raise IntegratedLedgerError(
+                "reviewed source-error quarantine requires source_url and reason"
+            )
     cik_by_event = {event_key(row): row for row in cik_events}
     form25_by_url = {
         row["filing_url"]: row["classification_status"]
@@ -225,6 +235,7 @@ def build_integrated_ledger(
         "identity_transitions": len(identity_transitions or []),
         "corporate_continuity_events": len(continuity_events or []),
         "quarantined_source_artifacts": len(quarantined_keys),
+        "reviewed_source_error_quarantines": len(reviewed_quarantines),
         "event_statuses": dict(statuses),
         "verified_official_events": verified,
         "events_with_common_form25": sum(row["common_equity_form25"] for row in rows),

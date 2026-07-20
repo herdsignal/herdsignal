@@ -55,6 +55,7 @@ REQUIRED_INPUTS = {
     "form25_classification",
     "merger_classification",
     "reconstruction_anomalies",
+    "reviewed_reconstruction_anomalies",
     "baseline_intervals",
     "baseline_corrections",
 }
@@ -246,6 +247,10 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
             load_spglobal_corpus(inputs["sp_continuity_corpus"]),
             load_sec_corpus(inputs["sec_continuity_corpus"]),
         )
+        reconstruction_anomalies = (
+            read_csv(inputs["reconstruction_anomalies"])
+            + read_csv(inputs["reviewed_reconstruction_anomalies"])
+        )
         ledger, ledger_audit = build_integrated_ledger(
             reconciliation,
             read_csv(inputs["cik_events"]),
@@ -253,7 +258,7 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
             read_csv(inputs["form25_classification"]),
             read_csv(inputs["merger_classification"]),
             identity_events,
-            read_csv(inputs["reconstruction_anomalies"]),
+            reconstruction_anomalies,
             continuity_events,
         )
         baseline = load_baseline_from_intervals(

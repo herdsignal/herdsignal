@@ -1,0 +1,6 @@
+candidate_effective_date,action,ticker,normalized_ticker,anomaly_type,exclude_from_official_ledger,review_status,source_url,reason
+2018-09-19,REMOVE,KORS,KORS,INVALID_RECONSTRUCTION_EVENT,true,VERIFIED_SOURCE_ERROR,https://www.sec.gov/Archives/edgar/data/1530721/000119312518362322/d653406dex991.htm,공식 기업 사건은 2019-01-02 KORS에서 CPRI로의 티커 변경이며 해당 날짜 제거 근거가 없음
+2023-05-17,ADD,DOW,DOW,DUPLICATE_HISTORICAL_ADDITION,true,VERIFIED_SOURCE_ERROR,https://press.spglobal.com/2019-03-26-Dow-Set-to-Join-S-P-500-and-S-P-100-Brighthouse-Financial-and-Trex-Company-to-Join-S-P-MidCap-400-Pitney-Bowes-and-Xenia-Hotels-Resorts-to-Join-S-P-SmallCap-600,공식 편입일은 2019-04-02이며 2023-05-17 행은 중복 편입
+2023-05-17,ADD,FOX,FOX,DUPLICATE_HISTORICAL_ADDITION,true,VERIFIED_SOURCE_ERROR,https://press.spglobal.com/2019-03-14-Fox-Corporation-Set-to-Join-S-P-500,공식 구성 승계는 2019-03-19이며 2023-05-17 행은 중복 편입
+2023-05-17,ADD,FOXA,FOXA,DUPLICATE_HISTORICAL_ADDITION,true,VERIFIED_SOURCE_ERROR,https://press.spglobal.com/2019-03-14-Fox-Corporation-Set-to-Join-S-P-500,공식 구성 승계는 2019-03-19이며 2023-05-17 행은 중복 편입
+2023-05-17,ADD,IR,IR,DUPLICATE_HISTORICAL_ADDITION,true,VERIFIED_SOURCE_ERROR,https://press.spglobal.com/2020-02-27-Gardner-Denver-Holdings-Set-to-Join-S-P-500-Cimarex-Energy-to-Join-S-P-MidCap-400,공식 기업행동은 2020-03-03이며 2023-05-17 행은 중복 편입
