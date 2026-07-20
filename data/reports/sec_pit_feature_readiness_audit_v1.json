@@ -1,0 +1,37 @@
+{
+  "format_version": "herd-sec-pit-feature-readiness-v1",
+  "max_fact_age_days": 550,
+  "core_concept_groups": {
+    "revenue": [
+      "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "RevenueFromContractWithCustomerIncludingAssessedTax",
+      "Revenues",
+      "SalesRevenueNet",
+      "SalesRevenueServicesNet"
+    ],
+    "earnings": [
+      "NetIncomeLoss",
+      "ProfitLoss"
+    ],
+    "operating_cash_flow": [
+      "NetCashProvidedByUsedInOperatingActivities",
+      "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations"
+    ],
+    "assets": [
+      "Assets"
+    ],
+    "liabilities_or_debt": [
+      "Liabilities",
+      "LiabilitiesAndStockholdersEquity",
+      "LongTermDebt",
+      "LongTermDebtCurrent",
+      "LongTermDebtNoncurrent"
+    ]
+  },
+  "audited_rows": 5,
+  "guard_ready_rows": 5,
+  "guard_blocked_rows": 0,
+  "strict_corpus_ready": false,
+  "guard_research_ready": true,
+  "interpretation": "guard_research_ready permits only the business deterioration veto. It does not repair or include observations without SEC acceptance times."
+}
