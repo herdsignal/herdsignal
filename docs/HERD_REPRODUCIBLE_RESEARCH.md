@@ -210,6 +210,21 @@ PYTHONPATH=. .venv/bin/python -m herd.evidence_family_validation \
 실행 manifest와 일별 수익률을 보존한다. 집계 결과만 저장한 과거 보고서는
 참고 기록일 뿐 차세대 HERD 채택 근거로 사용하지 않는다.
 
+## 9. 실험 판정 원장
+
+완료한 사전등록 연구는 `herd/experiment_ledger.json`에 순서대로 기록한다.
+각 행은 사전등록 원문과 결과 파일의 SHA-256, 선언한 시험 수, 최종 판정,
+직전 행 해시를 포함한다. 연구 결과는 스스로 운영 승격을 허용할 수 없다.
+
+```bash
+cd data
+PYTHONPATH=. python -m herd.experiment_ledger
+```
+
+원문·결과·과거 판정 중 하나가 바뀌거나 행이 재정렬되면 검증은 실패한다.
+탈락 가설을 다시 검증하려면 기존 행을 수정하지 않고, 경제적 가설 또는
+측정식이 무엇이 달라졌는지 명시한 새 사전등록과 새 행을 추가한다.
+
 ## SEC PIT 가격·fold 연결
 
 가격 ticker를 current CIK 하나로 전체 과거에 소급하지 않는다. 먼저

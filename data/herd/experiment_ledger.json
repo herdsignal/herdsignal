@@ -1,0 +1,47 @@
+{
+  "ledger_version": "HERD_EXPERIMENT_LEDGER_V1",
+  "records": [
+    {
+      "sequence": 1,
+      "experiment_id": "TIMING_EVIDENCE_OOS_V2",
+      "completed_on": "2026-07-20",
+      "protocol_path": "data/herd/timing_oos_protocol.json",
+      "protocol_sha256": "c66353fa83fad212d173e356650d2f6c926df7b6a783aa5e58ad07d463179fa4",
+      "report_path": "data/reports/timing_evidence_oos_v2.json",
+      "report_sha256": "7a58d181ada78f9fd1079b013e9bde48f2a9096ddd6bf05775177d975a9e6061",
+      "declared_test_count": 6,
+      "decision": "PASS_MARKET_RISK_DOWNSIDE_TO_CAP_ABLATION_ONLY",
+      "promotion_allowed": false,
+      "previous_record_sha256": null,
+      "record_sha256": "a0a8274c50b00b51d238206e0b10262226f309a5917bdb6c4b31585338650420"
+    },
+    {
+      "sequence": 2,
+      "experiment_id": "RUSH_TURNING_POINT_OOS_V1",
+      "completed_on": "2026-07-20",
+      "protocol_path": "data/herd/rush_turning_point_protocol.json",
+      "protocol_sha256": "a65c080432e07eda824df4f2ac1cb34a221589f5ecc8e3aa273d91c6e8bfbf99",
+      "report_path": "data/reports/rush_turning_point_oos_v1.json",
+      "report_sha256": "5f8acc9e58f8cd502069e4fee383ce9f633d13970fb88fbf018c19dd79672b86",
+      "declared_test_count": 6,
+      "decision": "REJECT_RUSH_TURNING_POINT_SELL_EVIDENCE",
+      "promotion_allowed": false,
+      "previous_record_sha256": "a0a8274c50b00b51d238206e0b10262226f309a5917bdb6c4b31585338650420",
+      "record_sha256": "a6ab65e264172b22983b5b622d7f4478d7a288fc683d573b7712d2be28369ee9"
+    },
+    {
+      "sequence": 3,
+      "experiment_id": "SEC_PIT_BUSINESS_GUARD_OOS_V1",
+      "completed_on": "2026-07-20",
+      "protocol_path": "data/herd/business_guard_protocol.json",
+      "protocol_sha256": "6c9e857557e19d630cbad6b06b7c2ce1e8bde02a904b465bf9794e8cc16a73ab",
+      "report_path": "data/reports/business_guard_oos_v1.json",
+      "report_sha256": "4cf1786c0c50e59bc85713f324ad4b4456e466ea93df6f73752e1bf6f6113d32",
+      "declared_test_count": 6,
+      "decision": "REJECT_BUSINESS_GUARD_PREDICTIVE_EVIDENCE",
+      "promotion_allowed": false,
+      "previous_record_sha256": "a6ab65e264172b22983b5b622d7f4478d7a288fc683d573b7712d2be28369ee9",
+      "record_sha256": "a9934a78cf767fa9d81fe03feea8ab6ce5cd7ac3d4c2e16bccab26517696e4ee"
+    }
+  ]
+}
