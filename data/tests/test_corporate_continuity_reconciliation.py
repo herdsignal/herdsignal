@@ -143,6 +143,39 @@ class CorporateContinuityReconciliationTest(unittest.TestCase):
         self.assertEqual("RENAME", events[0]["action"])
         self.assertEqual(0, audit["reclassified_candidate_rows"])
 
+    def test_historical_admission_preserves_ticker_until_verified_rename(self):
+        claims = [{
+            "candidate_effective_date": "2017-04-04",
+            "action": "ADD",
+            "ticker": "NEXT",
+            "continuity_type": "HISTORICAL_TICKER_ADMISSION_THEN_RENAME",
+            "old_ticker": "OLD",
+            "effective_date": "2017-04-04",
+            "rename_effective_date": "2017-05-01",
+            "cik": "123",
+            "sp_source_url": self.sp_url,
+            "filing_url": self.sec_url,
+            "required_sp_terms": "in the S&P 500||Post-merger",
+            "required_sec_terms": "ticker symbol NEW",
+        }]
+
+        rows, events, audit = verify_and_reconcile(
+            self.reconciliation, claims, self.sp, self.sec
+        )
+
+        self.assertEqual(
+            [("2017-04-04", "ADD", "OLD"), ("2017-05-01", "RENAME", "NEXT")],
+            [
+                (event["effective_date"], event["action"], event["ticker"])
+                for event in events
+            ],
+        )
+        self.assertEqual(
+            "VERIFIED_CORPORATE_CONTINUITY_COMPONENT",
+            next(row for row in rows if row["ticker"] == "NEXT")["status"],
+        )
+        self.assertEqual(1, audit["reclassified_candidate_rows"])
+
     def test_spinoff_dual_membership_addition_does_not_consume_old_ticker(self):
         claims = [{
             "candidate_effective_date": "2019-11-05",

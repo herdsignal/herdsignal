@@ -19,6 +19,7 @@ CONTINUITY_TYPES = {
     "SAME_CIK_MEMBERSHIP_CONTINUITY",
     "SUCCESSOR_MEMBERSHIP",
     "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
+    "HISTORICAL_TICKER_ADMISSION_THEN_RENAME",
 }
 VERIFIED_COMPONENT = "VERIFIED_CORPORATE_CONTINUITY_COMPONENT"
 
@@ -159,6 +160,7 @@ def verify_and_reconcile(
             "SAME_CIK_MEMBERSHIP_CONTINUITY",
             "SUCCESSOR_MEMBERSHIP",
             "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
+            "HISTORICAL_TICKER_ADMISSION_THEN_RENAME",
         }:
             sp_url = claim["sp_source_url"]
             sp_item = sp_evidence.get(sp_url)
@@ -188,7 +190,48 @@ def verify_and_reconcile(
                     )
                     if old_key in rows_by_key:
                         consumed[old_key] = claim
+        common_event = {
+            "candidate_effective_date": claim["candidate_effective_date"],
+            "claim_scope": claim_scope,
+            "cik": claim["cik"].zfill(10),
+            "verification_status": "CORPORATE_CONTINUITY_VERIFIED",
+            "sp_source_url": claim["sp_source_url"],
+            "sp_source_sha256": sp_sha,
+            "sec_source_url": sec_url,
+            "sec_source_sha256": sec_item[1],
+        }
+        if continuity_type == "HISTORICAL_TICKER_ADMISSION_THEN_RENAME":
+            rename_effective_date = claim.get("rename_effective_date", "")
+            if not rename_effective_date:
+                raise CorporateContinuityError(
+                    "historical admission requires rename_effective_date"
+                )
+            old_tickers = claim_old_tickers(claim)
+            if len(old_tickers) != 1:
+                raise CorporateContinuityError(
+                    "historical admission supports exactly one historical ticker"
+                )
+            events.extend([
+                {
+                    **common_event,
+                    "event_type": "SUCCESSOR_MEMBERSHIP",
+                    "effective_date": claim["effective_date"],
+                    "action": "ADD",
+                    "ticker": old_tickers[0],
+                    "old_ticker": "",
+                },
+                {
+                    **common_event,
+                    "event_type": "SAME_CIK_RENAME",
+                    "effective_date": rename_effective_date,
+                    "action": "RENAME",
+                    "ticker": claim["ticker"].upper(),
+                    "old_ticker": old_tickers[0],
+                },
+            ])
+            continue
         events.append({
+            **common_event,
             "event_type": continuity_type,
             "effective_date": claim["effective_date"],
             "action": (
@@ -201,14 +244,6 @@ def verify_and_reconcile(
             ),
             "ticker": claim["ticker"].upper(),
             "old_ticker": "|".join(claim_old_tickers(claim)),
-            "candidate_effective_date": claim["candidate_effective_date"],
-            "claim_scope": claim_scope,
-            "cik": claim["cik"].zfill(10),
-            "verification_status": "CORPORATE_CONTINUITY_VERIFIED",
-            "sp_source_url": claim["sp_source_url"],
-            "sp_source_sha256": sp_sha,
-            "sec_source_url": sec_url,
-            "sec_source_sha256": sec_item[1],
         })
 
     updated = []
