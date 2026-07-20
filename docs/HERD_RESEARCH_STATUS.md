@@ -118,6 +118,14 @@ SEC PIT corpus를 55종목 가격·fold에 연결했다. ETF를 제외한 51개 
 차단용 `BUSINESS_GUARD` 단독 가설로 OOS 검증할 수 있다. 전체 SEC corpus는
 여전히 `strict_corpus_ready=false`다.
 
+SEC 접수 시각 기준 월별 기업 상태 veto도 사전등록 OOS 검증을 완료했다.
+일반 기업용 매출·이익·영업현금흐름·부채 규칙은 6개월 VETO 15건,
+PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하지 못했다.
+따라서 `REJECT_BUSINESS_GUARD_PREDICTIVE_EVIDENCE`이며 추가매수 규칙에
+연결하지 않는다. 약 12개월 test fold에서는 엄격 purge를 적용한 12개월
+사건을 만들 수 없으므로 다음 검증은 더 긴 fold를 별도로 사전등록해야
+한다.
+
 ## 해결한 연구 인프라
 
 - 동일 조건 Buy & Hold 비교 엔진
