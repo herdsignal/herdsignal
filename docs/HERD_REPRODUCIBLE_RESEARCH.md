@@ -138,7 +138,41 @@ PYTHONPATH=data data/.venv/bin/python -m herd.pit_diagnostic_snapshot verify \
 2026-07-20 기준 스냅샷은 최종 구성 500종목, 재생 오류 0건이며
 LIN·VTRS·SW·PSKY 네 사건을 차단 목록으로 고정한다.
 
-## 5. 판정 원칙
+## 5. PIT 불확실성 시나리오
+
+동결 스냅샷의 모든 차단 사건은
+`herd/pit_uncertainty_assumptions.csv`에서 정확히 한 번씩 다룬다.
+가정은 `RESEARCH_SCENARIO_ONLY`, `promotion_allowed=false`여야 한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.pit_uncertainty_scenarios \
+  data/reference/point_in_time/pit-diagnostic-v1.1-YYYYMMDD \
+  data/herd/pit_uncertainty_assumptions.csv \
+  data/reference/point_in_time/<scenario-run-id>
+```
+
+생성 경계:
+
+- `CURRENT_DIAGNOSTIC`: 현재 진단 승계 포함
+- `VERIFIED_ONLY`: 검증 사건만 포함
+- `ASSUME_CONTINUITY`: 차단된 승계를 모두 연속으로 가정
+- `CONSERVATIVE_EXCLUSION`: 사건 전후 63개 관측치를 제외하는 성과 오버레이
+
+OOS 후보 민감도는 다음 명령으로 계산한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.pit_sensitivity_evaluation \
+  data/reference/point_in_time/<scenario-run-id> \
+  data/walk_forward/<run-id> \
+  data/reports/pit_uncertainty_sensitivity_v1.json
+```
+
+후보 순위 변경, 초과 CAGR 부호 반전, 후보별 초과 CAGR 범위 0.50%p 초과
+중 하나가 발생하면 구성 불확실성이 중요한 것으로 판정하고 원문 해결 또는
+가격 coverage 확장으로 돌아간다. 모두 발생하지 않으면 기존 모델
+재평가로 진행한다.
+
+## 6. 판정 원칙
 
 스냅샷과 시간 분할은 모델 성능을 본 뒤 바꾸지 않는다. 후보가 탈락해도
 실행 manifest와 일별 수익률을 보존한다. 집계 결과만 저장한 과거 보고서는

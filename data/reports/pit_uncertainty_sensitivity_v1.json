@@ -1,0 +1,403 @@
+{
+  "format_version": "herd-pit-sensitivity-evaluation-v1",
+  "sources": {
+    "scenario_run_sha256": "d2bf54c0661a912995a89fa8b24e777d030719e5f79ccf6365b8875e7939671c",
+    "walk_forward_run_sha256": "70763a1d11d748bccef0ab0394c51e8fae0c59592995fe8306275d91cd699de1"
+  },
+  "coverage": {
+    "walk_forward_tickers": 55,
+    "uncertainty_tickers": [
+      "LIN",
+      "MYL",
+      "PARA",
+      "PSKY",
+      "PX",
+      "SW",
+      "VTRS",
+      "WRK"
+    ],
+    "covered_uncertainty_tickers": [
+      "LIN"
+    ],
+    "missing_uncertainty_tickers": [
+      "MYL",
+      "PARA",
+      "PSKY",
+      "PX",
+      "SW",
+      "VTRS",
+      "WRK"
+    ],
+    "eligible_tickers_by_scenario": {
+      "CURRENT_DIAGNOSTIC": 50,
+      "VERIFIED_ONLY": 50,
+      "ASSUME_CONTINUITY": 51,
+      "CONSERVATIVE_EXCLUSION": 51
+    },
+    "conservative_excluded_rows": 0
+  },
+  "scenarios": {
+    "CURRENT_DIAGNOSTIC": {
+      "B0": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.19249831018955366,
+          "max_drawdown": -0.19003619236207492,
+          "sortino": 1.6801320287676362,
+          "calmar": 1.0129560469344054,
+          "excess_cagr": -0.010550256161753646
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.2030485663513073,
+          "max_drawdown": -0.19541525215985567,
+          "sortino": 1.69615471777579,
+          "calmar": 1.0390620184815837
+        },
+        "median_eligible_tickers": 50.0,
+        "minimum_eligible_tickers": 48
+      },
+      "B1": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.1732105661406702,
+          "max_drawdown": -0.175891949542064,
+          "sortino": 1.6703528296695644,
+          "calmar": 0.9847555080924694,
+          "excess_cagr": -0.029838000210637095
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.2030485663513073,
+          "max_drawdown": -0.19541525215985567,
+          "sortino": 1.69615471777579,
+          "calmar": 1.0390620184815837
+        },
+        "median_eligible_tickers": 50.0,
+        "minimum_eligible_tickers": 48
+      },
+      "B2": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.16808213983423603,
+          "max_drawdown": -0.17403424458880068,
+          "sortino": 1.655533280556275,
+          "calmar": 0.9657992323945901,
+          "excess_cagr": -0.03496642651707127
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.2030485663513073,
+          "max_drawdown": -0.19541525215985567,
+          "sortino": 1.69615471777579,
+          "calmar": 1.0390620184815837
+        },
+        "median_eligible_tickers": 50.0,
+        "minimum_eligible_tickers": 48
+      },
+      "B3": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.163587978671919,
+          "max_drawdown": -0.1709830042831163,
+          "sortino": 1.6517552630551426,
+          "calmar": 0.9567499375613232,
+          "excess_cagr": -0.039460587679388315
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.2030485663513073,
+          "max_drawdown": -0.19541525215985567,
+          "sortino": 1.69615471777579,
+          "calmar": 1.0390620184815837
+        },
+        "median_eligible_tickers": 50.0,
+        "minimum_eligible_tickers": 48
+      }
+    },
+    "VERIFIED_ONLY": {
+      "B0": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.19249831018955366,
+          "max_drawdown": -0.19003619236207492,
+          "sortino": 1.6801320287676362,
+          "calmar": 1.0129560469344054,
+          "excess_cagr": -0.010550256161753646
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.2030485663513073,
+          "max_drawdown": -0.19541525215985567,
+          "sortino": 1.69615471777579,
+          "calmar": 1.0390620184815837
+        },
+        "median_eligible_tickers": 50.0,
+        "minimum_eligible_tickers": 48
+      },
+      "B1": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.1732105661406702,
+          "max_drawdown": -0.175891949542064,
+          "sortino": 1.6703528296695644,
+          "calmar": 0.9847555080924694,
+          "excess_cagr": -0.029838000210637095
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.2030485663513073,
+          "max_drawdown": -0.19541525215985567,
+          "sortino": 1.69615471777579,
+          "calmar": 1.0390620184815837
+        },
+        "median_eligible_tickers": 50.0,
+        "minimum_eligible_tickers": 48
+      },
+      "B2": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.16808213983423603,
+          "max_drawdown": -0.17403424458880068,
+          "sortino": 1.655533280556275,
+          "calmar": 0.9657992323945901,
+          "excess_cagr": -0.03496642651707127
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.2030485663513073,
+          "max_drawdown": -0.19541525215985567,
+          "sortino": 1.69615471777579,
+          "calmar": 1.0390620184815837
+        },
+        "median_eligible_tickers": 50.0,
+        "minimum_eligible_tickers": 48
+      },
+      "B3": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.163587978671919,
+          "max_drawdown": -0.1709830042831163,
+          "sortino": 1.6517552630551426,
+          "calmar": 0.9567499375613232,
+          "excess_cagr": -0.039460587679388315
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.2030485663513073,
+          "max_drawdown": -0.19541525215985567,
+          "sortino": 1.69615471777579,
+          "calmar": 1.0390620184815837
+        },
+        "median_eligible_tickers": 50.0,
+        "minimum_eligible_tickers": 48
+      }
+    },
+    "ASSUME_CONTINUITY": {
+      "B0": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.1922309561624984,
+          "max_drawdown": -0.1894841200370151,
+          "sortino": 1.6805111272066062,
+          "calmar": 1.0144963922303714,
+          "excess_cagr": -0.010119459531396258
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.20235041569389467,
+          "max_drawdown": -0.19475995017271153,
+          "sortino": 1.694229725750625,
+          "calmar": 1.0389734414824607
+        },
+        "median_eligible_tickers": 51.0,
+        "minimum_eligible_tickers": 49
+      },
+      "B1": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.1728548199131139,
+          "max_drawdown": -0.17561567280144796,
+          "sortino": 1.667246011017634,
+          "calmar": 0.9842790062851879,
+          "excess_cagr": -0.02949559578078076
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.20235041569389467,
+          "max_drawdown": -0.19475995017271153,
+          "sortino": 1.694229725750625,
+          "calmar": 1.0389734414824607
+        },
+        "median_eligible_tickers": 51.0,
+        "minimum_eligible_tickers": 49
+      },
+      "B2": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.1676328557968878,
+          "max_drawdown": -0.17379209189134182,
+          "sortino": 1.6514469344306841,
+          "calmar": 0.9645597447649984,
+          "excess_cagr": -0.03471755989700687
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.20235041569389467,
+          "max_drawdown": -0.19475995017271153,
+          "sortino": 1.694229725750625,
+          "calmar": 1.0389734414824607
+        },
+        "median_eligible_tickers": 51.0,
+        "minimum_eligible_tickers": 49
+      },
+      "B3": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.16322950451354745,
+          "max_drawdown": -0.17079881729028723,
+          "sortino": 1.6472802092016534,
+          "calmar": 0.9556828735887843,
+          "excess_cagr": -0.03912091118034722
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.20235041569389467,
+          "max_drawdown": -0.19475995017271153,
+          "sortino": 1.694229725750625,
+          "calmar": 1.0389734414824607
+        },
+        "median_eligible_tickers": 51.0,
+        "minimum_eligible_tickers": 49
+      }
+    },
+    "CONSERVATIVE_EXCLUSION": {
+      "B0": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.1922309561624984,
+          "max_drawdown": -0.1894841200370151,
+          "sortino": 1.6805111272066062,
+          "calmar": 1.0144963922303714,
+          "excess_cagr": -0.010119459531396258
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.20235041569389467,
+          "max_drawdown": -0.19475995017271153,
+          "sortino": 1.694229725750625,
+          "calmar": 1.0389734414824607
+        },
+        "median_eligible_tickers": 51.0,
+        "minimum_eligible_tickers": 49
+      },
+      "B1": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.1728548199131139,
+          "max_drawdown": -0.17561567280144796,
+          "sortino": 1.667246011017634,
+          "calmar": 0.9842790062851879,
+          "excess_cagr": -0.02949559578078076
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.20235041569389467,
+          "max_drawdown": -0.19475995017271153,
+          "sortino": 1.694229725750625,
+          "calmar": 1.0389734414824607
+        },
+        "median_eligible_tickers": 51.0,
+        "minimum_eligible_tickers": 49
+      },
+      "B2": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.1676328557968878,
+          "max_drawdown": -0.17379209189134182,
+          "sortino": 1.6514469344306841,
+          "calmar": 0.9645597447649984,
+          "excess_cagr": -0.03471755989700687
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.20235041569389467,
+          "max_drawdown": -0.19475995017271153,
+          "sortino": 1.694229725750625,
+          "calmar": 1.0389734414824607
+        },
+        "median_eligible_tickers": 51.0,
+        "minimum_eligible_tickers": 49
+      },
+      "B3": {
+        "strategy": {
+          "observations": 1256,
+          "cagr": 0.16322950451354745,
+          "max_drawdown": -0.17079881729028723,
+          "sortino": 1.6472802092016534,
+          "calmar": 0.9556828735887843,
+          "excess_cagr": -0.03912091118034722
+        },
+        "benchmark": {
+          "observations": 1256,
+          "cagr": 0.20235041569389467,
+          "max_drawdown": -0.19475995017271153,
+          "sortino": 1.694229725750625,
+          "calmar": 1.0389734414824607
+        },
+        "median_eligible_tickers": 51.0,
+        "minimum_eligible_tickers": 49
+      }
+    }
+  },
+  "conclusion": {
+    "ranking_by_scenario": {
+      "CURRENT_DIAGNOSTIC": [
+        "B0",
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "VERIFIED_ONLY": [
+        "B0",
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "ASSUME_CONTINUITY": [
+        "B0",
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "CONSERVATIVE_EXCLUSION": [
+        "B0",
+        "B1",
+        "B2",
+        "B3"
+      ]
+    },
+    "ranking_stable": true,
+    "excess_cagr_range_by_candidate": {
+      "B0": 0.00043079663035738847,
+      "B1": 0.00034240442985633557,
+      "B2": 0.00024886662006440297,
+      "B3": 0.0003396764990410972
+    },
+    "sign_flip_by_candidate": {
+      "B0": false,
+      "B1": false,
+      "B2": false,
+      "B3": false
+    },
+    "materiality_threshold": 0.005,
+    "material_candidates": [],
+    "decision_sensitive": false,
+    "next_action": "PROCEED_TO_LEGACY_MODEL_REEVALUATION"
+  },
+  "policy": {
+    "research_only": true,
+    "survivorship_safe": false,
+    "final_adoption_allowed": false
+  }
+}
