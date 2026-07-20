@@ -102,7 +102,43 @@ PYTHONPATH=data data/.venv/bin/python -m herd.constituent_research_pipeline \
 기존 결과 디렉터리는 덮어쓰지 않는다. 새 증거를 추가할 때마다 새 run ID를
 사용하고 직전 승인 결과를 회귀 기준으로 고정한다.
 
-## 4. 판정 원칙
+## 4. PIT 진단 스냅샷
+
+공식 사건이 모두 해결되지 않았더라도 재생 오류가 0건이고 차단 사건이
+명시적으로 격리된 실행은 `PIT_DIAGNOSTIC_V1`으로 동결할 수 있다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.pit_diagnostic_snapshot create \
+  pit-diagnostic-v1-YYYYMMDD \
+  data/reference/point_in_time/<pipeline-run-id> \
+  --root data/reference/point_in_time
+```
+
+스냅샷은 통합 사건 원장, 차단 목록, 재생 결과와 원본 pipeline manifest를
+그대로 복사하고 각 파일의 SHA-256을 기록한다. 기존 스냅샷은 덮어쓰지
+않으며, 검증 명령은 파일 변조와 정책 변경을 모두 차단한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.pit_diagnostic_snapshot verify \
+  data/reference/point_in_time/pit-diagnostic-v1-YYYYMMDD
+```
+
+허용 범위:
+
+- 모델 후보의 조기 탈락
+- 미해결 사건 불확실성 민감도 분석
+- 연구 파이프라인 회귀 검증
+
+금지 범위:
+
+- 최종 모델 채택
+- 운영 신호 생성
+- 생존자 편향 해결 선언
+
+2026-07-20 기준 스냅샷은 최종 구성 500종목, 재생 오류 0건이며
+LIN·VTRS·SW·PSKY 네 사건을 차단 목록으로 고정한다.
+
+## 5. 판정 원칙
 
 스냅샷과 시간 분할은 모델 성능을 본 뒤 바꾸지 않는다. 후보가 탈락해도
 실행 manifest와 일별 수익률을 보존한다. 집계 결과만 저장한 과거 보고서는
