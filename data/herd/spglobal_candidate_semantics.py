@@ -16,6 +16,7 @@ from herd.spglobal_prose_event_verifier import (
     classify_occurrence,
     load_release_texts,
     qualified_effective_mentions,
+    shared_replacement_removal_mentions,
 )
 
 
@@ -35,6 +36,14 @@ def extract_candidate_semantics(candidate: dict, release: dict) -> dict:
             occurrence.end(),
             published_date=date.fromisoformat(release["published_date"]),
         )
+        if action == "REMOVE":
+            shared_mentions = shared_replacement_removal_mentions(
+                release["text"],
+                occurrence.end(),
+                published_date=date.fromisoformat(release["published_date"]),
+            )
+            if shared_mentions:
+                mentions = shared_mentions
         if action and len(mentions) == 1:
             stated_date, timing = next(iter(mentions))
             outcomes.append((occurrence, action, stated_date, timing))

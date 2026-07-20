@@ -20,6 +20,27 @@ class SpglobalProseEventVerifierTest(unittest.TestCase):
         self.assertIsNotNone(ticker_match)
         self.assertEqual("REMOVE", classify_occurrence(text, ticker_match))
 
+    def test_uses_shared_removal_date_instead_of_earlier_addition_date(self):
+        release = {
+            "published_date": "2020-03-31",
+            "source_url": "https://press.spglobal.com/example",
+            "source_sha256": "a" * 64,
+            "text": (
+                "Otis Worldwide Corp. (NYSE: OTIS) and Carrier Global Corp. "
+                "(NYSE: CARR) will be added to the S&P 500 prior to the open "
+                "of trading on Friday, April 3. Otis Worldwide will replace "
+                "Raytheon Co. (NYSE: RTN), and Carrier Global will replace "
+                "Macy's Inc. (NYSE: M) both of which will be removed from the "
+                "S&P 500 effective prior to the open of trading on Monday, April 6."
+            ),
+        }
+        row = verify_candidate(
+            {"effective_date": "2020-04-06", "action": "REMOVE", "ticker": "RTN"},
+            release,
+        )
+        self.assertEqual("SEMANTICS_AND_DATE_VERIFIED", row["verification_status"])
+        self.assertEqual("2020-04-06", row["stated_effective_date"])
+
     def test_verifies_add_and_remove_with_same_qualified_date(self):
         release = {
             "published_date": "2019-09-20",

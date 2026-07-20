@@ -125,6 +125,40 @@ def mention_matches_candidate(
     return False
 
 
+def shared_replacement_removal_mentions(
+    text: str,
+    occurrence_end: int,
+    *,
+    published_date: date,
+) -> set[tuple[date, str]]:
+    """복수 교체 대상에 공통으로 붙은 편출 시점을 반환한다."""
+    after = text[occurrence_end:min(len(text), occurrence_end + 650)]
+    shared_clause = re.search(
+        r"\bboth of which will be removed from (?:the\s+)?S&P 500",
+        after,
+        re.IGNORECASE,
+    )
+    if not shared_clause:
+        return set()
+    clause = after[shared_clause.start():]
+    sentence_end = re.search(r"\.(?=\s+[A-Z]|$)", clause)
+    if sentence_end:
+        clause = clause[:sentence_end.end()]
+    mentions = set()
+    for match in DATE_PATTERN.finditer(clause):
+        context = clause[max(0, match.start() - 130):match.end() + 40]
+        if not QUALIFIER_PATTERN.search(context):
+            continue
+        try:
+            mentions.add((
+                parse_date_mention(match.group(), published_date=published_date),
+                classify_effective_timing(context),
+            ))
+        except (ConstituentEventContractError, ProseVerificationError):
+            continue
+    return mentions
+
+
 def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
     before = text[max(0, ticker_match.start() - 650):ticker_match.start()]
     after = text[ticker_match.end():min(len(text), ticker_match.end() + 650)]
@@ -275,6 +309,14 @@ def verify_candidate(event: dict, release: dict) -> dict:
             occurrence.end(),
             published_date=published_date,
         )
+        if action == "REMOVE":
+            shared_mentions = shared_replacement_removal_mentions(
+                release["text"],
+                occurrence.end(),
+                published_date=published_date,
+            )
+            if shared_mentions:
+                mentions = shared_mentions
         matching_mentions = {
             mention for mention in mentions
             if mention_matches_candidate(mention[0], mention[1], expected_date)

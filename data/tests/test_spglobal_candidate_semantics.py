@@ -45,6 +45,27 @@ class SpglobalCandidateSemanticsTest(unittest.TestCase):
         )
         self.assertEqual("2016-09-06", row["membership_session_date"])
 
+    def test_extracts_date_from_shared_removal_clause(self):
+        row = extract_candidate_semantics(
+            {"effective_date": "2020-04-06", "action": "REMOVE", "ticker": "RTN"},
+            {
+                "published_date": "2020-03-31",
+                "source_url": "https://press.spglobal.com/example",
+                "source_sha256": "a" * 64,
+                "text": (
+                    "Otis (NYSE: OTIS) and Carrier (NYSE: CARR) will be added "
+                    "to the S&P 500 prior to the open on April 3. Otis will "
+                    "replace Raytheon (NYSE: RTN), and Carrier will replace "
+                    "Macy's (NYSE: M) both of which will be removed from the "
+                    "S&P 500 prior to the open on April 6."
+                ),
+            },
+        )
+        self.assertEqual(
+            "OFFICIAL_SEMANTICS_MATCH_CANDIDATE", row["extraction_status"]
+        )
+        self.assertEqual("2020-04-06", row["membership_session_date"])
+
 
 if __name__ == "__main__":
     unittest.main()

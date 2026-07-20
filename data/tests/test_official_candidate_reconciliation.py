@@ -4,6 +4,24 @@ from herd.official_candidate_reconciliation import reconcile_candidates
 
 
 class OfficialCandidateReconciliationTest(unittest.TestCase):
+    def test_accepts_previous_reconciliation_as_candidate_input(self):
+        rows, audit = reconcile_candidates(
+            [{
+                "candidate_effective_date": "2020-04-06",
+                "action": "REMOVE",
+                "ticker": "RTN",
+            }],
+            [],
+            [{
+                "effective_date": "2020-04-06",
+                "action": "REMOVE",
+                "ticker": "RTN",
+            }],
+            [],
+        )
+        self.assertEqual("OFFICIAL_PROSE_EXACT", rows[0]["status"])
+        self.assertEqual(1, audit["resolved_events"])
+
     def test_prefers_exact_table_and_corrects_nearby_candidate_date(self):
         candidates = [
             {"effective_date": "2020-10-09", "action": "ADD", "ticker": "VNT"},

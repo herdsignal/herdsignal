@@ -14,7 +14,10 @@ class CandidateReconciliationError(RuntimeError):
 
 
 def event_key(row: dict) -> tuple[str, str, str]:
-    return row["effective_date"], row["action"], row["ticker"].upper()
+    effective_date = row.get("effective_date") or row.get("candidate_effective_date")
+    if not effective_date:
+        raise CandidateReconciliationError("candidate effective date is missing")
+    return effective_date, row["action"], row["ticker"].upper()
 
 
 def reconcile_candidates(
