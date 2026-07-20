@@ -89,6 +89,58 @@ class DailyConstituentReplayTest(unittest.TestCase):
         self.assertEqual(["NEW"], snapshots[0]["added"])
         self.assertTrue(audit["replay_complete"])
 
+    def test_replays_admission_before_same_day_rename_by_sequence(self):
+        snapshots, audit = replay_events(
+            {"AAA"},
+            [
+                {
+                    "event_type": "IDENTITY_CHANGE",
+                    "index_effective_date": "2018-06-05",
+                    "effective_date": "2018-06-05",
+                    "event_sequence": "30",
+                    "action": "RENAME",
+                    "old_ticker": "WR",
+                    "ticker": "EVRG",
+                    "event_status": "VERIFIED_CORPORATE_CONTINUITY",
+                },
+                {
+                    "event_type": "MEMBERSHIP_CHANGE",
+                    "index_effective_date": "2018-06-05",
+                    "effective_date": "2018-06-05",
+                    "event_sequence": "20",
+                    "action": "ADD",
+                    "ticker": "WR",
+                    "event_status": "VERIFIED_CORPORATE_CONTINUITY",
+                },
+            ],
+            minimum_size=1,
+            maximum_size=2,
+        )
+        self.assertEqual(["EVRG"], snapshots[0]["added"])
+        self.assertEqual([], snapshots[0]["removed"])
+        self.assertEqual(0, audit["errors"])
+        self.assertTrue(audit["replay_complete"])
+
+    def test_replay_uses_index_date_not_corporate_or_trading_date(self):
+        snapshots, audit = replay_events(
+            {"WRK"},
+            [{
+                "event_type": "IDENTITY_CHANGE",
+                "corporate_effective_date": "2024-07-05",
+                "trading_start_date": "2024-07-08",
+                "index_effective_date": "2024-07-08",
+                "effective_date": "2024-07-08",
+                "action": "RENAME",
+                "old_ticker": "WRK",
+                "ticker": "SW",
+                "event_status": "VERIFIED_CORPORATE_CONTINUITY",
+            }],
+            minimum_size=1,
+            maximum_size=1,
+        )
+        self.assertEqual("2024-07-08", snapshots[0]["effective_date"])
+        self.assertTrue(audit["replay_complete"])
+
     def test_replays_multi_class_identity_consolidation(self):
         snapshots, audit = replay_events(
             {"DISCA", "DISCK", "AAA"},

@@ -20,6 +20,11 @@ VERIFIED_STATUSES = {
     "VERIFIED_CORPORATE_CONTINUITY",
 }
 VERIFIED_BASELINE_STATUS = "VERIFIED_BASELINE_CONTINUITY_BACKCAST"
+DEFAULT_EVENT_SEQUENCE = {
+    "REMOVE": 10,
+    "ADD": 20,
+    "RENAME": 30,
+}
 
 
 def apply_baseline_corrections(
@@ -71,13 +76,23 @@ def replay_events(
     current = {ticker.upper() for ticker in baseline}
     events_by_date = defaultdict(list)
     for row in ledger:
-        if row["event_status"] in VERIFIED_STATUSES and row.get("effective_date"):
-            events_by_date[row["effective_date"]].append(row)
+        index_date = row.get("index_effective_date") or row.get("effective_date")
+        if row["event_status"] in VERIFIED_STATUSES and index_date:
+            events_by_date[index_date].append(row)
     snapshots = []
     errors = []
     for effective, events in sorted(events_by_date.items()):
         before = set(current)
-        for event in sorted(events, key=lambda row: row["action"], reverse=True):
+        for event in sorted(
+            events,
+            key=lambda row: (
+                int(
+                    row.get("event_sequence")
+                    or DEFAULT_EVENT_SEQUENCE.get(row["action"], 99)
+                ),
+                row["ticker"],
+            ),
+        ):
             ticker = event["ticker"].upper()
             if event.get("event_type") == "IDENTITY_CHANGE":
                 old_tickers = [

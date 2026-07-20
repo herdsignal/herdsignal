@@ -135,8 +135,13 @@ def build_integrated_ledger(
         rows.append({
             "event_type": "MEMBERSHIP_CHANGE",
             "candidate_effective_date": candidate["candidate_effective_date"],
+            "announcement_date": candidate.get("announcement_date", ""),
+            "corporate_effective_date": "",
+            "trading_start_date": "",
+            "index_effective_date": key[0] if official_resolved else "",
             "effective_date": key[0] if official_resolved else "",
             "action": key[1],
+            "event_sequence": 10 if key[1] == "REMOVE" else 20,
             "ticker": key[2],
             "company_name": candidate.get("company_name", ""),
             "event_status": status,
@@ -159,8 +164,15 @@ def build_integrated_ledger(
         rows.append({
             "event_type": "IDENTITY_CHANGE",
             "candidate_effective_date": transition["new_candidate_date"],
+            "announcement_date": transition.get("announcement_date", ""),
+            "corporate_effective_date": transition.get(
+                "corporate_effective_date", ""
+            ),
+            "trading_start_date": transition.get("trading_start_date", ""),
+            "index_effective_date": transition["effective_date"],
             "effective_date": transition["effective_date"],
             "action": "RENAME",
+            "event_sequence": 30,
             "ticker": transition["new_ticker"].upper(),
             "old_ticker": transition["old_ticker"].upper(),
             "company_name": "",
@@ -187,8 +199,19 @@ def build_integrated_ledger(
         rows.append({
             "event_type": "IDENTITY_CHANGE" if same_cik else "MEMBERSHIP_CHANGE",
             "candidate_effective_date": continuity["candidate_effective_date"],
+            "announcement_date": continuity.get("announcement_date", ""),
+            "corporate_effective_date": continuity.get(
+                "corporate_effective_date", ""
+            ),
+            "trading_start_date": continuity.get("trading_start_date", ""),
+            "index_effective_date": continuity.get(
+                "index_effective_date", continuity["effective_date"]
+            ),
             "effective_date": continuity["effective_date"],
             "action": "RENAME" if same_cik else "ADD",
+            "event_sequence": int(continuity.get("event_sequence") or (
+                30 if same_cik else 20
+            )),
             "ticker": continuity["ticker"].upper(),
             "old_ticker": continuity["old_ticker"].upper(),
             "company_name": "",

@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 from collections import Counter
+from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -109,6 +110,42 @@ def claim_old_tickers(claim: dict) -> list[str]:
     return values
 
 
+def optional_iso_date(claim: dict, field: str) -> str:
+    value = (claim.get(field) or "").strip()
+    if value:
+        try:
+            date.fromisoformat(value)
+        except ValueError as exc:
+            raise CorporateContinuityError(
+                f"invalid {field}: {value}"
+            ) from exc
+    return value
+
+
+def timeline_fields(
+    claim: dict,
+    *,
+    index_effective_date: str | None = None,
+) -> dict[str, str]:
+    index_date = (
+        index_effective_date
+        or optional_iso_date(claim, "index_effective_date")
+        or optional_iso_date(claim, "effective_date")
+    )
+    if not index_date:
+        raise CorporateContinuityError("index_effective_date is required")
+    return {
+        "announcement_date": optional_iso_date(claim, "announcement_date"),
+        "corporate_effective_date": optional_iso_date(
+            claim, "corporate_effective_date"
+        ),
+        "trading_start_date": optional_iso_date(claim, "trading_start_date"),
+        "index_effective_date": index_date,
+        # Compatibility for downstream readers during schema migration.
+        "effective_date": index_date,
+    }
+
+
 def verify_and_reconcile(
     reconciliation: list[dict],
     claims: list[dict],
@@ -201,10 +238,13 @@ def verify_and_reconcile(
             "sec_source_sha256": sec_item[1],
         }
         if continuity_type == "HISTORICAL_TICKER_ADMISSION_THEN_RENAME":
-            rename_effective_date = claim.get("rename_effective_date", "")
-            if not rename_effective_date:
+            rename_index_date = (
+                optional_iso_date(claim, "rename_index_effective_date")
+                or optional_iso_date(claim, "rename_effective_date")
+            )
+            if not rename_index_date:
                 raise CorporateContinuityError(
-                    "historical admission requires rename_effective_date"
+                    "historical admission requires rename_index_effective_date"
                 )
             old_tickers = claim_old_tickers(claim)
             if len(old_tickers) != 1:
@@ -214,17 +254,30 @@ def verify_and_reconcile(
             events.extend([
                 {
                     **common_event,
+                    **timeline_fields(claim),
                     "event_type": "SUCCESSOR_MEMBERSHIP",
-                    "effective_date": claim["effective_date"],
                     "action": "ADD",
+                    "event_sequence": 20,
                     "ticker": old_tickers[0],
                     "old_ticker": "",
                 },
                 {
                     **common_event,
+                    **timeline_fields(
+                        claim,
+                        index_effective_date=rename_index_date,
+                    ),
+                    "corporate_effective_date": (
+                        optional_iso_date(claim, "rename_corporate_effective_date")
+                        or optional_iso_date(claim, "corporate_effective_date")
+                    ),
+                    "trading_start_date": (
+                        optional_iso_date(claim, "rename_trading_start_date")
+                        or optional_iso_date(claim, "trading_start_date")
+                    ),
                     "event_type": "SAME_CIK_RENAME",
-                    "effective_date": rename_effective_date,
                     "action": "RENAME",
+                    "event_sequence": 30,
                     "ticker": claim["ticker"].upper(),
                     "old_ticker": old_tickers[0],
                 },
@@ -232,8 +285,8 @@ def verify_and_reconcile(
             continue
         events.append({
             **common_event,
+            **timeline_fields(claim),
             "event_type": continuity_type,
-            "effective_date": claim["effective_date"],
             "action": (
                 "RENAME"
                 if continuity_type in {
@@ -241,6 +294,14 @@ def verify_and_reconcile(
                     "SAME_CIK_MEMBERSHIP_CONTINUITY",
                 }
                 else "ADD"
+            ),
+            "event_sequence": (
+                30
+                if continuity_type in {
+                    "SAME_CIK_RENAME",
+                    "SAME_CIK_MEMBERSHIP_CONTINUITY",
+                }
+                else 20
             ),
             "ticker": claim["ticker"].upper(),
             "old_ticker": "|".join(claim_old_tickers(claim)),
@@ -255,7 +316,10 @@ def verify_and_reconcile(
         updated.append({
             **row,
             "status": VERIFIED_COMPONENT,
-            "resolved_effective_date": claim["effective_date"],
+            "resolved_effective_date": (
+                claim.get("index_effective_date")
+                or claim["effective_date"]
+            ),
             "identity_transition_cik": claim["cik"].zfill(10),
         })
     statuses = Counter(row["status"] for row in updated)
