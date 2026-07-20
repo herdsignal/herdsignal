@@ -23,6 +23,6 @@ elif command -v python3.12 >/dev/null 2>&1; then
 else
   PYTHON="$(command -v python3)"
 fi
-(cd "$ROOT_DIR/data" && "$PYTHON" -m unittest discover -s tests -p 'test_*.py')
+(cd "$ROOT_DIR/data" && "$PYTHON" -m pytest -q)
 
 echo "All verification checks passed."

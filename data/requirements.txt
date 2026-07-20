@@ -33,3 +33,6 @@ exchange_calendars>=4.13,<5
 
 # S&P Global asPDF=1 보조 원문 텍스트 검증
 pypdf>=6.14,<7
+
+# 테스트
+pytest>=8.0,<9
