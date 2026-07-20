@@ -1,0 +1,27 @@
+{
+  "decision": "REJECT_RUSH_TURNING_POINT_SELL_EVIDENCE",
+  "folds_sha256": "c59b5fe832e87670190ecd07ece70d42b165fc062ab2577fa3081854f608a642",
+  "limitations": [
+    "The fixed price universe remains survivorship-biased.",
+    "Relative strength uses SPY because PIT sector ETF mapping is unavailable.",
+    "Volume participation is a proxy and does not represent full market breadth.",
+    "This event study does not authorize re-entry or live trading."
+  ],
+  "primary_outcomes_passed": 0,
+  "primary_outcomes_required": 2,
+  "protocol": {
+    "protocol_version": "2026.07-rush-turning-point-v1",
+    "sha256": "81c6a6d2af078690cf6d170e1f549069d4df398752a375a5af874e98f23a3292",
+    "state_count": 4,
+    "status": "LOCKED_BEFORE_OOS_RESULTS"
+  },
+  "report_version": "herd-rush-turning-point-oos-v1",
+  "snapshot_id": "yf-10y-20260719",
+  "snapshot_sha256": "d3a6b6cdacc604ce0c90e751c56210261b272501486bb6692e3bfd3a0905840b",
+  "state_event_counts": {
+    "BREAKING_RUSH": 200,
+    "EXHAUSTED_RUSH": 82,
+    "EXTENDING_RUSH": 315,
+    "HEALTHY_RUSH": 266
+  }
+}
