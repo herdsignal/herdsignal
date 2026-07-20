@@ -18,6 +18,7 @@ CONTINUITY_TYPES = {
     "SAME_CIK_RENAME",
     "SAME_CIK_MEMBERSHIP_CONTINUITY",
     "SUCCESSOR_MEMBERSHIP",
+    "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
 }
 VERIFIED_COMPONENT = "VERIFIED_CORPORATE_CONTINUITY_COMPONENT"
 
@@ -151,6 +152,7 @@ def verify_and_reconcile(
         if continuity_type in {
             "SAME_CIK_MEMBERSHIP_CONTINUITY",
             "SUCCESSOR_MEMBERSHIP",
+            "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
         }:
             sp_url = claim["sp_source_url"]
             sp_item = sp_evidence.get(sp_url)

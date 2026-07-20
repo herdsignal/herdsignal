@@ -168,6 +168,9 @@ def build_integrated_ledger(
             "SAME_CIK_RENAME",
             "SAME_CIK_MEMBERSHIP_CONTINUITY",
         }
+        dual_membership = (
+            continuity["event_type"] == "SPINOFF_DUAL_MEMBERSHIP_ADDITION"
+        )
         rows.append({
             "event_type": "IDENTITY_CHANGE" if same_cik else "MEMBERSHIP_CHANGE",
             "candidate_effective_date": continuity["candidate_effective_date"],
@@ -183,14 +186,19 @@ def build_integrated_ledger(
             "cik": continuity["cik"],
             "cik_link_status": (
                 "SEC_SAME_CIK_TRADING_SYMBOL_VERIFIED"
-                if same_cik else "SEC_SUCCESSOR_ENTITY_VERIFIED"
+                if same_cik or dual_membership else "SEC_SUCCESSOR_ENTITY_VERIFIED"
             ),
             "corporate_action_evidence": (
                 "TICKER_IDENTITY_CONTINUITY"
-                if same_cik else "S_AND_P_MEMBERSHIP_SUCCESSION"
+                if same_cik
+                else (
+                    "S_AND_P_SPINOFF_DUAL_MEMBERSHIP"
+                    if dual_membership
+                    else "S_AND_P_MEMBERSHIP_SUCCESSION"
+                )
             ),
             "common_equity_form25": False,
-            "merger_completion_evidence": not same_cik,
+            "merger_completion_evidence": not same_cik and not dual_membership,
             "merger_agreement_evidence": False,
             "sp_source_url": continuity.get("sp_source_url", ""),
             "sp_source_sha256": continuity.get("sp_source_sha256", ""),

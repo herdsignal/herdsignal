@@ -118,6 +118,28 @@ class CorporateContinuityReconciliationTest(unittest.TestCase):
         self.assertEqual("RENAME", events[0]["action"])
         self.assertEqual(2, audit["reclassified_candidate_rows"])
 
+    def test_spinoff_dual_membership_addition_does_not_consume_old_ticker(self):
+        claims = [{
+            "candidate_effective_date": "2019-11-05",
+            "action": "ADD",
+            "ticker": "NEW",
+            "continuity_type": "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
+            "old_ticker": "OLD",
+            "effective_date": "2019-11-05",
+            "cik": "123",
+            "sp_source_url": self.sp_url,
+            "filing_url": self.sec_url,
+            "required_sp_terms": "Prior Corp.||in the S&P 500||Post-merger",
+            "required_sec_terms": "changed its name||ticker symbol NEW",
+        }]
+        rows, events, audit = verify_and_reconcile(
+            self.reconciliation, claims, self.sp, self.sec
+        )
+        self.assertEqual("ADD", events[0]["action"])
+        self.assertEqual(1, audit["reclassified_candidate_rows"])
+        old = next(row for row in rows if row["ticker"] == "OLD")
+        self.assertEqual("NO_OFFICIAL_DOCUMENT_MATCH", old["status"])
+
     def test_consumes_multiple_share_classes(self):
         reconciliation = [
             {

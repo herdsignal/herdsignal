@@ -163,6 +163,36 @@ class IntegratedEventLedgerTest(unittest.TestCase):
         self.assertEqual("IDENTITY_CHANGE", rows[0]["event_type"])
         self.assertEqual("DISCA|DISCK", rows[0]["old_ticker"])
 
+    def test_maps_spinoff_ticker_reuse_to_addition(self):
+        reconciliation = [{
+            "candidate_effective_date": "2020-03-03",
+            "resolved_effective_date": "2020-03-03",
+            "action": "ADD",
+            "ticker": "TT",
+            "status": "VERIFIED_CORPORATE_CONTINUITY_COMPONENT",
+        }]
+        continuity = [{
+            "event_type": "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
+            "candidate_effective_date": "2020-03-03",
+            "effective_date": "2020-03-03",
+            "ticker": "TT",
+            "old_ticker": "IR",
+            "cik": "0001466258",
+            "sp_source_url": "https://press.spglobal.com/example",
+            "sp_source_sha256": "a" * 64,
+            "sec_source_url": "https://www.sec.gov/example",
+            "sec_source_sha256": "b" * 64,
+        }]
+        rows, _ = build_integrated_ledger(
+            reconciliation, [], [], [], [], continuity_events=continuity
+        )
+        self.assertEqual("MEMBERSHIP_CHANGE", rows[0]["event_type"])
+        self.assertEqual("ADD", rows[0]["action"])
+        self.assertEqual(
+            "S_AND_P_SPINOFF_DUAL_MEMBERSHIP",
+            rows[0]["corporate_action_evidence"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
