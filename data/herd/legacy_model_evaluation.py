@@ -22,6 +22,7 @@ from herd.benchmark_engine import (
     performance_metrics,
     simulate_fractional_actions,
 )
+from herd.data_snapshot import load_snapshot
 from herd.indicator_inventory import build_v4_indicator_frame
 from herd.legacy_action_rules import action_decision, trend_frame
 from herd.validation_universe import SECTOR_UNIVERSE, TICKERS, UNIVERSE_VERSION
@@ -103,8 +104,8 @@ def _json_metrics(metrics: dict) -> dict:
     }
 
 
-def evaluate_ticker(ticker: str, period: str = "10y") -> dict:
-    raw = collect(ticker, period=period)
+def evaluate_frame(ticker: str, raw: pd.DataFrame) -> dict:
+    raw = raw.copy()
     raw["Date"] = pd.to_datetime(raw["Date"])
     prices = raw.set_index("Date")[["Open", "Close"]].sort_index()
     indicators = build_v4_indicator_frame(raw)
@@ -124,7 +125,7 @@ def evaluate_ticker(ticker: str, period: str = "10y") -> dict:
     stress_v4 = simulate_fractional_actions("HERD v4 base stress", prices, v4_actions(score), config=stress_config)
     stress_v61 = simulate_fractional_actions("HERD v6.1 Python stress", prices, v61_actions(close, score), config=stress_config)
     return {
-        "ticker": ticker,
+        "ticker": ticker.upper(),
         "start": prices.index.min().date().isoformat(),
         "end": prices.index.max().date().isoformat(),
         "observations": len(prices),
@@ -136,6 +137,10 @@ def evaluate_ticker(ticker: str, period: str = "10y") -> dict:
             "v61": _json_metrics(performance_metrics(stress_v61, stress_benchmark)),
         },
     }
+
+
+def evaluate_ticker(ticker: str, period: str = "10y") -> dict:
+    return evaluate_frame(ticker, collect(ticker, period=period))
 
 
 def _median(rows: list[dict], path: tuple[str, ...]) -> float | None:
@@ -165,13 +170,14 @@ def summarize(rows: list[dict], model: str) -> dict:
     }
 
 
-def run(period: str = "10y") -> dict:
-    rows, failures = [], {}
-    for ticker in TICKERS:
-        try:
-            rows.append(evaluate_ticker(ticker, period))
-        except Exception as exc:
-            failures[ticker] = str(exc)
+def _build_report(
+    rows: list[dict],
+    failures: dict[str, str],
+    *,
+    period: str,
+    data_source: dict,
+) -> dict:
+    rows = sorted(rows, key=lambda row: row["ticker"])
     ticker_sector = {
         ticker: sector for sector, tickers in SECTOR_UNIVERSE.items() for ticker in tickers
     }
@@ -183,9 +189,10 @@ def run(period: str = "10y") -> dict:
             "v61_median_excess_cagr": _median(subset, ("v61", "excess_cagr")),
         }
     return {
-        "report_version": "2026.07-v1",
+        "report_version": "2026.07-v2",
         "universe_version": UNIVERSE_VERSION,
         "period": period,
+        "data_source": data_source,
         "model_scope": {
             "v4": "price-only v4 base; PIT EPS/sector multipliers excluded",
             "v61": "Python research v6.1 reconstruction; not Java production parity",
@@ -198,12 +205,59 @@ def run(period: str = "10y") -> dict:
     }
 
 
+def run(period: str = "10y") -> dict:
+    rows, failures = [], {}
+    for ticker in TICKERS:
+        try:
+            rows.append(evaluate_ticker(ticker, period))
+        except Exception as exc:
+            failures[ticker] = str(exc)
+    return _build_report(
+        rows,
+        failures,
+        period=period,
+        data_source={
+            "mode": "LIVE_PROVIDER",
+            "reproducible": False,
+        },
+    )
+
+
+def run_snapshot(snapshot_dir: Path) -> dict:
+    frames, manifest = load_snapshot(snapshot_dir)
+    rows, failures = [], {}
+    for ticker in manifest["completed_tickers"]:
+        try:
+            rows.append(evaluate_frame(ticker, frames[ticker]))
+        except Exception as exc:
+            failures[ticker] = str(exc)
+    return _build_report(
+        rows,
+        failures,
+        period=manifest["source"]["period"],
+        data_source={
+            "mode": "IMMUTABLE_PRICE_SNAPSHOT",
+            "reproducible": True,
+            "snapshot_id": manifest["snapshot_id"],
+            "snapshot_sha256": manifest["snapshot_sha256"],
+            "coverage": manifest["coverage"],
+            "provider": manifest["source"]["provider"],
+            "auto_adjust": manifest["source"]["auto_adjust"],
+        },
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--period", default="10y")
+    parser.add_argument("--snapshot", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    report = run(args.period)
+    report = (
+        run_snapshot(args.snapshot)
+        if args.snapshot
+        else run(args.period)
+    )
     rendered = json.dumps(report, ensure_ascii=False, indent=2)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

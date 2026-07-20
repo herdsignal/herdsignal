@@ -6,7 +6,11 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from herd.legacy_model_evaluation import summarize, v4_actions
+from herd.legacy_model_evaluation import (
+    _build_report,
+    summarize,
+    v4_actions,
+)
 
 
 class LegacyModelEvaluationTest(unittest.TestCase):
@@ -33,6 +37,22 @@ class LegacyModelEvaluationTest(unittest.TestCase):
 
         self.assertAlmostEqual(result["median_excess_cagr"], 0.005)
         self.assertEqual(result["positive_excess_rate"], 50.0)
+
+    def test_report_records_reproducible_data_source(self):
+        report = _build_report(
+            [],
+            {"AAA": "failed"},
+            period="10y",
+            data_source={
+                "mode": "IMMUTABLE_PRICE_SNAPSHOT",
+                "reproducible": True,
+                "snapshot_id": "test-snapshot",
+            },
+        )
+
+        self.assertEqual(report["report_version"], "2026.07-v2")
+        self.assertTrue(report["data_source"]["reproducible"])
+        self.assertEqual(report["failures"], {"AAA": "failed"})
 
 
 if __name__ == "__main__":

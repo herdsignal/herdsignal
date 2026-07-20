@@ -172,7 +172,23 @@ PYTHONPATH=data data/.venv/bin/python -m herd.pit_sensitivity_evaluation \
 가격 coverage 확장으로 돌아간다. 모두 발생하지 않으면 기존 모델
 재평가로 진행한다.
 
-## 6. 판정 원칙
+## 6. 기존 모델 재평가
+
+실행 시점의 외부 시세를 다시 받지 않고 불변 가격 스냅샷으로 v4와
+Python v6.1을 비교한다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.legacy_model_evaluation \
+  --snapshot snapshots/yf-10y-20260719 \
+  --output reports/legacy_model_evaluation_v2.json
+```
+
+보고서에는 가격 스냅샷 ID와 manifest SHA-256, 조정 가격 여부, 입력
+coverage를 기록한다. 이 결과는 55개 현존 대형주의 가격 기반 재평가이며
+전체 과거 S&P 500의 생존자 편향 해소 결과가 아니다.
+
+## 7. 판정 원칙
 
 스냅샷과 시간 분할은 모델 성능을 본 뒤 바꾸지 않는다. 후보가 탈락해도
 실행 manifest와 일별 수익률을 보존한다. 집계 결과만 저장한 과거 보고서는
