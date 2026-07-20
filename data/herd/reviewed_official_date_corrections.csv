@@ -1,0 +1,2 @@
+candidate_effective_date,action,ticker,corrected_effective_date,source_url,source_sha256,review_note
+2023-05-17,ADD,CEG,2022-02-02,https://press.spglobal.com/2022-01-26-Constellation-Energy-Set-to-Join-S-P-500-Others-to-Join-S-P-MidCap-400-and-S-P-SmallCap-600,b2c2a725887a0b3cf99099c95a84d866720d92ee4700bb8d5a7336cf0abb35ae,공개 재구성본의 날짜 오류를 공식 S&P 표로 교정

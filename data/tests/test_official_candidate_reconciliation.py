@@ -38,6 +38,34 @@ class OfficialCandidateReconciliationTest(unittest.TestCase):
         )
         self.assertFalse(audit["complete"])
 
+    def test_applies_distant_date_only_from_reviewed_archived_table_claim(self):
+        table = [{
+            "effective_date": "2022-02-02", "action": "ADD", "ticker": "CEG",
+            "announcement_date": "2022-01-26", "company_name": "Constellation Energy",
+            "source_url": "https://press.spglobal.com/ceg",
+            "source_sha256": "a" * 64,
+        }]
+        rows, audit = reconcile_candidates(
+            [{"effective_date": "2023-05-17", "action": "ADD", "ticker": "CEG"}],
+            table,
+            [],
+            [],
+            reviewed_date_corrections=[{
+                "candidate_effective_date": "2023-05-17",
+                "action": "ADD",
+                "ticker": "CEG",
+                "corrected_effective_date": "2022-02-02",
+                "source_url": "https://press.spglobal.com/ceg",
+                "source_sha256": "a" * 64,
+            }],
+        )
+        self.assertEqual(
+            "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
+            rows[0]["status"],
+        )
+        self.assertEqual("2022-02-02", rows[0]["resolved_effective_date"])
+        self.assertTrue(audit["complete"])
+
     def test_corrects_candidate_date_from_unambiguous_official_semantics(self):
         rows, audit = reconcile_candidates(
             [{"effective_date": "2017-07-25", "action": "REMOVE", "ticker": "RAI"}],

@@ -23,6 +23,7 @@ def reconcile_candidates(
     prose_events: list[dict],
     suggestions: list[dict],
     semantic_events: list[dict] | None = None,
+    reviewed_date_corrections: list[dict] | None = None,
     *,
     correction_window_days: int = 7,
 ) -> tuple[list[dict], dict]:
@@ -32,6 +33,16 @@ def reconcile_candidates(
     for row in table_events:
         table_by_identity.setdefault((row["action"], row["ticker"].upper()), []).append(row)
     suggestion_keys = {event_key(row) for row in suggestions}
+    correction_by_candidate = {
+        (
+            row["candidate_effective_date"],
+            row["action"].upper(),
+            row["ticker"].upper(),
+        ): row
+        for row in reviewed_date_corrections or []
+    }
+    if len(correction_by_candidate) != len(reviewed_date_corrections or []):
+        raise CandidateReconciliationError("duplicate reviewed date correction")
     semantic_by_candidate = {}
     for row in semantic_events or []:
         if row["extraction_status"] not in {
@@ -71,7 +82,26 @@ def reconcile_candidates(
                 resolved = nearby[0]
                 status = "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE"
             elif same_identity:
-                status = "DISTANT_SAME_TICKER_EVENT_REQUIRES_IDENTITY_REVIEW"
+                correction = correction_by_candidate.get(key)
+                corrected_date = (
+                    correction.get("corrected_effective_date", "")
+                    if correction else ""
+                )
+                matches = [
+                    row for row in same_identity
+                    if row["effective_date"] == corrected_date
+                    and row.get("source_url", "") == correction.get("source_url", "")
+                    and row.get("source_sha256", "") == correction.get("source_sha256", "")
+                ] if correction else []
+                if len(matches) == 1:
+                    resolved = matches[0]
+                    status = "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE"
+                elif correction:
+                    raise CandidateReconciliationError(
+                        f"reviewed correction does not match archived table event: {key}"
+                    )
+                else:
+                    status = "DISTANT_SAME_TICKER_EVENT_REQUIRES_IDENTITY_REVIEW"
             elif key in semantic_by_candidate:
                 semantics = {
                     (
@@ -141,6 +171,7 @@ def reconcile_candidates(
         "OFFICIAL_PROSE_EXACT",
         "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
         "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
+        "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
     }
     return reconciled, {
         "candidate_events": len(reconciled),
@@ -174,6 +205,7 @@ def main() -> None:
     parser.add_argument("suggestions", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--semantic-events", type=Path)
+    parser.add_argument("--reviewed-date-corrections", type=Path)
     args = parser.parse_args()
     rows, audit = reconcile_candidates(
         read_csv(args.candidates),
@@ -181,6 +213,8 @@ def main() -> None:
         read_csv(args.prose_events),
         read_csv(args.suggestions),
         read_csv(args.semantic_events) if args.semantic_events else None,
+        read_csv(args.reviewed_date_corrections)
+        if args.reviewed_date_corrections else None,
     )
     write_reconciliation(args.output, rows)
     print(audit)

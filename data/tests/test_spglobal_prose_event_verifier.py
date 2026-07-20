@@ -1,12 +1,25 @@
+import re
 import unittest
 
 from herd.spglobal_prose_event_verifier import (
     canonical_verified_events,
+    classify_occurrence,
     verify_candidate,
 )
 
 
 class SpglobalProseEventVerifierTest(unittest.TestCase):
+    def test_classifies_first_replacement_target_in_shared_removal_clause(self):
+        text = (
+            "Otis Worldwide Corp. (NYSE: OTIS) will replace Raytheon Co. "
+            "(NYSE: RTN), and Carrier Global Corp. (NYSE: CARR) will replace "
+            "Macy's Inc. (NYSE: M), both of which will be removed from the "
+            "S&P 500 prior to the open of trading on Monday, April 6."
+        )
+        ticker_match = re.search(r"\(NYSE:\s*RTN\)", text)
+        self.assertIsNotNone(ticker_match)
+        self.assertEqual("REMOVE", classify_occurrence(text, ticker_match))
+
     def test_verifies_add_and_remove_with_same_qualified_date(self):
         release = {
             "published_date": "2019-09-20",

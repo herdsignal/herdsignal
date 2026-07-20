@@ -164,6 +164,20 @@ def classify_occurrence(text: str, ticker_match: re.Match) -> str | None:
     prefix_without_abbreviations = re.sub(
         r"\b[A-Z]\.(?=\s|$)", "", prefix_without_abbreviations
     )
+    # `A will replace X, and B will replace Y, both of which will be removed`
+    # 형태에서는 X/Y 뒤에 다른 종목의 편입 동사가 이어진다. 교체 대상임을
+    # 먼저 확정하지 않으면 뒤의 `will replace`를 보고 X/Y를 ADD로 오판한다.
+    if (
+        replacement_start >= 0
+        and not ANY_EXCHANGE_TICKER.search(replacement_tail)
+        and "." not in tail_without_abbreviations
+        and re.search(
+            r"\bboth of which will be removed from (?:the\s+)?S&P 500",
+            after[:650],
+            re.IGNORECASE,
+        )
+    ):
+        return "REMOVE"
     if (
         next_replace
         and "." not in prefix_without_abbreviations

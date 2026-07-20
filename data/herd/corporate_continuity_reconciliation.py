@@ -133,6 +133,7 @@ def verify_and_reconcile(
             "OFFICIAL_PROSE_EXACT",
             "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
             "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
+            "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
             "VERIFIED_IDENTITY_CHANGE_COMPONENT",
         }:
             raise CorporateContinuityError(
@@ -224,6 +225,7 @@ def verify_and_reconcile(
                 "OFFICIAL_PROSE_EXACT",
                 "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
                 "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
+                "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
                 "VERIFIED_IDENTITY_CHANGE_COMPONENT",
                 VERIFIED_COMPONENT,
             }

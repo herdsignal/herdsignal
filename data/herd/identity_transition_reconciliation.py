@@ -126,6 +126,7 @@ def reconcile_identity_transitions(
                 "OFFICIAL_PROSE_EXACT",
                 "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_TABLE",
                 "CANDIDATE_DATE_CORRECTED_BY_OFFICIAL_PROSE",
+                "CANDIDATE_DATE_CORRECTED_BY_REVIEWED_OFFICIAL_TABLE",
                 "VERIFIED_IDENTITY_CHANGE_COMPONENT",
             }
             for row in updated
