@@ -1,0 +1,76 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V1",
+  "status": "POST_OOS_DECISIONS_LOCKED",
+  "source_reports": [
+    {
+      "path": "data/reports/timing_evidence_oos_v2.json",
+      "sha256": "7a58d181ada78f9fd1079b013e9bde48f2a9096ddd6bf05775177d975a9e6061"
+    },
+    {
+      "path": "data/reports/rush_turning_point_oos_v1.json",
+      "sha256": "5f8acc9e58f8cd502069e4fee383ce9f633d13970fb88fbf018c19dd79672b86"
+    },
+    {
+      "path": "data/reports/business_guard_oos_v1.json",
+      "sha256": "4cf1786c0c50e59bc85713f324ad4b4456e466ea93df6f73752e1bf6f6113d32"
+    }
+  ],
+  "families": [
+    {
+      "id": "PRICE_EXTENSION",
+      "role": "DIRECTION",
+      "decision": "REJECT_CURRENT_MEASUREMENT",
+      "direction_authorized": false,
+      "allowed_next_step": "NEW_MEASUREMENT_REQUIRES_NEW_PREREGISTRATION"
+    },
+    {
+      "id": "TREND_MATURITY",
+      "role": "DIRECTION_CONFIRMATION",
+      "decision": "REJECT_CURRENT_MEASUREMENT",
+      "direction_authorized": false,
+      "allowed_next_step": "NEW_MEASUREMENT_REQUIRES_NEW_PREREGISTRATION"
+    },
+    {
+      "id": "PARTICIPATION",
+      "role": "CONFIRMATION",
+      "decision": "REJECT_CURRENT_MEASUREMENT",
+      "direction_authorized": false,
+      "allowed_next_step": "NEW_MEASUREMENT_REQUIRES_NEW_PREREGISTRATION"
+    },
+    {
+      "id": "RELATIVE_OVERHEAT",
+      "role": "CONTEXT",
+      "decision": "REJECT_CURRENT_MEASUREMENT",
+      "direction_authorized": false,
+      "allowed_next_step": "NEW_MEASUREMENT_REQUIRES_NEW_PREREGISTRATION"
+    },
+    {
+      "id": "MARKET_RISK",
+      "role": "ACTION_INTENSITY_CAP",
+      "decision": "PASS_STOCK_DOWNSIDE_COMPONENT_ONLY",
+      "direction_authorized": false,
+      "allowed_next_step": "CAP_ABLATION_ONLY"
+    },
+    {
+      "id": "BUSINESS_GUARD",
+      "role": "ADD_BUY_VETO",
+      "decision": "REJECT_CURRENT_MEASUREMENT",
+      "direction_authorized": false,
+      "allowed_next_step": "BLOCKED_UNTIL_LONG_OOS_DATA"
+    }
+  ],
+  "composite_hypotheses": [
+    {
+      "id": "RUSH_TURNING_POINT",
+      "decision": "REJECT_CURRENT_MEASUREMENT",
+      "profit_take_authorized": false
+    }
+  ],
+  "candidate_state": {
+    "direction_family_count": 0,
+    "herd_next_composition_allowed": false,
+    "profit_take_cycle_allowed": false,
+    "reentry_cycle_allowed": false,
+    "operational_action_ratio": 0.0
+  }
+}
