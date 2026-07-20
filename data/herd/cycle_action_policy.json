@@ -1,0 +1,39 @@
+{
+  "policy_version": "HERD_CYCLE_ACTION_V1",
+  "status": "RESEARCH_POLICY_LOCKED",
+  "profit_take_requires": [
+    "EXISTING_HOLDER",
+    "PIT_EVIDENCE",
+    "FRESH_DATA",
+    "OOS_PROFIT_TAKE_DIRECTION",
+    "CROWDED_STATE",
+    "OOS_AUTHORIZED_EXHAUSTED_OR_BREAKING"
+  ],
+  "reentry_requires": [
+    "EXISTING_HOLDER",
+    "PRIOR_PROFIT_TAKE_CASH",
+    "PIT_EVIDENCE",
+    "FRESH_DATA",
+    "OOS_REENTRY_DIRECTION",
+    "MARKET_OR_SECTOR_EXPLAINED_WEAKNESS",
+    "DECLINE_STABILIZED",
+    "OOS_AUTHORIZED_BUSINESS_GUARD_PASS",
+    "SUPPORTED_COMPANY_TYPE_MODEL"
+  ],
+  "sizing": {
+    "minimum_fraction": 0.05,
+    "maximum_fraction": 0.15,
+    "full_liquidation_allowed": false,
+    "reentry_cannot_exceed_open_sale_cash": true
+  },
+  "current_authorization": {
+    "profit_take": false,
+    "reentry": false
+  },
+  "forbidden": [
+    "RUSH_ALONE_AUTHORIZES_PROFIT_TAKE",
+    "FLEE_ALONE_AUTHORIZES_REENTRY",
+    "REENTRY_WITHOUT_PRIOR_PROFIT_TAKE_CASH",
+    "COUNT_OPEN_SALE_AS_COMPLETED_CYCLE"
+  ]
+}

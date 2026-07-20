@@ -64,3 +64,37 @@ def test_fully_authorized_general_company_context_can_be_researched():
 
     assert decision.eligible is True
     assert decision.reasons == ()
+
+
+def test_current_profit_take_is_blocked_without_exhaustion_evidence():
+    decision = evaluate_eligibility(EligibilityContext(
+        action="PROFIT_TAKE",
+        evidence_as_of_signal=True,
+        direction_authorized=False,
+        data_fresh=True,
+        existing_holder=True,
+        crowded_state=True,
+    ))
+
+    assert decision.eligible is False
+    assert "NO_OOS_DIRECTION_EVIDENCE" in decision.reasons
+    assert "EXHAUSTION_MODEL_NOT_OOS_AUTHORIZED" in decision.reasons
+
+
+def test_reentry_requires_cash_created_by_prior_profit_take():
+    decision = evaluate_eligibility(EligibilityContext(
+        action="REENTRY",
+        evidence_as_of_signal=True,
+        direction_authorized=True,
+        data_fresh=True,
+        existing_holder=True,
+        market_or_sector_explained_weakness=True,
+        decline_stabilized=True,
+        business_guard_authorized=True,
+        business_guard_state="PASS",
+        company_type="GENERAL_CORPORATE",
+        prior_profit_take_cash=False,
+    ))
+
+    assert decision.eligible is False
+    assert decision.reasons == ("NO_PRIOR_PROFIT_TAKE_CASH",)

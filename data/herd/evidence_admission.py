@@ -19,6 +19,7 @@ EXPECTED_FAMILIES = {
     "MARKET_RISK",
     "BUSINESS_GUARD",
 }
+ACTION_TYPES = {"NEW_ENTRY", "ADD_BUY", "PROFIT_TAKE", "REENTRY"}
 
 
 class EvidenceAdmissionError(RuntimeError):
@@ -59,6 +60,17 @@ def validate_registry(registry: dict) -> dict:
     directional = [
         family for family in families if family.get("direction_authorized") is True
     ]
+    action_authorizations = {action: 0 for action in ACTION_TYPES}
+    for family in families:
+        actions = family.get("authorized_actions", [])
+        if len(actions) != len(set(actions)) or not set(actions).issubset(ACTION_TYPES):
+            raise EvidenceAdmissionError(f"invalid action permission: {family['id']}")
+        if actions and family.get("direction_authorized") is not True:
+            raise EvidenceAdmissionError(
+                f"action permission requires direction evidence: {family['id']}"
+            )
+        for action in actions:
+            action_authorizations[action] += 1
     market_risk = next(family for family in families if family["id"] == "MARKET_RISK")
     if (
         market_risk.get("decision") != "PASS_STOCK_DOWNSIDE_COMPONENT_ONLY"
@@ -95,6 +107,7 @@ def validate_registry(registry: dict) -> dict:
         "registry_version": REGISTRY_VERSION,
         "family_count": len(families),
         "direction_family_count": len(directional),
+        "action_authorizations": action_authorizations,
         "cap_ablation_families": [
             family["id"]
             for family in families

@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
-SUPPORTED_ACTIONS = {"NEW_ENTRY", "ADD_BUY"}
+SUPPORTED_ACTIONS = {"NEW_ENTRY", "ADD_BUY", "PROFIT_TAKE", "REENTRY"}
 SPECIALIZED_COMPANY_TYPES = {"BANK", "INSURANCE", "REIT", "UTILITY"}
 
 
@@ -22,6 +22,10 @@ class EligibilityContext:
     business_guard_state: str = "UNKNOWN"
     company_type: str = "UNKNOWN"
     company_type_model_authorized: bool = False
+    crowded_state: bool = False
+    exhaustion_model_authorized: bool = False
+    exhausted_or_breaking: bool = False
+    prior_profit_take_cash: bool = False
 
 
 @dataclass(frozen=True)
@@ -44,7 +48,7 @@ def evaluate_eligibility(context: EligibilityContext) -> EligibilityDecision:
     if not context.direction_authorized:
         reasons.append("NO_OOS_DIRECTION_EVIDENCE")
 
-    if action == "ADD_BUY":
+    if action in {"ADD_BUY", "REENTRY"}:
         if not context.existing_holder:
             reasons.append("NOT_EXISTING_HOLDER")
         if not context.market_or_sector_explained_weakness:
@@ -60,6 +64,18 @@ def evaluate_eligibility(context: EligibilityContext) -> EligibilityDecision:
                 reasons.append(f"{context.company_type}_MODEL_NOT_AUTHORIZED")
         elif context.company_type != "GENERAL_CORPORATE":
             reasons.append("UNKNOWN_COMPANY_TYPE")
+        if action == "REENTRY" and not context.prior_profit_take_cash:
+            reasons.append("NO_PRIOR_PROFIT_TAKE_CASH")
+
+    if action == "PROFIT_TAKE":
+        if not context.existing_holder:
+            reasons.append("NOT_EXISTING_HOLDER")
+        if not context.crowded_state:
+            reasons.append("NOT_CROWDED")
+        if not context.exhaustion_model_authorized:
+            reasons.append("EXHAUSTION_MODEL_NOT_OOS_AUTHORIZED")
+        elif not context.exhausted_or_breaking:
+            reasons.append("RUSH_NOT_EXHAUSTED_OR_BREAKING")
 
     return EligibilityDecision(
         action=action,

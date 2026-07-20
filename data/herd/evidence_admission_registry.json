@@ -21,6 +21,7 @@
       "role": "DIRECTION",
       "decision": "REJECT_CURRENT_MEASUREMENT",
       "direction_authorized": false,
+      "authorized_actions": [],
       "allowed_next_step": "NEW_MEASUREMENT_REQUIRES_NEW_PREREGISTRATION"
     },
     {
@@ -28,6 +29,7 @@
       "role": "DIRECTION_CONFIRMATION",
       "decision": "REJECT_CURRENT_MEASUREMENT",
       "direction_authorized": false,
+      "authorized_actions": [],
       "allowed_next_step": "NEW_MEASUREMENT_REQUIRES_NEW_PREREGISTRATION"
     },
     {
@@ -35,6 +37,7 @@
       "role": "CONFIRMATION",
       "decision": "REJECT_CURRENT_MEASUREMENT",
       "direction_authorized": false,
+      "authorized_actions": [],
       "allowed_next_step": "NEW_MEASUREMENT_REQUIRES_NEW_PREREGISTRATION"
     },
     {
@@ -42,6 +45,7 @@
       "role": "CONTEXT",
       "decision": "REJECT_CURRENT_MEASUREMENT",
       "direction_authorized": false,
+      "authorized_actions": [],
       "allowed_next_step": "NEW_MEASUREMENT_REQUIRES_NEW_PREREGISTRATION"
     },
     {
@@ -49,6 +53,7 @@
       "role": "ACTION_INTENSITY_CAP",
       "decision": "PASS_STOCK_DOWNSIDE_COMPONENT_ONLY",
       "direction_authorized": false,
+      "authorized_actions": [],
       "allowed_next_step": "CAP_ABLATION_ONLY"
     },
     {
@@ -56,6 +61,7 @@
       "role": "ADD_BUY_VETO",
       "decision": "REJECT_CURRENT_MEASUREMENT",
       "direction_authorized": false,
+      "authorized_actions": [],
       "allowed_next_step": "BLOCKED_UNTIL_LONG_OOS_DATA"
     }
   ],

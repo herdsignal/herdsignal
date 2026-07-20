@@ -13,6 +13,7 @@ def test_current_oos_evidence_does_not_authorize_direction_or_cycles():
     _, audit = load_registry()
 
     assert audit["direction_family_count"] == 0
+    assert all(count == 0 for count in audit["action_authorizations"].values())
     assert audit["cap_ablation_families"] == ["MARKET_RISK"]
     assert audit["herd_next_composition_allowed"] is False
     assert audit["operational_action_ratio"] == 0.0

@@ -29,8 +29,8 @@ def validate_policy(policy: dict) -> dict:
 
     _, evidence = load_registry()
     current = policy.get("current_authorization", {})
-    expected_direction = evidence["direction_family_count"] > 0
-    if current.get("new_entry") is not expected_direction:
+    expected_new_entry = evidence["action_authorizations"]["NEW_ENTRY"] > 0
+    if current.get("new_entry") is not expected_new_entry:
         raise EntryAddBuyPolicyError("new-entry authorization exceeds evidence")
     if (
         current.get("generic_business_guard") is not False
