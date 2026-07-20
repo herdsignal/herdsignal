@@ -48,6 +48,50 @@ def _current_cik_index(rows: list[dict]) -> dict[str, dict]:
     return index
 
 
+def _period_cik_index(rows: list[dict] | None) -> dict[str, list[dict]]:
+    index: dict[str, list[dict]] = {}
+    for row in rows or []:
+        ticker = row["ticker"].upper()
+        item = {
+            **row,
+            "cik": f"{int(row['cik']):010d}",
+            "valid_from": date.fromisoformat(row["valid_from"]),
+            "valid_to": (
+                date.fromisoformat(row["valid_to"])
+                if row.get("valid_to")
+                else None
+            ),
+        }
+        index.setdefault(ticker, []).append(item)
+    for ticker in index:
+        index[ticker].sort(key=lambda item: item["valid_from"])
+    return index
+
+
+def _mapping_as_of(
+    ticker: str,
+    as_of: date,
+    current: dict[str, dict],
+    periods: dict[str, list[dict]],
+) -> dict | None:
+    candidates = [
+        row
+        for row in periods.get(ticker, [])
+        if row["valid_from"] <= as_of
+        and (row["valid_to"] is None or as_of <= row["valid_to"])
+    ]
+    if len(candidates) == 1:
+        return {
+            "cik": candidates[0]["cik"],
+            "mapping_status": "VERIFIED_PERIOD_CIK",
+        }
+    if len(candidates) > 1:
+        return {"cik": "", "mapping_status": "AMBIGUOUS_PERIOD_CIK"}
+    if ticker in periods:
+        return {"cik": "", "mapping_status": "NO_PERIOD_CIK_AS_OF"}
+    return current.get(ticker)
+
+
 def _load_cik_facts(
     corpora: list[Path],
     cik: str,
@@ -98,11 +142,13 @@ def build_links(
     ticker_cik_rows: list[dict],
     corpus: Path | list[Path],
     folds: list[dict],
+    cik_period_rows: list[dict] | None = None,
 ) -> tuple[list[dict], dict]:
     tickers = price_manifest.get("completed_tickers", [])
     if not tickers or not folds:
         raise SecPriceFoldLinkError("price tickers and folds are required")
     cik_index = _current_cik_index(ticker_cik_rows)
+    period_index = _period_cik_index(cik_period_rows)
     corpora = (
         [Path(item) for item in corpus]
         if isinstance(corpus, list)
@@ -131,14 +177,20 @@ def build_links(
                     "status": "NOT_APPLICABLE_ETF",
                 })
             continue
-        mapping = cik_index.get(ticker)
-        if not mapping or not mapping["cik"]:
-            status = (
-                mapping["mapping_status"]
-                if mapping
-                else "NO_CURRENT_CIK"
+        for fold in folds:
+            as_of = date.fromisoformat(fold["test_start"])
+            mapping = _mapping_as_of(
+                ticker,
+                as_of,
+                cik_index,
+                period_index,
             )
-            for fold in folds:
+            if not mapping or not mapping["cik"]:
+                status = (
+                    mapping["mapping_status"]
+                    if mapping
+                    else "NO_CURRENT_CIK"
+                )
                 rows.append({
                     "ticker": ticker,
                     "asset_type": "EQUITY",
@@ -150,19 +202,18 @@ def build_links(
                     "available_concepts": 0,
                     "status": status,
                 })
-            continue
-        cik = mapping["cik"]
-        if cik not in cache:
-            cache[cik] = _load_cik_facts(
-                corpora,
-                cik,
-                filed_from=filed_from,
-                filed_to=filed_to,
-            )
-        facts, corpus_status = cache[cik]
-        for fold in folds:
+                continue
+            cik = mapping["cik"]
+            if cik not in cache:
+                cache[cik] = _load_cik_facts(
+                    corpora,
+                    cik,
+                    filed_from=filed_from,
+                    filed_to=filed_to,
+                )
+            facts, corpus_status = cache[cik]
             boundary = datetime.combine(
-                datetime.fromisoformat(fold["test_start"]).date(),
+                as_of,
                 time.min,
                 tzinfo=timezone.utc,
             )
@@ -174,6 +225,7 @@ def build_links(
                 "ticker": ticker,
                 "asset_type": "EQUITY",
                 "cik": cik,
+                "cik_mapping_status": mapping["mapping_status"],
                 "fold_id": fold["fold_id"],
                 "as_of": fold["test_start"],
                 "available_fact_rows": len(available),
@@ -264,12 +316,18 @@ def main() -> None:
         default=[],
     )
     parser.add_argument("--collection-queue", type=Path)
+    parser.add_argument(
+        "--cik-periods",
+        type=Path,
+        help="시점별 ticker-CIK 유효기간 CSV",
+    )
     args = parser.parse_args()
     rows, audit = build_links(
         json.loads(args.price_manifest.read_text(encoding="utf-8")),
         _read_csv(args.ticker_cik),
         [args.sec_corpus, *args.additional_corpus],
         _read_csv(args.folds),
+        _read_csv(args.cik_periods) if args.cik_periods else None,
     )
     write_links(args.output, rows)
     if args.collection_queue:

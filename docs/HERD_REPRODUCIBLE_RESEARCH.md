@@ -224,12 +224,22 @@ PYTHONPATH=. .venv/bin/python -m herd.sec_price_fold_link \
   walk_forward/fixed-b0-b3-20260719/folds.csv \
   reports/sec_price_fold_link_v2.csv \
   --additional-corpus \
-  reference/sec/sec-pit-157cik-20160718-20260717-20260719
+  reference/sec/sec-pit-157cik-20160718-20260717-20260719 \
+  --additional-corpus \
+  reference/sec/sec-pit-xom34088-20160718-20260717-20260721 \
+  --cik-periods herd/price_universe_cik_periods.csv
 ```
 
 ETF는 `NOT_APPLICABLE_ETF`, SEC 접수시각 미연결과 CIK 유효기간 오류는
-fail-closed로 처리한다. 접수 시각이 fold 경계보다 늦은 관측은 해당 fold에
-노출하지 않는다.
+fail-closed로 처리한다. 기업 승계가 발생한 ticker는 현재 CIK를 과거에
+소급하지 않고 `price_universe_cik_periods.csv`의 유효기간으로 연결한다.
+접수 시각이 fold 경계보다 늦은 관측은 해당 fold에 노출하지 않는다.
+
+2026년 Exxon Mobil 지주회사 재편 전 연구 fold에는 옛 CIK
+`0000034088`을, 재편 이후에만 `0002115436`을 사용한다. 이 보정 후 최신
+fold의 엄격 PIT 연결은 51개 기업 중 50개다. CRM은 CompanyFacts의 한
+제출번호에 SEC 접수시각이 없어 별도 제외 영향 감사를 통과하기 전까지
+엄격 PIT 준비 상태로 승격하지 않는다.
 
 ## 근거
 

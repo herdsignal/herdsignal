@@ -122,6 +122,40 @@ class SecPriceFoldLinkTest(unittest.TestCase):
 
         self.assertEqual(rows[0]["status"], "AMBIGUOUS_CURRENT_CIK")
 
+    def test_period_cik_prevents_current_cik_backcast(self):
+        with TemporaryDirectory() as directory:
+            corpus = self._corpus(Path(directory))
+            rows, audit = build_links(
+                {
+                    "snapshot_id": "prices",
+                    "completed_tickers": ["AAA"],
+                },
+                [{"ticker": "AAA", "cik": "2"}],
+                corpus,
+                [{
+                    "fold_id": "F01",
+                    "train_start": "2019-01-01",
+                    "test_start": "2021-01-01",
+                    "test_end": "2021-12-31",
+                }],
+                [{
+                    "ticker": "AAA",
+                    "cik": "1",
+                    "valid_from": "2010-01-01",
+                    "valid_to": "2025-12-31",
+                }, {
+                    "ticker": "AAA",
+                    "cik": "2",
+                    "valid_from": "2026-01-01",
+                    "valid_to": "",
+                }],
+            )
+
+        self.assertEqual(rows[0]["cik"], "0000000001")
+        self.assertEqual(rows[0]["cik_mapping_status"], "VERIFIED_PERIOD_CIK")
+        self.assertEqual(rows[0]["status"], "PIT_FACTS_READY")
+        self.assertTrue(audit["research_ready"])
+
 
 if __name__ == "__main__":
     unittest.main()
