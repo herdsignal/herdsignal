@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import sys
 import unittest
@@ -16,6 +17,15 @@ from herd.pit_diagnostic_snapshot import (
 
 
 class PitDiagnosticSnapshotTest(unittest.TestCase):
+    @staticmethod
+    def _pipeline_hash(path: Path) -> str:
+        content = hashlib.sha256(path.read_bytes()).digest()
+        digest = hashlib.sha256()
+        digest.update(path.name.encode())
+        digest.update(b"\0")
+        digest.update(content)
+        return digest.hexdigest()
+
     def _pipeline(self, root: Path, *, replay_errors: int = 0) -> Path:
         source = root / "pipeline"
         source.mkdir()
@@ -57,6 +67,18 @@ class PitDiagnosticSnapshotTest(unittest.TestCase):
         (source / "replay.json").write_text(
             json.dumps(replay), encoding="utf-8"
         )
+        baseline = source / "baseline.csv"
+        baseline.write_text(
+            "ticker,effective_from,effective_to\n"
+            "AAA,2016-07-18,\n",
+            encoding="utf-8",
+        )
+        corrections = source / "corrections.csv"
+        corrections.write_text(
+            "as_of,ticker,action,event_status,promotion_scope,inference,"
+            "correction_type,entity_id,cik\n",
+            encoding="utf-8",
+        )
         manifest = {
             "format_version": "herd-constituent-research-pipeline-v1",
             "period": {
@@ -69,6 +91,16 @@ class PitDiagnosticSnapshotTest(unittest.TestCase):
                 "blocked_events": 2,
                 "replay_complete": False,
                 "survivorship_safe": False,
+            },
+            "inputs": {
+                "baseline_intervals": {
+                    "path": str(baseline),
+                    "sha256": self._pipeline_hash(baseline),
+                },
+                "baseline_corrections": {
+                    "path": str(corrections),
+                    "sha256": self._pipeline_hash(corrections),
+                },
             },
         }
         (source / "manifest.json").write_text(
@@ -92,6 +124,14 @@ class PitDiagnosticSnapshotTest(unittest.TestCase):
             self.assertIn(
                 "FINAL_MODEL_ADOPTION",
                 manifest["policy"]["forbidden_uses"],
+            )
+            self.assertTrue(
+                (
+                    snapshot
+                    / manifest["source"]["frozen_inputs"][
+                        "baseline_intervals"
+                    ]
+                ).is_file()
             )
 
     def test_rejects_source_with_replay_errors(self):

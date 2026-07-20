@@ -18,6 +18,10 @@ REQUIRED_ARTIFACTS = (
     "blocker_backlog.csv",
     "replay.json",
 )
+REQUIRED_SOURCE_INPUTS = (
+    "baseline_intervals",
+    "baseline_corrections",
+)
 ALLOWED_USES = (
     "MODEL_ELIMINATION",
     "UNCERTAINTY_SENSITIVITY",
@@ -44,6 +48,14 @@ def _sha256(path: Path) -> str:
 
 def _canonical_json(value: object) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+
+
+def _pipeline_file_hash(path: Path) -> str:
+    digest = hashlib.sha256()
+    digest.update(path.name.encode())
+    digest.update(b"\0")
+    digest.update(bytes.fromhex(_sha256(path)))
+    return digest.hexdigest()
 
 
 def _read_json(path: Path) -> dict:
@@ -106,6 +118,19 @@ def create_snapshot(
         if not (source / name).is_file():
             raise PitDiagnosticSnapshotError(f"missing source artifact: {name}")
     source_manifest, replay, blockers = _validate_source(source)
+    source_inputs = source_manifest.get("inputs", {})
+    resolved_inputs = {}
+    for name in REQUIRED_SOURCE_INPUTS:
+        metadata = source_inputs.get(name, {})
+        path = Path(metadata.get("path", ""))
+        if (
+            not path.is_file()
+            or _pipeline_file_hash(path) != metadata.get("sha256")
+        ):
+            raise PitDiagnosticSnapshotError(
+                f"source input is missing or changed: {name}"
+            )
+        resolved_inputs[name] = path
 
     temporary = Path(root) / f".{snapshot_id}.tmp-{uuid.uuid4().hex}"
     temporary.mkdir(parents=True)
@@ -124,6 +149,14 @@ def create_snapshot(
             "bytes": source_copy.stat().st_size,
             "sha256": _sha256(source_copy),
         }
+        for name, source_path in resolved_inputs.items():
+            suffix = "".join(source_path.suffixes)
+            target = temporary / f"{name}{suffix}"
+            shutil.copyfile(source_path, target)
+            copied[target.name] = {
+                "bytes": target.stat().st_size,
+                "sha256": _sha256(target),
+            }
 
         blocker_keys = sorted(
             {
@@ -149,6 +182,14 @@ def create_snapshot(
                     "format_version", ""
                 ),
                 "period": source_manifest.get("period", {}),
+                "frozen_inputs": {
+                    name: next(
+                        artifact_name
+                        for artifact_name in copied
+                        if artifact_name.startswith(f"{name}.")
+                    )
+                    for name in REQUIRED_SOURCE_INPUTS
+                },
             },
             "quality": {
                 "replay_errors": 0,
