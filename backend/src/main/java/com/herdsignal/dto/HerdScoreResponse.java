@@ -120,8 +120,14 @@ public class HerdScoreResponse {
     /** 화면 표시용 행동 문구 */
     private String actionLabel;
 
-    /** 권장 행동 비율 (0.00~0.30) */
+    /** 운영 승인된 행동 비율. 연구 단계에서는 항상 0.00이다. */
     private BigDecimal actionRatio;
+
+    /** 연구 비교용 원래 행동 비율. 운영 행동에는 사용하지 않는다. */
+    private BigDecimal researchActionRatio;
+
+    /** 연구 비교용 원래 행동 문구. 운영 행동에는 사용하지 않는다. */
+    private String researchActionLabel;
 
     /** 세부 국면 코드 */
     private String actionRegime;
@@ -288,7 +294,7 @@ public class HerdScoreResponse {
                 .qualityReasons(qualityReasons);
 
         builder.operationalModelVersion("HERD_v4")
-               .actionDisclaimer("연구 검증 중인 행동 보조 정보이며 확정 매매 추천이 아닙니다.")
+               .actionDisclaimer("검증되지 않은 Action Layer의 운영 비율은 0%이며 연구 결과만 별도로 제공합니다.")
                .oosValidationSummary("최신 전체 OOS 수치와 채택 게이트 결과는 HERD Lab에서 확인할 수 있습니다.");
 
         if (actionDecision != null) {
@@ -302,6 +308,8 @@ public class HerdScoreResponse {
                    .actionGrade(actionDecision.getActionGrade())
                    .actionLabel(actionDecision.getActionLabel())
                    .actionRatio(actionDecision.getActionRatio())
+                   .researchActionRatio(actionDecision.getResearchActionRatio())
+                   .researchActionLabel(actionDecision.getResearchActionLabel())
                    .actionRegime(actionDecision.getActionRegime())
                    .actionRegimeLabel(actionDecision.getActionRegimeLabel())
                    .actionReasons(actionDecision.getActionReasons())

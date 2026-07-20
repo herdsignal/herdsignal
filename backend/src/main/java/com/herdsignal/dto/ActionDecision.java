@@ -42,8 +42,14 @@ public class ActionDecision {
     /** 화면 표시용 행동 문구 */
     private String actionLabel;
 
-    /** 권장 행동 비율 (0.00~0.30) */
+    /** 운영 승인된 행동 비율. 연구 단계에서는 항상 0.00이다. */
     private BigDecimal actionRatio;
+
+    /** 연구 비교용 원래 행동 비율. 운영 행동에는 사용하지 않는다. */
+    private BigDecimal researchActionRatio;
+
+    /** 연구 비교용 원래 행동 문구. 운영 행동에는 사용하지 않는다. */
+    private String researchActionLabel;
 
     /** 세부 국면 코드 */
     private String actionRegime;

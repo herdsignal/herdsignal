@@ -5,6 +5,7 @@ import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.InvestorProfile;
 import com.herdsignal.dto.ActionDecision;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,14 +31,24 @@ public class ActionDecisionService {
     private static final String BASE_MODEL_VERSION = "HERD_v4";
     private static final String ACTION_MODEL_STATUS = "RESEARCH_VALIDATION";
     private final PersonalActionTranslator personalActionTranslator;
+    private final boolean liveActionsEnabled;
 
     @Autowired
-    public ActionDecisionService(PersonalActionTranslator personalActionTranslator) {
+    public ActionDecisionService(
+            PersonalActionTranslator personalActionTranslator,
+            @Value("${herdsignal.action.live-enabled:false}") boolean liveActionsEnabled,
+            @Value("${herdsignal.shadow.holdout-passed:false}") boolean holdoutPassed
+    ) {
         this.personalActionTranslator = personalActionTranslator;
+        this.liveActionsEnabled = liveActionsEnabled && holdoutPassed;
     }
 
     ActionDecisionService() {
-        this(new PersonalActionTranslator());
+        this(new PersonalActionTranslator(), false, false);
+    }
+
+    ActionDecisionService(boolean liveActionsEnabled) {
+        this(new PersonalActionTranslator(), liveActionsEnabled, liveActionsEnabled);
     }
 
     public ActionDecision decide(HerdScore score, HerdIndicator indicator, Integer qualityScore) {
@@ -124,6 +135,8 @@ public class ActionDecisionService {
         adjustedRegime = cooldownAdjustment.regime();
         int actionScore = calculateActionScore(herdScore, dataQuality, trend.score(), momentum.score(), adjustedRegime);
         actionScore = clamp(actionScore + lifecycle.scoreAdjustment(), 0, 100);
+        RegimeDecision researchRegime = adjustedRegime;
+        adjustedRegime = applyOperationalGate(adjustedRegime);
 
         List<String> reasons = new ArrayList<>();
         reasons.add("HERD " + displayStage(score.getHerdStage()) + " 구간");
@@ -166,6 +179,8 @@ public class ActionDecisionService {
                 .actionGrade(actionGrade(actionScore, adjustedRegime.ratio()))
                 .actionLabel(adjustedRegime.label())
                 .actionRatio(BigDecimal.valueOf(adjustedRegime.ratio()).setScale(2, RoundingMode.HALF_UP))
+                .researchActionRatio(BigDecimal.valueOf(researchRegime.ratio()).setScale(2, RoundingMode.HALF_UP))
+                .researchActionLabel(researchRegime.label())
                 .actionRegime(adjustedRegime.code())
                 .actionRegimeLabel(adjustedRegime.regimeLabel())
                 .actionReasons(reasons)
@@ -182,6 +197,19 @@ public class ActionDecisionService {
                 .actionIntensity(actionIntensity(adjustedRegime.ratio()).code())
                 .actionIntensityLabel(actionIntensity(adjustedRegime.ratio()).label())
                 .build();
+    }
+
+    private RegimeDecision applyOperationalGate(RegimeDecision regime) {
+        if (liveActionsEnabled || regime.ratio() == 0.0) {
+            return regime;
+        }
+        return new RegimeDecision(
+                regime.code() + "_RESEARCH_ONLY",
+                "연구 검증 중·관찰",
+                regime.regimeLabel(),
+                0.0,
+                regime.reason() + " 운영 채택 기준을 통과하지 않아 실행 비율을 0%로 제한합니다."
+        );
     }
 
     private ActionIntensity actionIntensity(double ratio) {

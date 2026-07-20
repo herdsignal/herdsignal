@@ -68,6 +68,9 @@ management:
 
 herdsignal:
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}
+  action:
+    # true여도 shadow.holdout-passed가 false면 운영 행동 비율은 항상 0%다.
+    live-enabled: ${HERD_LIVE_ACTIONS_ENABLED:false}
   shadow:
     enabled: ${HERD_SHADOW_ENABLED:false}
     candidate-id: ${HERD_SHADOW_CANDIDATE_ID:}

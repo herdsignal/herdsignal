@@ -14,7 +14,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ActionDecisionServiceTest {
 
-    private final ActionDecisionService service = new ActionDecisionService();
+    private final ActionDecisionService service = new ActionDecisionService(true);
+
+    @Test
+    void disablesUnvalidatedActionsByDefaultButPreservesResearchOutput() {
+        ActionDecisionService gatedService = new ActionDecisionService();
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 8, "Flee", "BUY");
+
+        ActionDecision decision = gatedService.decide(
+                latest, null, 90,
+                historyUntil(latest.getScoreDate(), 25, 18, "Flee", "BUY"),
+                profile("NEW_ENTRY", "GROWTH", 10, 6, "0.30"),
+                false
+        );
+
+        assertThat(decision.getActionRatio()).isZero();
+        assertThat(decision.getActionLabel()).isEqualTo("연구 검증 중·관찰");
+        assertThat(decision.getActionRegime()).endsWith("_RESEARCH_ONLY");
+        assertThat(decision.getResearchActionRatio()).isPositive();
+        assertThat(decision.getResearchActionLabel()).contains("진입");
+    }
 
     @Test
     void scalesActionRatioDownWhenDataQualityIsLow() {
