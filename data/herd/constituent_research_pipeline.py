@@ -31,6 +31,7 @@ from herd.residual_event_classification import (
     RESOLVED_STATUSES,
     classify_residual_events,
 )
+from herd.share_class_normalization import normalize_share_class_events
 
 
 class ConstituentResearchPipelineError(RuntimeError):
@@ -221,9 +222,12 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
             start=period_start,
             end=period_end,
         )
+        normalized_table_events, share_class_audit = normalize_share_class_events(
+            read_csv(inputs["table_events"])
+        )
         official_rows, official_audit = reconcile_candidates(
             candidates,
-            read_csv(inputs["table_events"]),
+            normalized_table_events,
             read_csv(inputs["prose_events"]),
             read_csv(inputs["suggestions"]),
             read_csv(inputs["semantic_events"]),
@@ -348,6 +352,7 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
         )
         audits = {
             "official": official_audit,
+            "share_classes": share_class_audit,
             "identity": identity_audit,
             "continuity": continuity_audit,
             "ledger": ledger_audit,
