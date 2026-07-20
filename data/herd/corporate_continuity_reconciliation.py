@@ -28,6 +28,7 @@ EVIDENCE_BASES = {
     "DIRECT_SP_DJI_EVENT",
     "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_SUCCESSION",
     "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_EXPLICIT_INDEX_ENTRY",
+    "SEC_CORPORATE_ACTION_ONLY",
 }
 
 
@@ -244,7 +245,7 @@ def verify_and_reconcile(
             "SPINOFF_DUAL_MEMBERSHIP_ADDITION",
             "HISTORICAL_TICKER_ADMISSION_THEN_RENAME",
             "SUCCESSOR_MEMBERSHIP_CONTINUITY",
-        }:
+        } and evidence_basis != "SEC_CORPORATE_ACTION_ONLY":
             sp_url = claim["sp_source_url"]
             sp_item = sp_evidence.get(sp_url)
             if not sp_item:
@@ -284,8 +285,10 @@ def verify_and_reconcile(
             "cik": claim["cik"].zfill(10),
             "verification_status": (
                 "CORPORATE_CONTINUITY_INFERRED"
-                if evidence_basis
-                == "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_SUCCESSION"
+                if evidence_basis in {
+                    "PRIOR_SP_DJI_MEMBERSHIP_PLUS_SEC_SUCCESSION",
+                    "SEC_CORPORATE_ACTION_ONLY",
+                }
                 else "CORPORATE_CONTINUITY_VERIFIED"
             ),
             "evidence_basis": evidence_basis,

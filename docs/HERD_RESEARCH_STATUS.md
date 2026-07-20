@@ -132,10 +132,16 @@ Buy & Hold의 상승 복리를 더 크게 잃는다.
   `CORPORATE_SUCCESSION`으로 소비할 수 있다.
 - Evergy는 2018-06-05 편입으로, Amcor는 2019-06-07 BMS 편입 후
   2019-06-11 AMCR 승계로 공식 S&P·SEC 원문을 대조했다.
-- 최신 단일 실행 결과는 차단 8건, 재생 구조 오류 0건이다.
-- 잔여 사건은 LIN, BKR, MYL→VTRS, WRK→SW, PARA→PSKY다. BKR은
-  선행 BHI→BHGE 승계가 기준 구성에 없고, 세 합병 묶음은 SEC 회사
-  사건과 별도로 공식 지수 연속성 근거를 더 고정해야 한다.
+- 기준 구성 복원을 `entity_id + CIK + historical ticker` 계약으로 바꾸고
+  공식 원문 SHA-256을 실행 시 다시 검증한다.
+- BHI를 기준 구성에 복원해 BHI→BHGE→BKR을 오류 없이 재생했다.
+- MYL→VTRS, WRK→SW, PARA→PSKY는 합병일·거래 시작일·지수 적용일을
+  분리하고 각각 하나의 원자적 승계 사건으로 정규화했다.
+- SEC 원문만으로는 S&P 연속성을 증명할 수 없으므로 네 승계 사건은
+  `DIAGNOSTIC_CORPORATE_CONTINUITY`이며 공식 승격 대상이 아니다.
+- 최신 단일 실행 결과는 차단 5건, 재생 구조 오류 0건, 최종 500종목이다.
+- LIN은 PX 기준 구성 공식 PDF 원문이 확인됐지만 S&P WAF로 로컬 원문
+  해시를 고정하지 못해 계속 차단한다.
 - 따라서 `replay_complete=false`, `survivorship_safe=false`를 유지한다.
 
 ### 발표일 기준 기업 데이터 진행

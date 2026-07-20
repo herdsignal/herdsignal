@@ -139,11 +139,16 @@ SEC 8-K의 전환·거래일을 모두 확인했다. 재생기는 여러 이전 
 - 여러 날짜의 후보 행은 선언된 component key로만 한 chain에 묶는다.
 - 검토 격리는 공식 URL과 사유가 없으면 파이프라인을 실패시킨다.
 
-2026-07-20 실행은 IQV, EVRG, AMCR과 검증된 재구성 오류 5행을 처리해
-차단 사건을 8건으로 줄였고 재생 오류는 0건이다. 남은 LIN, BKR,
-MYL→VTRS, WRK→SW, PARA→PSKY는 SEC 합병 사실만으로 지수 연속성을
-추정해 승격하지 않는다. 해당 사건까지 해결되기 전
-`survivorship_safe=false`다.
+2026-07-20 실행은 과거 구성원 복원을 티커가 아닌 `entity_id + CIK`로
+관리한다. BHI를 기준 구성에 복원하고 BHI→BHGE→BKR을 재생했으며,
+MYL→VTRS, WRK→SW, PARA→PSKY의 잘못 분리된 REMOVE/ADD 행을 각각 하나의
+기업 승계 사건으로 정규화했다. SEC 원문만 있는 네 승계는
+`DIAGNOSTIC_CORPORATE_CONTINUITY`로 분리되어 공식 사건으로 승격되지 않는다.
+
+최신 진단 재생은 구조 오류 0건, 최종 구성 500종목, 차단 사건 5건이다.
+남은 핵심은 PX 기준 구성 원문 해시 고정과 PX→LIN 승계, 그리고 네 진단
+승계의 직접 S&P 사건 또는 공식 전후 구성 근거 확보다.
+`replay_complete=false`, `survivorship_safe=false`를 유지한다.
 
 ## 승격 조건
 

@@ -278,6 +278,7 @@ class CorporateContinuityReconciliationTest(unittest.TestCase):
             "candidate_components": (
                 "2024-07-09:REMOVE:WRK|2024-07-12:ADD:SW"
             ),
+            "evidence_basis": "SEC_CORPORATE_ACTION_ONLY",
             "cik": "2005951",
             "sp_source_url": self.sp_url,
             "filing_url": self.sec_url,
@@ -296,6 +297,11 @@ class CorporateContinuityReconciliationTest(unittest.TestCase):
             {row["status"] for row in rows},
         )
         self.assertEqual("CORPORATE_SUCCESSION", events[0]["event_type"])
+        self.assertEqual(
+            "CORPORATE_CONTINUITY_INFERRED",
+            events[0]["verification_status"],
+        )
+        self.assertEqual("", events[0]["sp_source_sha256"])
         self.assertEqual("2024-07-08", events[0]["index_effective_date"])
         self.assertEqual(2, audit["reclassified_candidate_rows"])
 
