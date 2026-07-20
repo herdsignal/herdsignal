@@ -39,6 +39,7 @@ class Trade:
     execution_date: pd.Timestamp
     side: str
     shares: float
+    reference_price: float
     execution_price: float
     notional: float
     fee: float
@@ -52,7 +53,9 @@ class SimulationResult:
     daily_returns: pd.Series
     exposure: pd.Series
     cash: pd.Series
+    shares: pd.Series
     external_flows: pd.Series
+    config: BenchmarkConfig
     trades: list[Trade] = field(default_factory=list)
     contributed_capital: float = 0.0
 
@@ -134,6 +137,7 @@ def _execute_target(
         execution_date=execution_date,
         side=side,
         shares=float(trade_shares),
+        reference_price=float(open_price),
         execution_price=float(execution_price),
         notional=float(notional),
         fee=float(fee),
@@ -165,6 +169,7 @@ def simulate(
     return_values: list[float] = []
     exposure_values: list[float] = []
     cash_values: list[float] = []
+    share_values: list[float] = []
     previous_equity = cfg.initial_cash
     daily_cash_rate = (1 + cfg.annual_cash_yield) ** (1 / TRADING_DAYS) - 1
 
@@ -211,6 +216,7 @@ def simulate(
         return_values.append(daily_return)
         exposure_values.append(exposure)
         cash_values.append(cash)
+        share_values.append(shares)
         previous_equity = equity
 
     index = frame.index
@@ -220,7 +226,9 @@ def simulate(
         daily_returns=pd.Series(return_values, index=index, name=name),
         exposure=pd.Series(exposure_values, index=index, name=name),
         cash=pd.Series(cash_values, index=index, name=name),
+        shares=pd.Series(share_values, index=index, name=name),
         external_flows=flows,
+        config=cfg,
         trades=trades,
         contributed_capital=cfg.initial_cash + float(flows.sum()),
     )
@@ -249,6 +257,7 @@ def simulate_fractional_actions(
     returns: list[float] = []
     exposures: list[float] = []
     cash_values: list[float] = []
+    share_values: list[float] = []
     previous_equity = cfg.initial_cash
     daily_cash_rate = (1 + cfg.annual_cash_yield) ** (1 / TRADING_DAYS) - 1
 
@@ -281,8 +290,17 @@ def simulate_fractional_actions(
                 cash -= notional + fee
                 shares += trade_shares
                 target = shares * open_price / (cash + shares * open_price)
-                trades.append(Trade(signal_date, date, action, trade_shares,
-                                    execution_price, notional, fee, target))
+                trades.append(Trade(
+                    signal_date=signal_date,
+                    execution_date=date,
+                    side=action,
+                    shares=trade_shares,
+                    reference_price=open_price,
+                    execution_price=execution_price,
+                    notional=notional,
+                    fee=fee,
+                    target_weight=target,
+                ))
             elif action == "SELL" and ratio > 0 and shares > 0:
                 execution_price = open_price * (1 - cfg.slippage_rate)
                 trade_shares = shares * ratio
@@ -291,8 +309,17 @@ def simulate_fractional_actions(
                 cash += notional - fee
                 shares -= trade_shares
                 target = shares * open_price / (cash + shares * open_price)
-                trades.append(Trade(signal_date, date, action, trade_shares,
-                                    execution_price, notional, fee, target))
+                trades.append(Trade(
+                    signal_date=signal_date,
+                    execution_date=date,
+                    side=action,
+                    shares=trade_shares,
+                    reference_price=open_price,
+                    execution_price=execution_price,
+                    notional=notional,
+                    fee=fee,
+                    target_weight=target,
+                ))
             elif action not in {"BUY", "SELL", "HOLD", "NAN"}:
                 raise ValueError(f"unsupported action: {action}")
 
@@ -302,6 +329,7 @@ def simulate_fractional_actions(
         returns.append(equity / previous_equity - 1.0)
         exposures.append(shares * float(row["Close"]) / equity if equity > 0 else 0.0)
         cash_values.append(cash)
+        share_values.append(shares)
         previous_equity = equity
 
     index = frame.index
@@ -311,7 +339,9 @@ def simulate_fractional_actions(
         daily_returns=pd.Series(returns, index=index, name=name),
         exposure=pd.Series(exposures, index=index, name=name),
         cash=pd.Series(cash_values, index=index, name=name),
+        shares=pd.Series(share_values, index=index, name=name),
         external_flows=pd.Series(0.0, index=index),
+        config=cfg,
         trades=trades,
         contributed_capital=cfg.initial_cash,
     )
@@ -332,6 +362,20 @@ def _max_drawdown(returns: pd.Series) -> float:
     wealth = (1 + returns.fillna(0.0)).cumprod()
     drawdown = wealth / wealth.cummax() - 1.0
     return float(drawdown.min())
+
+
+def _validate_comparable(
+    result: SimulationResult,
+    benchmark: SimulationResult,
+) -> None:
+    if not result.equity.index.equals(benchmark.equity.index):
+        raise ValueError("strategy and benchmark must use identical dates")
+    if result.config != benchmark.config:
+        raise ValueError("strategy and benchmark must use identical execution costs")
+    if result.contributed_capital != benchmark.contributed_capital:
+        raise ValueError("strategy and benchmark must use identical capital")
+    if not result.external_flows.equals(benchmark.external_flows):
+        raise ValueError("strategy and benchmark must use identical external flows")
 
 
 def performance_metrics(
@@ -359,6 +403,11 @@ def performance_metrics(
         sum(trade.notional for trade in result.trades) / average_equity
         if average_equity > 0 else 0.0
     )
+    total_fees = sum(trade.fee for trade in result.trades)
+    slippage_cost = sum(
+        abs(trade.execution_price - trade.reference_price) * trade.shares
+        for trade in result.trades
+    )
 
     metrics: dict[str, float | int | None] = {
         "observations": observations,
@@ -375,12 +424,19 @@ def performance_metrics(
         "average_cash_ratio": float((result.cash / result.equity).mean()),
         "contributed_capital": result.contributed_capital,
         "final_equity": float(result.equity.iloc[-1]),
+        "final_cash": float(result.cash.iloc[-1]),
+        "terminal_shares": float(result.shares.iloc[-1]),
+        "total_fees": float(total_fees),
+        "estimated_slippage_cost": float(slippage_cost),
         "upside_capture": None,
         "downside_capture": None,
         "excess_cagr": None,
+        "terminal_wealth_delta": None,
+        "terminal_share_delta": None,
     }
 
     if benchmark is not None:
+        _validate_comparable(result, benchmark)
         aligned = pd.concat(
             [returns.rename("strategy"), benchmark.daily_returns.rename("benchmark")],
             axis=1,
@@ -400,6 +456,12 @@ def performance_metrics(
         metrics["excess_cagr"] = (
             cagr - float(benchmark_cagr)
             if cagr is not None and benchmark_cagr is not None else None
+        )
+        metrics["terminal_wealth_delta"] = (
+            float(result.equity.iloc[-1] - benchmark.equity.iloc[-1])
+        )
+        metrics["terminal_share_delta"] = (
+            float(result.shares.iloc[-1] - benchmark.shares.iloc[-1])
         )
 
     return metrics

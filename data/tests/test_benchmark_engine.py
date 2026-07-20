@@ -97,6 +97,8 @@ class BenchmarkEngineTest(unittest.TestCase):
         for key in (
             "cagr", "max_drawdown", "sortino", "calmar",
             "upside_capture", "downside_capture", "turnover", "excess_cagr",
+            "terminal_wealth_delta", "terminal_share_delta",
+            "total_fees", "estimated_slippage_cost",
         ):
             self.assertIn(key, metrics)
 
@@ -116,6 +118,57 @@ class BenchmarkEngineTest(unittest.TestCase):
         sell = result.trades[-1]
         self.assertEqual(sell.execution_date, prices.index[1])
         self.assertAlmostEqual(sell.shares, result.trades[0].shares * 0.25)
+
+    def test_comparison_rejects_different_cost_assumptions(self):
+        prices = _prices([100, 101, 102])
+        benchmark = buy_and_hold(
+            prices,
+            config=BenchmarkConfig(fee_rate=0.0, slippage_rate=0.0),
+        )
+        strategy = simulate(
+            "strategy",
+            prices,
+            pd.Series(1.0, index=prices.index),
+            config=BenchmarkConfig(fee_rate=0.001, slippage_rate=0.0),
+        )
+
+        with self.assertRaisesRegex(ValueError, "execution costs"):
+            performance_metrics(strategy, benchmark)
+
+    def test_comparison_rejects_different_dates(self):
+        prices = _prices([100, 101, 102, 103])
+        benchmark = buy_and_hold(
+            prices,
+            config=BenchmarkConfig(fee_rate=0.0, slippage_rate=0.0),
+        )
+        shorter = prices.iloc[1:]
+        strategy = simulate(
+            "strategy",
+            shorter,
+            pd.Series(1.0, index=shorter.index),
+            config=BenchmarkConfig(fee_rate=0.0, slippage_rate=0.0),
+        )
+
+        with self.assertRaisesRegex(ValueError, "identical dates"):
+            performance_metrics(strategy, benchmark)
+
+    def test_terminal_share_delta_tracks_incomplete_reentry(self):
+        prices = _prices([100, 100, 100])
+        config = BenchmarkConfig(fee_rate=0.0, slippage_rate=0.0)
+        benchmark = buy_and_hold(prices, config=config)
+        actions = pd.DataFrame(
+            {"action": ["SELL", "HOLD", "HOLD"], "ratio": [0.10, 0.0, 0.0]},
+            index=prices.index,
+        )
+        strategy = simulate_fractional_actions(
+            "incomplete-cycle", prices, actions, config=config
+        )
+
+        metrics = performance_metrics(strategy, benchmark)
+        self.assertLess(metrics["terminal_share_delta"], 0.0)
+        self.assertAlmostEqual(
+            metrics["terminal_wealth_delta"], 0.0, places=8
+        )
 
 
 if __name__ == "__main__":
