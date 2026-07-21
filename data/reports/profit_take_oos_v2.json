@@ -1,0 +1,8 @@
+{
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "passing_hypotheses": [],
+  "profit_take_authorized": false,
+  "registry_version": "HERD_PROFIT_TAKE_MEASUREMENTS_V2",
+  "status": "NO_ADMITTED_PROFIT_TAKE_EVIDENCE"
+}

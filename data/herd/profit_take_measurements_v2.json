@@ -9,6 +9,7 @@
     "minimum_ticker_history_days": 756,
     "percentile_reference": "TICKER_EXPANDING_HISTORY_SHIFTED_ONE_OBSERVATION",
     "episode_reset_percentile": 0.7,
+    "control_percentile_band": [0.4, 0.7],
     "forward_horizons_days": [21, 63, 126]
   },
   "hypotheses": [
