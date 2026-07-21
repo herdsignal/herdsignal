@@ -1,0 +1,60 @@
+{
+  "protocol_version": "HERD_SYSTEMATIC_HEALTHY_PULLBACK_V1",
+  "status": "LOCKED_BEFORE_OOS_RESULTS",
+  "objective": "Test whether a pullback mainly explained by market and sector returns is a better add-buy candidate only when SEC point-in-time business state is not deteriorated.",
+  "snapshot": "data/snapshots/yf-long14-actions-sector-20260721",
+  "business_features": "data/reports/business_state_features_v2.csv",
+  "candidate_rule": {
+    "sampling": "MONTH_END_LAST_TRADING_SESSION",
+    "drawdown_high_sessions": 126,
+    "entry_drawdown": -0.10,
+    "rearm_drawdown": -0.05,
+    "minimum_sessions_between_events": 126
+  },
+  "decomposition": {
+    "regression_sessions": 252,
+    "minimum_regression_sessions": 180,
+    "attribution_sessions": 63,
+    "factors": ["SPY_RETURN", "SECTOR_EXCESS_OVER_SPY"],
+    "systematic_fraction_high": 0.6666666667,
+    "systematic_fraction_low": 0.3333333333
+  },
+  "business_state": {
+    "source": "HERD_SEC_PIT_BUSINESS_STATE_V2",
+    "availability": "LATEST_MONTH_END_STRICTLY_BEFORE_SIGNAL_MONTH",
+    "healthy": "PASS",
+    "damaged": "VETO",
+    "unknown": "EXCLUDE_FAIL_CLOSED"
+  },
+  "test_folds": [
+    {"id": "F01", "start": "2018-01-01", "end": "2019-12-31"},
+    {"id": "F02", "start": "2020-01-01", "end": "2021-12-31"},
+    {"id": "F03", "start": "2022-01-01", "end": "2023-12-31"},
+    {"id": "F04", "start": "2024-01-01", "end": "2025-12-31"}
+  ],
+  "outcomes": {"horizon_sessions": 126, "primary": ["FORWARD_TOTAL_RETURN", "FORWARD_TROUGH_RETURN"]},
+  "primary_contrasts": [
+    {"id": "SOURCE_WITHIN_HEALTHY", "treatment": "HEALTHY_SYSTEMATIC", "control": "HEALTHY_FIRM_SPECIFIC"},
+    {"id": "HEALTH_WITHIN_SYSTEMATIC", "treatment": "HEALTHY_SYSTEMATIC", "control": "DAMAGED_SYSTEMATIC"}
+  ],
+  "adoption_gate": {
+    "minimum_events_per_side": 30,
+    "minimum_tickers_per_side": 10,
+    "minimum_evaluable_folds": 3,
+    "minimum_directional_folds": 3,
+    "minimum_rank_biserial": 0.10,
+    "maximum_holm_p_value": 0.10,
+    "required_passed_contrasts": 2,
+    "required_passed_outcomes_per_contrast": 2
+  },
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_RESEARCH_ONLY",
+  "forbidden": [
+    "USE_SAME_MONTH_BUSINESS_SNAPSHOT",
+    "TREAT_UNKNOWN_AS_PASS",
+    "CHANGE_THRESHOLDS_AFTER_RESULTS",
+    "COMBINE_FAILED_CONTRASTS",
+    "AUTHORIZE_ADD_BUY_FROM_THIS_SAMPLE",
+    "CLAIM_SURVIVORSHIP_SAFE",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}

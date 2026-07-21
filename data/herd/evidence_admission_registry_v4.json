@@ -1,0 +1,34 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V4",
+  "status": "POST_OOS_DECISION_LOCKED",
+  "hypothesis": "SYSTEMATIC_CORRECTION_WITH_NON_DETERIORATED_SEC_PIT_BUSINESS_STATE",
+  "source_artifacts": [
+    {
+      "path": "data/herd/systematic_healthy_pullback_v1.json",
+      "sha256": "3ebfd44e29a2e1b7e77f4196b17cb0c5df0224083392f347cf552baff0dcbdab"
+    },
+    {
+      "path": "data/reports/systematic_healthy_pullback_events_v1.csv",
+      "sha256": "2cbd458caa5d9bfa77ca6c9eadfd4b052488717f1d949ace146ca2356df28d09"
+    },
+    {
+      "path": "data/reports/systematic_healthy_pullback_comparison_v1.json",
+      "sha256": "433af5dea3b612f3bd01b51cd8e19bce0dac9fd7a43851152f00ed45a89cc64f"
+    },
+    {
+      "path": "data/reports/systematic_healthy_pullback_v1.json",
+      "sha256": "4407f2b62ce19c68dc627000684b96c06a637e3411ac048a4fb65eb1662face9"
+    }
+  ],
+  "decision": {
+    "status": "REJECT_OR_INSUFFICIENT_INTERACTION_EVIDENCE",
+    "source_within_healthy_passed_outcomes": 0,
+    "health_within_systematic_passed_outcomes": 0,
+    "reentry_evidence_admitted": false,
+    "five_percent_cycle_allowed": false,
+    "add_buy_authorized": false,
+    "blind_holdout_allowed": false,
+    "operational_action_ratio": 0.0
+  },
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_RESEARCH_ONLY"
+}

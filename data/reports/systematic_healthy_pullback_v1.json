@@ -1,0 +1,23 @@
+{
+  "report_version": "HERD_SYSTEMATIC_HEALTHY_PULLBACK_V1",
+  "status": "OOS_COMPLETE",
+  "decision": "REJECT_OR_INSUFFICIENT_INTERACTION_EVIDENCE",
+  "events": 286,
+  "group_counts": {
+    "EXCLUDED_UNKNOWN_OR_MIDDLE": 103,
+    "HEALTHY_SYSTEMATIC": 90,
+    "HEALTHY_FIRM_SPECIFIC": 64,
+    "DAMAGED_FIRM_SPECIFIC": 19,
+    "DAMAGED_SYSTEMATIC": 10
+  },
+  "passed_outcomes_by_contrast": {
+    "HEALTH_WITHIN_SYSTEMATIC": 0,
+    "SOURCE_WITHIN_HEALTHY": 0
+  },
+  "all_primary_contrasts_passed": false,
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_RESEARCH_ONLY",
+  "survivorship_safe": false,
+  "add_buy_authorized": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}
