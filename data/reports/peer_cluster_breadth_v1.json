@@ -1,0 +1,12 @@
+{
+  "report_version": "HERD_PEER_CLUSTER_BREADTH_V1",
+  "status": "DISCOVERY_COMPLETE",
+  "claim_boundary": "CURRENT_CONSTITUENTS_ROBUSTNESS_ONLY",
+  "target_events": 2396,
+  "features_compared": 2,
+  "retained_features": [],
+  "independent_oos_passed_features": [],
+  "survivorship_safe": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}
