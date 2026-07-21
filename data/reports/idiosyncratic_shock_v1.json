@@ -1,0 +1,10 @@
+{
+  "report_version": "HERD_IDIOSYNCRATIC_SHOCK_V1",
+  "status": "DISCOVERY_COMPLETE",
+  "target_events": 2396,
+  "features_compared": 2,
+  "retained_features": [],
+  "independent_oos_passed_features": [],
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}
