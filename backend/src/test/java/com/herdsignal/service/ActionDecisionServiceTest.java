@@ -4,6 +4,8 @@ import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.InvestorProfile;
 import com.herdsignal.dto.ActionDecision;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +17,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ActionDecisionServiceTest {
 
     private final ActionDecisionService service = new ActionDecisionService(true);
+
+    @ParameterizedTest
+    @CsvSource({
+            "10,DEEP_FLEE_FRESH",
+            "15,NORMAL_FLEE_FRESH",
+            "16,NORMAL_SCATTER",
+            "40,NORMAL_SCATTER",
+            "41,CALM",
+            "59,CALM",
+            "60,NORMAL_DRIFT_FRESH",
+            "74,NORMAL_DRIFT_FRESH",
+            "75,CROWDED_RUSH_FRESH",
+            "90,PEAKING_RUSH_FRESH"
+    })
+    void preservesFiveStageAndInternalRegimeBoundaries(double herd, String expectedRegime) {
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), herd, stageFor(herd), "HOLD");
+
+        ActionDecision decision = service.decide(latest, null, 90, List.of());
+
+        assertThat(decision.getActionRegime()).isEqualTo(expectedRegime);
+    }
 
     @Test
     void disablesUnvalidatedActionsByDefaultButPreservesResearchOutput() {
@@ -216,5 +239,13 @@ class ActionDecisionServiceTest {
                 .herdStage(stage)
                 .signal(signal)
                 .build();
+    }
+
+    private static String stageFor(double score) {
+        if (score <= 15) return "Flee";
+        if (score <= 40) return "Scatter";
+        if (score < 60) return "Calm";
+        if (score < 75) return "Drift";
+        return "Rush";
     }
 }
