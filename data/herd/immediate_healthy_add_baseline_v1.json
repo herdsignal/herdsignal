@@ -1,0 +1,59 @@
+{
+  "protocol_version": "HERD_IMMEDIATE_HEALTHY_ADD_BASELINE_V1",
+  "status": "LOCKED_BEFORE_BASELINE_RESULTS",
+  "objective": "Measure whether deploying a five-percent sleeve immediately after the first ten-percent pullback in a prior-month SEC PIT PASS company beats keeping cash and an unconditional 21-session scheduled deployment.",
+  "source_protocol": "HERD_SYSTEMATIC_HEALTHY_PULLBACK_V1",
+  "source_events": "data/reports/systematic_healthy_pullback_events_v1.csv",
+  "snapshot": "data/snapshots/yf-long14-actions-sector-20260721",
+  "eligibility": {
+    "business_state": "PASS",
+    "business_snapshot": "STRICTLY_BEFORE_SIGNAL_MONTH",
+    "pullback": "FIRST_MINUS_TEN_PERCENT_FROM_126_SESSION_HIGH",
+    "event_spacing_sessions": 126
+  },
+  "lanes": {
+    "IMMEDIATE": "NEXT_SESSION_ADJUSTED_OPEN_AFTER_PULLBACK_SIGNAL",
+    "CASH": "KEEP_FIVE_PERCENT_CASH_TO_COMMON_OUTCOME_END",
+    "SCHEDULED_21": "NEXT_ADJUSTED_OPEN_AFTER_21_COMPLETE_SESSIONS"
+  },
+  "portfolio": {
+    "sleeve_ratio": 0.05,
+    "one_way_cost_base": 0.0015,
+    "one_way_cost_stress": 0.003,
+    "cash_return": 0.0,
+    "outcome_sessions": 126,
+    "terminal_mark_to_market_sell_cost": 0.0
+  },
+  "primary_comparisons": ["IMMEDIATE_MINUS_CASH", "IMMEDIATE_MINUS_SCHEDULED_21"],
+  "inference": {
+    "event_rows_are_not_independent": true,
+    "required_units": ["TICKER_MEAN", "SIGNAL_MONTH_MEAN"],
+    "multiple_testing": "HOLM_ACROSS_TWO_COMPARISONS_AND_TWO_INFERENCE_UNITS"
+  },
+  "baseline_gate": {
+    "minimum_events": 100,
+    "minimum_tickers": 20,
+    "minimum_evaluable_folds": 4,
+    "minimum_positive_folds_per_comparison": 3,
+    "minimum_median_total_position_uplift": 0.0,
+    "maximum_cluster_holm_p_value": 0.10,
+    "minimum_median_total_position_trough": -0.0075,
+    "minimum_tenth_percentile_total_position_trough": -0.02,
+    "required_comparisons_passed": 2
+  },
+  "interpretation": {
+    "same_sample_baseline_only": true,
+    "pass_requires_independent_unseen_equities": true,
+    "pass_does_not_authorize_add_buy": true
+  },
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_BASELINE_ONLY",
+  "forbidden": [
+    "CALL_THIS_INDEPENDENT_CONFIRMATION",
+    "CHANGE_RISK_GATE_AFTER_RESULTS",
+    "EXCLUDE_LOSS_EVENTS",
+    "IGNORE_SCHEDULED_COMPARATOR",
+    "AUTHORIZE_ADD_BUY_FROM_THIS_SAMPLE",
+    "OPEN_BLIND_HOLDOUT",
+    "CLAIM_SURVIVORSHIP_SAFE"
+  ]
+}

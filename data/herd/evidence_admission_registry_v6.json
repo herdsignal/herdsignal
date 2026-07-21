@@ -1,0 +1,25 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V6",
+  "status": "POST_BASELINE_DECISION_LOCKED",
+  "hypothesis": "PIT_PASS_FIRST_MINUS_TEN_PERCENT_IMMEDIATE_FIVE_PERCENT_ADD",
+  "source_artifacts": [
+    {"path": "data/herd/immediate_healthy_add_baseline_v1.json", "sha256": "545d0b36032321bfa9dbd69e2ec6fdc46167b3ad732792f621d561c9af31e760"},
+    {"path": "data/reports/immediate_healthy_add_events_v1.csv", "sha256": "02ddeca4a78a63818a1b32a8fb296e6fb50808541642e754221d3a2e8a633698"},
+    {"path": "data/reports/immediate_healthy_add_comparison_v1.json", "sha256": "e7459c30fdcd99302ba42f0e99369943e8d0298f794f282041e36ad3e5adf3dc"},
+    {"path": "data/reports/immediate_healthy_add_baseline_v1.json", "sha256": "dc0ca3dd3d59d1f953340f2436873484866d68dbcaa76391a077dc25e51cdf91"}
+  ],
+  "decision": {
+    "status": "REJECT_IMMEDIATE_HEALTHY_ADD_BASELINE",
+    "cash_comparison_passed": true,
+    "scheduled_21_comparison_passed": false,
+    "comparisons_passed": 1,
+    "comparisons_required": 2,
+    "timing_evidence_admitted": false,
+    "add_buy_authorized": false,
+    "five_percent_cycle_allowed": false,
+    "blind_holdout_allowed": false,
+    "operational_action_ratio": 0.0
+  },
+  "interpretation": "Investment beat zero-return cash in this survivor-biased long-winner sample, but immediate pullback timing did not robustly beat unconditional scheduled deployment.",
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_BASELINE_ONLY"
+}

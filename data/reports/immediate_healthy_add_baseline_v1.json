@@ -1,0 +1,19 @@
+{
+  "report_version": "HERD_IMMEDIATE_HEALTHY_ADD_BASELINE_V1",
+  "status": "BASELINE_COMPLETE",
+  "decision": "REJECT_IMMEDIATE_HEALTHY_ADD_BASELINE",
+  "eligible_events": 206,
+  "tickers": 46,
+  "folds": 4,
+  "median_total_position_trough": -0.004435100333338849,
+  "tenth_percentile_total_position_trough": -0.013243343481464241,
+  "comparisons_passed": 1,
+  "same_sample_baseline_only": true,
+  "independent_confirmation_passed": false,
+  "add_buy_authorized": false,
+  "five_percent_cycle_executed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_BASELINE_ONLY"
+}
