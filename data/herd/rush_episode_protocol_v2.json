@@ -1,0 +1,49 @@
+{
+  "protocol_version": "HERD_RUSH_EPISODE_V2",
+  "status": "LOCKED_BEFORE_EPISODE_EXTRACTION",
+  "objective": "Describe which observable Rush episodes continue and which become actionable pullbacks without treating extension alone as a sell signal.",
+  "universe": {
+    "equity_tickers": 51,
+    "market_etfs_are_context_only": ["SPY", "QQQ", "DIA", "IWM"],
+    "survivorship_safe": false
+  },
+  "observation": {
+    "frequency": "COMPLETED_WEEKLY",
+    "minimum_extension_votes": 2,
+    "episode_reset_maximum_votes": 1,
+    "episode_reset_consecutive_weeks": 4,
+    "extension_votes": {
+      "weekly_wilder_rsi_14": 70.0,
+      "adjusted_close_to_52_week_high_minimum": 0.95,
+      "adjusted_26_week_return_minimum": 0.20,
+      "adjusted_close_to_sma_200_minimum": 1.15
+    }
+  },
+  "outcome": {
+    "horizon_sessions": 126,
+    "labels_in_priority_order": [
+      "STRUCTURAL_BREAK",
+      "LARGE_PULLBACK",
+      "TEMPORARY_PULLBACK",
+      "CONTINUATION",
+      "UNRESOLVED"
+    ],
+    "structural_break": {"minimum_adverse_return": -0.15, "terminal_return_maximum": -0.10},
+    "large_pullback": {"minimum_adverse_return": -0.10},
+    "temporary_pullback": {"minimum_adverse_return": -0.05, "recovery_floor": -0.02},
+    "continuation": {"minimum_favorable_return": 0.08, "terminal_return_minimum": 0.0, "must_precede_five_percent_pullback": true},
+    "unresolved_is_not_continuation": true
+  },
+  "research_basis": [
+    {"name":"52-week high and momentum","url":"https://doi.org/10.1111/j.1540-6261.2004.00695.x"},
+    {"name":"Momentum Crashes","url":"https://www.nber.org/papers/w20439"},
+    {"name":"Disposition Effect and Momentum","url":"https://www.nber.org/papers/w8734"}
+  ],
+  "forbidden": [
+    "CHANGE_THRESHOLDS_AFTER_LABEL_COUNTS",
+    "USE_OUTCOME_TO_DEFINE_EPISODE",
+    "LABEL_UNRESOLVED_AS_CONTINUATION",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}

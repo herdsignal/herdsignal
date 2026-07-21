@@ -1,0 +1,17 @@
+{
+  "blind_holdout_access": false,
+  "episodes": 791,
+  "equity_tickers": 51,
+  "label_counts": {
+    "CONTINUATION": 320,
+    "LARGE_PULLBACK": 191,
+    "STRUCTURAL_BREAK": 81,
+    "TEMPORARY_PULLBACK": 150,
+    "UNRESOLVED": 49
+  },
+  "operational_action_ratio": 0.0,
+  "report_version": "herd-rush-episode-study-v2",
+  "resolved_target_episodes": 742,
+  "status": "DESCRIPTIVE_ONLY_NO_ACTION_AUTHORITY",
+  "survivorship_safe": false
+}
