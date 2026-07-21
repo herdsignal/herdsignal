@@ -33,15 +33,15 @@
   },
   "features": [
     {"id":"STOCK_SECTOR_RS_13W","formula":"63-session stock return minus mapped sector ETF return","direction":"HIGH","availability":"T_OR_EARLIER","source_indicator":"V4_SECTOR_MULTIPLIER"},
-    {"id":"STOCK_SECTOR_RS_DAMAGE","formula":"stock/sector price ratio divided by its trailing 63-session maximum minus one","direction":"LOW_AS_DAMAGE","availability":"T_OR_EARLIER","source_indicator":"R_SECTOR_ALIGNMENT"},
+    {"id":"STOCK_SECTOR_RS_DAMAGE","formula":"trailing 63-session maximum of stock/sector adjusted-close ratio divided by current ratio minus one","direction":"HIGH_AS_DAMAGE","availability":"T_OR_EARLIER","source_indicator":"R_SECTOR_ALIGNMENT"},
     {"id":"STOCK_SPY_RS_13W","formula":"63-session stock return minus SPY return","direction":"HIGH","availability":"T_OR_EARLIER","source_indicator":"R_TREND_RELATIVE_STRENGTH"},
     {"id":"HIGH_52W_PROXIMITY","formula":"adjusted close divided by trailing 252-session maximum","direction":"HIGH","availability":"T_OR_EARLIER","source_indicator":"V4_52W_POSITION"},
-    {"id":"HIGH_52W_FAILURE","formula":"weeks since latest 252-session high plus current distance below that high","direction":"HIGH_AS_FAILURE","availability":"T_OR_EARLIER","source_indicator":"V4_52W_POSITION"},
+    {"id":"HIGH_52W_FAILURE","formula":"0.5*min(weeks_since_252d_high/26,1)+0.5*min((252d_high/close-1)/0.20,1)","direction":"HIGH_AS_FAILURE","availability":"T_OR_EARLIER","source_indicator":"V4_52W_POSITION"},
     {"id":"TREND_26W_QUALITY","formula":"positive-slope R-squared of weekly log adjusted close over 26 completed weeks","direction":"HIGH","availability":"T_OR_EARLIER","source_indicator":"R_TREND_QUALITY_R2"},
-    {"id":"TREND_13W_DECELERATION","formula":"prior 13-week weekly-log-price slope minus current 13-week slope","direction":"HIGH_AS_DECELERATION","availability":"T_OR_EARLIER","source_indicator":"R_TREND_QUALITY_R2"},
-    {"id":"SIGNED_VOLUME_PARTICIPATION","formula":"20-session mean signed volume divided by 126-session mean volume","direction":"LOW_AS_WEAKENING","availability":"T_OR_EARLIER","source_indicator":"R_PARTICIPATION_BREADTH"},
-    {"id":"MARKET_STRESS_REGIME","formula":"SPY below SMA200 plus 63-session volatility expanding percentile plus 63-session drawdown","direction":"CONTEXT_ONLY","availability":"T_OR_EARLIER","source_indicator":"R_MARKET_VOLATILITY"},
-    {"id":"PIT_BUSINESS_DETERIORATION","formula":"entity-type-aware revenue, margin, operating cash flow and leverage deterioration from accepted SEC facts","direction":"HIGH_AS_IMPAIRMENT","availability":"ACCEPTED_AT_OR_BEFORE_T","source_indicator":"R_BUSINESS_DETERIORATION"},
+    {"id":"TREND_13W_DECELERATION","formula":"52*(OLS slope of prior 13 completed weekly log closes minus OLS slope of current 13 completed weekly log closes)","direction":"HIGH_AS_DECELERATION","availability":"T_OR_EARLIER","source_indicator":"R_TREND_QUALITY_R2"},
+    {"id":"SIGNED_VOLUME_PARTICIPATION","formula":"negative of sum(sign(daily adjusted-close return)*volume)/sum(volume) over trailing 20 sessions; high means weakening","direction":"HIGH_AS_WEAKENING","availability":"T_OR_EARLIER","source_indicator":"R_PARTICIPATION_BREADTH"},
+    {"id":"MARKET_STRESS_REGIME","formula":"0.4*I(SPY_close<SMA200)+0.3*expanding_percentile(63d_annualized_volatility)+0.3*min(abs(min(63d_drawdown,0))/0.30,1)","direction":"CONTEXT_ONLY","availability":"T_OR_EARLIER","source_indicator":"R_MARKET_VOLATILITY"},
+    {"id":"PIT_BUSINESS_DETERIORATION","formula":"flag_count/4 for GENERAL entities using entity-type-aware revenue, margin, operating cash flow and leverage deterioration; UNKNOWN remains missing","direction":"HIGH_AS_IMPAIRMENT","availability":"ACCEPTED_AT_OR_BEFORE_T","source_indicator":"R_BUSINESS_DETERIORATION"},
     {"id":"WEEKLY_RSI_EXTREME","formula":"completed-week Wilder RSI(14) extreme episode entry at 75","direction":"HIGH_AS_EXTENSION","availability":"T_OR_EARLIER","source_indicator":"R_WEEKLY_RSI_EXTREME_ENTRY"}
   ],
   "hypotheses": [
