@@ -1,0 +1,18 @@
+{
+  "report_version": "herd-sec-guidance-structure-parser-v2",
+  "development_accessions_excluded": 74,
+  "v2_candidates": 375,
+  "v2_candidate_tickers": 27,
+  "fresh_holdout_candidates": 278,
+  "fresh_holdout_tickers": 20,
+  "fresh_review_rows": 80,
+  "fresh_review_tickers": 20,
+  "review_sample_gate_ready": true,
+  "review_gate_passed": false,
+  "source_qualified_revision_pairs": 0,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "COMPLETE_FRESH_V2_SOURCE_REVIEW",
+  "price_outcomes_observed": false,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "15b686591cf7d7a888a8653b8933f94d7414bd4d6b0a81186debd7b4664de740"
+}

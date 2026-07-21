@@ -1,0 +1,26 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_STRUCTURE_PARSER_V2",
+  "status": "LOCKED_BEFORE_V2_OUTPUT",
+  "objective": "Parse semantic roles and range-local metric, period, basis, and subtype without reusing V1 reviewed accessions for precision evaluation.",
+  "corpus": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
+  "development_review": "data/reports/sec_guidance_block_reviewed_v1.csv",
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "coverage_gate": {
+    "minimum_source_qualified_revision_pairs": 150,
+    "minimum_source_qualified_tickers": 20
+  },
+  "forbidden": [
+    "USE_V1_REVIEWED_ACCESSION_IN_V2_PRECISION_SAMPLE",
+    "TREAT_MIDPOINT_CHANGE_AS_RANGE",
+    "TREAT_IMPACT_OR_COMPONENT_AS_RANGE",
+    "PAIR_DIFFERENT_ACCOUNTING_BASIS_OR_SUBTYPE",
+    "USE_PRICE_OUTCOME_DURING_PARSER_VALIDATION",
+    "CHANGE_HERD_WEIGHTS"
+  ]
+}
