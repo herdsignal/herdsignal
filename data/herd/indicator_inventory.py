@@ -8,11 +8,13 @@
 from __future__ import annotations
 
 import argparse
+import bisect
 import json
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 _DATA_DIR = Path(__file__).resolve().parent.parent
@@ -124,10 +126,19 @@ def inventory() -> list[dict]:
 
 def _expanding_percentile(series: pd.Series, min_periods: int) -> pd.Series:
     """현재값의 과거 포함 백분위. 미래 관측값을 사용하지 않는다."""
-    return series.expanding(min_periods=min_periods).apply(
-        lambda values: pd.Series(values).rank(pct=True).iloc[-1] * 100.0,
-        raw=False,
-    )
+    ordered: list[float] = []
+    result = np.full(len(series), np.nan, dtype=float)
+    for position, value in enumerate(series.to_numpy(dtype=float)):
+        if not np.isfinite(value):
+            continue
+        left = bisect.bisect_left(ordered, value)
+        right = bisect.bisect_right(ordered, value)
+        bisect.insort_right(ordered, value)
+        if len(ordered) >= min_periods:
+            # pandas rank(pct=True)의 동률 평균 순위를 그대로 계산한다.
+            average_rank = left + (right - left + 2) / 2.0
+            result[position] = average_rank / len(ordered) * 100.0
+    return pd.Series(result, index=series.index, name=series.name)
 
 
 def build_v4_indicator_frame(df: pd.DataFrame) -> pd.DataFrame:

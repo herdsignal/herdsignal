@@ -1,0 +1,905 @@
+{
+  "report_version": "HERD_V61_BASELINE_DIAGNOSTIC_V1",
+  "status": "RESEARCH_BASELINE_NOT_JAVA_PARITY",
+  "purpose": "measure historical action frequency and counterfactual price paths before selector redesign",
+  "universe_version": "2026.07",
+  "equity_tickers": 51,
+  "survivorship_safe": false,
+  "operational_action_authority": false,
+  "data_source": {
+    "snapshot_id": "yf-long14-actions-sector-20260721",
+    "snapshot_sha256": "a0307644b5a3dc396c66e293f5bf66f6df627117ca29f301be142e36d4ebf217",
+    "coverage": {
+      "end_exclusive": "2026-07-18",
+      "start_inclusive": "2012-01-03"
+    }
+  },
+  "outcome_contract": {
+    "sell_helpful": "minimum six-month return <= -5%; opportunity diagnostic, not realized profit",
+    "buy_helpful": "six-month terminal return > 0%; diagnostic, not causal alpha",
+    "counterfactual": "same ticker buy-and-hold path from the signal close"
+  },
+  "summary": {
+    "evaluable_events": 4934,
+    "median_annualized_event_count": 9.476771247021446,
+    "by_action": [
+      {
+        "action": "BUY",
+        "events": 2217,
+        "helpful_rate_6m": 0.6986919260261615,
+        "median_terminal_return_1m": 0.018488160462384107,
+        "median_terminal_return_3m": 0.048060351866660245,
+        "median_terminal_return_6m": 0.0839580468784824,
+        "median_mae_6m": -0.07687404428315492,
+        "median_mfe_6m": 0.1611658372782756
+      },
+      {
+        "action": "SELL",
+        "events": 2717,
+        "helpful_rate_6m": 0.6069193963930806,
+        "median_terminal_return_1m": 0.012752215916277176,
+        "median_terminal_return_3m": 0.0339632517385875,
+        "median_terminal_return_6m": 0.06600870964089323,
+        "median_mae_6m": -0.07298652756702739,
+        "median_mfe_6m": 0.13887572619951505
+      }
+    ],
+    "by_action_and_regime": [
+      {
+        "action": "BUY",
+        "regime": "NORMAL_FLEE",
+        "events": 555,
+        "helpful_rate_6m": 0.7117117117117117,
+        "median_terminal_return_1m": 0.02647182383191682,
+        "median_terminal_return_3m": 0.0592810775865622,
+        "median_terminal_return_6m": 0.10489234144948156,
+        "median_mae_6m": -0.07839936153682525,
+        "median_mfe_6m": 0.1842867415085434
+      },
+      {
+        "action": "BUY",
+        "regime": "OPPORTUNITY_FLEE",
+        "events": 195,
+        "helpful_rate_6m": 0.7128205128205128,
+        "median_terminal_return_1m": 0.025110892334080814,
+        "median_terminal_return_3m": 0.05279970082718122,
+        "median_terminal_return_6m": 0.08384238239509978,
+        "median_mae_6m": -0.07986872531170086,
+        "median_mfe_6m": 0.17179631248662686
+      },
+      {
+        "action": "BUY",
+        "regime": "OPPORTUNITY_SCATTER",
+        "events": 1467,
+        "helpful_rate_6m": 0.6918882072256305,
+        "median_terminal_return_1m": 0.016130799452537925,
+        "median_terminal_return_3m": 0.04309459151084871,
+        "median_terminal_return_6m": 0.07617571065803608,
+        "median_mae_6m": -0.07419744035709075,
+        "median_mfe_6m": 0.14833790366484023
+      },
+      {
+        "action": "SELL",
+        "regime": "CROWDED_RUSH",
+        "events": 11,
+        "helpful_rate_6m": 0.8181818181818182,
+        "median_terminal_return_1m": 0.025026330423545406,
+        "median_terminal_return_3m": 0.19774401285773324,
+        "median_terminal_return_6m": 0.6555052572968192,
+        "median_mae_6m": -0.12267693784181277,
+        "median_mfe_6m": 0.9965860739564198
+      },
+      {
+        "action": "SELL",
+        "regime": "HEALTHY_DRIFT",
+        "events": 1324,
+        "helpful_rate_6m": 0.5959214501510574,
+        "median_terminal_return_1m": 0.015407787630712821,
+        "median_terminal_return_3m": 0.03417110501062448,
+        "median_terminal_return_6m": 0.06775529192873841,
+        "median_mae_6m": -0.07264718743925835,
+        "median_mfe_6m": 0.13936260429577296
+      },
+      {
+        "action": "SELL",
+        "regime": "HEALTHY_RUSH",
+        "events": 1015,
+        "helpful_rate_6m": 0.6502463054187192,
+        "median_terminal_return_1m": 0.008533784356296259,
+        "median_terminal_return_3m": 0.031993660015144254,
+        "median_terminal_return_6m": 0.06135536209958703,
+        "median_mae_6m": -0.08367908900444831,
+        "median_mfe_6m": 0.14231505429423819
+      },
+      {
+        "action": "SELL",
+        "regime": "NORMAL_DRIFT",
+        "events": 227,
+        "helpful_rate_6m": 0.47577092511013214,
+        "median_terminal_return_1m": 0.011729655734767475,
+        "median_terminal_return_3m": 0.04445907174266739,
+        "median_terminal_return_6m": 0.0842448055506253,
+        "median_mae_6m": -0.0473260656141985,
+        "median_mfe_6m": 0.13585020610251175
+      },
+      {
+        "action": "SELL",
+        "regime": "NORMAL_RUSH",
+        "events": 140,
+        "helpful_rate_6m": 0.5928571428571429,
+        "median_terminal_return_1m": 0.01476706431103536,
+        "median_terminal_return_3m": 0.02143244552540735,
+        "median_terminal_return_6m": 0.03367694958678935,
+        "median_mae_6m": -0.062088034164055006,
+        "median_mfe_6m": 0.11157089254110664
+      }
+    ],
+    "by_sector_and_action": [
+      {
+        "sector": "communication",
+        "action": "BUY",
+        "events": 271,
+        "helpful_rate_6m": 0.7158671586715867,
+        "median_terminal_return_1m": 0.022524608195314988,
+        "median_terminal_return_3m": 0.0598702600949923,
+        "median_terminal_return_6m": 0.09884399232020269,
+        "median_mae_6m": -0.07753755823195652,
+        "median_mfe_6m": 0.18962668376675684
+      },
+      {
+        "sector": "communication",
+        "action": "SELL",
+        "events": 216,
+        "helpful_rate_6m": 0.6481481481481481,
+        "median_terminal_return_1m": 0.016967233345059896,
+        "median_terminal_return_3m": 0.04544117762446709,
+        "median_terminal_return_6m": 0.08188227961918226,
+        "median_mae_6m": -0.0837944234218791,
+        "median_mfe_6m": 0.16350946747770634
+      },
+      {
+        "sector": "consumer_discretionary",
+        "action": "BUY",
+        "events": 286,
+        "helpful_rate_6m": 0.6678321678321678,
+        "median_terminal_return_1m": 0.018075814435548843,
+        "median_terminal_return_3m": 0.05049453589804043,
+        "median_terminal_return_6m": 0.07898850422710402,
+        "median_mae_6m": -0.0921257428927158,
+        "median_mfe_6m": 0.1700997519423867
+      },
+      {
+        "sector": "consumer_discretionary",
+        "action": "SELL",
+        "events": 204,
+        "helpful_rate_6m": 0.6666666666666666,
+        "median_terminal_return_1m": 0.006870227776907933,
+        "median_terminal_return_3m": 0.016957167487992808,
+        "median_terminal_return_6m": 0.05853433170476796,
+        "median_mae_6m": -0.09101500950244484,
+        "median_mfe_6m": 0.12188934508404303
+      },
+      {
+        "sector": "consumer_staples",
+        "action": "BUY",
+        "events": 200,
+        "helpful_rate_6m": 0.775,
+        "median_terminal_return_1m": 0.02144575086695133,
+        "median_terminal_return_3m": 0.04945252859498872,
+        "median_terminal_return_6m": 0.08213397002878564,
+        "median_mae_6m": -0.03955607839135189,
+        "median_mfe_6m": 0.12942011694035993
+      },
+      {
+        "sector": "consumer_staples",
+        "action": "SELL",
+        "events": 321,
+        "helpful_rate_6m": 0.5638629283489096,
+        "median_terminal_return_1m": 0.006837886949937477,
+        "median_terminal_return_3m": 0.020271913517606377,
+        "median_terminal_return_6m": 0.03942515208517694,
+        "median_mae_6m": -0.060668023093085166,
+        "median_mfe_6m": 0.09387301935104819
+      },
+      {
+        "sector": "energy",
+        "action": "BUY",
+        "events": 134,
+        "helpful_rate_6m": 0.5597014925373134,
+        "median_terminal_return_1m": 0.011578444635291674,
+        "median_terminal_return_3m": 0.013152592348634196,
+        "median_terminal_return_6m": 0.02446105684002231,
+        "median_mae_6m": -0.12406473175891103,
+        "median_mfe_6m": 0.14505007002023163
+      },
+      {
+        "sector": "energy",
+        "action": "SELL",
+        "events": 261,
+        "helpful_rate_6m": 0.7318007662835249,
+        "median_terminal_return_1m": 0.009045139735919916,
+        "median_terminal_return_3m": 0.012021595378897798,
+        "median_terminal_return_6m": 0.01803478738385289,
+        "median_mae_6m": -0.09852989866633455,
+        "median_mfe_6m": 0.1304601501937126
+      },
+      {
+        "sector": "financials",
+        "action": "BUY",
+        "events": 257,
+        "helpful_rate_6m": 0.7509727626459144,
+        "median_terminal_return_1m": 0.01703306174738528,
+        "median_terminal_return_3m": 0.05388624098782868,
+        "median_terminal_return_6m": 0.10581446163358099,
+        "median_mae_6m": -0.06795258396963744,
+        "median_mfe_6m": 0.16250555859722549
+      },
+      {
+        "sector": "financials",
+        "action": "SELL",
+        "events": 241,
+        "helpful_rate_6m": 0.5560165975103735,
+        "median_terminal_return_1m": 0.01906136840864625,
+        "median_terminal_return_3m": 0.044856299150519474,
+        "median_terminal_return_6m": 0.09200350108510813,
+        "median_mae_6m": -0.06247650396025195,
+        "median_mfe_6m": 0.14999863403211822
+      },
+      {
+        "sector": "healthcare",
+        "action": "BUY",
+        "events": 245,
+        "helpful_rate_6m": 0.7061224489795919,
+        "median_terminal_return_1m": 0.010564597479312932,
+        "median_terminal_return_3m": 0.03929531562553956,
+        "median_terminal_return_6m": 0.08387287756299244,
+        "median_mae_6m": -0.067842961471685,
+        "median_mfe_6m": 0.13852502804343558
+      },
+      {
+        "sector": "healthcare",
+        "action": "SELL",
+        "events": 247,
+        "helpful_rate_6m": 0.5384615384615384,
+        "median_terminal_return_1m": 0.012559464528121511,
+        "median_terminal_return_3m": 0.03804870466977084,
+        "median_terminal_return_6m": 0.08132825727123949,
+        "median_mae_6m": -0.0573336648061461,
+        "median_mfe_6m": 0.1392155607067873
+      },
+      {
+        "sector": "industrials",
+        "action": "BUY",
+        "events": 212,
+        "helpful_rate_6m": 0.6462264150943396,
+        "median_terminal_return_1m": 0.015618944803194479,
+        "median_terminal_return_3m": 0.04130830155300669,
+        "median_terminal_return_6m": 0.053574935246883726,
+        "median_mae_6m": -0.09878906209069388,
+        "median_mfe_6m": 0.15345701116591703
+      },
+      {
+        "sector": "industrials",
+        "action": "SELL",
+        "events": 252,
+        "helpful_rate_6m": 0.5555555555555556,
+        "median_terminal_return_1m": 0.013208927776653279,
+        "median_terminal_return_3m": 0.04039854552214228,
+        "median_terminal_return_6m": 0.0882815932407851,
+        "median_mae_6m": -0.06576627592605921,
+        "median_mfe_6m": 0.14363983714941198
+      },
+      {
+        "sector": "materials",
+        "action": "BUY",
+        "events": 166,
+        "helpful_rate_6m": 0.7168674698795181,
+        "median_terminal_return_1m": 0.014662671385497816,
+        "median_terminal_return_3m": 0.04229521554427995,
+        "median_terminal_return_6m": 0.09951771261627429,
+        "median_mae_6m": -0.07487551109613527,
+        "median_mfe_6m": 0.1603612055401752
+      },
+      {
+        "sector": "materials",
+        "action": "SELL",
+        "events": 319,
+        "helpful_rate_6m": 0.7021943573667712,
+        "median_terminal_return_1m": 0.010907770301885611,
+        "median_terminal_return_3m": 0.026821759782183374,
+        "median_terminal_return_6m": 0.03776007707718132,
+        "median_mae_6m": -0.09024651777813286,
+        "median_mfe_6m": 0.14247614486105586
+      },
+      {
+        "sector": "technology",
+        "action": "BUY",
+        "events": 252,
+        "helpful_rate_6m": 0.7301587301587301,
+        "median_terminal_return_1m": 0.036629842809577484,
+        "median_terminal_return_3m": 0.08227926332895574,
+        "median_terminal_return_6m": 0.15782171074298745,
+        "median_mae_6m": -0.08542404681068633,
+        "median_mfe_6m": 0.23241133704390404
+      },
+      {
+        "sector": "technology",
+        "action": "SELL",
+        "events": 353,
+        "helpful_rate_6m": 0.5892351274787535,
+        "median_terminal_return_1m": 0.02465222866525596,
+        "median_terminal_return_3m": 0.0642544953916655,
+        "median_terminal_return_6m": 0.13685471908433322,
+        "median_mae_6m": -0.0683399619505809,
+        "median_mfe_6m": 0.20994488396824385
+      },
+      {
+        "sector": "utilities_real_estate",
+        "action": "BUY",
+        "events": 194,
+        "helpful_rate_6m": 0.6597938144329897,
+        "median_terminal_return_1m": 0.01894487522410404,
+        "median_terminal_return_3m": 0.03628385353990049,
+        "median_terminal_return_6m": 0.06694827737779452,
+        "median_mae_6m": -0.07377397071192865,
+        "median_mfe_6m": 0.13899694116129446
+      },
+      {
+        "sector": "utilities_real_estate",
+        "action": "SELL",
+        "events": 303,
+        "helpful_rate_6m": 0.5346534653465347,
+        "median_terminal_return_1m": 0.008208208716447452,
+        "median_terminal_return_3m": 0.03606930202118441,
+        "median_terminal_return_6m": 0.05839979783620475,
+        "median_mae_6m": -0.06264446601044027,
+        "median_mfe_6m": 0.11451484979422544
+      }
+    ]
+  },
+  "early_sell_cases": [
+    {
+      "ticker": "AVGO",
+      "events": 49,
+      "helpful_rate_6m": 0.5714285714285714,
+      "median_terminal_return_1m": 0.025375608178655362,
+      "median_terminal_return_3m": 0.08671680597486064,
+      "median_terminal_return_6m": 0.18356532168098583,
+      "median_mae_6m": -0.054719575231679474,
+      "median_mfe_6m": 0.34961876458052643
+    },
+    {
+      "ticker": "LLY",
+      "events": 65,
+      "helpful_rate_6m": 0.5692307692307692,
+      "median_terminal_return_1m": 0.02960539946378926,
+      "median_terminal_return_3m": 0.05178861026081205,
+      "median_terminal_return_6m": 0.18098836262900275,
+      "median_mae_6m": -0.06439933648707308,
+      "median_mfe_6m": 0.219830749455306
+    },
+    {
+      "ticker": "NVDA",
+      "events": 74,
+      "helpful_rate_6m": 0.5945945945945946,
+      "median_terminal_return_1m": 0.056840274294464144,
+      "median_terminal_return_3m": 0.1425240701554158,
+      "median_terminal_return_6m": 0.31384092326658175,
+      "median_mae_6m": -0.07065951490002997,
+      "median_mfe_6m": 0.457454526347316
+    }
+  ],
+  "ticker_summary": [
+    {
+      "ticker": "AAPL",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 96,
+      "annualized_event_count": 9.283367752184274,
+      "buy_events": 39,
+      "sell_events": 57,
+      "helpful_rate_6m": 0.7083333333333334
+    },
+    {
+      "ticker": "ABBV",
+      "start": "2017-03-13",
+      "end": "2026-07-17",
+      "evaluable_events": 87,
+      "annualized_event_count": 9.310312774685027,
+      "buy_events": 32,
+      "sell_events": 55,
+      "helpful_rate_6m": 0.7241379310344828
+    },
+    {
+      "ticker": "AMT",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 96,
+      "annualized_event_count": 9.283367752184274,
+      "buy_events": 50,
+      "sell_events": 46,
+      "helpful_rate_6m": 0.5520833333333334
+    },
+    {
+      "ticker": "AMZN",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 102,
+      "annualized_event_count": 9.86357823669579,
+      "buy_events": 55,
+      "sell_events": 47,
+      "helpful_rate_6m": 0.6470588235294118
+    },
+    {
+      "ticker": "APD",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 104,
+      "annualized_event_count": 10.056981731532963,
+      "buy_events": 67,
+      "sell_events": 37,
+      "helpful_rate_6m": 0.6923076923076923
+    },
+    {
+      "ticker": "AVGO",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 102,
+      "annualized_event_count": 9.86357823669579,
+      "buy_events": 53,
+      "sell_events": 49,
+      "helpful_rate_6m": 0.6568627450980392
+    },
+    {
+      "ticker": "BA",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 87,
+      "annualized_event_count": 8.413052025416999,
+      "buy_events": 49,
+      "sell_events": 38,
+      "helpful_rate_6m": 0.5517241379310345
+    },
+    {
+      "ticker": "BAC",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 90,
+      "annualized_event_count": 8.703157267672756,
+      "buy_events": 43,
+      "sell_events": 47,
+      "helpful_rate_6m": 0.6777777777777778
+    },
+    {
+      "ticker": "CAT",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 94,
+      "annualized_event_count": 9.089964257347102,
+      "buy_events": 18,
+      "sell_events": 76,
+      "helpful_rate_6m": 0.574468085106383
+    },
+    {
+      "ticker": "COP",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 72,
+      "annualized_event_count": 6.962525814138205,
+      "buy_events": 17,
+      "sell_events": 55,
+      "helpful_rate_6m": 0.7222222222222222
+    },
+    {
+      "ticker": "COST",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 109,
+      "annualized_event_count": 10.540490468625894,
+      "buy_events": 47,
+      "sell_events": 62,
+      "helpful_rate_6m": 0.6788990825688074
+    },
+    {
+      "ticker": "CRM",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 97,
+      "annualized_event_count": 9.38006949960286,
+      "buy_events": 56,
+      "sell_events": 41,
+      "helpful_rate_6m": 0.7216494845360825
+    },
+    {
+      "ticker": "CVX",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 91,
+      "annualized_event_count": 8.799859015091343,
+      "buy_events": 34,
+      "sell_events": 57,
+      "helpful_rate_6m": 0.6593406593406593
+    },
+    {
+      "ticker": "DIS",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 87,
+      "annualized_event_count": 8.413052025416999,
+      "buy_events": 64,
+      "sell_events": 23,
+      "helpful_rate_6m": 0.7011494252873564
+    },
+    {
+      "ticker": "DUK",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 96,
+      "annualized_event_count": 9.283367752184274,
+      "buy_events": 27,
+      "sell_events": 69,
+      "helpful_rate_6m": 0.59375
+    },
+    {
+      "ticker": "EOG",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 76,
+      "annualized_event_count": 7.34933280381255,
+      "buy_events": 35,
+      "sell_events": 41,
+      "helpful_rate_6m": 0.7368421052631579
+    },
+    {
+      "ticker": "FCX",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 85,
+      "annualized_event_count": 8.219648530579825,
+      "buy_events": 0,
+      "sell_events": 85,
+      "helpful_rate_6m": 0.8117647058823529
+    },
+    {
+      "ticker": "GE",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 84,
+      "annualized_event_count": 8.12294678316124,
+      "buy_events": 26,
+      "sell_events": 58,
+      "helpful_rate_6m": 0.4642857142857143
+    },
+    {
+      "ticker": "GOOGL",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 102,
+      "annualized_event_count": 9.86357823669579,
+      "buy_events": 54,
+      "sell_events": 48,
+      "helpful_rate_6m": 0.7254901960784313
+    },
+    {
+      "ticker": "GS",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 92,
+      "annualized_event_count": 8.896560762509928,
+      "buy_events": 39,
+      "sell_events": 53,
+      "helpful_rate_6m": 0.6739130434782609
+    },
+    {
+      "ticker": "HD",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 101,
+      "annualized_event_count": 9.766876489277205,
+      "buy_events": 76,
+      "sell_events": 25,
+      "helpful_rate_6m": 0.7524752475247525
+    },
+    {
+      "ticker": "HON",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 108,
+      "annualized_event_count": 10.443788721207309,
+      "buy_events": 76,
+      "sell_events": 32,
+      "helpful_rate_6m": 0.6944444444444444
+    },
+    {
+      "ticker": "JNJ",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 104,
+      "annualized_event_count": 10.056981731532963,
+      "buy_events": 66,
+      "sell_events": 38,
+      "helpful_rate_6m": 0.5865384615384616
+    },
+    {
+      "ticker": "JPM",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 107,
+      "annualized_event_count": 10.347086973788722,
+      "buy_events": 46,
+      "sell_events": 61,
+      "helpful_rate_6m": 0.6542056074766355
+    },
+    {
+      "ticker": "KO",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 112,
+      "annualized_event_count": 10.830595710881653,
+      "buy_events": 49,
+      "sell_events": 63,
+      "helpful_rate_6m": 0.7410714285714286
+    },
+    {
+      "ticker": "LIN",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 107,
+      "annualized_event_count": 10.347086973788722,
+      "buy_events": 32,
+      "sell_events": 75,
+      "helpful_rate_6m": 0.5794392523364486
+    },
+    {
+      "ticker": "LLY",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 99,
+      "annualized_event_count": 9.573472994440031,
+      "buy_events": 34,
+      "sell_events": 65,
+      "helpful_rate_6m": 0.6262626262626263
+    },
+    {
+      "ticker": "MA",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 106,
+      "annualized_event_count": 10.250385226370135,
+      "buy_events": 63,
+      "sell_events": 43,
+      "helpful_rate_6m": 0.6320754716981132
+    },
+    {
+      "ticker": "MCD",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 97,
+      "annualized_event_count": 9.38006949960286,
+      "buy_events": 42,
+      "sell_events": 55,
+      "helpful_rate_6m": 0.6701030927835051
+    },
+    {
+      "ticker": "META",
+      "start": "2016-07-25",
+      "end": "2026-07-17",
+      "evaluable_events": 101,
+      "annualized_event_count": 10.12335139956092,
+      "buy_events": 50,
+      "sell_events": 51,
+      "helpful_rate_6m": 0.6633663366336634
+    },
+    {
+      "ticker": "MRK",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 98,
+      "annualized_event_count": 9.476771247021446,
+      "buy_events": 44,
+      "sell_events": 54,
+      "helpful_rate_6m": 0.6428571428571429
+    },
+    {
+      "ticker": "MSFT",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 102,
+      "annualized_event_count": 9.86357823669579,
+      "buy_events": 38,
+      "sell_events": 64,
+      "helpful_rate_6m": 0.47058823529411764
+    },
+    {
+      "ticker": "NEE",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 104,
+      "annualized_event_count": 10.056981731532963,
+      "buy_events": 50,
+      "sell_events": 54,
+      "helpful_rate_6m": 0.5576923076923077
+    },
+    {
+      "ticker": "NEM",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 87,
+      "annualized_event_count": 8.413052025416999,
+      "buy_events": 10,
+      "sell_events": 77,
+      "helpful_rate_6m": 0.7471264367816092
+    },
+    {
+      "ticker": "NFLX",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 97,
+      "annualized_event_count": 9.38006949960286,
+      "buy_events": 48,
+      "sell_events": 49,
+      "helpful_rate_6m": 0.6907216494845361
+    },
+    {
+      "ticker": "NKE",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 98,
+      "annualized_event_count": 9.476771247021446,
+      "buy_events": 66,
+      "sell_events": 32,
+      "helpful_rate_6m": 0.6020408163265306
+    },
+    {
+      "ticker": "NVDA",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 106,
+      "annualized_event_count": 10.250385226370135,
+      "buy_events": 32,
+      "sell_events": 74,
+      "helpful_rate_6m": 0.6226415094339622
+    },
+    {
+      "ticker": "ORCL",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 102,
+      "annualized_event_count": 9.86357823669579,
+      "buy_events": 34,
+      "sell_events": 68,
+      "helpful_rate_6m": 0.7156862745098039
+    },
+    {
+      "ticker": "PEP",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 107,
+      "annualized_event_count": 10.347086973788722,
+      "buy_events": 54,
+      "sell_events": 53,
+      "helpful_rate_6m": 0.6542056074766355
+    },
+    {
+      "ticker": "PG",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 93,
+      "annualized_event_count": 8.993262509928515,
+      "buy_events": 38,
+      "sell_events": 55,
+      "helpful_rate_6m": 0.5591397849462365
+    },
+    {
+      "ticker": "PLD",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 108,
+      "annualized_event_count": 10.443788721207309,
+      "buy_events": 50,
+      "sell_events": 58,
+      "helpful_rate_6m": 0.6018518518518519
+    },
+    {
+      "ticker": "SHW",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 102,
+      "annualized_event_count": 9.86357823669579,
+      "buy_events": 57,
+      "sell_events": 45,
+      "helpful_rate_6m": 0.7352941176470589
+    },
+    {
+      "ticker": "SLB",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 72,
+      "annualized_event_count": 6.962525814138205,
+      "buy_events": 25,
+      "sell_events": 47,
+      "helpful_rate_6m": 0.625
+    },
+    {
+      "ticker": "SO",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 93,
+      "annualized_event_count": 8.993262509928515,
+      "buy_events": 17,
+      "sell_events": 76,
+      "helpful_rate_6m": 0.6129032258064516
+    },
+    {
+      "ticker": "TMUS",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 100,
+      "annualized_event_count": 9.670174741858618,
+      "buy_events": 55,
+      "sell_events": 45,
+      "helpful_rate_6m": 0.65
+    },
+    {
+      "ticker": "TSLA",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 92,
+      "annualized_event_count": 8.896560762509928,
+      "buy_events": 47,
+      "sell_events": 45,
+      "helpful_rate_6m": 0.6630434782608695
+    },
+    {
+      "ticker": "UNH",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 104,
+      "annualized_event_count": 10.056981731532963,
+      "buy_events": 69,
+      "sell_events": 35,
+      "helpful_rate_6m": 0.5480769230769231
+    },
+    {
+      "ticker": "UNP",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 91,
+      "annualized_event_count": 8.799859015091343,
+      "buy_events": 43,
+      "sell_events": 48,
+      "helpful_rate_6m": 0.6703296703296703
+    },
+    {
+      "ticker": "V",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 103,
+      "annualized_event_count": 9.960279984114377,
+      "buy_events": 66,
+      "sell_events": 37,
+      "helpful_rate_6m": 0.6504854368932039
+    },
+    {
+      "ticker": "WMT",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 100,
+      "annualized_event_count": 9.670174741858618,
+      "buy_events": 12,
+      "sell_events": 88,
+      "helpful_rate_6m": 0.57
+    },
+    {
+      "ticker": "XOM",
+      "start": "2016-03-14",
+      "end": "2026-07-17",
+      "evaluable_events": 84,
+      "annualized_event_count": 8.12294678316124,
+      "buy_events": 23,
+      "sell_events": 61,
+      "helpful_rate_6m": 0.6309523809523809
+    }
+  ],
+  "failures": {}
+}
