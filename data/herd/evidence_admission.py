@@ -20,6 +20,14 @@ EXPECTED_FAMILIES = {
     "BUSINESS_GUARD",
 }
 ACTION_TYPES = {"NEW_ENTRY", "ADD_BUY", "PROFIT_TAKE", "REENTRY"}
+EXPECTED_ACTION_HYPOTHESES = {
+    "ENTRY_TREND_RESUMPTION",
+    "ADD_BUY_MARKET_SECTOR_DISLOCATION",
+    "PROFIT_TAKE_VOLATILITY_EXTENSION",
+    "PROFIT_TAKE_TREND_DECELERATION",
+    "PROFIT_TAKE_RELATIVE_STRENGTH_BREAK",
+    "REENTRY_POST_PROFIT_STABILIZATION",
+}
 
 
 class EvidenceAdmissionError(RuntimeError):
@@ -103,11 +111,43 @@ def validate_registry(registry: dict) -> dict:
     ):
         raise EvidenceAdmissionError("rejected Rush evidence was re-enabled")
 
+    action_hypotheses = registry.get("action_hypotheses", [])
+    if (
+        {row.get("id") for row in action_hypotheses}
+        != EXPECTED_ACTION_HYPOTHESES
+        or any(row.get("action") not in ACTION_TYPES for row in action_hypotheses)
+    ):
+        raise EvidenceAdmissionError("action direction decisions are incomplete")
+    if any(row.get("authorized") is not False for row in action_hypotheses):
+        raise EvidenceAdmissionError("failed or blocked action evidence was authorized")
+    action_report = json.loads(
+        _source_file("data/reports/action_direction_oos_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    locked_decisions = {
+        row["id"]: row["decision"] for row in action_hypotheses
+    }
+    if locked_decisions != action_report.get("decisions"):
+        raise EvidenceAdmissionError("action direction decision does not match OOS report")
+    if (
+        action_report.get("operational_authorization") is not False
+        or action_report.get("blind_holdout_access") is not False
+    ):
+        raise EvidenceAdmissionError("action OOS report exceeded research authority")
+
     return {
         "registry_version": REGISTRY_VERSION,
         "family_count": len(families),
         "direction_family_count": len(directional),
         "action_authorizations": action_authorizations,
+        "action_hypothesis_authorizations": {
+            action: sum(
+                row["authorized"] is True
+                for row in action_hypotheses if row["action"] == action
+            )
+            for action in ACTION_TYPES
+        },
         "cap_ablation_families": [
             family["id"]
             for family in families

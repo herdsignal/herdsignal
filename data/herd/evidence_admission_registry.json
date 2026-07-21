@@ -13,6 +13,10 @@
     {
       "path": "data/reports/business_guard_oos_v1.json",
       "sha256": "4cf1786c0c50e59bc85713f324ad4b4456e466ea93df6f73752e1bf6f6113d32"
+    },
+    {
+      "path": "data/reports/action_direction_oos_v1.json",
+      "sha256": "0a6c40fd29ced8f0714d0952a1497b8959efa4c405cd76929473dadf806fc429"
     }
   ],
   "families": [
@@ -70,6 +74,44 @@
       "id": "RUSH_TURNING_POINT",
       "decision": "REJECT_CURRENT_MEASUREMENT",
       "profit_take_authorized": false
+    }
+  ],
+  "action_hypotheses": [
+    {
+      "id": "ENTRY_TREND_RESUMPTION",
+      "action": "NEW_ENTRY",
+      "decision": "REJECTED_DIRECTIONAL_EVIDENCE",
+      "authorized": false
+    },
+    {
+      "id": "ADD_BUY_MARKET_SECTOR_DISLOCATION",
+      "action": "ADD_BUY",
+      "decision": "REJECTED_DIRECTIONAL_EVIDENCE",
+      "authorized": false
+    },
+    {
+      "id": "PROFIT_TAKE_VOLATILITY_EXTENSION",
+      "action": "PROFIT_TAKE",
+      "decision": "REJECTED_DIRECTIONAL_EVIDENCE",
+      "authorized": false
+    },
+    {
+      "id": "PROFIT_TAKE_TREND_DECELERATION",
+      "action": "PROFIT_TAKE",
+      "decision": "REJECTED_DIRECTIONAL_EVIDENCE",
+      "authorized": false
+    },
+    {
+      "id": "PROFIT_TAKE_RELATIVE_STRENGTH_BREAK",
+      "action": "PROFIT_TAKE",
+      "decision": "DATA_BLOCKED_SECTOR_ETF_NOT_IN_FROZEN_SNAPSHOT",
+      "authorized": false
+    },
+    {
+      "id": "REENTRY_POST_PROFIT_STABILIZATION",
+      "action": "REENTRY",
+      "decision": "DEPENDENCY_BLOCKED_PROFIT_AND_BUSINESS_EVIDENCE_REQUIRED",
+      "authorized": false
     }
   ],
   "candidate_state": {
