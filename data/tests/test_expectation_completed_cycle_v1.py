@@ -16,7 +16,7 @@ def test_cycle_math_rewards_lower_reentry_and_charges_costs():
 
 def test_current_dependencies_block_fake_completed_cycle():
     protocol = json.loads((ROOT / "herd/expectation_completed_cycle_v1.json").read_text())
-    result = build_decision(protocol, {"eligible": False}, None)
+    result = build_decision(protocol, {"eligible": False}, {})
     assert result["decision"] == "DEPENDENCY_BLOCKED"
     assert result["evaluated_cycles"] == 0
     assert result["trim_ratio"] == 0.0

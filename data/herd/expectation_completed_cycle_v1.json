@@ -2,7 +2,7 @@
   "protocol_version": "HERD_EXPECTATION_COMPLETED_CYCLE_V1",
   "status": "LOCKED",
   "combination_gate": "data/reports/expectation_combination_gate_v1.json",
-  "reentry_evidence_registry": "data/reports/evidence_adoption_registry_v2.json",
+  "reentry_evidence_registry": "data/herd/evidence_admission_registry_v2.json",
   "trim_ratio": 0.05,
   "sell_cost_bps": 15,
   "buy_cost_bps": 15,

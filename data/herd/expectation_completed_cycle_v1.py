@@ -26,7 +26,9 @@ def cycle_uplift(sell_price: float, buy_price: float, end_price: float,
 
 
 def build_decision(protocol: dict, gate: dict, reentry: dict | None) -> dict:
-    admitted_reentry = [] if reentry is None else list(reentry.get("admitted_reentry_evidence", []))
+    if reentry is None:
+        raise FileNotFoundError("reentry evidence registry is required")
+    admitted_reentry = list(reentry.get("admitted_reentry_evidence", []))
     blockers = []
     if not gate.get("eligible", False):
         blockers.append("COMBINATION_GATE_BLOCKED")
@@ -60,12 +62,14 @@ def main() -> None:
     gate_path = Path(protocol["combination_gate"])
     gate = json.loads(gate_path.read_text(encoding="utf-8"))
     reentry_path = Path(protocol["reentry_evidence_registry"])
-    reentry = json.loads(reentry_path.read_text(encoding="utf-8")) if reentry_path.exists() else None
+    if not reentry_path.exists():
+        raise FileNotFoundError(f"missing reentry evidence registry: {reentry_path}")
+    reentry = json.loads(reentry_path.read_text(encoding="utf-8"))
     result = build_decision(protocol, gate, reentry)
     result.update({
         "protocol_sha256": _sha256(PROTOCOL),
         "combination_gate_sha256": _sha256(gate_path),
-        "reentry_registry_sha256": _sha256(reentry_path) if reentry_path.exists() else None,
+        "reentry_registry_sha256": _sha256(reentry_path),
     })
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")

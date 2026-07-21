@@ -12,8 +12,8 @@
   "note": "No synthetic sell or reentry dates were created because required evidence is absent.",
   "operational_action_authority": false,
   "operational_action_ratio": 0.0,
-  "protocol_sha256": "9872f269a0ec0ab6e39f75f87ae9c885aedbd371472ff3e936704c146c9a7c8a",
-  "reentry_registry_sha256": null,
+  "protocol_sha256": "a63cd0cb861e72d8f2223d3521eb9be7087d82d6ba6c701ed85a7c0886661f63",
+  "reentry_registry_sha256": "505deae96cc6edef64655a0f9a1464b2799c933d093a6df98cb7910362b79221",
   "report_version": "herd-expectation-completed-cycle-v1",
   "trim_ratio": 0.0
 }
