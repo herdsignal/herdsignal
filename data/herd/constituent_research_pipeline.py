@@ -402,10 +402,16 @@ def run_pipeline(config_path: Path, output_dir: Path) -> dict:
                 "replay_errors": replay_audit["errors"],
                 "blocked_events": replay_audit["blocked_events"],
                 "replay_complete": replay_audit["replay_complete"],
-                "survivorship_safe": (
+                "membership_replay_ready": (
                     replay_audit["replay_complete"]
                     and not replay_audit["diagnostic_only"]
                 ),
+                "survivorship_safe": False,
+                "survivorship_blockers": [
+                    "CIK_IDENTITY_ATTESTATION_REQUIRED",
+                    "DELISTED_PRICE_COVERAGE_REQUIRED",
+                    "SPLIT_DIVIDEND_ACTION_AUDIT_REQUIRED",
+                ],
             },
         }
         (temp / "manifest.json").write_text(
