@@ -1,0 +1,8 @@
+{
+  "blind_holdout_access": false,
+  "matched_pairs": 449,
+  "operational_action_ratio": 0.0,
+  "passing_hypotheses": [],
+  "profit_take_evidence_ready": false,
+  "report_version": "herd-weekly-rsi-oos-v1"
+}
