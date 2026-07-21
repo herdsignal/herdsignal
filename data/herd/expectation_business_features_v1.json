@@ -1,0 +1,30 @@
+{
+  "protocol_version": "HERD_EXPECTATION_BUSINESS_FEATURES_V1",
+  "status": "LOCKED_BEFORE_FEATURE_OUTPUT",
+  "objective": "Create point-in-time business expectation-change measurements for a rare profit-take hypothesis without granting sell authority.",
+  "base_features": "data/reports/business_state_features_v2.csv",
+  "price_snapshot": "data/snapshots/yf-long14-actions-sector-20260721",
+  "sec_corpora": [
+    "data/reference/sec/sec-pit-price50-20120103-20260717-20260721",
+    "data/reference/sec/sec-pit-xom34088-20120103-20260717-20260721",
+    "data/reference/sec/sec-pit-long-predecessors-20120103-20260717-20260721"
+  ],
+  "measurements": {
+    "revenue_growth_acceleration": "LATEST_REVENUE_YOY_MINUS_PREVIOUS_DISCLOSURE_REVENUE_YOY",
+    "margin_change_acceleration": "LATEST_MARGIN_YOY_CHANGE_MINUS_PREVIOUS_DISCLOSURE_MARGIN_YOY_CHANGE",
+    "operating_cash_flow_growth_change": "LATEST_OCF_YOY_MINUS_PREVIOUS_DISCLOSURE_OCF_YOY",
+    "share_dilution_yoy": "SAME_CONCEPT_LATEST_PIT_SHARES_DIVIDED_BY_SPLIT_ADJUSTED_NEAREST_PRIOR_YEAR_PIT_SHARES_MINUS_ONE"
+  },
+  "share_concepts_priority": [
+    "EntityCommonStockSharesOutstanding",
+    "CommonStockSharesOutstanding",
+    "WeightedAverageNumberOfDilutedSharesOutstanding"
+  ],
+  "share_quality_rule": "ABS_YOY_CHANGE_GT_100_PERCENT_IS_UNKNOWN_WITHOUT_VERIFIED_IDENTITY_OR_CORPORATE_ACTION_RECONCILIATION",
+  "claim_boundary": "PUBLIC_SEC_PIT_GENERAL_COMPANIES_RESEARCH_ONLY",
+  "forbidden": [
+    "USE_FACT_BEFORE_SEC_ACCEPTANCE", "BACKFILL_RESTATEMENT_TO_EARLIER_MONTH",
+    "FILL_MISSING_DILUTION_WITH_ZERO", "TYPE_FALLBACK_TO_GENERAL",
+    "CREATE_SELL_SIGNAL", "OPEN_BLIND_HOLDOUT"
+  ]
+}

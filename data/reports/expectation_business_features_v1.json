@@ -1,0 +1,24 @@
+{
+  "report_version": "HERD_EXPECTATION_BUSINESS_FEATURES_V1",
+  "status": "FEATURES_READY",
+  "rows": 8262,
+  "tickers": 51,
+  "general_company_rows": 7452,
+  "coverage": {
+    "revenue_growth_acceleration": 0.9274020397208803,
+    "margin_change_acceleration": 0.9274020397208803,
+    "operating_cash_flow_growth_change": 0.9274020397208803,
+    "share_dilution_yoy": 0.9482018250134192
+  },
+  "feature_columns": [
+    "revenue_growth_acceleration",
+    "margin_change_acceleration",
+    "operating_cash_flow_growth_change",
+    "share_dilution_yoy"
+  ],
+  "strict_pit_rule": "SEC_ACCEPTANCE_DATETIME",
+  "sell_authority": false,
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false,
+  "claim_boundary": "PUBLIC_SEC_PIT_GENERAL_COMPANIES_RESEARCH_ONLY"
+}
