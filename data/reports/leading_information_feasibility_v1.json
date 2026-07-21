@@ -1,0 +1,25 @@
+{
+  "context_or_exploratory_sources": [
+    "SEC_13F_INSTITUTIONAL_HOLDINGS",
+    "FINRA_EQUITY_SHORT_INTEREST"
+  ],
+  "data_blocked_sources": [
+    "HISTORICAL_ANALYST_ESTIMATE_REVISIONS",
+    "HISTORICAL_EQUITY_OPTION_SURFACE"
+  ],
+  "decision": "COLLECT_PUBLIC_SEC_FIRST",
+  "herd_formula_change_allowed": false,
+  "next_implementation": "SEC_8K_EARNINGS_GUIDANCE_PIT_CORPUS",
+  "operational_action_authority": false,
+  "operational_action_ratio": 0.0,
+  "primary_collectable_sources": [
+    "SEC_8K_EARNINGS_GUIDANCE",
+    "SEC_FORM4_INSIDER_TRANSACTIONS"
+  ],
+  "protocol_sha256": "b60e6a8de5b63e71f56fd80e339ddea62ce851d957793ce8d8d841202137b296",
+  "reason": "Current price and periodic-fundamental panel observes confirmation mostly after expectations are priced; SEC event documents are the first public source with an auditable availability timestamp and genuinely new content.",
+  "rejected_proxy_sources": [
+    "FINRA_DAILY_SHORT_SALE_VOLUME"
+  ],
+  "report_version": "herd-leading-information-feasibility-v1"
+}

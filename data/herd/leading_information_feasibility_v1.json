@@ -1,0 +1,106 @@
+{
+  "protocol_version": "HERD_LEADING_INFORMATION_FEASIBILITY_V1",
+  "status": "LOCKED_BEFORE_COLLECTION",
+  "objective": "Determine which genuinely new point-in-time information can test rare partial profit-taking before changing any HERD formula.",
+  "minimum_history_years_for_primary_oos": 10,
+  "sources": [
+    {
+      "id": "SEC_8K_EARNINGS_GUIDANCE",
+      "provider": "SEC EDGAR",
+      "official_url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+      "availability": "PUBLIC_MACHINE_READABLE_WITH_DOCUMENT_PARSE",
+      "pit_timestamp": "EDGAR_ACCEPTANCE_DATETIME",
+      "history_assessment": "SUFFICIENT",
+      "information": ["REPORTED_RESULTS", "FORWARD_GUIDANCE", "GUIDANCE_REVISION"],
+      "limitations": ["NO_SYSTEMATIC_ANALYST_CONSENSUS", "TEXT_AND_TABLE_NORMALIZATION_REQUIRED"],
+      "research_role": "PRIMARY_CANDIDATE",
+      "collection_priority": 1
+    },
+    {
+      "id": "SEC_FORM4_INSIDER_TRANSACTIONS",
+      "provider": "SEC EDGAR",
+      "official_url": "https://www.sec.gov/files/form4data%2C0.pdf",
+      "availability": "PUBLIC_XML",
+      "pit_timestamp": "EDGAR_ACCEPTANCE_DATETIME",
+      "history_assessment": "SUFFICIENT",
+      "information": ["INSIDER_OPEN_MARKET_BUY", "INSIDER_OPEN_MARKET_SELL"],
+      "limitations": ["PLANNED_10B5_1_AND_TAX_SALES_MUST_BE_SEPARATED", "INSIDER_SALE_IS_NOT_AUTOMATIC_BEARISH_EVIDENCE"],
+      "research_role": "PRIMARY_CANDIDATE",
+      "collection_priority": 2
+    },
+    {
+      "id": "SEC_13F_INSTITUTIONAL_HOLDINGS",
+      "provider": "SEC EDGAR",
+      "official_url": "https://www.sec.gov/rules-regulations/staff-guidance/division-investment-management-frequently-asked-questions/frequently-asked-questions-about-form-13f",
+      "availability": "PUBLIC_MACHINE_READABLE",
+      "pit_timestamp": "EDGAR_ACCEPTANCE_DATETIME",
+      "history_assessment": "SUFFICIENT_BUT_SLOW",
+      "information": ["QUARTER_END_REPORTED_HOLDINGS"],
+      "limitations": ["UP_TO_45_DAY_PUBLICATION_LAG", "NO_SHORT_POSITIONS", "CUSIP_CIK_MAPPING_REQUIRED"],
+      "research_role": "CONTEXT_ONLY",
+      "collection_priority": 3
+    },
+    {
+      "id": "FINRA_EQUITY_SHORT_INTEREST",
+      "provider": "FINRA",
+      "official_url": "https://www.finra.org/finra-data/browse-catalog/equity-short-interest",
+      "availability": "PUBLIC_FIVE_ROLLING_YEARS",
+      "pit_timestamp": "PUBLICATION_DATE_SEVENTH_BUSINESS_DAY",
+      "history_assessment": "INSUFFICIENT_FOR_PRIMARY_10Y_OOS",
+      "information": ["TWICE_MONTHLY_SHORT_POSITION"],
+      "limitations": ["FIVE_YEAR_ONLINE_HISTORY", "PUBLICATION_LAG", "AMENDMENTS_REPLACE_PRIOR_VIEW"],
+      "research_role": "EXPLORATORY_RECENT_LANE",
+      "collection_priority": 4
+    },
+    {
+      "id": "FINRA_DAILY_SHORT_SALE_VOLUME",
+      "provider": "FINRA",
+      "official_url": "https://www.finra.org/finra-data/daily-short-sale-volume-transaction-data",
+      "availability": "PUBLIC_DAILY_FILES",
+      "pit_timestamp": "TRADE_DATE_PUBLICATION",
+      "history_assessment": "SUFFICIENT_LENGTH_IN_PART",
+      "information": ["OFF_EXCHANGE_REPORTED_SHORT_SALE_VOLUME"],
+      "limitations": ["NOT_SHORT_INTEREST", "NOT_CONSOLIDATED_WITH_EXCHANGES", "EXCLUDES_NON_PUBLIC_TRADES"],
+      "research_role": "REJECTED_AS_SENTIMENT_PROXY",
+      "collection_priority": null
+    },
+    {
+      "id": "HISTORICAL_ANALYST_ESTIMATE_REVISIONS",
+      "provider": "LICENSED_VENDOR_REQUIRED",
+      "official_url": null,
+      "availability": "NOT_AVAILABLE_AS_COMPLETE_PUBLIC_PIT_PANEL",
+      "pit_timestamp": null,
+      "history_assessment": "DATA_BLOCKED",
+      "information": ["CONSENSUS_EPS_REVISION", "TARGET_PRICE_REVISION", "DISPERSION"],
+      "limitations": ["VENDOR_LICENSE", "REVISION_TIMESTAMP_AND_POINT_IN_TIME_ARCHIVE_REQUIRED"],
+      "research_role": "DATA_BLOCKED",
+      "collection_priority": null
+    },
+    {
+      "id": "HISTORICAL_EQUITY_OPTION_SURFACE",
+      "provider": "OPRA_OR_LICENSED_EXCHANGE_VENDOR",
+      "official_url": "https://www.cboe.com/data/market-data-services/us/options",
+      "availability": "LICENSED_FOR_DEEP_HISTORY",
+      "pit_timestamp": "EXCHANGE_SESSION_DATE",
+      "history_assessment": "DATA_BLOCKED_FOR_PUBLIC_RESEARCH_TIER",
+      "information": ["IMPLIED_VOLATILITY", "PUT_CALL_SKEW", "TERM_STRUCTURE", "OPEN_INTEREST"],
+      "limitations": ["COST_AND_LICENSE", "CORPORATE_ACTION_ADJUSTED_OPTION_ROOTS", "FREE_ROLLING_HISTORY_TOO_SHORT_OR_AGGREGATED"],
+      "research_role": "DATA_BLOCKED",
+      "collection_priority": null
+    }
+  ],
+  "next_collection_order": [
+    "SEC_8K_EARNINGS_GUIDANCE",
+    "SEC_FORM4_INSIDER_TRANSACTIONS",
+    "SEC_13F_INSTITUTIONAL_HOLDINGS",
+    "FINRA_EQUITY_SHORT_INTEREST"
+  ],
+  "forbidden": [
+    "SUBSTITUTE_PRICE_REACTION_FOR_EXPECTATION_REVISION",
+    "TREAT_FINRA_SHORT_VOLUME_AS_SHORT_INTEREST",
+    "SCRAPE_UNLICENSED_ANALYST_ESTIMATE_HISTORY",
+    "SCRAPE_UNLICENSED_OPTION_SURFACE_HISTORY",
+    "USE_PERIOD_END_BEFORE_PUBLICATION_TIMESTAMP",
+    "CHANGE_HERD_WEIGHTS_BEFORE_INDEPENDENT_OOS"
+  ]
+}
