@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from herd.expectation_evidence_oos_v1 import _outcome
+from herd.expectation_evidence_oos_v1 import _outcome, _trading_sessions_between
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,3 +24,8 @@ def test_protocol_forbids_test_threshold_and_operational_sell():
     assert protocol["trim_ratio"] == 0.05
     assert "TEST_DERIVED_THRESHOLD" in protocol["forbidden"]
     assert "ACTIVATE_OPERATIONAL_SELL" in protocol["forbidden"]
+
+
+def test_cooldown_counts_trading_sessions_not_calendar_days():
+    prices = pd.DataFrame(index=pd.bdate_range("2020-01-01", periods=10))
+    assert _trading_sessions_between(prices, pd.Timestamp("2020-01-01"), pd.Timestamp("2020-01-08")) == 5

@@ -52,6 +52,12 @@ def _outcome(prices: pd.DataFrame, signal_date: pd.Timestamp, horizon: int,
     }
 
 
+def _trading_sessions_between(prices: pd.DataFrame, earlier: pd.Timestamp,
+                              later: pd.Timestamp) -> int:
+    index = prices.index
+    return int(index.searchsorted(later, side="right") - index.searchsorted(earlier, side="right"))
+
+
 def _holm(rows: list[dict]) -> None:
     ordered = sorted(enumerate(rows), key=lambda item: item[1]["raw_p_value"])
     running = 0.0
@@ -93,13 +99,18 @@ def evaluate(panel: pd.DataFrame, folds: pd.DataFrame,
                 for row in test.itertuples(index=False):
                     ticker = str(row.ticker)
                     key = (fold_id, ticker)
-                    if key in last_event and (row.month_end - last_event[key]).days < 90:
+                    ticker_prices = prices.get(ticker)
+                    if ticker_prices is None:
+                        continue
+                    if key in last_event and _trading_sessions_between(
+                        ticker_prices, last_event[key], row.month_end
+                    ) < int(protocol["cooldown_sessions"]):
                         continue
                     result = _outcome(
-                        prices.get(ticker, pd.DataFrame()), row.month_end,
+                        ticker_prices, row.month_end,
                         int(protocol["horizon_sessions"]), float(protocol["trim_ratio"]),
                         float(protocol["one_way_cost_bps"]),
-                    ) if ticker in prices else None
+                    )
                     if result is None:
                         continue
                     last_event[key] = row.month_end
