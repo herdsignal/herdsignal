@@ -1,0 +1,34 @@
+{
+  "blind_holdout_access": false,
+  "decisions": {
+    "ADD_BUY_MARKET_SECTOR_DISLOCATION": "REJECTED_DIRECTIONAL_EVIDENCE",
+    "ENTRY_TREND_RESUMPTION": "REJECTED_DIRECTIONAL_EVIDENCE",
+    "PROFIT_TAKE_RELATIVE_STRENGTH_BREAK": "DATA_BLOCKED_SECTOR_ETF_NOT_IN_FROZEN_SNAPSHOT",
+    "PROFIT_TAKE_TREND_DECELERATION": "REJECTED_DIRECTIONAL_EVIDENCE",
+    "PROFIT_TAKE_VOLATILITY_EXTENSION": "REJECTED_DIRECTIONAL_EVIDENCE",
+    "REENTRY_POST_PROFIT_STABILIZATION": "DEPENDENCY_BLOCKED_PROFIT_AND_BUSINESS_EVIDENCE_REQUIRED"
+  },
+  "folds_sha256": "c59b5fe832e87670190ecd07ece70d42b165fc062ab2577fa3081854f608a642",
+  "limitations": [
+    "The frozen 55-ticker price universe remains survivorship-biased.",
+    "Sector-relative evidence is blocked because sector ETFs are absent from the frozen snapshot.",
+    "A pass authorizes only a role-correct ablation, never an operational action.",
+    "Re-entry remains blocked until profit-taking and the SEC PIT business guard independently pass."
+  ],
+  "operational_authorization": false,
+  "registry_audit": {
+    "actions": [
+      "ADD_BUY",
+      "NEW_ENTRY",
+      "PROFIT_TAKE",
+      "REENTRY"
+    ],
+    "hypothesis_count": 6,
+    "operational_authorization": false,
+    "registry_version": "HERD_ACTION_DIRECTION_V1"
+  },
+  "registry_version": "HERD_ACTION_DIRECTION_V1",
+  "report_version": "herd-action-direction-oos-v1",
+  "snapshot_id": "yf-10y-20260719",
+  "snapshot_sha256": "d3a6b6cdacc604ce0c90e751c56210261b272501486bb6692e3bfd3a0905840b"
+}
