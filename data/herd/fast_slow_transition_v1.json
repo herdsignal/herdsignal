@@ -1,0 +1,41 @@
+{
+  "protocol_version": "HERD_FAST_SLOW_TRANSITION_V1",
+  "status": "LOCKED_BEFORE_FEATURE_RESULTS",
+  "snapshot": "data/snapshots/yf-independent-current-sp500-20260721",
+  "target_report": "data/reports/reentry_worthwhile_target_v1.json",
+  "target_rows": "data/reports/reentry_worthwhile_target_v1.csv",
+  "weekly_sampling": "W-FRI_COMPLETED_ONLY",
+  "fast_slope_weeks": 4,
+  "slow_slope_weeks": 26,
+  "normalization_volatility_weeks": 26,
+  "velocity_lag_weeks": 4,
+  "candidate_features": [
+    {"id": "FAST_SLOW_TREND_GAP", "expected_direction": "LOWER"},
+    {"id": "FAST_SLOW_TRANSITION_VELOCITY_4W", "expected_direction": "LOWER"}
+  ],
+  "comparison": {"treatment": "REENTRY_WORTHWHILE", "control": "HOLD_WINNER"},
+  "retention_gate": {
+    "minimum_treatment_events": 300,
+    "minimum_control_events": 300,
+    "maximum_missing_fraction": 0.1,
+    "minimum_directional_rank_biserial": 0.1,
+    "maximum_holm_p_value": 0.05,
+    "minimum_same_direction_eras": 3,
+    "eras": [
+      ["2016-01-01", "2019-12-31"],
+      ["2020-01-01", "2022-12-31"],
+      ["2023-01-01", "2026-01-14"]
+    ]
+  },
+  "research_boundary": {
+    "same_sample_result_is_discovery_only": true,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false
+  },
+  "forbidden": [
+    "CHANGE_WINDOWS_AFTER_RESULTS",
+    "USE_POST_SIGNAL_PRICE",
+    "PROMOTE_DISCOVERY_TO_OPERATIONAL_EVIDENCE",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
