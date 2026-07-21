@@ -1,0 +1,33 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V2",
+  "status": "POST_OOS_DECISIONS_LOCKED",
+  "research_scope": "CONDITIONAL_TIMING_WITHIN_MONITORED_UNIVERSE",
+  "source_artifacts": [
+    {
+      "path": "data/herd/profit_take_measurements_v2.json",
+      "sha256": "1dba14baec5d4a6efbf99ba6a3e3c9b78538e552667dcbc0f4ef49ad021e9b9a"
+    },
+    {
+      "path": "data/reports/profit_take_oos_v2.json",
+      "sha256": "4044677ac2ff091708853b6f2da277594bb9bba5e498d4e892d3ade47a5e52f7"
+    },
+    {
+      "path": "data/reports/profit_take_oos_v2.csv",
+      "sha256": "85f35b82e057005a95817d27362f6de7003b971842be936de5e345d4bf6f80bc"
+    }
+  ],
+  "profit_take_families": [
+    {"id": "PROFIT_RELATIVE_EXTENSION_V2", "decision": "REJECTED_OOS", "authorized": false},
+    {"id": "PROFIT_TREND_DECELERATION_V2", "decision": "REJECTED_OOS", "authorized": false},
+    {"id": "PROFIT_RELATIVE_BREAK_V2", "decision": "REJECTED_OOS", "authorized": false},
+    {"id": "PROFIT_DOWNSIDE_EXPANSION_V2", "decision": "REJECTED_OOS", "authorized": false}
+  ],
+  "candidate_state": {
+    "admitted_profit_take_count": 0,
+    "profit_take_authorized": false,
+    "completed_cycle_allowed": false,
+    "blind_holdout_allowed": false,
+    "operational_action_ratio": 0.0,
+    "next_allowed_step": "INDEPENDENT_SEC_BUSINESS_STATE_V2_RESEARCH"
+  }
+}
