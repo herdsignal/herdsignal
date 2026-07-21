@@ -1,0 +1,20 @@
+{
+  "review_rows": 85,
+  "reviewed_rows": 85,
+  "distinct_tickers": 25,
+  "ticker_requirement_met": true,
+  "valid_rows": 36,
+  "invalid_rows": 47,
+  "ambiguous_rows": 2,
+  "source_precision": 0.4235294117647059,
+  "wilson_95_lower_bound": 0.3240354231287896,
+  "review_complete": true,
+  "review_gate_passed": false,
+  "ready_to_build_revision_pairs": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "REVIEW_GATE_BLOCKED",
+  "report_version": "herd-sec-guidance-block-source-review-v1",
+  "review_template_sha256": "9057d015ae180772430a47cf9034d2a19758c39a43cd467f54a6157f0a8ac697",
+  "labels_sha256": "1d31c99b4e5b0651130c70c1c00b34002fdb11828e387acecbe2d1ad894a8a83",
+  "price_outcomes_observed": false
+}

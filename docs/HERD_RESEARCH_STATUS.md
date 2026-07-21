@@ -845,3 +845,24 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
 - 아직 85건 원문 일치 판정과 Wilson 95% 하한 검사가 남아 있으므로 판정은
   `COMPLETE_STRATIFIED_SOURCE_REVIEW`다. 수정쌍·방향 라벨·HERD 가중치·
   행동 비율은 계속 열지 않는다.
+
+### 2026-07-22 SEC 블록 후보 원문 검수 V1
+
+- 잠긴 85건·25개 기업 표본을 가격 결과 없이 원문과 대조했다. 템플릿
+  SHA-256과 별도 판정 원장을 고정해 후보가 바뀌면 기존 라벨을 재사용할 수
+  없게 했다.
+- 지표·회계기간·현재 범위·단위·회계기준이 모두 맞는 36건만 VALID였다.
+  INVALID 47건, AMBIGUOUS 2건으로 점 정확도는 42.35%, Wilson 95% 하한은
+  32.40%였다. 사전 기준 90%를 크게 밑돌아 검수 게이트를 기각한다.
+- 주요 실패는 midpoint 변화량 오인 11건, respectively 관계 오연결 6건,
+  영향 금액 오인 6건, 회계기준 미해결 5건, 기간 오연결 5건, 과거 범위
+  오인 4건이었다.
+- 지표별 VALID는 CAPEX 12/12, Core FFO 8/12, revenue 7/12, margin 3/6,
+  Adjusted EBITDA 3/12, EPS 1/12였다. AFFO·cash capex·free cash flow·
+  operating income은 VALID가 없었다.
+- 판정은 `REVIEW_GATE_BLOCKED`다. 522개 자동 후보를 수정쌍으로 승격하지
+  않으며 150쌍·20개 기업 커버리지 계산, 방향 가설 사전등록, HERD 반영을
+  모두 중단한다.
+- 다음 파서는 거리 임계값을 다시 조정하지 않는다. respectively 병렬 관계,
+  midpoint/impact 의미 역할, current/prior range, 분기·연간 기간, 범위별
+  GAAP/non-GAAP를 구조적으로 파싱해야 한다.

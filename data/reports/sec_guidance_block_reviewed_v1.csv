@@ -1,0 +1,1080 @@
+review_id,ticker,cik,accession_number,accepted_at,document_name,document_role,source_url,source_sha256,source_kind,block_path,block_text,metric,matched_alias,fiscal_period,accounting_basis,unit,lower_bound,upper_bound,midpoint,range_offset,range_role,candidate_status,review_priority,review_decision,review_reason,reviewer,reviewed_at
+SGB-0001,AMT,1053507,0001053507-17-000017,2017-03-21T12:31:07.000Z,a8-kbuyback.htm,PRIMARY,https://www.sec.gov/Archives/edgar/data/1053507/000105350717000017/a8-kbuyback.htm,7d1f42ca852def25cec4934b6533e6b6dcaaa5691832ee393d839124bdf7628b,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[14],"Updated Outlook. Subsequent to its issuance of full year 2017 outlook on February 27, 2017, American Tower Corporation (the “Company”) amended a master lease agreement with one of its tenants. Based on the amendment, the Company now expects to recognize at least $100 million in additional straight-line revenue for the year. The Company has therefore revised its guidance for the full year 2017, and now expects total property revenue, net income and Adjusted EBITDA of $6,310 million to $6,490 million, $1,275 million to $1,345 million and $3,910 million to $4,010 million, respectively. The Company’s guidance for other measures is not impacted.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2017,NON_GAAP,USD,1275000000,1345000000,1310000000,505,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,179e0df9df0572b7dcee590279a92227828f553b7fc158439c0d9b264368ce72,INVALID,RESPECTIVELY_WRONG_METRIC,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0002,AMT,1053507,0001053507-22-000115,2022-10-27T11:05:00.000Z,pressreleaseq32022.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350722000115/pressreleaseq32022.htm,98166aa541501e315dbbc1b20d63b387d97b8f0fa6e4d7707586cb36f8eaa5f3,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[50],"The Company is raising the midpoint of its full year 2022 outlook for property revenue and Adjusted EBITDA by $70 million and $30 million, respectively, driven primarily by higher straight-line and international pass-through revenues, along with various one-time benefits, tenant billings outperformance and cost controls. Outperformance was partially offset by approximately $95 million and $125 million in incremental reserves associated with VIL in India for property revenue and Adjusted EBITDA, respectively. The Company is lowering the midpoint of its full year 2022 outlook for Consolidated AFFO and AFFO attributable to AMT common stockholders by $45 million and $40 million, respectively, due to the incremental reserves associated with VIL and the negative effects of foreign exchange rate fluctuations, partially offsetting other outperformance in the business. Similarly, the Company is lowering the midpoint of its full year 2022 outlook for AFFO attributable to AMT common stockholders per Share by $0.09 as a result of the negative impacts described above. The Company is raising the midpoint of its full year 2022 outlook for net income and net income attributable to AMT common stockholders by $290 million and $300 million, respectively, which includes the positive impact of foreign currency gains in the third quarter.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2022,NON_GAAP,USD,30000000,70000000,50000000,110,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,1fd88fd50736d13ae42c0d422c9f857de48326c8a6670606569a9e3ed0c6f7ed,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0003,TMUS,1283699,0001283699-17-000029,2017-07-19T20:04:41.000Z,tmus06302017ex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1283699/000128369917000029/tmus06302017ex991.htm,bd400f93c887ba23dec3c4745b1f8e83667d355acef7645d442d1e8f28ce3dc1,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[72],"Branded postpaid net customer additions guidance for full-year 2017 is increasing to 3.0 - 3.6 million from 2.8 - 3.5 million. Net income is not available on a forward looking basis. We are increasing our Adjusted EBITDA target to between $10.5 - $10.9 billion, up from the prior guidance range of $10.4 - $10.8 billion. Our Adjusted EBITDA target includes expected leasing revenues of $0.85 - $0.95 billion, increased from the prior guidance range of $0.8 - $0.9 billion.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2017,NON_GAAP,USD,10500000000,10900000000,10700000000,239,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,32f6552182eaae408f89a39783b51edfc04aaeae736ed491c43c9ba8ed426b52,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0004,AMT,1053507,0001053507-17-000017,2017-03-21T12:31:07.000Z,a8-kbuyback.htm,PRIMARY,https://www.sec.gov/Archives/edgar/data/1053507/000105350717000017/a8-kbuyback.htm,7d1f42ca852def25cec4934b6533e6b6dcaaa5691832ee393d839124bdf7628b,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[14],"Updated Outlook. Subsequent to its issuance of full year 2017 outlook on February 27, 2017, American Tower Corporation (the “Company”) amended a master lease agreement with one of its tenants. Based on the amendment, the Company now expects to recognize at least $100 million in additional straight-line revenue for the year. The Company has therefore revised its guidance for the full year 2017, and now expects total property revenue, net income and Adjusted EBITDA of $6,310 million to $6,490 million, $1,275 million to $1,345 million and $3,910 million to $4,010 million, respectively. The Company’s guidance for other measures is not impacted.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2017,NON_GAAP,USD,3910000000,4010000000,3960000000,542,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,39345ba53e37332fc851f195fe817bc3ecea873ee13fa65b3126102af62adf76,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0005,TMUS,1283699,0001283699-14-000009,2014-02-25T02:32:38.000Z,tmus12312013ex993.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1283699/000128369914000009/tmus12312013ex993.htm,e44bc3ac095e5f143bfa613371a15eff90d17c880c7a2f98414ed042583366b2,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div/div/div[5]/div[1],"Growth and profitability  Met Adjusted EBITDA target while exceeding branded postpaid net adds guidance  Strong cost discipline with $1.7 billion run-rate costs taken out of the business in 2013 Key Messages 5 2013: T-Mobile is the fastest growing wireless company  Total net additions of more than 4.4 million in 2013 – 1.6 million in Q4  Branded postpaid net additions of over 2 million in 2013 – 869K in Q4 1 Strong operating improvement – improved retention & customer quality  Branded postpaid churn of 1.7% for FY 2013 – down 70bps YoY  Improving quality metrics: service bad debt expense, % Prime in EIP receivables 2 3 Continuing growth path even further in 2014 – already seen in Q1  Guiding toward Adjusted EBITDA of $5.7 to $6.0 billion  Branded postpaid net adds guidance of 2 to 3 million 4 Note: All figures for 4Q12, 1Q13 and 2Q13 are pro forma combined results.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2013,NON_GAAP,USD,2000000,3000000,2500000,794,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,3995ae730660439f668dcbb8a38bfd8c9a462856506b209d786577a063c1a6b1,INVALID,RESPECTIVELY_WRONG_METRIC,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0006,AMT,1053507,0001053507-20-000143,2020-09-15T12:34:04.000Z,amt-20200915.htm,PRIMARY,https://www.sec.gov/Archives/edgar/data/1053507/000105350720000143/amt-20200915.htm,33f88acaf2bd826d14c53e0695324341426c873adb49b0768518bd558e6d9f41,HTML_DIV,/html/body/div[48],"Subsequent to the issuance of its full year 2020 outlook on July 30, 2020, American Tower Corporation (the “Company”) entered into a new master lease agreement with T-Mobile U.S. Inc. (the “MLA”). Based on the MLA, the Company now expects to recognize approximately $95 million in additional straight-line revenue for the full year. The Company has therefore revised its outlook for the full year 2020 and now expects total property revenue of $7,750 to $7,880 million, net income of $1,845 to $1,925 million and Adjusted EBITDA of $4,985 to $5,065 million. The Company’s full year expectations for other measures, including Organic Tenant Billings Growth and Consolidated AFFO, remain unchanged from its full year 2020 outlook issued on July 30, 2020.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2020,NON_GAAP,USD,4985000000,5065000000,5025000000,532,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,50db4d0bb94c32cb3f8e8a926f28219e126ff2479fea7bb694245030dffdaf05,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0007,TMUS,1283699,0001283699-19-000075,2019-04-25T20:17:23.000Z,tmus03312019ex992.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1283699/000128369919000075/tmus03312019ex992.htm,95d8bbf976906d7f9a43189609fa23511d6c9f4ef5e240114e4a1789491ca3d5,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[154]/div[3]/table[3]/tr[2]/td[2]/div,"Adjusted EBITDA: For the full-year 2019, Adjusted EBITDA is expected to be in the range of $12.7 to $13.2 billion, unchanged from prior guidance. This target includes expected leasing revenues of $0.6 to $0.7 billion, also unchanged from prior guidance, and takes into account the network expansion, the deployment of our 600 MHz spectrum, and the build-out of our 5G network, expected to drive up Cost of Services by $200 to $300 million year-over-year, and increased customer guidance.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2019,NON_GAAP,USD,600000000,700000000,650000000,196,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,665d0743ad34be39a59a13f24ef2f515c470340fab049692578dc8d8ef086f3e,INVALID,COMPONENT_RANGE_NOT_METRIC_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0008,AMT,1053507,0001053507-18-000035,2018-07-31T11:03:37.000Z,pressreleaseq22018.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350718000035/pressreleaseq22018.htm,6a1956b1b0b5b07c876f3788a569e9e0c4c16a8cdbf09a026550e945f5d359f8,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[54],"The Company is reducing the midpoint of its full year 2018 outlook for property revenue, net income and Adjusted EBITDA by $60 million, $80 million and $30 million, respectively, and reiterating the midpoint of its outlook for Consolidated AFFO.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2018,NON_GAAP,USD,30000000,80000000,55000000,136,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,66f0b519973a916c3bbcc3341b9dbf04ca83cedf49e5ccebbc0065e42659b0ab,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0009,AMT,1053507,0001053507-22-000096,2022-07-28T11:05:56.000Z,pressreleaseq22022.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350722000096/pressreleaseq22022.htm,9adba67be2eb1e6a1a4dc94050f105cc538034d98acd0083b86d6ef7ce01fb36,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[49],"Due to the negative effects of foreign exchange rate fluctuations, the Company is lowering the midpoint of its full year 2022 outlook for property revenue and Adjusted EBITDA by $15 million and $20 million, respectively, which represents foreign exchange rate neutral outperformance of $84 million and $27 million, respectively. Similarly, the Company is lowering the midpoint of its full year 2022 outlook for Consolidated AFFO and AFFO attributable to AMT common stockholders by $80 million and $90 million, respectively, due to foreign exchange currency fluctuations, and also increased interest expense, primarily associated with higher debt balances assumed for the financing of CoreSite, which is more than offset by a corresponding equity issuance assumption on a per share basis. The Company is raising the midpoint of its full year 2022 outlook for AFFO attributable to AMT common stockholders per Share by $0.02. The Company is raising the midpoint of its full year 2022 outlook for net income and net income attributable to AMT common stockholders by $535 million and $570 million, respectively, which includes the positive impact of foreign currency gains in the second quarter.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2022,NON_GAAP,USD,27000000,84000000,55500000,286,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,69e9005628c66d001ad1853f626e8df3e570e521974bd8125276c6a28cef5c40,INVALID,IMPACT_AMOUNT_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0010,AMT,1053507,0001053507-17-000017,2017-03-21T12:31:07.000Z,a8-kbuyback.htm,PRIMARY,https://www.sec.gov/Archives/edgar/data/1053507/000105350717000017/a8-kbuyback.htm,7d1f42ca852def25cec4934b6533e6b6dcaaa5691832ee393d839124bdf7628b,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[14],"Updated Outlook. Subsequent to its issuance of full year 2017 outlook on February 27, 2017, American Tower Corporation (the “Company”) amended a master lease agreement with one of its tenants. Based on the amendment, the Company now expects to recognize at least $100 million in additional straight-line revenue for the year. The Company has therefore revised its guidance for the full year 2017, and now expects total property revenue, net income and Adjusted EBITDA of $6,310 million to $6,490 million, $1,275 million to $1,345 million and $3,910 million to $4,010 million, respectively. The Company’s guidance for other measures is not impacted.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2017,NON_GAAP,USD,6310000000,6490000000,6400000000,471,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,7236ccd0f35543cd44c66d05aba5b3bd75fef38cbbdd7521b105fa33ae7a90da,INVALID,RESPECTIVELY_WRONG_METRIC,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0011,TMUS,1283699,0001283699-17-000029,2017-07-19T20:04:41.000Z,tmus06302017ex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1283699/000128369917000029/tmus06302017ex991.htm,bd400f93c887ba23dec3c4745b1f8e83667d355acef7645d442d1e8f28ce3dc1,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[72],"Branded postpaid net customer additions guidance for full-year 2017 is increasing to 3.0 - 3.6 million from 2.8 - 3.5 million. Net income is not available on a forward looking basis. We are increasing our Adjusted EBITDA target to between $10.5 - $10.9 billion, up from the prior guidance range of $10.4 - $10.8 billion. Our Adjusted EBITDA target includes expected leasing revenues of $0.85 - $0.95 billion, increased from the prior guidance range of $0.8 - $0.9 billion.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2017,NON_GAAP,USD,850000000,950000000,900000000,386,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,9d859fedc2eda3901b47ed72ffb43954c374d827ce54715c33afc3e120b7da08,INVALID,COMPONENT_RANGE_NOT_METRIC_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0012,TMUS,1283699,0001283699-15-000009,2015-02-19T02:27:06.000Z,tmus12312014ex992.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1283699/000128369915000009/tmus12312014ex992.htm,d750c169c751fbcb5cd6ab74c5060226a56714d2f012e8cfe88bb1ee413ab2ca,HTML_DIV,/html/body/document/type/sequence/filename/description/text/table[87]/tr[2]/td[2]/div,"For the full-year 2014, Adjusted EBITDA was $5.636 billion, up 6.0% compared to the pro forma combined $5.317 billion in 2013. Full-year 2014 Adjusted EBITDA margin was 25% compared to a pro forma combined Adjusted EBITDA margin of 26% in full-year 2013. The full-year 2014 Adjusted EBITDA came in within the guidance range of $5.6 to $5.8 billion.",ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,FY2014,NON_GAAP,USD,5600000000,5800000000,5700000000,327,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,b1d31b2d4ac40d6548aa822eaff8ef6a33ccca7afeabc7fd8d893d465cf5338c,INVALID,HISTORICAL_RANGE_NOT_CURRENT_GUIDANCE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0013,AMT,1053507,0001053507-22-000065,2022-04-27T11:05:14.000Z,pressreleaseq12022.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350722000065/pressreleaseq12022.htm,89a9cecde2400d9319c95e38d5d5bf329fbfb119d2aaa2a50a8162b74e95e06c,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[45],"The Company is raising the midpoint of its full year 2022 outlook for property revenue, net income attributable to AMT common stockholders, Adjusted EBITDA, Consolidated AFFO and AFFO attributable to AMT common stockholders by $75 million, $3 million, $55 million, $5 million and $10 million, respectively.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2022,NON_GAAP,USD_PER_SHARE,5,10,7.5,265,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,181711cd6af69382a8cd6f91cd69da4c215f2e307b9629a4b5c1675e1070484b,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0014,AMT,1053507,0001053507-17-000054,2017-10-31T11:05:34.000Z,pressreleaseq32017.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350717000054/pressreleaseq32017.htm,9fbdd1f88c89910184075405bd9cc767727ace55c343fb69adb78d8a27da55f4,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[46],"The Company is raising the midpoint of its full year 2017 outlook for property revenue, Adjusted EBITDA and Consolidated AFFO by $15 million, $15 million and $30 million, respectively, and reducing the midpoint for net income by $20 million, primarily due to an adjustment to depreciation expense in the U.S.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2017,NON_GAAP,USD_PER_SHARE,15,30,22.5,142,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,2057312ec9f791152810f6e4845557d63ad409f9d95f54cc170ee54174f2182d,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0015,AMT,1053507,0001053507-25-000117,2025-07-29T11:03:47.000Z,pressreleaseq22025.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350725000117/pressreleaseq22025.htm,41f6d6ba1c4b3ec5401814eb67c114fbdba8f0410dfefdba2e42ecf3b2d66885,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[57],"As a result of the estimated positive foreign currency exchange rate fluctuations described above, and core outperformance as it relates to property revenue and Adjusted EBITDA, the Company is raising the midpoints of its full year 2025 outlook for property revenue, Adjusted EBITDA, AFFO attributable to AMT common stockholders and AFFO attributable to AMT common stockholders per Share by $165 million, $120 million, $55 million and $0.12, respectively. The Company is reducing the midpoint for net income and net income attributable to AMT common stockholders by $400 million and $475 million, respectively, primarily due to unrealized foreign currency losses.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2025,NON_GAAP,USD_PER_SHARE,0.12,55,27.56,419,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,222f6f0e1f7aee3b2989ac48091d75ac156fec1ccf2586812e6f526138aa165f,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0016,AMT,1053507,0001053507-22-000096,2022-07-28T11:05:56.000Z,pressreleaseq22022.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350722000096/pressreleaseq22022.htm,9adba67be2eb1e6a1a4dc94050f105cc538034d98acd0083b86d6ef7ce01fb36,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[49],"Due to the negative effects of foreign exchange rate fluctuations, the Company is lowering the midpoint of its full year 2022 outlook for property revenue and Adjusted EBITDA by $15 million and $20 million, respectively, which represents foreign exchange rate neutral outperformance of $84 million and $27 million, respectively. Similarly, the Company is lowering the midpoint of its full year 2022 outlook for Consolidated AFFO and AFFO attributable to AMT common stockholders by $80 million and $90 million, respectively, due to foreign exchange currency fluctuations, and also increased interest expense, primarily associated with higher debt balances assumed for the financing of CoreSite, which is more than offset by a corresponding equity issuance assumption on a per share basis. The Company is raising the midpoint of its full year 2022 outlook for AFFO attributable to AMT common stockholders per Share by $0.02. The Company is raising the midpoint of its full year 2022 outlook for net income and net income attributable to AMT common stockholders by $535 million and $570 million, respectively, which includes the positive impact of foreign currency gains in the second quarter.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2022,NON_GAAP,USD_PER_SHARE,80,90,85,481,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,22cb7278e094be92173af7737ba4089c6f9924ebbfcce8b89173d4a3b3db66b5,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0017,AMT,1053507,0001053507-18-000047,2018-10-30T11:05:24.000Z,pressreleaseq32018.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350718000047/pressreleaseq32018.htm,adef429a67f76ca5649751bad6cdac1f431d90d3ea5c97ae10fd9696e9595eda,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[56],"The Company is raising the midpoint of its full year 2018 outlook for property revenue, Adjusted EBITDA and Consolidated AFFO by $325 million, $315 million and $255 million, respectively, and lowering the midpoint of its outlook for net income by $5 million. These amounts include increased Organic Tenant Billings Growth expectations in the U.S. and Latin America and also reflect a net positive impact of $300 million to both property revenue and Adjusted EBITDA, a net positive impact of $250 million to Consolidated AFFO and an immaterial impact to net income as a result of the Company’s settlement with Tata.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2018,NON_GAAP,USD_PER_SHARE,255,315,285,143,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,25435731817f43c4649ee282e6a689f08356640ef8c8a7b95cb59578d56dfed4,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0018,AMT,1053507,0001053507-19-000071,2019-05-03T11:05:17.000Z,pressreleaseq12019.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350719000071/pressreleaseq12019.htm,f0925fbfa1775eb167ef7c69e3174f041b088dd20ab71a8b94c59d976f669d84,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[49],"The Company’s full year 2019 outlook also reflects estimated cumulative expected unfavorable impacts of ICCC on property revenue, Adjusted EBITDA and Consolidated AFFO of approximately $380 million, $268 million and $214 million, respectively, inclusive of an expected reduction in pass-through revenue of approximately $83 million. These impacts are unchanged from the Company’s prior outlook and include consolidation churn experienced through the end of the first quarter of 2019, as well as the incremental expected impacts of ICCC throughout the remainder of 2019. The expected 2019-specific impacts of ICCC to property revenue, Adjusted EBITDA and Consolidated AFFO are $191 million, $148 million and $118 million, respectively, including $22 million in lower pass-through revenue. At this time, the Company expects the impacts of ICCC to last throughout 2019 and anticipates that churn rates in India will return to lower levels in 2020 and beyond. The Company is providing key outlook measures adjusted to quantify the impacts of ICCC on such measures and the impact of ICCC and the Company’s settlement with Tata Teleservices and related entities (Tata) in the fourth quarter of 2018 on growth rates as it believes that these adjusted measures better reflect the long-term trajectory of its recurring business and provide investors with a more comprehensive analysis of the Company’s operations. The impacts of ICCC and the Tata settlement on net income are not provided, as the impact on all components of the net income measure cannot be calculated without unreasonable effort.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2019,NON_GAAP,USD_PER_SHARE,214,268,241,199,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,259804eb8eee73bbc69859b27cb286af6032ebcdcff6b649420560234ae2f7d4,INVALID,IMPACT_AMOUNT_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0019,AMT,1053507,0001053507-18-000035,2018-07-31T11:03:37.000Z,pressreleaseq22018.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350718000035/pressreleaseq22018.htm,6a1956b1b0b5b07c876f3788a569e9e0c4c16a8cdbf09a026550e945f5d359f8,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[56],"The Company’s full year 2018 outlook also reflects estimated unfavorable impacts from Indian Carrier Consolidation-Driven Churn on property revenue, Adjusted EBITDA and Consolidated AFFO of approximately $180 million, $115 million and $90 million, respectively, inclusive of an expected reduction in pass-through revenue of approximately $60 million. At this time, the Company expects the impacts of Indian Carrier Consolidation-Driven Churn to last for several years and anticipates that churn rates in India will return to lower levels once the consolidation process is complete. The Company is providing key outlook measures adjusted to quantify the impacts of Indian Carrier Consolidation-Driven Churn on such measures as it believes that these adjusted measures better reflect the long-term trajectory of its recurring business and provide investors with a more comprehensive analysis of the Company’s business. The impact of Indian Carrier Consolidation-Driven Churn on net income is not provided, as the impact on all components of the net income measure cannot be calculated without unreasonable effort.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2018,NON_GAAP,USD_PER_SHARE,90,115,102.5,218,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,2ce62995ae53749a6a6c73f1323a266e8dd8b13c4304f98876793e8168a22217,INVALID,IMPACT_AMOUNT_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0020,AMT,1053507,0001053507-19-000101,2019-07-31T11:04:50.000Z,pressreleaseq22019.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350719000101/pressreleaseq22019.htm,988595c6f02ed4fdb94461d260ff3e5b97d5045e3eb54b3dd86613ea9f0504b1,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[48],"The Company’s full year 2019 outlook also reflects estimated cumulative expected unfavorable impacts of ICCC on property revenue, Adjusted EBITDA and Consolidated AFFO of approximately $375 million, $261 million and $209 million, respectively, inclusive of an expected reduction in pass-through revenue of approximately $85 million and the benefit of approximately $9 million of settlement payments related to ICCC in prior periods, which was not contemplated within the Company’s prior outlook. The expected 2019-specific impacts of ICCC to property revenue, Adjusted EBITDA and Consolidated AFFO are $186 million, $141 million and $113 million, respectively, including $24 million in lower pass-through revenue and the expected benefit of the settlement payments. At this time, the Company expects the impacts of ICCC to last throughout 2019 and anticipates that churn rates in India will return to lower levels in 2020 and beyond. The Company is providing key outlook measures adjusted to quantify the impacts of ICCC on such measures and the impact of ICCC and the Company’s settlement with Tata Teleservices and related entities (“Tata”) in the fourth quarter of 2018 on growth rates as it believes that these adjusted measures better reflect the long-term trajectory of its recurring business and provide investors with a more comprehensive analysis of the Company’s operations. The impacts of ICCC and the Tata settlement on net income are not provided, as the impact on all components of the net income measure cannot be calculated without unreasonable effort.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2019,NON_GAAP,USD_PER_SHARE,209,261,235,199,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,3b995dc59ff6e9c926319215c72dde6aff85a1ca7952032aaa27b50442e9cec3,INVALID,IMPACT_AMOUNT_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0021,AMT,1053507,0001053507-21-000127,2021-07-29T11:05:43.000Z,pressreleaseq22021.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350721000127/pressreleaseq22021.htm,275811127219715064ad8fd54191f0ce7910b56c554e40049429746b46044115,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[47],"The Company is raising the midpoint of its full year 2021 outlook for property revenue, net income, Adjusted EBITDA and Consolidated AFFO by $510 million, $135 million, $260 million and $170 million, respectively, primarily due to the impacts of its Telxius Acquisition, including the approximately 4,000 remaining German communications sites expected to close in August 2021.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2021,NON_GAAP,USD_PER_SHARE,170,260,215,169,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,5092f8218b1c96882acc5cf47a23d55d8bebc8b2d026a7f8e89ca23527101965,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0022,AMT,1053507,0001053507-26-000094,2026-04-28T11:04:17.000Z,pressreleaseq12026.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350726000094/pressreleaseq12026.htm,c5a517552d27a2d3f8485d8ba541f586d08a687b2216a152a778e8dbf4b32d7b,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[51],"As a result of the estimated positive foreign currency exchange rate fluctuations described above and accelerating straight-line revenue in Latin America, the Company is raising the midpoints of its full year 2026 outlook for property revenue, Adjusted EBITDA, AFFO attributable to AMT common stockholders and AFFO attributable to AMT common stockholders per Share by $145 million, $105 million, $55 million and $0.12, respectively. The Company is increasing the midpoint for net income and net income attributable to AMT common stockholders by $70 million and $85 million, respectively, primarily due to unrealized foreign currency gains.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2026,NON_GAAP,USD_PER_SHARE,0.12,55,27.56,396,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,51e96cadffe8b8314159a35f4c4236041cb20a6359f5f372e156a465ad945001,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0023,AMT,1053507,0001053507-21-000082,2021-04-29T11:04:21.000Z,pressreleaseq12021.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350721000082/pressreleaseq12021.htm,73b53f9b555b22aed45021750b0c518f9ddfc5e4824688725ff67d2a6f5343da,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[47],"The Company is lowering the midpoint of its full year 2021 outlook for property revenue by $25 million as a result of unfavorable translational foreign currency exchange rate fluctuations, while raising the midpoints of its outlook for net income, Adjusted EBITDA and Consolidated AFFO by $110 million, $10 million and $25 million, respectively.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2021,NON_GAAP,USD_PER_SHARE,10,25,17.5,303,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,577024c0fa1d0b080015c81c95ef7e30f1d6e2940ccf936f23a915f7373ead2b,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0024,AMT,1053507,0001053507-19-000131,2019-10-31T11:07:20.000Z,pressreleaseq32019.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1053507/000105350719000131/pressreleaseq32019.htm,10c5dd7d028d310b6a33b20fe9e1b89ab78178689e4d0c8cafb5756e988178a2,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[51],"The Company is raising the midpoint of its full year 2019 outlook for property revenue, net income, Adjusted EBITDA and Consolidated AFFO by $180 million, $145 million, $180 million and $5 million, respectively, as compared to the Company’s outlook issued on July 31, 2019. The increases in property revenue, net income and Adjusted EBITDA include approximately $167 million in additional straight-line revenue as a result of the Company’s new MLA with AT&T.",AFFO,consolidated AFFO|adjusted funds from operations|AFFO,FY2019,NON_GAAP,USD_PER_SHARE,5,180,92.5,169,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,594b6c0248482ba384a478820a547a8247ce1afced37eb4ff9d06ecc14138586,INVALID,MIDPOINT_CHANGE_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0025,APD,2969,0000002969-25-000012,2025-02-06T12:28:03.000Z,exhibit99131dec24.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/2969/000000296925000012/exhibit99131dec24.htm,37635d947b4ebd841761e8cee1b865550e508e157291cf8344feae1fb4acfe2a,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[144],We expect capital expenditures for fiscal year 2025 in the range of $4.5 billion to $5.0 billion.,CAPEX,capital expenditures|capital spending|capex,FY2025,NOT_APPLICABLE,USD,4500000000,5000000000,4750000000,68,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,033d4d0212cd609e17849079533bff9359e19cba2c937e6a359de6516244a259,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0026,LIN,1707925,0001654954-22-014269,2022-10-27T10:57:55.000Z,lin_ex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1707925/000165495422014269/lin_ex991.htm,670d2e5fe1d8aec6caeec23c2f7ea62a4beba3dd48df939eb44178a08157c81c,HTML_P,/html/body/document/type/sequence/filename/description/text/p[19],"For the full year 2022, the company expects adjusted diluted earnings per share to be in the range of $11.93 to $12.03, up 12% to 13% versus prior year or 17% to 18% excluding currency headwind. Full-year capital expenditures are expected to be in the range of $3.0 billion to $3.4 billion to support growth and maintenance requirements including the $3.7 billion contractual sale of gas project backlog.",CAPEX,capital expenditures|capital spending|capex,FY2022,NOT_APPLICABLE,USD,3000000000,3400000000,3200000000,261,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,04c6443e35f2948debcea417bc7c2c1ab45999c4d110c246d6460902c60734cc,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0027,WMT,104169,0000104169-14-000016,2014-02-20T12:00:24.000Z,earningsrelease-13114.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/104169/000010416914000016/earningsrelease-13114.htm,cbdf6622be66184ccd8d925a2aab6c011d71d98e91d83e5ac010aab731fd07ce,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[96],The result of this program enhancement is an increase of $600 million to the company's total fiscal year 2015 forecast for capital expenditures. The updated range is $12.4 to $13.4 billion versus the October forecast of $11.8 to $12.8 billion.,CAPEX,capital expenditures|capital spending|capex,FY2015,NOT_APPLICABLE,USD,12400000000,13400000000,12900000000,166,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,0e50ebffa7fa582ee08cdc0a423caebf878e0a09f16f78f705bb29ad2c7a3a24,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0028,LIN,1707925,0001654954-21-011422,2021-10-28T10:48:28.000Z,lin_ex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1707925/000165495421011422/lin_ex991.htm,515f87fdd8f1c9e781b2e938d45a781c9ce0e2c422112a05d42644232e01e757,HTML_P,/html/body/document/type/sequence/filename/description/text/p[28],"For full year 2021, the company has updated its adjusted diluted earnings per share guidance to be in the range of $10.52 to $10.62, up 43% to 45% versus 2019 and 28% to 29% versus prior year. This guidance assumes 3% currency tailwind versus 2020. Full-year capital expenditures are expected to be in the range of $3.0 billion to $3.2 billion to support maintenance and growth requirements including the contractual project backlog.",CAPEX,capital expenditures|capital spending|capex,FY2021,NOT_APPLICABLE,USD,3000000000,3200000000,3100000000,315,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,10d125e2af924ae7ebe980a3c1b3e9664d753ef838f32166538e7a7f2ec75f29,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0029,APD,2969,0000002969-23-000041,2023-11-07T12:43:43.000Z,exhibit99130sep23.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/2969/000000296923000041/exhibit99130sep23.htm,a668a221b2ebe21975cd15eb340398de5d084d6674849c157fe725af0df774c5,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[184],We expect capital expenditures for fiscal year 2024 to be $5.0 billion to $5.5 billion.,CAPEX,capital expenditures|capital spending|capex,FY2024,NOT_APPLICABLE,USD,5000000000,5500000000,5250000000,58,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,1177b379b5bb764ea1ca4be9dca1d9cbc16e9d7182f68fe0d735bfe6c01e1938,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0030,APD,2969,0000002969-23-000035,2023-08-03T11:43:40.000Z,exhibit99130jun23.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/2969/000000296923000035/exhibit99130jun23.htm,a0bcbf3855fd868b42193a3e2dbc739ecc0acf88330fa13e646320c381d7ecfe,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[168],We expect capital expenditures for fiscal year 2023 to be $5.0 billion to $5.5 billion.,CAPEX,capital expenditures|capital spending|capex,FY2023,NOT_APPLICABLE,USD,5000000000,5500000000,5250000000,58,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,11a6e4c1d480a008b9e1cf3e9e9f9f73a770123e74b42066bbf18543929ffaea,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0031,LIN,1707925,0001654954-24-001330,2024-02-06T11:11:34.000Z,linde_ex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1707925/000165495424001330/linde_ex991.htm,dc0ce974a7d36d1e14263dc5b0a28c955f43e608724576805e9734afcb0a62db,HTML_P,/html/body/document/type/sequence/filename/description/text/p[33],"For the full year 2024, the company expects adjusted diluted earnings per share to be in the range of $15.25 to $15.65, up 7% to 10% versus prior year or 8% to 11% when excluding estimated currency headwinds.  Full-year capital expenditures are expected to range between $4.5 billion and $5.0 billion to support operating and growth requirements, including the contractual sale of gas backlog.  For the first quarter 2024, adjusted earnings per share is expected to be in the range of $3.58 to $3.68, 5% to 8% above prior-year quarter.  This range assumes 1% unfavorable currency.",CAPEX,capital expenditures|capital spending|capex,FY2024,NOT_APPLICABLE,USD,4500000000,5000000000,4750000000,271,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,1522ca3e21ec3e33de7429c2e8c05de42d658884f5e34c1a91d5fe891dc98a4e,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0032,APD,2969,0000002969-23-000021,2023-05-09T11:55:14.000Z,exhibit99131mar23.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/2969/000000296923000021/exhibit99131mar23.htm,a467413b2ebb16098422e87cee7d008ebb1b464993f9f5a9b8065ad33a943b21,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[170],We expect capital expenditures for fiscal year 2023 to be $5.0 to $5.5 billion.,CAPEX,capital expenditures|capital spending|capex,FY2023,NOT_APPLICABLE,USD,5000000000,5500000000,5250000000,58,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,1b8c555a956c5ac28d0f37582930935211e11c1e4e222157c0d2d8b535b4e069,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0033,LIN,1707925,0001654954-26-004202,2026-05-01T10:47:13.000Z,lin_ex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1707925/000165495426004202/lin_ex991.htm,cdc9da9573198b4463f804140dde1017add322a0cdbcb6528c7b6c8c3140ec57,HTML_P,/html/body/document/type/sequence/filename/description/text/p[23],"For the full year 2026, the company expects adjusted diluted earnings per share to be in the range of $17.60 to $17.90, up 7% to 9%, assuming favorable currency of 1%. Full-year capital expenditures are expected to be in the range of $5.0 billion to $5.5 billion to support growth and maintenance requirements including the $7.1 billion contractual sale of gas project backlog.",CAPEX,capital expenditures|capital spending|capex,FY2026,NOT_APPLICABLE,USD,5000000000,5500000000,5250000000,234,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,22a4d099fb6959e0427c625b7ba876ec34b6e402a3df2907d181dd880b3b636c,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0034,LIN,1707925,0001654954-21-005179,2021-05-06T10:59:06.000Z,lin_ex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1707925/000165495421005179/lin_ex991.htm,b39ef5eb876a82fd066f3725e0e4bc318ada2a16983a3123024a900007534315,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[34],"For the
+full year 2021, the company expects adjusted diluted earnings per
+share to be in the range of $9.60 to $9.80, up 31% to 34% versus
+2019 and 17% to 19% versus prior year. This guidance assumes a 2%
+currency tailwind versus 2020. Full-year capital expenditures are
+expected to be in the range of $3.0 billion to $3.4 billion to
+support maintenance and growth requirements including the $3.5
+billion contractual sale of gas project backlog.",CAPEX,capital expenditures|capital spending|capex,FY2021,NOT_APPLICABLE,USD,3000000000,3400000000,3200000000,302,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,2664309f825f9b7adcba4e9dd3baa44836eb05414d63e8513f53ed141604130a,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0035,LIN,1707925,0001654954-21-008345,2021-07-30T11:30:25.000Z,lin_ex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1707925/000165495421008345/lin_ex991.htm,b60cb6eb799f43358e95dcbba3e0c9297cdf7db829a39832f5fcfd4f23f3bffb,HTML_P,/html/body/document/type/sequence/filename/description/text/p[31],"For full year 2021, the company has updated its adjusted diluted earnings per share guidance to be in the range of $10.10 to $10.30, up 38% to 40% versus 2019 and 23% to 25% versus prior year. This guidance assumes 3% currency tailwind versus 2020. Full-year capital expenditures are expected to be in the range of $3.0 billion to $3.4 billion to support maintenance and growth requirements including the contractual project backlog.",CAPEX,capital expenditures|capital spending|capex,FY2021,NOT_APPLICABLE,USD,3000000000,3400000000,3200000000,315,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,36de5b04217169e2a23693ffccfcd31518b89d01f660e98c11ecff97ad6f2f12,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0036,APD,2969,0000002969-24-000024,2024-04-30T12:09:52.000Z,exhibit99131mar24.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/2969/000000296924000024/exhibit99131mar24.htm,d5f90546c0f63e9338b1980a7a01d6e8c538f614a7a6002fcf1649b4a82310ec,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[157],We expect capital expenditures for fiscal year 2024 to be $5.0 billion to $5.5 billion.,CAPEX,capital expenditures|capital spending|capex,FY2024,NOT_APPLICABLE,USD,5000000000,5500000000,5250000000,58,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,3c16c59bb41408edcb801c371189f7ed41b8a60fb853072b278a4d8abd7891fe,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0037,TMUS,1283699,0001283699-19-000117,2019-10-28T20:11:05.000Z,tmus09302019ex992.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1283699/000128369919000117/tmus09302019ex992.htm,fbd42a14fc761ca02773d030c643d05ef5f41318760caf142a5c5b5d107ce3e5,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[150]/div[3]/table[1]/tr[2]/td[2]/div,"Capital expenditures: Cash purchases of property and equipment for the full-year 2019, excluding capitalized interest of approximately $450 million (up from prior guidance of $400 million), are expected to be in the range of $5.9 to $6.0 billion, up $200 to $300 million from the high end of the prior guidance range. Cash purchases of property and equipment for the full-year 2019, including capitalized interest, are expected to be in the range of $6.35 to $6.45 billion, up from the prior guidance of $5.8 to $6.1 billion. The higher capital expenditures guidance reflects our rapid rollout of 600 MHz spectrum, setting the foundation for our accelerated plan to launch the first nationwide 5G network with more than 200 million POPs later this year.",CASH_CAPEX,cash capital expenditures|cash capex|cash purchases of property and equipment,FY2019,NOT_APPLICABLE,USD,6350000000,6450000000,6400000000,450,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,0e93c7ed8b08a510d4733245a6928af0b28593a0e0882e7e68639a1d9a08a3ca,AMBIGUOUS,MISSING_CAPITALIZED_INTEREST_SUBTYPE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0038,TMUS,1283699,0001283699-15-000009,2015-02-19T02:27:06.000Z,tmus12312014ex992.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1283699/000128369915000009/tmus12312014ex992.htm,d750c169c751fbcb5cd6ab74c5060226a56714d2f012e8cfe88bb1ee413ab2ca,HTML_DIV,/html/body/document/type/sequence/filename/description/text/table[90]/tr[2]/td[2]/div,"For the full-year 2014, cash capital expenditures were $4.317 billion, up 1.8% compared to the pro forma combined $4.240 billion in 2013. Full-year 2014 cash capital expenditures were within the guidance range of $4.3 to $4.6 billion.",CASH_CAPEX,cash capital expenditures|cash capex|cash purchases of property and equipment,FY2014,NOT_APPLICABLE,USD,4300000000,4600000000,4450000000,213,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,b6fc89094606ccf64e015385d299ddd56b41ff08a7dffffdf75a7787ecce830a,INVALID,HISTORICAL_RANGE_NOT_CURRENT_GUIDANCE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0039,PLD,1045609,0001193125-12-430875,2012-10-23T12:05:42.000Z,d427254dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312512430875/d427254dex991.htm,6d9a79b2f40e60d8db93c6e7fb40c714ab20c66c9c3bfbfc32684fca4d0268ef,HTML_SINGLE_CELL_ROW,/html/body/document/type/sequence/filename/description/text/div[4]/table/tr[2],"Copyright ©
+2012 Prologis
+“A lack of supply and increasing demand for large, Class-A facilities is
+driving stronger build-to-suit activity,”
+said Walter C. Rakowich, co-chief executive 
+officer, Prologis. “Two-thirds of our development starts this quarter were
+for build- to-suits in Japan, the United Kingdom and Mexico. Our
+global platform and strategic
+land
+holdings
+uniquely
+position
+us
+to
+fulfill
+our
+customers’
+logistics 
+needs on a real-time basis.”
+Private Capital Activity 
+Year-to-date through September 30, Prologis raised or received commitments
+for $330 million in new third-party equity in its private capital
+business. In addition, during the quarter, Prologis assumed all of ProLogis
+European Properties' (PEPR) assets and liabilities and is actively working
+toward recapitalizing its European platform. 
+Capital Markets 
+During the quarter, Prologis completed $378 million of debt financings,
+re- financings and pay-downs on behalf of its property funds. 
+Guidance for 2012  
+Prologis is increasing its full-year 2012 Core FFO guidance range to $1.72 to
+ $1.74 per diluted share, from $1.64 to $1.70 per diluted share. The company
+also expects to recognize net earnings, for GAAP purposes, of $0.23 to $0.25
+per share. The difference between the company's Core FFO and net earnings
+ guidance for 2012 predominantly relates to real estate depreciation,
+recognized gains on real estate transactions and merger-related
+expenses.  The Core FFO and earnings guidance reflected above excludes
+any potential future gains (losses) recognized from real estate
+transactions. In reconciling from net earnings to Core FFO, Prologis makes
+certain adjustments, including but not limited to real estate depreciation
+and amortization expense, impairment charges, deferred taxes, and unrealized
+gains or losses on foreign currency or derivative activity, as well as
+merger and integration costs.  Webcast and Conference Call
+Information  The company will host a webcast /conference call to
+discuss quarterly results, current market conditions and future outlook
+today, October 23, 2012, at 12:00 p.m. U.S. Eastern Time. Interested parties
+are encouraged to access the live webcast by clicking the microphone icon
+located near the top of the opening page
+of
+the
+Prologis
+Investor
+Relations  website 
+(http://ir.prologis.com).
+Interested parties also can participate via conference call by dialing +1
+877-447- 8218 (from the U.S. and Canada toll free) or +1
+973-409-9692 (from all other countries) and enter reservation code
+34781721. A telephonic replay will be available from October 23 through
+November 23, at +1 855-859-2056 (from the U.S. and Canada) or +1
+404-537-3406 (from all other countries), with reservation code
+34781721. The webcast and podcast replay will be posted when available in
+the ""Financial Information"" section of Investor Relations on the 
+Prologis website.
+About Prologis 
+Prologis, Inc., is the leading owner, operator and developer of industrial real
+estate, focused on global and regional markets across the Americas, Europe
+and Asia. As of September 30, 2012, Prologis owned or had investments in,
+on a consolidated basis or through unconsolidated joint ventures,
+properties and development projects expected to total
+approximately
+565
+million
+square
+feet
+(52.5
+million
+square
+meters)
+in
+21
+countries. 
+The company leases modern distribution facilities to more than 4,500 customers,
+ including manufacturers, retailers, transportation companies,
+third-party logistics providers and other enterprises. 
+The
+statements
+in
+this
+release
+that
+are
+not
+historical
+facts
+are
+forward-looking
+statements 
+within the meaning of Section 27A of the Securities Act of 1933,
+as amended, and 
+Section 21E of the Securities Exchange Act of 1934, as amended. These
+forward- looking statements are based on current expectations, estimates
+and projections about the industry and markets in which Prologis operates,
+management's beliefs and assumptions made by management. Such statements
+involve uncertainties that could significantly impact Prologis' financial
+results. Words such as ""expects,"" ""anticipates,"" 
+""intends,""
+""plans,""
+""believes,""
+""seeks,""
+""estimates,""
+variations
+of
+such
+words
+and
+similar 
+expressions are intended to identify such forward-looking statements, which
+generally are not historical in nature. All statements that address
+operating performance, events or developments
+that
+we
+expect
+or
+anticipate
+will
+occur
+in
+the
+future
+—
+including
+statements 
+relating to rent and occupancy growth, development activity and changes in sales
+or contribution volume of developed properties, disposition activity,
+general conditions in the geographic areas where we operate, synergies to
+be realized from our recent merger transaction, our debt and financial
+position, our ability to form new property funds and the
+availability
+of
+capital
+in
+existing
+or
+new
+property
+funds
+—
+are
+forward-looking 
+statements. These statements are not guarantees of future performance and involve
+ certain risks, uncertainties and assumptions that are difficult to predict.
+Although we believe the expectations reflected in any forward-looking
+statements are based on reasonable assumptions, we can give no assurance
+that our expectations will be attained
+and
+therefore,
+actual
+outcomes
+and
+results
+may
+differ
+materially
+from
+what
+is 
+expressed or forecasted in such forward-looking statements. Some of the
+factors that may
+affect
+outcomes
+and
+results
+include,
+but
+are
+not
+limited
+to:
+(i)
+national,
+international, 
+regional and local economic climates, (ii) changes in financial markets, interest
+rates and foreign currency exchange rates, (iii) increased or
+2",CORE_FFO,core FFO|core funds from operations,FY2012,NON_GAAP,USD_PER_SHARE,1.72,1.74,1.73,1062,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,045eee19dce6d2ebf2b8baa5f73cf68b7f7043f5a4cf3ccbc7a0bca5c8bdb47a,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0040,PLD,1045609,0001193125-15-021041,2015-01-27T13:06:09.000Z,d859856dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312515021041/d859856dex991.htm,4ed46a10759c6a84fbb951bbc23612ad26af5c3a1a06abc57fe24ba7c8a1dada,HTML_SINGLE_CELL_ROW,/html/body/document/type/sequence/filename/description/text/div[2]/table/tr[2],"Copyright ©
+2015 Prologis
+2
+At year end, the book value of the company’s land bank totaled $1.8 billion 
+with an estimated build-out potential of $10.7 billion.  
+Acquisitions  
+In the fourth quarter, Prologis acquired $151.4 million ($48.2 million Prologis’ 
+share) of buildings through its co-investment ventures with a stabilized 
+capitalization rate on Prologis’ share of 6.5 percent. For the full year 2014, the 
+company acquired $1.5 billion ($659.4 million Prologis’ share) of buildings at a 
+stabilized capitalization rate on Prologis’ share of 6.4 percent. More than 
+three-quarters of these buildings were in Europe, where the company 
+purchased assets at a discount to replacement costs.  
+ 
+Equity Invested in Co-Investment Ventures  
+During the year, the company invested $679.0 million in the Prologis North 
+American Industrial Fund, through a series of investments, at a weighted 
+average stabilized capitalization rate of 6.1 percent. As a result, the company 
+increased its ownership to 66.1 percent and consolidated the venture.  
+ 
+Contributions & Dispositions  
+During the fourth quarter, Prologis completed $213.2 million ($104.3 million 
+Prologis’ share) of contributions to its co-investment ventures and third-party
+ building dispositions of non-strategic assets of $500.3 million ($406.8 million
+ Prologis’ share).  Prologis’ share of contributions and dispositions had
+a stabilized capitalization rate of 5.9 percent.   
+ 
+During the full year, the company completed $1.7 billion ($948.7 million 
+Prologis’ share) of contributions at a weighted average stabilized capitalization 
+rate (Prologis’ share) of 5.8 percent, and $1.5 billion ($1.3 billion Prologis’
+ share) of building dispositions at a weighted average stabilized capitalization 
+rate (Prologis’ share) of 6.4 percent.  
+FINANCIAL STRENGTH A TOP PRIORITY 
+Prologis completed more than $1.7 billion of capital markets activity in the 
+quarter, including the previously announced issuance of a €600 million euro 
+bond, as well as $356 million of equity issuance from the exercise of warrants 
+related to the formation of its Prologis European Logistics Partners venture 
+and through its At-the-Market equity program. In the full year, the company 
+completed $7.0 billion of capital markets activity.  
+“We have effectively converted the currency composition of our balance sheet 
+to U.S. dollars,” said Tom Olinger, chief financial officer, Prologis. “At year end,
+ our U.S. dollar 
+ 
+net equity exposure was 89 percent—this allows us to operate globally with 
+our earnings and net asset value insulated from movements in foreign 
+currencies. We are also taking advantage of the low interest environment to 
+enhance our debt stack, and maintaining significant liquidity to keep us nimble
+as opportunities arise.”  
+In the strategic capital business, the company maintained a healthy 
+investment queue and raised $2.5 billion through both private and public 
+capital during the year.  
+NET EARNINGS  
+Net earnings per diluted share was $0.81 for the fourth quarter compared with
+$0.12 for the same period in 2013. For the full year 2014, net earnings per
+diluted share was $1.24 compared with $0.64 for the full year 2013.  
+GUIDANCE ESTABLISHED FOR 2015  
+Prologis established a full year 2015 Core FFO guidance range of $2.04 to
+$2.12 per diluted share, representing 11 percent growth at the midpoint
+compared with full year 2014. The company expects to recognize net earnings,
+for GAAP purposes, of $0.40 to $0.48 per share. This assumes (on an owned
+and managed basis):  
+ 
+• 
+Year-end occupancy between 95.5 and 96.5 percent 
+• 
+GAAP same store NOI growth between 3.5 and 4.5 percent 
+• 
+Development stabilizations between $1.7 and $1.9 billion 
+• 
+Development starts between $2.3 and $2.6 billion 
+• 
+Building acquisitions between $1.0 and $1.5 billion 
+• 
+Contributions to co-investment ventures between $1.3 and $1.8 billion
+• 
+Third-party dispositions between $1.5 and $2.0 billion 
+• 
+Strategic capital revenue between $210 and $220 million 
+• 
+Net G&A between $238 and $248 million 
+ 
+The Core FFO and earnings guidance reflected above excludes any potential 
+future gains (losses) recognized from real estate transactions. In reconciling 
+from net earnings to Core FFO, Prologis makes certain adjustments including 
+but not limited to real estate depreciation and amortization expenses, gains 
+(losses) recognized from real estate transactions and early extinguishment of 
+debt or redemption of preferred stock, impairment charges, deferred taxes 
+and unrealized gains or losses on foreign currency or derivative activity.   
+The difference between the company's Core FFO and net earnings guidance 
+for 2015 predominantly relates to real estate depreciation.",CORE_FFO,core FFO|core funds from operations,FY2015,NON_GAAP,USD_PER_SHARE,2.04,2.12,2.08,3308,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,163d4a6d740e54bba1a36318b36b5a066db5431f9c1e12b24a46661abd7e4df3,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0041,PLD,1045609,0001193125-12-198456,2012-05-01T12:06:02.000Z,d330103dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312512198456/d330103dex991.htm,caa53cece4b2e5b389794df8742f5cf2604879543be28a736cc7c07b25a79652,HTML_SINGLE_CELL_ROW,/html/body/document/type/sequence/filename/description/text/div[4]/table/tr[2],"Copyright ©
+2012 Prologis
+2
+Acquisitions & Development Starts 
+ 
+Capital deployed or committed during the fourth quarter 2011 totaled 
+approximately $345 million, of which $210 million was Prologis’ share,
+including: 
+ 
+Acquisitions of $178 million including 11 industrial properties totaling to 1.6
+ million square feet (150,000 square meters) with a stabilized
+capitalization rate of 7.0 percent and 10 acres of land. Of  the
+total acquisitions, $106 million was Prologis’ share; and 
+ 
+Development starts of $166 million totaling 2.2 million square feet (206,500
+ square meters) in 9 projects, which monetized $41 million of land.
+Prologis’ share of the total expected investment is $105
+million.  
+At quarter end, Prologis’ global development portfolio totaled 13.1 million
+square feet (1.2 million square meters), with an estimated total
+investment of $1.4 billion. Prologis’ share of the estimated total
+investment was $1.2 billion with an estimated value creation at
+stabilization of $238 million.  
+Private Capital Activity 
+ 
+In 2011, Prologis raised or received new, third-party equity commitments of
+ approximately $1.8 billion.  
+ 
+Consistent with the company’s priority to streamline its private capital
+business, it has implemented a plan to rationalize its co-investment
+ventures into a smaller number of differentiated investment vehicles.
+ 
+ 
+As previously announced the company sold its 20 percent interest in its 
+Prologis Korea Fund and liquidated the first phase of its Prologis North 
+America Properties Fund I during the second half of 2011. 
+ 
+ 
+Subsequent to year end, the company purchased its partner’s 63 percent
+ interest in Prologis North America Fund II and brought the portfolio
+entirely onto its balance sheet. 
+ 
+Financing Activity 
+ 
+During the fourth quarter, Prologis completed approximately $1.4 billion of
+ capital markets activities, including debt repurchases, refinancings, and
+new financings.  
+ 
+As a result and in combination with the significant disposition and contribution
+ activity, the company: 
+ 
+ 
+Reduced its share of total debt by $907 million; 
+ 
+ 
+Lowered its share of 2012 debt maturities by $399 million; and 
+ 
+ 
+Improved its key debt metrics in line with its previously stated strategic
+ priorities.  
+“We exceeded our balance sheet management and delevering objectives for
+2011 and remain committed to building one of the top balance sheets in
+the industry,” said William Sullivan, chief financial officer,
+Prologis. “Carrying this momentum into 2012, a key area of focus is
+on further improving our financial position and mitigating our exposure
+to foreign currency.” Guidance for 2012 
+ 
+Prologis established a full-year 2012 Core FFO guidance range of $1.60 to
+$1.70 per diluted share. The company also expects to recognize a net
+loss for GAAP purposes, on a relative basis, of $(0.40) to $(0.50) per
+share.  The difference between the company’s Core FFO and net
+earnings guidance for 2012 predominately relates to real estate
+depreciation and merger related expenses.  
+The Core FFO and earnings guidance reflected above excludes any potential
+gains (losses) recognized from property dispositions, due to the
+variability of timing, composition of properties and estimate of
+proceeds.  In reconciling from net earnings to Core FFO, Prologis
+makes certain adjustments including but not limited to real estate
+depreciation and amortization expense, impairment charges, deferred
+taxes, unrealized gains or losses on foreign currency or derivative activity,
+as well as transaction and merger costs.
+ 
+The principal drivers supporting Prologis’ 2012 guidance include the
+following: 
+ 
+Year end occupancy in its operating portfolio between 92.5 and 93.5 percent
+ (consistent with historical seasonal trends, the company expects
+occupancy to decrease in the first quarter and trend higher through the
+remainder of the year); 
+ 
+ 
+Same-store NOI growth flat to 1.0 percent, excluding the impact of foreign
+ exchange movements; 
+ 
+ Acquisitions of $111 million, including $71 million in 10 logistics 
+facilities totaling approximately 1.0 million square feet (91,231 
+square meters) with a stabilized capitalization rate of 6.6 percent 
+and an investment of $40 million in land and land infrastructure. Of 
+the total acquisitions, $58 million was Prologis’ share. 
+At quarter end, Prologis’ global development portfolio totaled 12.0 
+million square feet (128,131 square meters), with a total expected 
+investment of $1.4 billion. Prologis’ share of the estimated total 
+investment is $1.2 billion, with an estimated value creation at 
+stabilization of $248 million.   
+Private Capital Activity  
+During the first quarter 2012, Prologis raised $128 million in new third-
+party equity for the Prologis Targeted U.S. Logistics Fund.  
+The company continued the rationalization of its co-investment 
+ventures into fewer, more profitable and differentiated investment 
+vehicles. As previously announced, during the first quarter the 
+company:  
+ 
+Purchased its partner's interest in Prologis North American Fund II 
+and brought the entire $1.6 billion portfolio directly onto its balance 
+sheet;  
+ 
+Concluded the Prologis California Fund, as it had reached the end 
+of the venture’s term. The portfolio was equally divided with its 
+partner, and Prologis' 50 percent share of the fund's $1.0 billion of 
+real estate was brought directly onto its balance sheet; and  
+ 
+Disposed of 11 of the 12 assets held in Prologis North American 
+Fund XI.  
+Capital Markets  
+During the first quarter 2012, Prologis completed more than $1.3 billion 
+of debt financings and refinancings, with approximately $1.0 billion 
+related to the REIT and $296 million on behalf of our property funds.     
+Significant financing activity during the first quarter included the 
+following:   
+ 
+A $642 million (€487.5 million) multi-currency senior term loan 
+agreement at an all-in drawn margin of 150 basis points over 
+LIBOR, extendable at the company’s option through 2017; and  
+ 
+$372 million (¥ 30.5 billion) in three TMK bond financings with a 
+weighted average term of five years and weighted average rate of 
+1.05 percent.  
+Subsequent to quarter end the company paid off $449million of its 2.25
+percent convertible notes and repaid $59 million of senior unsecured 
+notes at maturity.  
+“During the first quarter, we made excellent progress toward our stated
+goal of streamlining our private capital business by rationalizing two 
+funds,” said William E. Sullivan, chief financial officer, Prologis. “While 
+this activity modestly increased our total debt in the interim, it 
+enhanced the simplification of the balance sheet and brought a 
+substantial amount of high-quality assets directly into the REIT. We 
+remain highly focused on de-levering the balance sheet and expect to 
+make progress on improving our debt metrics throughout the course of 
+2012 and 2013.”  
+Guidance for 2012  
+Prologis re-affirmed its full-year 2012 Core FFO guidance range of 
+$1.60 to $1.70 per diluted share. The company also expects to 
+recognize net earnings, for GAAP purposes, of $0.05 to $0.15 per 
+share. The difference between the company’s Core FFO and net 
+earnings guidance for 2012 predominantly relates to real estate 
+depreciation, recognized gains on real estate transactions, and 
+merger-related expenses.   
+The Core FFO and earnings guidance reflected above excludes any 
+potential future gains (losses) recognized from real estate  
+transactions. In reconciling from net earnings to Core FFO, Prologis 
+makes certain adjustments, including but not limited to real estate 
+depreciation and amortization expense, impairment charges, deferred 
+taxes, unrealized gains or losses on foreign currency or derivative 
+activity, as well as transaction and merger costs.",CORE_FFO,core FFO|core funds from operations,FY2012,NON_GAAP,USD_PER_SHARE,1.6,1.7,1.65,2716,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,1f11911f7b45d3028ef312d2d2b45652f6cc1b0c11851eca0b7f947861fea596,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0042,PLD,1045609,0001193125-13-299744,2013-07-24T12:07:00.000Z,d572370dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312513299744/d572370dex991.htm,2148db18aed8811070878949b0da3cd3e13e7b438bb6c2c71c665e48bc9a8bba,HTML_SINGLE_CELL_ROW,/html/body/document/type/sequence/filename/description/text/div[4]/table/tr[2],"Copyright ©
+2013 Prologis
+2
+Dispositions and Contributions 
+Prologis completed $567.2 million in contributions and dispositions in 
+the second quarter, of which $347.7 million was the company’s share, 
+with a stabilized capitalization rate of 5.6 percent, including:  
+ 
+ 
+$282.0 million in contributions to Nippon Prologis REIT and 
+Prologis Mexico Fondo Logistico, of which $237.3 million was 
+the company’s share; and  
+ 
+ 
+$285.2 million of third-party building and land dispositions, of 
+which $110.4 million was the company’s share. 
+ 
+Investment Management 
+During the second quarter, the company further streamlined its co-
+investment ventures by rationalizing two funds: 
+ 
+ 
+Prologis Japan Fund 1, the assets of which were acquired by 
+Nippon Prologis REIT and Prologis; and  
+ 
+ 
+Prologis Institutional Alliance Fund II, in which the company 
+acquired its outside partners' interests and the assets are now 
+wholly-owned by Prologis. 
+ 
+At quarter end, Prologis had $22.8 billion in combined assets under 
+management in 15 funds. 
+ 
+Capital Markets 
+During the second quarter, Prologis completed approximately $4.3 
+billion in capital markets transactions, including: 
+ 
+ 
+$1.5 billion from its follow-on equity offering, including the over-
+allotment; 
+ 
+ 
+$2.3 billion in debt financings, re-financings, and pay-downs; 
+and 
+ 
+ 
+$482.5 million in preferred stock redemptions. 
+The company also established an at-the-market equity offering program 
+to sell up to $750 million of its common stock.  
+ 
+Subsequent to quarter end, Prologis recast and upsized its global line of
+credit by $350 million to $2.0 billion, extended the initial term to 2017, 
+and achieved a 40 basis point reduction in interest rate. 
+ 
+“Our capital markets activity in the quarter provides us with enhanced 
+financial flexibility,” said Thomas S. Olinger, chief financial officer, 
+Prologis. “We have a strong balance sheet and the proven ability to 
+access multiple sources of capital to fund our growth opportunities.” 
+ 
+Guidance for 2013  
+Prologis narrowed its full-year 2013 Core FFO guidance range to $1.63 
+to $1.67 per diluted share. The company also expects to recognize net 
+earnings, for GAAP purposes, of $0.58 to $0.62 per share.  
+ 
+In addition, the company increased its full-year deployment guidance 
+range by $1.7 billion, to $3.5 billion to $4.1 billion. 
+ 
+The Core FFO and earnings guidance reflected above excludes any 
+potential future gains (losses) recognized from real estate transactions. 
+In reconciling from net earnings to Core FFO, Prologis makes certain 
+adjustments, including but not limited to real estate depreciation and 
+amortization expense, gains (losses) recognized from real estate 
+transactions and early extinguishment of debt or redemption of 
+preferred stock, impairment charges, deferred taxes, and unrealized 
+gains or losses on foreign currency or derivative activity.  
+ 
+The difference between the company's Core FFO and net earnings 
+guidance for 2013 predominantly relates to real estate depreciation and 
+recognized gains on real estate transactions.  
+ 
+Webcast and Conference Call Information  
+The company will host a webcast /conference call to discuss quarterly 
+results, current market conditions and future outlook today, July 24, at 
+12:00 p.m. U.S. Eastern Time. Interested parties are encouraged to 
+access the live webcast by clicking the microphone icon located near 
+the top of the opening page of the Prologis Investor Relations website",CORE_FFO,core FFO|core funds from operations,FY2013,NON_GAAP,USD_PER_SHARE,1.63,1.67,1.65,2096,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,22a089c4f142e2624feef62568f543aa3e656c4dfc2b1338d6ee4551e87db043,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0043,PLD,1045609,0001564590-15-005526,2015-07-21T12:05:26.000Z,pld-ex991_372.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000156459015005526/pld-ex991_372.htm,fe1171f4755768fe8baa854e2f77eb81f04a3a95092aa217f65fec42dfa79c0c,HTML_P,/html/body/document/type/sequence/filename/description/text/p[11],"2complete the long-term funding of KTR and have the capital to support future growth through asset recycling.” NET EARNINGSNet earnings per diluted share was $0.27 for the second quarter compared with $0.13 for the same period in 2014.GROWS ANNUALIZED DIVIDEND BY 11 PERCENT AND INCREASES 2015 CORE FFO GUIDANCE MIDPOINTDividendThe Prologis Board of Directors declared a regular cash dividend for the quarter ending September 30, 2015, on the following securities:A dividend of $0.40 per share of the company’s common stock, representing an increase of 11 percent over the June 2015 quarterly common stock dividend, payable September 30, 2015, to common stockholders of record at the close of business on September 18, 2015; andA dividend of $1.0675 per share of the company’s 8.54 percent Series Q Cumulative Redeemable Preferred Stock, payable September 30, 2015, to Series Q stockholders of record at the close of business on September 18, 2015.“This increase in our common stock dividend is the second this year, and the combined impact results in a 21 percent increase over the 2014 dividend level on a run rate basis,” said Olinger. “The growth in our dividend was driven by the cash flow accretion from the KTR transaction and a stronger operations outlook.”GuidancePrologis increased the midpoint of its full-year 2015 Core FFO guidance and narrowed the range to $2.18 to $2.22 per diluted share from $2.16 to $2.22 per diluted share, representing expected year-over-year growth of 17 percent. The company expects to recognize net earnings, for GAAP purposes, of $1.12 to $1.16 per share. The Core FFO and earnings guidance described above excludes any potential future gains (losses) recognized from real estate transactions. In reconciling from net earnings to Core FFO, Prologis makes certain adjustments, including but not limited to real estate depreciation and amortization expense, gains (losses) recognized from real estate transactions and early extinguishment of debt, acquisition costs, impairment charges, deferred taxes and unrealized gains or losses on foreign currency or derivative activity. The difference between the company's Core FFO and net earnings guidance for 2015 relates predominantly to these items.WEBCAST & CONFERENCE CALL INFORMATIONPrologis will host a live webcast/conference call to discuss quarterly results, current market conditions and future outlook today, July 21, at 11 a.m. U.S. Eastern Time. Interested parties are encouraged to access the webcast by clicking on the Investor Events and Presentations section of the Prologis Investor Relations website (http://ir.prologis.com). Interested parties also can participate via conference call by dialing +1 877-256-7020 (toll-free from the U.S. and Canada) or +1 973-409-9692 (from all other countries) and entering conference code 48765490.A telephonic replay will be available July 21-Aug. 21 at +1 855-859-2056 (from the U.S. and Canada) or +1 404-537-3406 (from all other countries); please use conference code 48765490. The webcast replay will be posted when available in the ""Events & Presentations"" section of Investor Relations on the Prologis website. ABOUT PROLOGISPrologis, Inc. is the global leader in industrial real estate. As of June 30, 2015, Prologis owned or had investments in, on a wholly owned basis or through co-investment ventures, properties and development projects expected to total approximately 670 million square feet (62 million square meters) in 21 countries. The company leases modern distribution facilities to more than 5,200 customers, including third-party logistics providers, transportation companies, retailers and manufacturers.The statements in this document that are not historical facts are forward-looking statements within the meaning of Section 27A of the Securities Act of 1933, as amended, and Section 21E of the Securities Exchange Act of 1934, as amended. These forward-looking statements are based on current expectations, estimates and projections about the industry and markets in which Prologis operates, management’s beliefs and assumptions made by management. Such statements involve uncertainties that could significantly impact Prologis’ financial results. Words such as “expects,” “anticipates,” “intends,” “plans,” “believes,” “seeks,” “estimates,” variations of such words and similar expressions are intended to identify such forward-looking statements, which generally are not historical in nature. All statements that address operating performance, events or developments that we expect or anticipate will occur in the future — including statements relating to rent and occupancy growth, development activity and changes in sales or contribution volume of properties, disposition activity, general conditions in the geographic areas where we operate, our debt and financial position, our ability to form new co-",CORE_FFO,core FFO|core funds from operations,FY2015,NON_GAAP,USD_PER_SHARE,2.18,2.22,2.2,1371,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,2c21f9500d6901d9065a300bdd3e1a5bb680d74cf620bb763bf70c2be7328afe,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0044,PLD,1045609,0001193125-13-168855,2013-04-24T12:06:09.000Z,d524473dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312513168855/d524473dex991.htm,90a7a66b061b1fedecb832746b4e7f1391876914de4a996aed9186af492e37a7,HTML_SINGLE_CELL_ROW,/html/body/document/type/sequence/filename/description/text/div[2]/table/tr[2],"2
+Copyright ©
+2013 Prologis
+investment of $2.0 billion, of which Prologis' share was $1.8 
+billion. The company’s share of estimated value creation at 
+stabilization is expected to be $371 million, with a weighted 
+average estimated stabilized yield of 7.8 percent and a margin 
+of approximately 21.6 percent.  
+Capital Markets  
+During the first quarter, Prologis completed approximately $3.0
+billion of capital markets activity including debt financings, re-
+financings, and pay-downs.  
+As a result, and in combination with the significant disposition 
+and contribution activity, the company:  
+ 
+Lowered its share of total debt by $2.4 billion;  
+ 
+Improved the company’s debt as a percent of gross 
+real estate assets to 37.5 percent and debt to adjusted 
+EBITDA to 7.52 times; and   
+ 
+Increased its USD net equity to 66 percent.  
+ 
+“During the quarter, we made considerable progress 
+strengthening our financial position and reducing our foreign 
+net equity exposure,” said Thomas Olinger, chief financial 
+officer, Prologis. “With a strong balance sheet in place, we are 
+well positioned to grow our company strategically.”  
+Subsequent to quarter end, the company redeemed $482 
+million of its outstanding preferred stock.  
+Guidance for 2013   
+Prologis maintains its full-year 2013 Core FFO guidance range
+of $1.60 to $1.70 per diluted share. The company also expects
+to recognize net earnings, for GAAP purposes, of $0.55 to 
+$0.65 per share.   
+The Core FFO and earnings guidance reflected above 
+excludes any potential future gains (losses) recognized from 
+real estate transactions. In reconciling from net earnings to 
+Core FFO, Prologis makes certain adjustments, including but 
+not limited to real estate depreciation and amortization 
+expense, gains (losses) recognized from real estate 
+transactions and early extinguishment of debt or redemption of
+ 
+preferred stock, impairment charges, deferred taxes, and unrealized 
+gains or losses on foreign currency or derivative activity.   
+The difference between the company's Core FFO and net earnings 
+guidance for 2013 predominantly relates to real estate depreciation and
+recognized gains on real estate transactions.   
+Webcast and Conference Call Information   
+The company will host a webcast /conference call to discuss quarterly 
+results, current market conditions and future outlook today, April 24, at 
+12:00 p.m. U.S. Eastern Time. Interested parties are encouraged to 
+access the live webcast by clicking the microphone icon located near 
+the top of the opening page of the Prologis Investor Relations website 
+(http://ir.prologis.com). Interested parties also can participate via
+ conference call by dialing 
++1 877-256-7020 (from the U.S. and Canada toll free) or +1
+973-409-9692 (from all other countries) and enter conference code 26751768. 
+ A telephonic replay will be available from April 24 through May 24 at +1 
+855-859-2056 (from the U.S. and Canada) or +1 404-537-3406 (from 
+all other countries), with conference code 26751768. The webcast 
+replay will be posted when available in the ""Financial Information"" 
+section of Investor Relations on the Prologis website.  
+About Prologis  
+Prologis, Inc., is the leading owner, operator and developer of industrial 
+real estate, focused on global and regional markets across the 
+Americas, Europe and Asia. As of March 31, 2013, Prologis owned or 
+had investments in, on a consolidated basis or through unconsolidated 
+joint ventures, properties and development projects expected to total 
+approximately 559 million square feet (51.9 million square meters) in 
+21 countries. The company leases modern distribution facilities to more 
+than 4,500 customers, including manufacturers, retailers, transportation
+companies, third-party logistics providers and other enterprises.  
+The statements in this release that are not historical facts are forward-
+looking statements within the meaning of Section 27A of the Securities 
+Act of 1933, as amended, and Section 21E of the Securities Exchange 
+Act of 1934, as amended. These forward-looking statements are based",CORE_FFO,core FFO|core funds from operations,FY2013,NON_GAAP,USD_PER_SHARE,0.55,0.65,0.6,1429,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,3805369c64c357fd328b21b610a7a6d01a2adf64fb8657dafcdc99d81fa23b29,INVALID,RESPECTIVELY_WRONG_METRIC,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0045,PLD,1045609,0001193125-12-198456,2012-05-01T12:06:02.000Z,d330103dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312512198456/d330103dex991.htm,caa53cece4b2e5b389794df8742f5cf2604879543be28a736cc7c07b25a79652,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[4]/table/tr[2]/td/div[70],"Prologis established a full-year 2012 Core FFO guidance range of $1.60 to
+$1.70",CORE_FFO,core FFO|core funds from operations,FY2012,NON_GAAP,USD_PER_SHARE,1.6,1.7,1.65,65,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,3b35d7acca5555bfb58a7e208f769eb608f1e094c976c8ef8d16761a90f63906,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0046,PLD,1045609,0001193125-15-207873,2015-06-01T13:40:00.000Z,d933474dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312515207873/d933474dex991.htm,48b2eba96f16789a179e060244bc11b2dfca7aad308fd1db5686981f18b914b3,HTML_P,/html/body/document/type/sequence/filename/description/text/p[12],"The transaction is expected to be accretive to 2015 core funds from operations (Core FFO) by approximately $0.09 per share. As a result, Prologis increased
+its full-year 2015 Core FFO guidance range to $2.16 to $2.22 per diluted share from $2.07 to $2.13 per diluted share. This represents year-over-year growth of more than 16 percent at the midpoint. On an annual stabilized basis, the forecasted Core
+FFO accretion is expected to be approximately $0.15 per share. Additionally, the transaction is expected to reduce general and administrative expenses as a percentage of assets under management by approximately 10 percent and increase U.S. dollar
+equity exposure to 95 percent.",CORE_FFO,core FFO|core funds from operations,FY2015,NON_GAAP,USD_PER_SHARE,2.16,2.22,2.19,202,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,593731a93e3166bcb874a00b10ca78efdff6b756b8f05156e1f4fa259401000e,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0047,PLD,1045609,0001193125-13-040119,2013-02-06T13:06:06.000Z,d480629dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312513040119/d480629dex991.htm,1c6ac4de1dd8775441b49329e015ddd1bb1a89ea46d706a6fd944ee67d50d9d9,HTML_SINGLE_CELL_ROW,/html/body/document/type/sequence/filename/description/text/div[4]/table/tr[2],"Copyright ©
+2013 Prologis
+2
+Development Starts and Building Acquisitions  
+Committed capital during the fourth quarter 2012 totaled approximately $1.2 
+billion, of which $909 million was Prologis' share, including: 
+ 
+Development starts of $727 million, of which $613 million was 
+Prologis’ share. These starts totaled 7.3 million square feet (675,000 
+square meters), and monetized $190 million of land. The company’s 
+estimated share of value creation on development starts in the fourth 
+quarter was $71 million. 
+Acquisitions of $458 million, including $276 million in buildings with a 
+stabilized capitalization rate of 7.4 percent and an investment of $182 
+million in land and land infrastructure. Of the total acquisitions, $295 
+million was Prologis’ share. 
+ 
+Capital committed during the year totaled approximately $2.5 billion, of which 
+$2.0 billion was the company’s share. This included development starts of $1.6 
+billion, of which 57 percent were build-to-suits, and acquisitions of $983 million, 
+including $544 million in buildings with a stabilized capitalization rate of 7.3 
+percent and an investment of $439 million in land and land infrastructure. 
+ 
+At quarter end, Prologis' global development pipeline comprised 22.5 million 
+square feet (2.1 million square meters), with a total expected investment of 
+$2.1 billion, of which Prologis' share was $1.9 billion. The company’s share of 
+estimated value creation at stabilization is expected to be $354 million, with a 
+weighted average stabilized yield of 7.8 percent and a margin of approximately 
+19 percent. 
+ 
+Private Capital Activity 
+In 2012, Prologis raised or received commitments for $1.9 billion in new, third-
+party equity. This was primarily due to PELP, and also included Prologis 
+Targeted U.S. Logistics Fund and Prologis Targeted Europe Logistics Fund. 
+ 
+The company continued streamlining its co-investment ventures into fewer, 
+more profitable and differentiated investment vehicles, rationalizing six funds in 
+2012.  
+ 
+In the fourth quarter, Prologis concluded the Prologis North American Fund I. 
+Two of the fund’s assets were sold to third parties with the remaining portfolio 
+divided up between the partners, of which Prologis’ share was $117 million. 
+Capital Markets 
+Prologis completed approximately $1.1 billion of capital markets activity in the 
+fourth quarter and $4.8 billion for the full year 2012. This includes debt 
+financings, re-financings, and pay-downs. Subsequent to quarter end, the
+company paid off $141 million of its 1.875 percent convertible notes and repaid $319 million of
+secured debt. 
+Guidance for 2013  
+Prologis established a full-year 2013 Core FFO guidance range of $1.60 to 
+$1.70 per diluted share. On a GAAP basis, the company expects to recognize 
+a range of a net loss of ($0.07) per share to net earnings of $0.03 per share. 
+From a fourth quarter run rate perspective, this slight decline from 2012 is 
+primarily due to near-term dilution from disposition and contribution activities, 
+which are expected to significantly deleverage the company by the end of the 
+first quarter. 
+ 
+The Core FFO and earnings guidance reflected above excludes any potential 
+future gains (losses) recognized from real estate transactions. In reconciling 
+from net earnings to Core FFO, Prologis makes certain adjustments, including 
+but not limited to real estate depreciation and amortization expense, 
+impairment charges, deferred taxes, early extinguishment of debt, and 
+unrealized gains or losses on foreign currency or derivative activity.  
+ 
+The difference between the company's Core FFO and net earnings guidance 
+for 2013 predominantly relates to real estate depreciation and recognized 
+gains on real estate transactions.  
+ 
+The principal drivers supporting Prologis’ 2013 guidance include the following: 
+ 
+Year end occupancy in its operating portfolio between 94 to 95 
+percent (consistent with historical seasonal trends, the company 
+expects occupancy to decrease in the first quarter and trend higher 
+through the remainder of the year); 
+ 
+Same-store NOI growth of 1.5 to 2.5 percent, excluding the impact of 
+foreign exchange movements; 
+ 
+Development starts of $1.5 to $1.8 billion, of which approximately 75 
+percent is expected to be the company’s share; 
+ 
+Building acquisitions of $400 to $600 million, of which approximately 
+35 percent is expected to be the company’s share; 
+ 
+Building and land dispositions and contributions of $7.5 to $10.0 
+billion, of which approximately 60 percent is expected to be the 
+company’s share; and 
+ 
+A euro exchange rate of $1.35; and a yen exchange rate of JPY 92 
+per U.S. dollar.",CORE_FFO,core FFO|core funds from operations,FY2013,NON_GAAP,USD_PER_SHARE,1.6,1.7,1.65,2698,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,5a5edef2641c8e1e905f5110b43c94acb0470ae0e5b345683b2c7b402fc0d223,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0048,PLD,1045609,0001193125-14-151746,2014-04-22T12:08:07.000Z,d713104dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312514151746/d713104dex991.htm,5c3b7ea9b756797145c9be0b4289af23d6fdedc0ced90115fcc96dd707ca403d,HTML_SINGLE_CELL_ROW,/html/body/document/type/sequence/filename/description/text/div[2]/table/tr[2],"Copyright ©
+2014 Prologis
+2
+CAPITAL MARKETS ACTIVITY STRENGTHENS FINANCIAL POSITION  
+During the first quarter, Prologis took the opportunity to further access the 
+current low interest rate environment to complete approximately $1.2 billion 
+of debt financings and refinancings, including the issuance of €700 million 
+($965.2 million) of Eurobonds.  
+Subsequent to quarter end, the company closed on the issuance of €300 million 
+ ($413.6 million) of Prologis European Properties Fund II Eurobonds. 
+Additionally, the company redeemed $194.2 million of U.S. senior notes and 
+repaid $239.3 million of secured debt.  
+“The recent credit ratings upgrade from Standard & Poor’s to BBB+ is 
+affirmation of our earnings trajectory, significant liquidity, and our 
+demonstrated commitment to build one of the strongest balance sheets in 
+the REIT sector,” said Thomas S. Olinger, chief financial officer, Prologis. 
+“Our euro-related financings in the first quarter enabled us to increase our 
+U.S. dollar net equity position to 82 percent, further minimizing foreign 
+currency exposure.”  
+DIVIDEND INCREASED  
+As previously announced, the board of directors of Prologis approved a plan 
+during the first quarter to raise the company's annualized dividend level by 
+18 percent to $1.32 per share of common stock. The dividend is expected to 
+be declared quarterly.  
+NET EARNINGS  
+Net earnings per fully diluted share was $0.01 for the first quarter compared 
+to net earnings per share of $0.57 for the same period in 2013. The year-over-
+year decrease was primarily due to a lower level of gains on the contributions 
+and disposition of operating properties.  
+GUIDANCE NARROWED FOR 2014  
+Prologis narrowed its full-year 2014 Core FFO guidance range to $1.76 to 
+$1.82 per diluted share from $1.74 to $1.82 per diluted share. The company 
+also narrowed its guidance for net earnings to a range of $0.06 to $0.12 per 
+diluted share.
+ 
+The Core FFO and earnings guidance reflected above excludes any potential 
+future gains (losses) recognized from real estate transactions. In reconciling 
+from net earnings to Core FFO, Prologis makes certain adjustments, including 
+but not limited to real estate depreciation and amortization expense, gains 
+(losses) recognized from real estate transactions and early extinguishment of  
+debt or redemption of preferred stock, impairment charges, deferred taxes, 
+and unrealized gains or losses on foreign currency or derivative activity. 
+   
+The difference between the company's Core FFO and net earnings guidance 
+for 2014 predominantly relates to real estate depreciation and recognized 
+gains or losses on real estate transactions and early extinguishment of debt.  
+WEBCAST & CONFERENCE CALL INFORMATION  
+The company will host a webcast/conference call to discuss quarterly results, 
+current market conditions and future outlook today, April 22, at 12:00 p.m. 
+U.S. Eastern Time. Interested parties are encouraged to access the live 
+webcast by clicking the microphone icon located near the top of the opening 
+page of the Prologis Investor Relations website (http://ir.prologis.com). Interested parties
+also can participate via conference call by dialing +1 877- 256-7020 (from the
+U.S. and Canada toll free) or +1 973-409-9692 (from all other countries) and
+entering conference code 48765448.  A telephonic replay will be available from
+April 23 through May 23 at +1 855- 859-2056 (from the U.S. and Canada) or +1
+404-537-3406 (from all other countries), and entering conference code
+48765448. The webcast replay will be posted when available in the ""Events &
+Presentations"" section of Investor Relations on the Prologis website.  
+ ABOUT PROLOGIS  
+Prologis, Inc., is the leading owner, operator and developer of industrial real 
+estate, focused on global and regional markets across the Americas, Europe 
+and Asia. As of March 31, 2014, Prologis owned or had investments in, on a 
+wholly owned basis or through co-investment ventures, properties and 
+development projects expected to total approximately 574 million square 
+feet (53.3 million square meters) in 21 countries. The company leases 
+modern distribution facilities to more than 4,700 customers, including 
+manufacturers, retailers, transportation companies, third-party logistics 
+providers and other enterprises.  
+The statements in this document that are not historical facts are forward-
+looking statements within the meaning of Section 27A of the Securities Act of 
+1933, as amended, and Section 21E of the Securities Exchange Act of 1934, as 
+amended. These forward-looking statements are based on current 
+expectations, estimates and projections about the industry and markets in 
+which Prologis operates, management’s beliefs and assumptions made by 
+management.  Such statements involve uncertainties that could significantly 
+impact Prologis’ financial results. Words such as “expects,”
+“anticipates,” “intends,” “plans,” “believes,”
+“seeks,” “estimates,”",CORE_FFO,core FFO|core funds from operations,FY2014,NON_GAAP,USD_PER_SHARE,1.74,1.82,1.78,1792,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,5a86c2e1aabb2387b55863c99834459a5c812f80b7cd33da91d5738ff45b90ae,INVALID,PRIOR_RANGE_NOT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0049,PLD,1045609,0001193125-12-198456,2012-05-01T12:06:02.000Z,d330103dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312512198456/d330103dex991.htm,caa53cece4b2e5b389794df8742f5cf2604879543be28a736cc7c07b25a79652,HTML_SINGLE_CELL_ROW,/html/body/document/type/sequence/filename/description/text/div[4]/table/tr[2],"Copyright ©
+2012 Prologis
+2
+Acquisitions & Development Starts 
+ 
+Capital deployed or committed during the fourth quarter 2011 totaled 
+approximately $345 million, of which $210 million was Prologis’ share,
+including: 
+ 
+Acquisitions of $178 million including 11 industrial properties totaling to 1.6
+ million square feet (150,000 square meters) with a stabilized
+capitalization rate of 7.0 percent and 10 acres of land. Of  the
+total acquisitions, $106 million was Prologis’ share; and 
+ 
+Development starts of $166 million totaling 2.2 million square feet (206,500
+ square meters) in 9 projects, which monetized $41 million of land.
+Prologis’ share of the total expected investment is $105
+million.  
+At quarter end, Prologis’ global development portfolio totaled 13.1 million
+square feet (1.2 million square meters), with an estimated total
+investment of $1.4 billion. Prologis’ share of the estimated total
+investment was $1.2 billion with an estimated value creation at
+stabilization of $238 million.  
+Private Capital Activity 
+ 
+In 2011, Prologis raised or received new, third-party equity commitments of
+ approximately $1.8 billion.  
+ 
+Consistent with the company’s priority to streamline its private capital
+business, it has implemented a plan to rationalize its co-investment
+ventures into a smaller number of differentiated investment vehicles.
+ 
+ 
+As previously announced the company sold its 20 percent interest in its 
+Prologis Korea Fund and liquidated the first phase of its Prologis North 
+America Properties Fund I during the second half of 2011. 
+ 
+ 
+Subsequent to year end, the company purchased its partner’s 63 percent
+ interest in Prologis North America Fund II and brought the portfolio
+entirely onto its balance sheet. 
+ 
+Financing Activity 
+ 
+During the fourth quarter, Prologis completed approximately $1.4 billion of
+ capital markets activities, including debt repurchases, refinancings, and
+new financings.  
+ 
+As a result and in combination with the significant disposition and contribution
+ activity, the company: 
+ 
+ 
+Reduced its share of total debt by $907 million; 
+ 
+ 
+Lowered its share of 2012 debt maturities by $399 million; and 
+ 
+ 
+Improved its key debt metrics in line with its previously stated strategic
+ priorities.  
+“We exceeded our balance sheet management and delevering objectives for
+2011 and remain committed to building one of the top balance sheets in
+the industry,” said William Sullivan, chief financial officer,
+Prologis. “Carrying this momentum into 2012, a key area of focus is
+on further improving our financial position and mitigating our exposure
+to foreign currency.” Guidance for 2012 
+ 
+Prologis established a full-year 2012 Core FFO guidance range of $1.60 to
+$1.70 per diluted share. The company also expects to recognize a net
+loss for GAAP purposes, on a relative basis, of $(0.40) to $(0.50) per
+share.  The difference between the company’s Core FFO and net
+earnings guidance for 2012 predominately relates to real estate
+depreciation and merger related expenses.  
+The Core FFO and earnings guidance reflected above excludes any potential
+gains (losses) recognized from property dispositions, due to the
+variability of timing, composition of properties and estimate of
+proceeds.  In reconciling from net earnings to Core FFO, Prologis
+makes certain adjustments including but not limited to real estate
+depreciation and amortization expense, impairment charges, deferred
+taxes, unrealized gains or losses on foreign currency or derivative activity,
+as well as transaction and merger costs.
+ 
+The principal drivers supporting Prologis’ 2012 guidance include the
+following: 
+ 
+Year end occupancy in its operating portfolio between 92.5 and 93.5 percent
+ (consistent with historical seasonal trends, the company expects
+occupancy to decrease in the first quarter and trend higher through the
+remainder of the year); 
+ 
+ 
+Same-store NOI growth flat to 1.0 percent, excluding the impact of foreign
+ exchange movements; 
+ 
+ Acquisitions of $111 million, including $71 million in 10 logistics 
+facilities totaling approximately 1.0 million square feet (91,231 
+square meters) with a stabilized capitalization rate of 6.6 percent 
+and an investment of $40 million in land and land infrastructure. Of 
+the total acquisitions, $58 million was Prologis’ share. 
+At quarter end, Prologis’ global development portfolio totaled 12.0 
+million square feet (128,131 square meters), with a total expected 
+investment of $1.4 billion. Prologis’ share of the estimated total 
+investment is $1.2 billion, with an estimated value creation at 
+stabilization of $248 million.   
+Private Capital Activity  
+During the first quarter 2012, Prologis raised $128 million in new third-
+party equity for the Prologis Targeted U.S. Logistics Fund.  
+The company continued the rationalization of its co-investment 
+ventures into fewer, more profitable and differentiated investment 
+vehicles. As previously announced, during the first quarter the 
+company:  
+ 
+Purchased its partner's interest in Prologis North American Fund II 
+and brought the entire $1.6 billion portfolio directly onto its balance 
+sheet;  
+ 
+Concluded the Prologis California Fund, as it had reached the end 
+of the venture’s term. The portfolio was equally divided with its 
+partner, and Prologis' 50 percent share of the fund's $1.0 billion of 
+real estate was brought directly onto its balance sheet; and  
+ 
+Disposed of 11 of the 12 assets held in Prologis North American 
+Fund XI.  
+Capital Markets  
+During the first quarter 2012, Prologis completed more than $1.3 billion 
+of debt financings and refinancings, with approximately $1.0 billion 
+related to the REIT and $296 million on behalf of our property funds.     
+Significant financing activity during the first quarter included the 
+following:   
+ 
+A $642 million (€487.5 million) multi-currency senior term loan 
+agreement at an all-in drawn margin of 150 basis points over 
+LIBOR, extendable at the company’s option through 2017; and  
+ 
+$372 million (¥ 30.5 billion) in three TMK bond financings with a 
+weighted average term of five years and weighted average rate of 
+1.05 percent.  
+Subsequent to quarter end the company paid off $449million of its 2.25
+percent convertible notes and repaid $59 million of senior unsecured 
+notes at maturity.  
+“During the first quarter, we made excellent progress toward our stated
+goal of streamlining our private capital business by rationalizing two 
+funds,” said William E. Sullivan, chief financial officer, Prologis. “While 
+this activity modestly increased our total debt in the interim, it 
+enhanced the simplification of the balance sheet and brought a 
+substantial amount of high-quality assets directly into the REIT. We 
+remain highly focused on de-levering the balance sheet and expect to 
+make progress on improving our debt metrics throughout the course of 
+2012 and 2013.”  
+Guidance for 2012  
+Prologis re-affirmed its full-year 2012 Core FFO guidance range of 
+$1.60 to $1.70 per diluted share. The company also expects to 
+recognize net earnings, for GAAP purposes, of $0.05 to $0.15 per 
+share. The difference between the company’s Core FFO and net 
+earnings guidance for 2012 predominantly relates to real estate 
+depreciation, recognized gains on real estate transactions, and 
+merger-related expenses.   
+The Core FFO and earnings guidance reflected above excludes any 
+potential future gains (losses) recognized from real estate  
+transactions. In reconciling from net earnings to Core FFO, Prologis 
+makes certain adjustments, including but not limited to real estate 
+depreciation and amortization expense, impairment charges, deferred 
+taxes, unrealized gains or losses on foreign currency or derivative 
+activity, as well as transaction and merger costs.",CORE_FFO,core FFO|core funds from operations,FY2012,NON_GAAP,USD_PER_SHARE,0.05,0.15,0.1,7099,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,5bc99d2164deb408e77b1764a314ee970fa0063e78c26b4a6e09409b2769d5ea,INVALID,RESPECTIVELY_WRONG_METRIC,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0050,PLD,1045609,0001193125-14-274964,2014-07-22T12:06:40.000Z,d760069dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1045609/000119312514274964/d760069dex991.htm,0925a3010e7c7e8f19eba64cee0dc463ac90619c6b1cbe3213429b5d6b9e8b47,HTML_P,/html/body/document/type/sequence/filename/description/text/p[95],"Prologis increased the midpoint and narrowed its full-year 2014 Core FFO guidance range to $1.82 to $1.86 per diluted share from $1.76 to $1.82 per diluted share. The company also expects
+to recognize net earnings, for GAAP purposes, of $0.20 to $0.24 per share.",CORE_FFO,core FFO|core funds from operations,FY2014,NON_GAAP,USD_PER_SHARE,1.76,1.82,1.79,129,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,5cc5317279cd093338582570ed48ba166d831271dbdf99e411228c7e8bc547db,INVALID,PRIOR_RANGE_NOT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0051,ABBV,1551152,0001551152-19-000021,2019-07-26T11:44:13.000Z,abbv-20190630xexhibit991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1551152/000155115219000021/abbv-20190630xexhibit991.htm,3465d5264f6f33c642bcd8a403b622ad423274abfbaf0d9b86ae9127bee92fec,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[86],"AbbVie is updating its GAAP diluted EPS guidance for the full-year 2019 from $7.26 to $7.36 to $5.69 to $5.79, representing growth of 56.8 percent at the midpoint, inclusive of a non-cash charge for SKYRIZI contingent consideration following regulatory approvals in the second quarter. AbbVie is raising its previously announced adjusted EPS guidance range for the full-year 2019 from $8.73 to $8.83 to $8.82 to $8.92, representing growth of 12.1 percent at the midpoint. The company's 2019 adjusted diluted EPS guidance excludes $3.13 per share of intangible asset amortization expense, non-cash charges for contingent consideration adjustments and other specified items.",EPS,adjusted diluted EPS|adjusted EPS,FY2019,NON_GAAP,USD_PER_SHARE,8.82,8.92,8.87,403,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,0088ac38e7e4315c07d9f5f9a4d3c2cbc382c04d2ad9cbdaa8431477559f8e2f,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0052,WMT,104169,0000104169-14-000016,2014-02-20T12:00:24.000Z,earningsrelease-13114.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/104169/000010416914000016/earningsrelease-13114.htm,cbdf6622be66184ccd8d925a2aab6c011d71d98e91d83e5ac010aab731fd07ce,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[78],"""We expect first quarter fiscal year 2015 earnings per share from continuing operations to be between $1.10 and $1.20. This compares to the reported $1.14 last year,"" said Holley. ""We expect full year earnings per share from continuing operations to be in the range of $5.10 and $5.45. This compares to a reported EPS of $4.85 in fiscal 2014, which included the discrete items we told you about. Underlying1 EPS for fiscal 2014 was $5.11.",EPS,earnings per share|diluted EPS|EPS,FY2015,UNSPECIFIED,USD_PER_SHARE,1.1,1.2,1.15,102,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,01fa263f1cbf09948bfa2c7cc59a376ef974771402bbd79bf4fa6c064de11172,INVALID,FISCAL_PERIOD_MISMATCH,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0053,LLY,59478,0001193125-12-313296,2012-07-25T10:30:56.000Z,d385278dex99.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/59478/000119312512313296/d385278dex99.htm,0b08f1928d2972a7783684cb474345dae4cf38ecc082d3ca1a5051ad3c1976bf,HTML_P,/html/body/document/type/sequence/filename/description/text/p[127],"The company has raised its 2012 earnings per share guidance and now expects full-year 2012 earnings per share to be in the range of $3.29 to $3.39 on a reported basis and $3.30 to $3.40 on a non-GAAP
+basis. This is an increase from the previous earnings per share guidance range of $3.14 to $3.29 on a reported basis and $3.15 to $3.30 on a non-GAAP basis. Certain other elements of the company’s 2012 financial guidance have also been revised,
+as noted below and in the exhibit at the end of the press release.",EPS,earnings per share|diluted EPS|EPS,FY2012,UNSPECIFIED,USD_PER_SHARE,3.3,3.4,3.35,171,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,02e8384db3fb348b432e7bfbbe09c9b162e07775ec42e53a8e1282a0adcb30e6,INVALID,ACCOUNTING_BASIS_UNRESOLVED,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0054,ABBV,1551152,0001551152-19-000026,2019-11-01T11:50:34.000Z,abbv-20190930xexhibit991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1551152/000155115219000026/abbv-20190930xexhibit991.htm,0368619fe00c4ca253aae0e596423ccea0e9a5c85ee3f3f6332df820e529ff06,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[87],"AbbVie is updating its GAAP diluted EPS guidance for the full-year 2019 from $5.69 to $5.79 to $5.08 to $5.10, representing growth of 39.1 percent at the midpoint, inclusive of a non-cash charge for SKYRIZI contingent consideration following regulatory approvals in the second quarter and a third-quarter impairment charge related to intangible assets acquired as part of the 2016 acquisition of Stemcentrx, Inc. AbbVie is raising its previously announced adjusted EPS guidance range for the full-year 2019 from $8.82 to $8.92 to $8.90 to $8.92, representing growth of 12.6 percent at the midpoint. The company's 2019 adjusted diluted EPS guidance excludes $3.82 per share of intangible asset amortization expense, non-cash charges for contingent consideration adjustments and other specified items.",EPS,earnings per share|diluted EPS|EPS,FY2019,UNSPECIFIED,USD_PER_SHARE,5.69,5.79,5.74,77,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,030e6bbbd937191dd40bf45ba74d1913f84c8384726dcd4a4ef05f4e53d424eb,INVALID,PRIOR_RANGE_AND_BASIS_MISMATCH,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0055,LLY,59478,0000059478-13-000016,2013-04-24T10:34:51.000Z,q113lillysalesandearningsp.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/59478/000005947813000016/q113lillysalesandearningsp.htm,cbf776b3a991085927f672ed907bfc9c71d960b1e704d1c3d5c609281f8ed17a,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[106],"The company reconfirmed most of its 2013 financial guidance and still expects full-year 2013 earnings per share to be in the range of $4.10 to $4.25 on a reported basis, or $3.82 to $3.97 on a non-GAAP basis.",EPS,earnings per share|diluted EPS|EPS,FY2013,UNSPECIFIED,USD_PER_SHARE,4.1,4.25,4.175,134,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,038b45ce32ecdcd6baf1f91fe57b073b84e49d308d8fbd227fead1575c00a735,INVALID,ACCOUNTING_BASIS_UNRESOLVED,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0056,MRK,310158,0001104659-16-151769,2016-10-25T10:50:02.000Z,a16-20299_1ex99d1.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/310158/000110465916151769/a16-20299_1ex99d1.htm,72cd7bcee18bdce8418f7f08cb81217fc9ef3905126e4c44d97e46d89c887b83,HTML_P,/html/body/document/type/sequence/filename/description/text/div[1]/p[13],·                  Company Updates EPS Guidance: Full-Year 2016 GAAP EPS to be Between $2.02 and $2.09; Full-Year 2016 Non-GAAP EPS to be Between $3.71 and $3.78,EPS,earnings per share|diluted EPS|EPS,FY2016,UNSPECIFIED,USD_PER_SHARE,2.02,2.09,2.055,87,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,06f290aaa92a2d9e86dbddad1de0ff825d563fc853854c8f5381156f660bb9d2,INVALID,ACCOUNTING_BASIS_UNRESOLVED,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0057,DUK,1326160,0001104659-21-080192,2021-06-11T20:33:45.000Z,tm2118184d1_ex99-1.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1326160/000110465921080192/tm2118184d1_ex99-1.htm,c940273ebb647e09d7c696d3a5111e591f381427f651302e9a5e9be30d796189,HTML_P,/html/body/document/type/sequence/filename/description/text/div[2]/div/div[23]/table/tr/td[2]/p,"// 12 // 12 DUKE ENERGY INVESTOR UPDATE – SUMMER 2021
+Complementary businesses with strong growth opportunities
+86%
+9%
+5%
+Consolidated
+5-7%
+5-7%
+8-10%
+2021 – 2025
+ADJUSTED EPS CAGR(2)
+2021 ADJUSTED
+EPS CONTRIBUTION(1)
+Electric Utilities &
+Infrastructure
+Gas Utilities &
+Infrastructure
+2021-2025
+CAPEX
+$49.5 B
+$5.7 B
+$2.5 B(3)
+(1) Based upon the midpoint of the 2021 adjusted EPS guidance range of $5.00-$5.30 per share as most recently reaffirmed in the Q1 2021 Earnings Review and Business Update on May 10, 2021; excludes the impact of Other
+(2) CAGR off of the components of the midpoint of the 2021 EPS guidance range of $5.00-$5.30 per share as most recently reaffirmed in the Q1 2021 Earnings Review and Business Update on May 10, 2021; consolidated
+growth rate includes the impact of Commercial Renewables (approximately flat growth) and Other
+(3) Net of tax equity financing
+ELECTRIC UTILITIES
+ & INFRASTRUCTURE
+GAS UTILITIES
+ & INFRASTRUCTURE
+COMMERCIAL
+RENEWABLES",EPS,earnings per share|diluted EPS|EPS,Q1-2021,UNSPECIFIED,USD_PER_SHARE,5,5.3,5.15,625,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,106fb72dee5dbecd0a0246e8c66bcb39c3883caf39035c46a2120e746b479518,INVALID,FISCAL_PERIOD_AND_BASIS_MISMATCH,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0058,V,1403161,0001403161-23-000092,2023-10-24T20:05:35.000Z,q42023earningsrelease.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1403161/000140316123000092/q42023earningsrelease.htm,1fcec6690595e7b001f4aac82816033e664bf6c5a29d09d316fdff944d851f97,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[51]/table/tr[3]/td/div,"(2)Our non-GAAP fiscal full-year 2024 financial outlook for annual operating expense growth and annual diluted Class A common stock earnings per share growth reflect adjustments for the amortization of acquired intangible assets of approximately $150 million and $0.06, respectively, and acquisition-related costs of approximately $80 million and $0.03, respectively. No other 2024 non-GAAP adjustments have been made.",EPS,earnings per share|diluted EPS|EPS,FY2024,UNSPECIFIED,USD_PER_SHARE,0.06,150,75.03,246,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,14d0cbced35c6a690bcb823061b853a9be627c3c3663faac4c4acc6acaf73db2,INVALID,ADJUSTMENT_AMOUNTS_NOT_GUIDANCE_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0059,BA,12927,0000950123-14-004017,2014-04-23T11:46:07.000Z,earningsrelease.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/12927/000095012314004017/earningsrelease.htm,0bf5b2eb225d3a167a270eff7efc0a15efa95d0d3065911353beaa2508e7b0cb,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[11],"Core earnings per share guidance for 2014 increased to between $7.15 and $7.35, from $7.00 to $7.20, to reflect the benefit of a tax settlement to be recognized in the second quarter of 2014. GAAP earnings per share guidance for 2014 is reaffirmed at between $6.10 to $6.30 as the tax settlement benefit was offset by the retirement plan charges. GAAP pension expense guidance for 2014 is now at approximately $3.2 billion, up from $3.1 billion, to reflect the retirement plan charges. The company reaffirmed its 2014 revenue, operating cash flow and deliveries guidance.",EPS,earnings per share|diluted EPS|EPS,Q2-2014,UNSPECIFIED,USD_PER_SHARE,6.1,6.3,6.2,259,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,214a04b034bdb296112667dfafb3bf04fcf73df53e11c51fc20885d1722ab722,INVALID,FISCAL_PERIOD_AND_BASIS_MISMATCH,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0060,NEE,753308,0000753308-14-000096,2014-10-31T11:56:05.000Z,exhibit99-10312014.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/753308/000075330814000096/exhibit99-10312014.htm,9106d84666b4720e0667855d621ff9ef8303fce316fecbf48db5ae4ef3a5e580,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[52],"NextEra Energy continues to expect full-year 2014 adjusted earnings per share to be in the range of $5.15 to $5.35. For 2015, the company expects full-year adjusted earnings per share to be in the range of $5.40 to $5.70. NextEra Energy also continues to expect 2016 full-year adjusted earnings per share to be in the range of $5.50 to $6.00.",EPS,earnings per share|diluted EPS|EPS,FY2016,UNSPECIFIED,USD_PER_SHARE,5.5,6,5.75,327,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,54c18141e5527962a0db9853f1ed21e6d91608fc62f38c518f807880389e6d58,INVALID,ACCOUNTING_BASIS_UNRESOLVED,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0061,PG,80424,0000080424-15-000066,2015-07-30T14:16:42.000Z,amjq4powerpoint.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/80424/000008042415000066/amjq4powerpoint.htm,bfecadae44af9b3b2ae6e9945f6fa00c2dd0fc3646699e6bbcff58e3f70edbc6,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[1]/div[92]/div[2]/div,FY 2016 Guidance*EPS Growth    FY’16  Core Operating Income Growth  Up Mid to High Single Digits  Core Earnings Per Share Growth  Down Slightly to Up Mid-Single Digits  All-in Earnings Per Share Growth  +53% to 63%      Other Items:    Venezuela Deconsolidation  $(0.05) to (0.06)  Beauty deal transition costs  $(0.02) to (0.03)  Non Operating income  $(0.09) to (0.10)  Tax Rate  $(0.16)  Foreign Exchange  $(0.12) to (0.15)  Commodities  Modest Benefit  * Guidance assumes that Batteries & transitioning Beauty businesses are accounted for as discontinued operations,EPS,earnings per share|diluted EPS|EPS,FY2016,UNSPECIFIED,USD_PER_SHARE,-0.06,-0.05,-0.055,264,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,d22f407fdf57148dabae65da5c9023d8a824d14c471f6e36bfb24c27c863b9a5,INVALID,ADJUSTMENT_AMOUNT_NOT_EPS_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0062,HON,773840,0000930413-17-003540,2017-10-10T23:01:17.000Z,c89514_ex99-1.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/773840/000093041317003540/c89514_ex99-1.htm,92fe4a2e6b3e66ba991989dacbc47ea372fd224a6b31fa384c36cf5074fe3794,HTML_P,/html/body/document/type/sequence/filename/text/p[21],"Honeywell
+announced it anticipates strong third-quarter results. Sales are expected to be $10.1 billion, up 3% reported and up 5% organic,
+and earnings per share is expected to be $1.75, up 9% reported and up 16%1 ex-divestitures, normalized for tax at 26%,
+driven by strong results at its Aerospace and Performance Materials and Technologies business groups. The Company also raised
+the low-end of its full-year 2017 earnings per share guidance by 5 cents to a new range of $7.05 - $7.10, excluding any pension
+mark-to-market adjustment. The Company will hold its quarterly earnings announcement on Friday, October 20, at 9:30 a.m. EDT.",EPS,earnings per share|diluted EPS|EPS,FY2017,UNSPECIFIED,USD_PER_SHARE,7.05,7.1,7.075,475,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,e0c57589d618b4982e81e0443a66e96fab687077eb0a8dfd08b4a450336f172e,AMBIGUOUS,EXCLUSION_BASIS_NOT_NORMALIZED,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0063,TMUS,1283699,0001283699-19-000075,2019-04-25T20:17:23.000Z,tmus03312019ex992.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1283699/000128369919000075/tmus03312019ex992.htm,95d8bbf976906d7f9a43189609fa23511d6c9f4ef5e240114e4a1789491ca3d5,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[146]/div[3]/table[5]/tr[2]/td[2]/div,"In Q2 2019, we expect the impact of payments for merger-related costs on Free Cash Flow to be higher than Q1 2019 payments, but lower than the expected merger-related costs of $200 - $250 million as a result of payment timing.",FREE_CASH_FLOW,free cash flow|operating cash flow,Q1-2019,NON_GAAP,USD,200000000,250000000,225000000,176,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,872ecc3f66e50f2e1b478bc8cea276a20b38d1c87b1eba46a9604d82c29ce4ec,INVALID,COST_RANGE_NOT_FREE_CASH_FLOW_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0064,TSLA,1318605,0001193125-12-221988,2012-05-09T20:05:41.000Z,d344520dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1318605/000119312512221988/d344520dex991.htm,b9c2e7ae906be9e0b541e1ea81a53e65a45061fa8ad6bdd9e23ff210eb88f361,HTML_P,/html/body/document/type/sequence/filename/description/text/p[30],"We also reiterate the
+guidance provided in the Q4 2011 shareholder letter for capital expenditures and gross margin trends. We anticipate our R&D spending should increase sequentially in Q2, by about 20-25% as we continue to grow the manufacturing team prior to
+launch and incur expenses to complete our final activities related to the development of Model S and the Tesla Factory. With the start of Model S production, one-time development related expenses will decline, and manufacturing expenses will be
+reflected in cost of goods sold rather than in R&D. Q3 R&D spending should therefore decline substantially.",MARGIN,operating margin|gross margin|EBITDA margin,Q4-2011,UNSPECIFIED,PERCENT,20,25,22.5,199,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,004641a1fd68aa61b270bd4d93d5ebe4183989b8df21f6aab956e6b1836d87e9,INVALID,R_AND_D_RANGE_NOT_MARGIN_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0065,NFLX,1065280,0001065280-22-000256,2022-07-19T20:02:32.000Z,ex991_q222.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1065280/000106528022000256/ex991_q222.htm,061407f9ad0daf100e7dd2ef6ad9c488f5ae420bd2e31ddf7c965dc281acb9f5,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[41],"We forecast paid net adds for Q3 of +1.0m vs. 4.4m in the year ago quarter. We continue to expect full year 2022 operating margin of 19%-20%, excluding the unanticipated $150m of restructuring costs in Q2 noted above and the material movement in F/X from January 2022, as our guidance was set based on F/X at that time (see our Q4’21 letter4).",MARGIN,operating margin|gross margin|EBITDA margin,FY2022,UNSPECIFIED,PERCENT,19,20,19.5,132,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,3dfc07ecc2e6388196343c59ae46e61da2487ae92708caecaa33ecd5858c57a7,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0066,CRM,1108524,0001193125-21-280853,2021-09-23T21:53:37.000Z,d233992dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1108524/000119312521280853/d233992dex991.htm,d3032bdbf8e4e2cd6a0071538c349eec28852b6743620812f45bb1f439be60f2,HTML_P,/html/body/document/type/sequence/filename/description/text/p[155],"Non-GAAP Reconciliation Table (in millions) ASC 606 ASC 605 Fiscal Year
+2023 Non-GAAP income from operations FY14 Guidance FY20 FY21 FY19 FY18 FY17 FY16 FY15 GAAP income from operations $455 $297 $535 $454 $64 $115 $(146) $(286) GAAP Operating Margin ~3.0% - 3.5% Plus: Amortization of purchased intangibles $1,121 $792
+$447 $287 $225 $158 $155 $147 Plus: Stock-based expenses $2,190 $1,785 $1,283 $997 $820 $594 $565 $503 Amortization of purchased Less: intangibles 5.8% Operating lease termination resulting from Stock-based compensation 11.1% - 10.6% purchase of 50
+Fremont $0 $0 $0 $0 $0 $(37) $0 $0 Non-GAAP income from operations $3,766 $2,874 $2,265 $1,738 $1,109 $830 $574 $364 Non-GAAP Operating Margin ~20% As Margin % Total revenues $21,252 $17,098 $13,282 $10,540 $8,392 $6,667 $5,374 $4,071 GAAP operating
+margin 2.1% 1.7% 4.0% 4.3% 0.8% 1.7% -2.7% -7.0% Non-GAAP operating margin 17.7% 16.8% 17.1% 16.5% 13.2% 12.5% 10.7% 8.9% Year-over-Year improvement 91 bps (24) bps 56 bps 326 bps 78 bps 177 bps 174 bps (276) bps Free cash ﬂow Operating cash
+ﬂow $4,801 $4,331 $3,398 $2,738 $2,162 $1,672 $1,181 $875 Less: Capital expenditures $710 $643 $595 $534 $464 $284 $290 $299 Free cash ﬂow $4,091 $3,688 $2,803 $2,204 $1,698 $1,388 $891 $576 FY16 and FY15 operating cash flows reflect
+the adoption of ASU 2016-09 in FY 17",MARGIN,operating margin|gross margin|EBITDA margin,FY2023,UNSPECIFIED,PERCENT,3,3.5,3.25,252,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,4b792810d95f8fb2f9d3ef1bfc3003b06f2e7edbc9cdb157afc377d33a959bf6,INVALID,ACCOUNTING_BASIS_UNRESOLVED,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0067,NFLX,1065280,0001065280-23-000197,2023-07-19T20:04:02.000Z,ex991_q223.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1065280/000106528023000197/ex991_q223.htm,f113c179230a1ad1d85afce781c0593e58172dcf64221c23578f660eb8290c78,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[39],"We expect Q3 operating income of $1.9B vs. $1.5B in Q3’22 and operating margin of 22% compared with 19% in the year ago period. We’re still targeting a full year 2023 operating margin of 18%-20%, based on F/X rates as of January 1, 2023, up from 17.8% in FY22.",MARGIN,operating margin|gross margin|EBITDA margin,FY2023,UNSPECIFIED,PERCENT,18,20,19,186,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,7da1d5c41944944ca270475d9f063908fae33ea2cf831b4cde9b613f8467354c,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0068,NFLX,1065280,0001065280-23-000197,2023-07-19T20:04:02.000Z,ex991_q223.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1065280/000106528023000197/ex991_q223.htm,f113c179230a1ad1d85afce781c0593e58172dcf64221c23578f660eb8290c78,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[11],•Q2‘23 revenue of $8.2B and operating profit of $1.8B were generally in-line with our forecast—and we expect revenue growth to accelerate in the second half of ‘23 as we start to see the full benefits of paid sharing plus continued steady growth in our ad-supported plan. We’re still targeting a full year 2023 operating margin of 18% to 20%.,MARGIN,operating margin|gross margin|EBITDA margin,FY2023,UNSPECIFIED,PERCENT,18,20,19,330,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,b5648f3335c64baa94a23492c7a7805e17b8aca2cf555ed660cf641ded730fb2,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0069,NFLX,1065280,0001065280-24-000029,2024-01-23T21:02:17.000Z,ex991_q423.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1065280/000106528024000029/ex991_q423.htm,9ed3e0791f337f4f128d033765ada5d160b77a6918564d0b495aae7859028573,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[52],"We are increasing our full year 2024 operating margin forecast from 22%-23% to 24% (based on F/X rates as of January 1, 2024). This reflects the weakening of the US dollar vs. most other currencies since October as well as our stronger-than-forecasted Q4’23 performance and our expectation for how that will carry through 2024. As we noted in our Q3 letter, while we've launched a F/X risk management",MARGIN,operating margin|gross margin|EBITDA margin,FY2024,UNSPECIFIED,PERCENT,22,23,22.5,67,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,fdc44e1b94a8e23bf1f87e8a24f88f949b25ea27a36ae56f74076f813d9c5c19,INVALID,PRIOR_RANGE_NOT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0070,NFLX,1065280,0001065280-22-000367,2022-10-18T20:06:07.000Z,ex991_q322.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1065280/000106528022000367/ex991_q322.htm,07fe7d9d3a12c0c79b515a661471bc81830063bf41be74fc898c4bcf3d7444be,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[61],"The US dollar has strengthened6 against most other currencies at a historic rate this year. Based on our YTD actuals and Q4 guidance, we estimate that this appreciation since January 1, 2022 will negatively impact our full year 2022 revenue and operating income by ~$1 billion and $0.8 billion, respectively.",OPERATING_INCOME,operating income,FY2022,UNSPECIFIED,USD,800000000,1000000000,900000000,266,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,b1b24d50b6575925e8a3fa464f536b05510acea0ec03de86ac73d9a42eb94cf4,INVALID,IMPACT_AMOUNT_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0071,HON,773840,0000773840-25-000125,2025-12-22T11:05:39.000Z,hon-20251222.htm,PRIMARY,https://www.sec.gov/Archives/edgar/data/773840/000077384025000125/hon-20251222.htm,c11c476060309a5f1dfb8c2e34b7c8d193ad556e635f2c699a19ba327cd60e5a,HTML_DIV,/html/body/div[57],"The Company is providing an update with respect to the previously disclosed Flexjet-related litigation matters. The Company is in ongoing settlement negotiations with Flexjet and the other parties to the litigation matters. Based on negotiations to date, the Company expects to record a one-time charge within its Aerospace Technologies segment in the fourth quarter of 2025 that will reduce GAAP sales (due to contra-revenue accounting) and operating income by approximately $310 million and $370 million, respectively. The Company further expects that any comprehensive settlements will include one-time cash payments to the parties to the Flexjet-related litigation matters totaling approximately $470 million in the aggregate. The foregoing expected financial impacts are subject to change based on the final terms of any such settlements with Flexjet and such other parties, and there can be no assurance that any such settlements will be reached.",OPERATING_INCOME,operating income,Q4-2025,UNSPECIFIED,USD,310000000,370000000,340000000,476,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,f0380f65ac71858eb39e3886d1820b8c87542dedcc86fbcf7ffd150e1746bd5e,INVALID,IMPACT_AMOUNT_NOT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0072,PEP,77476,0000077476-23-000060,2023-10-10T10:05:29.000Z,q320238-kxexhibit991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/77476/000007747623000060/q320238-kxexhibit991.htm,84e4885e5d9b10ac4f3a4527cab87c1031145773d82d3beae56d9b0fe6d5e159,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[47],"For fiscal year 2024, we expect to deliver results towards the upper end of our long-term target ranges for both organic revenue and core constant currency EPS growth. Our long-term target ranges for both organic revenue growth (4 to 6 percent increase) and core constant currency EPS growth (high-single-digit percentage increase) remain unchanged.",ORGANIC_REVENUE_GROWTH,organic sales growth|organic revenue growth|organic sales,FY2024,NON_GAAP,PERCENT,4,6,5,228,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,d8a20325c511b432dbbbbe812c66e4b64a55540271c75b5e1664018ac193ddac,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0073,PEP,77476,0000077476-25-000059,2025-12-08T21:34:02.000Z,exhibit991-pepsicopressrel.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/77476/000007747625000059/exhibit991-pepsicopressrel.htm,e5e9a68e391a25f18e43c0ee8d0b5a225596e2a92b6e53d4b5f5adcd45d77d53,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[27],"As a result, we expect full-year 2026 organic revenue growth to range between 2 and 4 percent and expect to deliver the high end of that range during the second half of 2026. In addition, acquisitions net of divestitures that occurred in 2025 are expected to contribute 1 percentage point to reported net revenue growth in 2026. Based on current foreign exchange spot rates, foreign currency translation is also expected to benefit reported net revenue growth by approximately 1 percentage point in fiscal 2026. The ranges above imply net revenue growth within a range of 4 to 6 percent in fiscal 2026.",ORGANIC_REVENUE_GROWTH,organic sales growth|organic revenue growth|organic sales,FY2026,NON_GAAP,PERCENT,2,4,3,77,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,f56b4a7040074001182393cce173080fce4a2442b9c0123e0106297bdca21388,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0074,CRM,1108524,0001193125-12-366787,2012-08-23T20:35:58.000Z,d399908dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1108524/000119312512366787/d399908dex991.htm,c04aaf08690effcf74a7fecc622b92e3be2ef85785722987e3f0f1c3a39b2be2,HTML_P,/html/body/document/type/sequence/filename/description/text/p[30],"Full Year FY13 Guidance: Revenue for the
+company’s full fiscal year 2013 is projected to be in the range of $3.025 billion to $3.035 billion, an increase of 33% to 34% year-over-year.",REVENUE,revenue|net sales,FY2013,UNSPECIFIED,USD,3025000000,3035000000,3030000000,108,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,005de4b543354bcdcb0214697dfda0efbdf985a1b4cec0bf39ab0072ed9d2946,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0075,CRM,1108524,0001193125-13-445593,2013-11-18T21:45:54.000Z,d627763dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1108524/000119312513445593/d627763dex991.htm,ff7bfee21785de03de9033fb57acf1e4675ee97c6401135082e80c71e7cc6ca2,HTML_P,/html/body/document/type/sequence/filename/description/text/p[31],"Full Year FY14 Guidance: Revenue for the
+company’s full fiscal year 2014 is projected to be in the range of $4.050 billion to $4.055 billion, an increase of 33% year-over-year.",REVENUE,revenue|net sales,FY2014,UNSPECIFIED,USD,4050000000,4055000000,4052500000,108,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,0094c808ccdbb9b16797b0ea0b9cd314c599fe8bafb5e5ebaa4b2c6e7be64dca,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0076,LLY,59478,0000059478-25-000251,2025-10-30T11:03:41.000Z,q325lillysalesandearningsp.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/59478/000005947825000251/q325lillysalesandearningsp.htm,16eeaeccdf5e963fd3d3aeb320187c37af2e1b7efb4b49547d1ccdeaf527832f,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[17],•Increased our 2025 full-year revenue guidance to be in the range of $63.0 billion to $63.5 billion; reported EPS guidance raised to be in the range of $21.80 to $22.50 and non-GAAP EPS guidance raised to be in the range of $23.00 to $23.70.,REVENUE,revenue|net sales,FY2025,UNSPECIFIED,USD,63000000000,63500000000,63250000000,69,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,018e1182f263f705f96a936f404b63c3fe8ded642fbf39e67f8994c7957a3061,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0077,META,1326801,0001628280-26-028364,2026-04-29T20:05:41.000Z,meta-03312026xexhibit991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/meta-03312026xexhibit991.htm,ce4b6c18a778cc37c8daced6a09d0385b79263a907d41e1260093eb1dcc52664,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[34],"We expect second quarter 2026 total revenue to be in the range of $58-61 billion. Our guidance assumes foreign currency is an approximately 2% tailwind to year-over-year total revenue growth, based on current exchange rates.",REVENUE,revenue|net sales,Q2-2026,UNSPECIFIED,USD,58000000000,61000000000,59500000000,66,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,045426d6bf914fee7ef8cc678ce88374c504e89dd7e579c4ac3ff43c892d07c7,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0078,META,1326801,0001326801-23-000089,2023-07-26T20:06:51.000Z,meta06302023-exhibit991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1326801/000132680123000089/meta06302023-exhibit991.htm,adecec331f39126cd25370ab1e54b95aacfeb5fabb590f178b293a5408d28185,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[41],"We expect third quarter 2023 total revenue to be in the range of $32-34.5 billion. Our guidance assumes a foreign currency tailwind of approximately 3% to year-over-year total revenue growth in the third quarter, based on current exchange rates.",REVENUE,revenue|net sales,Q3-2023,UNSPECIFIED,USD,32000000000,34500000000,33250000000,65,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,047743d978d9d25859a1162d8bed5fdfedc970dfe9329231c78ed72bd8552e05,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0079,AMT,1053507,0001053507-19-000115,2019-09-03T12:49:39.000Z,a8-koutlook2019.htm,PRIMARY,https://www.sec.gov/Archives/edgar/data/1053507/000105350719000115/a8-koutlook2019.htm,6708bb7c03df0fb5c5b418f1b6ed06db5f3ea1026591c8919db84d83c4a6af06,HTML_DIV,/html/body/div[45],"Subsequent to the issuance of its full year 2019 outlook on July 31, 2019, American Tower Corporation (the “Company”) entered into a new master lease agreement with AT&T Inc. (the “MLA”). Based on the MLA, the Company now expects to recognize approximately $135 million in additional straight-line revenue for the full year. The Company has therefore revised its outlook for the full year 2019 and now expects total property revenue of $7,340 to $7,470 million, net income of $1,725 to $1,795 million and Adjusted EBITDA of $4,625 to $4,705 million. The Company’s full year expectations for other measures, including Organic Tenant Billings Growth and Consolidated AFFO, remain unchanged from its full year 2019 outlook issued on July 31, 2019.",REVENUE,revenue|net sales,FY2019,UNSPECIFIED,USD,1725000000,1795000000,1760000000,476,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,04fa8af4d69e5267412d8e3dbd19b91bd63311fda643c5968fc7f809b82587ee,INVALID,RESPECTIVELY_WRONG_METRIC,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0080,META,1326801,0001326801-23-000100,2023-10-25T20:20:51.000Z,meta09302023-exhibit991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1326801/000132680123000100/meta09302023-exhibit991.htm,2f16bfca916a5ffde88033cf88be4e51a68769c418502f1c1f83756935a6acea,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[41],"We expect fourth quarter 2023 total revenue to be in the range of $36.5-40 billion. Our guidance assumes a foreign currency tailwind of approximately 2% to year-over-year total revenue growth in the fourth quarter, based on current exchange rates.",REVENUE,revenue|net sales,Q4-2023,UNSPECIFIED,USD,36500000000,40000000000,38250000000,66,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,095191bb49b1bb0a121d007fbd9bdfca5b988e63d61d7a033d2fa6bcbd9efeca,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0081,SHW,89800,0001193125-13-410622,2013-10-25T11:16:59.000Z,d616671dex99.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/89800/000119312513410622/d616671dex99.htm,9b65f560ad6a53eb429556ddc9bc0d7ed32741dbe996733d3e92de9ef4b5e8c4,HTML_P,/html/body/document/type/sequence/filename/description/text/p[28],"“For the fourth quarter, we anticipate our core consolidated net sales will increase five to seven percent
+compared to last year’s fourth quarter. At that anticipated sales level, we estimate core diluted net income per common share in the fourth quarter to be in the range of $1.29 to $1.39 per share compared to $.65 per share earned in the fourth
+quarter of 2012. We anticipate our Comex acquisition will increase net sales $95 million to $105 million and negatively impact diluted net income per common share $.20 to $.40 per share in the fourth quarter. For the full year 2013, we expect
+consolidated net sales to increase above 2012 levels by a mid single digit percentage. With annual sales at that level, we are updating our guidance for diluted net income per common share for 2013 to an expected range of $7.00 to $7.30 per share
+compared to $6.02 per share earned in 2012.”",REVENUE,revenue|net sales,Q4-2012,UNSPECIFIED,USD,95000000,105000000,100000000,427,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,0dde26d97d836de16fd8a5bd4ba31c748fb7b8748ca12d3beb04803b9219fa52,INVALID,ACQUISITION_EFFECT_NOT_REVENUE_RANGE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0082,MSFT,789019,0001193125-20-050232,2020-02-26T22:10:49.000Z,d896577dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/789019/000119312520050232/d896577dex991.htm,d5ad61d48c91b931744b69b571d91d7d0532f4cf06e600c2223b4d1824088ebf,HTML_P,/html/body/document/type/sequence/filename/description/text/center[1]/div/p[4],"On January 29, as part of our second quarter of fiscal year 2020 earnings call, we issued quarterly revenue guidance for our More Personal
+Computing segment between $10.75 and $11.15 billion, which included a wider than usual range to reflect uncertainty related to the public health situation in China. Although we see strong Windows demand in line with our expectations, the supply
+chain is returning to normal operations at a slower pace than anticipated at the time of our Q2 earnings call. As a result, for the third quarter of fiscal year 2020, we do not expect to meet our More Personal Computing segment guidance as Windows
+OEM and Surface are more negatively impacted than previously anticipated. All other components of our Q3 guidance remain unchanged.",REVENUE,revenue|net sales,FY2020,UNSPECIFIED,USD,10750000000,11150000000,10950000000,165,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,53ff5b48eebbaa6b09d987e31c546d0a998e1cdd729923a7f5b46b2ccaf98aac,INVALID,FISCAL_PERIOD_MISMATCH,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0083,JPM,19617,0000019617-20-000256,2020-02-25T21:15:06.000Z,investordaypresentation2.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/19617/000001961720000256/investordaypresentation2.htm,4f5e9226b51f0594c4ae96a1de69fff550eb56bf8522044bcfa6ca77e3da5589,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div/div/div[40]/div[1],"Notes on slide 12 – …but our scale, completeness and global franchises allow us to address broad-based margin pressure across the industry caused by these secular headwinds 1. AUM yield = long-term and cash management fees / average AUM 2. 2014 and 2019 fees and AUC adjusted for exited businesses. 2014 fees also exclude the impact of a significant client exit and was revised to present depository receipt fees on a net basis in accordance with the retrospective adoption of the revenue recognition guidance in the first quarter of 2018. Total adjustments to fees were $368 million and $0.1 million in 2014 and 2019, respectively. Total adjustments to AUC were $1.1 trillion and $0.2 trillion in 2014 and 2019, respectively 3. Commission rate = commission revenue / trading volume 4. Yield = foreign exchange (“FX”) revenue / trading volume. FX data is for major currencies (EUR, GBP, AUD, NZD, CHF, JPY, CAD, USD). FX revenues are reported as part of the Fixed Income Markets business 5. Net revenue rate reflects the Credit Card business only and excludes rewards liability adjustments. Credit Card net revenue rate was 10.6% and 11.1% for the years ended December 31, 2019 and 2014, respectively. Effective in the first quarter of 2020, the Merchant Services business was realigned from CCB to CIB as part of the Firm’s Wholesale Payments business. The revenue and expenses of the Merchant Services business will be reported across CCB, CIB and CB based primarily on client relationship 6. Dealogic as of January 2, 2020. Based on top 100 fee-paying deals 37",REVENUE,revenue|net sales,Q1-2018,UNSPECIFIED,USD,100000,368000000,184050000,571,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,642f937c723867b23af1e87999adc2d71ef902dcc00feb898ddfd96c65460f39,INVALID,ACCOUNTING_DISCUSSION_NOT_GUIDANCE,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0084,AVGO,1649338,0001193125-18-026500,2018-01-31T08:25:56.000Z,d496455dex991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/1649338/000119312518026500/d496455dex991.htm,90501614a034956ffb0be8cf95c2745ebb0d669e8f5400cd820538cb74e1f436,HTML_P,/html/body/document/type/sequence/filename/description/text/p[6],"For the first quarter of fiscal year 2018, which is a 14-week quarter, the Company expects non-GAAP net revenue in the range of $5,300 million to $5,350 million. In addition, the Company expects non-GAAP fully diluted earnings per share to be approximately
+$5.10 per share.",REVENUE,revenue|net sales,FY2018,UNSPECIFIED,USD,5300000000,5350000000,5325000000,128,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,a98e4a279a63ee5fd06206b45571a10698be64128d06c9a78145cd8fd05a04b5,INVALID,FISCAL_PERIOD_MISMATCH,CODEX_SOURCE_AUDIT,2026-07-22
+SGB-0085,UNH,731766,0000731766-25-000228,2025-07-29T10:04:05.000Z,a2025q2exhibit991.htm,TEXT_ATTACHMENT,https://www.sec.gov/Archives/edgar/data/731766/000073176625000228/a2025q2exhibit991.htm,258053571f1f107bcad1ab9b3327120f4935ecbf8c91c8804e9076ba3df10271,HTML_DIV,/html/body/document/type/sequence/filename/description/text/div[6],•Full Year 2025 Revenue Outlook of $445.5 Billion to $448.0 Billion,REVENUE,revenue|net sales,FY2025,UNSPECIFIED,USD,445500000000,448000000000,446750000000,35,CURRENT_CANDIDATE,BLOCK_PRESERVED_NOT_SOURCE_REVIEWED,efb760dd18a4b47146f8d3d51962fad2a124776843c8c4686db4a203edbc0782,VALID,EXPLICIT_CURRENT_RANGE,CODEX_SOURCE_AUDIT,2026-07-22

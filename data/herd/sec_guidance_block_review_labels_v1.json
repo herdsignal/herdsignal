@@ -1,0 +1,11 @@
+{
+  "review_version": "HERD_SEC_GUIDANCE_BLOCK_SOURCE_REVIEW_V1",
+  "status": "LOCKED_MANUAL_SOURCE_REVIEW",
+  "review_template": "data/reports/sec_guidance_block_review_v1.csv",
+  "review_template_sha256": "9057d015ae180772430a47cf9034d2a19758c39a43cd467f54a6157f0a8ac697",
+  "labels": "data/herd/sec_guidance_block_review_labels_v1.csv",
+  "reviewer": "CODEX_SOURCE_AUDIT",
+  "reviewed_at": "2026-07-22",
+  "price_outcomes_observed": false,
+  "allowed_decisions": ["VALID", "INVALID", "AMBIGUOUS"]
+}
