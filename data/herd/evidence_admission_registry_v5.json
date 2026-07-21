@@ -1,0 +1,22 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V5",
+  "status": "POST_OOS_DECISION_LOCKED",
+  "hypothesis": "PIT_HEALTHY_PULLBACK_THEN_FLOOR_AND_RELATIVE_STRENGTH_RECOVERY",
+  "source_artifacts": [
+    {"path": "data/herd/confirmed_reentry_v1.json", "sha256": "2ff14fb30ea02c3d8a6320b2394a956de3b884a5c74d2421d454d241873a1616"},
+    {"path": "data/reports/confirmed_reentry_events_v1.csv", "sha256": "3724615e2f4cc3158e4d3d2e4d18ad88d659a650c65a35b80af2bd60cd3210c7"},
+    {"path": "data/reports/confirmed_reentry_comparison_v1.json", "sha256": "09edf0d284be1181ba7374842ed4afc1aca617c36400793f843a337ac2124827"},
+    {"path": "data/reports/confirmed_reentry_v1.json", "sha256": "afd9d3db11c85b39dd385c194d70d6eb411c7150a7f7ec498ec5c37e98df5383"}
+  ],
+  "decision": {
+    "status": "REJECT_CONFIRMED_REENTRY_RULE",
+    "comparators_passed": 0,
+    "confirmation_rate": 0.9223300970873787,
+    "reentry_evidence_admitted": false,
+    "five_percent_cycle_allowed": false,
+    "reentry_authorized": false,
+    "blind_holdout_allowed": false,
+    "operational_action_ratio": 0.0
+  },
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_RESEARCH_ONLY"
+}

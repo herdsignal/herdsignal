@@ -1,0 +1,18 @@
+{
+  "report_version": "HERD_CONFIRMED_REENTRY_V1",
+  "status": "OOS_COMPLETE",
+  "decision": "REJECT_CONFIRMED_REENTRY_RULE",
+  "eligible_events": 206,
+  "tickers": 46,
+  "confirmed_events": 190,
+  "confirmation_rate": 0.9223300970873787,
+  "median_confirmation_wait_sessions": 24.0,
+  "median_confirmed_entry_drawdown_improvement": -0.0058077115618043185,
+  "comparators_passed": 0,
+  "reentry_authorized": false,
+  "five_percent_cycle_executed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_RESEARCH_ONLY"
+}

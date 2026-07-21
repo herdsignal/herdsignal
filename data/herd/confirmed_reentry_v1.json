@@ -1,0 +1,56 @@
+{
+  "protocol_version": "HERD_CONFIRMED_REENTRY_V1",
+  "status": "LOCKED_BEFORE_OOS_RESULTS",
+  "objective": "Test whether waiting for an observable price floor and stock-relative recovery improves a five-percent reentry after a pullback in a point-in-time healthy company.",
+  "source_pullback_protocol": "HERD_SYSTEMATIC_HEALTHY_PULLBACK_V1",
+  "source_events": "data/reports/systematic_healthy_pullback_events_v1.csv",
+  "snapshot": "data/snapshots/yf-long14-actions-sector-20260721",
+  "eligibility": {
+    "business_state": "PASS",
+    "business_snapshot_rule": "INHERIT_STRICT_PRIOR_MONTH_FROM_SOURCE",
+    "include_all_pullback_sources": true
+  },
+  "confirmation": {
+    "maximum_wait_sessions": 63,
+    "minimum_sessions_since_episode_low": 10,
+    "minimum_recovery_from_episode_low": 0.05,
+    "relative_return_sessions": 21,
+    "stock_must_outperform": ["SPY", "SECTOR_ETF"],
+    "signal_information": "CLOSE_AND_EARLIER_ONLY",
+    "execution": "NEXT_SESSION_ADJUSTED_OPEN"
+  },
+  "comparators": {
+    "IMMEDIATE": "NEXT_SESSION_ADJUSTED_OPEN_AFTER_PULLBACK_SIGNAL",
+    "FIXED_WAIT_21": "NEXT_SESSION_ADJUSTED_OPEN_AFTER_21_SESSIONS"
+  },
+  "portfolio": {
+    "sleeve_ratio": 0.05,
+    "one_way_cost_base": 0.0015,
+    "one_way_cost_stress": 0.003,
+    "unconfirmed_action": "KEEP_CASH",
+    "cash_return": 0.0,
+    "common_outcome_end": "126_SESSIONS_AFTER_PULLBACK_SIGNAL"
+  },
+  "adoption_gate": {
+    "minimum_eligible_events": 100,
+    "minimum_tickers": 20,
+    "minimum_confirmation_rate": 0.30,
+    "maximum_confirmation_rate": 0.80,
+    "minimum_evaluable_folds": 4,
+    "minimum_positive_uplift_folds_per_comparator": 3,
+    "minimum_median_total_position_uplift": 0.0,
+    "minimum_confirmed_entry_drawdown_improvement": 0.02,
+    "maximum_holm_p_value": 0.10,
+    "required_comparators_passed": 2
+  },
+  "claim_boundary": "FIXED_51_EQUITY_SURVIVORSHIP_BIASED_RESEARCH_ONLY",
+  "forbidden": [
+    "CHANGE_CONFIRMATION_AFTER_RESULTS",
+    "USE_CONFIRMATION_DAY_OPEN_FOR_EXECUTION",
+    "EXCLUDE_UNCONFIRMED_FROM_STRATEGY_RETURN",
+    "USE_POST_CONFIRMATION_INFORMATION_TO_CONFIRM",
+    "AUTHORIZE_REENTRY_FROM_THIS_SAMPLE",
+    "OPEN_BLIND_HOLDOUT",
+    "CLAIM_SURVIVORSHIP_SAFE"
+  ]
+}
