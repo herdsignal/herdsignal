@@ -1,0 +1,12 @@
+{
+  "admitted_hypotheses": [],
+  "blind_holdout_access": false,
+  "blocked_test_is_performance_failure": false,
+  "confirmation_rows_read": 0,
+  "direction_evidence_ready": false,
+  "oos_tests_executed": 0,
+  "operational_action_ratio": 0.0,
+  "passing_hypotheses": [],
+  "report_version": "herd-rush-confirmation-oos-v1",
+  "status": "BLOCKED_NO_PREREGISTERED_HYPOTHESIS"
+}
