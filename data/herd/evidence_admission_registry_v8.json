@@ -1,0 +1,28 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V8",
+  "status": "POST_DIAGNOSTIC_DECISION_LOCKED",
+  "hypothesis": "PRE_DAMAGE_OBSERVATIONS_SEPARATE_ADVERSE_FROM_BENIGN_RUSH_DAMAGE_PATHS",
+  "source_artifacts": [
+    {"path": "data/herd/rush_damage_path_audit_v1.json", "sha256": "9339c966d0cf6fd8dd5f44ed63d44bf3fea8a9100f24f1c9e959249277924d7a"},
+    {"path": "data/reports/rush_damage_path_events_v1.csv", "sha256": "4edb2fc0b9bd47a1987fae8dcc4d784726b40359163b9bcffcd89ddf6df824fc"},
+    {"path": "data/reports/rush_damage_path_feature_comparison_v1.json", "sha256": "ef616b841c11d9e6b06a6a71c59f78086e988fca375cef852e18eae354af1319"},
+    {"path": "data/reports/rush_damage_path_audit_v1.json", "sha256": "96c7f047a332980ec8aac07ede45a7103064f6b4bc1aef18e31d9709ed28d875"}
+  ],
+  "decision": {
+    "status": "DISCOVERY_LEADS_REQUIRE_NEW_SAMPLE",
+    "classified_events": 1998,
+    "adverse_path_events": 491,
+    "benign_path_events": 1507,
+    "retained_discovery_leads": [
+      "downside_acceleration_5_21",
+      "realized_vol_expansion_20_63"
+    ],
+    "independent_oos_evidence_admitted": false,
+    "profit_take_evidence_admitted": false,
+    "five_percent_cash_creation_authorized": false,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_allowed": false
+  },
+  "failure_reason": "The existing damage trigger fires too often and 75.4% of triggered paths are benign. The two retained measurements were discovered on the same events and cannot repair or authorize the rule without a separately locked independent sample.",
+  "claim_boundary": "CURRENT_CONSTITUENTS_DIAGNOSTIC_ONLY"
+}

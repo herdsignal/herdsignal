@@ -1,0 +1,95 @@
+{
+  "report_version": "HERD_RUSH_DAMAGE_PATH_AUDIT_V1",
+  "status": "DIAGNOSTIC_COMPLETE",
+  "decision": "DISCOVERY_LEADS_REQUIRE_NEW_SAMPLE",
+  "source_damage_events": 1998,
+  "classified_events": 1998,
+  "tickers": 381,
+  "path_counts": {
+    "TEMPORARY_PULLBACK": 772,
+    "RESUMED_UPTREND": 735,
+    "LARGE_PULLBACK": 299,
+    "STRUCTURAL_BREAK": 192
+  },
+  "path_fractions": {
+    "TEMPORARY_PULLBACK": 0.3863863863863864,
+    "RESUMED_UPTREND": 0.36786786786786785,
+    "LARGE_PULLBACK": 0.14964964964964966,
+    "STRUCTURAL_BREAK": 0.0960960960960961
+  },
+  "path_profiles": {
+    "LARGE_PULLBACK": {
+      "events": 299,
+      "median_damage_wait_sessions": 27.0,
+      "median_features": {
+        "breakdown_severity_vol20": 1.1476119839787775,
+        "below_sma50_severity_vol63": 1.6263976050133115,
+        "relative_damage_21d": 0.045792928470406113,
+        "downside_acceleration_5_21": 0.042481708954935714,
+        "down_up_volume_ratio_20d": 1.1422765612051446,
+        "realized_vol_expansion_20_63": 1.0372479054432606
+      }
+    },
+    "RESUMED_UPTREND": {
+      "events": 735,
+      "median_damage_wait_sessions": 28.0,
+      "median_features": {
+        "breakdown_severity_vol20": 0.9805772672340911,
+        "below_sma50_severity_vol63": 1.3362081692280001,
+        "relative_damage_21d": 0.042445081174547344,
+        "downside_acceleration_5_21": 0.03538053514375257,
+        "down_up_volume_ratio_20d": 1.1063709623873832,
+        "realized_vol_expansion_20_63": 0.962690459189609
+      }
+    },
+    "STRUCTURAL_BREAK": {
+      "events": 192,
+      "median_damage_wait_sessions": 26.5,
+      "median_features": {
+        "breakdown_severity_vol20": 1.009743707308397,
+        "below_sma50_severity_vol63": 1.2193076747022409,
+        "relative_damage_21d": 0.0434936752450093,
+        "downside_acceleration_5_21": 0.04601655265087323,
+        "down_up_volume_ratio_20d": 1.1233121549469405,
+        "realized_vol_expansion_20_63": 1.0002894478365123
+      }
+    },
+    "TEMPORARY_PULLBACK": {
+      "events": 772,
+      "median_damage_wait_sessions": 26.5,
+      "median_features": {
+        "breakdown_severity_vol20": 0.9525287265393538,
+        "below_sma50_severity_vol63": 1.2194575448271774,
+        "relative_damage_21d": 0.04135614223579953,
+        "downside_acceleration_5_21": 0.03126818608575819,
+        "down_up_volume_ratio_20d": 1.0975751301838257,
+        "realized_vol_expansion_20_63": 0.9403848455667763
+      }
+    }
+  },
+  "features_audited": 6,
+  "retained_features": [
+    "downside_acceleration_5_21",
+    "realized_vol_expansion_20_63"
+  ],
+  "retained_count": 2,
+  "failure_causes": [
+    "DAMAGE_TRIGGER_NOT_SPARSE",
+    "MOST_CONFIRMED_DAMAGE_PATHS_ARE_BENIGN",
+    "DISCOVERY_LEADS_HAVE_NO_INDEPENDENT_CONFIRMATION"
+  ],
+  "model_fit": {
+    "source_damage_rate": 0.721820809248555,
+    "source_maximum_damage_rate": 0.3,
+    "benign_path_fraction_after_damage": 0.7542542542542543,
+    "existing_profit_take_rule_passed": false,
+    "reason": "The existing trigger is too common and mostly precedes benign paths. Two same-sample leads are not sufficient to repair or authorize it."
+  },
+  "interpretation": "The existing profit-take model remains rejected. Downside acceleration and volatility expansion are discovery leads for a separately locked independent sample, not evidence for threshold tuning on these events.",
+  "profit_take_authorized": false,
+  "operational_action_ratio": 0.0,
+  "same_sample_confirmation_allowed": false,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "claim_boundary": "CURRENT_CONSTITUENTS_DIAGNOSTIC_ONLY"
+}

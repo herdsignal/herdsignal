@@ -1,0 +1,77 @@
+{
+  "protocol_version": "HERD_RUSH_DAMAGE_PATH_AUDIT_V1",
+  "status": "LOCKED_BEFORE_PATH_AND_FEATURE_RESULTS",
+  "objective": "Classify the 1,998 confirmed Rush-damage events by their subsequent path and audit whether information observable by the damage close separated adverse from benign paths.",
+  "source_events": "data/reports/rush_damage_profit_take_events_v1.csv",
+  "source_protocol": "data/herd/rush_damage_profit_take_v1.json",
+  "source_report": "data/reports/rush_damage_profit_take_v1.json",
+  "snapshot": "data/snapshots/yf-independent-current-sp500-20260721",
+  "eligibility": {
+    "damage_triggered_only": true,
+    "minimum_complete_sessions_after_damage": 63,
+    "expected_source_event_count": 1998
+  },
+  "future_path": {
+    "anchor": "DAMAGE_CONFIRMATION_ADJUSTED_CLOSE",
+    "horizon_sessions": 63,
+    "labels_in_priority_order": [
+      "STRUCTURAL_BREAK",
+      "LARGE_PULLBACK",
+      "RESUMED_UPTREND",
+      "TEMPORARY_PULLBACK"
+    ],
+    "structural_break": {
+      "terminal_return_maximum": -0.15,
+      "minimum_adverse_return_maximum": -0.25
+    },
+    "large_pullback": {
+      "minimum_adverse_return_maximum": -0.12
+    },
+    "resumed_uptrend": {
+      "terminal_return_minimum": 0.05,
+      "maximum_favorable_return_minimum": 0.10
+    },
+    "temporary_pullback": "ALL_REMAINING_COMPLETE_PATHS"
+  },
+  "comparison": {
+    "treatment_labels": ["STRUCTURAL_BREAK", "LARGE_PULLBACK"],
+    "control_labels": ["TEMPORARY_PULLBACK", "RESUMED_UPTREND"]
+  },
+  "candidate_features": [
+    {"id": "breakdown_severity_vol20", "expected_direction": "HIGHER"},
+    {"id": "below_sma50_severity_vol63", "expected_direction": "HIGHER"},
+    {"id": "relative_damage_21d", "expected_direction": "HIGHER"},
+    {"id": "downside_acceleration_5_21", "expected_direction": "HIGHER"},
+    {"id": "down_up_volume_ratio_20d", "expected_direction": "HIGHER"},
+    {"id": "realized_vol_expansion_20_63", "expected_direction": "HIGHER"}
+  ],
+  "retention_gate": {
+    "minimum_events_per_side": 300,
+    "maximum_missing_fraction": 0.10,
+    "minimum_directional_rank_biserial": 0.10,
+    "maximum_holm_p_value": 0.05,
+    "eras": [
+      ["2016-01-01", "2019-12-31"],
+      ["2020-01-01", "2022-12-31"],
+      ["2023-01-01", "2026-12-31"]
+    ],
+    "minimum_events_per_side_per_era": 30,
+    "minimum_directional_eras": 3,
+    "maximum_pairwise_spearman_correlation": 0.75
+  },
+  "interpretation": {
+    "retained_means_new_sample_preregistration_only": true,
+    "zero_retained_means_current_price_volume_profit_take_model_not_identified": true,
+    "same_sample_action_authority": false,
+    "survivorship_safe": false
+  },
+  "forbidden": [
+    "USE_POST_DAMAGE_VALUES_AS_FEATURES",
+    "CHANGE_PATH_THRESHOLDS_AFTER_LABEL_COUNTS",
+    "CHANGE_FEATURES_AFTER_RESULTS",
+    "TREAT_P_VALUE_ALONE_AS_EVIDENCE",
+    "AUTHORIZE_PROFIT_TAKE_FROM_THIS_AUDIT",
+    "OPEN_BLIND_HOLDOUT",
+    "CLAIM_SURVIVORSHIP_SAFE"
+  ]
+}
