@@ -1,0 +1,46 @@
+{
+  "protocol_version": "HERD_RUSH_SELECTOR_COMPARISON_V1",
+  "status": "LOCKED_BEFORE_SELECTOR_COMPARISON",
+  "analysis_window": {
+    "start_inclusive": "2016-01-01",
+    "signal_end_inclusive": "2026-01-14",
+    "reason": "common fully evaluable window after v4 200-week warm-up and before the 126-session outcome boundary"
+  },
+  "selectors": {
+    "V61_RUSH": {
+      "source": "actual non-zero Python v6.1 SELL actions whose regime ends with RUSH",
+      "episode_collapse_calendar_days": 42
+    },
+    "PRICE_RUSH_V2": {
+      "source": "locked HERD_RUSH_EPISODE_V2 price extension selector"
+    },
+    "INTERSECTION": {
+      "source": "one-to-one V61_RUSH and PRICE_RUSH_V2 match",
+      "maximum_calendar_distance_days": 14,
+      "signal_date": "later observation date"
+    }
+  },
+  "outcome": {
+    "source": "HERD_RUSH_EPISODE_V2",
+    "horizon_sessions": 126,
+    "correction_opportunity_labels": [
+      "TEMPORARY_PULLBACK",
+      "LARGE_PULLBACK",
+      "STRUCTURAL_BREAK"
+    ],
+    "false_positive_label": "CONTINUATION",
+    "unresolved_excluded_from_rate_denominator": true
+  },
+  "selection_gate": {
+    "minimum_resolved_episodes": 100,
+    "maximum_median_annual_episodes_per_ticker": 2.5,
+    "utility": "correction_opportunity_rate - continuation_rate",
+    "tie_breaker": "fewer median annual episodes",
+    "selection_scope": "discovery only; selected definition must be locked before independent-universe OOS"
+  },
+  "policy": {
+    "operational_action_authority": false,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

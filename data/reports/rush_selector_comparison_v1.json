@@ -1,0 +1,1205 @@
+{
+  "report_version": "HERD_RUSH_SELECTOR_COMPARISON_V1",
+  "status": "DISCOVERY_SELECTOR_COMPARISON_NO_ACTION_AUTHORITY",
+  "protocol": {
+    "protocol_version": "HERD_RUSH_SELECTOR_COMPARISON_V1",
+    "status": "LOCKED_BEFORE_SELECTOR_COMPARISON",
+    "analysis_window": {
+      "start_inclusive": "2016-01-01",
+      "signal_end_inclusive": "2026-01-14",
+      "reason": "common fully evaluable window after v4 200-week warm-up and before the 126-session outcome boundary"
+    },
+    "selectors": {
+      "V61_RUSH": {
+        "source": "actual non-zero Python v6.1 SELL actions whose regime ends with RUSH",
+        "episode_collapse_calendar_days": 42
+      },
+      "PRICE_RUSH_V2": {
+        "source": "locked HERD_RUSH_EPISODE_V2 price extension selector"
+      },
+      "INTERSECTION": {
+        "source": "one-to-one V61_RUSH and PRICE_RUSH_V2 match",
+        "maximum_calendar_distance_days": 14,
+        "signal_date": "later observation date"
+      }
+    },
+    "outcome": {
+      "source": "HERD_RUSH_EPISODE_V2",
+      "horizon_sessions": 126,
+      "correction_opportunity_labels": [
+        "TEMPORARY_PULLBACK",
+        "LARGE_PULLBACK",
+        "STRUCTURAL_BREAK"
+      ],
+      "false_positive_label": "CONTINUATION",
+      "unresolved_excluded_from_rate_denominator": true
+    },
+    "selection_gate": {
+      "minimum_resolved_episodes": 100,
+      "maximum_median_annual_episodes_per_ticker": 2.5,
+      "utility": "correction_opportunity_rate - continuation_rate",
+      "tie_breaker": "fewer median annual episodes",
+      "selection_scope": "discovery only; selected definition must be locked before independent-universe OOS"
+    },
+    "policy": {
+      "operational_action_authority": false,
+      "blind_holdout_access": false,
+      "survivorship_safe": false
+    }
+  },
+  "snapshot_id": "yf-long14-actions-sector-20260721",
+  "snapshot_sha256": "a0307644b5a3dc396c66e293f5bf66f6df627117ca29f301be142e36d4ebf217",
+  "summaries": [
+    {
+      "selector": "V61_RUSH",
+      "episodes": 419,
+      "resolved_episodes": 389,
+      "ticker_count": 51,
+      "median_annual_episodes_per_ticker": 0.797037643207856,
+      "correction_opportunity_rate": 0.6426735218508998,
+      "continuation_rate": 0.35732647814910024,
+      "selection_utility": 0.28534704370179953,
+      "label_counts": {
+        "CONTINUATION": 139,
+        "LARGE_PULLBACK": 101,
+        "TEMPORARY_PULLBACK": 91,
+        "STRUCTURAL_BREAK": 58,
+        "UNRESOLVED": 30
+      },
+      "eligible_for_discovery_selection": true
+    },
+    {
+      "selector": "PRICE_RUSH_V2",
+      "episodes": 580,
+      "resolved_episodes": 542,
+      "ticker_count": 51,
+      "median_annual_episodes_per_ticker": 1.195556464811784,
+      "correction_opportunity_rate": 0.5885608856088561,
+      "continuation_rate": 0.4114391143911439,
+      "selection_utility": 0.17712177121771222,
+      "label_counts": {
+        "CONTINUATION": 223,
+        "LARGE_PULLBACK": 153,
+        "TEMPORARY_PULLBACK": 99,
+        "STRUCTURAL_BREAK": 67,
+        "UNRESOLVED": 38
+      },
+      "eligible_for_discovery_selection": true
+    },
+    {
+      "selector": "INTERSECTION",
+      "episodes": 107,
+      "resolved_episodes": 99,
+      "ticker_count": 41,
+      "median_annual_episodes_per_ticker": 0.199259410801964,
+      "correction_opportunity_rate": 0.6464646464646465,
+      "continuation_rate": 0.35353535353535354,
+      "selection_utility": 0.292929292929293,
+      "label_counts": {
+        "CONTINUATION": 35,
+        "LARGE_PULLBACK": 25,
+        "TEMPORARY_PULLBACK": 21,
+        "STRUCTURAL_BREAK": 18,
+        "UNRESOLVED": 8
+      },
+      "eligible_for_discovery_selection": false
+    }
+  ],
+  "decision": {
+    "status": "LOCK_FOR_INDEPENDENT_OOS",
+    "selected": "V61_RUSH",
+    "selection_scope": "discovery only; selected definition must be locked before independent-universe OOS"
+  },
+  "diagnostics": {
+    "by_selector_and_era": [
+      {
+        "selector": "INTERSECTION",
+        "era": "2016-2019",
+        "path_label": "CONTINUATION",
+        "episodes": 24
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2016-2019",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 10
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2016-2019",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 6
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2016-2019",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 10
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2016-2019",
+        "path_label": "UNRESOLVED",
+        "episodes": 4
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2020-2022",
+        "path_label": "CONTINUATION",
+        "episodes": 4
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2020-2022",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 9
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2020-2022",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 9
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2020-2022",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 8
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2020-2022",
+        "path_label": "UNRESOLVED",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2023-2026",
+        "path_label": "CONTINUATION",
+        "episodes": 7
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2023-2026",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 6
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2023-2026",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2023-2026",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "era": "2023-2026",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2016-2019",
+        "path_label": "CONTINUATION",
+        "episodes": 108
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2016-2019",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 54
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2016-2019",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 24
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2016-2019",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 40
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2016-2019",
+        "path_label": "UNRESOLVED",
+        "episodes": 18
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2020-2022",
+        "path_label": "CONTINUATION",
+        "episodes": 53
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2020-2022",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 56
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2020-2022",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 29
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2020-2022",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 41
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2020-2022",
+        "path_label": "UNRESOLVED",
+        "episodes": 10
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2023-2026",
+        "path_label": "CONTINUATION",
+        "episodes": 62
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2023-2026",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 43
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2023-2026",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 14
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2023-2026",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 18
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "era": "2023-2026",
+        "path_label": "UNRESOLVED",
+        "episodes": 10
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2016-2019",
+        "path_label": "CONTINUATION",
+        "episodes": 76
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2016-2019",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 30
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2016-2019",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 14
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2016-2019",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 41
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2016-2019",
+        "path_label": "UNRESOLVED",
+        "episodes": 19
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2020-2022",
+        "path_label": "CONTINUATION",
+        "episodes": 31
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2020-2022",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 40
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2020-2022",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 33
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2020-2022",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 33
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2020-2022",
+        "path_label": "UNRESOLVED",
+        "episodes": 5
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2023-2026",
+        "path_label": "CONTINUATION",
+        "episodes": 32
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2023-2026",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 31
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2023-2026",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 11
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2023-2026",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 17
+      },
+      {
+        "selector": "V61_RUSH",
+        "era": "2023-2026",
+        "path_label": "UNRESOLVED",
+        "episodes": 6
+      }
+    ],
+    "by_selector_and_sector": [
+      {
+        "selector": "INTERSECTION",
+        "sector": "communication",
+        "path_label": "CONTINUATION",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "communication",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "consumer_discretionary",
+        "path_label": "CONTINUATION",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "consumer_discretionary",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "consumer_discretionary",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "consumer_staples",
+        "path_label": "CONTINUATION",
+        "episodes": 7
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "consumer_staples",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 5
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "consumer_staples",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "consumer_staples",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 4
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "consumer_staples",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "energy",
+        "path_label": "CONTINUATION",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "energy",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 7
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "energy",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "energy",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "financials",
+        "path_label": "CONTINUATION",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "financials",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "financials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "healthcare",
+        "path_label": "CONTINUATION",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "healthcare",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 4
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "healthcare",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "healthcare",
+        "path_label": "UNRESOLVED",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "industrials",
+        "path_label": "CONTINUATION",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "industrials",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "industrials",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "industrials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "materials",
+        "path_label": "CONTINUATION",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "materials",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "materials",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 4
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "materials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "materials",
+        "path_label": "UNRESOLVED",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "technology",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "technology",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "technology",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "technology",
+        "path_label": "UNRESOLVED",
+        "episodes": 1
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "utilities_real_estate",
+        "path_label": "CONTINUATION",
+        "episodes": 11
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "utilities_real_estate",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "utilities_real_estate",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 3
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "utilities_real_estate",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 2
+      },
+      {
+        "selector": "INTERSECTION",
+        "sector": "utilities_real_estate",
+        "path_label": "UNRESOLVED",
+        "episodes": 1
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "communication",
+        "path_label": "CONTINUATION",
+        "episodes": 20
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "communication",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 22
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "communication",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 6
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "communication",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 11
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "communication",
+        "path_label": "UNRESOLVED",
+        "episodes": 2
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_discretionary",
+        "path_label": "CONTINUATION",
+        "episodes": 17
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_discretionary",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 12
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_discretionary",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 8
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_discretionary",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 6
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_discretionary",
+        "path_label": "UNRESOLVED",
+        "episodes": 4
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_staples",
+        "path_label": "CONTINUATION",
+        "episodes": 18
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_staples",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 17
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_staples",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 2
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_staples",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 13
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "consumer_staples",
+        "path_label": "UNRESOLVED",
+        "episodes": 12
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "energy",
+        "path_label": "CONTINUATION",
+        "episodes": 10
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "energy",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 14
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "energy",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 6
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "energy",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 9
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "energy",
+        "path_label": "UNRESOLVED",
+        "episodes": 4
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "financials",
+        "path_label": "CONTINUATION",
+        "episodes": 26
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "financials",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 18
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "financials",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 9
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "financials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 5
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "financials",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "healthcare",
+        "path_label": "CONTINUATION",
+        "episodes": 28
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "healthcare",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 15
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "healthcare",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 1
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "healthcare",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 13
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "healthcare",
+        "path_label": "UNRESOLVED",
+        "episodes": 1
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "industrials",
+        "path_label": "CONTINUATION",
+        "episodes": 20
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "industrials",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 10
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "industrials",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 9
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "industrials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 10
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "industrials",
+        "path_label": "UNRESOLVED",
+        "episodes": 2
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "materials",
+        "path_label": "CONTINUATION",
+        "episodes": 26
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "materials",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 18
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "materials",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 10
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "materials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 6
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "materials",
+        "path_label": "UNRESOLVED",
+        "episodes": 4
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "technology",
+        "path_label": "CONTINUATION",
+        "episodes": 32
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "technology",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 13
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "technology",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 8
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "technology",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 20
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "technology",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "utilities_real_estate",
+        "path_label": "CONTINUATION",
+        "episodes": 26
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "utilities_real_estate",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 14
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "utilities_real_estate",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 8
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "utilities_real_estate",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 6
+      },
+      {
+        "selector": "PRICE_RUSH_V2",
+        "sector": "utilities_real_estate",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "communication",
+        "path_label": "CONTINUATION",
+        "episodes": 8
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "communication",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 12
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "communication",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 4
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "communication",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 8
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "communication",
+        "path_label": "UNRESOLVED",
+        "episodes": 2
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_discretionary",
+        "path_label": "CONTINUATION",
+        "episodes": 9
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_discretionary",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 3
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_discretionary",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 6
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_discretionary",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 5
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_discretionary",
+        "path_label": "UNRESOLVED",
+        "episodes": 2
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_staples",
+        "path_label": "CONTINUATION",
+        "episodes": 19
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_staples",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 9
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_staples",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 5
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_staples",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 9
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "consumer_staples",
+        "path_label": "UNRESOLVED",
+        "episodes": 12
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "energy",
+        "path_label": "CONTINUATION",
+        "episodes": 5
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "energy",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 15
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "energy",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 12
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "energy",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 12
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "energy",
+        "path_label": "UNRESOLVED",
+        "episodes": 1
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "financials",
+        "path_label": "CONTINUATION",
+        "episodes": 17
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "financials",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 10
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "financials",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 4
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "financials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 5
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "financials",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "healthcare",
+        "path_label": "CONTINUATION",
+        "episodes": 14
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "healthcare",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 13
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "healthcare",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 11
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "healthcare",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "industrials",
+        "path_label": "CONTINUATION",
+        "episodes": 13
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "industrials",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 9
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "industrials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 5
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "industrials",
+        "path_label": "UNRESOLVED",
+        "episodes": 1
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "materials",
+        "path_label": "CONTINUATION",
+        "episodes": 11
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "materials",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 13
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "materials",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 10
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "materials",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 11
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "materials",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "technology",
+        "path_label": "CONTINUATION",
+        "episodes": 20
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "technology",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 8
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "technology",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 11
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "technology",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 15
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "utilities_real_estate",
+        "path_label": "CONTINUATION",
+        "episodes": 23
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "utilities_real_estate",
+        "path_label": "LARGE_PULLBACK",
+        "episodes": 9
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "utilities_real_estate",
+        "path_label": "STRUCTURAL_BREAK",
+        "episodes": 6
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "utilities_real_estate",
+        "path_label": "TEMPORARY_PULLBACK",
+        "episodes": 10
+      },
+      {
+        "selector": "V61_RUSH",
+        "sector": "utilities_real_estate",
+        "path_label": "UNRESOLVED",
+        "episodes": 3
+      }
+    ]
+  }
+}
