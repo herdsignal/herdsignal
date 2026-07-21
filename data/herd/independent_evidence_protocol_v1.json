@@ -1,0 +1,69 @@
+{
+  "protocol_version": "HERD_INDEPENDENT_RUSH_EVIDENCE_V1",
+  "status": "LOCKED_BEFORE_INDEPENDENT_RESULTS",
+  "sample": {
+    "universe_report": "data/reports/independent_universe_v1.json",
+    "universe_audit": "data/reports/independent_universe_v1.csv",
+    "selector": "V61_RUSH",
+    "selector_protocol": "HERD_RUSH_SELECTOR_COMPARISON_V1",
+    "window_start": "2016-01-01",
+    "window_end": "2026-01-14",
+    "outcome_sessions": 126
+  },
+  "target": {
+    "treatment_labels": ["LARGE_PULLBACK", "STRUCTURAL_BREAK"],
+    "control_labels": ["CONTINUATION"],
+    "temporary_pullback_is_not_direction_authority": true
+  },
+  "hypotheses": [
+    {
+      "id": "H1_SECTOR_RS_DAMAGE_4W",
+      "feature": "SECTOR_RS_DAMAGE_DELTA_4W",
+      "expected_direction": "HIGHER_IN_TREATMENT",
+      "priority": 1
+    },
+    {
+      "id": "H2_TREND_QUALITY_FALL_4W",
+      "feature": "TREND_QUALITY_DELTA_4W",
+      "expected_direction": "LOWER_IN_TREATMENT",
+      "priority": 2
+    },
+    {
+      "id": "H3_PARTICIPATION_WEAKENING_4W",
+      "feature": "PARTICIPATION_WEAKENING_DELTA_4W",
+      "expected_direction": "HIGHER_IN_TREATMENT",
+      "priority": 3
+    },
+    {
+      "id": "H4_MARKET_STRESS_EXPANSION_4W",
+      "feature": "MARKET_STRESS_DELTA_4W",
+      "expected_direction": "HIGHER_IN_TREATMENT",
+      "priority": 4
+    }
+  ],
+  "gate": {
+    "minimum_treatment_events": 100,
+    "minimum_control_events": 100,
+    "maximum_missing_fraction": 0.1,
+    "minimum_directional_rank_biserial": 0.1,
+    "maximum_holm_p_value": 0.05,
+    "required_positive_eras": 3,
+    "eras": [
+      ["2016-01-01", "2019-12-31"],
+      ["2020-01-01", "2022-12-31"],
+      ["2023-01-01", "2026-01-14"]
+    ]
+  },
+  "sec_pit_business_state": {
+    "status": "SEPARATE_VETO_NOT_PRICE_DIRECTION_EVIDENCE",
+    "required_before_reentry": true,
+    "missing_is_fail_closed": true
+  },
+  "forbidden": [
+    "CHANGE_THRESHOLD_AFTER_RESULTS",
+    "COMBINE_FAILED_HYPOTHESES",
+    "USE_TEMPORARY_PULLBACK_AS_PRIMARY_SUCCESS",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}

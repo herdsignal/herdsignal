@@ -1,0 +1,20 @@
+{
+  "report_version": "HERD_INDEPENDENT_RUSH_EVIDENCE_V1",
+  "status": "INDEPENDENT_OOS_COMPLETE",
+  "claim_boundary": "CURRENT_CONSTITUENTS_ROBUSTNESS_ONLY",
+  "snapshot_id": "yf-independent-current-sp500-20260721",
+  "snapshot_sha256": "fc02612692db213f7bfa1ade52db9a030150db6ad8728d4f465ea585b3dc8c32",
+  "eligible_tickers": 388,
+  "evaluated_tickers": 383,
+  "episodes": 2768,
+  "admitted_features": [],
+  "admitted_count": 0,
+  "sec_pit_business_state": {
+    "status": "SEPARATE_VETO_NOT_PRICE_DIRECTION_EVIDENCE",
+    "required_before_reentry": true,
+    "missing_is_fail_closed": true
+  },
+  "operational_action_authority": false,
+  "blind_holdout_access": false,
+  "failures": {}
+}

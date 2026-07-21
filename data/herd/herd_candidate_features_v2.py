@@ -34,7 +34,11 @@ def _daily_features(stock: pd.DataFrame, sector: pd.DataFrame, spy: pd.DataFrame
     def close(frame):
         return frame.set_index("Date")["Adj Close"].sort_index().astype(float)
     stock_close, sector_close, spy_close = close(stock), close(sector), close(spy)
-    aligned = pd.concat({"stock": stock_close, "sector": sector_close, "spy": spy_close}, axis=1, sort=False).ffill()
+    aligned = pd.concat(
+        {"stock": stock_close, "sector": sector_close, "spy": spy_close},
+        axis=1,
+        sort=False,
+    ).sort_index().ffill()
     ratio = aligned["stock"] / aligned["sector"]
     high = aligned["stock"].rolling(252, min_periods=252).max()
     high_failure = []
