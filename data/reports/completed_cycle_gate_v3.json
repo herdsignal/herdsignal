@@ -1,0 +1,36 @@
+{
+  "blind_holdout_access": false,
+  "blocked_experiment_is_performance_failure": false,
+  "buy_hold_comparison_executed": false,
+  "completed_cycle_executed": false,
+  "constructed_candidate_ready": false,
+  "cost_stress_executed": false,
+  "execution_contract_if_eligible": {
+    "base_one_way_cost_bps": 10,
+    "benchmark": "SAME_CAPITAL_PERIOD_PRICES_DIVIDENDS_BUY_AND_HOLD",
+    "fill_timing": "NEXT_COMPLETED_WEEK_FIRST_AVAILABLE_CLOSE",
+    "initial_profit_take_fraction": 0.05,
+    "maximum_profit_take_fraction": 0.15,
+    "metrics": [
+      "CAGR",
+      "MDD",
+      "SORTINO",
+      "CALMAR",
+      "UPSIDE_CAPTURE",
+      "DOWNSIDE_CAPTURE",
+      "COMPLETED_CYCLE_ALPHA"
+    ],
+    "reentry_limit": "UNSPENT_PROCEEDS_FROM_MATCHED_PRIOR_SALE",
+    "stress_one_way_cost_bps": [
+      25,
+      50
+    ]
+  },
+  "initial_profit_take_fraction": 0.0,
+  "model_promotion_allowed": false,
+  "operational_action_ratio": 0.0,
+  "profit_take_evidence_ready": false,
+  "reentry_evidence_ready": false,
+  "report_version": "herd-completed-cycle-gate-v3",
+  "status": "BLOCKED_MISSING_PROFIT_TAKE_OR_REENTRY_EVIDENCE"
+}

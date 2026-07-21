@@ -15,6 +15,7 @@
   "operational_action_ratio": 0.0,
   "profit_take_direction_ready": false,
   "redundancy_audit_ready": false,
+  "reentry_direction_ready": false,
   "report_version": "herd-model-construction-v2",
   "status": "NO_CANDIDATE_CONSTRUCTED",
   "weights": {},

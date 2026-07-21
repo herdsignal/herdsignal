@@ -1,0 +1,30 @@
+{
+  "policy_version": "HERD_COMPLETED_CYCLE_GATE_V3",
+  "status": "LOCKED_AFTER_MODEL_CONSTRUCTION_V2",
+  "objective": "Evaluate a complete rare partial-profit-take and evidence-based reentry cycle against the same long-term Buy & Hold lane.",
+  "required_report": "data/reports/herd_model_construction_v2.json",
+  "execution_contract_if_eligible": {
+    "initial_profit_take_fraction": 0.05,
+    "maximum_profit_take_fraction": 0.15,
+    "fill_timing": "NEXT_COMPLETED_WEEK_FIRST_AVAILABLE_CLOSE",
+    "reentry_limit": "UNSPENT_PROCEEDS_FROM_MATCHED_PRIOR_SALE",
+    "base_one_way_cost_bps": 10,
+    "stress_one_way_cost_bps": [25, 50],
+    "benchmark": "SAME_CAPITAL_PERIOD_PRICES_DIVIDENDS_BUY_AND_HOLD",
+    "metrics": ["CAGR", "MDD", "SORTINO", "CALMAR", "UPSIDE_CAPTURE", "DOWNSIDE_CAPTURE", "COMPLETED_CYCLE_ALPHA"]
+  },
+  "required_evidence": [
+    "ADMITTED_PROFIT_TAKE_DIRECTION",
+    "ADMITTED_REENTRY_DIRECTION",
+    "CONSTRUCTED_HERD_CANDIDATE"
+  ],
+  "forbidden": [
+    "SELL_WITHOUT_ADMITTED_PROFIT_TAKE_EVIDENCE",
+    "BUY_BECAUSE_PRICE_IS_LOW_WITHOUT_REENTRY_EVIDENCE",
+    "REENTER_MORE_THAN_PRIOR_SALE_PROCEEDS",
+    "IGNORE_FEES_OR_SLIPPAGE",
+    "TREAT_BLOCKED_EXPERIMENT_AS_PERFORMANCE_FAILURE",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}

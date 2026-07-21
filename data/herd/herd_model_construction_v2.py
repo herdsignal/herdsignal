@@ -40,6 +40,7 @@ def evaluate_construction(policy_path: Path = POLICY_PATH) -> dict:
         "status": "READY_TO_CONSTRUCT_CANDIDATES" if eligible else "NO_CANDIDATE_CONSTRUCTED",
         "admitted_direction_features": admitted,
         "profit_take_direction_ready": profit_take_ready,
+        "reentry_direction_ready": False,
         "redundancy_audit_ready": redundancy_ready,
         "candidate_families_planned": [item["id"] for item in policy["candidate_families"]],
         "candidate_families_constructed": [],
