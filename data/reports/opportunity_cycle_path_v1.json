@@ -1,0 +1,44 @@
+{
+  "events": 2290,
+  "folds": 9,
+  "hypothesis_label_counts": {
+    "PROFIT_DOWNSIDE_EXPANSION_V2": {
+      "CONTINUATION": 271,
+      "NOISE": 244,
+      "STRUCTURAL_BREAK": 35,
+      "TRADABLE_PULLBACK": 179
+    },
+    "PROFIT_RELATIVE_BREAK_V2": {
+      "CONTINUATION": 257,
+      "NOISE": 270,
+      "STRUCTURAL_BREAK": 45,
+      "TRADABLE_PULLBACK": 167
+    },
+    "PROFIT_RELATIVE_EXTENSION_V2": {
+      "CONTINUATION": 52,
+      "NOISE": 60,
+      "STRUCTURAL_BREAK": 11,
+      "TRADABLE_PULLBACK": 48
+    },
+    "PROFIT_TREND_DECELERATION_V2": {
+      "CONTINUATION": 237,
+      "NOISE": 230,
+      "STRUCTURAL_BREAK": 32,
+      "TRADABLE_PULLBACK": 152
+    }
+  },
+  "label_counts": {
+    "CONTINUATION": 817,
+    "NOISE": 804,
+    "STRUCTURAL_BREAK": 123,
+    "TRADABLE_PULLBACK": 546
+  },
+  "labels_authorize_actions": false,
+  "oracle_reentry_executable": false,
+  "report_version": "herd-opportunity-cycle-path-v1",
+  "target": {
+    "locked": true,
+    "target_version": "HERD_OPPORTUNITY_CYCLE_TARGET_V1"
+  },
+  "tickers": 51
+}

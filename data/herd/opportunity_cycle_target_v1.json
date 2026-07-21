@@ -1,0 +1,37 @@
+{
+  "target_version": "HERD_OPPORTUNITY_CYCLE_TARGET_V1",
+  "status": "LOCKED_BEFORE_PATH_DIAGNOSTIC_RESULTS",
+  "objective": "Identify an executable pullback after a candidate profit-take without treating healthy continuation as overheat failure.",
+  "research_scope": "CONDITIONAL_TIMING_WITHIN_MONITORED_UNIVERSE",
+  "path_horizon_days": 126,
+  "signal_volatility_window_days": 63,
+  "labels": {
+    "CONTINUATION": "CONTINUATION_ADVANCE_REACHED_BEFORE_TRADABLE_PULLBACK_AND_TERMINAL_RETURN_POSITIVE",
+    "TRADABLE_PULLBACK": "PULLBACK_THRESHOLD_REACHED_AND_PRICE_LATER_RECOVERS_TO_WITHIN_TWO_PERCENT_OF_SIGNAL_PRICE",
+    "STRUCTURAL_BREAK": "STRUCTURAL_DECLINE_REACHED_AND_TERMINAL_RETURN_AT_OR_BELOW_MINUS_TEN_PERCENT",
+    "NOISE": "NO_OTHER_LABEL"
+  },
+  "volatility_scaled_thresholds": {
+    "tradable_pullback": "MAX_5_PERCENT_OR_1_5_X_VOL63_SQRT_21_OVER_252",
+    "continuation_advance": "MAX_8_PERCENT_OR_1_5_X_VOL63_SQRT_63_OVER_252",
+    "structural_decline": "MAX_15_PERCENT_OR_2_5_X_VOL63_SQRT_63_OVER_252",
+    "recovery_floor": -0.02,
+    "structural_terminal_ceiling": -0.10
+  },
+  "recorded_path_fields": [
+    "MFE", "MAE", "TIME_TO_HIGH", "TIME_TO_LOW", "LOW_BEFORE_HIGH",
+    "RECOVERY_AFTER_LOW", "TERMINAL_RETURN", "GROSS_ORACLE_OPPORTUNITY"
+  ],
+  "interpretation": {
+    "oracle_fields_are_targets_only": true,
+    "oracle_reentry_is_not_executable": true,
+    "labels_do_not_authorize_actions": true
+  },
+  "forbidden": [
+    "CHANGE_LABEL_THRESHOLDS_AFTER_COUNTS",
+    "USE_FUTURE_PATH_AS_FEATURE",
+    "TREAT_ORACLE_LOW_AS_REENTRY_PRICE",
+    "AUTHORIZE_PROFIT_TAKE_FROM_PATH_LABEL",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
