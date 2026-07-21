@@ -1,0 +1,50 @@
+{
+  "protocol_version": "HERD_SPARSE_ACTION_PROTOCOL_V1",
+  "status": "LOCKED_BEFORE_WEEKLY_RSI_RESULTS",
+  "objective": "Improve long-term share count and terminal wealth with rare partial profit-taking and evidence-backed reentry without abandoning healthy winners.",
+  "default_action": "HOLD",
+  "research_frequency_bounds": {
+    "profit_take_candidates_per_ticker_year_maximum": 2.0,
+    "all_completed_actions_per_ticker_year_maximum": 5.0,
+    "frequency_is_diagnostic_not_optimization_target": true
+  },
+  "action_constraints": {
+    "initial_profit_take_fraction": 0.05,
+    "maximum_cumulative_profit_take_fraction": 0.15,
+    "full_exit_forbidden": true,
+    "minimum_cooldown_weeks": 8,
+    "profit_take_without_reentry_is_incomplete_cycle": true
+  },
+  "weekly_sampling": {
+    "calendar": "W-FRI",
+    "week_is_observable_after_last_session_close": true,
+    "rsi_period_weeks": 14,
+    "rsi_method": "WILDER",
+    "extreme_entry_levels": [75, 80],
+    "cooling_level": 70,
+    "minimum_extreme_duration_weeks": 2,
+    "outcome_horizons_weeks": [4, 8, 13, 26]
+  },
+  "event_families": {
+    "EXTREME_ENTRY": "WEEKLY_RSI_CROSSES_UP_THROUGH_75_AND_STARTS_ONE_EPISODE",
+    "EXTREME_ESCALATION": "THE_SAME_ACTIVE_EPISODE_CROSSES_UP_THROUGH_80",
+    "EXTREME_PERSISTENCE": "RSI_REMAINS_AT_OR_ABOVE_ENTRY_LEVEL_FOR_AT_LEAST_TWO_WEEKS",
+    "EXTREME_DECELERATION": "RSI_DECLINES_FOR_TWO_CONSECUTIVE_COMPLETED_WEEKS_AFTER_EXTREME_ENTRY",
+    "COOLING_EXIT": "RSI_CROSSES_DOWN_BELOW_70_AFTER_EXTREME_ENTRY"
+  },
+  "research_only": {
+    "events_do_not_authorize_actions": true,
+    "future_paths_are_labels_only": true,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false
+  },
+  "forbidden": [
+    "SELL_ONLY_BECAUSE_RSI_IS_HIGH",
+    "USE_INCOMPLETE_WEEK",
+    "CHANGE_THRESHOLDS_AFTER_RESULTS",
+    "DROP_CONTINUATION_CASES",
+    "FORCE_EVENTS_TO_MATCH_FREQUENCY_TARGET",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}

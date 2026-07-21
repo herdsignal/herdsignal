@@ -1,0 +1,19 @@
+{
+  "event_type_counts": {
+    "COOLING_EXIT": 417,
+    "EXTREME_DECELERATION": 200,
+    "EXTREME_ENTRY": 417,
+    "EXTREME_ESCALATION": 144,
+    "EXTREME_PERSISTENCE": 303
+  },
+  "events": 1481,
+  "events_authorize_actions": false,
+  "extreme_entries": 417,
+  "frequency_diagnostic_maximum": 2.0,
+  "maximum_extreme_entries_per_ticker_year": 1.100749670371068,
+  "median_extreme_entries_per_ticker_year": 0.48157798078734226,
+  "operational_action_ratio": 0.0,
+  "report_version": "herd-weekly-rsi-event-frequency-v1",
+  "tickers": 51,
+  "tickers_above_frequency_diagnostic": []
+}
