@@ -1,0 +1,116 @@
+{
+  "report_version": "HERD_RUSH_PRE_DAMAGE_PATH_AUDIT_V2",
+  "status": "DIAGNOSTIC_COMPLETE",
+  "decision": "CURRENT_PRE_DAMAGE_PRICE_VOLUME_PROFIT_TAKE_MODEL_NOT_IDENTIFIED",
+  "source_damage_events": 1998,
+  "classified_events": 1998,
+  "tickers": 381,
+  "path_counts": {
+    "TEMPORARY_PULLBACK": 772,
+    "RESUMED_UPTREND": 735,
+    "LARGE_PULLBACK": 299,
+    "STRUCTURAL_BREAK": 192
+  },
+  "path_fractions": {
+    "TEMPORARY_PULLBACK": 0.3863863863863864,
+    "RESUMED_UPTREND": 0.36786786786786785,
+    "LARGE_PULLBACK": 0.14964964964964966,
+    "STRUCTURAL_BREAK": 0.0960960960960961
+  },
+  "path_profiles": {
+    "LARGE_PULLBACK": {
+      "events": 299,
+      "median_damage_wait_sessions": 27.0,
+      "median_features": {
+        "breakdown_severity_vol20": 0.0,
+        "below_sma50_severity_vol63": 0.0,
+        "relative_damage_21d": 0.02104057493158601,
+        "downside_acceleration_5_21": 0.02254684345321,
+        "down_up_volume_ratio_20d": 1.0722809664985604,
+        "realized_vol_expansion_20_63": 0.8947395450777966
+      }
+    },
+    "RESUMED_UPTREND": {
+      "events": 735,
+      "median_damage_wait_sessions": 28.0,
+      "median_features": {
+        "breakdown_severity_vol20": 0.0,
+        "below_sma50_severity_vol63": 0.0,
+        "relative_damage_21d": 0.02014626646910883,
+        "downside_acceleration_5_21": 0.016395967287498734,
+        "down_up_volume_ratio_20d": 1.0609004669701438,
+        "realized_vol_expansion_20_63": 0.8546971074163117
+      }
+    },
+    "STRUCTURAL_BREAK": {
+      "events": 192,
+      "median_damage_wait_sessions": 26.5,
+      "median_features": {
+        "breakdown_severity_vol20": 0.0,
+        "below_sma50_severity_vol63": 0.0,
+        "relative_damage_21d": 0.017859264038944084,
+        "downside_acceleration_5_21": 0.023229954053870006,
+        "down_up_volume_ratio_20d": 1.061900177261274,
+        "realized_vol_expansion_20_63": 0.8869510071216098
+      }
+    },
+    "TEMPORARY_PULLBACK": {
+      "events": 772,
+      "median_damage_wait_sessions": 26.5,
+      "median_features": {
+        "breakdown_severity_vol20": 0.0,
+        "below_sma50_severity_vol63": 0.0,
+        "relative_damage_21d": 0.02213139954767651,
+        "downside_acceleration_5_21": 0.014509881497546104,
+        "down_up_volume_ratio_20d": 1.0446679981086935,
+        "realized_vol_expansion_20_63": 0.8483625247696244
+      }
+    }
+  },
+  "features_audited": 6,
+  "retained_features": [],
+  "retained_count": 0,
+  "failure_causes": [
+    "NO_REPEATED_PRE_DAMAGE_SEPARATOR",
+    "DAMAGE_TRIGGER_NOT_SPARSE",
+    "MOST_CONFIRMED_DAMAGE_PATHS_ARE_BENIGN"
+  ],
+  "model_fit": {
+    "source_damage_rate": 0.721820809248555,
+    "source_maximum_damage_rate": 0.3,
+    "benign_path_fraction_after_damage": 0.7542542542542543,
+    "existing_profit_take_rule_passed": false,
+    "reason": "Before the confirmation session, no candidate met material effect, Holm significance, and same-direction evidence in all three eras. The confirmation-day move created the apparent V1 separation too late to be predictive."
+  },
+  "interpretation": "No repeated pre-confirmation separator was identified. With the currently audited price and volume observations, the sparse profit-take model is not realizable; new information families or a new independently preregistered hypothesis are required.",
+  "profit_take_authorized": false,
+  "operational_action_ratio": 0.0,
+  "same_sample_confirmation_allowed": false,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "claim_boundary": "CURRENT_CONSTITUENTS_DIAGNOSTIC_ONLY",
+  "feature_cutoff": "PREVIOUS_COMPLETED_TRADING_SESSION_BEFORE_DAMAGE_CONFIRMATION",
+  "strongest_pre_damage_observations": [
+    {
+      "feature": "downside_acceleration_5_21",
+      "directional_rank_biserial": 0.1342801659099675,
+      "holm_p_value": 4.6079368312237544e-05,
+      "directional_eras": 2,
+      "passes_univariate_gate": false
+    },
+    {
+      "feature": "realized_vol_expansion_20_63",
+      "directional_rank_biserial": 0.09516817668193589,
+      "holm_p_value": 0.007601500334705546,
+      "directional_eras": 2,
+      "passes_univariate_gate": false
+    },
+    {
+      "feature": "down_up_volume_ratio_20d",
+      "directional_rank_biserial": 0.05485169216102603,
+      "holm_p_value": 0.20293655532826593,
+      "directional_eras": 3,
+      "passes_univariate_gate": false
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V9",
+  "status": "POST_STRICT_PRE_DAMAGE_AUDIT_LOCKED",
+  "hypothesis": "OBSERVATIONS_BEFORE_DAMAGE_CONFIRMATION_SEPARATE_FUTURE_RUSH_PATHS",
+  "source_artifacts": [
+    {"path": "data/herd/rush_pre_damage_path_audit_v2.json", "sha256": "b85f837d6a62399b0dd0d6e23165a34d969f0c27eadb1823852104dff4adf862"},
+    {"path": "data/reports/rush_pre_damage_path_events_v2.csv", "sha256": "10eac5722a9fcd9cd155f626d5ec60ca06cfa961836a6605f9ab946d75687089"},
+    {"path": "data/reports/rush_pre_damage_path_feature_comparison_v2.json", "sha256": "b5ade1d7f6bee2a2dc600daaea0a19503cb978d0db6aa016e912061bcc2f83c9"},
+    {"path": "data/reports/rush_pre_damage_path_audit_v2.json", "sha256": "5617a9a793af132bef064627f5806b25de7a4290f11e8dedd91f181b45bc110c"}
+  ],
+  "decision": {
+    "status": "CURRENT_PRE_DAMAGE_PRICE_VOLUME_PROFIT_TAKE_MODEL_NOT_IDENTIFIED",
+    "classified_events": 1998,
+    "retained_pre_damage_features": [],
+    "profit_take_evidence_admitted": false,
+    "five_percent_cash_creation_authorized": false,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_allowed": false
+  },
+  "failure_reason": "No price or volume observation available before the damage-confirmation session met material effect, Holm significance, and same-direction evidence across all three eras. The existing trigger fires on 72.2% of Rush episodes and 75.4% of its subsequent paths are benign.",
+  "claim_boundary": "CURRENT_CONSTITUENTS_DIAGNOSTIC_ONLY"
+}
