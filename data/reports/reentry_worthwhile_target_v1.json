@@ -1,0 +1,23 @@
+{
+  "report_version": "HERD_REENTRY_WORTHWHILE_TARGET_V1",
+  "status": "DISCOVERY_TARGET_READY",
+  "source_events": 2768,
+  "eligible_target_events": 2396,
+  "excluded_events": 372,
+  "label_counts": {
+    "REENTRY_WORTHWHILE": 1515,
+    "HOLD_WINNER": 881
+  },
+  "safe_output_columns": [
+    "ticker",
+    "episode_id",
+    "signal_date",
+    "target_label"
+  ],
+  "future_outcome_columns_exported": false,
+  "confirmation_on_same_sample_allowed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "source_report_version": "HERD_CYCLE_VALUE_CEILING_V1",
+  "research_scope": "DISCOVERY_TARGET_ONLY_REQUIRES_NEW_CONFIRMATION_SAMPLE"
+}

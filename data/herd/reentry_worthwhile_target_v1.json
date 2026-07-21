@@ -1,0 +1,48 @@
+{
+  "target_version": "HERD_REENTRY_WORTHWHILE_TARGET_V1",
+  "status": "LOCKED_AFTER_FEASIBILITY_BEFORE_FEATURE_RESEARCH",
+  "required_feasibility_report": "data/reports/cycle_value_ceiling_v1.json",
+  "required_feasibility_status": "FEASIBILITY_CEILING_PASSED",
+  "source_events": "data/reports/cycle_value_ceiling_events_v1.csv",
+  "labels": {
+    "REENTRY_WORTHWHILE": "STRESS_CONSTRAINED_ORACLE_AVAILABLE",
+    "HOLD_WINNER": "NO_STRESS_CONSTRAINED_ORACLE_AND_EXISTING_PATH_LABEL_CONTINUATION",
+    "EXCLUDED": "ALL_OTHER_PATHS"
+  },
+  "minimum_sample": {
+    "REENTRY_WORTHWHILE": 300,
+    "HOLD_WINNER": 300
+  },
+  "safe_output_columns": [
+    "ticker",
+    "episode_id",
+    "signal_date",
+    "target_label"
+  ],
+  "research_scope": "DISCOVERY_TARGET_ONLY_REQUIRES_NEW_CONFIRMATION_SAMPLE",
+  "forbidden_feature_columns": [
+    "sale_date",
+    "outcome_end",
+    "path_label",
+    "reentry_date",
+    "reentry_price",
+    "time_to_reentry",
+    "days_below_net_discount",
+    "share_delta",
+    "terminal_uplift",
+    "future_open",
+    "future_close"
+  ],
+  "interpretation": {
+    "label_uses_future_only_as_outcome": true,
+    "same_sample_cannot_confirm_discovered_feature": true,
+    "target_does_not_authorize_profit_take_or_reentry": true
+  },
+  "forbidden": [
+    "USE_ORACLE_FIELD_AS_FEATURE",
+    "TREAT_EXCLUDED_AS_NEGATIVE",
+    "CONFIRM_DISCOVERED_FEATURE_ON_SAME_EPISODES",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
