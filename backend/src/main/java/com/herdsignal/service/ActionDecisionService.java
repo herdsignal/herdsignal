@@ -31,6 +31,8 @@ public class ActionDecisionService {
     private static final String BASE_MODEL_VERSION = "HERD_v4";
     private static final String ACTION_MODEL_STATUS = "RESEARCH_VALIDATION";
     private final PersonalActionTranslator personalActionTranslator;
+    private final HerdTrendQualityCalculator trendCalculator;
+    private final HerdMomentumCalculator momentumCalculator;
     private final boolean liveActionsEnabled;
 
     @Autowired
@@ -42,6 +44,8 @@ public class ActionDecisionService {
             OperationalPromotionGate promotionGate
     ) {
         this.personalActionTranslator = personalActionTranslator;
+        this.trendCalculator = new HerdTrendQualityCalculator();
+        this.momentumCalculator = new HerdMomentumCalculator();
         this.liveActionsEnabled = liveActionsEnabled
                 && holdoutPassed
                 && promotionGate.isApproved(candidateId);
@@ -113,8 +117,8 @@ public class ActionDecisionService {
     ) {
         double rawHerdScore = score.getHerdScore().doubleValue();
         int dataQuality = qualityScore != null ? qualityScore : 50;
-        TrendContext trend = calculateTrendContext(indicator);
-        MomentumContext momentum = calculateMomentumContext(score, history);
+        HerdTrendQualityCalculator.Result trend = trendCalculator.calculate(indicator);
+        HerdMomentumCalculator.Result momentum = momentumCalculator.calculate(score, history);
         ScoreContext stabilized = stabilizeScore(rawHerdScore, score.getScoreDate(), history);
         double herdScore = stabilized.score();
         RegimeDecision regime = chooseRegime(herdScore, trend, momentum);
@@ -378,7 +382,7 @@ public class ActionDecisionService {
     }
 
     /** 데이터와 변화 이력이 약할수록 행동 비율만 축소하고 시장 상태 자체는 보존한다. */
-    private RegimeDecision applyConfidence(RegimeDecision regime, int dataQuality, MomentumContext momentum) {
+    private RegimeDecision applyConfidence(RegimeDecision regime, int dataQuality, HerdMomentumCalculator.Result momentum) {
         if (regime.ratio() == 0.0) return regime;
         double qualityFactor = dataQuality >= 85 ? 1.0 : dataQuality >= 65 ? 0.85 : dataQuality >= 50 ? 0.65 : 0.40;
         double historyFactor = momentum.observations() >= 20 ? 1.0 : momentum.observations() >= 5 ? 0.85 : 0.65;
@@ -501,54 +505,6 @@ public class ActionDecisionService {
         return label;
     }
 
-    private MomentumContext calculateMomentumContext(HerdScore latest, List<HerdScore> history) {
-        if (history == null || history.size() < 2 || latest.getScoreDate() == null) {
-            return new MomentumContext(50, 0.0, 0.0, 0.0, 0, "HERD 변화 데이터 부족", List.of("HERD 변화율 데이터가 부족해 현재 점수 중심으로 해석합니다."));
-        }
-
-        HerdScore previous = null;
-        HerdScore monthAgo = null;
-        LocalDate latestDate = latest.getScoreDate();
-
-        for (HerdScore row : history) {
-            if (row.getScoreDate() == null || !row.getScoreDate().isBefore(latestDate)) {
-                continue;
-            }
-            if (previous == null) {
-                previous = row;
-            }
-            long days = ChronoUnit.DAYS.between(row.getScoreDate(), latestDate);
-            if (days <= 35) {
-                monthAgo = row;
-            }
-        }
-
-        if (previous == null) {
-            return new MomentumContext(50, 0.0, 0.0, 0.0, history.size(), "HERD 변화 데이터 부족", List.of("직전 HERD 포인트가 없어 변화율을 보수적으로 봅니다."));
-        }
-
-        HerdScore baseline = monthAgo != null ? monthAgo : previous;
-        double shortDelta = latest.getHerdScore().doubleValue() - previous.getHerdScore().doubleValue();
-        double monthDelta = latest.getHerdScore().doubleValue() - baseline.getHerdScore().doubleValue();
-        HerdScore fiveDay = scoreNearDays(history, latestDate, 5);
-        HerdScore twentyDay = scoreNearDays(history, latestDate, 20);
-        double fastDelta = fiveDay == null ? shortDelta : latest.getHerdScore().doubleValue() - fiveDay.getHerdScore().doubleValue();
-        double slowDelta = twentyDay == null ? monthDelta : latest.getHerdScore().doubleValue() - twentyDay.getHerdScore().doubleValue();
-        double acceleration = fastDelta - (slowDelta / 4.0);
-
-        int momentumScore = 50;
-        if (monthDelta >= 12) momentumScore = 85;
-        else if (monthDelta >= 5) momentumScore = 70;
-        else if (monthDelta <= -12) momentumScore = 15;
-        else if (monthDelta <= -5) momentumScore = 30;
-
-        String direction = monthDelta > 1
-                ? "상승"
-                : monthDelta < -1 ? "둔화" : "유지";
-        String reason = String.format("HERD 5일 %.1fpt · 20일 %.1fpt · 가속도 %.1f(%s)", fastDelta, slowDelta, acceleration, direction);
-        return new MomentumContext(momentumScore, shortDelta, monthDelta, acceleration, history.size(), reason, List.of());
-    }
-
     private HerdScore previousScore(List<HerdScore> history, LocalDate latestDate) {
         if (history == null) return null;
         return history.stream().filter(row -> row.getScoreDate() != null && row.getHerdScore() != null
@@ -556,89 +512,7 @@ public class ActionDecisionService {
                 .max((a, b) -> a.getScoreDate().compareTo(b.getScoreDate())).orElse(null);
     }
 
-    private HerdScore scoreNearDays(List<HerdScore> history, LocalDate latestDate, int days) {
-        LocalDate target = latestDate.minusDays(days);
-        return history.stream()
-                .filter(row -> row.getScoreDate() != null && row.getHerdScore() != null && row.getScoreDate().isBefore(latestDate))
-                .min((a, b) -> Long.compare(Math.abs(ChronoUnit.DAYS.between(a.getScoreDate(), target)), Math.abs(ChronoUnit.DAYS.between(b.getScoreDate(), target))))
-                .orElse(null);
-    }
-
-    private TrendContext calculateTrendContext(HerdIndicator indicator) {
-        if (indicator == null) {
-            return new TrendContext(35, 50.0, List.of("지표 분해 데이터가 없어 추세 품질을 낮게 반영합니다."));
-        }
-
-        int score = 0;
-        double ma200DeviationValue = 50.0;
-        List<String> warnings = new ArrayList<>();
-
-        BigDecimal ma200Weekly = indicator.getMa200Weekly();
-        if (ma200Weekly != null) {
-            double value = ma200Weekly.doubleValue();
-            if (value >= 60) score += 25;
-            else if (value >= 40) score += 17;
-            else score += 8;
-        } else {
-            warnings.add("200주 MA 위치 데이터가 없습니다.");
-        }
-
-        BigDecimal ma200Deviation = indicator.getMa200Deviation();
-        if (ma200Deviation != null) {
-            double value = ma200Deviation.doubleValue();
-            ma200DeviationValue = value;
-            if (value >= 35 && value <= 70) score += 20;
-            else if (value >= 20 && value < 85) score += 14;
-            else score += 6;
-
-            if (value >= 85) {
-                warnings.add("MA200 이격도가 높아 과밀 국면일 수 있습니다.");
-            }
-            if (value <= 15) {
-                warnings.add("MA200 이격도가 낮아 추세 훼손 여부 확인이 필요합니다.");
-            }
-        }
-
-        BigDecimal position52w = indicator.getPosition52w();
-        if (position52w != null) {
-            double value = position52w.doubleValue();
-            if (value >= 55) score += 20;
-            else if (value >= 35) score += 14;
-            else score += 6;
-        }
-
-        BigDecimal sectorMultiplier = indicator.getSectorMultiplier();
-        if (sectorMultiplier != null) {
-            double value = sectorMultiplier.doubleValue();
-            if (value <= 0.95) score += 20;
-            else if (value <= 1.00) score += 14;
-            else if (value <= 1.05) score += 8;
-            else {
-                score += 4;
-                warnings.add("섹터 대비 상대 강도가 약합니다.");
-            }
-        } else {
-            score += 8;
-        }
-
-        BigDecimal epsMultiplier = indicator.getEpsMultiplier();
-        if (epsMultiplier != null) {
-            double value = epsMultiplier.doubleValue();
-            if (value <= 0.95) score += 15;
-            else if (value <= 1.00) score += 10;
-            else if (value <= 1.05) score += 6;
-            else {
-                score += 3;
-                warnings.add("EPS 서프라이즈 흐름이 약합니다.");
-            }
-        } else {
-            score += 6;
-        }
-
-        return new TrendContext(clamp(score, 0, 100), ma200DeviationValue, warnings);
-    }
-
-    private RegimeDecision chooseRegime(double score, TrendContext trend, MomentumContext momentum) {
+    private RegimeDecision chooseRegime(double score, HerdTrendQualityCalculator.Result trend, HerdMomentumCalculator.Result momentum) {
         int trendScore = trend.score();
         double ma200Dev = trend.ma200Deviation();
         boolean momentumRising = momentum.monthDelta() >= 5.0;
@@ -856,20 +730,6 @@ public class ActionDecisionService {
 
     private int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
-    }
-
-    private record TrendContext(int score, double ma200Deviation, List<String> warnings) {
-    }
-
-    private record MomentumContext(
-            int score,
-            double shortDelta,
-            double monthDelta,
-            double acceleration,
-            int observations,
-            String reason,
-            List<String> warnings
-    ) {
     }
 
     private record ScoreContext(double score, String reason) {
