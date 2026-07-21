@@ -1,0 +1,66 @@
+{
+  "protocol_version": "HERD_WEEKLY_RSI_OOS_V1",
+  "status": "LOCKED_BEFORE_OOS_RESULTS",
+  "objective": "Test whether rare weekly RSI transition events identify a materially better partial-profit opportunity than comparable non-event weeks without treating strong momentum itself as a sell signal.",
+  "fold_lane": "PRICE_TIMING_6M",
+  "outcome": {
+    "primary_horizon_weeks": 13,
+    "primary_target": "FUTURE_ADJUSTED_CLOSE_AT_LEAST_5_PERCENT_BELOW_EVENT_CLOSE",
+    "secondary_horizons_weeks": [4, 8, 26],
+    "outcomes_are_labels_only": true
+  },
+  "hypotheses": [
+    {
+      "id": "WRSI_EXTREME_ENTRY_PULLBACK",
+      "event_type": "EXTREME_ENTRY",
+      "control_pool": "SAME_TICKER_TEST_FOLD_RSI_70_TO_75_NON_EVENT_WEEK"
+    },
+    {
+      "id": "WRSI_EXTREME_ESCALATION_PULLBACK",
+      "event_type": "EXTREME_ESCALATION",
+      "control_pool": "SAME_TICKER_TEST_FOLD_ACTIVE_EXTREME_NON_TRANSITION_WEEK"
+    },
+    {
+      "id": "WRSI_DECELERATION_PULLBACK",
+      "event_type": "EXTREME_DECELERATION",
+      "control_pool": "SAME_TICKER_TEST_FOLD_ACTIVE_EXTREME_NON_TRANSITION_WEEK"
+    },
+    {
+      "id": "WRSI_COOLING_EXIT_PULLBACK",
+      "event_type": "COOLING_EXIT",
+      "control_pool": "SAME_TICKER_TEST_FOLD_RSI_55_TO_70_NON_EVENT_WEEK"
+    }
+  ],
+  "matching": {
+    "one_control_per_event": true,
+    "without_replacement_within_hypothesis_fold": true,
+    "match_features": ["TICKER", "TEST_FOLD", "TRAILING_26_WEEK_RETURN"],
+    "maximum_absolute_trailing_return_gap": 0.15,
+    "exclude_control_within_26_weeks_after_same_hypothesis_event": true,
+    "test_outcome_not_used_for_matching": true
+  },
+  "adoption_gate": {
+    "minimum_matched_events": 80,
+    "minimum_tickers": 20,
+    "minimum_test_folds": 4,
+    "minimum_directional_folds": 3,
+    "minimum_event_target_rate": 0.6,
+    "minimum_target_rate_gap": 0.1,
+    "minimum_signal_dates": 20,
+    "maximum_holm_p_value": 0.1,
+    "maximum_extreme_entries_per_ticker_year": 2.0
+  },
+  "frequency_policy": {
+    "event_frequency_is_a_safety_gate_not_a_tunable_objective": true,
+    "all_actions_per_ticker_year_must_remain_at_or_below": 5.0
+  },
+  "forbidden": [
+    "CHANGE_RSI_LEVEL_AFTER_RESULTS",
+    "CHANGE_PRIMARY_HORIZON_AFTER_RESULTS",
+    "USE_FUTURE_OUTCOME_FOR_MATCHING",
+    "COUNT_SAME_DATE_STOCKS_AS_INDEPENDENT_MARKET_EVENTS",
+    "COMBINE_FAILED_HYPOTHESES",
+    "AUTHORIZE_PROFIT_TAKE_BEFORE_INDEPENDENT_OOS_PASS",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
