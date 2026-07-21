@@ -1,0 +1,21 @@
+{
+  "features": 11,
+  "labels_are_not_features": true,
+  "missing_fraction": {
+    "HIGH_52W_FAILURE": 0.03686814036172515,
+    "HIGH_52W_PROXIMITY": 0.03686814036172515,
+    "MARKET_STRESS_REGIME": 0.01775132684083063,
+    "PIT_BUSINESS_DETERIORATION": 0.19889730509609935,
+    "SIGNED_VOLUME_PARTICIPATION": 0.0,
+    "STOCK_SECTOR_RS_13W": 0.041248003297779154,
+    "STOCK_SECTOR_RS_DAMAGE": 0.041248003297779154,
+    "STOCK_SPY_RS_13W": 0.0,
+    "TREND_13W_DECELERATION": 0.0,
+    "TREND_26W_QUALITY": 0.0,
+    "WEEKLY_RSI_EXTREME": 0.0
+  },
+  "operational_action_ratio": 0.0,
+  "report_version": "herd-candidate-feature-panel-v2",
+  "rows": 38814,
+  "tickers": 55
+}

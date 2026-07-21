@@ -1,0 +1,11 @@
+{
+  "blind_holdout_access": false,
+  "continuation_shield_ready": false,
+  "operational_action_ratio": 0.0,
+  "passing_direction_variants": [],
+  "passing_variants": [],
+  "profit_take_evidence_ready": false,
+  "report_version": "herd-candidate-oos-v2",
+  "tests": 21,
+  "weights_allowed": false
+}
