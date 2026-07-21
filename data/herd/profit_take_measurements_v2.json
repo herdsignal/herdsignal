@@ -1,0 +1,66 @@
+{
+  "registry_version": "HERD_PROFIT_TAKE_MEASUREMENTS_V2",
+  "status": "LOCKED_BEFORE_OOS_RESULTS",
+  "objective": "Find evidence for a small partial profit-take within a preselected long-term holding without cutting healthy momentum merely because HERD is high.",
+  "input_manifest": "HERD_RESEARCH_INPUT_V2",
+  "observation": {
+    "frequency": "MONTH_END",
+    "execution": "NEXT_TRADING_DAY_OPEN",
+    "minimum_ticker_history_days": 756,
+    "percentile_reference": "TICKER_EXPANDING_HISTORY_SHIFTED_ONE_OBSERVATION",
+    "episode_reset_percentile": 0.7,
+    "forward_horizons_days": [21, 63, 126]
+  },
+  "hypotheses": [
+    {
+      "id": "PROFIT_RELATIVE_EXTENSION_V2",
+      "family": "RELATIVE_PRICE_EXTENSION",
+      "measurement": "RET252_STOCK_MINUS_RET252_SECTOR",
+      "event_percentiles": [0.8, 0.9],
+      "expected": "LOWER_FORWARD_EXCESS_RETURN_AND_DEEPER_TROUGH"
+    },
+    {
+      "id": "PROFIT_TREND_DECELERATION_V2",
+      "family": "TREND_DECELERATION",
+      "measurement": "NEGATIVE_OF_LOG_SLOPE21_MINUS_LOG_SLOPE63_WHILE_SLOPE126_POSITIVE",
+      "event_percentiles": [0.8, 0.9],
+      "expected": "LOWER_FORWARD_EXCESS_RETURN_AND_DEEPER_TROUGH"
+    },
+    {
+      "id": "PROFIT_RELATIVE_BREAK_V2",
+      "family": "RELATIVE_STRENGTH_BREAK",
+      "measurement": "NEGATIVE_OF_RELATIVE_RET21_MINUS_RELATIVE_RET126_OVER_SIX",
+      "event_percentiles": [0.8, 0.9],
+      "expected": "LOWER_FORWARD_EXCESS_RETURN_AND_DEEPER_TROUGH"
+    },
+    {
+      "id": "PROFIT_DOWNSIDE_EXPANSION_V2",
+      "family": "DOWNSIDE_RISK_EXPANSION",
+      "measurement": "DOWNSIDE_VOL20_DIV_DOWNSIDE_VOL63",
+      "event_percentiles": [0.8, 0.9],
+      "expected": "DEEPER_FORWARD_TROUGH_WITH_LIMITED_UPSIDE_SACRIFICE",
+      "role_if_passed": "ACTION_INTENSITY_CAP_OR_CONFIRMATION_ONLY"
+    }
+  ],
+  "oos_gate": {
+    "primary_horizon_days": 63,
+    "minimum_events": 40,
+    "minimum_tickers": 15,
+    "minimum_test_folds": 4,
+    "minimum_directional_folds": 3,
+    "maximum_holm_p_value": 0.1,
+    "minimum_median_excess_return_gap": 0.0,
+    "minimum_median_trough_gap": 0.0,
+    "maximum_median_upside_sacrifice": 0.08,
+    "leave_one_ticker_out_sign_must_hold": true,
+    "cost_stress_bps": [10, 25, 50]
+  },
+  "forbidden": [
+    "COMBINE_HYPOTHESES_BEFORE_INDEPENDENT_OOS_PASS",
+    "SEARCH_PERCENTILE_AFTER_RESULTS",
+    "HIGH_HERD_ALONE_AS_EVENT",
+    "COUNT_MULTIPLE_MONTHS_IN_ONE_EPISODE",
+    "AUTHORIZE_ACTION_BEFORE_ADMISSION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
