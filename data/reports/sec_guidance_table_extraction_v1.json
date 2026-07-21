@@ -1,0 +1,27 @@
+{
+  "report_version": "herd-sec-guidance-table-extraction-v1",
+  "snapshot_id": "sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "html_documents_scanned": 11800,
+  "structure_preserved_candidates": 140,
+  "candidate_tickers": 15,
+  "candidate_counts_by_metric": {
+    "CAPEX": 21,
+    "EPS": 56,
+    "MARGIN": 2,
+    "OPERATING_INCOME": 53,
+    "REVENUE": 8
+  },
+  "stratified_review_rows": 55,
+  "reviewed_rows": 0,
+  "source_precision": null,
+  "wilson_95_lower_bound": null,
+  "review_gate_passed": false,
+  "source_verified_pairs": 0,
+  "source_verified_tickers": 0,
+  "coverage_gate_passed": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "REVIEW_SAMPLE_COVERAGE_BLOCKED",
+  "guidance_direction_classified": 0,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "771aae22e7397d13068da5153f033eec1097421125f5bf66be1c835a74a41273"
+}

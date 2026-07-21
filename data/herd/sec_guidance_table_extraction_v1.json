@@ -1,0 +1,23 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_TABLE_EXTRACTION_V1",
+  "status": "LOCKED_BEFORE_TABLE_OUTPUT_AND_REVIEW_LABELS",
+  "objective": "Preserve EDGAR HTML table row and column structure when extracting explicit issuer guidance ranges.",
+  "corpus": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "eligible_metrics": ["REVENUE", "EPS", "MARGIN", "OPERATING_INCOME", "FREE_CASH_FLOW", "CAPEX"],
+  "review_gate": {
+    "minimum_stratified_rows": 60,
+    "target_rows_per_metric": 15,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "coverage_gate": {
+    "minimum_source_verified_pairs": 150,
+    "minimum_source_verified_tickers": 20
+  },
+  "forbidden": [
+    "FLATTEN_TABLE_BEFORE_ASSOCIATION",
+    "LINK_METRIC_AND_RANGE_ACROSS_DIFFERENT_ROWS",
+    "INFER_DIRECTION_BEFORE_REVIEW_AND_COVERAGE_GATES",
+    "USE_PRICE_OUTCOME_DURING_SOURCE_REVIEW",
+    "CHANGE_HERD_WEIGHTS"
+  ]
+}
