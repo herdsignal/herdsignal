@@ -1,0 +1,13 @@
+{
+  "blind_holdout_access": false,
+  "blocked_cycle_is_performance_failure": false,
+  "buy_hold_comparison_executed": false,
+  "cycle_executed": false,
+  "full_exit_allowed": false,
+  "initial_profit_take_fraction": 0.0,
+  "maximum_profit_take_fraction": 0.15,
+  "operational_action_ratio": 0.0,
+  "passing_hypotheses": [],
+  "report_version": "herd-rush-five-percent-cycle-gate-v1",
+  "status": "BLOCKED_NO_CONFIRMED_RUSH_DIRECTION_EVIDENCE"
+}
