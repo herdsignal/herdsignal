@@ -1,0 +1,14 @@
+{
+  "features": 11,
+  "hypotheses": 11,
+  "locked_before_results": true,
+  "operational_actions_allowed": false,
+  "report_version": "herd-candidate-formulas-v2-preregistration",
+  "roles": [
+    "BUSINESS_VETO",
+    "CONTINUATION_SHIELD",
+    "PROFIT_TAKE_DIRECTION",
+    "REGIME_CONTEXT"
+  ],
+  "weights_allowed": false
+}

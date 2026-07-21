@@ -1,0 +1,75 @@
+{
+  "protocol_version": "HERD_CANDIDATE_FORMULAS_V2",
+  "status": "LOCKED_BEFORE_CANDIDATE_FEATURE_RESULTS",
+  "objective": "Identify which independent evidence, if any, should compose HERD before learning any weights.",
+  "source_matrix": "HERD_EVIDENCE_TARGET_MATRIX_V1",
+  "research_basis": [
+    {"name":"52-week high and momentum","url":"https://doi.org/10.1111/j.1540-6261.2004.00695.x"},
+    {"name":"price momentum and trading volume","url":"https://doi.org/10.1111/0022-1082.00280"},
+    {"name":"distress risk","url":"https://www.nber.org/papers/w12362"}
+  ],
+  "common": {
+    "signal_frequency": "COMPLETED_WEEKLY",
+    "price_lane": "PRICE_TIMING_6M",
+    "primary_horizon_weeks": 13,
+    "secondary_horizons_weeks": [4, 8, 26],
+    "threshold_training_quantiles": [0.8, 0.9],
+    "control_training_quantile_maximum": 0.5,
+    "minimum_training_events": 80,
+    "minimum_treatment_events": 60,
+    "minimum_tickers": 20,
+    "minimum_test_folds": 4,
+    "minimum_directional_folds": 3,
+    "minimum_signal_dates": 20,
+    "maximum_holm_p_value": 0.1,
+    "same_date_cluster_inference": true,
+    "one_hypothesis_one_target": true
+  },
+  "targets": {
+    "CONTINUATION_13W": "13-week terminal return positive and no 10% decline from signal close",
+    "PULLBACK_13W": "a close at least 5% below signal close within 13 weeks",
+    "STRUCTURAL_BREAK_26W": "26-week terminal return at most -10% with maximum decline at most -15%",
+    "REENTRY_13W": "after a prior profit-take event, lower price plus stabilized trend and non-impaired PIT business state"
+  },
+  "features": [
+    {"id":"STOCK_SECTOR_RS_13W","formula":"63-session stock return minus mapped sector ETF return","direction":"HIGH","availability":"T_OR_EARLIER","source_indicator":"V4_SECTOR_MULTIPLIER"},
+    {"id":"STOCK_SECTOR_RS_DAMAGE","formula":"stock/sector price ratio divided by its trailing 63-session maximum minus one","direction":"LOW_AS_DAMAGE","availability":"T_OR_EARLIER","source_indicator":"R_SECTOR_ALIGNMENT"},
+    {"id":"STOCK_SPY_RS_13W","formula":"63-session stock return minus SPY return","direction":"HIGH","availability":"T_OR_EARLIER","source_indicator":"R_TREND_RELATIVE_STRENGTH"},
+    {"id":"HIGH_52W_PROXIMITY","formula":"adjusted close divided by trailing 252-session maximum","direction":"HIGH","availability":"T_OR_EARLIER","source_indicator":"V4_52W_POSITION"},
+    {"id":"HIGH_52W_FAILURE","formula":"weeks since latest 252-session high plus current distance below that high","direction":"HIGH_AS_FAILURE","availability":"T_OR_EARLIER","source_indicator":"V4_52W_POSITION"},
+    {"id":"TREND_26W_QUALITY","formula":"positive-slope R-squared of weekly log adjusted close over 26 completed weeks","direction":"HIGH","availability":"T_OR_EARLIER","source_indicator":"R_TREND_QUALITY_R2"},
+    {"id":"TREND_13W_DECELERATION","formula":"prior 13-week weekly-log-price slope minus current 13-week slope","direction":"HIGH_AS_DECELERATION","availability":"T_OR_EARLIER","source_indicator":"R_TREND_QUALITY_R2"},
+    {"id":"SIGNED_VOLUME_PARTICIPATION","formula":"20-session mean signed volume divided by 126-session mean volume","direction":"LOW_AS_WEAKENING","availability":"T_OR_EARLIER","source_indicator":"R_PARTICIPATION_BREADTH"},
+    {"id":"MARKET_STRESS_REGIME","formula":"SPY below SMA200 plus 63-session volatility expanding percentile plus 63-session drawdown","direction":"CONTEXT_ONLY","availability":"T_OR_EARLIER","source_indicator":"R_MARKET_VOLATILITY"},
+    {"id":"PIT_BUSINESS_DETERIORATION","formula":"entity-type-aware revenue, margin, operating cash flow and leverage deterioration from accepted SEC facts","direction":"HIGH_AS_IMPAIRMENT","availability":"ACCEPTED_AT_OR_BEFORE_T","source_indicator":"R_BUSINESS_DETERIORATION"},
+    {"id":"WEEKLY_RSI_EXTREME","formula":"completed-week Wilder RSI(14) extreme episode entry at 75","direction":"HIGH_AS_EXTENSION","availability":"T_OR_EARLIER","source_indicator":"R_WEEKLY_RSI_EXTREME_ENTRY"}
+  ],
+  "hypotheses": [
+    {"id":"H_CONT_SECTOR_RS","feature":"STOCK_SECTOR_RS_13W","target":"CONTINUATION_13W","role":"CONTINUATION_SHIELD"},
+    {"id":"H_CONT_SPY_RS","feature":"STOCK_SPY_RS_13W","target":"CONTINUATION_13W","role":"CONTINUATION_SHIELD"},
+    {"id":"H_CONT_52W_HIGH","feature":"HIGH_52W_PROXIMITY","target":"CONTINUATION_13W","role":"CONTINUATION_SHIELD"},
+    {"id":"H_CONT_TREND_QUALITY","feature":"TREND_26W_QUALITY","target":"CONTINUATION_13W","role":"CONTINUATION_SHIELD"},
+    {"id":"H_PULLBACK_RS_DAMAGE","feature":"STOCK_SECTOR_RS_DAMAGE","target":"PULLBACK_13W","role":"PROFIT_TAKE_DIRECTION"},
+    {"id":"H_PULLBACK_HIGH_FAILURE","feature":"HIGH_52W_FAILURE","target":"PULLBACK_13W","role":"PROFIT_TAKE_DIRECTION"},
+    {"id":"H_PULLBACK_TREND_DECEL","feature":"TREND_13W_DECELERATION","target":"PULLBACK_13W","role":"PROFIT_TAKE_DIRECTION"},
+    {"id":"H_PULLBACK_VOLUME_WEAK","feature":"SIGNED_VOLUME_PARTICIPATION","target":"PULLBACK_13W","role":"PROFIT_TAKE_DIRECTION"},
+    {"id":"H_PULLBACK_WEEKLY_RSI","feature":"WEEKLY_RSI_EXTREME","target":"PULLBACK_13W","role":"PROFIT_TAKE_DIRECTION"},
+    {"id":"H_BREAK_BUSINESS","feature":"PIT_BUSINESS_DETERIORATION","target":"STRUCTURAL_BREAK_26W","role":"BUSINESS_VETO"},
+    {"id":"H_CONTEXT_MARKET_STRESS","feature":"MARKET_STRESS_REGIME","target":"PULLBACK_13W","role":"REGIME_CONTEXT"}
+  ],
+  "adoption_gates": {
+    "CONTINUATION_SHIELD":{"minimum_target_rate":0.60,"minimum_control_gap":0.10},
+    "PROFIT_TAKE_DIRECTION":{"minimum_target_rate":0.60,"minimum_control_gap":0.10},
+    "BUSINESS_VETO":{"minimum_target_rate":0.55,"minimum_control_gap":0.10},
+    "REGIME_CONTEXT":{"cannot_pass_as_direction":true,"minimum_interaction_gap":0.10}
+  },
+  "forbidden": [
+    "CHANGE_FORMULA_AFTER_FEATURE_RESULTS",
+    "CHANGE_TARGET_AFTER_OOS_RESULTS",
+    "COUNT_REGIME_AS_DIRECTION",
+    "COMBINE_BEFORE_INDEPENDENT_PASS",
+    "LEARN_WEIGHTS_BEFORE_REDUNDANCY_AUDIT",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
