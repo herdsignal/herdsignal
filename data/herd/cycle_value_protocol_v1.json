@@ -1,0 +1,70 @@
+{
+  "protocol_version": "HERD_CYCLE_VALUE_V1",
+  "status": "LOCKED_BEFORE_CYCLE_VALUE_RESULTS",
+  "objective": "Determine whether a rare five-percent profit-take can create economically meaningful additional shares without abandoning a long-term winner.",
+  "input": {
+    "episode_report": "data/reports/independent_rush_evidence_panel_v1.csv",
+    "selector": "V61_RUSH",
+    "claim_boundary": "CURRENT_CONSTITUENTS_ROBUSTNESS_ONLY",
+    "horizon_sessions_after_signal": 126
+  },
+  "execution": {
+    "profit_take_fraction": 0.05,
+    "sale_fill": "FIRST_AVAILABLE_OPEN_STRICTLY_AFTER_SIGNAL_SESSION",
+    "reentry_fill": "QUALIFYING_SESSION_OPEN",
+    "base_one_way_fee_rate": 0.001,
+    "base_one_way_slippage_rate": 0.0005,
+    "stress_one_way_fee_rate": 0.002,
+    "stress_one_way_slippage_rate": 0.0015,
+    "reentry_spend_cap": "NET_PROCEEDS_FROM_MATCHED_SALE",
+    "cash_yield": 0.0,
+    "dividends_after_sale": "NOT_CREDITED_TO_CASH_ORACLE_AND_RECORDED_AS_LIMITATION"
+  },
+  "ceilings": {
+    "theoretical_oracle": {
+      "reentry": "LOWEST_FUTURE_OPEN_AFTER_SALE_WITHIN_HORIZON",
+      "interpretation": "NON_EXECUTABLE_ABSOLUTE_UPPER_BOUND"
+    },
+    "constrained_oracle": {
+      "minimum_net_discount_from_sale_execution": 0.03,
+      "minimum_consecutive_qualifying_sessions": 3,
+      "maximum_advance_before_reentry": 0.10,
+      "reentry": "LOWEST_OPEN_AMONG_QUALIFYING_WINDOW_STARTS",
+      "abstain_when_no_window": true,
+      "interpretation": "NON_EXECUTABLE_FEASIBILITY_CEILING_NOT_A_SIGNAL"
+    }
+  },
+  "recorded_fields": [
+    "SALE_DATE",
+    "SALE_EXECUTION_PRICE",
+    "ORACLE_REENTRY_DATE",
+    "ORACLE_REENTRY_PRICE",
+    "TIME_TO_REENTRY",
+    "PRE_REENTRY_MAX_ADVANCE",
+    "DAYS_BELOW_NET_DISCOUNT",
+    "SLEEVE_SHARE_DELTA_RATE",
+    "TOTAL_POSITION_TERMINAL_UPLIFT",
+    "NO_ACTION_TERMINAL_WEALTH"
+  ],
+  "economic_feasibility_gate": {
+    "minimum_evaluable_episodes": 1000,
+    "minimum_constrained_opportunity_rate": 0.15,
+    "minimum_mean_total_position_terminal_uplift": 0.001,
+    "minimum_median_conditional_sleeve_share_delta_rate": 0.03,
+    "must_pass_base_and_stress_costs": true
+  },
+  "interpretation": {
+    "future_low_is_never_a_feature": true,
+    "oracle_result_does_not_authorize_action": true,
+    "feasibility_pass_only_allows_new_target_research": true,
+    "feasibility_failure_requires_objective_review": true
+  },
+  "forbidden": [
+    "USE_ORACLE_REENTRY_AS_EXECUTABLE_RULE",
+    "CHANGE_DISCOUNT_OR_WINDOW_AFTER_RESULTS",
+    "COUNT_PULLBACK_WITHOUT_NET_COSTS",
+    "TREAT_ABSTENTION_AS_FAILED_TRADE",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
