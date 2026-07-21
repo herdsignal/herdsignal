@@ -1,0 +1,45 @@
+{
+  "protocol_version": "HERD_RUSH_PATH_COMPARISON_V2",
+  "status": "LOCKED_BEFORE_PATH_FEATURE_COMPARISON",
+  "discovery_end": "2015-12-31",
+  "confirmation_start": "2016-08-02",
+  "primary_comparison": {
+    "treatment_labels": ["LARGE_PULLBACK", "STRUCTURAL_BREAK"],
+    "control_labels": ["CONTINUATION"]
+  },
+  "secondary_comparison": {
+    "treatment_labels": ["TEMPORARY_PULLBACK"],
+    "control_labels": ["CONTINUATION"]
+  },
+  "candidate_features": [
+    "extension_votes",
+    "weekly_rsi_14",
+    "high_52w_proximity",
+    "return_26w",
+    "close_to_sma200",
+    "STOCK_SECTOR_RS_13W",
+    "STOCK_SECTOR_RS_DAMAGE",
+    "STOCK_SPY_RS_13W",
+    "HIGH_52W_FAILURE",
+    "SIGNED_VOLUME_PARTICIPATION",
+    "MARKET_STRESS_REGIME",
+    "TREND_26W_QUALITY",
+    "TREND_13W_DECELERATION",
+    "PIT_BUSINESS_DETERIORATION"
+  ],
+  "discovery_retention_gate": {
+    "minimum_treatment_events": 25,
+    "minimum_control_events": 25,
+    "maximum_missing_fraction": 0.25,
+    "minimum_absolute_rank_biserial": 0.20,
+    "maximum_holm_p_value": 0.10,
+    "minimum_same_direction_halves": 2
+  },
+  "forbidden": [
+    "USE_CONFIRMATION_ROWS_FOR_FEATURE_RETENTION",
+    "CHANGE_RETENTION_GATE_AFTER_COMPARISON",
+    "RETAIN_BY_P_VALUE_WITHOUT_EFFECT_SIZE",
+    "TREAT_SECONDARY_COMPARISON_AS_DIRECTION_AUTHORITY",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}

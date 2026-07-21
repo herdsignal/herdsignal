@@ -1,0 +1,11 @@
+{
+  "blind_holdout_access": false,
+  "confirmation_rows_accessed_for_selection": false,
+  "discovery_episodes": 211,
+  "features_compared": 14,
+  "operational_action_ratio": 0.0,
+  "report_version": "herd-rush-path-comparison-v2",
+  "retained_count": 0,
+  "retained_features": [],
+  "status": "DISCOVERY_COMPARISON_COMPLETE"
+}
