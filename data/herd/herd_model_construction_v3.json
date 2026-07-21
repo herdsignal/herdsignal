@@ -1,0 +1,24 @@
+{
+  "policy_version": "HERD_MODEL_CONSTRUCTION_V3",
+  "status": "LOCKED_AFTER_INDEPENDENT_RUSH_EVIDENCE_V1",
+  "required_reports": {
+    "independent_oos": "data/reports/independent_rush_evidence_v1.json",
+    "comparison": "data/reports/independent_rush_evidence_comparison_v1.json"
+  },
+  "minimum_admitted_direction_features": 1,
+  "candidate_contract_if_eligible": {
+    "state_base": "HERD_V4_STATE",
+    "direction_components": "ADMITTED_FEATURES_ONLY",
+    "personal_portfolio_inputs": "EXCLUDED_FROM_OBJECTIVE_HERD",
+    "weights": "NOT_ASSIGNED_BEFORE_ABLATION_AND_WALK_FORWARD",
+    "operational_status": "SHADOW_RESEARCH_ONLY"
+  },
+  "forbidden": [
+    "COMBINE_FAILED_FEATURES",
+    "ASSIGN_WEIGHTS_WITHOUT_ABLATION",
+    "RENAME_EXISTING_INDICATORS_AS_NEXT_GENERATION_HERD",
+    "DELETE_OPERATIONAL_V4",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}

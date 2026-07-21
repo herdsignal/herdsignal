@@ -1,0 +1,20 @@
+{
+  "report_version": "HERD_MODEL_CONSTRUCTION_V3",
+  "status": "BLOCKED_NO_ADMITTED_DIRECTION_EVIDENCE",
+  "source_oos_status": "INDEPENDENT_OOS_COMPLETE",
+  "admitted_direction_features": [],
+  "rejected_direction_features": [
+    "SECTOR_RS_DAMAGE_DELTA_4W",
+    "TREND_QUALITY_DELTA_4W",
+    "PARTICIPATION_WEAKENING_DELTA_4W",
+    "MARKET_STRESS_DELTA_4W"
+  ],
+  "candidate_contract": null,
+  "candidate_count": 0,
+  "weights": {},
+  "weights_allowed": false,
+  "existing_v4_preserved": true,
+  "model_promotion_allowed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}
