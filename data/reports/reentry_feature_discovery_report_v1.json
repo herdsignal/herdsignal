@@ -1,0 +1,12 @@
+{
+  "report_version": "HERD_REENTRY_FEATURE_DISCOVERY_V1",
+  "status": "DISCOVERY_COMPLETE",
+  "target_events": 2396,
+  "features_compared": 4,
+  "retained_features": [],
+  "retained_count": 0,
+  "independent_oos_passed_features": [],
+  "same_sample_confirmation_allowed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}
