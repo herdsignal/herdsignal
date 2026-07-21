@@ -126,6 +126,7 @@ def evaluate(panel: pd.DataFrame, folds: pd.DataFrame, protocol: dict) -> tuple[
     passing = table[table["passed"]]
     report = {
         "report_version":"herd-candidate-oos-v2", "tests":len(table),
+        "status":"ADOPTABLE_DIRECTION_EVIDENCE_FOUND" if not passing.empty else "NO_ADOPTABLE_CANDIDATE",
         "passing_variants":passing["hypothesis_id"].tolist(),
         "passing_direction_variants":passing[passing["direction_authority"]]["hypothesis_id"].tolist(),
         "profit_take_evidence_ready":bool(((passing["role"] == "PROFIT_TAKE_DIRECTION") & passing["direction_authority"]).any()),

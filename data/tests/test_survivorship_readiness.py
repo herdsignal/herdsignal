@@ -1,6 +1,11 @@
 import copy
+import json
+from pathlib import Path
 
 from herd.survivorship_readiness import evaluate_survivorship_readiness
+
+
+DATA_ROOT = Path(__file__).resolve().parents[1]
 
 
 def complete_evidence():
@@ -39,11 +44,8 @@ def test_missing_axis_fails_closed_instead_of_raising_readiness():
 
 
 def test_current_public_evidence_cannot_claim_survivorship_safety():
-    import json
-    from pathlib import Path
-
     evidence = json.loads(
-        Path("herd/survivorship_evidence_v1.json").read_text(encoding="utf-8")
+        (DATA_ROOT / "herd/survivorship_evidence_v1.json").read_text(encoding="utf-8")
     )
     result = evaluate_survivorship_readiness(evidence)
 

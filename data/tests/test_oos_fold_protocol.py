@@ -17,8 +17,11 @@ from herd.oos_fold_protocol import (
 )
 
 
+DATA_ROOT = Path(__file__).resolve().parents[1]
+
+
 def test_current_snapshot_allows_price_lane_but_blocks_long_business_lane():
-    frames, _ = load_snapshot("snapshots/yf-10y-20260719")
+    frames, _ = load_snapshot(DATA_ROOT / "snapshots/yf-10y-20260719")
     calendar = pd.DatetimeIndex(pd.to_datetime(frames["SPY"]["Date"]))
 
     audit = audit_calendar(calendar)
@@ -33,7 +36,7 @@ def test_current_snapshot_allows_price_lane_but_blocks_long_business_lane():
 
 def test_long_v2_snapshot_unlocks_four_non_overlapping_business_folds():
     calendar = load_spy_calendar(
-        "snapshots/yf-long14-actions-sector-20260721"
+        DATA_ROOT / "snapshots/yf-long14-actions-sector-20260721"
     )
 
     audit = audit_calendar(calendar, research_end="2026-07-17")

@@ -6,6 +6,7 @@
   "passing_variants": [],
   "profit_take_evidence_ready": false,
   "report_version": "herd-candidate-oos-v2",
+  "status": "NO_ADOPTABLE_CANDIDATE",
   "tests": 21,
   "weights_allowed": false
 }
