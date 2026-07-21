@@ -1,0 +1,37 @@
+{
+  "authorities": {
+    "ACTION_CONTEXT_ONLY": 3,
+    "ACTION_INTENSITY_CAP_ONLY": 1,
+    "ACTION_SIZE_ONLY": 3,
+    "LEGACY_SCORE_ONLY": 7,
+    "NONE": 13,
+    "OBSERVATION_CANDIDATE_ONLY": 2,
+    "VETO_ONLY": 2
+  },
+  "duplicate_groups_with_multiple_items": {
+    "BUSINESS_STATE": 3,
+    "EXECUTION": 2,
+    "LONG_TREND": 2,
+    "MARKET_RISK": 2,
+    "PRICE_EXTENSION": 7,
+    "RELATIVE_STRENGTH": 2,
+    "RETURN_PATH": 3,
+    "V4_DERIVATIVE": 2
+  },
+  "inventory_complete": true,
+  "inventory_items": 31,
+  "layers": {
+    "DERIVED_ACTION_CONTEXT": 4,
+    "EXECUTION_POLICY": 1,
+    "OPERATIONAL_V4_INPUT": 6,
+    "OPERATIONAL_V4_MULTIPLIER": 2,
+    "PERSONAL_POLICY": 2,
+    "RESEARCH_CANDIDATE": 15,
+    "SAFETY_GATE": 1
+  },
+  "model_components_selected": false,
+  "operational_v4_weight_sum": 1.0,
+  "report_version": "herd-indicator-inventory-v2-audit",
+  "research_candidates_with_direction_authority": [],
+  "weights_selected": false
+}
