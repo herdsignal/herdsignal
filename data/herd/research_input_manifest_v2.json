@@ -1,0 +1,57 @@
+{
+  "manifest_version": "HERD_RESEARCH_INPUT_V2",
+  "status": "PINNED_PUBLIC_RESEARCH_ONLY",
+  "research_period": {
+    "start": "2012-01-03",
+    "end": "2026-07-17"
+  },
+  "price_snapshot": {
+    "manifest_path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json",
+    "manifest_sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b",
+    "snapshot_id": "yf-long14-actions-sector-20260721",
+    "required_tickers": 65,
+    "required_market_etfs": ["SPY", "QQQ", "IWM", "DIA"],
+    "required_sector_etfs": ["XLB", "XLC", "XLE", "XLF", "XLI", "XLK", "XLP", "XLU", "XLV", "XLY"],
+    "price_column": "Adj Close",
+    "execution_columns": ["Open", "High", "Low", "Close"],
+    "action_columns": ["Dividends", "Stock Splits"]
+  },
+  "oos_folds": {
+    "manifest_path": "data/walk_forward/long-oos-v2-20260721/manifest.json",
+    "manifest_sha256": "b9a1f6c7658a00fcdd857f29d66963f971f5c8e4b6a62f627cb454102fff46ea",
+    "protocol_version": "HERD_LONG_HORIZON_OOS_V2",
+    "price_lane_minimum_folds": 4,
+    "business_lane_minimum_folds": 4
+  },
+  "sec_corpora": [
+    {
+      "manifest_path": "data/reference/sec/sec-pit-price50-20120103-20260717-20260721/manifest.json",
+      "manifest_sha256": "8eb580a62147523025d3828e6db8561392699e517e0b2d4d83472c4b19aef5ec"
+    },
+    {
+      "manifest_path": "data/reference/sec/sec-pit-xom34088-20120103-20260717-20260721/manifest.json",
+      "manifest_sha256": "2c1de9d97471fbe2bd79511d48eef8b5fe9ab94c627c7fdc76737cc5606276c2"
+    },
+    {
+      "manifest_path": "data/reference/sec/sec-pit-long-predecessors-20120103-20260717-20260721/manifest.json",
+      "manifest_sha256": "bb5adb0413d2164ca2afd6453cb6ffd4d356fcdd6984e2b125335657396aa64a"
+    }
+  ],
+  "cik_periods": {
+    "path": "data/herd/price_universe_cik_periods.csv",
+    "sha256": "efb7ec2bcf35b5221494e5bd002d991d307b99b318eaace303d6b742d5393487"
+  },
+  "sec_fold_link": {
+    "path": "data/reports/sec_price_long_business_fold_link_v2.csv",
+    "sha256": "64a5927f1b21f7ad247e0c545eeb28e6110e1c676f70582a7d7f598244203dfe",
+    "required_ready_rows": 200,
+    "required_total_rows": 204,
+    "known_blocked_ticker": "CRM"
+  },
+  "constituent_evidence": {
+    "path": "data/herd/survivorship_evidence_v1.json",
+    "sha256": "e110c5d8b1a224e4f3ef8f9faf0f68fec2cf035053039a0c9db01c2c4b1d4945",
+    "required_survivorship_safe": false,
+    "allowed_use": "SENSITIVITY_AND_MODEL_ELIMINATION_ONLY"
+  }
+}

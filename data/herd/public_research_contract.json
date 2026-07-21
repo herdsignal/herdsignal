@@ -1,0 +1,35 @@
+{
+  "contract_version": "HERD_PUBLIC_RESEARCH_ONLY_V1",
+  "status": "LOCKED_BEFORE_V2_MEASUREMENT_RESULTS",
+  "service_objective": "Improve partial profit-taking and later re-entry decisions for an investor who already selected a long-term holding, without turning crowding alone into a sell signal.",
+  "data_tier": "PUBLIC_RESEARCH_ONLY",
+  "licensed_sources": {
+    "wrds": false,
+    "crsp": false,
+    "official_sp_constituent_history": false
+  },
+  "allowed_claims": [
+    "CONDITIONAL_TIMING_WITHIN_MONITORED_UNIVERSE",
+    "MODEL_ELIMINATION",
+    "DATA_UNCERTAINTY_SENSITIVITY"
+  ],
+  "forbidden_claims": [
+    "GENERAL_US_EQUITY_MODEL",
+    "SURVIVORSHIP_SAFE_BACKTEST",
+    "PRODUCTION_TRADING_SIGNAL",
+    "HIGH_HERD_ALONE_AUTHORIZES_PROFIT_TAKE"
+  ],
+  "promotion_policy": {
+    "survivorship_safe": false,
+    "blind_holdout_allowed": false,
+    "production_signal_allowed": false,
+    "operational_action_ratio": 0.0,
+    "independent_oos_evidence_required_before_cycle": true
+  },
+  "missing_data_policy": {
+    "missing_price": "EXCLUDE_OBSERVATION",
+    "missing_sector_benchmark": "EXCLUDE_RELATIVE_MEASUREMENT",
+    "missing_sec_acceptance": "EXCLUDE_FACT",
+    "missing_business_comparables": "UNKNOWN_DOES_NOT_AUTHORIZE_ADD_BUY"
+  }
+}
