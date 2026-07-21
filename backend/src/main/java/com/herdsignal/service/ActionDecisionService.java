@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,7 @@ public class ActionDecisionService {
     private final PersonalActionTranslator personalActionTranslator;
     private final HerdTrendQualityCalculator trendCalculator;
     private final HerdMomentumCalculator momentumCalculator;
+    private final HerdLifecycleClassifier lifecycleClassifier;
     private final boolean liveActionsEnabled;
 
     @Autowired
@@ -46,6 +46,7 @@ public class ActionDecisionService {
         this.personalActionTranslator = personalActionTranslator;
         this.trendCalculator = new HerdTrendQualityCalculator();
         this.momentumCalculator = new HerdMomentumCalculator();
+        this.lifecycleClassifier = new HerdLifecycleClassifier();
         this.liveActionsEnabled = liveActionsEnabled
                 && holdoutPassed
                 && promotionGate.isApproved(candidateId);
@@ -122,7 +123,7 @@ public class ActionDecisionService {
         ScoreContext stabilized = stabilizeScore(rawHerdScore, score.getScoreDate(), history);
         double herdScore = stabilized.score();
         RegimeDecision regime = chooseRegime(herdScore, trend, momentum);
-        LifecycleContext lifecycle = calculateLifecycleContext(score, history);
+        HerdLifecycleClassifier.Result lifecycle = lifecycleClassifier.classify(score, history);
         RegimeDecision adjustedRegime = applyLifecycle(regime, lifecycle, herdScore);
         adjustedRegime = applyConfidence(adjustedRegime, dataQuality, momentum);
         PersonalActionTranslator.Translation personal = personalActionTranslator.translate(
@@ -392,62 +393,7 @@ public class ActionDecisionService {
                 regime.reason() + String.format(" 신뢰도 보정 %.0f%%를 적용합니다.", qualityFactor * historyFactor * 100));
     }
 
-    private LifecycleContext calculateLifecycleContext(HerdScore latest, List<HerdScore> history) {
-        if (latest.getScoreDate() == null || history == null || history.isEmpty()) {
-            return new LifecycleContext(0, 1.0, 0, "신호 지속일 데이터 부족", List.of());
-        }
-
-        String latestSignal = normalizedSignal(latest.getSignal());
-        LocalDate startedAt = latest.getScoreDate();
-        for (HerdScore row : history) {
-            if (row.getScoreDate() == null || row.getScoreDate().isAfter(latest.getScoreDate())) {
-                continue;
-            }
-            if (normalizedSignal(row.getSignal()).equals(latestSignal)) {
-                startedAt = row.getScoreDate();
-            } else {
-                break;
-            }
-        }
-
-        long days = Math.max(1, ChronoUnit.DAYS.between(startedAt, latest.getScoreDate()) + 1);
-        if (days <= 5) {
-            return new LifecycleContext(
-                    days,
-                    0.65,
-                    -8,
-                    "신호 초입 " + days + "일째",
-                    List.of("초입 신호는 확인 전까지 행동 비율을 낮춥니다.")
-            );
-        }
-        if (days <= 20) {
-            return new LifecycleContext(
-                    days,
-                    1.0,
-                    4,
-                    "신호 진행 " + days + "일째",
-                    List.of()
-            );
-        }
-        if (days <= 45) {
-            return new LifecycleContext(
-                    days,
-                    0.82,
-                    -3,
-                    "신호 성숙 " + days + "일째",
-                    List.of("이미 진행된 신호라 신규 행동은 분할 기준으로 제한합니다.")
-            );
-        }
-        return new LifecycleContext(
-                days,
-                0.55,
-                -10,
-                "신호 장기 지속 " + days + "일째",
-                List.of("장기 지속 신호는 추격 대응보다 다음 전환 확인이 우선입니다.")
-        );
-    }
-
-    private RegimeDecision applyLifecycle(RegimeDecision regime, LifecycleContext lifecycle, double herdScore) {
+    private RegimeDecision applyLifecycle(RegimeDecision regime, HerdLifecycleClassifier.Result lifecycle, double herdScore) {
         if (regime.ratio() == 0.0) {
             return regime;
         }
@@ -724,24 +670,11 @@ public class ActionDecisionService {
         return herdStage.startsWith("Herd ") ? herdStage.substring(5) : herdStage;
     }
 
-    private String normalizedSignal(String signal) {
-        return signal == null || signal.isBlank() ? "HOLD" : signal.trim().toUpperCase();
-    }
-
     private int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
 
     private record ScoreContext(double score, String reason) {
-    }
-
-    private record LifecycleContext(
-            long signalDays,
-            double ratioMultiplier,
-            int scoreAdjustment,
-            String reason,
-            List<String> warnings
-    ) {
     }
 
     private record RegimeDecision(
