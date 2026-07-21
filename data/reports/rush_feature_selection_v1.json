@@ -1,0 +1,14 @@
+{
+  "blind_holdout_access": false,
+  "confirmation_period_accessed": false,
+  "features_reviewed": 22,
+  "operational_action_ratio": 0.0,
+  "removed_count": 21,
+  "report_version": "herd-rush-feature-selection-v1",
+  "research_leads_not_admitted": [
+    "SECTOR_RS_DAMAGE_DELTA_4W"
+  ],
+  "retained_count": 0,
+  "retained_features": [],
+  "status": "NO_FEATURE_ADMITTED"
+}
