@@ -19,8 +19,13 @@ final class HerdMomentumCalculator {
         LocalDate latestDate = latest.getScoreDate();
         for (HerdScore row : history) {
             if (row.getScoreDate() == null || !row.getScoreDate().isBefore(latestDate)) continue;
-            if (previous == null) previous = row;
-            if (ChronoUnit.DAYS.between(row.getScoreDate(), latestDate) <= 35) monthAgo = row;
+            if (previous == null || row.getScoreDate().isAfter(previous.getScoreDate())) {
+                previous = row;
+            }
+            if (ChronoUnit.DAYS.between(row.getScoreDate(), latestDate) <= 35
+                    && (monthAgo == null || row.getScoreDate().isBefore(monthAgo.getScoreDate()))) {
+                monthAgo = row;
+            }
         }
         if (previous == null) {
             return new Result(50, 0.0, 0.0, 0.0, history.size(), "HERD 변화 데이터 부족",
