@@ -1,0 +1,51 @@
+{
+  "protocol_version": "HERD_SEC_PIT_BUSINESS_STATE_V2",
+  "status": "LOCKED_BEFORE_OOS_RESULTS",
+  "objective": "Test whether point-in-time deterioration can veto an add-buy in a preselected long-term holding; it cannot change HERD or create a sell signal.",
+  "input_manifest": "HERD_RESEARCH_INPUT_V2",
+  "entity_types": {
+    "BANK": ["JPM", "BAC", "GS"],
+    "REIT": ["AMT", "PLD"],
+    "GENERAL": "ALL_REMAINING_EQUITIES"
+  },
+  "type_policy": {
+    "GENERAL": "EVALUATE_STANDARD_OPERATING_METRICS",
+    "BANK": "UNKNOWN_UNTIL_BANK_SPECIFIC_CONCEPT_COVERAGE_IS_PREREGISTERED",
+    "REIT": "UNKNOWN_UNTIL_FFO_AND_REIT_LEVERAGE_COVERAGE_IS_PREREGISTERED"
+  },
+  "general_measurements": {
+    "REVENUE_DIRECTION": "LATEST_QUARTER_YOY_GROWTH_LT_ZERO",
+    "MARGIN_DIRECTION": "LATEST_QUARTER_NET_MARGIN_YOY_CHANGE_LT_ZERO",
+    "OPERATING_CASH_FLOW_DIRECTION": "LATEST_ANNUAL_OPERATING_CASH_FLOW_YOY_GROWTH_LT_ZERO",
+    "LEVERAGE_DIRECTION": "LIABILITIES_TO_ASSETS_YOY_CHANGE_GT_ZERO"
+  },
+  "state_rule": {
+    "VETO": "AT_LEAST_THREE_DETERIORATION_DIRECTIONS_OR_MARGIN_AND_CASH_FLOW_BOTH_DETERIORATE_WITH_NON_POSITIVE_CASH_FLOW",
+    "PASS": "ZERO_TO_TWO_DIRECTIONS_WITHOUT_COMBINED_SEVERE_CONDITION",
+    "UNKNOWN": "TYPE_UNSUPPORTED_OR_REQUIRED_COMPARABLE_FACTS_MISSING_OR_STALE"
+  },
+  "predictive_test": {
+    "forward_horizons_months": [6, 12],
+    "primary_horizon_months": 12,
+    "outcomes": ["FORWARD_TOTAL_RETURN", "FORWARD_TROUGH_RETURN"],
+    "event_sampling": "FIRST_MONTH_OF_STATE_TRANSITION",
+    "purge_rule": "OUTCOME_MUST_END_INSIDE_TEST_FOLD",
+    "lane": "BUSINESS_STATE_12M"
+  },
+  "adoption_gate": {
+    "minimum_events_per_side": 30,
+    "minimum_tickers_per_side": 10,
+    "minimum_test_folds_per_side": 4,
+    "minimum_directional_folds": 3,
+    "maximum_holm_p_value": 0.1,
+    "required_primary_outcomes": 2
+  },
+  "forbidden": [
+    "BUSINESS_STATE_CHANGES_HERD",
+    "BUSINESS_STATE_CREATES_SELL",
+    "UNKNOWN_AUTHORIZES_ADD_BUY",
+    "RESTATEMENT_BACKFILL",
+    "TYPE_FALLBACK_TO_GENERAL",
+    "THRESHOLD_SEARCH_AFTER_RESULTS"
+  ]
+}

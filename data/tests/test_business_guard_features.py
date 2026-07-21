@@ -65,6 +65,7 @@ class BusinessGuardFeaturesTest(unittest.TestCase):
         )
         self.assertEqual(result["guard_state"], "VETO")
         self.assertGreaterEqual(result["flag_count"], 2)
+        self.assertEqual(result["operating_cash_flow_value"], -1)
 
     def test_future_filing_is_not_visible(self):
         result = classify_as_of(

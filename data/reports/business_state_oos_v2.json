@@ -1,0 +1,45 @@
+{
+  "add_buy_veto_authorized": false,
+  "blind_holdout_access": false,
+  "decision": "REJECT_BUSINESS_GUARD_PREDICTIVE_EVIDENCE",
+  "excluded_unknown_rows": 1507,
+  "feature_audit": {
+    "entity_type_counts": {
+      "BANK": 486,
+      "GENERAL": 7452,
+      "REIT": 324
+    },
+    "format_version": "herd-business-state-features-v2",
+    "rows": 8262,
+    "state_counts": {
+      "PASS": 5394,
+      "UNKNOWN": 1507,
+      "VETO": 1361
+    },
+    "strict_pit_rule": "SEC_ACCEPTANCE_DATETIME",
+    "tickers": 51
+  },
+  "limitations": [
+    "The monitored fixed universe remains survivorship-biased.",
+    "Banks and REITs fail closed as UNKNOWN until type-specific XBRL measurements are separately preregistered.",
+    "Company Facts may contain filer errors; only acceptance-time-visible as-filed facts are used.",
+    "A pass could authorize only an add-buy veto ablation, never HERD or a sell signal."
+  ],
+  "operational_action_ratio": 0.0,
+  "primary_outcomes_passed": 0,
+  "primary_outcomes_required": 2,
+  "primary_side_tickers": {
+    "PASS": 18,
+    "VETO": 34
+  },
+  "protocol": {
+    "locked": true,
+    "protocol_version": "HERD_SEC_PIT_BUSINESS_STATE_V2"
+  },
+  "report_version": "herd-business-state-oos-v2",
+  "ticker_gate_passed": true,
+  "transition_counts": {
+    "PASS": 213,
+    "VETO": 172
+  }
+}

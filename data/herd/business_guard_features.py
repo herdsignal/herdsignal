@@ -257,6 +257,7 @@ def classify_as_of(
         "net_margin": margin,
         "net_margin_yoy_change": margin - prior_margin,
         "operating_cash_flow_yoy": cash_flow_growth,
+        "operating_cash_flow_value": cash_flow["value"],
         "liabilities_to_assets": debt_ratio,
         "liabilities_to_assets_yoy_change": debt_ratio - prior_debt_ratio,
     }
