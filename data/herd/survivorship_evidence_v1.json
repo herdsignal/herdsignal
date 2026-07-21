@@ -1,0 +1,36 @@
+{
+  "evidence_version": "HERD_SURVIVORSHIP_EVIDENCE_2026_07_21",
+  "membership": {
+    "source": "PIT_DIAGNOSTIC_V1",
+    "replay_complete": false,
+    "replay_errors": 0,
+    "blocked_events": 4,
+    "historical_tickers": 1128
+  },
+  "identity": {
+    "mapped_entities": 176,
+    "total_entities": 1128,
+    "ambiguous_entities": 4,
+    "mapping_basis": "INTEGRATED_EVENT_LEDGER_NONEMPTY_CIK"
+  },
+  "prices": {
+    "requested_tickers": 1128,
+    "available_tickers": 51,
+    "delisted_requested": 652,
+    "delisted_available": 1,
+    "adjustment_audited": false,
+    "source": "YF_LONG14_ACTIONS_SECTOR_20260721"
+  },
+  "corporate_actions": {
+    "unresolved_events": 4,
+    "split_dividend_audited": false,
+    "yahoo_actions_preserved": true,
+    "independent_authoritative_reconciliation": false
+  },
+  "source_policy": {
+    "sp_constituent_history": "LICENSED_DATA_REQUIRED_FOR_PROMOTION",
+    "delisting_returns": "CRSP_OR_EQUIVALENT_REQUIRED_FOR_PROMOTION",
+    "sec_form25_role": "DELISTING_DATE_AND_CAUSE_ONLY",
+    "free_public_reconstruction_role": "MODEL_ELIMINATION_AND_SENSITIVITY_ONLY"
+  }
+}

@@ -36,3 +36,18 @@ def test_missing_axis_fails_closed_instead_of_raising_readiness():
     assert result["status"] == "PIT_RESEARCH_ONLY"
     assert "corporate_action_ledger" in result["failed_checks"]
     assert "split_dividend_audit" in result["failed_checks"]
+
+
+def test_current_public_evidence_cannot_claim_survivorship_safety():
+    import json
+    from pathlib import Path
+
+    evidence = json.loads(
+        Path("herd/survivorship_evidence_v1.json").read_text(encoding="utf-8")
+    )
+    result = evaluate_survivorship_readiness(evidence)
+
+    assert result["survivorship_safe"] is False
+    assert "membership_replay" in result["failed_checks"]
+    assert "delisted_price_coverage" in result["failed_checks"]
+    assert "split_dividend_audit" in result["failed_checks"]

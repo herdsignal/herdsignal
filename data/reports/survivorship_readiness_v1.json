@@ -1,0 +1,85 @@
+{
+  "checks": [
+    {
+      "actual": false,
+      "name": "membership_replay",
+      "passed": false,
+      "required": true
+    },
+    {
+      "actual": 0,
+      "name": "membership_errors",
+      "passed": true,
+      "required": 0
+    },
+    {
+      "actual": 4,
+      "name": "membership_blockers",
+      "passed": false,
+      "required": 0
+    },
+    {
+      "actual": {
+        "mapped": 176,
+        "total": 1128
+      },
+      "name": "cik_mapping",
+      "passed": false,
+      "required": "mapped == total"
+    },
+    {
+      "actual": 4,
+      "name": "identity_ambiguity",
+      "passed": false,
+      "required": 0
+    },
+    {
+      "actual": 0.04521276595744681,
+      "name": "price_coverage",
+      "passed": false,
+      "required": ">=0.95"
+    },
+    {
+      "actual": {
+        "available": 1,
+        "requested": 652
+      },
+      "name": "delisted_price_coverage",
+      "passed": false,
+      "required": "all delisted prices available"
+    },
+    {
+      "actual": false,
+      "name": "price_adjustment_audit",
+      "passed": false,
+      "required": true
+    },
+    {
+      "actual": 4,
+      "name": "corporate_action_ledger",
+      "passed": false,
+      "required": 0
+    },
+    {
+      "actual": false,
+      "name": "split_dividend_audit",
+      "passed": false,
+      "required": true
+    }
+  ],
+  "evidence_version": "HERD_SURVIVORSHIP_EVIDENCE_2026_07_21",
+  "failed_checks": [
+    "membership_replay",
+    "membership_blockers",
+    "cik_mapping",
+    "identity_ambiguity",
+    "price_coverage",
+    "delisted_price_coverage",
+    "price_adjustment_audit",
+    "corporate_action_ledger",
+    "split_dividend_audit"
+  ],
+  "promotion_allowed": false,
+  "status": "PIT_RESEARCH_ONLY",
+  "survivorship_safe": false
+}

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import argparse
+import json
+from pathlib import Path
 from typing import Any
 
 
@@ -55,3 +58,23 @@ def evaluate_survivorship_readiness(evidence: dict[str, Any]) -> dict[str, Any]:
         "failed_checks": failed,
         "checks": checks,
     }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("evidence", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    evidence = json.loads(args.evidence.read_text(encoding="utf-8"))
+    report = evaluate_survivorship_readiness(evidence)
+    report["evidence_version"] = evidence.get("evidence_version")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

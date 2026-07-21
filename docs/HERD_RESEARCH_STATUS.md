@@ -57,6 +57,26 @@ CRM은 Company Facts 제출번호 한 건에 SEC 접수시각이 없어 4개 fol
 기업 가설의 재연구는 가능하지만 `strict_corpus_ready=false`이며 모델
 채택·Blind holdout·운영 신호에는 사용할 수 없다.
 
+### Survivorship-safe 승격 판정
+
+공개 자료만 사용한 현재 PIT 증거를 네 축으로 다시 판정했다.
+
+- 역사 ticker 가격: 51/1,128, 4.52%
+- 종료된 ticker 가격: 1/652
+- CIK 연결: 176/1,128
+- 구성·기업행동 blocker: 4건
+- 독립 분할·배당 대조: 미완료
+
+따라서 판정은 `PIT_RESEARCH_ONLY`, `survivorship_safe=false`다. S&P 공식
+역사 구성·기업행동은 라이선스 데이터이며, SEC Form 25는 상장폐지 날짜와
+원인을 확인할 수 있지만 상장폐지 후 투자 수익을 제공하지 않는다. 최종
+승격에는 S&P constituent history와 CRSP delisting return 또는 동등한
+권위 원천이 필요하다.
+
+무료 공개 재구성본은 계속 모델 탈락·불확실성 민감도 연구에만 사용한다.
+이 데이터 문제를 해결하기 전에는 새 측정법 사전등록, 완결 사이클 검증,
+Blind holdout 개방으로 넘어가지 않는다.
+
 ## A~F 구현 완료 범위
 
 UI를 제외한 연구·검증·운영 안전장치를 다음 경계로 고정했다.
