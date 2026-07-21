@@ -1,0 +1,22 @@
+{
+  "report_version": "herd-sec-8k-guidance-coverage-v1",
+  "snapshot_id": "sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "snapshot_manifest_sha256": "a20b2c09d7e0d5567ac89784ba7afef468fa8c5f4626cc60afe3feab3bf6fb86",
+  "filings_requested": 4608,
+  "filings_collected": 4608,
+  "collection_failures": 0,
+  "filings_audited": 4608,
+  "tickers_audited": 51,
+  "guidance_language_filings": 3491,
+  "quantitative_range_filings": 1086,
+  "target_period_filings": 2714,
+  "guidance_direction_classified": 0,
+  "ready_for_direction_standardization": false,
+  "operational_action_ratio": 0.0,
+  "limitations": [
+    "Lexical coverage is not a guidance direction label.",
+    "Issuer-specific non-GAAP metrics and fiscal periods still require normalization.",
+    "Prior and current guidance ranges have not yet been paired.",
+    "No analyst consensus is inferred."
+  ]
+}

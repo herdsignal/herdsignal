@@ -1,0 +1,13 @@
+{
+  "report_version": "herd-sec-8k-guidance-candidate-catalog-v1",
+  "universe_tickers": 51,
+  "tickers_with_submissions": 51,
+  "missing_submissions": [],
+  "eligible_filings": 4608,
+  "tickers_with_eligible_filings": 51,
+  "first_accepted_at": "2012-01-05T13:01:23.000Z",
+  "last_accepted_at": "2026-07-17T20:29:26.000Z",
+  "guidance_direction_classified": 0,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "dd111dd18c5d0823542044f61dbb15ac83613bdc34ca66a4bd2199962c35fabd"
+}

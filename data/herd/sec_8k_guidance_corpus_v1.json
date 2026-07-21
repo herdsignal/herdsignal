@@ -1,0 +1,37 @@
+{
+  "protocol_version": "HERD_SEC_8K_GUIDANCE_PIT_CORPUS_V1",
+  "status": "LOCKED_BEFORE_DOCUMENT_COLLECTION",
+  "objective": "Build an acceptance-time point-in-time corpus of issuer-reported earnings and guidance documents before defining guidance-change features.",
+  "universe": "data/reports/business_state_features_v2.csv",
+  "period": {"start": "2012-01-03", "end": "2026-07-17"},
+  "submission_roots": [
+    "data/reference/sec/sec-pit-price50-20120103-20260717-20260721/raw",
+    "data/reference/sec/sec-pit-long-predecessors-20120103-20260717-20260721/raw",
+    "data/reference/sec/sec-pit-xom34088-20120103-20260717-20260721/raw"
+  ],
+  "eligible_forms": ["8-K", "8-K/A"],
+  "eligible_items": ["2.02", "7.01"],
+  "download": {
+    "archive_base": "https://www.sec.gov/Archives/edgar/data",
+    "minimum_request_interval_seconds": 0.12,
+    "maximum_text_document_bytes": 10000000,
+    "extensions": [".htm", ".html", ".txt"],
+    "exclude_filename_patterns": [".xsd", "_cal.xml", "_def.xml", "_lab.xml", "_pre.xml", "-index", "index.json"]
+  },
+  "coverage_dimensions": [
+    "TICKER_WITH_SUBMISSIONS", "ELIGIBLE_8K", "PRIMARY_DOCUMENT",
+    "TEXT_ATTACHMENT", "GUIDANCE_LANGUAGE", "COMPARABLE_PRIOR_GUIDANCE"
+  ],
+  "classification_statuses": [
+    "NOT_CLASSIFIED", "NO_GUIDANCE_DISCLOSED", "GUIDANCE_PARSE_PENDING",
+    "GUIDANCE_NOT_COMPARABLE", "GUIDANCE_COMPARABLE"
+  ],
+  "forbidden": [
+    "USE_FILING_DATE_INSTEAD_OF_ACCEPTANCE_DATETIME",
+    "INFER_ANALYST_CONSENSUS",
+    "CALL_PRICE_REACTION_EPS_SURPRISE",
+    "CLASSIFY_UP_DOWN_FLAT_BEFORE_COVERAGE_AUDIT",
+    "USE_AMENDED_DOCUMENT_BEFORE_AMENDMENT_ACCEPTANCE",
+    "CHANGE_HERD_WEIGHTS"
+  ]
+}
