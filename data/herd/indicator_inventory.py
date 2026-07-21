@@ -14,7 +14,6 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import pandas as pd
-import pandas_ta as ta
 
 _DATA_DIR = Path(__file__).resolve().parent.parent
 if str(_DATA_DIR) not in sys.path:
@@ -23,6 +22,7 @@ if str(_DATA_DIR) not in sys.path:
 from collectors.stock_collector import collect
 from config.settings import HERD_WEIGHTS
 from herd.validation_universe import TICKERS as VALIDATION_TICKERS
+from indicators.wilder_rsi import wilder_rsi
 
 
 @dataclass(frozen=True)
@@ -146,8 +146,8 @@ def build_v4_indicator_frame(df: pd.DataFrame) -> pd.DataFrame:
 
     weekly_close = close.resample("W").last().dropna()
     monthly_close = close.resample("ME").last().dropna()
-    weekly_rsi_raw = ta.rsi(weekly_close, length=14)
-    monthly_rsi_raw = ta.rsi(monthly_close, length=14)
+    weekly_rsi_raw = wilder_rsi(weekly_close, 14)
+    monthly_rsi_raw = wilder_rsi(monthly_close, 14)
 
     weekly_rsi = _expanding_percentile(weekly_rsi_raw, 14).reindex(data.index, method="ffill")
     monthly_rsi = _expanding_percentile(monthly_rsi_raw, 14).reindex(data.index, method="ffill")

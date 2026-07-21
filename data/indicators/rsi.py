@@ -6,8 +6,9 @@ indicators/rsi.py — 주봉 / 월봉 RSI 계산기
 import logging
 
 import pandas as pd
-import pandas_ta as ta
 from scipy.stats import percentileofscore
+
+from indicators.wilder_rsi import wilder_rsi
 
 logger = logging.getLogger(__name__)
 
@@ -42,10 +43,12 @@ def _resample_to_ohlcv(df: pd.DataFrame, freq: str) -> pd.DataFrame:
 
 def _calc_rsi(series: pd.Series, period: int = RSI_PERIOD) -> pd.Series:
     """
-    pandas_ta를 이용해 Close 시리즈의 RSI를 계산한다.
+    Wilder RMA를 이용해 Close 시리즈의 RSI를 계산한다.
     """
-    rsi = ta.rsi(series, length=period)
-    return rsi
+    result = wilder_rsi(series, period)
+    if result is None:
+        return pd.Series(index=series.index, dtype=float, name=f"RSI_{period}")
+    return result
 
 
 def _percentile_normalize(series_values: pd.Series, current: float) -> float:
