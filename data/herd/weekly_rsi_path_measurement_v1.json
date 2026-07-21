@@ -1,0 +1,31 @@
+{
+  "measurement_version": "HERD_WEEKLY_RSI_PATH_MEASUREMENT_V1",
+  "status": "LOCKED_BEFORE_FORWARD_PATH_RESULTS",
+  "source_protocol": "HERD_SPARSE_ACTION_PROTOCOL_V1",
+  "availability": "FUTURE_PATH_IS_OUTCOME_ONLY",
+  "horizons_weeks": [4, 8, 13, 26],
+  "continuous_outcomes": [
+    "FORWARD_ADJUSTED_CLOSE_RETURN",
+    "MAXIMUM_ADVANCE_FROM_EVENT_CLOSE",
+    "MAXIMUM_DECLINE_FROM_EVENT_CLOSE",
+    "MAXIMUM_DRAWDOWN_FROM_INTERIM_PEAK",
+    "WEEKS_BELOW_EVENT_CLOSE"
+  ],
+  "descriptive_thresholds": {
+    "decline_from_event_close": [0.02, 0.05, 0.1],
+    "thresholds_do_not_authorize_actions": true
+  },
+  "execution_limitations": {
+    "adjusted_close_path_is_not_execution_price": true,
+    "taxes_and_spread_not_applied": true,
+    "lower_future_close_is_not_proof_of_reentry": true,
+    "same_episode_events_are_correlated": true
+  },
+  "forbidden": [
+    "USE_OUTCOME_AS_SIGNAL_FEATURE",
+    "CLAIM_EXECUTABLE_SHARE_GAIN",
+    "TREAT_SAME_EPISODE_EVENTS_AS_INDEPENDENT",
+    "SELECT_HORIZON_AFTER_RESULTS",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}
