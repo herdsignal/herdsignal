@@ -1,0 +1,15 @@
+{
+  "policy_version": "HERD_COMPLETED_CYCLE_GATE_V2",
+  "status": "LOCKED_AFTER_INDEPENDENT_OOS_DECISIONS",
+  "initial_profit_take_fraction_if_eligible": 0.05,
+  "source_artifacts": {
+    "profit_take_admission": {
+      "path": "data/herd/evidence_admission_registry_v2.json",
+      "sha256": "505deae96cc6edef64655a0f9a1464b2799c933d093a6df98cb7910362b79221"
+    },
+    "business_state_oos": {
+      "path": "data/reports/business_state_oos_v2.json",
+      "sha256": "722c12a52b03dc2f1e6e6d7e723dc64cc00e67023778620558c18bde52127c8b"
+    }
+  }
+}

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 from datetime import date, datetime, time, timezone
 from pathlib import Path
@@ -11,12 +10,12 @@ from pathlib import Path
 import pandas as pd
 
 from herd.business_guard_features import (
-    _load_cik_facts,
     classify_as_of,
     prepare_relevant_facts,
 )
 from herd.business_guard_oos import evaluate_oos
 from herd.business_guard_protocol import load_protocol as load_v1_protocol
+from herd.sec_price_fold_link import _load_cik_facts
 
 
 PROTOCOL_PATH = Path(__file__).with_name("business_state_v2_protocol.json")

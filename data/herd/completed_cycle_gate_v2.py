@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -10,9 +11,25 @@ from herd.evidence_admission_v2 import load_evidence_admission_v2
 
 
 ROOT = Path(__file__).resolve().parents[2]
+POLICY_PATH = Path(__file__).with_name("completed_cycle_gate_v2.json")
+
+
+def _load_policy() -> dict:
+    policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+    if policy.get("policy_version") != "HERD_COMPLETED_CYCLE_GATE_V2" \
+            or policy.get("status") != "LOCKED_AFTER_INDEPENDENT_OOS_DECISIONS" \
+            or policy.get("initial_profit_take_fraction_if_eligible") != 0.05:
+        raise ValueError("completed-cycle policy is not locked")
+    for artifact in policy["source_artifacts"].values():
+        path = (ROOT / artifact["path"]).resolve()
+        if not path.is_relative_to(ROOT) or not path.is_file() \
+                or hashlib.sha256(path.read_bytes()).hexdigest() != artifact["sha256"]:
+            raise ValueError(f"completed-cycle source mismatch: {artifact['path']}")
+    return policy
 
 
 def evaluate_completed_cycle_gate() -> dict:
+    policy = _load_policy()
     _, admission = load_evidence_admission_v2()
     business = json.loads(
         (ROOT / "data/reports/business_state_oos_v2.json").read_text(encoding="utf-8")
@@ -27,7 +44,9 @@ def evaluate_completed_cycle_gate() -> dict:
         "business_state_evidence_ready": business_ready,
         "completed_cycle_evaluation_executed": False,
         "completed_cycle_allowed": allowed,
-        "initial_profit_take_fraction": 0.05 if allowed else 0.0,
+        "initial_profit_take_fraction": (
+            policy["initial_profit_take_fraction_if_eligible"] if allowed else 0.0
+        ),
         "reentry_maximum": "OPEN_SALE_CASH" if allowed else "BLOCKED",
         "operational_action_ratio": 0.0,
         "blind_holdout_access": False,
