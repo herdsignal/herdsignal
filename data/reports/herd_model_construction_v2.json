@@ -1,0 +1,22 @@
+{
+  "admitted_direction_features": [],
+  "blind_holdout_access": false,
+  "candidate_count": 0,
+  "candidate_families_constructed": [],
+  "candidate_families_planned": [
+    "B0",
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5"
+  ],
+  "model_promotion_allowed": false,
+  "operational_action_ratio": 0.0,
+  "profit_take_direction_ready": false,
+  "redundancy_audit_ready": false,
+  "report_version": "herd-model-construction-v2",
+  "status": "NO_CANDIDATE_CONSTRUCTED",
+  "weights": {},
+  "weights_allowed": false
+}
