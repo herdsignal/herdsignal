@@ -1,0 +1,71 @@
+{
+  "protocol_version": "HERD_RUSH_DAMAGE_PROFIT_TAKE_V1",
+  "status": "LOCKED_BEFORE_RESULTS",
+  "objective": "Test whether a sparse observable breakdown after a locked v6.1 Rush episode can create a five-percent cash sleeve without underperforming Buy and Hold or unconditional scheduled trimming.",
+  "source_events": "data/reports/independent_rush_evidence_panel_v1.csv",
+  "snapshot": "data/snapshots/yf-independent-current-sp500-20260721",
+  "safe_source_columns": ["ticker", "episode_id", "signal_date", "last_observed_session", "sector_etf"],
+  "damage_confirmation": {
+    "maximum_wait_sessions": 63,
+    "prior_low_sessions": 20,
+    "moving_average_sessions": 50,
+    "relative_return_sessions": 21,
+    "requirements": [
+      "CLOSE_BELOW_PRIOR_20_SESSION_LOW",
+      "CLOSE_BELOW_50_SESSION_MOVING_AVERAGE",
+      "STOCK_21_SESSION_RETURN_BELOW_SPY",
+      "STOCK_21_SESSION_RETURN_BELOW_SECTOR_ETF"
+    ],
+    "execution": "NEXT_SESSION_ADJUSTED_OPEN"
+  },
+  "portfolio": {
+    "profit_take_ratio": 0.05,
+    "one_way_cost_base": 0.0015,
+    "one_way_cost_stress": 0.003,
+    "cash_return": 0.0,
+    "outcome_sessions_after_rush": 126,
+    "unconfirmed_action": "BUY_AND_HOLD"
+  },
+  "comparators": {
+    "BUY_AND_HOLD": "NO_SALE",
+    "SCHEDULED_TRIM_21": "SELL_FIVE_PERCENT_AT_NEXT_OPEN_AFTER_21_COMPLETE_SESSIONS"
+  },
+  "folds": [
+    {"id": "F01", "start": "2016-01-01", "end": "2018-12-31"},
+    {"id": "F02", "start": "2019-01-01", "end": "2021-12-31"},
+    {"id": "F03", "start": "2022-01-01", "end": "2023-12-31"},
+    {"id": "F04", "start": "2024-01-01", "end": "2026-01-14"}
+  ],
+  "adoption_gate": {
+    "minimum_episodes": 1000,
+    "minimum_tickers": 200,
+    "minimum_damage_rate": 0.05,
+    "maximum_damage_rate": 0.30,
+    "maximum_median_annual_damage_events_per_ticker": 1.0,
+    "minimum_evaluable_folds": 4,
+    "minimum_positive_folds_per_comparison": 3,
+    "minimum_median_total_position_uplift": 0.0,
+    "minimum_median_triggered_trough_improvement": 0.005,
+    "maximum_cluster_holm_p_value": 0.10,
+    "required_comparisons_passed": 2
+  },
+  "inference": {
+    "required_units": ["TICKER_MEAN", "SIGNAL_MONTH_MEAN"],
+    "multiple_testing": "HOLM_ACROSS_TWO_COMPARISONS_AND_TWO_INFERENCE_UNITS"
+  },
+  "interpretation": {
+    "current_constituent_robustness_only": true,
+    "pass_requires_new_independent_confirmation": true,
+    "pass_does_not_authorize_profit_take": true
+  },
+  "claim_boundary": "CURRENT_CONSTITUENTS_ROBUSTNESS_ONLY",
+  "forbidden": [
+    "HIGH_HERD_ALONE_CREATES_SELL",
+    "USE_DAMAGE_DAY_OPEN",
+    "DROP_UNTRIGGERED_EPISODES",
+    "CHANGE_BREAKDOWN_WINDOWS_AFTER_RESULTS",
+    "AUTHORIZE_PROFIT_TAKE_FROM_THIS_SAMPLE",
+    "OPEN_BLIND_HOLDOUT",
+    "CLAIM_SURVIVORSHIP_SAFE"
+  ]
+}

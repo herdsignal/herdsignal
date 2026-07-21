@@ -1,0 +1,23 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V7",
+  "status": "POST_OOS_DECISION_LOCKED",
+  "hypothesis": "V61_RUSH_THEN_DAILY_TREND_AND_RELATIVE_STRENGTH_DAMAGE",
+  "source_artifacts": [
+    {"path": "data/herd/rush_damage_profit_take_v1.json", "sha256": "b0656f8ad4bb4c324de9ac649d583af2dd8d2b99fa75ecf10bfdc5b2b734fc48"},
+    {"path": "data/reports/rush_damage_profit_take_events_v1.csv", "sha256": "5bd124b4de4aab0ca682fe478e4f261285ccfcab632c30d3161e90503d66b365"},
+    {"path": "data/reports/rush_damage_profit_take_comparison_v1.json", "sha256": "4d2cbaed3ff0ca3f3c0bf784e8d429d090c0ee1524f1db78d5a705c75b7d1cb4"},
+    {"path": "data/reports/rush_damage_profit_take_v1.json", "sha256": "4bb44ae96f8f90008b6b3fac1a56e8be13d8d60456126a02fb4367141c24910c"}
+  ],
+  "decision": {
+    "status": "REJECT_RUSH_DAMAGE_PROFIT_TAKE",
+    "damage_rate": 0.721820809248555,
+    "buy_hold_comparison_passed": false,
+    "scheduled_trim_comparison_passed": false,
+    "profit_take_evidence_admitted": false,
+    "five_percent_cash_creation_authorized": false,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_allowed": false
+  },
+  "failure_reason": "The damage rule was common rather than sparse and sacrificed more terminal value than its modest drawdown reduction justified.",
+  "claim_boundary": "CURRENT_CONSTITUENTS_ROBUSTNESS_ONLY"
+}

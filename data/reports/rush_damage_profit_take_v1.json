@@ -1,0 +1,19 @@
+{
+  "report_version": "HERD_RUSH_DAMAGE_PROFIT_TAKE_V1",
+  "status": "OOS_COMPLETE",
+  "decision": "REJECT_RUSH_DAMAGE_PROFIT_TAKE",
+  "episodes": 2768,
+  "tickers": 383,
+  "damage_events": 1998,
+  "damage_rate": 0.721820809248555,
+  "median_damage_wait_sessions": 27.0,
+  "median_annual_damage_events_per_ticker": 0.5082695519064848,
+  "median_triggered_trough_improvement": 0.00357591402067714,
+  "comparisons_passed": 0,
+  "profit_take_authorized": false,
+  "five_percent_cash_creation_authorized": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "claim_boundary": "CURRENT_CONSTITUENTS_ROBUSTNESS_ONLY"
+}
