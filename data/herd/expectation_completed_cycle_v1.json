@@ -1,0 +1,25 @@
+{
+  "protocol_version": "HERD_EXPECTATION_COMPLETED_CYCLE_V1",
+  "status": "LOCKED",
+  "combination_gate": "data/reports/expectation_combination_gate_v1.json",
+  "reentry_evidence_registry": "data/reports/evidence_adoption_registry_v2.json",
+  "trim_ratio": 0.05,
+  "sell_cost_bps": 15,
+  "buy_cost_bps": 15,
+  "maximum_holding_sessions_in_cash": 126,
+  "required_conditions": [
+    "COMBINATION_GATE_ELIGIBLE",
+    "ADMITTED_REENTRY_EVIDENCE",
+    "SELL_PRECEDES_REENTRY",
+    "SAME_TICKER_AND_OOS_FOLD",
+    "COMPLETE_PRICE_PATH"
+  ],
+  "benchmark": "IDENTICAL_BUY_AND_HOLD_SHARES_WITH_DIVIDEND_ADJUSTED_PRICE",
+  "forbidden": [
+    "EVALUATE_ORPHAN_SELL",
+    "ASSUME_REENTRY_DATE",
+    "IGNORE_ROUND_TRIP_COST",
+    "ACTIVATE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
