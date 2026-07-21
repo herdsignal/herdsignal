@@ -1,0 +1,19 @@
+{
+  "protocol_version": "HERD_VALUATION_EXPECTATION_EXPANSION_V1",
+  "status": "LOCKED_BEFORE_MEASUREMENT_OUTPUT",
+  "objective": "Measure own-history valuation and price-to-business expectation expansion without treating expensive stocks as sell signals.",
+  "business_features": "data/reports/expectation_business_features_v1.csv",
+  "business_protocol": "data/herd/expectation_business_features_v1.json",
+  "price_snapshot": "data/snapshots/yf-long14-actions-sector-20260721",
+  "measurements": {
+    "market_cap_to_operating_cash_flow": "MONTH_END_UNADJUSTED_CLOSE_X_PIT_SHARES_DIVIDED_BY_POSITIVE_LATEST_ANNUAL_OPERATING_CASH_FLOW",
+    "pocf_own_history_percentile": "CURRENT_MULTIPLE_PERCENTILE_WITHIN_PRIOR_60_MONTHS_MINIMUM_36",
+    "price_revenue_expectation_gap": "TRAILING_12_MONTH_ADJUSTED_PRICE_RETURN_MINUS_PIT_REVENUE_YOY",
+    "expectation_gap_own_history_percentile": "CURRENT_GAP_PERCENTILE_WITHIN_PRIOR_60_MONTHS_MINIMUM_36"
+  },
+  "forbidden": [
+    "USE_FUTURE_MONTH_IN_PERCENTILE", "USE_NON_POSITIVE_CASH_FLOW_MULTIPLE",
+    "CROSS_COMPANY_RAW_MULTIPLE_COMPARISON", "EXPENSIVE_ALONE_CREATES_SELL",
+    "COMBINE_MEASUREMENTS_BEFORE_INDEPENDENT_OOS", "OPEN_BLIND_HOLDOUT"
+  ]
+}

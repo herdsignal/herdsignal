@@ -1,0 +1,22 @@
+{
+  "report_version": "HERD_VALUATION_EXPECTATION_EXPANSION_V1",
+  "status": "MEASUREMENTS_READY",
+  "rows": 8262,
+  "tickers": 51,
+  "coverage": {
+    "market_cap_to_operating_cash_flow": 0.7762043088840475,
+    "pocf_own_history_percentile": 0.5693536673928831,
+    "price_revenue_expectation_gap": 0.7653110626966836,
+    "expectation_gap_own_history_percentile": 0.5647542967804405
+  },
+  "measurements": [
+    "market_cap_to_operating_cash_flow",
+    "pocf_own_history_percentile",
+    "price_revenue_expectation_gap",
+    "expectation_gap_own_history_percentile"
+  ],
+  "sell_authority": false,
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false,
+  "claim_boundary": "OWN_HISTORY_PUBLIC_DATA_RESEARCH_ONLY"
+}
