@@ -1,0 +1,32 @@
+{
+  "families": {
+    "BUSINESS_DECELERATION": {
+      "decision": "REJECTED",
+      "passed_measurements": []
+    },
+    "IDIOSYNCRATIC_DAMAGE": {
+      "decision": "REJECTED",
+      "passed_measurements": []
+    },
+    "VALUATION_EXPECTATION": {
+      "decision": "REJECTED",
+      "passed_measurements": []
+    }
+  },
+  "folds_sha256": "6bbc6757a4907bcead0275571a5ae5e2b7a1618ce0e8b4e288a5cf7480b9be4a",
+  "input_sha256": "1a0656bb5186dade2699e82e3b4708a966d4512b676f7b971184bcbaff4797b3",
+  "limitations": [
+    "The fixed large-cap universe remains survivorship-biased.",
+    "Yahoo adjusted prices are a public-research input, not an exchange-grade total-return source.",
+    "A passing measurement still requires preregistered combination and completed-cycle validation."
+  ],
+  "operational_action_ratio": 0.0,
+  "operational_sell_authority": false,
+  "passed_evidence_count": 0,
+  "protocol_sha256": "2224a63a91f39ef9d5a8db77f952f4240e158d51e8cf0ea2063aeb491ef77e03",
+  "report_version": "herd-expectation-evidence-oos-v1",
+  "snapshot_id": "yf-long14-actions-sector-20260721",
+  "snapshot_sha256": "a0307644b5a3dc396c66e293f5bf66f6df627117ca29f301be142e36d4ebf217",
+  "status": "RESEARCH_ONLY",
+  "survivorship_safe": false
+}

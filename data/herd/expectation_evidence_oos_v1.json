@@ -1,0 +1,46 @@
+{
+  "protocol_version": "HERD_EXPECTATION_EVIDENCE_OOS_V1",
+  "status": "LOCKED_BEFORE_OOS_OUTPUT",
+  "objective": "Test business deterioration, valuation expectation expansion, and idiosyncratic damage independently as rare 5% trim evidence.",
+  "input_panel": "data/reports/idiosyncratic_relative_damage_v2.csv",
+  "snapshot": "data/snapshots/yf-long14-actions-sector-20260721",
+  "folds": "data/walk_forward/long-oos-v2-20260721/business_state_12m.csv",
+  "trim_ratio": 0.05,
+  "one_way_cost_bps": 15,
+  "horizon_sessions": 63,
+  "cooldown_sessions": 63,
+  "train_tail_quantile": 0.10,
+  "families": {
+    "BUSINESS_DECELERATION": {
+      "revenue_growth_acceleration": "LOWER",
+      "margin_change_acceleration": "LOWER",
+      "operating_cash_flow_growth_change": "LOWER",
+      "share_dilution_yoy": "HIGHER"
+    },
+    "VALUATION_EXPECTATION": {
+      "pocf_own_history_percentile": "HIGHER",
+      "expectation_gap_own_history_percentile": "HIGHER"
+    },
+    "IDIOSYNCRATIC_DAMAGE": {
+      "residual_return_21d": "LOWER",
+      "residual_volatility_expansion_21_63": "HIGHER",
+      "relative_strength_gap_21_126": "LOWER",
+      "relative_strength_gap_change_1m": "LOWER"
+    }
+  },
+  "gate": {
+    "minimum_events": 80,
+    "minimum_tickers": 20,
+    "minimum_eligible_folds": 3,
+    "minimum_positive_folds": 3,
+    "minimum_median_trim_uplift": 0.0,
+    "minimum_median_drawdown_relief": 0.0025,
+    "maximum_holm_p_value": 0.10
+  },
+  "forbidden": [
+    "TEST_DERIVED_THRESHOLD",
+    "COMBINE_FAMILIES_BEFORE_PASS",
+    "ACTIVATE_OPERATIONAL_SELL",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
