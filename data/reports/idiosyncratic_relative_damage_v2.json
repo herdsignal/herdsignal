@@ -1,0 +1,22 @@
+{
+  "report_version": "HERD_IDIOSYNCRATIC_RELATIVE_DAMAGE_V2",
+  "status": "MEASUREMENTS_READY",
+  "rows": 8262,
+  "tickers": 51,
+  "coverage": {
+    "residual_return_21d": 0.9179375453885258,
+    "residual_volatility_expansion_21_63": 0.9179375453885258,
+    "relative_strength_gap_21_126": 0.9179375453885258,
+    "relative_strength_gap_change_1m": 0.9120067780198499
+  },
+  "measurements": [
+    "residual_return_21d",
+    "residual_volatility_expansion_21_63",
+    "relative_strength_gap_21_126",
+    "relative_strength_gap_change_1m"
+  ],
+  "sell_authority": false,
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false,
+  "claim_boundary": "CURRENT_FIXED_UNIVERSE_CONFIRMATION_RESEARCH_ONLY"
+}

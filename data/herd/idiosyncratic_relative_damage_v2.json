@@ -1,0 +1,20 @@
+{
+  "protocol_version": "HERD_IDIOSYNCRATIC_RELATIVE_DAMAGE_V2",
+  "status": "LOCKED_BEFORE_MEASUREMENT_OUTPUT",
+  "objective": "Measure stock-specific relative-strength damage after removing market and sector returns, for confirmatory use only.",
+  "input_measurements": "data/reports/valuation_expectation_expansion_v1.csv",
+  "snapshot": "data/snapshots/yf-long14-actions-sector-20260721",
+  "sector_map": "data/reports/independent_universe_v1.csv",
+  "regression": {"lookback_sessions": 126, "minimum_observations": 100, "recent_sessions": 21, "prior_volatility_sessions": 63},
+  "measurements": {
+    "residual_return_21d": "SUM_OF_LAST_21_LOG_RETURN_RESIDUALS_FROM_STOCK_ON_SPY_AND_SECTOR_EXCESS_REGRESSION",
+    "residual_volatility_expansion_21_63": "LAST_21_RESIDUAL_VOLATILITY_DIVIDED_BY_PRECEDING_63",
+    "relative_strength_gap_21_126": "STOCK_MINUS_SECTOR_21D_LOG_RETURN_MINUS_21_OVER_126_TIMES_STOCK_MINUS_SECTOR_126D_LOG_RETURN",
+    "relative_strength_gap_change_1m": "CURRENT_GAP_MINUS_PREVIOUS_MONTH_GAP"
+  },
+  "forbidden": [
+    "USE_POST_MONTH_END_PRICE", "USE_RAW_STOCK_RETURN_AS_DAMAGE",
+    "RELATIVE_DAMAGE_ALONE_CREATES_SELL", "COMBINE_BEFORE_INDEPENDENT_OOS",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
