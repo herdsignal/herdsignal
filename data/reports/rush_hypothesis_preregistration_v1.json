@@ -1,0 +1,9 @@
+{
+  "admitted_count": 0,
+  "admitted_hypotheses": [],
+  "blind_holdout_access": false,
+  "confirmation_oos_allowed": false,
+  "operational_action_ratio": 0.0,
+  "report_version": "herd-rush-hypothesis-preregistration-v1",
+  "status": "NO_HYPOTHESIS_PREREGISTERED"
+}

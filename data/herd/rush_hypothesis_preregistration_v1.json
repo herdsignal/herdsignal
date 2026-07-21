@@ -1,0 +1,20 @@
+{
+  "registry_version": "HERD_RUSH_HYPOTHESIS_PREREGISTRATION_V1",
+  "status": "LOCKED_AFTER_DISCOVERY_SELECTION",
+  "source_report": "data/reports/rush_feature_selection_v1.json",
+  "target": "LARGE_PULLBACK_OR_STRUCTURAL_BREAK_VS_CONTINUATION",
+  "admitted_hypotheses": [],
+  "research_leads_without_test_authority": [
+    {
+      "feature": "SECTOR_RS_DAMAGE_DELTA_4W",
+      "required_next_evidence": "NEW_INDEPENDENT_SAMPLE_OR_PREREGISTERED_UNIVERSE_EXPANSION"
+    }
+  ],
+  "forbidden": [
+    "PROMOTE_RESEARCH_LEAD_TO_HYPOTHESIS",
+    "RUN_CONFIRMATION_OOS_WITH_EMPTY_ADMISSION",
+    "LOWER_DISCOVERY_GATE_AFTER_RESULTS",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
