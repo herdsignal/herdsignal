@@ -119,6 +119,7 @@ def create_snapshot(
     root: Path = DEFAULT_ROOT,
     collector: Callable[..., pd.DataFrame] = collect_history,
     created_at: datetime | None = None,
+    allow_equity_failures: bool = False,
 ) -> Path:
     if not _ID.fullmatch(snapshot_id):
         raise LongPriceSnapshotError("invalid snapshot id")
@@ -157,7 +158,9 @@ def create_snapshot(
                 }
             except Exception as error:
                 failures[ticker] = f"{type(error).__name__}: {error}"
-        required = {ticker for ticker in requested if _role(ticker) != "SECTOR_ETF"}
+        required = set(MARKET_ETFS) if allow_equity_failures else {
+            ticker for ticker in requested if _role(ticker) != "SECTOR_ETF"
+        }
         missing_required = sorted(required - files.keys())
         missing_sector = sorted(set(sector_etfs) - files.keys())
         if missing_required or missing_sector:
@@ -185,6 +188,7 @@ def create_snapshot(
                 "sector_etf_pre_inception_backfill": False,
                 "production_signal_allowed": False,
                 "blind_holdout_allowed": False,
+                "allow_equity_failures": allow_equity_failures,
             },
             "schema": list(PRICE_COLUMNS),
             "requested_tickers": list(requested),

@@ -64,3 +64,22 @@ def test_snapshot_fails_closed_if_sector_etf_is_missing():
                 equities=["AAA"], sector_etfs=["XLC"], root=Path(directory),
                 collector=failing,
             )
+
+
+def test_research_snapshot_can_record_individual_equity_failure():
+    def partially_failing(ticker: str, *, start: date, end: date) -> pd.DataFrame:
+        if ticker == "BBB":
+            raise RuntimeError("provider unavailable")
+        return _history(ticker, start=start, end=end)
+
+    with TemporaryDirectory() as directory:
+        snapshot = create_snapshot(
+            "partial-equity", start=date(2012, 1, 3), end=date(2026, 7, 18),
+            equities=["AAA", "BBB"], sector_etfs=["XLC"], root=Path(directory),
+            collector=partially_failing, allow_equity_failures=True,
+        )
+        manifest = verify_snapshot(snapshot)
+        assert "AAA" in manifest["completed_tickers"]
+        assert "BBB" not in manifest["completed_tickers"]
+        assert "BBB" in manifest["failures"]
+        assert manifest["policy"]["allow_equity_failures"] is True
