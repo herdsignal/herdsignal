@@ -66,7 +66,6 @@ def collect_history(ticker: str, *, start: date, end: date) -> pd.DataFrame:
         actions=True,
         repair=False,
         keepna=False,
-        raise_errors=True,
     ).reset_index()
 
 

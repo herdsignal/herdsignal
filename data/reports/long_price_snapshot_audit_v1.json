@@ -1,0 +1,50 @@
+{
+  "report_version": "herd-long-price-snapshot-audit-v1",
+  "snapshot_id": "yf-long14-actions-sector-20260721",
+  "manifest_path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json",
+  "manifest_file_sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b",
+  "snapshot_sha256": "a0307644b5a3dc396c66e293f5bf66f6df627117ca29f301be142e36d4ebf217",
+  "research_period": {
+    "start_inclusive": "2012-01-03",
+    "end_exclusive": "2026-07-18"
+  },
+  "completed_tickers": 65,
+  "roles": {
+    "equity": 51,
+    "market_etf": 4,
+    "sector_etf": 10
+  },
+  "corporate_actions": {
+    "dividend_events": 3440,
+    "split_events": 43
+  },
+  "sector_etf_coverage": {
+    "XLB": "2012-01-03",
+    "XLC": "2018-06-19",
+    "XLE": "2012-01-03",
+    "XLF": "2012-01-03",
+    "XLI": "2012-01-03",
+    "XLK": "2012-01-03",
+    "XLP": "2012-01-03",
+    "XLU": "2012-01-03",
+    "XLV": "2012-01-03",
+    "XLY": "2012-01-03"
+  },
+  "verification": {
+    "all_file_hashes_verified": true,
+    "failed_tickers": 0,
+    "sector_pre_inception_backfill": false
+  },
+  "authorization": {
+    "research_only": true,
+    "survivorship_safe": false,
+    "blind_holdout_allowed": false,
+    "production_signal_allowed": false
+  },
+  "limitations": [
+    "Yahoo Finance via yfinance is restricted to personal research use under the provider terms.",
+    "The equity universe is the current fixed validation universe and remains survivorship-biased.",
+    "XLC begins on 2018-06-19; communication-sector evidence before inception remains unavailable.",
+    "Yahoo corporate actions are preserved but have not yet been reconciled against an independent official ledger."
+  ]
+}
