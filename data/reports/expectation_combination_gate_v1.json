@@ -1,0 +1,15 @@
+{
+  "admitted_evidence": {},
+  "admitted_family_count": 0,
+  "admitted_measurement_count": 0,
+  "combination_formula": null,
+  "decision": "BLOCKED_NO_INDEPENDENT_EVIDENCE",
+  "eligible": false,
+  "operational_action_ratio": 0.0,
+  "operational_sell_authority": false,
+  "protocol_sha256": "1ffbb3d957c3e96350528454be2a1cf56f974974dfa7987149b8174f07d272c3",
+  "reason": "No evidence survived the locked independent OOS gate; weighting and score construction are prohibited.",
+  "registry_version": "herd-expectation-combination-gate-v1",
+  "research_trim_ratio": 0.0,
+  "source_report_sha256": "8a3272f2a45762101246fa336774e6e68ae7516e4841815c2edfd1e4fda4e918"
+}

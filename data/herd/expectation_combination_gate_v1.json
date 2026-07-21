@@ -1,0 +1,15 @@
+{
+  "protocol_version": "HERD_EXPECTATION_COMBINATION_GATE_V1",
+  "status": "LOCKED",
+  "source_report": "data/reports/expectation_evidence_oos_v1.json",
+  "required_passed_families": 1,
+  "required_passed_measurements": 1,
+  "allowed_trim_ratio_if_eligible": 0.05,
+  "forbidden": [
+    "INCLUDE_REJECTED_MEASUREMENT",
+    "FIT_COMBINATION_WEIGHTS_ON_OOS",
+    "CREATE_SCORE_WHEN_GATE_BLOCKED",
+    "ACTIVATE_OPERATIONAL_SELL",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
