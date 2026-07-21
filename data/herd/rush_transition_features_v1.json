@@ -1,0 +1,33 @@
+{
+  "feature_version": "HERD_RUSH_TRANSITION_FEATURES_V1",
+  "status": "LOCKED_BEFORE_TRANSITION_RESULTS",
+  "lookback_completed_weeks": 4,
+  "availability": "SIGNAL_WEEK_OR_EARLIER_ONLY",
+  "features": {
+    "SECTOR_RS_DELTA_4W": "STOCK_SECTOR_RS_13W(t)-STOCK_SECTOR_RS_13W(t-4 completed weeks)",
+    "SECTOR_RS_DAMAGE_DELTA_4W": "STOCK_SECTOR_RS_DAMAGE(t)-STOCK_SECTOR_RS_DAMAGE(t-4 completed weeks)",
+    "SPY_RS_DELTA_4W": "STOCK_SPY_RS_13W(t)-STOCK_SPY_RS_13W(t-4 completed weeks)",
+    "HIGH_FAILURE_DELTA_4W": "HIGH_52W_FAILURE(t)-HIGH_52W_FAILURE(t-4 completed weeks)",
+    "PARTICIPATION_WEAKENING_DELTA_4W": "SIGNED_VOLUME_PARTICIPATION(t)-SIGNED_VOLUME_PARTICIPATION(t-4 completed weeks)",
+    "MARKET_STRESS_DELTA_4W": "MARKET_STRESS_REGIME(t)-MARKET_STRESS_REGIME(t-4 completed weeks)",
+    "TREND_QUALITY_DELTA_4W": "TREND_26W_QUALITY(t)-TREND_26W_QUALITY(t-4 completed weeks)",
+    "DECELERATION_DELTA_4W": "TREND_13W_DECELERATION(t)-TREND_13W_DECELERATION(t-4 completed weeks)"
+  },
+  "comparison": {
+    "discovery_end": "2015-12-31",
+    "treatment_labels": ["LARGE_PULLBACK", "STRUCTURAL_BREAK"],
+    "control_labels": ["CONTINUATION"],
+    "minimum_treatment_events": 25,
+    "minimum_control_events": 25,
+    "maximum_missing_fraction": 0.25,
+    "minimum_absolute_rank_biserial": 0.20,
+    "maximum_holm_p_value": 0.10,
+    "minimum_same_direction_halves": 2
+  },
+  "forbidden": [
+    "USE_FORWARD_VALUES_IN_DELTA",
+    "USE_CONFIRMATION_ROWS_FOR_SELECTION",
+    "CHANGE_LOOKBACK_AFTER_RESULTS",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}

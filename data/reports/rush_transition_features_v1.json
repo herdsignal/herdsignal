@@ -1,0 +1,10 @@
+{
+  "blind_holdout_access": false,
+  "confirmation_rows_accessed_for_selection": false,
+  "episodes": 791,
+  "features_compared": 8,
+  "operational_action_ratio": 0.0,
+  "report_version": "herd-rush-transition-features-v1",
+  "retained_count": 0,
+  "retained_features": []
+}
