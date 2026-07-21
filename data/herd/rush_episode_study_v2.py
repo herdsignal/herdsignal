@@ -37,11 +37,10 @@ def _weekly_observations(frame: pd.DataFrame, protocol: dict) -> pd.DataFrame:
     weekly["high_52w_proximity"] = close / close.rolling(52, min_periods=52).max()
     weekly["return_26w"] = close.pct_change(26, fill_method=None)
     sma200 = daily.rolling(200, min_periods=200).mean()
-    weekly["close_to_sma200"] = [
-        float(daily.loc[:date].iloc[-1] / sma200.loc[:date].iloc[-1])
-        if not daily.loc[:date].empty and np.isfinite(sma200.loc[:date].iloc[-1]) else np.nan
-        for date in pd.to_datetime(weekly["last_session"])
-    ]
+    sessions = pd.DatetimeIndex(pd.to_datetime(weekly["last_session"]))
+    session_close = daily.reindex(sessions, method="ffill").to_numpy()
+    session_sma200 = sma200.reindex(sessions, method="ffill").to_numpy()
+    weekly["close_to_sma200"] = session_close / session_sma200
     weekly["rsi_vote"] = weekly["weekly_rsi_14"] >= votes["weekly_wilder_rsi_14"]
     weekly["high_vote"] = weekly["high_52w_proximity"] >= votes["adjusted_close_to_52_week_high_minimum"]
     weekly["return_vote"] = weekly["return_26w"] >= votes["adjusted_26_week_return_minimum"]
