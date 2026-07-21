@@ -1,0 +1,44 @@
+{
+  "registry_version": "HERD_OPPORTUNITY_HYPOTHESES_V1",
+  "status": "LOCKED_BEFORE_OOS_RESULTS",
+  "objective": "Separate healthy long-winner continuation from an executable pullback opportunity before any 5 percent profit-take cycle is tested.",
+  "target": "HERD_OPPORTUNITY_CYCLE_TARGET_V1",
+  "common_test": {
+    "fold_lane": "PRICE_TIMING_6M",
+    "event_identity": ["ticker", "signal_date"],
+    "duplicate_source_hypotheses_count_once": true,
+    "training_thresholds": [0.8, 0.9],
+    "control_training_quantile_maximum": 0.5,
+    "threshold_fit": "RAW_FEATURE_DISTRIBUTION_BEFORE_TEST_START_ONLY",
+    "minimum_training_events": 40,
+    "minimum_treatment_events": 30,
+    "minimum_tickers": 15,
+    "minimum_comparison_dates": 20,
+    "minimum_test_folds": 4,
+    "minimum_directional_folds": 3,
+    "minimum_target_rate_gap": 0.05,
+    "maximum_holm_p_value": 0.1
+  },
+  "hypotheses": [
+    {"id": "CONTINUATION_TREND_QUALITY", "feature": "trend_quality", "target_label": "CONTINUATION", "role": "CONTINUATION_SHIELD", "direction": "HIGH"},
+    {"id": "CONTINUATION_SECTOR_ALIGNMENT", "feature": "sector_alignment", "target_label": "CONTINUATION", "role": "CONTINUATION_SHIELD", "direction": "HIGH"},
+    {"id": "PULLBACK_RETURN_CONCENTRATION", "feature": "return_concentration", "target_label": "TRADABLE_PULLBACK", "role": "PULLBACK_EVIDENCE", "direction": "HIGH"},
+    {"id": "CONTINUATION_INTRADAY_SHARE", "feature": "intraday_return_share", "target_label": "CONTINUATION", "role": "CONTINUATION_SHIELD", "direction": "HIGH"},
+    {"id": "CONTINUATION_CAPITAL_GAIN_OVERHANG", "feature": "capital_gain_overhang_proxy", "target_label": "CONTINUATION", "role": "CONTINUATION_SHIELD", "direction": "HIGH"},
+    {"id": "PULLBACK_PRICE_BUSINESS_DIVERGENCE", "feature": "price_business_divergence", "target_label": "TRADABLE_PULLBACK", "role": "PULLBACK_EVIDENCE", "direction": "HIGH"},
+    {"id": "PULLBACK_MARKET_VOLATILITY", "feature": "market_volatility_percentile", "target_label": "TRADABLE_PULLBACK", "role": "PULLBACK_EVIDENCE", "direction": "HIGH"}
+  ],
+  "role_policy": {
+    "CONTINUATION_SHIELD": "MAY_ONLY_BLOCK_PROFIT_TAKE_AFTER_OOS_PASS",
+    "PULLBACK_EVIDENCE": "MAY_ONLY_PROGRESS_TO_EXECUTABLE_5_PERCENT_CYCLE_AFTER_OOS_PASS",
+    "STRUCTURAL_BREAK": "SEPARATE_REENTRY_BLOCK_RESEARCH_REQUIRED"
+  },
+  "forbidden": [
+    "COMBINE_FEATURES_BEFORE_INDEPENDENT_PASS",
+    "REVERSE_DIRECTION_AFTER_RESULTS",
+    "COUNT_DUPLICATE_EVENT_SOURCES",
+    "USE_TEST_LABEL_TO_FIT_THRESHOLD",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}

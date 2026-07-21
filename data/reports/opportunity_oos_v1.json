@@ -1,0 +1,10 @@
+{
+  "blind_holdout_access": false,
+  "deduplicated_events": 1025,
+  "operational_action_ratio": 0.0,
+  "passing_continuation_shields": [],
+  "passing_hypotheses": [],
+  "passing_pullback_evidence": [],
+  "profit_take_cycle_allowed": false,
+  "report_version": "herd-opportunity-oos-v1"
+}
