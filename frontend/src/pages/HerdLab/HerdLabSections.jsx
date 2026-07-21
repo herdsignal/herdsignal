@@ -6,7 +6,7 @@ const { stages: STAGES, weights: WEIGHTS } = herdModelReport
 const ACTION_GUIDES = [
   ['BUY', 'buy', 'Flee · Scatter', '추세 유지', '분할 매수'],
   ['HOLD', 'hold', 'Calm · Healthy', '추세 지속', '비중 유지'],
-  ['REDUCE', 'reduce', 'Drift · Rush', '과열 둔화', '분할 익절'],
+  ['OBSERVE', 'reduce', 'Drift · Rush', '독립 증거 없음', '행동 보류'],
 ]
 
 const STRATEGY_LABELS = {

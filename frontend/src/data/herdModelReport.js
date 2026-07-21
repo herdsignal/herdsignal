@@ -11,8 +11,8 @@ const herdModelReport = {
     { stage: 'Flee', range: '0-15', action: '추가매수', ratio: '8-22%', tone: 'flee' },
     { stage: 'Scatter', range: '15-40', action: '분할매수', ratio: '0-4%', tone: 'scatter' },
     { stage: 'Calm', range: '40-60', action: '보유', ratio: '0%', tone: 'calm' },
-    { stage: 'Drift', range: '60-75', action: '소폭 익절', ratio: '2-6%', tone: 'drift' },
-    { stage: 'Rush', range: '75-100', action: '일부 익절', ratio: '5-30%', tone: 'rush' },
+    { stage: 'Drift', range: '60-75', action: '쏠림 관찰', ratio: '행동 미채택', tone: 'drift' },
+    { stage: 'Rush', range: '75-100', action: '밀집 관찰', ratio: '행동 미채택', tone: 'rush' },
   ],
   weights: [
     { label: '월봉 RSI', value: 24 },

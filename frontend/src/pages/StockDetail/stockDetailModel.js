@@ -63,8 +63,8 @@ export function badgeColors(stage) {
 
 /** score → Timing Signal 텍스트 */
 export function getTimingSignal(score) {
-  if (score >= 75) return '보유량의 30% 익절을 고려하세요'
-  if (score >= 60) return '보유량의 5% 부분 익절 구간입니다'
+  if (score >= 75) return '군중 밀집 상태입니다 · 익절 근거는 미채택입니다'
+  if (score >= 60) return '군중 쏠림 상태입니다 · 비중 행동은 검증 중입니다'
   if (score >= 40) return '현재 비중을 유지하세요'
   if (score >= 15) return '분할 매수를 시작할 수 있는 구간입니다'
   return '적극적 추가매수 구간입니다'

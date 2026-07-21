@@ -25,7 +25,7 @@ const ACTION_META = {
     title: '익절/축소 기록',
     priceLabel: '매도가 (USD)',
     quantityLabel: '매도 수량 (주)',
-    memoPlaceholder: '예: Rush 구간이라 30% 익절',
+    memoPlaceholder: '예: 목표 비중 초과로 5% 축소',
   },
 }
 
