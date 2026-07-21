@@ -33,7 +33,7 @@
   ],
   "cik_periods": {
     "path": "data/herd/price_universe_cik_periods.csv",
-    "sha256": "73bb8455b4e24cde4417929afe817a69ed2c8e940f863cfb71531b74a5fb32e3"
+    "sha256": "efb7ec2bcf35b5221494e5bd002d991d307b99b318eaace303d6b742d5393487"
   },
   "fold_link_audit": {
     "path": "data/reports/sec_price_fold_link_v2.csv",

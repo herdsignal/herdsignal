@@ -1,4 +1,7 @@
 import copy
+import json
+from tempfile import TemporaryDirectory
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -9,6 +12,8 @@ from herd.oos_fold_protocol import (
     audit_calendar,
     load_protocol,
     validate_protocol,
+    load_spy_calendar,
+    write_fold_artifacts,
 )
 
 
@@ -24,6 +29,27 @@ def test_current_snapshot_allows_price_lane_but_blocks_long_business_lane():
     assert audit["lanes"]["BUSINESS_STATE_12M"]["estimated_minimum_calendar_years"] >= 14
     assert audit["lanes"]["BUSINESS_STATE_12M"]["estimated_additional_years_needed"] > 0
     assert audit["all_lanes_adoption_ready"] is False
+
+
+def test_long_v2_snapshot_unlocks_four_non_overlapping_business_folds():
+    calendar = load_spy_calendar(
+        "snapshots/yf-long14-actions-sector-20260721"
+    )
+
+    audit = audit_calendar(calendar, research_end="2026-07-17")
+
+    business = audit["lanes"]["BUSINESS_STATE_12M"]
+    assert business["adoption_ready"] is True
+    assert business["fold_count"] >= 4
+    assert business["estimated_additional_years_needed"] == 0
+
+    with TemporaryDirectory() as directory:
+        output = write_fold_artifacts(Path(directory) / "folds", audit)
+        manifest = json.loads(
+            (output / "manifest.json").read_text(encoding="utf-8")
+        )
+        assert manifest["files"]["BUSINESS_STATE_12M"]["fold_count"] == 4
+        assert (output / "business_state_12m.csv").is_file()
 
 
 def test_protocol_rejects_purge_shorter_than_forward_label():

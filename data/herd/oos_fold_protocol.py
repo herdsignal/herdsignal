@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import gzip
+import hashlib
 import json
 from dataclasses import asdict
 from pathlib import Path
@@ -23,6 +25,31 @@ PROTOCOL_VERSION = "HERD_LONG_HORIZON_OOS_V2"
 
 class OosFoldProtocolError(RuntimeError):
     """장기 OOS 분할이 사전등록 계약을 위반할 때 발생한다."""
+
+
+def load_spy_calendar(snapshot: Path) -> pd.DatetimeIndex:
+    """가격 스냅샷 V1/V2에서 고정 SPY 거래일을 읽는다."""
+    root = Path(snapshot)
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    version = manifest.get("format_version")
+    if version == "herd-price-snapshot-v1":
+        frames, _ = load_snapshot(root, tickers=["SPY"])
+        dates = frames["SPY"]["Date"]
+    elif version == "herd-price-snapshot-v2":
+        metadata = manifest.get("files", {}).get("SPY")
+        if not metadata:
+            raise OosFoldProtocolError("SPY is missing from price snapshot")
+        path = root / metadata["path"]
+        if not path.is_file():
+            raise OosFoldProtocolError("SPY price file is missing")
+        with gzip.open(path, "rt", encoding="utf-8") as stream:
+            dates = pd.read_csv(stream, usecols=["Date"])["Date"]
+    else:
+        raise OosFoldProtocolError("unsupported price snapshot format")
+    calendar = pd.DatetimeIndex(pd.to_datetime(dates)).sort_values()
+    if calendar.empty or calendar.duplicated().any():
+        raise OosFoldProtocolError("invalid SPY calendar")
+    return calendar
 
 
 def load_protocol(path: Path = PROTOCOL_PATH) -> dict:
@@ -142,15 +169,58 @@ def audit_calendar(
     }
 
 
+def write_fold_artifacts(output: Path, audit: dict) -> Path:
+    """lane별 fold CSV와 해시가 포함된 불변 manifest를 기록한다."""
+    root = Path(output)
+    if root.exists():
+        raise OosFoldProtocolError(f"fold artifact exists: {root}")
+    root.mkdir(parents=True)
+    files = {}
+    try:
+        for lane_id, lane in audit["lanes"].items():
+            path = root / f"{lane_id.lower()}.csv"
+            pd.DataFrame(lane["folds"]).to_csv(
+                path, index=False, lineterminator="\n"
+            )
+            files[lane_id] = {
+                "path": path.name,
+                "fold_count": len(lane["folds"]),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+        body = {
+            "format_version": "herd-long-oos-fold-artifacts-v1",
+            "protocol_version": audit["protocol_version"],
+            "calendar_start": audit["calendar_start"],
+            "calendar_end": audit["calendar_end"],
+            "all_lanes_adoption_ready": audit["all_lanes_adoption_ready"],
+            "files": files,
+        }
+        body["manifest_sha256"] = hashlib.sha256(
+            json.dumps(body, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        (root / "manifest.json").write_text(
+            json.dumps(body, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return root
+    except Exception:
+        import shutil
+        shutil.rmtree(root, ignore_errors=True)
+        raise
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("snapshot", type=Path)
     parser.add_argument("--research-end")
+    parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    frames, _ = load_snapshot(args.snapshot)
-    calendar = pd.DatetimeIndex(pd.to_datetime(frames["SPY"]["Date"]))
+    calendar = load_spy_calendar(args.snapshot)
+    audit = audit_calendar(calendar, research_end=args.research_end)
+    if args.output:
+        write_fold_artifacts(args.output, audit)
     print(json.dumps(
-        audit_calendar(calendar, research_end=args.research_end),
+        audit,
         ensure_ascii=False,
         indent=2,
     ))

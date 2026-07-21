@@ -1,0 +1,62 @@
+{
+  "report_version": "herd-sec-pit-long-readiness-v1",
+  "research_period": {
+    "start": "2012-01-03",
+    "end": "2026-07-17"
+  },
+  "oos_contract": {
+    "protocol": "HERD_LONG_HORIZON_OOS_V2",
+    "price_folds": 9,
+    "business_folds": 4,
+    "business_test_years": 2,
+    "business_purge_days": 252,
+    "business_embargo_days": 20,
+    "minimum_fold_requirement_met": true
+  },
+  "sec_corpora": [
+    {
+      "snapshot_id": "sec-pit-price50-20120103-20260717-20260721",
+      "manifest_sha256": "8eb580a62147523025d3828e6db8561392699e517e0b2d4d83472c4b19aef5ec",
+      "ciks": 50,
+      "documents": 261
+    },
+    {
+      "snapshot_id": "sec-pit-xom34088-20120103-20260717-20260721",
+      "manifest_sha256": "2c1de9d97471fbe2bd79511d48eef8b5fe9ab94c627c7fdc76737cc5606276c2",
+      "ciks": 1,
+      "documents": 3
+    },
+    {
+      "snapshot_id": "sec-pit-long-predecessors-20120103-20260717-20260721",
+      "manifest_sha256": "bb5adb0413d2164ca2afd6453cb6ffd4d356fcdd6984e2b125335657396aa64a",
+      "ciks": 4,
+      "documents": 16
+    }
+  ],
+  "pit_link": {
+    "equity_tickers": 51,
+    "strict_ready_tickers": 50,
+    "strict_coverage": 0.9803921568627451,
+    "ready_fold_rows": 200,
+    "total_fold_rows": 204,
+    "blocked_ticker": "CRM",
+    "blocked_reason": "ONE_COMPANYFACTS_ACCESSION_WITHOUT_SEC_ACCEPTANCE_DATETIME",
+    "blocked_fold_rows": 4,
+    "link_csv_sha256": "64a5927f1b21f7ad247e0c545eeb28e6110e1c676f70582a7d7f598244203dfe"
+  },
+  "identity_periods": {
+    "verified_successions": ["AVGO", "DIS", "XOM"],
+    "ledger_sha256": "efb7ec2bcf35b5221494e5bd002d991d307b99b318eaace303d6b742d5393487"
+  },
+  "decision": "LONG_OOS_DATA_AVAILABLE_WITH_CRM_FAIL_CLOSED_EXCLUSION",
+  "strict_corpus_ready": false,
+  "business_hypothesis_execution_allowed": true,
+  "business_hypothesis_adoption_allowed": false,
+  "blind_holdout_allowed": false,
+  "production_signal_allowed": false,
+  "limitations": [
+    "CRM remains excluded because one Company Facts accession has no SEC acceptance timestamp.",
+    "The current 51-equity universe remains survivorship-biased.",
+    "Long OOS data availability permits preregistered research, not model adoption."
+  ]
+}

@@ -7,10 +7,14 @@ from tempfile import TemporaryDirectory
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from herd.sec_price_fold_link import build_links, collection_queue
+from herd.sec_price_fold_link import _asset_type, build_links, collection_queue
 
 
 class SecPriceFoldLinkTest(unittest.TestCase):
+    def test_v2_sector_role_is_not_treated_as_a_company(self):
+        manifest = {"files": {"XLC": {"role": "SECTOR_ETF"}}}
+        self.assertEqual(_asset_type(manifest, "XLC"), "ETF")
+
     def _corpus(self, root: Path) -> Path:
         raw = root / "raw"
         raw.mkdir(parents=True)

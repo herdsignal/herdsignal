@@ -17,6 +17,14 @@ from herd.sec_point_in_time_fundamentals import (
 NON_CORPORATE_FUNDS = {"DIA", "IWM", "QQQ", "SPY"}
 
 
+def _asset_type(price_manifest: dict, ticker: str) -> str:
+    """V2의 명시적 역할을 우선하고 V1은 기존 ETF 목록으로 판정한다."""
+    role = price_manifest.get("files", {}).get(ticker, {}).get("role")
+    if role in {"MARKET_ETF", "SECTOR_ETF"} or ticker in NON_CORPORATE_FUNDS:
+        return "ETF"
+    return "EQUITY"
+
+
 class SecPriceFoldLinkError(RuntimeError):
     pass
 
@@ -163,7 +171,7 @@ def build_links(
     rows = []
     cache: dict[str, tuple[list[dict], str]] = {}
     for ticker in sorted(tickers):
-        if ticker in NON_CORPORATE_FUNDS:
+        if _asset_type(price_manifest, ticker) == "ETF":
             for fold in folds:
                 rows.append({
                     "ticker": ticker,
@@ -257,7 +265,10 @@ def build_links(
         "price_snapshot_id": price_manifest.get("snapshot_id"),
         "folds": len(folds),
         "equity_tickers": len(equity_tickers),
-        "etf_tickers": len(set(tickers) & NON_CORPORATE_FUNDS),
+        "etf_tickers": sum(
+            _asset_type(price_manifest, ticker) == "ETF"
+            for ticker in set(tickers)
+        ),
         "latest_fold": latest_fold,
         "latest_fold_ready_tickers": len(ready_tickers),
         "latest_fold_coverage": (

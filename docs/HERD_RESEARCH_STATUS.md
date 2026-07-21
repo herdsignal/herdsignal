@@ -40,6 +40,23 @@ XLC는 실제 데이터가 2018-06-19부터 존재하므로 그 이전을 다른
 일부 해소하지만 현재 대형주 중심 유니버스이므로 `survivorship_safe=false`,
 `blind_holdout_allowed=false`, `production_signal_allowed=false`를 유지한다.
 
+### 장기 SEC PIT·OOS fold
+
+2012-01-03~2026-07-17 SEC submissions·Company Facts corpus를 새로 고정했다.
+AVGO의 두 차례 보고 주체 변경, DIS의 2019년 모회사 변경, XOM의 2026년
+CIK 변경을 SEC 원문에 따라 기간별로 연결했다. TSLA의 장기 corpus 누락도
+보완했다.
+
+새 SPY 캘린더에서는 가격 6개월 lane 9개, 기업 상태 12개월 lane 4개가
+생성된다. 기업 lane은 5년 학습, 252거래일 purge, 20거래일 embargo,
+2년 test 조건을 유지한다. 51개 기업 중 50개는 4개 fold 모두 엄격 PIT
+연결을 통과했다.
+
+CRM은 Company Facts 제출번호 한 건에 SEC 접수시각이 없어 4개 fold 모두
+차단한다. 시각을 추정하거나 filing date로 대체하지 않는다. 따라서 장기
+기업 가설의 재연구는 가능하지만 `strict_corpus_ready=false`이며 모델
+채택·Blind holdout·운영 신호에는 사용할 수 없다.
+
 ## A~F 구현 완료 범위
 
 UI를 제외한 연구·검증·운영 안전장치를 다음 경계로 고정했다.
