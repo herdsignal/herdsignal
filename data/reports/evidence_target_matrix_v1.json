@@ -1,0 +1,15 @@
+{
+  "cells": 105,
+  "coverage_complete": true,
+  "cross_target_transfer_allowed": false,
+  "direction_evidence_admitted": [],
+  "report_version": "herd-evidence-target-matrix-v1-audit",
+  "research_candidates": 15,
+  "state_counts": {
+    "CONTEXT_ONLY": 12,
+    "EXCLUDED": 53,
+    "PASSED_CAP_ONLY": 1,
+    "TEST_CANDIDATE": 39
+  },
+  "targets": 7
+}
