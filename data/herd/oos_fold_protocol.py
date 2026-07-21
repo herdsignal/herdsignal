@@ -18,7 +18,7 @@ from herd.walk_forward_artifacts import (
 
 
 PROTOCOL_PATH = Path(__file__).with_name("oos_fold_protocol.json")
-PROTOCOL_VERSION = "HERD_LONG_HORIZON_OOS_V1"
+PROTOCOL_VERSION = "HERD_LONG_HORIZON_OOS_V2"
 
 
 class OosFoldProtocolError(RuntimeError):
@@ -103,16 +103,32 @@ def audit_calendar(
     minimum_folds = locked["minimum_complete_folds"]
     lane_audits = {}
     for lane_id in locked["lanes"]:
+        lane = locked["lanes"][lane_id]
         folds = build_lane_folds(
             calendar,
             lane_id,
             protocol=locked,
             research_end=research_end,
         )
+        calendar_years = (
+            (pd.Timestamp(calendar.max()) - pd.Timestamp(calendar.min())).days
+            / 365.2425
+        )
+        required_years = (
+            lane["minimum_train_years"]
+            + (lane["purge_days"] + lane["embargo_days"]) / 252.0
+            + lane["test_years"]
+            + (minimum_folds - 1) * lane["step_years"]
+        )
         lane_audits[lane_id] = {
             "fold_count": len(folds),
             "minimum_complete_folds": minimum_folds,
             "adoption_ready": len(folds) >= minimum_folds,
+            "calendar_years": round(calendar_years, 2),
+            "estimated_minimum_calendar_years": round(required_years, 2),
+            "estimated_additional_years_needed": round(
+                max(0.0, required_years - calendar_years), 2
+            ),
             "folds": [asdict(fold) for fold in folds],
         }
     return {

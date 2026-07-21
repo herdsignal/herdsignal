@@ -1,5 +1,5 @@
 {
-  "protocol_version": "HERD_LONG_HORIZON_OOS_V1",
+  "protocol_version": "HERD_LONG_HORIZON_OOS_V2",
   "status": "LOCKED_BEFORE_NEW_HYPOTHESIS_RESULTS",
   "calendar_source": "SPY_TRADING_DAYS",
   "split_type": "ANCHORED_EXPANDING_TRAIN_NON_OVERLAPPING_TEST",
@@ -15,7 +15,7 @@
     },
     "BUSINESS_STATE_12M": {
       "maximum_label_horizon_trading_days": 252,
-      "minimum_train_years": 4,
+      "minimum_train_years": 5,
       "test_years": 2,
       "step_years": 2,
       "purge_days": 252,

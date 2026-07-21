@@ -21,6 +21,8 @@ def test_current_snapshot_allows_price_lane_but_blocks_long_business_lane():
     assert audit["lanes"]["PRICE_TIMING_6M"]["adoption_ready"] is True
     assert audit["lanes"]["PRICE_TIMING_6M"]["fold_count"] >= 4
     assert audit["lanes"]["BUSINESS_STATE_12M"]["adoption_ready"] is False
+    assert audit["lanes"]["BUSINESS_STATE_12M"]["estimated_minimum_calendar_years"] >= 14
+    assert audit["lanes"]["BUSINESS_STATE_12M"]["estimated_additional_years_needed"] > 0
     assert audit["all_lanes_adoption_ready"] is False
 
 
