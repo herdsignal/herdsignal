@@ -1,0 +1,37 @@
+{
+  "report_version": "HERD_CYCLE_VALUE_CEILING_V1",
+  "status": "FEASIBILITY_CEILING_PASSED",
+  "interpretation": "non-executable upper bound; no action authority",
+  "snapshot_id": "yf-independent-current-sp500-20260721",
+  "snapshot_sha256": "fc02612692db213f7bfa1ade52db9a030150db6ad8728d4f465ea585b3dc8c32",
+  "input_episodes": 2768,
+  "base_costs": {
+    "evaluable_episodes": 2768,
+    "theoretical_opportunity_rate": 0.9244942196531792,
+    "constrained_opportunity_rate": 0.5686416184971098,
+    "mean_total_position_terminal_uplift": 0.006056297753282841,
+    "median_conditional_sleeve_share_delta_rate": 0.1430160893739143,
+    "median_time_to_reentry_sessions": 61.0,
+    "median_days_below_net_discount": 19.0,
+    "gate_passed": true
+  },
+  "stress_costs": {
+    "evaluable_episodes": 2768,
+    "theoretical_opportunity_rate": 0.9060693641618497,
+    "constrained_opportunity_rate": 0.5473265895953757,
+    "mean_total_position_terminal_uplift": 0.005871974384245749,
+    "median_conditional_sleeve_share_delta_rate": 0.14452007141709888,
+    "median_time_to_reentry_sessions": 62.0,
+    "median_days_below_net_discount": 17.0,
+    "gate_passed": true
+  },
+  "ready_for_reentry_worthwhile_target_research": true,
+  "limitations": {
+    "dividends_excluded_from_both_lanes": true,
+    "current_constituents_survivorship_bias": true,
+    "oracle_uses_future_prices": true
+  },
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "failures": {}
+}
