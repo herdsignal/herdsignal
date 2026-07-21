@@ -1,0 +1,21 @@
+{
+  "policy_version": "HERD_EVIDENCE_REDUNDANCY_GATE_V2",
+  "status": "LOCKED_AFTER_INDEPENDENT_OOS",
+  "purpose": "Audit redundancy and conditional contribution only among independently admitted direction evidence.",
+  "source_report": "data/reports/herd_candidate_oos_v2.json",
+  "admission_field": "passing_direction_variants",
+  "minimum_admitted_features": 2,
+  "planned_methods_if_eligible": [
+    "TRAIN_FOLD_SPEARMAN_ABSOLUTE_CORRELATION",
+    "HIERARCHICAL_CLUSTERING_WITHIN_TARGET_ROLE",
+    "OOS_LEAVE_ONE_FEATURE_OUT_ABLATION",
+    "OOS_GROUPED_PERMUTATION_IMPORTANCE"
+  ],
+  "forbidden": [
+    "ANALYZE_FAILED_FEATURES_AS_IF_ADMITTED",
+    "LEARN_WEIGHTS_BEFORE_REDUNDANCY_AUDIT",
+    "TRANSFER_EVIDENCE_BETWEEN_TARGET_ROLES",
+    "USE_BLIND_HOLDOUT",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}
