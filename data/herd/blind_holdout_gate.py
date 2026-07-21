@@ -42,8 +42,19 @@ def decide(
         generalization_report.get("walk_forward", {}).get("status") == "COMPLETE"
         and generalization_report.get("era_validation", {}).get("status") == "COMPLETE"
     )
+    action_evidence = candidate_report.get("action_evidence", {})
+    completed_cycle = candidate_report.get("completed_cycle", {})
     prerequisites = {
         "candidate_passed_pre_holdout_gate": bool(passing_candidates),
+        "independent_action_direction_evidence_passed": (
+            action_evidence.get("status") == "PASSED"
+            and action_evidence.get("authorized_direction_count", 0) > 0
+        ),
+        "completed_profit_take_reentry_cycle_passed": (
+            completed_cycle.get("status") == "PASSED"
+            and completed_cycle.get("required_metrics_complete") is True
+            and completed_cycle.get("open_sale_counted_as_cycle") is False
+        ),
         "full_pre_holdout_gate_passed": (
             pre_holdout_gate.get("stage") == "PRE_HOLDOUT"
             and pre_holdout_gate.get("status") == "READY_FOR_BLIND_HOLDOUT"

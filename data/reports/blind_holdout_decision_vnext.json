@@ -8,11 +8,15 @@
   "sealed_data_accessed": false,
   "prerequisites": {
     "candidate_passed_pre_holdout_gate": false,
+    "independent_action_direction_evidence_passed": false,
+    "completed_profit_take_reentry_cycle_passed": false,
     "point_in_time_data_ready": false,
     "walk_forward_and_era_validation_complete": false
   },
   "failed_prerequisites": [
     "candidate_passed_pre_holdout_gate",
+    "independent_action_direction_evidence_passed",
+    "completed_profit_take_reentry_cycle_passed",
     "point_in_time_data_ready",
     "walk_forward_and_era_validation_complete"
   ],

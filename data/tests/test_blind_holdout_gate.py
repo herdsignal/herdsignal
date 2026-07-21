@@ -16,10 +16,24 @@ def _passed_pre_holdout_gate() -> dict:
     }
 
 
+def _passed_candidate(summary: dict) -> dict:
+    return {
+        "summary": summary,
+        "action_evidence": {
+            "status": "PASSED",
+            "authorized_direction_count": 2,
+        },
+        "completed_cycle": {
+            "status": "PASSED",
+            "required_metrics_complete": True,
+            "open_sale_counted_as_cycle": False,
+        },
+    }
+
+
 class BlindHoldoutGateTest(unittest.TestCase):
     def test_failed_candidate_never_opens_holdout(self):
-        candidate = {
-            "summary": {
+        candidate = _passed_candidate({
                 "B0": {
                     "median_excess_cagr": -0.01,
                     "positive_excess_rate": 40,
@@ -27,8 +41,7 @@ class BlindHoldoutGateTest(unittest.TestCase):
                     "median_downside_capture": 0.90,
                     "median_mdd_improvement": 0.01,
                 }
-            }
-        }
+            })
         quality = {
             "summary": {
                 "overall_status": "READY",
@@ -49,6 +62,67 @@ class BlindHoldoutGateTest(unittest.TestCase):
         self.assertFalse(result["sealed_data_accessed"])
 
     def test_all_preconditions_only_make_holdout_ready(self):
+        candidate = _passed_candidate({
+                "B0": {
+                    "median_excess_cagr": 0.01,
+                    "positive_excess_rate": 65,
+                    "median_upside_capture": 0.90,
+                    "median_downside_capture": 0.80,
+                    "median_mdd_improvement": 0.01,
+                }
+            })
+        quality = {
+            "summary": {
+                "overall_status": "READY",
+                "point_in_time_universe_ready": True,
+            }
+        }
+        generalization = {
+            "walk_forward": {"status": "COMPLETE"},
+            "era_validation": {"status": "COMPLETE"},
+        }
+
+        result = decide(
+            candidate, quality, generalization, _passed_pre_holdout_gate()
+        )
+
+        self.assertEqual(result["status"], "READY_TO_OPEN")
+        self.assertEqual(result["evaluation_count"], 0)
+        self.assertIsNone(result["passed"])
+
+    def test_summary_metrics_cannot_bypass_full_pre_holdout_gate(self):
+        candidate = _passed_candidate({
+                "B9": {
+                    "median_excess_cagr": 0.02,
+                    "positive_excess_rate": 70,
+                    "median_upside_capture": 0.90,
+                    "median_downside_capture": 0.80,
+                    "median_mdd_improvement": 0.01,
+                }
+            })
+        quality = {
+            "summary": {
+                "overall_status": "READY",
+                "point_in_time_universe_ready": True,
+            }
+        }
+        generalization = {
+            "walk_forward": {"status": "COMPLETE"},
+            "era_validation": {"status": "COMPLETE"},
+        }
+        failed_gate = {
+            "stage": "PRE_HOLDOUT",
+            "status": "RESEARCH_VALIDATION",
+            "eligible_for_holdout": False,
+            "failed_criteria": ["pbo", "deflated_sharpe"],
+        }
+
+        result = decide(candidate, quality, generalization, failed_gate)
+
+        self.assertEqual(result["status"], "NOT_OPENED_PREREQUISITES_FAILED")
+        self.assertIn("full_pre_holdout_gate_passed", result["failed_prerequisites"])
+
+    def test_performance_cannot_bypass_action_evidence_and_completed_cycle(self):
         candidate = {
             "summary": {
                 "B0": {
@@ -75,43 +149,14 @@ class BlindHoldoutGateTest(unittest.TestCase):
             candidate, quality, generalization, _passed_pre_holdout_gate()
         )
 
-        self.assertEqual(result["status"], "READY_TO_OPEN")
-        self.assertEqual(result["evaluation_count"], 0)
-        self.assertIsNone(result["passed"])
-
-    def test_summary_metrics_cannot_bypass_full_pre_holdout_gate(self):
-        candidate = {
-            "summary": {
-                "B9": {
-                    "median_excess_cagr": 0.02,
-                    "positive_excess_rate": 70,
-                    "median_upside_capture": 0.90,
-                    "median_downside_capture": 0.80,
-                    "median_mdd_improvement": 0.01,
-                }
-            }
-        }
-        quality = {
-            "summary": {
-                "overall_status": "READY",
-                "point_in_time_universe_ready": True,
-            }
-        }
-        generalization = {
-            "walk_forward": {"status": "COMPLETE"},
-            "era_validation": {"status": "COMPLETE"},
-        }
-        failed_gate = {
-            "stage": "PRE_HOLDOUT",
-            "status": "RESEARCH_VALIDATION",
-            "eligible_for_holdout": False,
-            "failed_criteria": ["pbo", "deflated_sharpe"],
-        }
-
-        result = decide(candidate, quality, generalization, failed_gate)
-
-        self.assertEqual(result["status"], "NOT_OPENED_PREREQUISITES_FAILED")
-        self.assertIn("full_pre_holdout_gate_passed", result["failed_prerequisites"])
+        self.assertIn(
+            "independent_action_direction_evidence_passed",
+            result["failed_prerequisites"],
+        )
+        self.assertIn(
+            "completed_profit_take_reentry_cycle_passed",
+            result["failed_prerequisites"],
+        )
 
 
 if __name__ == "__main__":
