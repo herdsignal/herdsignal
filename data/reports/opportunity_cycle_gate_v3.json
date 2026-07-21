@@ -1,0 +1,16 @@
+{
+  "admission_audit": {
+    "continuation_shields": 0,
+    "pullback_evidence": 0
+  },
+  "blind_holdout_access": false,
+  "blocked_experiment_is_performance_failure": false,
+  "buy_hold_comparison_executed": false,
+  "five_percent_cycle_executed": false,
+  "gate_version": "HERD_OPPORTUNITY_CYCLE_GATE_V3",
+  "initial_profit_take_fraction": 0.0,
+  "operational_action_ratio": 0.0,
+  "pullback_evidence_ready": false,
+  "reentry_evidence_ready": false,
+  "status": "BLOCKED_MISSING_OPPORTUNITY_OR_REENTRY_EVIDENCE"
+}

@@ -1,0 +1,34 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V3",
+  "status": "POST_OOS_DECISIONS_LOCKED",
+  "source_artifacts": [
+    {"path": "data/herd/opportunity_cycle_target_v1.json", "sha256": "7a70d6a1749a6f36a47f4e3dab821b3a61f467e0b15a9faa83fb68d1647ecb46"},
+    {"path": "data/herd/opportunity_price_features_v1.json", "sha256": "bb870a6d8c9dd484984d690507edb0fef888d200ad65221b7eddd74057f5ce4c"},
+    {"path": "data/herd/opportunity_context_features_v1.json", "sha256": "7c76ecb8d63823445337d80613c5c961c859b4af931d3a761bd147285f739b95"},
+    {"path": "data/herd/opportunity_hypotheses_v1.json", "sha256": "9b39f0d005b5698270cf00f7a2f4533ee4ec65ba91283ed272cc80a854418695"},
+    {"path": "data/reports/opportunity_cycle_path_v1.json", "sha256": "02bc418fd458352ed0cfaa1e7067a2624ae5529bd2bef8039824d6360caf305d"},
+    {"path": "data/reports/opportunity_oos_v1.json", "sha256": "506fd96c0938aa33505fe3731970c95c42de78fd21a2ed7ab0d92880a3dbcdb4"},
+    {"path": "data/reports/opportunity_oos_v1.csv", "sha256": "be18262abfffa3a8c48b122e35b7f2e8f9ebcad093ca8d84d365e0bd60012564"}
+  ],
+  "path_diagnostic": {
+    "continuation": 817,
+    "tradable_pullback": 546,
+    "structural_break": 123,
+    "noise": 804,
+    "labels_authorize_actions": false
+  },
+  "admission": {
+    "continuation_shields": [],
+    "pullback_evidence": [],
+    "structural_break_evidence": [],
+    "reentry_evidence": []
+  },
+  "candidate_state": {
+    "profit_take_cycle_allowed": false,
+    "five_percent_cycle_executed": false,
+    "buy_hold_comparison_executed": false,
+    "blind_holdout_allowed": false,
+    "operational_action_ratio": 0.0,
+    "decision": "NO_ADOPTABLE_OPPORTUNITY_EVIDENCE"
+  }
+}
