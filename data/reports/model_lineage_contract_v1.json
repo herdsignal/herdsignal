@@ -1,0 +1,15 @@
+{
+  "operational_action_ratio": 0.0,
+  "operational_state_model": "HERD_V4_STATE",
+  "report_version": "herd-model-lineage-v1",
+  "research_action_model": "HERD_V61_ACTION_LAYER",
+  "research_sample_selector": "PRICE_RUSH_EPISODE_V2",
+  "status": "MODEL_ROLES_VERIFIED",
+  "verified_layer_count": 4,
+  "verified_layers": [
+    "HERD_V4_STATE",
+    "HERD_V61_ACTION_LAYER",
+    "PYTHON_V61_RECONSTRUCTION",
+    "PRICE_RUSH_EPISODE_V2"
+  ]
+}

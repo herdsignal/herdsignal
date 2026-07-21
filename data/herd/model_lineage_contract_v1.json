@@ -1,0 +1,61 @@
+{
+  "contract_version": "HERD_MODEL_LINEAGE_V1",
+  "status": "LOCKED_FROM_CURRENT_CODE",
+  "product_objective": "Support rare partial profit-taking and add-buy decisions for user-selected long-term US equity holdings while preserving the core position.",
+  "layers": [
+    {
+      "id": "HERD_V4_STATE",
+      "role": "OBJECTIVE_MARKET_STOCK_STATE",
+      "output": "herd_v4_0_100_and_five_stage",
+      "inputs": ["monthly_rsi", "weekly_rsi", "52w_position", "ma200_deviation", "volume_strength", "ma200_weekly", "eps_multiplier", "sector_multiplier"],
+      "source": "data/herd/calculator.py",
+      "source_symbols": ["calc_herd_score", "calc_herd_scores", "get_stage"],
+      "operational": true
+    },
+    {
+      "id": "HERD_V61_ACTION_LAYER",
+      "role": "RESEARCH_ACTION_TRANSLATION",
+      "output": "research_action_label_and_ratio",
+      "inputs": ["HERD_V4_STATE", "score_stability", "trend_quality", "herd_score_momentum", "signal_lifecycle", "data_quality", "investor_profile", "portfolio_context", "cooldown"],
+      "source": "backend/src/main/java/com/herdsignal/service/ActionDecisionService.java",
+      "source_symbols": ["ACTION_MODEL_VERSION", "decide", "applyOperationalGate"],
+      "operational": false
+    },
+    {
+      "id": "PYTHON_V61_RECONSTRUCTION",
+      "role": "RESEARCH_BASELINE_ONLY",
+      "output": "historical_regime_action_ratio",
+      "inputs": ["HERD_V4_STATE", "price_trend_quality", "ma200_deviation"],
+      "source": "data/herd/legacy_action_rules.py",
+      "source_symbols": ["trend_frame", "action_decision"],
+      "operational": false,
+      "java_parity": false
+    },
+    {
+      "id": "PRICE_RUSH_EPISODE_V2",
+      "role": "RESEARCH_SAMPLE_SELECTOR_ONLY",
+      "output": "rush_episode_start",
+      "inputs": ["weekly_rsi_14", "52w_high_proximity", "26w_return", "close_to_sma200"],
+      "source": "data/herd/rush_episode_study_v2.py",
+      "source_symbols": ["_weekly_observations", "extract_episodes"],
+      "operational": false,
+      "is_final_herd": false
+    }
+  ],
+  "boundaries": {
+    "personal_profile_is_part_of_objective_herd": false,
+    "portfolio_context_is_part_of_objective_herd": false,
+    "cooldown_is_direction_evidence": false,
+    "price_rush_episode_is_sell_signal": false,
+    "v61_action_layer_recalculates_v4_score": false,
+    "unapproved_research_action_ratio": 0.0
+  },
+  "canonical_flow": [
+    "RAW_PIT_DATA",
+    "HERD_V4_STATE",
+    "VALIDATED_EVIDENCE_CONTEXT",
+    "HERD_V61_ACTION_LAYER",
+    "PERSONAL_PORTFOLIO_TRANSLATION",
+    "OPERATIONAL_PROMOTION_GATE"
+  ]
+}
