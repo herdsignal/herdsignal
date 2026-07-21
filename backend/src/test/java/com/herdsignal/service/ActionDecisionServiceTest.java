@@ -26,10 +26,10 @@ class ActionDecisionServiceTest {
             "40,NORMAL_SCATTER",
             "41,CALM",
             "59,CALM",
-            "60,NORMAL_DRIFT_FRESH",
-            "74,NORMAL_DRIFT_FRESH",
-            "75,CROWDED_RUSH_FRESH",
-            "90,PEAKING_RUSH_FRESH"
+            "60,PROFIT_TAKE_EVIDENCE_BLOCKED",
+            "74,PROFIT_TAKE_EVIDENCE_BLOCKED",
+            "75,PROFIT_TAKE_EVIDENCE_BLOCKED",
+            "90,PROFIT_TAKE_EVIDENCE_BLOCKED"
     })
     void preservesFiveStageAndInternalRegimeBoundaries(double herd, String expectedRegime) {
         HerdScore latest = score(LocalDate.of(2026, 7, 10), herd, stageFor(herd), "HOLD");
@@ -121,7 +121,7 @@ class ActionDecisionServiceTest {
 
         ActionDecision decision = service.decide(latest, null, 90, List.of(), profile, true);
 
-        assertThat(decision.getActionLabel()).isEqualTo("목표 비중 확인");
+        assertThat(decision.getActionLabel()).isEqualTo("익절 근거 미채택");
         assertThat(decision.getActionWarnings()).anyMatch(warning -> warning.contains("목표 70%"));
     }
 
@@ -153,7 +153,7 @@ class ActionDecisionServiceTest {
     }
 
     @Test
-    void buyCooldownDoesNotBlockSellDirection() {
+    void unadmittedProfitTakeIsBlockedEvenWhenLiveActionsAreEnabled() {
         HerdScore latest = score(LocalDate.of(2026, 7, 10), 88, "Rush", "SELL");
         ActionCooldownContext cooldown = new ActionCooldownContext(
                 new ActionCooldownContext.Cooldown(
@@ -171,12 +171,14 @@ class ActionDecisionServiceTest {
                 cooldown
         );
 
-        assertThat(decision.getActionRatio()).isPositive();
+        assertThat(decision.getActionRatio()).isZero();
+        assertThat(decision.getResearchActionRatio()).isZero();
+        assertThat(decision.getActionRegime()).isEqualTo("PROFIT_TAKE_EVIDENCE_BLOCKED");
         assertThat(decision.getActionCooldownActive()).isFalse();
     }
 
     @Test
-    void blocksBuyWhenTickerWeightIsAlreadyConcentrated() {
+    void separatesConcentrationRiskRebalanceFromPredictiveProfitTake() {
         HerdScore latest = score(LocalDate.of(2026, 7, 10), 8, "Flee", "BUY");
         PortfolioActionContext portfolio = new PortfolioActionContext(
                 true, 0.28, 0.65, 0.70);
@@ -192,8 +194,10 @@ class ActionDecisionServiceTest {
                 portfolio
         );
 
-        assertThat(decision.getActionRatio()).isZero();
-        assertThat(decision.getActionLabel()).isEqualTo("종목 비중 상한 도달");
+        assertThat(decision.getActionRatio()).isEqualByComparingTo("0.05");
+        assertThat(decision.getActionLabel()).isEqualTo("집중도 리밸런싱 후보");
+        assertThat(decision.getActionRegime()).isEqualTo("RISK_REBALANCE_CONCENTRATION");
+        assertThat(decision.getActionWarnings()).anyMatch(warning -> warning.contains("집중 위험 관리"));
         assertThat(decision.getCurrentTickerWeight()).isEqualByComparingTo("0.2800");
     }
 

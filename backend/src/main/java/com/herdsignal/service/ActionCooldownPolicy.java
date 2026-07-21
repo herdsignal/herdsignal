@@ -13,7 +13,7 @@ final class ActionCooldownPolicy {
             double herdScore
     ) {
         boolean buySide = herdScore <= SCATTER_UPPER;
-        boolean sellSide = herdScore >= DRIFT_LOWER;
+        boolean sellSide = herdScore >= DRIFT_LOWER || regime.code().startsWith("RISK_REBALANCE");
         if (regime.ratio() == 0.0 || (!buySide && !sellSide)) {
             return new ActionDecisionService.CooldownAdjustment(
                     regime, ActionCooldownContext.Cooldown.none(), null, List.of());

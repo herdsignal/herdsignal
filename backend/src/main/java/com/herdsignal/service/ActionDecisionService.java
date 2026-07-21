@@ -35,6 +35,7 @@ public class ActionDecisionService {
     private final HerdScoreStabilizer scoreStabilizer;
     private final ActionStrengthCalculator strengthCalculator;
     private final ActionRatioAdjustmentPolicy ratioAdjustmentPolicy;
+    private final ActionAuthorityPolicy authorityPolicy;
     private final boolean liveActionsEnabled;
 
     @Autowired
@@ -55,6 +56,7 @@ public class ActionDecisionService {
         this.scoreStabilizer = new HerdScoreStabilizer();
         this.strengthCalculator = new ActionStrengthCalculator();
         this.ratioAdjustmentPolicy = new ActionRatioAdjustmentPolicy();
+        this.authorityPolicy = new ActionAuthorityPolicy();
         this.liveActionsEnabled = liveActionsEnabled
                 && holdoutPassed
                 && promotionGate.isApproved(candidateId);
@@ -151,6 +153,7 @@ public class ActionDecisionService {
                 herdScore
         );
         adjustedRegime = portfolioAdjustment.regime();
+        adjustedRegime = authorityPolicy.apply(adjustedRegime, herdScore);
         CooldownAdjustment cooldownAdjustment = cooldownPolicy.apply(
                 adjustedRegime,
                 cooldownContext == null ? ActionCooldownContext.none() : cooldownContext,

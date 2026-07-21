@@ -17,15 +17,26 @@ final class PortfolioAdjustmentPolicy {
             InvestorProfile profile,
             double herdScore
     ) {
+        if (context.available() && context.currentTickerWeight() >= 0.25) {
+            ActionDecisionService.RegimeDecision riskRebalance = new ActionDecisionService.RegimeDecision(
+                    "RISK_REBALANCE_CONCENTRATION",
+                    "집중도 리밸런싱 후보",
+                    regime.regimeLabel(),
+                    0.05,
+                    "현재 종목 비중이 25% 이상이라 수익률 예측과 별개로 집중 위험 축소를 검토합니다."
+            );
+            return new ActionDecisionService.PortfolioAdjustment(
+                    riskRebalance,
+                    context,
+                    String.format("현재 종목 비중 %.1f%% · 위험 리밸런싱 기준 25%%",
+                            context.currentTickerWeight() * 100),
+                    List.of("이 축소는 HERD 익절 신호가 아니라 포트폴리오 집중 위험 관리입니다.")
+            );
+        }
         if (!context.available() || regime.ratio() == 0.0) {
             return new ActionDecisionService.PortfolioAdjustment(regime, context, null, List.of());
         }
         boolean buySide = herdScore <= SCATTER_UPPER;
-        if (buySide && context.currentTickerWeight() >= 0.25) {
-            return blocked(regime, context, "종목 비중 상한 도달",
-                    String.format("현재 종목 비중 %.1f%% · 상한 25%%", context.currentTickerWeight() * 100),
-                    "단일 종목 집중도가 높아 추가매수를 제한합니다.");
-        }
         if (buySide && context.currentEquityRatio() >= context.targetEquityRatio() + 0.03) {
             return blocked(regime, context, "목표 주식 비중 초과",
                     String.format("현재 주식 비중 %.1f%% · 목표 %.1f%%",
