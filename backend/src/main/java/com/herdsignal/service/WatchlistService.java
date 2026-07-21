@@ -32,7 +32,7 @@ public class WatchlistService {
      * ticker를 대문자로 정규화 후 저장.
      * 이미 존재하면 DuplicateResourceException 발생 (HTTP 409).
      *
-     * @param userId  사용자 ID (MVP: "local")
+     * @param userId 인증 사용자의 내부 ID
      * @param request 추가 요청 DTO
      */
     @Transactional
@@ -57,7 +57,7 @@ public class WatchlistService {
      * 관심 종목 삭제.
      * 존재하지 않으면 ResourceNotFoundException 발생 (HTTP 404).
      *
-     * @param userId 사용자 ID (MVP: "local")
+     * @param userId 인증 사용자의 내부 ID
      * @param ticker 삭제할 티커 심볼
      */
     @Transactional
@@ -74,7 +74,7 @@ public class WatchlistService {
     /**
      * 관심 종목 전체 목록 조회.
      *
-     * @param userId 사용자 ID (MVP: "local")
+     * @param userId 인증 사용자의 내부 ID
      */
     @Transactional(readOnly = true)
     public List<UserWatchlist> getWatchlist(String userId) {
@@ -86,7 +86,7 @@ public class WatchlistService {
      * HerdService.getHerdByTickers()를 재사용해 각 티커의 최신 HERD 데이터를 조회.
      * Python 스케줄러가 미실행된 종목은 결과에서 자동 제외.
      *
-     * @param userId 사용자 ID (MVP: "local")
+     * @param userId 인증 사용자의 내부 ID
      */
     @Transactional(readOnly = true)
     public WatchlistHerdResponse getWatchlistHerd(String userId) {

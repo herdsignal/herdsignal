@@ -30,24 +30,6 @@ function stageRank(signal) {
   }
 }
 
-function signalBias(signal) {
-  switch (signal) {
-    case 'BUY': return 1.35
-    case 'ADD': return 1.15
-    case 'REDUCE': return 1.10
-    case 'SELL': return 1.30
-    default: return 0.65
-  }
-}
-
-function modeMultiplier(mode) {
-  switch (mode) {
-    case 'conservative': return 0.55
-    case 'aggressive': return 1.25
-    default: return 0.85
-  }
-}
-
 function equalTargetWeight(count) {
   return count > 0 ? 100 / count : 0
 }
@@ -246,59 +228,4 @@ export function opportunityRows(watchlist) {
       if (b.opportunityScore !== a.opportunityScore) return b.opportunityScore - a.opportunityScore
       return a.originalIndex - b.originalIndex
     })
-}
-
-export function buildRebalancePlan(rows, options = {}) {
-  const budget = Math.max(0, num(options.budget))
-  const cashTargetPct = Math.max(0, num(options.cashTargetPct))
-  const mode = options.mode ?? 'standard'
-  const totalValue = Math.max(0, num(options.totalValue))
-  const deployableBudget = Math.max(0, budget * (1 - cashTargetPct / 100))
-  const intensity = modeMultiplier(mode)
-
-  const buys = []
-  const sells = []
-  const holds = []
-
-  rows.forEach((row) => {
-    const driftUsd = totalValue > 0 ? Math.abs(row.drift) / 100 * totalValue : 0
-    const signal = row.signal ?? 'HOLD'
-    const bias = signalBias(signal)
-
-    if (row.drift < -2 && (signal === 'BUY' || signal === 'ADD' || mode === 'aggressive')) {
-      buys.push({
-        ...row,
-        amount: Math.min(deployableBudget, driftUsd * bias * intensity),
-        reason: row.drift < -5
-          ? '목표 비중보다 부족하고 HERD 신호가 매수권입니다.'
-          : '목표 비중 근처지만 HERD 신호가 우호적입니다.',
-      })
-    } else if (row.drift > 2 && (signal === 'SELL' || signal === 'REDUCE' || mode !== 'conservative')) {
-      sells.push({
-        ...row,
-        amount: driftUsd * bias * intensity,
-        reason: row.drift > 5
-          ? '목표 비중보다 높아 일부 비중 조정이 필요합니다.'
-          : '목표 비중 근처지만 HERD 신호가 군중 밀집권입니다.',
-      })
-    } else {
-      holds.push({
-        ...row,
-        amount: 0,
-        reason: '목표 비중과 HERD 신호가 강한 조정을 요구하지 않습니다.',
-      })
-    }
-  })
-
-  const buyTotal = buys.reduce((sum, item) => sum + item.amount, 0)
-  if (buyTotal > deployableBudget && buyTotal > 0) {
-    buys.forEach((item) => { item.amount = item.amount / buyTotal * deployableBudget })
-  }
-
-  return {
-    buys: buys.filter((item) => item.amount > 1).sort((a, b) => b.amount - a.amount),
-    sells: sells.filter((item) => item.amount > 1).sort((a, b) => b.amount - a.amount),
-    holds: holds.sort((a, b) => Math.abs(b.drift) - Math.abs(a.drift)),
-    deployableBudget,
-  }
 }

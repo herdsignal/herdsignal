@@ -30,7 +30,7 @@ public class UserWatchlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** 사용자 ID — MVP 단계에서는 'local' 고정 */
+    /** 인증 사용자의 내부 ID. 인증 비활성화 개발 환경에서는 'local'. */
     @Column(name = "user_id", nullable = false, length = 50)
     @Builder.Default
     private String userId = "local";

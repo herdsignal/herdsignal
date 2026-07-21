@@ -1,6 +1,6 @@
 # HERD 연구 현황
 
-기준일: 2026-07-21
+기준일: 2026-07-22
 판정: `NO_ADOPTABLE_CANDIDATE`
 
 ## Rush episode 전환 연구

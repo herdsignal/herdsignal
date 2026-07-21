@@ -16,8 +16,6 @@ const StockDetail = lazy(() => import('./pages/StockDetail/StockDetail'))
 const Search = lazy(() => import('./pages/Search/Search'))
 const Watchlist = lazy(() => import('./pages/Watchlist/Watchlist'))
 const History = lazy(() => import('./pages/History/History'))
-const AiRebalance = lazy(() => import('./pages/AiRebalance/AiRebalance'))
-const HerdFlowPreview = lazy(() => import('./pages/HerdFlowPreview/HerdFlowPreview'))
 const HerdLab = lazy(() => import('./pages/HerdLab/HerdLab'))
 const Journal = lazy(() => import('./pages/Journal/Journal'))
 const Settings = lazy(() => import('./pages/Settings/Settings'))
@@ -73,8 +71,6 @@ export default function App() {
             <Route path="/herd-lab"      element={<HerdLab />} />
             <Route path="/journal"       element={<Journal />} />
             <Route path="/settings"      element={<Settings />} />
-            <Route path="/ai"            element={<AiRebalance />} />
-            <Route path="/herd-flow"     element={<HerdFlowPreview />} />
           </Route>
           </Route>
           </Routes>

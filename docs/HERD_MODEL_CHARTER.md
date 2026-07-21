@@ -1,7 +1,7 @@
 # HERD 모델 헌장
 
 상태: `APPROVED_BASELINE`  
-최신화: 2026-07-21
+최신화: 2026-07-22
 
 ## 정의
 
@@ -115,12 +115,13 @@ Rush의 익절에는 Exhausted 또는 Breaking 확인이 필요하다.
 
 ## 현재 상태
 
-- HERD v4: 기존 운영 상태 점수
-- HERD v6.1 Action Layer: 연구용 행동 기준
-- B0~B3: 고정 후보, Buy & Hold 초과 기준 미달
-- 기존 참여·추세·위험 프록시: 단독 스크리닝 탈락
-- H1~H7: `2026.07-timing-v1` 사전등록 완료, 미검증
-- 차세대 HERD: `RESEARCH_VALIDATION`
+- HERD v4: 기존 운영 상태 점수이자 비교 기준
+- HERD v6.1 Action Layer: 채택되지 않은 레거시 연구 기준
+- 가격·추세·상대강도·위험·기업 상태 가설: 독립 OOS 채택 0개
+- SEC 8-K 가이던스: PIT corpus와 구조 파서 V2 구축, 신규 원문 검수 대기
+- 검증된 수정쌍·방향 가설·차세대 후보: 0개
+- Blind holdout: 미배정·미개방
+- 차세대 HERD: `NO_ADOPTABLE_CANDIDATE`
 
 검증을 통과하지 않은 후보는 운영 점수나 확정 행동으로 표시하지 않는다.
 기계 판독 계약은

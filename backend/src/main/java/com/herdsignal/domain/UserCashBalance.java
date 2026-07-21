@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  * 사용자 현금 보유액 현재값.
- * MVP에서는 user_id='local' 1개 행을 기준으로 사용한다.
+ * 사용자별 현금 잔액을 저장한다. 인증 비활성화 개발 환경은 user_id='local'을 사용한다.
  */
 @Entity
 @Table(name = "user_cash_balance")

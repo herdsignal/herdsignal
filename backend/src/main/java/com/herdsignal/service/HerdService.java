@@ -64,7 +64,7 @@ public class HerdService {
      * 보유 종목별로 최신 HERD 점수 + 지표를 조합해 반환.
      * 포트폴리오가 비어있거나 특정 종목의 데이터가 없으면 빈 리스트 반환 (예외 없음).
      *
-     * @param userId 사용자 ID (MVP: "local")
+     * @param userId 인증 사용자의 내부 ID
      */
     public PortfolioHerdResponse getPortfolioHerd(String userId) {
         List<UserPortfolio> portfolio = portfolioRepository.findByUserId(userId);
@@ -80,7 +80,7 @@ public class HerdService {
      * 수동 새로고침 전용 경로로, 보유 종목마다 Python on-demand 계산을 캐시 무시로 실행한 뒤
      * 최신 DB 값을 다시 읽어 반환한다. 일부 종목 실패는 로그만 남기고 나머지 종목 응답은 유지한다.
      *
-     * @param userId 사용자 ID (MVP: "local")
+     * @param userId 인증 사용자의 내부 ID
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public PortfolioHerdResponse refreshPortfolioHerd(String userId) {

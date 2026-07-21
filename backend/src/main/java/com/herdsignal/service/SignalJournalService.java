@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * HERD 판단 기록 관리 서비스.
- * MVP에서는 userId를 local로 고정하고, 추후 인증 도입 시 userId만 교체한다.
+ * 호출자가 전달한 인증 사용자 ID 단위로 판단 기록을 격리한다.
  */
 @Service
 @RequiredArgsConstructor
