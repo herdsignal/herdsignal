@@ -33,6 +33,8 @@ public class ActionDecisionService {
     private final HerdTrendQualityCalculator trendCalculator;
     private final HerdMomentumCalculator momentumCalculator;
     private final HerdLifecycleClassifier lifecycleClassifier;
+    private final PortfolioAdjustmentPolicy portfolioPolicy;
+    private final ActionCooldownPolicy cooldownPolicy;
     private final boolean liveActionsEnabled;
 
     @Autowired
@@ -47,6 +49,8 @@ public class ActionDecisionService {
         this.trendCalculator = new HerdTrendQualityCalculator();
         this.momentumCalculator = new HerdMomentumCalculator();
         this.lifecycleClassifier = new HerdLifecycleClassifier();
+        this.portfolioPolicy = new PortfolioAdjustmentPolicy();
+        this.cooldownPolicy = new ActionCooldownPolicy();
         this.liveActionsEnabled = liveActionsEnabled
                 && holdoutPassed
                 && promotionGate.isApproved(candidateId);
@@ -135,14 +139,14 @@ public class ActionDecisionService {
                 personal.ratio(),
                 adjustedRegime.reason()
         );
-        PortfolioAdjustment portfolioAdjustment = applyPortfolioContext(
+        PortfolioAdjustment portfolioAdjustment = portfolioPolicy.adjust(
                 adjustedRegime,
                 portfolioContext == null ? PortfolioActionContext.unavailable() : portfolioContext,
                 profile,
                 herdScore
         );
         adjustedRegime = portfolioAdjustment.regime();
-        CooldownAdjustment cooldownAdjustment = applyCooldown(
+        CooldownAdjustment cooldownAdjustment = cooldownPolicy.apply(
                 adjustedRegime,
                 cooldownContext == null ? ActionCooldownContext.none() : cooldownContext,
                 herdScore
@@ -234,135 +238,10 @@ public class ActionDecisionService {
         return new ActionIntensity("HIGH", "높음");
     }
 
-    private PortfolioAdjustment applyPortfolioContext(
-            RegimeDecision regime,
-            PortfolioActionContext context,
-            InvestorProfile profile,
-            double herdScore
-    ) {
-        if (!context.available() || regime.ratio() == 0.0) {
-            return new PortfolioAdjustment(regime, context, null, List.of());
-        }
-
-        boolean buySide = herdScore <= SCATTER_UPPER;
-        if (buySide && context.currentTickerWeight() >= 0.25) {
-            return blockedByPortfolio(
-                    regime, context, "종목 비중 상한 도달",
-                    String.format("현재 종목 비중 %.1f%% · 상한 25%%",
-                            context.currentTickerWeight() * 100),
-                    "단일 종목 집중도가 높아 추가매수를 제한합니다.");
-        }
-        if (buySide && context.currentEquityRatio() >= context.targetEquityRatio() + 0.03) {
-            return blockedByPortfolio(
-                    regime, context, "목표 주식 비중 초과",
-                    String.format("현재 주식 비중 %.1f%% · 목표 %.1f%%",
-                            context.currentEquityRatio() * 100,
-                            context.targetEquityRatio() * 100),
-                    "전체 주식 비중이 목표 범위를 초과해 추가매수를 제한합니다.");
-        }
-        if (buySide && context.currentTickerWeight() >= 0.15) {
-            double reducedRatio = BigDecimal.valueOf(regime.ratio() * 0.5)
-                    .setScale(2, RoundingMode.HALF_UP)
-                    .doubleValue();
-            RegimeDecision reduced = new RegimeDecision(
-                    regime.code() + "_CONCENTRATION",
-                    regime.label(),
-                    regime.regimeLabel(),
-                    reducedRatio,
-                    regime.reason() + " 현재 종목 집중도를 반영해 행동 비율을 절반으로 줄입니다."
-            );
-            return new PortfolioAdjustment(
-                    reduced,
-                    context,
-                    String.format("현재 종목 비중 %.1f%% · 집중도 보정 50%%",
-                            context.currentTickerWeight() * 100),
-                    List.of("종목 비중이 15% 이상이라 추가매수 강도를 낮춥니다.")
-            );
-        }
-
-        String strategy = profile == null ? "EXISTING_HOLDER" : profile.getStrategy();
-        if (!buySide
-                && "TARGET_REBALANCE".equals(strategy)
-                && herdScore < RUSH_THRESHOLD
-                && context.currentEquityRatio() <= context.targetEquityRatio() - 0.03) {
-            return blockedByPortfolio(
-                    regime, context, "목표 비중 회복 우선",
-                    String.format("현재 주식 비중 %.1f%% · 목표 %.1f%%",
-                            context.currentEquityRatio() * 100,
-                            context.targetEquityRatio() * 100),
-                    "주식 비중이 목표보다 낮아 Drift 단계의 추가 축소를 보류합니다.");
-        }
-
-        return new PortfolioAdjustment(
-                regime,
-                context,
-                String.format("현재 종목 %.1f%% · 주식 %.1f%% / 목표 %.1f%%",
-                        context.currentTickerWeight() * 100,
-                        context.currentEquityRatio() * 100,
-                        context.targetEquityRatio() * 100),
-                List.of()
-        );
-    }
-
-    private PortfolioAdjustment blockedByPortfolio(
-            RegimeDecision regime,
-            PortfolioActionContext context,
-            String label,
-            String reason,
-            String warning
-    ) {
-        RegimeDecision blocked = new RegimeDecision(
-                regime.code() + "_PORTFOLIO_LIMIT",
-                label,
-                regime.regimeLabel(),
-                0.0,
-                regime.reason() + " 실제 포트폴리오 비중 제한을 적용합니다."
-        );
-        return new PortfolioAdjustment(blocked, context, reason, List.of(warning));
-    }
-
     private BigDecimal ratioValue(PortfolioActionContext context, double value) {
         return context.available()
                 ? BigDecimal.valueOf(value).setScale(4, RoundingMode.HALF_UP)
                 : null;
-    }
-
-    private CooldownAdjustment applyCooldown(
-            RegimeDecision regime,
-            ActionCooldownContext context,
-            double herdScore
-    ) {
-        boolean buySide = herdScore <= SCATTER_UPPER;
-        boolean sellSide = herdScore >= DRIFT_LOWER;
-        if (regime.ratio() == 0.0 || (!buySide && !sellSide)) {
-            return new CooldownAdjustment(regime, ActionCooldownContext.Cooldown.none(), null, List.of());
-        }
-
-        ActionCooldownContext.Cooldown cooldown = context.forBuySide(buySide);
-        if (!cooldown.active()) {
-            return new CooldownAdjustment(regime, cooldown, null, List.of());
-        }
-
-        String direction = buySide ? "매수" : "비중 축소";
-        RegimeDecision blocked = new RegimeDecision(
-                regime.code() + "_COOLDOWN",
-                "최근 " + direction + " 후 대기",
-                regime.regimeLabel(),
-                0.0,
-                regime.reason() + " 동일 방향의 최근 실제 행동으로 쿨다운을 적용합니다."
-        );
-        String reason = String.format(
-                "최근 %s %s · 쿨다운 %d거래일 남음",
-                direction,
-                cooldown.lastActionDate(),
-                cooldown.remainingTradingDays()
-        );
-        return new CooldownAdjustment(
-                blocked,
-                cooldown,
-                reason,
-                List.of("같은 방향의 반복 행동을 막기 위해 쿨다운 종료 전까지 비율을 0%로 제한합니다.")
-        );
     }
 
     /** 경계 ±2pt에서는 직전 구간을 유지해 하루 단위 신호 뒤집힘을 줄인다. */
@@ -677,7 +556,7 @@ public class ActionDecisionService {
     private record ScoreContext(double score, String reason) {
     }
 
-    private record RegimeDecision(
+    record RegimeDecision(
             String code,
             String label,
             String regimeLabel,
@@ -686,7 +565,7 @@ public class ActionDecisionService {
     ) {
     }
 
-    private record CooldownAdjustment(
+    record CooldownAdjustment(
             RegimeDecision regime,
             ActionCooldownContext.Cooldown cooldown,
             String reason,
@@ -694,7 +573,7 @@ public class ActionDecisionService {
     ) {
     }
 
-    private record PortfolioAdjustment(
+    record PortfolioAdjustment(
             RegimeDecision regime,
             PortfolioActionContext context,
             String reason,
