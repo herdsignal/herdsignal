@@ -1,0 +1,37 @@
+{
+  "report_version": "herd-sec-guidance-normalization-v1",
+  "snapshot_id": "sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "snapshot_manifest_sha256": "a20b2c09d7e0d5567ac89784ba7afef468fa8c5f4626cc60afe3feab3bf6fb86",
+  "normalized_ranges": 2954,
+  "normalized_tickers": 40,
+  "explicit_basis_ranges": 2228,
+  "candidate_like_for_like_pairs": 478,
+  "quality_rejected_pairs": 219,
+  "comparable_pairs": 259,
+  "source_verified_comparable_pairs": 0,
+  "tickers_with_pairs": 17,
+  "calendar_years_with_pairs": 15,
+  "metrics_with_pairs": 6,
+  "coverage_gate": {
+    "minimum_comparable_pairs": 150,
+    "minimum_tickers_with_pairs": 20,
+    "minimum_calendar_years_with_pairs": 6,
+    "minimum_metrics_with_pairs": 2
+  },
+  "coverage_gate_passed": false,
+  "normalization_quality_review_required": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "COVERAGE_BLOCKED",
+  "guidance_direction_classified": 0,
+  "operational_action_ratio": 0.0,
+  "limitations": [
+    "Normalization uses conservative lexical rules and excludes implicit fiscal periods.",
+    "UNSPECIFIED accounting basis is retained for audit but excluded from comparable pairs.",
+    "A comparable pair is not evidence that a revision predicts future drawdown.",
+    "Passing the mechanical coverage gate does not establish parser precision; stratified source review is required.",
+    "Flattened HTML tables can place a metric, fiscal period, and range from different cells near each other.",
+    "Comparable-pair rows are automated review candidates, not source-verified revisions.",
+    "Direction and materiality tolerances remain unassigned."
+  ],
+  "protocol_sha256": "befc706080bc77bddbf1c1305a7f234ba56ad3a8f23bc17ac8c7cbc48b0895b1"
+}

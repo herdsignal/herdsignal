@@ -1,0 +1,47 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_NORMALIZATION_V1",
+  "status": "LOCKED_BEFORE_NORMALIZATION_OUTPUT",
+  "protocol_revision_reason": "DRAFT_OUTPUT_REJECTED_FOR_CROSS_METRIC_TABLE_FALSE_JOINS_BEFORE_ANY_DIRECTION_OR_PRICE_OUTCOME_LABEL",
+  "objective": "Normalize only explicit issuer guidance ranges and link like-for-like revisions without assigning directional labels.",
+  "corpus": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "eligible_metrics": ["REVENUE", "EPS", "MARGIN", "OPERATING_INCOME", "FREE_CASH_FLOW", "CAPEX"],
+  "required_pair_keys": ["ticker", "metric", "fiscal_period", "accounting_basis", "unit"],
+  "accounting_basis": ["GAAP", "NON_GAAP", "UNSPECIFIED"],
+  "units": ["USD", "USD_PER_SHARE", "PERCENT"],
+  "coverage_gate": {
+    "minimum_comparable_pairs": 150,
+    "minimum_tickers_with_pairs": 20,
+    "minimum_calendar_years_with_pairs": 6,
+    "minimum_metrics_with_pairs": 2
+  },
+  "pair_quality": {
+    "maximum_days_between_revisions": 550,
+    "minimum_midpoint_ratio": 0.5,
+    "maximum_midpoint_ratio": 2.0,
+    "maximum_absolute_eps": 50.0,
+    "minimum_margin_percent": -100.0,
+    "maximum_margin_percent": 100.0
+  },
+  "exclusion_reasons": [
+    "NO_EXPLICIT_FISCAL_PERIOD", "NO_EXPLICIT_RANGE", "UNKNOWN_UNIT",
+    "UNSPECIFIED_ACCOUNTING_BASIS", "NO_PRIOR_LIKE_FOR_LIKE_GUIDANCE"
+  ],
+  "forbidden": [
+    "INFER_FISCAL_YEAR_FROM_FILING_DATE",
+    "COMPARE_GAAP_WITH_NON_GAAP",
+    "COMPARE_DIFFERENT_METRICS_OR_PERIODS",
+    "INFER_SINGLE_POINT_AS_RANGE",
+    "KEEP_IMPLAUSIBLE_SCALE_JUMP_AS_REVISION",
+    "INFER_ANALYST_CONSENSUS",
+    "ASSIGN_UP_DOWN_FLAT_BEFORE_PREREGISTRATION",
+    "USE_PRICE_REACTION_TO_REPAIR_LABEL",
+    "CHANGE_HERD_WEIGHTS"
+  ],
+  "promotion_contract": {
+    "automated_pairs_are_candidates_only": true,
+    "require_source_preserving_html_table_extraction": true,
+    "require_stratified_source_precision_review": true,
+    "minimum_source_verified_pairs_before_direction_preregistration": 150,
+    "minimum_source_verified_tickers_before_direction_preregistration": 20
+  }
+}
