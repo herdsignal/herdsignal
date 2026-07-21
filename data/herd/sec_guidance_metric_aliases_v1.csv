@@ -1,0 +1,14 @@
+canonical_metric,alias_pattern,accounting_basis,unit_family,ticker_scope,notes
+REVENUE,revenue|net sales,UNSPECIFIED,USD,*,Do not infer basis from another metric in the block
+EPS,adjusted diluted EPS|adjusted EPS,NON_GAAP,USD_PER_SHARE,*,Explicit adjusted earnings measure
+EPS,earnings per share|diluted EPS|EPS,UNSPECIFIED,USD_PER_SHARE,*,Basis requires range-local source review
+MARGIN,adjusted operating margin|adjusted EBITDA margin,NON_GAAP,PERCENT,*,Explicit adjusted margin
+MARGIN,operating margin|gross margin|EBITDA margin,UNSPECIFIED,PERCENT,*,Keep margin separate from dollar EBITDA
+OPERATING_INCOME,operating income,UNSPECIFIED,USD,*,Do not map EBITDA to operating income
+FREE_CASH_FLOW,free cash flow|operating cash flow,NON_GAAP,USD,*,Issuer-defined supplemental measure
+CAPEX,capital expenditures|capital spending|capex,NOT_APPLICABLE,USD,*,Accounting basis is not a pairing dimension for capex
+ADJUSTED_EBITDA,adjusted EBITDA|core adjusted EBITDA|adjusted EBITDAre,NON_GAAP,USD,"AMT,TMUS,PLD",Company-defined non-GAAP; never merge with operating income
+CORE_FFO,core FFO|core funds from operations,NON_GAAP,USD_OR_PER_SHARE,"AMT,PLD",REIT-specific company-defined measure
+AFFO,consolidated AFFO|adjusted funds from operations|AFFO,NON_GAAP,USD_OR_PER_SHARE,"AMT,PLD",Company definitions may differ
+ORGANIC_REVENUE_GROWTH,organic sales growth|organic revenue growth|organic sales,NON_GAAP,PERCENT,"APD,KO,PEP,SHW",Growth rate not revenue dollars
+CASH_CAPEX,cash capital expenditures|cash capex|cash purchases of property and equipment,NOT_APPLICABLE,USD,TMUS,Keep capitalized-interest variants distinct during review

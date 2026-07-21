@@ -33,11 +33,19 @@ def evaluate(review: pd.DataFrame, protocol: dict) -> dict:
     total = len(decided)
     lower = wilson_lower(valid, total)
     gate = protocol["review_gate"]
-    complete = len(review) >= gate["minimum_stratified_rows"] and total == len(review)
+    distinct_tickers = int(review["ticker"].nunique()) if "ticker" in review else None
+    ticker_requirement_met = (
+        distinct_tickers >= gate["minimum_distinct_tickers"]
+        if "minimum_distinct_tickers" in gate and distinct_tickers is not None
+        else True
+    )
+    complete = len(review) >= gate["minimum_stratified_rows"] and total == len(review) and ticker_requirement_met
     passed = complete and lower is not None and lower >= gate["minimum_wilson_95_lower_bound"]
     return {
         "review_rows": len(review),
         "reviewed_rows": total,
+        "distinct_tickers": distinct_tickers,
+        "ticker_requirement_met": ticker_requirement_met,
         "valid_rows": valid,
         "invalid_rows": int(decided["review_decision"].eq("INVALID").sum()),
         "ambiguous_rows": int(decided["review_decision"].eq("AMBIGUOUS").sum()),

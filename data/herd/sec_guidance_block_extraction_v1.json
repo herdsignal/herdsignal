@@ -1,0 +1,32 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_BLOCK_EXTRACTION_V1",
+  "status": "LOCKED_BEFORE_BLOCK_OUTPUT_AND_REVIEW_LABELS",
+  "objective": "Preserve line and block boundaries in EDGAR prose, preformatted, and future ASCII documents while applying issuer-scoped metric aliases.",
+  "corpus": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
+  "association_limits": {
+    "maximum_alias_distance_chars": 140,
+    "maximum_period_distance_chars": 320,
+    "maximum_guidance_distance_chars": 260
+  },
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "coverage_gate": {
+    "minimum_source_qualified_revision_pairs": 150,
+    "minimum_source_qualified_tickers": 20
+  },
+  "forbidden": [
+    "FLATTEN_DOCUMENT_BEFORE_BLOCK_SEGMENTATION",
+    "MAP_FFO_AFFO_OR_EBITDA_TO_OPERATING_INCOME",
+    "MAP_ORGANIC_GROWTH_TO_REVENUE_DOLLARS",
+    "TREAT_MIDPOINT_CHANGE_AMOUNT_AS_GUIDANCE_RANGE",
+    "APPLY_ISSUER_SCOPED_ALIAS_TO_ANOTHER_ISSUER",
+    "INFER_DIRECTION_BEFORE_REVIEW_AND_COVERAGE_GATES",
+    "USE_PRICE_OUTCOME_DURING_SOURCE_REVIEW",
+    "CHANGE_HERD_WEIGHTS"
+  ]
+}

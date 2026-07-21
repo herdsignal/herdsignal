@@ -1,0 +1,16 @@
+{
+  "review_rows": 85,
+  "reviewed_rows": 0,
+  "distinct_tickers": 25,
+  "ticker_requirement_met": true,
+  "valid_rows": 0,
+  "invalid_rows": 0,
+  "ambiguous_rows": 0,
+  "source_precision": null,
+  "wilson_95_lower_bound": null,
+  "review_complete": false,
+  "review_gate_passed": false,
+  "ready_to_build_revision_pairs": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "REVIEW_GATE_BLOCKED"
+}

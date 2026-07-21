@@ -1,0 +1,37 @@
+{
+  "report_version": "herd-sec-guidance-block-extraction-v1",
+  "snapshot_id": "sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "source_blocks_by_kind": {
+    "HTML_P": 884684,
+    "HTML_SINGLE_CELL_ROW": 173615,
+    "HTML_DIV": 3265160,
+    "HTML_LI": 1408
+  },
+  "block_preserved_candidates": 522,
+  "candidate_tickers": 25,
+  "candidate_counts_by_metric": {
+    "ADJUSTED_EBITDA": 31,
+    "AFFO": 33,
+    "CAPEX": 51,
+    "CASH_CAPEX": 4,
+    "CORE_FFO": 25,
+    "EPS": 308,
+    "FREE_CASH_FLOW": 1,
+    "MARGIN": 6,
+    "OPERATING_INCOME": 2,
+    "ORGANIC_REVENUE_GROWTH": 2,
+    "REVENUE": 59
+  },
+  "stratified_review_rows": 85,
+  "stratified_review_tickers": 25,
+  "review_sample_gate_ready": true,
+  "review_gate_passed": false,
+  "source_qualified_revision_pairs": 0,
+  "coverage_gate_passed": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "COMPLETE_STRATIFIED_SOURCE_REVIEW",
+  "guidance_direction_classified": 0,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "89ae8392d44652b9512dcdbb50a36bb65f3b133d8097aafccf72323c1bc6caba",
+  "alias_registry_sha256": "ca84920ef2ebc2576de00bf591013039ca93c223de089d82c79cf80815c9f43e"
+}

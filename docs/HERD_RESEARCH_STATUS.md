@@ -824,3 +824,24 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
   상향·유지·하향 라벨, 가격 결과 연결, HERD 가중치, 행동 비율은 계속 0이다.
 - HTML 표만으로 커버리지를 확보할 수 없으므로 다음 연구는 ASCII·`pre`
   문서의 줄 경계를 보존하는 문장/블록 추출과 기업별 metric alias 사전이다.
+
+### 2026-07-22 SEC 블록 추출·기업별 지표 별칭 V1
+
+- 현재 corpus에는 순수 ASCII와 `<pre>` 문서가 각각 0건임을 확인했다.
+  미래 입력은 두 형식을 지원하되, 현재는 HTML 문단·목록·1셀 레이아웃 표의
+  줄과 블록 경계를 보존하는 경로를 전수 검증했다.
+- Adjusted EBITDA, Core FFO, AFFO, organic revenue growth, cash capex를
+  별도 정규 지표로 추가했다. FFO·AFFO·EBITDA를 operating income으로,
+  organic growth를 revenue dollars로 합치지 않는다.
+- 회사별 정의가 다른 비GAAP 지표는 ticker scope를 별칭 원장에 고정했다.
+  조정 지표만 NON_GAAP로 두고, 일반 EPS·매출은 명시되지 않으면
+  UNSPECIFIED, CAPEX는 NOT_APPLICABLE로 보존한다.
+- 별칭·기간·전망 표현은 숫자 범위 앞의 잠긴 문자 거리 안에 있어야 한다.
+  midpoint 변화량은 범위에서 제외하고 과거 범위는 PRIOR_REFERENCE로
+  분리해 현재 범위 검수 표본에 넣지 않는다.
+- 엄격화 후 후보는 522건·25개 기업이었다. 기업별 최소 1건을 먼저 뽑고
+  지표별 부족분을 채운 고정 검수 표본은 85건·25개 기업으로, 80건·20개
+  기업의 표본 준비 기준을 통과했다.
+- 아직 85건 원문 일치 판정과 Wilson 95% 하한 검사가 남아 있으므로 판정은
+  `COMPLETE_STRATIFIED_SOURCE_REVIEW`다. 수정쌍·방향 라벨·HERD 가중치·
+  행동 비율은 계속 열지 않는다.
