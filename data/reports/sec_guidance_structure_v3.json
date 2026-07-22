@@ -1,0 +1,21 @@
+{
+  "report_version": "herd-sec-guidance-structure-parser-v3",
+  "input_v2_ledger": "data/reports/sec_guidance_structure_v2_candidates.csv",
+  "input_v2_ledger_sha256": "c7670fea25a44af5efc318e6df3a412aeaa0aff3446341125468f0638d0f8611",
+  "development_accessions_excluded": 134,
+  "v3_candidates": 258,
+  "v3_candidate_tickers": 20,
+  "fresh_holdout_candidates": 135,
+  "fresh_holdout_tickers": 11,
+  "fresh_review_rows": 31,
+  "fresh_review_tickers": 11,
+  "review_sample_gate_ready": false,
+  "review_gate_passed": false,
+  "source_qualified_revision_pairs": 0,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "FRESH_REVIEW_SAMPLE_COVERAGE_BLOCKED",
+  "price_outcomes_observed": false,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "3645d3c72176edc2f2d14464b0e76a9638e522887f8a55bcc23eff40e458944d",
+  "v2_protocol_sha256": "15b686591cf7d7a888a8653b8933f94d7414bd4d6b0a81186debd7b4664de740"
+}

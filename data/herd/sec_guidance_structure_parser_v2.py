@@ -215,16 +215,27 @@ def parse_block_v2(text: str, ticker: str, aliases: list[Alias]) -> list[dict]:
     return output
 
 
-def build(corpus: Path, aliases: list[Alias], protocol: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+def build(
+    corpus: Path,
+    aliases: list[Alias],
+    protocol: dict,
+    *,
+    parse_candidate=parse_block_v2,
+    excluded_review_paths: list[str] | None = None,
+    review_prefix: str = "SG2",
+    report_version: str = "herd-sec-guidance-structure-parser-v2",
+) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     source_index = pd.read_csv(corpus / "index.csv", dtype={"cik": str})
-    development = pd.read_csv(protocol["development_review"])
-    excluded_accessions = set(development["accession_number"].astype(str))
+    review_paths = excluded_review_paths or [protocol["development_review"]]
+    excluded_accessions: set[str] = set()
+    for review_path in review_paths:
+        excluded_accessions.update(pd.read_csv(review_path)["accession_number"].astype(str))
     records = []
     for _, source in source_index.iterrows():
         with gzip.open(corpus / source["path"], "rb") as stream:
             content = stream.read()
         for block in structured_blocks(content):
-            for candidate in parse_block_v2(block["block_text"], source["ticker"], aliases):
+            for candidate in parse_candidate(block["block_text"], source["ticker"], aliases):
                 if candidate["semantic_role"] != "CURRENT_GUIDANCE_RANGE" or candidate["range_role"] != "CURRENT_CANDIDATE":
                     continue
                 records.append({
@@ -245,13 +256,13 @@ def build(corpus: Path, aliases: list[Alias], protocol: dict) -> tuple[pd.DataFr
     holdout = candidates.loc[~candidates["accession_number"].astype(str).isin(excluded_accessions)].copy() if not candidates.empty else candidates.copy()
     review = select_stratified_review(holdout, protocol["review_gate"]["target_rows_per_metric"])
     if not review.empty:
-        review.insert(0, "review_id", [f"SG2-{i:04d}" for i in range(1, len(review) + 1)])
+        review.insert(0, "review_id", [f"{review_prefix}-{i:04d}" for i in range(1, len(review) + 1)])
         for column, default in [("review_decision", "PENDING"), ("review_reason", ""), ("reviewer", ""), ("reviewed_at", "")]:
             review[column] = default
     gate = protocol["review_gate"]
     ready = len(review) >= gate["minimum_stratified_rows"] and review["ticker"].nunique() >= gate["minimum_distinct_tickers"] if not review.empty else False
     report = {
-        "report_version": "herd-sec-guidance-structure-parser-v2",
+        "report_version": report_version,
         "development_accessions_excluded": len(excluded_accessions),
         "v2_candidates": len(candidates),
         "v2_candidate_tickers": int(candidates["ticker"].nunique()) if not candidates.empty else 0,

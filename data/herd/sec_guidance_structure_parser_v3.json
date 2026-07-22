@@ -1,0 +1,39 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_STRUCTURE_PARSER_V3",
+  "status": "LOCKED_BEFORE_V3_OUTPUT",
+  "objective": "Bind semantic role, metric, fiscal period, accounting basis, unit and subtype to each range with precision-first rejection.",
+  "corpus": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
+  "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
+  "v2_candidate_ledger": "data/reports/sec_guidance_structure_v2_candidates.csv",
+  "development_reviews": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv"
+  ],
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "coverage_gate": {
+    "minimum_source_qualified_revision_pairs": 150,
+    "minimum_source_qualified_tickers": 20
+  },
+  "precision_rules": {
+    "require_explicit_period_before_range": true,
+    "reject_comparison_period": true,
+    "require_range_local_metric": true,
+    "require_range_local_accounting_basis_when_explicit": true,
+    "reject_actual_or_historical_values": true,
+    "reject_implausible_bound_ratio": 20.0,
+    "preserve_segment_subtype": true
+  },
+  "forbidden": [
+    "USE_V1_OR_V2_REVIEWED_ACCESSION_IN_V3_PRECISION_SAMPLE",
+    "INFER_PERIOD_FROM_COMPARISON_CLAUSE",
+    "PAIR_METRIC_OR_BASIS_ACROSS_ANOTHER_RANGE",
+    "USE_PRICE_OUTCOME_DURING_PARSER_VALIDATION",
+    "CHANGE_HERD_WEIGHTS",
+    "REPARSE_RAW_CORPUS_WHEN_HASHED_V2_BLOCK_LEDGER_IS_AVAILABLE"
+  ]
+}
