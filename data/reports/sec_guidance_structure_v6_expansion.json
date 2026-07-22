@@ -1,0 +1,20 @@
+{
+  "report_version": "herd-sec-guidance-v6-validation-expansion-v1",
+  "locked_review_rows_preserved": 52,
+  "locked_review_tickers": 12,
+  "new_v4_candidates": 34,
+  "new_v6_candidates": 31,
+  "new_v6_candidate_tickers": 13,
+  "expanded_review_rows": 80,
+  "expanded_review_tickers": 25,
+  "expanded_review_new_tickers": 13,
+  "review_sample_gate_ready": true,
+  "review_gate_passed": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "COMPLETE_LOCKED_V6_SOURCE_REVIEW",
+  "price_outcomes_observed": false,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "a197b08032cc81d5cf66e83b0b176a16c9de7f7860eb03b08fd7691635cd0ec2",
+  "candidate_ledger_sha256": "a3023c39b389790f09033cde5ca2814170af40293f935bfa101c24d1df2f6e57",
+  "locked_review_sha256": "2ac7632bdd4ed22101179711beb3897ed2eaca8fc6e7924bbabd36bef7dd690a"
+}

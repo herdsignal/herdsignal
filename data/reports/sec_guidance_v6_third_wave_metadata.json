@@ -1,0 +1,22 @@
+{
+  "report_version": "herd-sec-guidance-v6-third-wave-metadata-v1",
+  "selection_parent": "data/herd/sec_guidance_v5_broad_expansion.json",
+  "locked_first_wave_tickers": 120,
+  "third_wave_tickers": 30,
+  "third_wave_sectors": 9,
+  "selection_used_guidance_text": false,
+  "selection_used_parser_output": false,
+  "selection_used_price_outcomes": false,
+  "base_selection_report": {
+    "eligible_unseen_tickers": 351,
+    "selected_metadata_tickers": 150,
+    "selected_sectors": 11,
+    "selection_used_guidance_text": false,
+    "selection_used_parser_output": false,
+    "selection_used_price_outcomes": false,
+    "scope": "PARSER_VALIDATION_ONLY"
+  },
+  "operational_action_ratio": 0.0,
+  "base_protocol_sha256": "c0f99b16d529ef3750e3c8e1d97425909236e6b2cf6bb3ecd6450965b7ca33a1",
+  "universe_sha256": "ddb38eeefd54b1e80254e5fb2f541ac6cc8d6c68dc46778707b8bc4ae7828f37"
+}

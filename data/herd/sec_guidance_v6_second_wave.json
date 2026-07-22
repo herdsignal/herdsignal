@@ -1,0 +1,32 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_V6_SECOND_WAVE_V1",
+  "status": "LOCKED_BEFORE_SECOND_WAVE_COLLECTION",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "candidate_universe": "data/reports/independent_universe_v1.csv",
+  "submission_roots": ["data/reference/sec/sec-pit-157cik-20160718-20260717-20260719/raw"],
+  "exclude_issuer_universes": [
+    "data/reports/sec_guidance_v5_broad_metadata_universe.csv",
+    "data/reports/sec_guidance_v6_issuer_universe.csv",
+    "data/reports/sec_guidance_v6_supplement_universe.csv"
+  ],
+  "review_ledgers": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv",
+    "data/reports/sec_guidance_structure_v5_reviewed.csv"
+  ],
+  "minimum_eligible_filings_per_ticker": 12,
+  "collection_filings_per_ticker": 36,
+  "period": {"start": "2016-07-18", "end": "2026-07-17"},
+  "eligible_forms": ["8-K", "8-K/A"],
+  "eligible_items": ["2.02", "7.01"],
+  "download": {
+    "archive_base": "https://www.sec.gov/Archives/edgar/data",
+    "minimum_request_interval_seconds": 0.12,
+    "maximum_text_document_bytes": 10000000,
+    "extensions": [".htm", ".html", ".txt"],
+    "exclude_filename_patterns": [".xsd", "_cal.xml", "_def.xml", "_lab.xml", "_pre.xml", "-index", "index.json"]
+  },
+  "forbidden": ["SELECT_BY_GUIDANCE_OR_PARSER_OUTPUT", "SELECT_BY_PRICE_OUTCOME", "LOWER_REVIEW_GATE", "CHANGE_HERD_ACTION"]
+}

@@ -1,0 +1,24 @@
+{
+  "metadata_tickers": 30,
+  "eligible_tickers": 30,
+  "selected_filing_tickers": 30,
+  "selected_filings": 1075,
+  "base_catalog_report": {
+    "report_version": "herd-sec-8k-guidance-candidate-catalog-v1",
+    "universe_tickers": 30,
+    "tickers_with_submissions": 30,
+    "missing_submissions": [],
+    "eligible_filings": 2074,
+    "tickers_with_eligible_filings": 30,
+    "first_accepted_at": "2016-07-19T13:01:08.000Z",
+    "last_accepted_at": "2026-07-17T10:30:18.000Z",
+    "guidance_direction_classified": 0,
+    "operational_action_ratio": 0.0
+  },
+  "selection_used_guidance_text": false,
+  "selection_used_parser_output": false,
+  "selection_used_price_outcomes": false,
+  "scope": "PARSER_VALIDATION_ONLY",
+  "protocol_sha256": "c0f99b16d529ef3750e3c8e1d97425909236e6b2cf6bb3ecd6450965b7ca33a1",
+  "operational_action_ratio": 0.0
+}

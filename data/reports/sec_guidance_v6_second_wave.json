@@ -1,0 +1,27 @@
+{
+  "report_version": "herd-sec-guidance-v6-second-wave-v1",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "local_unreviewed_tickers": 24,
+  "selected_tickers": 23,
+  "selected_sectors": 7,
+  "selected_filings": 819,
+  "selection_used_guidance_text": false,
+  "selection_used_parser_output": false,
+  "selection_used_price_outcomes": false,
+  "base_catalog_report": {
+    "report_version": "herd-sec-8k-guidance-candidate-catalog-v1",
+    "universe_tickers": 24,
+    "tickers_with_submissions": 24,
+    "missing_submissions": [],
+    "eligible_filings": 1270,
+    "tickers_with_eligible_filings": 24,
+    "first_accepted_at": "2016-07-18T21:03:21.000Z",
+    "last_accepted_at": "2026-07-14T20:15:32.000Z",
+    "guidance_direction_classified": 0,
+    "operational_action_ratio": 0.0
+  },
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "e583d769bae228441b525875c6c34df22dae6c7fac07631ba3323741798704df",
+  "universe_sha256": "1471b6a6a331b6b8c34721af184ea6789c48e14310b1f425babfd62e1e49e35b",
+  "catalog_sha256": "72997616fd2bd6803caf195d2bb189d39655ae49aa50cf823eae3e9821918eb1"
+}

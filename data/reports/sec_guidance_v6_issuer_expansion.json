@@ -1,0 +1,31 @@
+{
+  "report_version": "herd-sec-guidance-v6-issuer-expansion-v1",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "locked_metadata_tickers": 120,
+  "excluded_tickers": 124,
+  "excluded_accessions": 322,
+  "unseen_metadata_tickers": 60,
+  "eligible_tickers": 59,
+  "selected_tickers": 50,
+  "selected_sectors": 11,
+  "selected_filings": 1750,
+  "selection_used_guidance_text": false,
+  "selection_used_parser_output": false,
+  "selection_used_price_outcomes": false,
+  "base_catalog_report": {
+    "report_version": "herd-sec-8k-guidance-candidate-catalog-v1",
+    "universe_tickers": 60,
+    "tickers_with_submissions": 60,
+    "missing_submissions": [],
+    "eligible_filings": 2721,
+    "tickers_with_eligible_filings": 60,
+    "first_accepted_at": "2016-07-18T20:59:56.000Z",
+    "last_accepted_at": "2026-07-17T10:58:28.000Z",
+    "guidance_direction_classified": 0,
+    "operational_action_ratio": 0.0
+  },
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "5ea2eb5842ab87e2fbd721a8b23948463cfa87177a97e66219f916ca3cb085bb",
+  "universe_sha256": "2b42adecc8d56c1a0281dfe02086cbad91df20459776e2fd2dd24368bd3b8e5e",
+  "catalog_sha256": "0cc2edc96394ee49131ea77cb81b4e310f089dc5ce7a00a7e91c58c07f8b0c04"
+}

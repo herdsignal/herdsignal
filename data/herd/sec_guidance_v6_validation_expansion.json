@@ -1,0 +1,37 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_V6_VALIDATION_EXPANSION_V1",
+  "status": "LOCKED_BEFORE_NEW_CORPUS_PARSE",
+  "objective": "Augment the already locked 52-row V6 review sample only with deterministic candidates from at least eight new issuers.",
+  "new_corpora": [
+    "data/reference/sec/sec-8k-guidance-v6-extra-50-20260722",
+    "data/reference/sec/sec-8k-guidance-v6-supplement-9-20260722",
+    "data/reference/sec/sec-8k-guidance-v6-second-wave-20260722",
+    "data/reference/sec/sec-8k-guidance-v6-third-wave-20260722"
+  ],
+  "cached_v6_candidates": "data/reports/sec_guidance_structure_v6_candidates.csv",
+  "cached_v6_candidates_sha256": "4f92ffd55fa3ca7a859af45960e0c869cdeb9552e659ccd13bddb1b69a8c4b96",
+  "locked_v6_review": "data/reports/sec_guidance_structure_v6_review.csv",
+  "locked_v6_review_sha256": "8f8a10326559012388dcdf40b9fda9770ae9a67b3937f38e9c721074f1788815",
+  "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
+  "development_reviews": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv",
+    "data/reports/sec_guidance_structure_v5_reviewed.csv"
+  ],
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_new_candidate_tickers": 8,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "forbidden": [
+    "DROP_OR_RESELECT_LOCKED_V6_REVIEW_ROWS",
+    "SELECT_NEW_ROWS_BY_MANUAL_SOURCE_INSPECTION",
+    "USE_PRICE_OUTCOMES",
+    "LOWER_REVIEW_GATE",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}
