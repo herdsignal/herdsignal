@@ -2,21 +2,22 @@
   "report_version": "herd-sec-guidance-structure-parser-v4",
   "input_corpora": [
     "data/reference/sec/sec-8k-guidance-expansion-v3-60-20260722",
-    "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721"
+    "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
+    "data/reference/sec/sec-8k-guidance-v4-extra-30-20260722"
   ],
   "development_accessions_excluded": 200,
-  "v4_candidates": 145,
-  "v4_candidate_tickers": 21,
-  "fresh_holdout_candidates": 113,
-  "fresh_holdout_tickers": 18,
+  "v4_candidates": 189,
+  "v4_candidate_tickers": 26,
+  "fresh_holdout_candidates": 157,
+  "fresh_holdout_tickers": 23,
   "fresh_review_rows": 80,
-  "fresh_review_tickers": 18,
-  "review_sample_gate_ready": false,
+  "fresh_review_tickers": 23,
+  "review_sample_gate_ready": true,
   "review_gate_passed": false,
   "source_qualified_revision_pairs": 0,
   "ready_for_direction_preregistration": false,
-  "next_decision": "FRESH_V4_REVIEW_SAMPLE_COVERAGE_BLOCKED",
+  "next_decision": "COMPLETE_FRESH_V4_SOURCE_REVIEW",
   "price_outcomes_observed": false,
   "operational_action_ratio": 0.0,
-  "protocol_sha256": "4d0070b96cf1e8ad9a19315229e4de0ad5e6bb87e1f1e46db9449d4d7c73d9df"
+  "protocol_sha256": "7a0186c6ccae4820875e51ed8e432348f04c1534696f98c91c3a2b6aaef7416d"
 }

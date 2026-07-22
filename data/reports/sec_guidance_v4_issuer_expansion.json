@@ -1,0 +1,25 @@
+{
+  "report_version": "herd-sec-guidance-v4-issuer-expansion-v1",
+  "eligible_unseen_tickers": 56,
+  "selected_tickers": 30,
+  "selected_filings": 1080,
+  "minimum_selected_filing_coverage": 42,
+  "excluded_tickers": 90,
+  "selection_used_parser_output": false,
+  "selection_used_guidance_text": false,
+  "selection_used_price_outcomes": false,
+  "base_catalog_report": {
+    "report_version": "herd-sec-8k-guidance-candidate-catalog-v1",
+    "universe_tickers": 56,
+    "tickers_with_submissions": 56,
+    "missing_submissions": [],
+    "eligible_filings": 1977,
+    "tickers_with_eligible_filings": 56,
+    "first_accepted_at": "2016-07-18T12:01:03.000Z",
+    "last_accepted_at": "2026-07-16T10:35:59.000Z",
+    "guidance_direction_classified": 0,
+    "operational_action_ratio": 0.0
+  },
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "c5ad49102597c59da2fb33ab48bbbd349ac6a7250f64de2a6fbd41429089e919"
+}

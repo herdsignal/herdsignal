@@ -1,0 +1,44 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_V4_ISSUER_EXPANSION_V1",
+  "status": "LOCKED_BEFORE_DOCUMENT_COLLECTION",
+  "objective": "Add unseen issuers for the V4 source-precision sample without selecting on parser output or price outcomes.",
+  "current_ticker_map": "data/reference/sec/sec-current-20260719/ticker_cik_current.csv",
+  "base_exclude_universe": "data/reports/business_state_features_v2.csv",
+  "prior_expansion_universe": "data/reports/sec_guidance_expansion_universe_v3.csv",
+  "review_ledgers": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv"
+  ],
+  "frozen_pre_expansion_review_tickers": "data/herd/sec_guidance_v4_pre_expansion_review_tickers.csv",
+  "period": {"start": "2016-07-18", "end": "2026-07-17"},
+  "submission_roots": ["data/reference/sec/sec-pit-157cik-20160718-20260717-20260719/raw"],
+  "eligible_forms": ["8-K", "8-K/A"],
+  "eligible_items": ["2.02", "7.01"],
+  "target_tickers": 30,
+  "minimum_eligible_filings_per_ticker": 8,
+  "collection_filings_per_ticker": 36,
+  "download": {
+    "archive_base": "https://www.sec.gov/Archives/edgar/data",
+    "minimum_request_interval_seconds": 0.12,
+    "maximum_text_document_bytes": 10000000,
+    "extensions": [".htm", ".html", ".txt"],
+    "exclude_filename_patterns": [".xsd", "_cal.xml", "_def.xml", "_lab.xml", "_pre.xml", "-index", "index.json"]
+  },
+  "selection_rules": [
+    "NYSE_OR_NASDAQ_COMMON_TICKER",
+    "CIK_WITH_LOCAL_SEC_SUBMISSIONS",
+    "EXCLUDE_ALL_PRIOR_REVIEW_ISSUERS",
+    "EXCLUDE_PRIOR_60_ISSUER_EXPANSION",
+    "RANK_BY_ELIGIBLE_8K_COUNT_ONLY",
+    "DETERMINISTIC_ACCESSION_HASH_SAMPLE"
+  ],
+  "forbidden": [
+    "SELECT_ISSUER_BY_V4_CANDIDATE_SUCCESS",
+    "SELECT_ISSUER_BY_GUIDANCE_TEXT",
+    "SELECT_ISSUER_BY_PRICE_OUTCOME",
+    "REUSE_REVIEWED_ACCESSION",
+    "LOWER_80_ROW_OR_20_ISSUER_GATE",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}

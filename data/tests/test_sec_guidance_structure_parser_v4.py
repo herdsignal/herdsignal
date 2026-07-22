@@ -80,12 +80,12 @@ def test_v3_invalid_bindings_do_not_survive_v4_regression() -> None:
     assert report["independent_precision_inferred"] is False
 
 
-def test_v4_holdout_remains_closed_without_twenty_issuers() -> None:
+def test_v4_holdout_sample_is_ready_but_not_source_approved() -> None:
     import json
 
     report = json.loads(__import__("pathlib").Path("data/reports/sec_guidance_structure_v4.json").read_text())
     assert report["fresh_review_rows"] == 80
-    assert report["fresh_review_tickers"] == 18
-    assert report["review_sample_gate_ready"] is False
+    assert report["fresh_review_tickers"] == 23
+    assert report["review_sample_gate_ready"] is True
     assert report["review_gate_passed"] is False
     assert report["operational_action_ratio"] == 0
