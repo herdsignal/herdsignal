@@ -1,0 +1,15 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_STRUCTURE_PARSER_V8",
+  "status": "LOCKED_BEFORE_V8_OUTPUT",
+  "objective": "Correct only the five structural failure families found in the locked V7 source review.",
+  "v7_review": "data/reports/sec_guidance_structure_v7_reviewed.csv",
+  "review_gate": {"minimum_stratified_rows": 80, "minimum_distinct_tickers": 20, "minimum_wilson_95_lower_bound": 0.90},
+  "grammar_changes": [
+    "LAST_PUBLICLY_DISCLOSED_VS_CURRENT_COLUMN_BINDING",
+    "PRIOR_GUIDANCE_RANGE_ROLE_BINDING",
+    "REPORTING_PERIOD_VS_GUIDANCE_PERIOD_BINDING",
+    "PERCENT_GROWTH_VS_EPS_UNIT_BINDING",
+    "HISTORICAL_RESULT_WITHIN_GUIDANCE_REJECTION"
+  ],
+  "forbidden": ["ADD_ISSUER_EXCEPTIONS", "ADD_NEW_METRIC_ALIASES", "LOWER_REVIEW_GATE", "USE_PRICE_OUTCOMES", "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"]
+}
