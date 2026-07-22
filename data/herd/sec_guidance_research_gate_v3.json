@@ -1,0 +1,19 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_RESEARCH_GATE_V3",
+  "source_review_report": "data/reports/sec_guidance_structure_expansion_source_review_v3.json",
+  "source_review_labels": "data/herd/sec_guidance_structure_expansion_review_labels_v3.csv",
+  "required_wilson_95_lower_bound": 0.9,
+  "steps": [
+    "INDEPENDENT_SOURCE_REVIEW",
+    "SOURCE_PRECISION_GATE",
+    "SOURCE_QUALIFIED_REVISION_PAIRS",
+    "PAIR_COVERAGE_GATE",
+    "DIRECTION_HYPOTHESIS_PREREGISTRATION",
+    "INDEPENDENT_OOS_EVALUATION",
+    "EVIDENCE_ADMISSION",
+    "FIVE_PERCENT_COMPLETED_CYCLE"
+  ],
+  "fail_closed": true,
+  "price_outcomes_forbidden_before_step": "INDEPENDENT_OOS_EVALUATION",
+  "operational_action_ratio_before_admission": 0.0
+}

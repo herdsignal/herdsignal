@@ -1,0 +1,20 @@
+{
+  "review_rows": 80,
+  "reviewed_rows": 80,
+  "distinct_tickers": 24,
+  "ticker_requirement_met": true,
+  "valid_rows": 54,
+  "invalid_rows": 26,
+  "ambiguous_rows": 0,
+  "source_precision": 0.675,
+  "wilson_95_lower_bound": 0.5664052731061472,
+  "review_complete": true,
+  "review_gate_passed": false,
+  "ready_to_build_revision_pairs": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "REVIEW_GATE_BLOCKED",
+  "report_version": "herd-sec-guidance-structure-expansion-source-review-v3",
+  "review_template_sha256": "45561e4b4998a242b72413e16dd5ea132665c39d307a825371bf1b577cd47026",
+  "labels_sha256": "53504333d23ced3f2edd3f2f3b7f06ec8b96de19f56862e9508e8856c239c11c",
+  "price_outcomes_observed": false
+}

@@ -1,0 +1,90 @@
+{
+  "report_version": "herd-sec-guidance-research-gate-v3",
+  "decision": "PARSER_V4_REQUIRED",
+  "steps": [
+    {
+      "step": 1,
+      "name": "INDEPENDENT_SOURCE_REVIEW",
+      "status": "COMPLETE",
+      "reason": "80 unseen rows across 24 issuers adjudicated"
+    },
+    {
+      "step": 2,
+      "name": "SOURCE_PRECISION_GATE",
+      "status": "FAILED",
+      "reason": "Wilson lower 0.5664 vs required 0.9000"
+    },
+    {
+      "step": 3,
+      "name": "SOURCE_QUALIFIED_REVISION_PAIRS",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 4,
+      "name": "PAIR_COVERAGE_GATE",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 5,
+      "name": "DIRECTION_HYPOTHESIS_PREREGISTRATION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 6,
+      "name": "INDEPENDENT_OOS_EVALUATION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 7,
+      "name": "EVIDENCE_ADMISSION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 8,
+      "name": "FIVE_PERCENT_COMPLETED_CYCLE",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    }
+  ],
+  "failure_taxonomy": {
+    "FISCAL_PERIOD_FROM_TABLE_FOOTNOTE": 3,
+    "RESPECTIVELY_SINGLE_VALUES_MERGED_AS_RANGE": 1,
+    "WRONG_METRIC_CASH_TAX_REFUND_RANGE": 1,
+    "QUARTER_RANGE_MAPPED_TO_FULL_YEAR": 4,
+    "REPORTED_BASIS_NOT_BOUND_TO_RANGE": 1,
+    "COMPARISON_YEAR_MAPPED_AS_GUIDANCE_YEAR": 3,
+    "ADJUSTED_BASIS_NOT_BOUND_TO_RANGE": 1,
+    "RESULTS_QUARTER_MAPPED_TO_FULL_YEAR_GUIDANCE": 1,
+    "NORMALIZED_BASIS_NOT_BOUND_TO_RANGE": 1,
+    "BEFORE_CHARGES_BASIS_NOT_BOUND_TO_RANGE": 1,
+    "USE_OF_CASH_SIGN_LOST": 1,
+    "EPS_RANGE_MAPPED_TO_MARGIN": 3,
+    "PRIOR_TABLE_COLUMN_MAPPED_AS_CURRENT": 1,
+    "ADJUSTED_OPERATING_PROFIT_MAPPED_TO_REVENUE": 1,
+    "PRIOR_RANGE_MAPPED_AS_CURRENT": 1,
+    "HISTORICAL_GUIDANCE_MAPPED_AS_CURRENT": 1,
+    "REPORTING_QUARTER_MAPPED_AS_GUIDANCE_QUARTER": 1
+  },
+  "source_precision": 0.675,
+  "wilson_95_lower_bound": 0.5664052731061472,
+  "source_qualified_revision_pairs": 0,
+  "direction_hypotheses_preregistered": 0,
+  "price_outcomes_observed": false,
+  "evidence_admitted": false,
+  "completed_cycle_executed": false,
+  "operational_action_ratio": 0.0,
+  "next_parser_requirements": [
+    "PRESERVE_TABLE_ROW_COLUMN_AND_HEADER_HIERARCHY",
+    "BIND_PERIOD_METRIC_BASIS_UNIT_AND_ROLE_PER_RANGE",
+    "DISTINGUISH_REPORTING_COMPARISON_AND_GUIDANCE_PERIODS",
+    "DISTINGUISH_ACTUAL_PRIOR_CURRENT_AND_RESPECTIVE_SINGLE_VALUES",
+    "PRESERVE_SIGN_AND_CASH_FLOW_DIRECTION",
+    "BIND_REPORTED_ADJUSTED_NORMALIZED_AND_EXCLUSION_BASIS",
+    "REJECT_HISTORICAL_GUIDANCE_RECAPS_WITHOUT_CURRENT_UPDATE"
+  ]
+}
