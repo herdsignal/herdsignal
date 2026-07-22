@@ -67,6 +67,8 @@ management:
       add-additional-paths: true
 
 herdsignal:
+  python:
+    executable: ${HERD_PYTHON_EXECUTABLE:}
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}
   promotion:
     approval-path: ${HERD_PROMOTION_APPROVAL_PATH:}

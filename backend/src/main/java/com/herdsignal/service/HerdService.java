@@ -5,8 +5,6 @@ import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.Stock;
 import com.herdsignal.domain.UserPortfolio;
 import com.herdsignal.domain.InvestorProfile;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.dto.ActionDecision;
 import com.herdsignal.dto.HerdHistoryPoint;
 import com.herdsignal.dto.HerdHistoryResponse;
@@ -23,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -34,7 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +53,7 @@ public class HerdService {
     private final ActionCooldownService actionCooldownService;
     private final PortfolioActionContextService portfolioActionContextService;
     private final InvestorProfileService investorProfileService;
+    private final HerdOnDemandRunner onDemandRunner;
 
     /**
      * 포트폴리오 전체 HERD 조회.
@@ -94,7 +90,7 @@ public class HerdService {
 
         if (!tickers.isEmpty()) {
             try {
-                triggerPythonOnDemandBatch(tickers, true);
+                onDemandRunner.refreshMany(tickers, true);
             } catch (Exception e) {
                 log.error("[portfolio] HERD 배치 강제 갱신 실패: {}", e.getMessage());
                 throw new ResourceNotFoundException(
@@ -133,7 +129,7 @@ public class HerdService {
             // ── 2. 데이터 없음 → Python on-demand 계산 (Tier 2) ───────────
             log.info("[{}] DB에 HERD 데이터 없음 → Python on-demand 계산 시작", ticker);
             try {
-                triggerPythonOnDemand(ticker);
+                onDemandRunner.refresh(ticker, false);
             } catch (Exception e) {
                 log.error("[{}] Python on-demand 실패: {}", ticker, e.getMessage());
                 throw new ResourceNotFoundException(
@@ -167,7 +163,7 @@ public class HerdService {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public HerdScoreResponse refreshStockHerd(String ticker, String userId) {
         try {
-            triggerPythonOnDemand(ticker, true);
+            onDemandRunner.refresh(ticker, true);
         } catch (Exception e) {
             log.error("[{}] Python on-demand 강제 갱신 실패: {}", ticker, e.getMessage());
             throw new ResourceNotFoundException(
@@ -188,199 +184,6 @@ public class HerdService {
                 .orElse(null);
 
         return buildResponse(scoreOpt.get(), indicator, userId);
-    }
-
-    /**
-     * ProcessBuilder로 Python calculate_on_demand(ticker)를 실행한다.
-     * 프로세스가 정상 종료(exit 0)되면 DB에 결과가 저장되어 있음.
-     *
-     * 프로젝트 루트 탐색: data/ 디렉토리가 있는 경로를 working directory로 설정.
-     * 타임아웃: 30초 초과 시 프로세스 강제 종료 후 예외 발생.
-     *
-     * @param ticker 유효성이 검증된 티커 심볼 (대문자, 영숫자/하이픈/점만 허용)
-     */
-    private void triggerPythonOnDemand(String ticker) throws IOException, InterruptedException {
-        triggerPythonOnDemand(ticker, false);
-    }
-
-    /**
-     * ProcessBuilder로 Python calculate_on_demand(ticker, force)를 실행한다.
-     *
-     * @param ticker 유효성이 검증된 티커 심볼 (대문자, 영숫자/하이픈/점만 허용)
-     * @param force 캐시 무시 여부
-     */
-    private void triggerPythonOnDemand(String ticker, boolean force) throws IOException, InterruptedException {
-        // 티커 유효성 검사 — 영숫자·하이픈·점만 허용 (코드 주입 방지)
-        if (!ticker.matches("[A-Z0-9\\-\\.]+")) {
-            throw new IllegalArgumentException("유효하지 않은 티커 형식: " + ticker);
-        }
-
-        // 프로젝트 루트 탐색 (data/ 디렉토리가 있는 경로)
-        File cwd = new File("").getAbsoluteFile();
-        File projectRoot;
-        if (new File(cwd, "data").isDirectory()) {
-            projectRoot = cwd;                           // 프로젝트 루트에서 실행 중
-        } else if (cwd.getParentFile() != null
-                && new File(cwd.getParentFile(), "data").isDirectory()) {
-            projectRoot = cwd.getParentFile();           // backend/ 에서 실행 중
-        } else {
-            throw new IOException(
-                    "프로젝트 루트(data/ 포함)를 찾을 수 없습니다. 현재 경로: " + cwd
-            );
-        }
-
-        // Python 인라인 코드 (ticker는 이미 검증된 안전한 문자열)
-        String pythonCode = String.join("\n",
-                "import sys",
-                "sys.path.insert(0, 'data')",
-                "from scheduler.herd_scheduler import calculate_on_demand",
-                "import json",
-                "result = calculate_on_demand('" + ticker + "', force=" + (force ? "True" : "False") + ")",
-                "print(json.dumps(result))"
-        );
-
-        ProcessBuilder pb = new ProcessBuilder(
-                "data/.venv/bin/python3.12", "-c", pythonCode
-        );
-        pb.directory(projectRoot);
-        pb.redirectErrorStream(true); // stderr → stdout 병합 (로그 수집용)
-
-        log.info("[{}] ProcessBuilder 실행 — 루트: {}", ticker, projectRoot.getAbsolutePath());
-        Process process = pb.start();
-
-        // 출력을 별도 스레드에서 읽어 파이프 버퍼 데드락 방지
-        StringBuilder outputBuf = new StringBuilder();
-        Thread outputReader = new Thread(() -> {
-            try {
-                outputBuf.append(new String(process.getInputStream().readAllBytes()));
-            } catch (IOException ignored) { }
-        });
-        outputReader.start();
-
-        boolean finished = process.waitFor(30, TimeUnit.SECONDS);
-        outputReader.join(2_000); // 출력 스레드 최대 2초 대기
-        String output = outputBuf.toString().trim();
-
-        if (!finished) {
-            process.destroyForcibly();
-            throw new IOException("[" + ticker + "] Python on-demand 타임아웃 (30초)");
-        }
-
-        if (process.exitValue() != 0) {
-            throw new IOException(
-                    "[" + ticker + "] Python 프로세스 종료 코드=" + process.exitValue()
-                    + " / 출력: " + output
-            );
-        }
-
-        log.info("[{}] Python on-demand 완료: {}", ticker, output);
-    }
-
-    /**
-     * ProcessBuilder 1회로 여러 티커의 Python calculate_many_on_demand(tickers, force)를 실행한다.
-     *
-     * @param tickers 유효성이 검증될 티커 심볼 목록
-     * @param force 캐시 무시 여부
-     */
-    private void triggerPythonOnDemandBatch(List<String> tickers, boolean force)
-            throws IOException, InterruptedException {
-        List<String> normalizedTickers = tickers.stream()
-                .map(String::toUpperCase)
-                .distinct()
-                .toList();
-
-        for (String ticker : normalizedTickers) {
-            if (!ticker.matches("[A-Z0-9\\-\\.]+")) {
-                throw new IllegalArgumentException("유효하지 않은 티커 형식: " + ticker);
-            }
-        }
-
-        File cwd = new File("").getAbsoluteFile();
-        File projectRoot;
-        if (new File(cwd, "data").isDirectory()) {
-            projectRoot = cwd;
-        } else if (cwd.getParentFile() != null
-                && new File(cwd.getParentFile(), "data").isDirectory()) {
-            projectRoot = cwd.getParentFile();
-        } else {
-            throw new IOException(
-                    "프로젝트 루트(data/ 포함)를 찾을 수 없습니다. 현재 경로: " + cwd
-            );
-        }
-
-        String pythonTickers = normalizedTickers.stream()
-                .map(t -> "'" + t + "'")
-                .collect(Collectors.joining(", ", "[", "]"));
-
-        String pythonCode = String.join("\n",
-                "import sys",
-                "sys.path.insert(0, 'data')",
-                "from scheduler.herd_scheduler import calculate_many_on_demand",
-                "import json",
-                "result = calculate_many_on_demand(" + pythonTickers + ", force=" + (force ? "True" : "False") + ")",
-                "print(json.dumps(result))"
-        );
-
-        ProcessBuilder pb = new ProcessBuilder(
-                "data/.venv/bin/python3.12", "-c", pythonCode
-        );
-        pb.directory(projectRoot);
-        pb.redirectErrorStream(true);
-
-        log.info("[portfolio] ProcessBuilder 배치 실행 — tickers={}", normalizedTickers);
-        Process process = pb.start();
-
-        StringBuilder outputBuf = new StringBuilder();
-        Thread outputReader = new Thread(() -> {
-            try {
-                outputBuf.append(new String(process.getInputStream().readAllBytes()));
-            } catch (IOException ignored) { }
-        });
-        outputReader.start();
-
-        boolean finished = process.waitFor(120, TimeUnit.SECONDS);
-        outputReader.join(2_000);
-        String output = outputBuf.toString().trim();
-
-        if (!finished) {
-            process.destroyForcibly();
-            throw new IOException("[portfolio] Python on-demand 배치 타임아웃 (120초)");
-        }
-
-        if (process.exitValue() != 0) {
-            throw new IOException(
-                    "[portfolio] Python 배치 프로세스 종료 코드=" + process.exitValue()
-                    + " / 출력: " + output
-            );
-        }
-
-        failOnBatchErrors(output);
-
-        log.info("[portfolio] Python on-demand 배치 완료: {}", output);
-    }
-
-    /**
-     * Python 배치 함수는 종목별 실패를 JSON errors 배열로 반환한다.
-     * 수동 새로고침 API에서는 실패를 조용히 숨기지 않고 클라이언트에 알려준다.
-     */
-    private void failOnBatchErrors(String output) throws IOException {
-        String jsonLine = null;
-        for (String line : output.split("\\R")) {
-            String trimmed = line.trim();
-            if (trimmed.startsWith("{") && trimmed.contains("\"errors\"")) {
-                jsonLine = trimmed;
-            }
-        }
-
-        if (jsonLine == null) {
-            return;
-        }
-
-        JsonNode root = new ObjectMapper().readTree(jsonLine);
-        JsonNode errors = root.get("errors");
-        if (errors != null && errors.isArray() && !errors.isEmpty()) {
-            throw new IOException("[portfolio] 일부 HERD 갱신 실패: " + errors);
-        }
     }
 
     /**
