@@ -1,0 +1,50 @@
+{
+  "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V1",
+  "as_of": "2026-07-22",
+  "statuses": {
+    "ACTIVE": "현재 다음 판정에 직접 사용되는 프로토콜과 원장",
+    "REJECTED": "게이트에서 탈락했지만 사후 선택 방지를 위해 보존하는 실험",
+    "LEGACY": "현행 판단에 사용하지 않는 과거 모델과 호환 경로",
+    "DATA_PIPELINE": "가격, SEC PIT, S&P 구성과 재현 입력을 만드는 기반"
+  },
+  "active_chain": [
+    "data/herd/public_research_contract.json",
+    "data/herd/research_input_manifest_v2.json",
+    "data/herd/sec_8k_guidance_corpus_v1.json",
+    "data/herd/sec_guidance_structure_parser_v2.json",
+    "data/reports/sec_guidance_structure_v2.json",
+    "data/reports/sec_guidance_structure_v2_review.csv",
+    "docs/HERD_RESEARCH_STATUS.md"
+  ],
+  "families": [
+    {
+      "status": "ACTIVE",
+      "patterns": ["sec_guidance_structure_parser_v2*", "research_input_manifest_v2*", "public_research_contract*"],
+      "note": "새 80건 독립 원문 검수와 공개 연구 경계"
+    },
+    {
+      "status": "DATA_PIPELINE",
+      "patterns": ["sec_*", "spglobal_*", "*constituent*", "*cik*", "*point_in_time*", "*snapshot*", "*ticker_alias*", "*corporate_*", "*survivorship*"],
+      "note": "삭제 금지. 원시 입력과 PIT 재현 경로"
+    },
+    {
+      "status": "LEGACY",
+      "patterns": ["backtest_v*", "legacy_*", "validation_v2*", "evidence_admission_registry.json", "evidence_admission_registry_v[2-8].json"],
+      "note": "운영·신규 연구에서 import 금지, 재현용 보존"
+    },
+    {
+      "status": "REJECTED",
+      "patterns": ["weekly_rsi_*", "rush_*", "opportunity_*", "profit_take_*", "reentry_*", "completed_cycle_*", "evidence_admission_registry_v9.json"],
+      "note": "탈락 결과를 삭제하거나 임계값 조정에 재사용하지 않음"
+    }
+  ],
+  "retention": {
+    "delete_only_when": [
+      "git import와 문서 참조가 모두 없음",
+      "고정 manifest 또는 hash 입력이 아님",
+      "실험 판정 재현에 필요하지 않음",
+      "전체 회귀 테스트 통과"
+    ],
+    "unclassified_policy": "REVIEW_REQUIRED"
+  }
+}

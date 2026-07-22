@@ -3,6 +3,10 @@
 기준일: 2026-07-22
 판정: `NO_ADOPTABLE_CANDIDATE`
 
+연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
+`HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
+`data/herd/research_artifact_catalog.json`을 기준으로 한다.
+
 ## Rush episode 전환 연구
 
 현재 검증 유니버스의 정확한 구성은 개별주 51개와 시장 ETF 4개다. ETF는
