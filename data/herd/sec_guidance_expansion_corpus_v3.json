@@ -1,5 +1,5 @@
 {
-  "protocol_version": "HERD_SEC_GUIDANCE_EXPANSION_CORPUS_V3",
+  "protocol_version": "HERD_SEC_GUIDANCE_EXPANSION_CORPUS_V3_1",
   "status": "LOCKED_BEFORE_EXPANSION_COLLECTION",
   "objective": "Add issuer-independent 8-K guidance documents solely for a fresh V3 parser precision sample.",
   "current_ticker_map": "data/reference/sec/sec-current-20260719/ticker_cik_current.csv",
@@ -8,9 +8,13 @@
   "submission_roots": ["data/reference/sec/sec-pit-157cik-20160718-20260717-20260719/raw"],
   "eligible_forms": ["8-K", "8-K/A"],
   "eligible_items": ["2.02", "7.01"],
-  "target_tickers": 30,
+  "target_tickers": 60,
   "minimum_eligible_filings_per_ticker": 8,
-  "collection_filings_per_ticker": 24,
+  "collection_filings_per_ticker": 36,
+  "prior_coverage_attempt": {
+    "snapshot": "data/reference/sec/sec-8k-guidance-expansion-v3-30-20260722",
+    "result": "55 candidates, 12 tickers, review coverage blocked"
+  },
   "download": {
     "archive_base": "https://www.sec.gov/Archives/edgar/data",
     "minimum_request_interval_seconds": 0.12,

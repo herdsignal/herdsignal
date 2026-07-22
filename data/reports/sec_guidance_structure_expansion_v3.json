@@ -1,0 +1,20 @@
+{
+  "report_version": "herd-sec-guidance-structure-expansion-v3",
+  "development_accessions_excluded": 134,
+  "v3_candidates": 257,
+  "v3_candidate_tickers": 24,
+  "fresh_holdout_candidates": 257,
+  "fresh_holdout_tickers": 24,
+  "fresh_review_rows": 80,
+  "fresh_review_tickers": 24,
+  "review_sample_gate_ready": true,
+  "review_gate_passed": false,
+  "source_qualified_revision_pairs": 0,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "COMPLETE_FRESH_V3_SOURCE_REVIEW",
+  "price_outcomes_observed": false,
+  "operational_action_ratio": 0.0,
+  "corpus_manifest_sha256": "4b973e21c3935b21b90efc18792b9aca4827dc663b5579508d305cb61489608e",
+  "corpus_index_sha256": "15ba435d3726abb0036fc040573abcbe935a074a62934c906e39bc94fde9fefa",
+  "original_universe_overlap": 0
+}

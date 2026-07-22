@@ -88,6 +88,7 @@ def main() -> None:
     parser.add_argument("--collect-snapshot-id")
     parser.add_argument("--output-root", type=Path, default=Path("data/reference/sec"))
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
+    parser.add_argument("--seed-corpus", type=Path)
     args = parser.parse_args()
     protocol = json.loads(PROTOCOL.read_text(encoding="utf-8"))
     universe, catalog, report = select_expansion(protocol)
@@ -103,6 +104,7 @@ def main() -> None:
         print(collect_documents(
             catalog, runtime, args.output_root, args.collect_snapshot_id,
             resolve_user_agent(args.env_file),
+            args.seed_corpus,
         ))
 
 

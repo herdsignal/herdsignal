@@ -224,6 +224,7 @@ def build(
     excluded_review_paths: list[str] | None = None,
     review_prefix: str = "SG2",
     report_version: str = "herd-sec-guidance-structure-parser-v2",
+    minimum_review_rows: int | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     source_index = pd.read_csv(corpus / "index.csv", dtype={"cik": str})
     review_paths = excluded_review_paths or [protocol["development_review"]]
@@ -255,6 +256,25 @@ def build(
         ])
     holdout = candidates.loc[~candidates["accession_number"].astype(str).isin(excluded_accessions)].copy() if not candidates.empty else candidates.copy()
     review = select_stratified_review(holdout, protocol["review_gate"]["target_rows_per_metric"])
+    if minimum_review_rows and len(review) < minimum_review_rows and not holdout.empty:
+        selected = set(review.index)
+        groups = [group for _, group in holdout.sort_values("review_priority").groupby("metric", sort=True)]
+        cursors = [0] * len(groups)
+        while len(selected) < min(minimum_review_rows, len(holdout)):
+            added = False
+            for group_index, group in enumerate(groups):
+                while cursors[group_index] < len(group):
+                    index = group.index[cursors[group_index]]
+                    cursors[group_index] += 1
+                    if index not in selected:
+                        selected.add(index)
+                        added = True
+                        break
+                if len(selected) >= min(minimum_review_rows, len(holdout)):
+                    break
+            if not added:
+                break
+        review = holdout.loc[sorted(selected)].sort_values(["metric", "review_priority"]).copy()
     if not review.empty:
         review.insert(0, "review_id", [f"{review_prefix}-{i:04d}" for i in range(1, len(review) + 1)])
         for column, default in [("review_decision", "PENDING"), ("review_reason", ""), ("reviewer", ""), ("reviewed_at", "")]:

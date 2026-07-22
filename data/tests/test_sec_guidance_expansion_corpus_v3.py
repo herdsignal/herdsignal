@@ -22,3 +22,11 @@ def test_selection_uses_only_filing_coverage() -> None:
     assert catalog.groupby("ticker").size().eq(PROTOCOL["collection_filings_per_ticker"]).all()
     assert report["selection_used_guidance_text"] is False
     assert report["selection_used_price_outcomes"] is False
+
+
+def test_collected_expansion_corpus_is_complete() -> None:
+    corpus = ROOT / "data/reference/sec/sec-8k-guidance-expansion-v3-60-20260722"
+    manifest = json.loads((corpus / "manifest.json").read_text())
+    assert manifest["filings_collected"] == manifest["filings_requested"] == 2160
+    assert manifest["failures"] == []
+    assert manifest["guidance_direction_classified"] == 0

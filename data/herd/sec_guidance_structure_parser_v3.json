@@ -5,6 +5,7 @@
   "corpus": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
   "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
   "v2_candidate_ledger": "data/reports/sec_guidance_structure_v2_candidates.csv",
+  "expansion_corpus": "data/reference/sec/sec-8k-guidance-expansion-v3-60-20260722",
   "development_reviews": [
     "data/reports/sec_guidance_block_reviewed_v1.csv",
     "data/reports/sec_guidance_structure_reviewed_v2.csv"
@@ -15,6 +16,7 @@
     "minimum_distinct_tickers": 20,
     "minimum_wilson_95_lower_bound": 0.90
   },
+  "review_fill_rule": "ISSUER_SEED_THEN_TARGET_PER_METRIC_THEN_ROUND_ROBIN_BY_LOCKED_HASH_TO_80",
   "coverage_gate": {
     "minimum_source_qualified_revision_pairs": 150,
     "minimum_source_qualified_tickers": 20

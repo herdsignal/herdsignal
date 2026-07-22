@@ -1,11 +1,11 @@
 {
   "report_version": "herd-sec-guidance-expansion-corpus-v3",
   "candidate_tickers": 116,
-  "selected_tickers": 30,
-  "eligible_filings_before_deterministic_sample": 2486,
-  "selected_filings": 720,
-  "filings_per_ticker": 24,
-  "minimum_eligible_filings": 61,
+  "selected_tickers": 60,
+  "eligible_filings_before_deterministic_sample": 4146,
+  "selected_filings": 2160,
+  "filings_per_ticker": 36,
+  "minimum_eligible_filings": 50,
   "selection_used_guidance_text": false,
   "selection_used_price_outcomes": false,
   "base_catalog_report": {
@@ -20,5 +20,5 @@
     "guidance_direction_classified": 0,
     "operational_action_ratio": 0.0
   },
-  "protocol_sha256": "dd614042134ecbb6144c29e7a664655297ba913f4a6da9b35135f7539256b60b"
+  "protocol_sha256": "20dcd31bfc95b88029a2fa161ed7b60a6c67249213d6a1960c1eca9fe8c4db77"
 }
