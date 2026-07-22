@@ -124,9 +124,11 @@ def build_catalog(protocol: dict) -> tuple[pd.DataFrame, dict]:
 
 def _text_document(name: str, item: dict, config: dict) -> bool:
     lowered = name.lower()
+    include_patterns = config.get("include_filename_patterns")
     return (
         Path(lowered).suffix in set(config["extensions"])
         and not any(pattern in lowered for pattern in config["exclude_filename_patterns"])
+        and (not include_patterns or any(pattern in lowered for pattern in include_patterns))
         and not re.fullmatch(r"\d{10}-\d{2}-\d{6}\.txt", lowered)
         and int(item.get("size") or 0) <= int(config["maximum_text_document_bytes"])
     )
@@ -246,7 +248,7 @@ def collect_documents(catalog: pd.DataFrame, protocol: dict, output_root: Path,
         output_root.mkdir(parents=True, exist_ok=True)
         temp.rename(final)
         return final
-    except Exception:
+    except BaseException:
         shutil.rmtree(temp, ignore_errors=True)
         raise
 

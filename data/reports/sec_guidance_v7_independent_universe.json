@@ -1,0 +1,23 @@
+{
+  "report_version": "herd-sec-guidance-v7-independent-universe-v1",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "eligible_outcome_blind_tickers": 351,
+  "locked_prior_tickers": 150,
+  "v7_independent_tickers": 201,
+  "v7_independent_sectors": 9,
+  "selection_used_guidance_text": false,
+  "selection_used_parser_output": false,
+  "selection_used_price_outcomes": false,
+  "base_selection_report": {
+    "eligible_unseen_tickers": 351,
+    "selected_metadata_tickers": 351,
+    "selected_sectors": 11,
+    "selection_used_guidance_text": false,
+    "selection_used_parser_output": false,
+    "selection_used_price_outcomes": false,
+    "scope": "PARSER_VALIDATION_ONLY"
+  },
+  "operational_action_ratio": 0.0,
+  "base_protocol_sha256": "c0f99b16d529ef3750e3c8e1d97425909236e6b2cf6bb3ecd6450965b7ca33a1",
+  "universe_sha256": "4da2eb600d90d395ebb996a5d057b203b71252015db85c7f2a8ed48887faa914"
+}

@@ -1,0 +1,28 @@
+{
+  "report_version": "herd-sec-guidance-v7-filing-selection-v1",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "input_tickers": 201,
+  "eligible_tickers": 200,
+  "eligible_sectors": 9,
+  "selected_filings": 7171,
+  "maximum_filings_per_ticker": 36,
+  "selection_used_guidance_text": false,
+  "selection_used_parser_output": false,
+  "selection_used_price_outcomes": false,
+  "base_catalog_report": {
+    "report_version": "herd-sec-8k-guidance-candidate-catalog-v1",
+    "universe_tickers": 201,
+    "tickers_with_submissions": 201,
+    "missing_submissions": [],
+    "eligible_filings": 13171,
+    "tickers_with_eligible_filings": 201,
+    "first_accepted_at": "2016-07-18T11:58:54.000Z",
+    "last_accepted_at": "2026-07-17T10:30:36.000Z",
+    "guidance_direction_classified": 0,
+    "operational_action_ratio": 0.0
+  },
+  "operational_action_ratio": 0.0,
+  "base_protocol_sha256": "c0f99b16d529ef3750e3c8e1d97425909236e6b2cf6bb3ecd6450965b7ca33a1",
+  "universe_sha256": "9862766b3ba14856df17ea4d63bff6f543c54458b6a55c217841ecf2811f6aa6",
+  "catalog_sha256": "3f2219c20efc749a19d6dcc55fabc701c109805f071133d3f40f0662e203d986"
+}
