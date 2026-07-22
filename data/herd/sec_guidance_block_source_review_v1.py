@@ -37,7 +37,7 @@ def adjudicate(template: Path, labels: Path, config: dict, protocol: dict) -> tu
     adjudicated["reviewed_at"] = config["reviewed_at"]
     report = evaluate(adjudicated, protocol)
     report.update({
-        "report_version": "herd-sec-guidance-block-source-review-v1",
+        "report_version": config.get("report_version", "herd-sec-guidance-block-source-review-v1"),
         "review_template_sha256": digest,
         "labels_sha256": hashlib.sha256(labels.read_bytes()).hexdigest(),
         "price_outcomes_observed": config["price_outcomes_observed"],
