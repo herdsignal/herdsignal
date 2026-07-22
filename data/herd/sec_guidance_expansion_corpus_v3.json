@@ -1,0 +1,35 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_EXPANSION_CORPUS_V3",
+  "status": "LOCKED_BEFORE_EXPANSION_COLLECTION",
+  "objective": "Add issuer-independent 8-K guidance documents solely for a fresh V3 parser precision sample.",
+  "current_ticker_map": "data/reference/sec/sec-current-20260719/ticker_cik_current.csv",
+  "exclude_universe": "data/reports/business_state_features_v2.csv",
+  "period": {"start": "2016-07-18", "end": "2026-07-17"},
+  "submission_roots": ["data/reference/sec/sec-pit-157cik-20160718-20260717-20260719/raw"],
+  "eligible_forms": ["8-K", "8-K/A"],
+  "eligible_items": ["2.02", "7.01"],
+  "target_tickers": 30,
+  "minimum_eligible_filings_per_ticker": 8,
+  "collection_filings_per_ticker": 24,
+  "download": {
+    "archive_base": "https://www.sec.gov/Archives/edgar/data",
+    "minimum_request_interval_seconds": 0.12,
+    "maximum_text_document_bytes": 10000000,
+    "extensions": [".htm", ".html", ".txt"],
+    "exclude_filename_patterns": [".xsd", "_cal.xml", "_def.xml", "_lab.xml", "_pre.xml", "-index", "index.json"]
+  },
+  "selection_rules": [
+    "NYSE_OR_NASDAQ_COMMON_TICKER",
+    "CIK_WITH_LOCAL_SEC_SUBMISSIONS",
+    "NOT_IN_V1_V2_51_TICKER_UNIVERSE",
+    "RANK_BY_ELIGIBLE_8K_COUNT_WITHOUT_READING_GUIDANCE_OR_PRICE_OUTCOMES"
+    ,"DETERMINISTIC_ACCESSION_HASH_SAMPLE_PER_TICKER"
+  ],
+  "forbidden": [
+    "SELECT_ISSUER_BY_PARSER_SUCCESS",
+    "SELECT_ISSUER_BY_PRICE_OUTCOME",
+    "REUSE_V1_OR_V2_REVIEW_ACCESSION",
+    "CHANGE_90_PERCENT_PRECISION_GATE",
+    "CHANGE_HERD_WEIGHTS"
+  ]
+}
