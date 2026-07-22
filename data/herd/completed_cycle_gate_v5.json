@@ -1,0 +1,36 @@
+{
+  "protocol_version": "HERD_COMPLETED_CYCLE_GATE_V5",
+  "status": "LOCKED_AFTER_MODEL_CONSTRUCTION_V4",
+  "required_reports": {
+    "model": "data/reports/herd_model_construction_v4.json",
+    "reentry": "data/reports/confirmed_reentry_v1.json",
+    "business_veto": "data/reports/business_veto_admission_v2.json",
+    "profit_take": "data/herd/evidence_admission_registry_v9.json"
+  },
+  "execution_contract_if_eligible": {
+    "profit_take_fraction": 0.05,
+    "maximum_total_profit_take_fraction": 0.15,
+    "full_exit_allowed": false,
+    "maximum_profit_take_events_per_year": 2,
+    "reentry_cap": "UNSPENT_PROCEEDS_FROM_MATCHED_PRIOR_SALE",
+    "reentry_requires": [
+      "PRIOR_MATCHED_PROFIT_TAKE_CASH",
+      "ADMITTED_REENTRY_DIRECTION",
+      "SEC_PIT_BUSINESS_VETO_PASS",
+      "DOWNTREND_DECELERATION_OR_RELATIVE_STRENGTH_RECOVERY"
+    ],
+    "fill_timing": "NEXT_TRADING_SESSION_OPEN_AFTER_SIGNAL_CONFIRMATION",
+    "base_round_trip_cost_bps": 30,
+    "stress_round_trip_cost_bps": [50, 100],
+    "benchmarks": ["BUY_AND_HOLD", "KEEP_SALE_CASH", "CALENDAR_DCA"],
+    "metrics": ["CAGR", "MDD", "SORTINO", "CALMAR", "COMPLETED_CYCLE_ALPHA", "CASH_DRAG"]
+  },
+  "forbidden": [
+    "SELL_WITHOUT_ADMITTED_PROFIT_TAKE_EVIDENCE",
+    "REENTER_WITHOUT_ADMITTED_REENTRY_EVIDENCE",
+    "REENTER_ONLY_BECAUSE_PRICE_IS_LOWER",
+    "SPEND_MORE_THAN_MATCHED_SALE_PROCEEDS",
+    "RUN_CYCLE_TO_CREATE_MISSING_EVIDENCE",
+    "OPEN_BLIND_HOLDOUT_OR_AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}
