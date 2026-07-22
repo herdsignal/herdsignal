@@ -1,0 +1,81 @@
+{
+  "report_version": "herd-sec-guidance-research-gate-v4",
+  "decision": "PARSER_V5_REQUIRED",
+  "steps": [
+    {
+      "step": 1,
+      "name": "INDEPENDENT_SOURCE_REVIEW",
+      "status": "COMPLETE",
+      "reason": "80 unseen rows across 23 issuers adjudicated"
+    },
+    {
+      "step": 2,
+      "name": "SOURCE_PRECISION_GATE",
+      "status": "FAILED",
+      "reason": "Wilson lower 0.6995 vs required 0.9000"
+    },
+    {
+      "step": 3,
+      "name": "SOURCE_QUALIFIED_REVISION_PAIRS",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 4,
+      "name": "PAIR_COVERAGE_GATE",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 5,
+      "name": "DIRECTION_HYPOTHESIS_PREREGISTRATION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 6,
+      "name": "INDEPENDENT_OOS_EVALUATION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 7,
+      "name": "EVIDENCE_ADMISSION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 8,
+      "name": "FIVE_PERCENT_COMPLETED_CYCLE",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    }
+  ],
+  "failure_taxonomy": {
+    "ONE_RANGE_APPLIES_TO_REPORTED_AND_NON_GAAP": 2,
+    "EX_PENSION_MTM_BASIS_NOT_BOUND": 2,
+    "Q2_RANGE_MAPPED_TO_FULL_YEAR": 5,
+    "PRIOR_RANGE_SELECTED_AFTER_CURRENT_RANGE": 2,
+    "Q1_PRE_SPLIT_RANGE_MAPPED_TO_FULL_YEAR": 1,
+    "INITIAL_RANGE_SELECTED_INSTEAD_OF_REVISED_RANGE": 1,
+    "REPORTING_QUARTER_MAPPED_TO_ANNUAL_GUIDANCE": 1,
+    "AFTER_DIVIDENDS_SUBTYPE_NOT_BOUND": 1,
+    "PRIOR_RANGE_SELECTED_INSTEAD_OF_RAISED_RANGE": 1
+  },
+  "source_precision": 0.8,
+  "wilson_95_lower_bound": 0.6995375627182917,
+  "source_qualified_revision_pairs": 0,
+  "direction_hypotheses_preregistered": 0,
+  "price_outcomes_observed": false,
+  "evidence_admitted": false,
+  "completed_cycle_executed": false,
+  "operational_action_ratio": 0.0,
+  "next_parser_requirements": [
+    "PARSE_COMPACT_QUARTER_AND_FISCAL_YEAR_AS_ONE_PERIOD",
+    "SELECT_CURRENT_RANGE_WHEN_PRIOR_RANGE_FOLLOWS_FROM",
+    "BIND_EX_PENSION_MTM_AS_NON_GAAP_BASIS",
+    "PRESERVE_AFTER_DIVIDENDS_FREE_CASH_FLOW_SUBTYPE",
+    "REJECT_OR_EXPLODE_ONE_RANGE_WITH_MULTIPLE_ACCOUNTING_BASES",
+    "DISTINGUISH_REPORTING_QUARTER_FROM_ANNUAL_GUIDANCE"
+  ]
+}

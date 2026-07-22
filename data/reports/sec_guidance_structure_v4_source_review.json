@@ -1,0 +1,20 @@
+{
+  "review_rows": 80,
+  "reviewed_rows": 80,
+  "distinct_tickers": 23,
+  "ticker_requirement_met": true,
+  "valid_rows": 64,
+  "invalid_rows": 14,
+  "ambiguous_rows": 2,
+  "source_precision": 0.8,
+  "wilson_95_lower_bound": 0.6995375627182917,
+  "review_complete": true,
+  "review_gate_passed": false,
+  "ready_to_build_revision_pairs": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "REVIEW_GATE_BLOCKED",
+  "report_version": "herd-sec-guidance-structure-source-review-v4",
+  "review_template_sha256": "7e092abd840bfaaec692c735db1e156aa70b1c3cd3df45296e3c5489f9aebb49",
+  "labels_sha256": "db3c2c844dc31b41bf99be25e4fdf838468b212d7f8dd52b9a5d71b4a759b5d9",
+  "price_outcomes_observed": false
+}
