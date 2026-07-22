@@ -1,0 +1,12 @@
+{
+  "review_version": "HERD_SEC_GUIDANCE_STRUCTURE_SOURCE_REVIEW_V9",
+  "report_version": "herd-sec-guidance-structure-source-review-v9",
+  "status": "LOCKED_INDEPENDENT_SOURCE_REVIEW",
+  "review_template": "data/reports/sec_guidance_structure_v9_review.csv",
+  "review_template_sha256": "ab0658c77d86da0619219f3b35cb6d8a8f41b85c60cbb8aa79f9d5729a137447",
+  "labels": "data/herd/sec_guidance_structure_v9_review_labels.csv",
+  "reviewer": "CODEX_SOURCE_AUDIT",
+  "reviewed_at": "2026-07-23",
+  "price_outcomes_observed": false,
+  "allowed_decisions": ["VALID", "INVALID", "AMBIGUOUS"]
+}
