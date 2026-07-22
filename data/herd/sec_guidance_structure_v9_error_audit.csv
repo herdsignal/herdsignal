@@ -1,0 +1,10 @@
+review_id,v8_decision,audit_decision,error_family,v9_action,evidence
+SG8-0021,INVALID,INVALID,EPS_BRIDGE_COMPONENT,REJECT,Range is an EPS driver bridge component rather than total guidance
+SG8-0024,INVALID,INVALID,RESPECTIVELY_RANGE_BASIS,CORRECT_TO_UNSPECIFIED,First range belongs to diluted EPS and second to adjusted diluted EPS
+SG8-0025,INVALID,INVALID,PARENTHETICAL_WAS_RANGE,REJECT,Matched range is inside a was parenthetical and current value is a point estimate
+SG8-0028,INVALID,INVALID,RESPECTIVELY_RANGE_BASIS,CORRECT_TO_UNSPECIFIED,First range belongs to diluted EPS and second to adjusted diluted EPS
+SG8-0033,INVALID,INVALID,SHARE_COUNT_METRIC,REJECT,Row is weighted average diluted share count rather than EPS guidance
+SG8-0041,INVALID,INVALID,ROW_LOCAL_GAAP_BASIS,CORRECT_TO_NON_GAAP,Row header explicitly identifies Non-GAAP EPS
+SG8-0043,INVALID,INVALID,PREVIOUSLY_ANNOUNCED_RANGE,REJECT,Sentence references previously announced guidance without reaffirmation
+SG8-0044,INVALID,INVALID,REAFFIRMED_ANNUAL_PERIOD,CORRECT_TO_FY2024,Second-quarter result precedes reaffirmed full-year 2024 guidance
+SG8-0048,INVALID,VALID,SOURCE_REVIEW_LABEL_ERROR,NO_PARSER_CHANGE,Range is in Current guidance column and change column is NC

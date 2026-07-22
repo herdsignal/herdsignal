@@ -17,9 +17,9 @@ def test_v8_locked_source_review_fails_without_opening_part_b() -> None:
     )
     assert len(reviewed) == 80
     assert reviewed["ticker"].nunique() == 20
-    assert report["valid_rows"] == 71
-    assert report["invalid_rows"] == 9
-    assert report["source_precision"] == 0.8875
+    assert report["valid_rows"] == 72
+    assert report["invalid_rows"] == 8
+    assert report["source_precision"] == 0.9
     assert report["wilson_95_lower_bound"] < protocol["review_gate"]["minimum_wilson_95_lower_bound"]
     assert report["review_gate_passed"] is False
     assert report["ready_to_build_revision_pairs"] is False
@@ -34,4 +34,4 @@ def test_v8_failures_cover_all_observed_binding_families() -> None:
     assert "SHARE_COUNT_MISCLASSIFIED_AS_EPS" in reasons
     assert "NON_GAAP_ROW_MISCLASSIFIED_AS_GAAP" in reasons
     assert "FULL_YEAR_GUIDANCE_MAPPED_TO_REPORTING_QUARTER" in reasons
-    assert "CURRENT_PRIOR_COLUMN_REVERSED" in reasons
+    assert "PREVIOUSLY_ANNOUNCED_RANGE_SELECTED_AS_CURRENT" in reasons
