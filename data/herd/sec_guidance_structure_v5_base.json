@@ -1,0 +1,34 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_STRUCTURE_V5_BASE_V1",
+  "status": "LOCKED_BEFORE_EXPANDED_V4_REPLAY",
+  "objective": "Replay every pre-V5 and V5 expansion corpus through the unchanged V4 atomic binder before applying the six V5 corrections.",
+  "input_corpora": [
+    "data/reference/sec/sec-8k-guidance-expansion-v3-60-20260722",
+    "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
+    "data/reference/sec/sec-8k-guidance-v4-extra-30-20260722",
+    "data/reference/sec/sec-8k-guidance-v5-extra-23-20260722",
+    "data/reference/sec/sec-8k-guidance-v5-broad-60-20260722"
+  ],
+  "cached_v4_candidate_ledger": "data/reports/sec_guidance_structure_v5_base_candidates.csv",
+  "cached_v4_candidate_ledger_sha256": "be4fa1bc77b24b73c5d12662361f2f1aef7e6128ef9922e1ba12ea30ae00ef60",
+  "v4_parser_sha256": "3d72eaa12a18d3944ea2dc8b6e5ce003b4adaa997e28390d03ee9f1195e528f5",
+  "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
+  "development_reviews": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv"
+  ],
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "forbidden": [
+    "CHANGE_V4_BINDING_CODE",
+    "REUSE_CACHE_WITHOUT_HASH_MATCH",
+    "USE_V4_REVIEW_LABELS_IN_BASE_REPLAY",
+    "USE_PRICE_OUTCOMES",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}

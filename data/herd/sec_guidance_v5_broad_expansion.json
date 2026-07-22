@@ -1,0 +1,40 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_V5_BROAD_EXPANSION_V1",
+  "status": "LOCKED_BEFORE_METADATA_COLLECTION",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "objective": "Select unseen issuers without guidance or price-outcome inspection and obtain enough independent syntax coverage for the V5 source-precision gate.",
+  "candidate_universe": "data/reports/independent_universe_v1.csv",
+  "exclude_universes": [
+    "data/reports/business_state_features_v2.csv",
+    "data/reports/sec_guidance_expansion_universe_v3.csv",
+    "data/reports/sec_guidance_v4_issuer_universe.csv",
+    "data/reports/sec_guidance_v5_issuer_universe.csv"
+  ],
+  "review_ledgers": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv"
+  ],
+  "metadata_target_tickers": 120,
+  "filing_target_tickers": 60,
+  "minimum_eligible_filings_per_ticker": 12,
+  "collection_filings_per_ticker": 36,
+  "period": {"start": "2016-07-18", "end": "2026-07-17"},
+  "eligible_forms": ["8-K", "8-K/A"],
+  "eligible_items": ["2.02", "7.01"],
+  "download": {
+    "archive_base": "https://www.sec.gov/Archives/edgar/data",
+    "minimum_request_interval_seconds": 0.12,
+    "maximum_text_document_bytes": 10000000,
+    "extensions": [".htm", ".html", ".txt"],
+    "exclude_filename_patterns": [".xsd", "_cal.xml", "_def.xml", "_lab.xml", "_pre.xml", "-index", "index.json"]
+  },
+  "forbidden": [
+    "SELECT_BY_GUIDANCE_TEXT_OR_PARSER_SUCCESS",
+    "SELECT_BY_PRICE_OUTCOME",
+    "USE_CURRENT_CONSTITUENT_SAMPLE_AS_SURVIVORSHIP_SAFE_OOS",
+    "REUSE_REVIEWED_ISSUER_OR_ACCESSION",
+    "LOWER_SOURCE_PRECISION_GATE"
+  ]
+}

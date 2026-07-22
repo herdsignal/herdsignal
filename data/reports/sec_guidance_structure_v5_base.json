@@ -1,0 +1,33 @@
+{
+  "report_version": "herd-sec-guidance-structure-v5-base-v1",
+  "replay_mode": "HASH_VERIFIED_INCREMENTAL_V4",
+  "cached_v4_candidates": 189,
+  "incremental_v4_candidates": 30,
+  "merged_v4_candidates": 219,
+  "merged_v4_candidate_tickers": 30,
+  "incremental_report": {
+    "report_version": "herd-sec-guidance-structure-parser-v4",
+    "input_corpora": [
+      "data/reference/sec/sec-8k-guidance-v5-extra-23-20260722"
+    ],
+    "development_accessions_excluded": 200,
+    "v4_candidates": 30,
+    "v4_candidate_tickers": 4,
+    "fresh_holdout_candidates": 30,
+    "fresh_holdout_tickers": 4,
+    "fresh_review_rows": 30,
+    "fresh_review_tickers": 4,
+    "review_sample_gate_ready": false,
+    "review_gate_passed": false,
+    "source_qualified_revision_pairs": 0,
+    "ready_for_direction_preregistration": false,
+    "next_decision": "FRESH_V4_REVIEW_SAMPLE_COVERAGE_BLOCKED",
+    "price_outcomes_observed": false,
+    "operational_action_ratio": 0.0
+  },
+  "cached_v4_candidate_ledger_sha256": "0a768fbddec26076200b4872e6b3668a059614dcfb3011b0c350089c83161d49",
+  "v4_parser_sha256": "3d72eaa12a18d3944ea2dc8b6e5ce003b4adaa997e28390d03ee9f1195e528f5",
+  "protocol_sha256": "6ff08e2bbc93ed628021852ca7fe20bbf05a335d2ba58c09553f85bdfd2461a9",
+  "price_outcomes_observed": false,
+  "operational_action_ratio": 0.0
+}

@@ -25,6 +25,8 @@ def select_issuers(protocol: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     }
     universe = candidate_universe(base_protocol)
     excluded_tickers = set(pd.read_csv(protocol["prior_expansion_universe"])["ticker"].astype(str))
+    for path in protocol.get("additional_exclude_universes", []):
+        excluded_tickers.update(pd.read_csv(path)["ticker"].astype(str))
     for path in protocol["review_ledgers"]:
         excluded_tickers.update(pd.read_csv(path)["ticker"].astype(str))
     excluded_tickers.update(pd.read_csv(protocol["frozen_pre_expansion_review_tickers"])["ticker"].astype(str))

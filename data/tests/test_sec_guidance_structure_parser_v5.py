@@ -51,7 +51,7 @@ def test_v5_sample_excludes_every_v4_review_accession() -> None:
     report = json.loads((ROOT / "data/reports/sec_guidance_structure_v5.json").read_text())
     review_path = ROOT / "data/reports/sec_guidance_structure_v5_review.csv"
     assert report["fresh_review_candidate_sha256"] == hashlib.sha256(review_path.read_bytes()).hexdigest()
-    assert report["review_sample_gate_ready"] is False
+    assert report["review_sample_gate_ready"] is True
     assert report["review_gate_passed"] is False
     assert report["price_outcomes_observed"] is False
     assert report["operational_action_ratio"] == 0
