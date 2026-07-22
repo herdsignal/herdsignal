@@ -24,6 +24,10 @@ def select_filings() -> tuple[pd.DataFrame, pd.DataFrame, dict, dict]:
     protocol["download"]["include_filename_patterns"] = [
         "ex99", "exhibit99", "earn", "release", "presentation", "investor", "slides", "guidance", "outlook",
     ]
+    protocol["download"]["minimum_request_interval_seconds"] = 0.125
+    protocol["download"]["maximum_workers"] = 4
+    protocol["download"]["checkpoint_every_filings"] = 50
+    protocol["download"]["throttle_cooldown_seconds"] = 30.0
     protocol["universe"] = str(UNIVERSE)
     protocol["submission_roots"] = [str(SUBMISSIONS)]
     catalog, base_report = build_catalog(protocol)

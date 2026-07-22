@@ -6,6 +6,7 @@
   "eligible_sectors": 9,
   "selected_filings": 7171,
   "maximum_filings_per_ticker": 36,
+  "attachment_selection": "PRIMARY_PLUS_DETERMINISTIC_EARNINGS_EX99_FILENAMES",
   "selection_used_guidance_text": false,
   "selection_used_parser_output": false,
   "selection_used_price_outcomes": false,

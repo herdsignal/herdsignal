@@ -142,12 +142,38 @@ def collect_documents(catalog: pd.DataFrame, protocol: dict, output_root: Path,
     final = output_root / snapshot_id
     if final.exists():
         raise FileExistsError(final)
-    for stale in output_root.glob(f".{snapshot_id}.tmp-*"):
-        shutil.rmtree(stale, ignore_errors=True)
-    temp = output_root / f".{snapshot_id}.tmp-{uuid.uuid4().hex}"
+    catalog_fingerprint = hashlib.sha256(
+        "\n".join(sorted(catalog["accession_number"].astype(str))).encode()
+    ).hexdigest()
+    stale_directories = sorted(output_root.glob(f".{snapshot_id}.tmp-*"))
+    resumable = []
+    for stale in stale_directories:
+        state_path = stale / "checkpoint.json"
+        if not state_path.exists():
+            continue
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        if state.get("catalog_sha256") == catalog_fingerprint:
+            resumable.append(stale)
+    temp = max(resumable, key=lambda path: path.stat().st_mtime) if resumable else None
+    for stale in stale_directories:
+        if stale != temp:
+            shutil.rmtree(stale, ignore_errors=True)
+    if temp is None:
+        temp = output_root / f".{snapshot_id}.tmp-{uuid.uuid4().hex}"
     raw = temp / "raw"
-    raw.mkdir(parents=True)
+    raw.mkdir(parents=True, exist_ok=True)
     index_rows, failures = [], []
+    completed_accessions: set[str] = set()
+    checkpoint_index = temp / "checkpoint-index.csv"
+    checkpoint_failures = temp / "checkpoint-failures.json"
+    checkpoint_state = temp / "checkpoint.json"
+    if checkpoint_state.exists():
+        state = json.loads(checkpoint_state.read_text(encoding="utf-8"))
+        completed_accessions = set(state.get("completed_accessions", []))
+        if checkpoint_index.exists() and checkpoint_index.stat().st_size:
+            index_rows = pd.read_csv(checkpoint_index, dtype={"cik": str}).to_dict("records")
+        if checkpoint_failures.exists():
+            failures = json.loads(checkpoint_failures.read_text(encoding="utf-8"))
     seed_accessions: set[str] = set()
     if seed_corpus:
         seed_index = pd.read_csv(seed_corpus / "index.csv", dtype={"cik": str})
@@ -168,26 +194,53 @@ def collect_documents(catalog: pd.DataFrame, protocol: dict, output_root: Path,
         0.20 if seed_corpus else 0.0,
     )
     request_lock, file_lock = threading.Lock(), threading.Lock()
-    next_request_at = [0.0]
+    next_request_at, blocked_until = [0.0], [0.0]
     local = threading.local()
 
     def get(url: str, timeout: int) -> requests.Response:
         if not hasattr(local, "session"):
             local.session = requests.Session()
             local.session.headers.update({"User-Agent": user_agent, "Accept-Encoding": "gzip, deflate"})
-        with request_lock:
-            wait = next_request_at[0] - time.monotonic()
-            if wait > 0:
-                time.sleep(wait)
-            next_request_at[0] = time.monotonic() + delay
         for attempt in range(4):
+            with request_lock:
+                wait = max(next_request_at[0], blocked_until[0]) - time.monotonic()
+                if wait > 0:
+                    time.sleep(wait)
+                next_request_at[0] = time.monotonic() + delay
             response = local.session.get(url, timeout=timeout)
             if response.status_code < 400:
                 return response
+            if response.status_code in {403, 429}:
+                with request_lock:
+                    blocked_until[0] = max(
+                        blocked_until[0],
+                        time.monotonic() + float(config.get("throttle_cooldown_seconds", 15.0)),
+                    )
             if response.status_code not in {403, 404, 429, 500, 502, 503, 504} or attempt == 3:
                 response.raise_for_status()
             time.sleep(2 ** attempt)
         raise RuntimeError("unreachable request retry state")
+
+    config = protocol["download"]
+
+    def atomic_write(path: Path, content: str) -> None:
+        pending = path.with_suffix(path.suffix + ".new")
+        pending.write_text(content, encoding="utf-8")
+        pending.replace(path)
+
+    def checkpoint() -> None:
+        ordered = sorted(
+            index_rows,
+            key=lambda row: (row["accepted_at"], row["ticker"], row["accession_number"], row["document_name"]),
+        )
+        pending_index = checkpoint_index.with_suffix(".csv.new")
+        pd.DataFrame(ordered).to_csv(pending_index, index=False, lineterminator="\n")
+        pending_index.replace(checkpoint_index)
+        atomic_write(checkpoint_failures, json.dumps(failures, ensure_ascii=False, indent=2) + "\n")
+        atomic_write(checkpoint_state, json.dumps({
+            "catalog_sha256": catalog_fingerprint,
+            "completed_accessions": sorted(completed_accessions),
+        }, ensure_ascii=False, indent=2) + "\n")
 
     def collect_one(filing) -> tuple[list[dict], dict | None]:
         collected = []
@@ -221,16 +274,25 @@ def collect_documents(catalog: pd.DataFrame, protocol: dict, output_root: Path,
             }
 
     try:
-        filings = [row for row in catalog.itertuples(index=False) if row.accession_number not in seed_accessions]
-        with ThreadPoolExecutor(max_workers=2 if seed_corpus else 4) as executor:
-            futures = [executor.submit(collect_one, filing) for filing in filings]
+        filings = [
+            row for row in catalog.itertuples(index=False)
+            if row.accession_number not in seed_accessions | completed_accessions
+        ]
+        workers = int(config.get("maximum_workers", 2 if seed_corpus else 4))
+        checkpoint_every = int(config.get("checkpoint_every_filings", 100))
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = {executor.submit(collect_one, filing): filing for filing in filings}
             for position, future in enumerate(as_completed(futures), start=1):
                 collected, failure = future.result()
                 index_rows.extend(collected)
                 if failure:
                     failures.append(failure)
+                completed_accessions.add(futures[future].accession_number)
+                if position % checkpoint_every == 0:
+                    checkpoint()
                 if position % 100 == 0:
                     print(f"collected filing indexes: {position}/{len(filings)}", flush=True)
+        checkpoint()
         index_rows.sort(key=lambda row: (row["accepted_at"], row["ticker"], row["accession_number"], row["document_name"]))
         pd.DataFrame(index_rows).to_csv(temp / "index.csv", index=False, lineterminator="\n")
         manifest = {
@@ -245,11 +307,14 @@ def collect_documents(catalog: pd.DataFrame, protocol: dict, output_root: Path,
             "guidance_direction_classified": 0, "operational_action_ratio": 0.0,
         }
         (temp / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        checkpoint_index.unlink(missing_ok=True)
+        checkpoint_failures.unlink(missing_ok=True)
+        checkpoint_state.unlink(missing_ok=True)
         output_root.mkdir(parents=True, exist_ok=True)
         temp.rename(final)
         return final
     except BaseException:
-        shutil.rmtree(temp, ignore_errors=True)
+        checkpoint()
         raise
 
 
