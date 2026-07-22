@@ -1,0 +1,33 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_STRUCTURE_PARSER_V5",
+  "status": "LOCKED_BEFORE_V5_OUTPUT",
+  "objective": "Correct only the six V4 source-review grammar failures without widening extraction scope.",
+  "v4_candidate_ledger": "data/reports/sec_guidance_structure_v4_candidates.csv",
+  "development_reviews": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv"
+  ],
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "grammar_changes": [
+    "COMPACT_QUARTER_FISCAL_YEAR_BINDING",
+    "CURRENT_PRIOR_DIRECTION_BINDING",
+    "EX_PENSION_MTM_NON_GAAP_BINDING",
+    "FREE_CASH_FLOW_AFTER_DIVIDENDS_SUBTYPE",
+    "REJECT_MULTI_BASIS_SINGLE_RANGE",
+    "REQUIRE_RANGE_PRESENT_IN_PRESERVED_SOURCE_EXCERPT"
+  ],
+  "forbidden": [
+    "CHANGE_NUMERIC_THRESHOLDS",
+    "ADD_NEW_METRICS_OR_ALIASES",
+    "USE_V4_REVIEWED_ACCESSION_IN_V5_PRECISION_SAMPLE",
+    "USE_PRICE_OUTCOMES",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}
