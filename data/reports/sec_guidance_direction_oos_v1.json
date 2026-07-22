@@ -1,0 +1,13 @@
+{
+  "report_version": "herd-sec-guidance-direction-oos-v1",
+  "pair_coverage_gate_passed": false,
+  "price_manifest_opened": false,
+  "evaluated_pairs": 0,
+  "evaluated_folds": 0,
+  "admitted_direction_evidence": 0,
+  "decision": "OOS_BLOCKED_BY_PAIR_COVERAGE",
+  "ready_for_herd_combination": false,
+  "operational_action_ratio": 0.0,
+  "pair_report_sha256": "0371938f1c1c01fd533c237bba58dd9a7775d406e3560091aee46db059c53369",
+  "protocol_sha256": "71f3410d33ade04a9cd7d0a1ce55da072958eb80e3637254857f96cae29734f3"
+}

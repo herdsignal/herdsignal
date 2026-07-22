@@ -1,0 +1,26 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_DIRECTION_OOS_V1",
+  "status": "PREREGISTERED_BEFORE_PRICE_JOIN",
+  "revision_pair_report": "data/reports/sec_guidance_revision_pairs_v1.json",
+  "revision_pairs": "data/reports/sec_guidance_revision_pairs_v1.csv",
+  "direction_definition": {
+    "RAISE": "midpoint_delta > 0",
+    "MAINTAIN": "midpoint_delta == 0",
+    "LOWER": "midpoint_delta < 0",
+    "continuous_primary_feature": "midpoint_delta_ratio"
+  },
+  "execution_time": "FIRST_TRADING_SESSION_AFTER_SEC_ACCEPTED_AT",
+  "horizons_sessions": [21, 63, 126],
+  "primary_targets": ["SECTOR_RESIDUAL_RETURN", "FORWARD_MAX_DRAWDOWN"],
+  "controls": ["SPY_RETURN", "SECTOR_ETF_RETURN", "REALIZED_VOLATILITY"],
+  "multiple_testing": "HOLM_WITHIN_GUIDANCE_FAMILY",
+  "minimum_oos_folds": 4,
+  "minimum_tickers_per_fold": 10,
+  "forbidden": [
+    "OPEN_PRICE_DATA_BEFORE_PAIR_COVERAGE_GATE",
+    "TUNE_DIRECTION_THRESHOLD_ON_OUTCOMES",
+    "TREAT_GUIDANCE_OMISSION_AS_LOWER",
+    "COMBINE_WITH_PRICE_SIGNALS_BEFORE_INDEPENDENT_OOS_PASS",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}
