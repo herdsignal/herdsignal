@@ -1,0 +1,15 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_REVISION_PAIRS_V1",
+  "status": "LOCKED_BEFORE_PAIR_OUTPUT",
+  "source_review_report": "data/reports/sec_guidance_structure_v5_source_review.json",
+  "source_review_ledger": "data/reports/sec_guidance_structure_v5_reviewed.csv",
+  "minimum_pairs": 150,
+  "minimum_distinct_tickers": 20,
+  "pair_identity": ["ticker", "metric", "fiscal_period", "accounting_basis", "metric_subtype", "unit"],
+  "forbidden": [
+    "BUILD_PAIRS_WHEN_SOURCE_PRECISION_GATE_FAILS",
+    "PAIR_ACROSS_DIFFERENT_PERIOD_METRIC_BASIS_SUBTYPE_OR_UNIT",
+    "CLASSIFY_DIRECTION_BEFORE_PAIR_COVERAGE_GATE",
+    "USE_PRICE_OUTCOMES"
+  ]
+}

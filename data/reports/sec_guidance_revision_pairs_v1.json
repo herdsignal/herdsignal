@@ -1,0 +1,15 @@
+{
+  "report_version": "herd-sec-guidance-revision-pairs-v1",
+  "source_precision_gate_passed": false,
+  "pair_build_blocked": true,
+  "source_qualified_pairs": 0,
+  "distinct_tickers": 0,
+  "pair_coverage_gate_passed": false,
+  "direction_labels_created": false,
+  "price_outcomes_observed": false,
+  "next_decision": "PAIR_BUILD_BLOCKED_BY_SOURCE_PRECISION",
+  "source_review_report_sha256": "dc251b624ab82bd13a8a89effeb63310d4ef66ddcd8c7f6c07bbc956e8287809",
+  "source_review_ledger_sha256": "e68915245fadfca3d682664fe9a0cf3dc0f5758201c807fe8bc95d5f0ee92767",
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "1007e0471cd89fefd8d3374e9913e3cbc081c981d4438e5236977469ea727c6c"
+}
