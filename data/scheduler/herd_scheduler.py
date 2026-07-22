@@ -21,10 +21,9 @@ Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
 """
 
 import argparse
-import json
 import logging
 import sys
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -48,6 +47,8 @@ from config.settings import (                                           # noqa: 
     SCHEDULER_MINUTE_ET,
 )
 from scheduler.incident_alerts import IncidentAlertConfig, send_scheduler_alert  # noqa: E402
+from scheduler.run_history import SchedulerRunRecorder                          # noqa: E402
+from scheduler.ticker_job import execute_tickers                                # noqa: E402
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
@@ -55,7 +56,6 @@ from init_db import (                                                   # noqa: 
     HerdIndicator,
     HerdScore,
     PortfolioHistory,
-    SchedulerRun,
     UserPortfolio,
     UserWatchlist,
 )
@@ -138,21 +138,7 @@ def _fetch_tier1_tickers() -> list[str]:
 
 
 def _start_scheduler_run(trigger_type: str) -> int | None:
-    """실행 시작을 별도 트랜잭션으로 먼저 기록한다."""
-    try:
-        with _get_session_factory()() as session:
-            run_row = SchedulerRun(
-                job_name=_TIER1_JOB_NAME,
-                trigger_type=trigger_type,
-                status="RUNNING",
-                started_at=datetime.now(UTC).replace(tzinfo=None),
-            )
-            session.add(run_row)
-            session.commit()
-            return run_row.id
-    except Exception as exc:
-        logger.error(f"[Tier1] 실행 시작 이력 저장 실패: {exc}", exc_info=True)
-        return None
+    return SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).start(trigger_type)
 
 
 def _finish_scheduler_run(
@@ -163,27 +149,9 @@ def _finish_scheduler_run(
     failed_tickers: list[str] | None = None,
     error_message: str | None = None,
 ) -> None:
-    """실행 결과를 저장한다. 이력 저장 실패가 본 잡 결과를 바꾸지는 않는다."""
-    if run_id is None:
-        return
-
-    failed = failed_tickers or []
-    try:
-        with _get_session_factory()() as session:
-            run_row = session.get(SchedulerRun, run_id)
-            if run_row is None:
-                logger.error(f"[Tier1] 실행 이력 {run_id}을 찾을 수 없습니다.")
-                return
-            run_row.status = status
-            run_row.finished_at = datetime.now(UTC).replace(tzinfo=None)
-            run_row.total_count = total_count
-            run_row.success_count = success_count
-            run_row.failed_count = len(failed)
-            run_row.failed_tickers = json.dumps(failed) if failed else None
-            run_row.error_message = error_message[:2000] if error_message else None
-            session.commit()
-    except Exception as exc:
-        logger.error(f"[Tier1] 실행 완료 이력 저장 실패: {exc}", exc_info=True)
+    SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).finish(
+        run_id, status, total_count, success_count, failed_tickers, error_message,
+    )
 
 
 def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
@@ -218,30 +186,8 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         return result
 
     # ── 2. 종목별 순차 처리 ────────────────────
-    success_list: list[str] = []
-    failed_list:  list[str] = []
     total = len(tickers)
-
-    for idx, ticker in enumerate(tickers, start=1):
-        logger.info(f"[Tier1][{ticker}] ─ 처리 시작 ({idx}/{total})")
-        try:
-            df          = collect(ticker)
-            herd_result = run(ticker, df)
-            ok          = save_herd_result(ticker, herd_result, df)
-
-            if ok:
-                success_list.append(ticker)
-                logger.info(
-                    f"[Tier1][{ticker}] ✅ 완료 "
-                    f"score={herd_result['score']:.2f}  stage={herd_result['stage']}"
-                )
-            else:
-                failed_list.append(ticker)
-                logger.error(f"[Tier1][{ticker}] ❌ DB 저장 실패")
-
-        except Exception as e:
-            logger.error(f"[Tier1][{ticker}] ❌ 처리 중 예외: {e}", exc_info=True)
-            failed_list.append(ticker)
+    success_list, failed_list = execute_tickers(tickers, collect, run, save_herd_result)
 
     # ── 3. 전체 결과 요약 ─────────────────────
     logger.info("━" * 60)
