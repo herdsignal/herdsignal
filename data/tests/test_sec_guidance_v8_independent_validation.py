@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from herd.sec_guidance_v8_independent_validation import build
-from herd.sec_guidance_v8_filing_selection import select_filings
+from herd.sec_guidance_v8_filing_selection import select_completion_filings, select_filings
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,3 +45,14 @@ def test_v8_second_wave_filings_do_not_overlap_v7() -> None:
     assert report["selection_used_parser_output"] is False
     assert report["selection_used_price_outcomes"] is False
     assert report["selected_tickers"] >= 20
+
+
+def test_v8_completion_exhausts_remaining_population_without_labels() -> None:
+    initial, _, _ = select_filings()
+    completion, report, _ = select_completion_filings()
+    v7 = pd.read_csv(ROOT / "data/reports/sec_guidance_v7_filing_catalog.csv")
+    assert set(completion["accession_number"]).isdisjoint(set(initial["accession_number"]))
+    assert set(completion["accession_number"]).isdisjoint(set(v7["accession_number"]))
+    assert len(initial) + len(completion) == report["initial_selection_report"]["remaining_filings"]
+    assert report["selection_used_source_review_labels"] is False
+    assert report["selection_used_price_outcomes"] is False

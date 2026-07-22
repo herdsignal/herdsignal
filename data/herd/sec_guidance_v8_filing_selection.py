@@ -62,14 +62,44 @@ def select_filings() -> tuple[pd.DataFrame, dict, dict]:
     return selected, report, protocol
 
 
+def select_completion_filings() -> tuple[pd.DataFrame, dict, dict]:
+    """라벨 확인 전, V7 제외 모집단에서 1차 미수집 accession을 전부 반환한다."""
+    selected, initial_report, protocol = select_filings()
+    initial = set(selected["accession_number"].astype(str))
+    catalog, _ = build_catalog(protocol)
+    v7 = set(pd.read_csv(V7_CATALOG)["accession_number"].astype(str))
+    completion = catalog.loc[
+        ~catalog["accession_number"].astype(str).isin(v7 | initial)
+    ].sort_values(["accepted_at", "ticker"]).reset_index(drop=True)
+    report = {
+        "report_version": "herd-sec-guidance-v8-coverage-completion-v1",
+        "scope": "PARSER_VALIDATION_ONLY",
+        "selection_reason": "EXHAUST_REMAINING_OUTCOME_BLIND_ELIGIBLE_ACCESSIONS",
+        "v7_accessions_excluded": len(v7),
+        "initial_v8_accessions_excluded": len(initial),
+        "selected_filings": len(completion),
+        "selected_tickers": int(completion["ticker"].nunique()),
+        "selection_used_guidance_text": False,
+        "selection_used_parser_output": False,
+        "selection_used_source_review_labels": False,
+        "selection_used_price_outcomes": False,
+        "initial_selection_report": initial_report,
+        "operational_action_ratio": 0.0,
+    }
+    return completion, report, protocol
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--catalog", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--collect-snapshot-id")
+    parser.add_argument("--complete-coverage", action="store_true")
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
     args = parser.parse_args()
-    catalog, report, protocol = select_filings()
+    catalog, report, protocol = (
+        select_completion_filings() if args.complete_coverage else select_filings()
+    )
     catalog.to_csv(args.catalog, index=False, lineterminator="\n")
     report["base_protocol_sha256"] = hashlib.sha256(BASE.read_bytes()).hexdigest()
     report["v7_catalog_sha256"] = hashlib.sha256(V7_CATALOG.read_bytes()).hexdigest()

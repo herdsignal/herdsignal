@@ -1,0 +1,43 @@
+{
+  "report_version": "herd-sec-guidance-v8-coverage-completion-v1",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "selection_reason": "EXHAUST_REMAINING_OUTCOME_BLIND_ELIGIBLE_ACCESSIONS",
+  "v7_accessions_excluded": 7171,
+  "initial_v8_accessions_excluded": 4347,
+  "selected_filings": 1653,
+  "selected_tickers": 53,
+  "selection_used_guidance_text": false,
+  "selection_used_parser_output": false,
+  "selection_used_source_review_labels": false,
+  "selection_used_price_outcomes": false,
+  "initial_selection_report": {
+    "report_version": "herd-sec-guidance-v8-filing-selection-v1",
+    "scope": "PARSER_VALIDATION_ONLY",
+    "catalog_filings": 13171,
+    "v7_accessions_excluded": 7171,
+    "remaining_filings": 6000,
+    "selected_filings": 4347,
+    "selected_tickers": 198,
+    "maximum_filings_per_ticker": 36,
+    "selection_used_guidance_text": false,
+    "selection_used_parser_output": false,
+    "selection_used_price_outcomes": false,
+    "base_catalog_report": {
+      "report_version": "herd-sec-8k-guidance-candidate-catalog-v1",
+      "universe_tickers": 201,
+      "tickers_with_submissions": 201,
+      "missing_submissions": [],
+      "eligible_filings": 13171,
+      "tickers_with_eligible_filings": 201,
+      "first_accepted_at": "2016-07-18T11:58:54.000Z",
+      "last_accepted_at": "2026-07-17T10:30:36.000Z",
+      "guidance_direction_classified": 0,
+      "operational_action_ratio": 0.0
+    },
+    "operational_action_ratio": 0.0
+  },
+  "operational_action_ratio": 0.0,
+  "base_protocol_sha256": "c0f99b16d529ef3750e3c8e1d97425909236e6b2cf6bb3ecd6450965b7ca33a1",
+  "v7_catalog_sha256": "3f2219c20efc749a19d6dcc55fabc701c109805f071133d3f40f0662e203d986",
+  "catalog_sha256": "ef3d09f150ffdc587e32c62d2085121559cb0b7c2c9eac6e214e9267cef07897"
+}
