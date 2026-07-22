@@ -118,7 +118,7 @@ Rush의 익절에는 Exhausted 또는 Breaking 확인이 필요하다.
 - HERD v4: 기존 운영 상태 점수이자 비교 기준
 - HERD v6.1 Action Layer: 채택되지 않은 레거시 연구 기준
 - 가격·추세·상대강도·위험·기업 상태 가설: 독립 OOS 채택 0개
-- SEC 8-K 가이던스: PIT corpus와 구조 파서 V2 구축, 신규 원문 검수 대기
+- SEC 8-K 가이던스: 구조 파서 V7 독립 원문 게이트 탈락, 수정쌍 생성 차단
 - 검증된 수정쌍·방향 가설·차세대 후보: 0개
 - Blind holdout: 미배정·미개방
 - 차세대 HERD: `NO_ADOPTABLE_CANDIDATE`

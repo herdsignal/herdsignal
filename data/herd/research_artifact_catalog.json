@@ -11,16 +11,19 @@
     "data/herd/public_research_contract.json",
     "data/herd/research_input_manifest_v2.json",
     "data/herd/sec_8k_guidance_corpus_v1.json",
-    "data/herd/sec_guidance_structure_parser_v2.json",
-    "data/reports/sec_guidance_structure_v2.json",
-    "data/reports/sec_guidance_structure_v2_review.csv",
+    "data/herd/sec_guidance_v7_independent_validation.json",
+    "data/herd/sec_guidance_structure_parser_v7.json",
+    "data/herd/sec_guidance_structure_v7_review.json",
+    "data/reports/sec_guidance_structure_v7.json",
+    "data/reports/sec_guidance_structure_v7_reviewed.csv",
+    "data/reports/sec_guidance_structure_v7_source_review.json",
     "docs/HERD_RESEARCH_STATUS.md"
   ],
   "families": [
     {
       "status": "ACTIVE",
-      "patterns": ["sec_guidance_structure_parser_v2*", "research_input_manifest_v2*", "public_research_contract*"],
-      "note": "새 80건 독립 원문 검수와 공개 연구 경계"
+      "patterns": ["sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "research_input_manifest_v2*", "public_research_contract*"],
+      "note": "V7 독립 원문 게이트 탈락과 공개 연구 경계"
     },
     {
       "status": "DATA_PIPELINE",
