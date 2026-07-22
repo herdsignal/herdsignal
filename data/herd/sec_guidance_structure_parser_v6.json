@@ -1,0 +1,38 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_STRUCTURE_PARSER_V6",
+  "status": "LOCKED_BEFORE_V6_OUTPUT",
+  "objective": "Correct only the ten V5 source-review failures by binding column role, forecast period, and reported basis to each range.",
+  "v5_candidate_ledger": "data/reports/sec_guidance_structure_v5_candidates.csv",
+  "development_reviews": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv",
+    "data/reports/sec_guidance_structure_v5_reviewed.csv"
+  ],
+  "source_corpora": [
+    "data/reference/sec/sec-8k-guidance-expansion-v3-60-20260722",
+    "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721",
+    "data/reference/sec/sec-8k-guidance-v4-extra-30-20260722",
+    "data/reference/sec/sec-8k-guidance-v5-extra-23-20260722",
+    "data/reference/sec/sec-8k-guidance-v5-broad-60-20260722"
+  ],
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "grammar_changes": [
+    "CURRENT_VERSUS_PRIOR_TABLE_COLUMN_BINDING",
+    "REPORTING_COMPARISON_VERSUS_FORECAST_PERIOD_BINDING",
+    "REPORTED_BASIS_RANGE_BINDING"
+  ],
+  "forbidden": [
+    "CHANGE_NUMERIC_THRESHOLDS",
+    "ADD_NEW_METRICS_OR_ALIASES",
+    "REUSE_V1_TO_V5_REVIEW_ACCESSIONS_IN_V6_PRECISION_SAMPLE",
+    "USE_PRICE_OUTCOMES",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}
