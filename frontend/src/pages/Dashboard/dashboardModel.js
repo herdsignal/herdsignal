@@ -2,6 +2,7 @@ import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
 import { actionBasisLabel, actionIntensityLabel } from '../../utils/actionIntensity'
 import { signalStyle as sharedSignalStyle } from '../../utils/signalStyle'
+import { operationalSignal } from '../../utils/portfolioTools'
 
 export const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
   .replace(/^https?:\/\//, '')
@@ -251,13 +252,14 @@ export function positionGap(row) {
 
 export function buildPositionAction(herd, row) {
   const gap = positionGap(row)
-  const signal = herd?.signal ?? 'HOLD'
+  const signal = operationalSignal(herd)
+  const operationalHerd = { ...herd, signal }
   const isBuy = signal === 'BUY' || signal === 'ADD'
   const isSell = signal === 'SELL' || signal === 'REDUCE'
   const base = {
-    code: formatActionCode(herd),
-    text: formatActionText(herd),
-    basis: formatActionBasis(herd),
+    code: formatActionCode(operationalHerd),
+    text: formatActionText(operationalHerd),
+    basis: formatActionBasis(operationalHerd),
     muted: false,
   }
 

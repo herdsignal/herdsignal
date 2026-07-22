@@ -65,9 +65,9 @@ export function badgeColors(stage) {
 export function getTimingSignal(score) {
   if (score >= 75) return '군중 밀집 상태입니다 · 익절 근거는 미채택입니다'
   if (score >= 60) return '군중 쏠림 상태입니다 · 비중 행동은 검증 중입니다'
-  if (score >= 40) return '현재 비중을 유지하세요'
-  if (score >= 15) return '분할 매수를 시작할 수 있는 구간입니다'
-  return '적극적 추가매수 구간입니다'
+  if (score >= 40) return '군중 균형 상태입니다'
+  if (score >= 15) return '군중 분산 상태입니다 · 매수 근거는 미채택입니다'
+  return '군중 이탈 상태입니다 · 매수 근거는 미채택입니다'
 }
 
 /** 지표 값 → 바 너비 % (0~100, min~max 범위 정규화) */

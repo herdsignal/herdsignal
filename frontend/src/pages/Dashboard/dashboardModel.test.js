@@ -5,6 +5,7 @@ import {
   CACHE_KEY_REALTIME,
   CACHE_KEY_TIME,
   DASHBOARD_CACHE_TTL_MS,
+  buildPositionAction,
   clearPortfolioCaches,
   isDashboardCacheFresh,
   userCacheKey,
@@ -47,5 +48,17 @@ describe('dashboard cache policy', () => {
 
     expect(localStorage.getItem(userCacheKey(CACHE_KEY_REALTIME, 'user-1'))).toBeNull()
     expect(localStorage.getItem(userCacheKey(CACHE_KEY_REALTIME, 'user-2'))).toBe('{"owner":2}')
+  })
+})
+
+describe('dashboard operational action boundary', () => {
+  it('does not translate an unapproved research signal into a trade action', () => {
+    const action = buildPositionAction(
+      { signal: 'BUY', actionRatio: 0, actionScore: 90 },
+      { currentWeight: 5, targetWeight: 15 },
+    )
+
+    expect(action.code).toBe('HOLD')
+    expect(action.text).not.toContain('매수')
   })
 })

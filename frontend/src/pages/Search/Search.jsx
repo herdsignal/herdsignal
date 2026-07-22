@@ -23,6 +23,7 @@ import {
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { qualityReasonText, shouldShowQuality } from '../../utils/dataQuality'
+import { normalizeStage, stageBadgeStyle, stageColor } from '../../utils/herdStage'
 import { useAuth } from '../../auth/AuthContext'
 import { clearPortfolioCaches } from '../Dashboard/dashboardModel'
 import styles from './Search.module.css'
@@ -80,32 +81,9 @@ function candidateMatches(item, normalized) {
   )
 }
 
-/** herdStage 정규화: "Herd Scatter" → "scatter" */
-function normalizeStage(stage) {
-  const s = (stage || '').toLowerCase()
-  return s.startsWith('herd ') ? s.slice(5) : s
-}
-
-/** 단계 → CSS 변수 색상 */
-function stageColor(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return 'var(--rush)'
-    case 'drift':   return 'var(--drift)'
-    case 'scatter': return 'var(--scatter)'
-    case 'flee':    return 'var(--flee)'
-    default:        return 'var(--calm)'
-  }
-}
-
-/** stage → 배지 인라인 스타일 */
-function badgeColors(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return { background: 'rgba(239,68,68,0.12)',   color: 'var(--rush)' }
-    case 'drift':   return { background: 'rgba(249,115,22,0.12)',  color: 'var(--drift)' }
-    case 'scatter': return { background: 'rgba(96,165,250,0.12)',  color: 'var(--scatter)' }
-    case 'flee':    return { background: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
-    default:        return { background: 'rgba(113,113,122,0.12)', color: 'var(--calm)' }
-  }
+const badgeColors = (stage) => {
+  const { bg, color } = stageBadgeStyle(stage)
+  return { background: bg, color }
 }
 
 /** stage 표시 문자열: "Herd Scatter" 형태 보장 */
@@ -158,15 +136,15 @@ function inclusionDecision(data) {
     case 'flee':
     case 'scatter':
       return {
-        label: '매수 대기열',
-        desc: '관심종목 우선 편입',
+        label: '이탈 관찰',
+        desc: '기업 상태와 추세 확인 필요',
         tone: 'Ready',
       }
     case 'drift':
     case 'rush':
       return {
-        label: '쏠림 관찰',
-        desc: '신규 매수보다 관찰 우선',
+        label: '밀집 관찰',
+        desc: '상태 변화 확인 필요',
         tone: 'Limited',
       }
     default:

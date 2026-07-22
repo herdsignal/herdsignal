@@ -23,7 +23,13 @@ import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
 import { signalDesc as decisionSignalDesc } from '../../utils/decision'
 import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
-import { scoreColor, stageLabelFromScore } from '../../utils/herdStage'
+import {
+  scoreColor,
+  stageBadgeStyle,
+  stageColor,
+  stageDescription,
+  stageLabelFromScore,
+} from '../../utils/herdStage'
 import { formatSignalAgeLabel, formatSignalDuration } from '../../utils/signalDuration'
 import { actionBasisLabel, actionIntensityLabel } from '../../utils/actionIntensity'
 import { opportunityRows } from '../../utils/portfolioTools'
@@ -45,44 +51,8 @@ const REFRESH_SCOPE_TITLE = '관심종목 HERD DB 조회와 SPY 최신 점수만
 
 /* ── 유틸 (Dashboard와 동일) ──────────────── */
 
-/** herdStage 소문자 정규화: "Herd Scatter" → "scatter" */
-function normalizeStage(stage) {
-  const s = (stage || '').toLowerCase()
-  return s.startsWith('herd ') ? s.slice(5) : s
-}
-
-/** stage → CSS 변수 색상 */
-function stageColor(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return 'var(--rush)'
-    case 'drift':   return 'var(--drift)'
-    case 'scatter': return 'var(--scatter)'
-    case 'flee':    return 'var(--flee)'
-    default:        return 'var(--calm)'
-  }
-}
-
-/** stage → 한국어 설명 (배너 하단) */
-function stageDesc(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return '군중 밀집 · 익절 근거 미채택'
-    case 'drift':   return '쏠림 진행 · 행동 검증 중'
-    case 'scatter': return '군중 흩어짐 · 분할 매수'
-    case 'flee':    return '군중 이탈 · 적극 매수'
-    default:        return '군중 균형 · 보유 유지'
-  }
-}
-
-/** stage → 티커 배지 배경/텍스트 색 */
-function badgeStyle(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return { bg: 'rgba(239,68,68,0.12)',   color: 'var(--rush)' }
-    case 'drift':   return { bg: 'rgba(249,115,22,0.12)',  color: 'var(--drift)' }
-    case 'scatter': return { bg: 'rgba(96,165,250,0.12)',  color: 'var(--scatter)' }
-    case 'flee':    return { bg: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
-    default:        return { bg: 'rgba(163,170,184,0.13)', color: 'var(--calm)' }
-  }
-}
+const stageDesc = stageDescription
+const badgeStyle = stageBadgeStyle
 
 function formatActionScore(value) {
   if (value == null) return null

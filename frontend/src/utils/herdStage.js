@@ -46,3 +46,23 @@ export function stageColor(stage) {
 export function scoreColor(score) {
   return stageColor(stageFromScore(score))
 }
+
+export function stageDescription(stage) {
+  switch (normalizeStage(stage)) {
+    case 'rush': return '군중 밀집'
+    case 'drift': return '밀집 진행'
+    case 'scatter': return '군중 분산'
+    case 'flee': return '군중 이탈'
+    default: return '군중 균형'
+  }
+}
+
+export function stageBadgeStyle(stage) {
+  switch (normalizeStage(stage)) {
+    case 'rush': return { bg: 'rgba(239,68,68,0.12)', color: 'var(--rush)' }
+    case 'drift': return { bg: 'rgba(249,115,22,0.12)', color: 'var(--drift)' }
+    case 'scatter': return { bg: 'rgba(96,165,250,0.12)', color: 'var(--scatter)' }
+    case 'flee': return { bg: 'rgba(59,130,246,0.12)', color: 'var(--flee)' }
+    default: return { bg: 'rgba(163,170,184,0.13)', color: 'var(--calm)' }
+  }
+}

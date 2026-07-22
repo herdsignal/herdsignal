@@ -34,6 +34,14 @@ function equalTargetWeight(count) {
   return count > 0 ? 100 / count : 0
 }
 
+/**
+ * 연구용 signal은 화면에 전달되더라도 운영 행동으로 승격하지 않는다.
+ * actionRatio가 0보다 큰 경우만 사용자가 실행할 수 있는 신호로 본다.
+ */
+export function operationalSignal(item) {
+  return num(item?.actionRatio) > 0 ? (item?.signal ?? 'HOLD') : 'HOLD'
+}
+
 export function portfolioRows(portfolio, summary, herdMap, targetWeights) {
   const totalValue = num(summary?.total_value)
   const fallbackTarget = equalTargetWeight(portfolio.length)
@@ -47,7 +55,8 @@ export function portfolioRows(portfolio, summary, herdMap, targetWeights) {
     const targetWeight = num(targetWeights[item.ticker], fallbackTarget)
     const drift = currentWeight - targetWeight
     const herd = herdMap[item.ticker]
-    const signal = herd?.signal ?? 'HOLD'
+    const stateSignal = herd?.signal ?? 'HOLD'
+    const signal = operationalSignal(herd)
 
     let action = '유지'
     if (drift > 5 && (signal === 'SELL' || signal === 'REDUCE')) action = '익절 우선'
@@ -64,6 +73,7 @@ export function portfolioRows(portfolio, summary, herdMap, targetWeights) {
       drift,
       herd,
       signal,
+      stateSignal,
       action,
       marketValue,
       returnPct: num(price?.return_pct, null),
@@ -168,7 +178,8 @@ export function opportunityRows(watchlist) {
   return [...watchlist]
     .map((item, index) => {
       const score = num(item.herdV4 ?? item.herdScore, 50)
-      const signal = item.signal ?? 'HOLD'
+      const stateSignal = item.signal ?? 'HOLD'
+      const signal = operationalSignal(item)
       const actionScore = num(item.actionScore)
       const signalDays = num(item.signalDurationDays)
       const qualityScore = num(item.qualityScore, 80)
@@ -193,6 +204,8 @@ export function opportunityRows(watchlist) {
           : 'AVOID'
       return {
         ...item,
+        stateSignal,
+        signal,
         opportunityScore: adjustedScore,
         queueState,
         queueLabel: queueState === 'READY'
@@ -209,17 +222,13 @@ export function opportunityRows(watchlist) {
             : qualityScore < 65
               ? '데이터 품질 확인 필요'
               : signal === 'BUY' || signal === 'ADD'
-                ? '분할매수 후보'
-                : '조건 대기',
+                ? '운영 행동 확인'
+                : '연구 상태 관찰',
         opportunityRank: signal === 'BUY' ? 3 : signal === 'ADD' ? 2 : signal === 'HOLD' ? 1 : 0,
         originalIndex: index,
-        reason: signal === 'BUY'
-          ? 'Flee 적극매수 후보'
-          : signal === 'ADD'
-            ? 'Scatter 분할매수 후보'
-            : signal === 'HOLD'
-              ? 'Calm 관찰'
-              : '익절 구간 제외',
+        reason: signal !== 'HOLD'
+          ? '승격된 운영 행동'
+          : `${stateSignal} 연구 상태`,
       }
     })
     .sort((a, b) => {

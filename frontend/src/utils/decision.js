@@ -4,7 +4,8 @@
  * 운영 HERD 점수는 변경하지 않는다.
  * 화면에서만 보유 여부와 포트폴리오 비중을 함께 해석한다.
  */
-import { normalizeStage } from './herdStage'
+import { normalizeStage, stageDescription } from './herdStage'
+import { operationalSignal } from './portfolioTools'
 
 export function signalDesc(signal) {
   switch (signal) {
@@ -29,13 +30,7 @@ export function signalLongDesc(signal) {
 }
 
 export function stageDesc(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return '군중 밀집 · 익절 근거 미채택'
-    case 'drift':   return '쏠림 진행 · 행동 검증 중'
-    case 'scatter': return '군중 흩어짐 · 분할 매수'
-    case 'flee':    return '군중 이탈 · 적극 매수'
-    default:        return '군중 균형 · 보유 유지'
-  }
+  return stageDescription(normalizeStage(stage))
 }
 
 function toNumber(value) {
@@ -63,7 +58,7 @@ function portfolioWeight(holding, summary, summaryStock) {
 
 export function buildDecision({ herdData, holding, summary }) {
   const score = toNumber(herdData?.herdV4 ?? herdData?.herdScore) ?? 50
-  const signal = herdData?.signal ?? 'HOLD'
+  const signal = operationalSignal(herdData)
   const stage = herdData?.herdStage ?? 'Herd Calm'
   const ticker = herdData?.ticker ?? holding?.ticker ?? ''
   const summaryStock = summary?.stocks?.find?.((s) => s.ticker === ticker)
