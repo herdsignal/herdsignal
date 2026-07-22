@@ -1,0 +1,31 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_V8_INDEPENDENT_VALIDATION_V1",
+  "status": "LOCKED_BEFORE_V8_HOLDOUT_SELECTION",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "candidate_ledgers": [
+    "data/reports/sec_guidance_structure_v6_expanded_candidates.csv",
+    "data/reports/sec_guidance_structure_v7_candidates.csv"
+  ],
+  "development_reviews": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv",
+    "data/reports/sec_guidance_structure_v5_reviewed.csv",
+    "data/reports/sec_guidance_structure_v6_reviewed.csv",
+    "data/reports/sec_guidance_structure_v7_reviewed.csv"
+  ],
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "forbidden": [
+    "REUSE_V1_TO_V7_REVIEW_ACCESSION",
+    "SELECT_BY_SOURCE_CORRECTNESS",
+    "USE_PRICE_OUTCOMES",
+    "LOWER_REVIEW_GATE",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}
