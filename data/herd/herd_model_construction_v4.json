@@ -1,0 +1,26 @@
+{
+  "protocol_version": "HERD_MODEL_CONSTRUCTION_V4",
+  "status": "LOCKED_EVIDENCE_ONLY_COMPOSITION",
+  "required_reports": {
+    "price_direction": "data/reports/herd_model_construction_v3.json",
+    "guidance_direction": "data/reports/sec_guidance_direction_oos_v1.json",
+    "business_veto": "data/reports/business_veto_admission_v2.json",
+    "profit_take_registry": "data/herd/evidence_admission_registry_v9.json"
+  },
+  "candidate_templates": {
+    "B0": "HERD_V4_STATE_BASELINE_NO_ACTION",
+    "B1": "B0_PLUS_ADMITTED_PRICE_DIRECTION",
+    "B2": "B0_PLUS_ADMITTED_GUIDANCE_DIRECTION",
+    "B3": "B0_PLUS_ADMITTED_BUSINESS_VETO",
+    "B4": "BEST_DIRECTION_CANDIDATE_PLUS_ADMITTED_RISK_CAP",
+    "B5": "ALL_NONREDUNDANT_ADMITTED_EVIDENCE"
+  },
+  "minimum_direction_evidence": 1,
+  "forbidden": [
+    "INSTANTIATE_DIRECTION_CANDIDATE_WITH_ZERO_DIRECTION_EVIDENCE",
+    "COMBINE_REJECTED_FEATURES",
+    "USE_VETO_OR_RISK_CAP_AS_DIRECTION",
+    "ASSIGN_WEIGHTS_BEFORE_ABLATION",
+    "DELETE_OPERATIONAL_V4_OR_OPEN_BLIND_HOLDOUT"
+  ]
+}

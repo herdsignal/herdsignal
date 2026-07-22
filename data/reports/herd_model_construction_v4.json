@@ -1,0 +1,22 @@
+{
+  "report_version": "HERD_MODEL_CONSTRUCTION_V4",
+  "status": "BLOCKED_NO_ADMITTED_DIRECTION_EVIDENCE",
+  "admitted_direction_evidence": [],
+  "admitted_business_veto": false,
+  "business_veto_used_as_direction": false,
+  "instantiated_candidates": [],
+  "candidate_count": 0,
+  "weights": {},
+  "weights_allowed": false,
+  "existing_v4_preserved": true,
+  "model_promotion_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "input_sha256": {
+    "price_direction": "135f9b73d8e851d01d1e47c2948f78ef67a74cc19d6b609cde2aaec354212b20",
+    "guidance_direction": "d81357e3d8ffde94db860b90962e2e921562faef7b100674f99a17513b2ec1cc",
+    "business_veto": "de4facd71483f00298134e3e309579938ee68acbc5d2227cccc5e554dd393d07",
+    "profit_take_registry": "94ff03db9c10bc42d5513517872abe5a0c39da3eb53e7e09a997fae136317d7b"
+  },
+  "protocol_sha256": "da0bb427fa14f04d18cbe87929a2000e53a8afffb83cee5e03856bd3de62f634"
+}
