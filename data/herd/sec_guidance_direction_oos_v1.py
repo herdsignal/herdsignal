@@ -16,7 +16,18 @@ def evaluate(protocol: dict) -> dict:
     pair_report = json.loads(pair_report_path.read_text(encoding="utf-8"))
     ready = bool(pair_report["pair_coverage_gate_passed"])
     if ready:
-        raise NotImplementedError("price OOS requires a source-qualified pair ledger and a separately locked price manifest")
+        return {
+            "report_version": "herd-sec-guidance-direction-oos-v1",
+            "pair_coverage_gate_passed": True,
+            "price_manifest_opened": False,
+            "evaluated_pairs": 0,
+            "evaluated_folds": 0,
+            "admitted_direction_evidence": 0,
+            "decision": "LOCK_PRICE_MANIFEST_BEFORE_OOS",
+            "ready_for_herd_combination": False,
+            "operational_action_ratio": 0.0,
+            "pair_report_sha256": hashlib.sha256(pair_report_path.read_bytes()).hexdigest(),
+        }
     return {
         "report_version": "herd-sec-guidance-direction-oos-v1",
         "pair_coverage_gate_passed": False,

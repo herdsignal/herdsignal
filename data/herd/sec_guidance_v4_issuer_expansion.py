@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import tempfile
 from pathlib import Path
 
 import pandas as pd
@@ -32,11 +33,15 @@ def select_issuers(protocol: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     excluded_tickers.update(pd.read_csv(protocol["frozen_pre_expansion_review_tickers"])["ticker"].astype(str))
     universe = universe.loc[~universe["ticker"].isin(excluded_tickers)].copy()
 
-    temporary = Path("data/reports/sec_guidance_v4_issuer_candidates.csv")
-    universe.to_csv(temporary, index=False, lineterminator="\n")
     runtime = dict(protocol)
-    runtime["universe"] = str(temporary)
-    catalog, base_report = build_catalog(runtime)
+    with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as handle:
+        temporary = Path(handle.name)
+    try:
+        universe.to_csv(temporary, index=False, lineterminator="\n")
+        runtime["universe"] = str(temporary)
+        catalog, base_report = build_catalog(runtime)
+    finally:
+        temporary.unlink(missing_ok=True)
     counts = catalog.groupby("ticker").size().rename("eligible_filings").reset_index()
     counts = counts.loc[counts["eligible_filings"] >= protocol["minimum_eligible_filings_per_ticker"]]
     selected_counts = counts.sort_values(["eligible_filings", "ticker"], ascending=[False, True]).head(

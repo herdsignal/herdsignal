@@ -1,0 +1,26 @@
+{
+  "protocol_version": "HERD_MODEL_RELEASE_READINESS_V1",
+  "status": "LOCKED_FINAL_PRE_HOLDOUT_GATE",
+  "required_reports": {
+    "model": "data/reports/herd_model_construction_v4.json",
+    "cycle": "data/reports/completed_cycle_gate_v5.json",
+    "survivorship": "data/reports/survivorship_readiness_v1.json",
+    "legacy_generalization": "data/reports/candidate_generalization_v1.json",
+    "blind_holdout": "data/reports/blind_holdout_decision_vnext.json"
+  },
+  "required_checks": [
+    "CANDIDATE_EXISTS",
+    "DIRECTION_EVIDENCE_ADMITTED",
+    "COMPLETED_CYCLE_PASSED",
+    "BASE_AND_STRESS_COSTS_PASSED",
+    "WALK_FORWARD_AND_ERA_VALIDATION_PASSED",
+    "SURVIVORSHIP_SAFE",
+    "BLIND_HOLDOUT_STILL_SEALED"
+  ],
+  "forbidden": [
+    "REUSE_LEGACY_GENERALIZATION_AS_NEW_CANDIDATE_EVIDENCE",
+    "OPEN_BLIND_HOLDOUT_WITH_FAILED_PREREQUISITE",
+    "PROMOTE_RESEARCH_ONLY_OR_SURVIVORSHIP_BIASED_RESULT",
+    "AUTHORIZE_OPERATIONAL_ACTION_WITHOUT_COMPLETED_CYCLE"
+  ]
+}

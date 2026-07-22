@@ -1077,3 +1077,14 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
   요구하며 확인 다음 거래일 시가에 체결한다.
 - 현재 거래와 Buy & Hold·현금 유지·정기매수 비교, 비용 스트레스는 실행하지
   않았다. 판정은 `BLOCKED_INCOMPLETE_EVIDENCE`다.
+
+### Part 7 — 최종 일반화·출시 준비 판정
+
+- 새 후보 존재, 방향 증거, 완결 사이클, 기본·스트레스 비용, Walk-forward·
+  시대 검증, survivorship-safe, Blind holdout 봉인을 하나의 게이트로 묶었다.
+- 새 후보가 없으므로 과거 B0~B3 일반화 결과를 새 후보 증거로 재사용하지
+  않았다. candidate·direction·cycle·cost·generalization·survivorship 여섯
+  조건이 실패했고 Blind holdout은 접근 0회로 봉인 상태를 유지했다.
+- 최종 판정은 `RESEARCH_BLOCKED_NO_RELEASABLE_MODEL`이다. 운영 v4 상태
+  점수는 유지하지만 차세대 행동 모델, 실제 5% 행동, 생산 신호는 승인하지
+  않는다.

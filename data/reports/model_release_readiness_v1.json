@@ -1,0 +1,34 @@
+{
+  "report_version": "HERD_MODEL_RELEASE_READINESS_V1",
+  "status": "RESEARCH_BLOCKED_NO_RELEASABLE_MODEL",
+  "checks": {
+    "candidate_exists": false,
+    "direction_evidence_admitted": false,
+    "completed_cycle_passed": false,
+    "base_and_stress_costs_passed": false,
+    "walk_forward_and_era_validation_passed": false,
+    "survivorship_safe": false,
+    "blind_holdout_still_sealed": true
+  },
+  "failed_checks": [
+    "candidate_exists",
+    "direction_evidence_admitted",
+    "completed_cycle_passed",
+    "base_and_stress_costs_passed",
+    "walk_forward_and_era_validation_passed",
+    "survivorship_safe"
+  ],
+  "legacy_generalization_reused_for_new_candidate": false,
+  "blind_holdout_evaluation_count": 0,
+  "blind_holdout_access": false,
+  "production_signal_allowed": false,
+  "operational_action_ratio": 0.0,
+  "input_sha256": {
+    "model": "fdd5f9a2e567fcdc348187ee6d8dcbe051d147a26e49202cc1d9ebb4abc8a200",
+    "cycle": "c31aa598a0e2ffbad71746dab6cf9ab6739bead097862d9f1c55c9a06c783f57",
+    "survivorship": "06c0d864eeff6e209231ff0da9bfac294285d1a6a35dd028d6fb64d6f3678442",
+    "legacy_generalization": "4bb81248c933ba5406f10b9e5b1540485068ef2e125d52aa57af5f6265e9eccd",
+    "blind_holdout": "335ff3bc96ddf1420118ead58507fff2b5de8203fd22c57fd3b575e5b0970e33"
+  },
+  "protocol_sha256": "2fae0e83069051fb596db6accc163c34102db5ba159769e376e60f640c6a49ab"
+}
