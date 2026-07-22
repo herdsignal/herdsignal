@@ -24,7 +24,7 @@ def build(protocol: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     source = pd.concat(
         [pd.read_csv(path, dtype={"cik": str}) for path in protocol["candidate_ledgers"]],
         ignore_index=True,
-    ).drop_duplicates(IDENTITY)
+    ).drop_duplicates(IDENTITY).reset_index(drop=True)
     candidates = pd.DataFrame([
         item for _, row in source.iterrows() if (item := transform_candidate(row)) is not None
     ])
@@ -41,14 +41,23 @@ def build(protocol: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
         ~candidates["accession_number"].astype(str).isin(excluded)
     ].copy() if not candidates.empty else candidates.copy()
     gate = protocol["review_gate"]
-    review = select_stratified_review(holdout, gate["target_rows_per_metric"])
-    if len(review) < gate["minimum_stratified_rows"] and not holdout.empty:
-        selected = set(review.index)
-        for index in holdout.sort_values("review_priority").index:
-            if len(selected) >= min(gate["minimum_stratified_rows"], len(holdout)):
-                break
-            selected.add(index)
-        review = holdout.loc[sorted(selected)].sort_values(["metric", "review_priority"]).copy()
+    stratified = select_stratified_review(holdout, gate["target_rows_per_metric"])
+    ranked = holdout.sort_values("review_priority")
+    coverage_seed = (
+        ranked.groupby("ticker", group_keys=False).head(1)
+        .sort_values("review_priority").head(gate["minimum_distinct_tickers"])
+    )
+    selected = set(stratified.index) | set(coverage_seed.index)
+    target = min(gate["minimum_stratified_rows"], len(holdout))
+    for index in ranked.index:
+        if len(selected) >= target:
+            break
+        selected.add(index)
+    if len(selected) > target:
+        seeds = set(coverage_seed.index)
+        remainder = [index for index in ranked.index if index in selected and index not in seeds]
+        selected = seeds | set(remainder[:max(0, target - len(seeds))])
+    review = holdout.loc[sorted(selected)].sort_values(["metric", "review_priority"]).copy()
     if not review.empty:
         review.insert(0, "review_id", [f"SG9-{number:04d}" for number in range(1, len(review) + 1)])
         review["review_decision"] = "PENDING"
@@ -69,6 +78,7 @@ def build(protocol: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
         "fresh_holdout_tickers": int(holdout["ticker"].nunique()) if not holdout.empty else 0,
         "review_rows": len(review),
         "review_tickers": int(review["ticker"].nunique()) if not review.empty else 0,
+        "coverage_seed_tickers": int(coverage_seed["ticker"].nunique()) if not coverage_seed.empty else 0,
         "review_sample_gate_ready": ready,
         "review_gate_passed": False,
         "ready_for_direction_preregistration": False,

@@ -1,10 +1,11 @@
 {
   "protocol_version": "HERD_SEC_GUIDANCE_V9_INDEPENDENT_VALIDATION_V1",
-  "status": "LOCKED_BEFORE_V9_HOLDOUT_SELECTION",
+  "status": "LOCKED_BEFORE_COMBINED_V9_HOLDOUT_SELECTION",
   "scope": "PARSER_VALIDATION_ONLY",
   "candidate_ledgers": [
     "data/reports/sec_guidance_structure_v7_candidates.csv",
-    "data/reports/sec_guidance_structure_v8_second_wave_candidates.csv"
+    "data/reports/sec_guidance_structure_v8_second_wave_candidates.csv",
+    "data/reports/sec_guidance_structure_v9_historical_candidates.csv"
   ],
   "development_reviews": [
     "data/reports/sec_guidance_block_reviewed_v1.csv",
