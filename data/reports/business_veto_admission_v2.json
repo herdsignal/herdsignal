@@ -1,0 +1,17 @@
+{
+  "report_version": "herd-business-veto-admission-v2",
+  "source_decision": "REJECT_BUSINESS_GUARD_PREDICTIVE_EVIDENCE",
+  "primary_outcomes_passed": 0,
+  "primary_outcomes_required": 2,
+  "summary_rows_audited": 6,
+  "business_veto_evidence_admitted": false,
+  "add_buy_veto_ablation_allowed": false,
+  "sell_authority": false,
+  "herd_weight_authority": false,
+  "new_parser_sample_used_for_oos": false,
+  "decision": "REJECT_BUSINESS_VETO_EVIDENCE",
+  "business_guard_oos_report_sha256": "4cf1786c0c50e59bc85713f324ad4b4456e466ea93df6f73752e1bf6f6113d32",
+  "business_guard_oos_summary_sha256": "0b68ce4179e2f5554aa1ee4a0aa2894241b76d84190796ca0214f8cc6ca1b64a",
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "5f7d0ba144d1994c80e6c299922a63087b73ebb44e5e7364de576a87f360d699"
+}

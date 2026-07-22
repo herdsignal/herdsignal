@@ -1047,3 +1047,14 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
   pair·fold·채택 증거는 모두 0개다. 판정은
   `OOS_BLOCKED_BY_PAIR_COVERAGE`이며 실패한 가이던스를 가격 신호와 섞지
   않는다.
+
+### Part 4 — 추가매수 기업 상태 veto 권한 감사
+
+- 기존 SEC PIT 기업 상태 OOS는 4개 장기 business fold와 접수시각 기준
+  Company Facts를 사용했지만 주요 결과 0/2로 탈락했다. 따라서 추가매수
+  veto ablation 권한을 승인하지 않았다.
+- V5 parser 표본용으로 선택한 현재 구성 기업 120개는 성능 재시험에 사용하지
+  않았다. 이 표본은 생존 기업·parser 문법 커버리지 기준으로 선택됐으므로
+  독립 투자 OOS가 아니다.
+- 기업 상태는 매도 신호나 HERD 가중치를 만들 수 없고, 통과하더라도 추가매수
+  차단 ablation만 허용한다. 현재 판정은 `REJECT_BUSINESS_VETO_EVIDENCE`다.

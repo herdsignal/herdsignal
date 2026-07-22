@@ -1,0 +1,15 @@
+{
+  "protocol_version": "HERD_BUSINESS_VETO_ADMISSION_V2",
+  "status": "LOCKED_EVIDENCE_AUTHORITY_AUDIT",
+  "business_guard_oos_report": "data/reports/business_guard_oos_v1.json",
+  "business_guard_oos_summary": "data/reports/business_guard_oos_summary_v1.csv",
+  "required_primary_outcomes": 2,
+  "allowed_authority_on_pass": "ADD_BUY_VETO_ABLATION_ONLY",
+  "new_parser_validation_companyfacts_scope": "PARSER_VALIDATION_SUPPORT_ONLY_NOT_OOS",
+  "forbidden": [
+    "RETEST_ON_V5_PARSER_SELECTED_CURRENT_CONSTITUENTS",
+    "USE_BUSINESS_GUARD_AS_SELL_SIGNAL",
+    "CHANGE_HERD_SCORE_OR_DIRECTION",
+    "ADMIT_WHEN_PRIMARY_OUTCOMES_FAIL"
+  ]
+}
