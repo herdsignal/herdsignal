@@ -2,7 +2,10 @@
   "protocol_version": "HERD_SEC_GUIDANCE_V8_SECOND_WAVE_VALIDATION_V1",
   "status": "LOCKED_BEFORE_V8_SECOND_WAVE_PARSE",
   "scope": "PARSER_VALIDATION_ONLY",
-  "corpus": "data/reference/sec/sec-8k-guidance-v8-second-wave-200-20260722",
+  "corpora": [
+    "data/reference/sec/sec-8k-guidance-v8-second-wave-200-20260722",
+    "data/reference/sec/sec-8k-guidance-v8-coverage-completion-20260722"
+  ],
   "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
   "development_reviews": [
     "data/reports/sec_guidance_block_reviewed_v1.csv",

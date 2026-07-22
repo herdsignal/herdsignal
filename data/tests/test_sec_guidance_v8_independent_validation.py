@@ -56,3 +56,23 @@ def test_v8_completion_exhausts_remaining_population_without_labels() -> None:
     assert len(initial) + len(completion) == report["initial_selection_report"]["remaining_filings"]
     assert report["selection_used_source_review_labels"] is False
     assert report["selection_used_price_outcomes"] is False
+
+
+def test_v8_second_wave_locked_sample_is_independent_and_complete() -> None:
+    report_path = ROOT / "data/reports/sec_guidance_structure_v8_second_wave.json"
+    review_path = ROOT / "data/reports/sec_guidance_structure_v8_second_wave_review.csv"
+    candidate_path = ROOT / "data/reports/sec_guidance_structure_v8_second_wave_candidates.csv"
+    report = json.loads(report_path.read_text())
+    review = pd.read_csv(review_path)
+    candidates = pd.read_csv(candidate_path)
+    v7 = pd.read_csv(ROOT / "data/reports/sec_guidance_v7_filing_catalog.csv")
+    assert hashlib.sha256(review_path.read_bytes()).hexdigest() == report["review_sha256"]
+    assert hashlib.sha256(candidate_path.read_bytes()).hexdigest() == report["candidate_sha256"]
+    assert len(review) == 80
+    assert review["ticker"].nunique() >= 20
+    assert set(review["review_decision"]) == {"PENDING"}
+    assert set(candidates["accession_number"].astype(str)).isdisjoint(
+        set(v7["accession_number"].astype(str))
+    )
+    assert report["review_sample_gate_ready"] is True
+    assert report["review_gate_passed"] is False

@@ -33,17 +33,17 @@ def _review_accessions(paths: list[str]) -> set[str]:
 
 
 def build(protocol: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
-    corpus = Path(protocol["corpus"])
+    corpora = [Path(path) for path in protocol["corpora"]]
     v4_protocol = {
         "development_reviews": protocol["development_reviews"],
         "review_gate": protocol["review_gate"],
     }
     v4, _, v4_report = build_v4(
-        [corpus], load_aliases(Path(protocol["alias_registry"])), v4_protocol,
+        corpora, load_aliases(Path(protocol["alias_registry"])), v4_protocol,
     )
     v5 = _transform(v4, transform_v5)
     base_v6 = json.loads(Path("data/herd/sec_guidance_structure_parser_v6.json").read_text())
-    locator = SourceLocator([*base_v6["source_corpora"], str(corpus)])
+    locator = SourceLocator([*base_v6["source_corpora"], *map(str, corpora)])
     v6 = _transform(v5, transform_v6, locator)
     v7 = _transform(v6, transform_v7)
     candidates = _transform(v7, transform_v8)
@@ -77,7 +77,10 @@ def build(protocol: dict) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     ) if not review.empty else False
     report = {
         "report_version": "herd-sec-guidance-v8-second-wave-validation-v1",
-        "input_documents": int(pd.read_csv(corpus / "index.csv")["source_sha256"].nunique()),
+        "input_documents": sum(
+            int(pd.read_csv(corpus / "index.csv")["source_sha256"].nunique())
+            for corpus in corpora
+        ),
         "v4_candidates": v4_report["v4_candidates"],
         "v5_candidates": len(v5),
         "v6_candidates": len(v6),
