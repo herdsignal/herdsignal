@@ -1,0 +1,36 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_STRUCTURE_PARSER_V4",
+  "status": "LOCKED_BEFORE_V4_OUTPUT",
+  "objective": "Bind period, metric, accounting basis, unit, numeric role, sign and subtype as one range object while preserving table hierarchy.",
+  "input_corpora": [
+    "data/reference/sec/sec-8k-guidance-expansion-v3-60-20260722",
+    "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721"
+  ],
+  "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
+  "development_reviews": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv"
+  ],
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "binding_contract": {
+    "required_fields": ["fiscal_period", "metric", "accounting_basis", "unit", "numeric_role", "sign", "metric_subtype"],
+    "table_context": ["table_index", "row_index", "column_index", "row_header", "header_path"],
+    "reject_ambiguous_period": true,
+    "reject_ambiguous_metric": true,
+    "reject_ambiguous_current_column": true,
+    "reject_historical_recap": true
+  },
+  "forbidden": [
+    "USE_V1_V2_OR_V3_REVIEWED_ACCESSION_IN_V4_PRECISION_SAMPLE",
+    "FLATTEN_TABLE_BEFORE_BINDING",
+    "PAIR_FIELDS_ACROSS_UNRELATED_ROWS_OR_COLUMNS",
+    "USE_PRICE_OUTCOMES_DURING_PARSER_VALIDATION",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}

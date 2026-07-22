@@ -1,0 +1,12 @@
+{
+  "report_version": "herd-sec-guidance-structure-v4-regression-audit",
+  "v3_review_rows": 80,
+  "v3_valid_rows": 54,
+  "v3_invalid_rows": 26,
+  "v4_exact_valid_bindings_retained": 4,
+  "v4_exact_invalid_bindings_retained": 0,
+  "invalid_review_ids_retained": [],
+  "development_regression_passed": true,
+  "independent_precision_inferred": false,
+  "price_outcomes_observed": false
+}
