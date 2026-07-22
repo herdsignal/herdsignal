@@ -1,0 +1,89 @@
+{
+  "report_version": "herd-sec-guidance-research-gate-v2",
+  "decision": "PARSER_V3_REQUIRED",
+  "steps": [
+    {
+      "step": 1,
+      "name": "INDEPENDENT_SOURCE_REVIEW",
+      "status": "COMPLETE",
+      "reason": "80 independent rows adjudicated"
+    },
+    {
+      "step": 2,
+      "name": "SOURCE_PRECISION_GATE",
+      "status": "FAILED",
+      "reason": "Wilson lower 0.5029 vs required 0.9000"
+    },
+    {
+      "step": 3,
+      "name": "SOURCE_QUALIFIED_REVISION_PAIRS",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 4,
+      "name": "PAIR_COVERAGE_GATE",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 5,
+      "name": "DIRECTION_HYPOTHESIS_PREREGISTRATION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 6,
+      "name": "INDEPENDENT_OOS_EVALUATION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 7,
+      "name": "EVIDENCE_ADMISSION",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    },
+    {
+      "step": 8,
+      "name": "FIVE_PERCENT_COMPLETED_CYCLE",
+      "status": "BLOCKED",
+      "reason": "SOURCE_PRECISION_GATE_FAILED"
+    }
+  ],
+  "failure_taxonomy": {
+    "ACTUAL_AND_GUIDANCE_BOUNDARY_MIXED": 2,
+    "WRONG_METRIC_DDA_RANGE": 1,
+    "WRONG_METRIC_OPERATING_COST_RANGE": 1,
+    "UNRELATED_VALUES_MERGED_INTO_RANGE": 1,
+    "PRIOR_GUIDANCE_REPORTED_AS_CURRENT": 1,
+    "GAAP_EARNINGS_RANGE_MAPPED_TO_CORE_FFO": 2,
+    "ACCOUNTING_BASIS_NOT_RANGE_LOCAL": 3,
+    "HISTORICAL_RESTATEMENT_NOT_GUIDANCE": 1,
+    "ADJUSTED_RANGE_MAPPED_TO_GAAP": 1,
+    "UNRELATED_VALUE_MERGED_INTO_RANGE": 1,
+    "FISCAL_PERIOD_FROM_DIFFERENT_RANGE": 1,
+    "FISCAL_PERIOD_FROM_REPORTING_CONTEXT": 1,
+    "GAAP_RANGE_MAPPED_TO_NON_GAAP": 1,
+    "SINGLE_VALUE_AND_UNRELATED_VALUE_MERGED": 1,
+    "COMPARISON_PERIOD_MAPPED_AS_GUIDANCE_PERIOD": 10,
+    "BOUND_ORDER_AND_SCALE_CORRUPTED": 1,
+    "ACCOUNTING_BASIS_NOT_APPLICABLE_TO_REVENUE": 1,
+    "SEGMENT_REVENUE_MISSING_SUBTYPE": 1
+  },
+  "source_precision": 0.6125,
+  "wilson_95_lower_bound": 0.5029365721075572,
+  "source_qualified_revision_pairs": 0,
+  "direction_hypotheses_preregistered": 0,
+  "price_outcomes_observed": false,
+  "evidence_admitted": false,
+  "completed_cycle_executed": false,
+  "operational_action_ratio": 0.0,
+  "next_parser_requirements": [
+    "DISTINGUISH_COMPARISON_PERIOD_FROM_GUIDANCE_PERIOD",
+    "BIND_METRIC_AND_ACCOUNTING_BASIS_TO_EACH_RANGE",
+    "SEPARATE_ACTUAL_PRIOR_CURRENT_AND_SINGLE_VALUES",
+    "PRESERVE_SEGMENT_AND_METRIC_SUBTYPES",
+    "REJECT_REVERSED_OR_IMPLAUSIBLE_SCALES"
+  ]
+}
