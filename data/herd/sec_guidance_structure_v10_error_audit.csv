@@ -1,0 +1,8 @@
+review_id,error_family,v10_action,evidence
+SG9-0002,EXPLICIT_FORWARD_FULL_YEAR_HEADER,CORRECT_TO_FY2012,Full-Year 2012 Guidance header is newer and more local than 2011 historical recap
+SG9-0011,NARRATIVE_NON_GAAP_BASIS,CORRECT_TO_NON_GAAP,Non-GAAP EPS immediately precedes matched range
+SG9-0018,REPORTED_ROW_GAAP_BASIS,CORRECT_TO_GAAP,Reported diluted EPS row is the GAAP side of outlook reconciliation
+SG9-0019,EXCLUDING_ITEMS_NON_GAAP_BASIS,CORRECT_TO_NON_GAAP,Range explicitly excludes restructuring and one-time items
+SG9-0024,ANNUAL_GUIDANCE_ACTION_PERIOD,CORRECT_TO_FY2024,Narrowing our 2024 core EPS guidance overrides reporting-quarter context
+SG9-0049,PREVIOUS_PRELIMINARY_GUIDANCE,REJECT,Matched range follows had provided preliminary guidance for a completed quarter
+SG9-0055,EXPLICIT_FORWARD_FULL_YEAR_HEADER,CORRECT_TO_FY2012,Full-Year 2012 Guidance header is newer and more local than 2011 historical recap

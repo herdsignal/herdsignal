@@ -1,0 +1,34 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_STRUCTURE_V10_CONTRACT_V1",
+  "status": "LOCKED_BEFORE_V10_IMPLEMENTATION",
+  "scope": "PARSER_VALIDATION_ONLY",
+  "development_review": "data/reports/sec_guidance_structure_v9_reviewed.csv",
+  "development_error_audit": "data/herd/sec_guidance_structure_v10_error_audit.csv",
+  "minimum_v9_errors_corrected_or_rejected": 5,
+  "maximum_v9_valid_semantic_changes": 0,
+  "independent_review": {
+    "minimum_rows": 80,
+    "minimum_distinct_tickers": 20,
+    "minimum_wilson_95_lower_bound": 0.90
+  },
+  "allowed_grammar_families": [
+    "EXPLICIT_FORWARD_FULL_YEAR_HEADER",
+    "NARRATIVE_NON_GAAP_BASIS",
+    "REPORTED_ROW_GAAP_BASIS",
+    "EXCLUDING_ITEMS_NON_GAAP_BASIS",
+    "ANNUAL_GUIDANCE_ACTION_PERIOD",
+    "PREVIOUS_PRELIMINARY_GUIDANCE"
+  ],
+  "stop_rule": {
+    "if_development_contract_fails": "STOP_ITERATIVE_PARSER_VERSIONING",
+    "if_independent_wilson_gate_fails": "STOP_ITERATIVE_PARSER_VERSIONING",
+    "fallback": "RESTRICT_TO_SOURCE_REVIEWED_ATOMIC_BINDINGS"
+  },
+  "forbidden": [
+    "ISSUER_SPECIFIC_EXCEPTION",
+    "LOWER_ACCURACY_GATE",
+    "REUSE_V9_REVIEW_AS_INDEPENDENT_VALIDATION",
+    "USE_PRICE_OUTCOMES",
+    "CHANGE_HERD_WEIGHTS_OR_ACTION_RATIO"
+  ]
+}
