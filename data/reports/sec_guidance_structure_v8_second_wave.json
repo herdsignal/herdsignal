@@ -1,0 +1,22 @@
+{
+  "report_version": "herd-sec-guidance-v8-second-wave-validation-v1",
+  "input_documents": 8703,
+  "v4_candidates": 200,
+  "v5_candidates": 154,
+  "v6_candidates": 144,
+  "v7_candidates": 137,
+  "v8_candidates": 128,
+  "v8_candidate_tickers": 19,
+  "development_accessions_excluded": 431,
+  "review_rows": 80,
+  "review_tickers": 19,
+  "review_sample_gate_ready": false,
+  "review_gate_passed": false,
+  "ready_for_direction_preregistration": false,
+  "next_decision": "V8_INDEPENDENT_SAMPLE_COVERAGE_BLOCKED",
+  "price_outcomes_observed": false,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "680308b0a7e42b223eea913fc1914cb6f9c830fbaf421000ee18d2becaa90445",
+  "candidate_sha256": "01e82d34045dcc064e75b638439d5cbe82051ca6595f248062f3c34f0f819d65",
+  "review_sha256": "360c5021738cf655c89bbf3d2a8bf8dd41adf221297c264d22e44ab72c69f782"
+}
