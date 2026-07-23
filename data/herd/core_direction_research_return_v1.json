@@ -1,0 +1,54 @@
+{
+  "protocol_version": "HERD_CORE_DIRECTION_RESEARCH_RETURN_V1",
+  "status": "LOCKED_BEFORE_ECONOMIC_TARGET_LEDGER",
+  "objective": "For a preselected long-term winner, identify rare 5% partial profit takes or additional buys that improve after-cost wealth versus matched Buy & Hold without abandoning high exposure.",
+  "source_events": "data/reports/rush_pre_damage_path_events_v2.csv",
+  "source_audit": "data/reports/rush_pre_damage_path_audit_v2.json",
+  "profit_take_admission": "data/herd/evidence_admission_registry_v9.json",
+  "sec_authority": "data/reports/sec_auxiliary_veto_authority_v1.json",
+  "survivorship_readiness": "data/reports/survivorship_readiness_v1.json",
+  "action_contract": {
+    "default_action": "HOLD",
+    "partial_action_ratio": 0.05,
+    "maximum_profit_takes_per_ticker_year": 2,
+    "maximum_annual_profit_take_ratio": 0.10,
+    "execution": "NEXT_TRADING_DAY_OPEN",
+    "benchmark": "MATCHED_BUY_AND_HOLD",
+    "base_and_stress_costs_required": true,
+    "reentry_blocked_until_profit_take_passes": true
+  },
+  "required_target_columns": [
+    "uplift_vs_buy_hold_base", "uplift_vs_buy_hold_stress",
+    "triggered_trough_improvement_base", "triggered_trough_improvement_stress"
+  ],
+  "candidate_lanes": [
+    "CROWD_PRICE_EXTENSION", "TREND_TRANSITION", "MARKET_SECTOR_RELATIVE_STRENGTH",
+    "PARTICIPATION_BREADTH", "DOWNSIDE_RISK"
+  ],
+  "standalone_before_combination": true,
+  "failed_exact_hypotheses_not_reusable": [
+    "PROFIT_TAKE_VOLATILITY_EXTENSION",
+    "PROFIT_TAKE_TREND_DECELERATION",
+    "PROFIT_TAKE_RELATIVE_STRENGTH_BREAK",
+    "H1_SECTOR_RS_DAMAGE_4W",
+    "H2_TREND_QUALITY_FALL_4W",
+    "H3_PARTICIPATION_WEAKENING_4W",
+    "H4_MARKET_STRESS_EXPANSION_4W"
+  ],
+  "future_oos_gate": {
+    "minimum_test_folds": 4,
+    "maximum_holm_p_value": 0.05,
+    "minimum_positive_folds": 4,
+    "minimum_median_stress_uplift_vs_buy_hold": 0.0,
+    "maximum_actions_per_ticker_year": 2,
+    "both_base_and_stress_must_pass": true
+  },
+  "forbidden": [
+    "DESIGN_SIGNAL_FROM_BLIND_HOLDOUT",
+    "REUSE_FAILED_EXACT_FORMULA",
+    "COMBINE_BEFORE_STANDALONE_OOS_PASS",
+    "USE_SEC_TO_CREATE_DIRECTION",
+    "SELL_FROM_HIGH_HERD_ALONE",
+    "ENABLE_OPERATIONAL_ACTION"
+  ]
+}
