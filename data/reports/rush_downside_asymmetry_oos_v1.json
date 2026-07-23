@@ -1,0 +1,67 @@
+{
+  "report_version": "HERD_RUSH_DOWNSIDE_ASYMMETRY_OOS_V1",
+  "status": "HYPOTHESIS_REJECTED",
+  "rush_events": 240,
+  "resolved_events": 233,
+  "triggered_events": 12,
+  "triggered_tickers": 10,
+  "triggered_label_counts": {
+    "TEMPORARY_PULLBACK": 3,
+    "STRUCTURAL_BREAK": 3,
+    "LARGE_PULLBACK": 3,
+    "CONTINUATION": 3
+  },
+  "missing_fraction": 0.008333333333333333,
+  "directional_rank_biserial": -0.002040662081475353,
+  "one_sided_p_value": 0.5110179097047558,
+  "median_annual_triggered_events": 1.0,
+  "median_63d_partial_sale_uplift": -0.0020940208625301825,
+  "folds": [
+    {
+      "fold_id": "OOS_2016_2019",
+      "events": 49,
+      "directional_rank_biserial": 0.24521739130434783
+    },
+    {
+      "fold_id": "OOS_2020_2022",
+      "events": 70,
+      "directional_rank_biserial": -0.12158808933002485
+    },
+    {
+      "fold_id": "OOS_2023_2026",
+      "events": 114,
+      "directional_rank_biserial": -0.06151368760064413
+    }
+  ],
+  "gate_checks": {
+    "minimum_total_events": false,
+    "minimum_adverse_events": false,
+    "minimum_benign_events": false,
+    "minimum_event_tickers": false,
+    "maximum_missing_fraction": true,
+    "maximum_median_annual_events": true,
+    "minimum_directional_effect": false,
+    "maximum_one_sided_p_value": false,
+    "minimum_positive_time_folds": false,
+    "required_time_folds": true,
+    "minimum_median_63d_partial_sale_uplift": false
+  },
+  "failed_checks": [
+    "minimum_total_events",
+    "minimum_adverse_events",
+    "minimum_benign_events",
+    "minimum_event_tickers",
+    "minimum_directional_effect",
+    "maximum_one_sided_p_value",
+    "minimum_positive_time_folds",
+    "minimum_median_63d_partial_sale_uplift"
+  ],
+  "operational_action_authority": false,
+  "herd_weight_change_allowed": false,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "snapshot_id": "yf-independent-current-sp500-20260721",
+  "evaluated_universe_tickers": 59,
+  "event_tickers": 51,
+  "failures": {}
+}

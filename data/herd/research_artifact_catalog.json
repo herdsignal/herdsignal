@@ -1,6 +1,6 @@
 {
   "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V1",
-  "as_of": "2026-07-22",
+  "as_of": "2026-07-23",
   "statuses": {
     "ACTIVE": "현재 다음 판정에 직접 사용되는 프로토콜과 원장",
     "REJECTED": "게이트에서 탈락했지만 사후 선택 방지를 위해 보존하는 실험",
@@ -17,6 +17,9 @@
     "data/reports/sec_guidance_structure_v7.json",
     "data/reports/sec_guidance_structure_v7_reviewed.csv",
     "data/reports/sec_guidance_structure_v7_source_review.json",
+    "data/herd/rush_downside_asymmetry_protocol_v1.json",
+    "data/reports/rush_downside_asymmetry_universe_v1.json",
+    "data/reports/rush_downside_asymmetry_oos_v1.json",
     "docs/HERD_RESEARCH_STATUS.md"
   ],
   "families": [
