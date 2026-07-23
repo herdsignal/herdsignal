@@ -1,0 +1,64 @@
+{
+  "contract_version": "HERD_VNEXT_COMPETING_PATH_ECONOMIC_LABEL_V1",
+  "status": "LOCKED_BEFORE_VNEXT_JOINT_HYPOTHESIS_RESULTS",
+  "parent_path_contract": "data/herd/opportunity_cycle_target_v1.json",
+  "observation": {
+    "signal_known_after_session_close": true,
+    "execution": "NEXT_SESSION_ADJUSTED_OPEN",
+    "horizon_sessions": 126,
+    "volatility_window_sessions": 63
+  },
+  "competing_path_contract": {
+    "first_boundaries": [
+      "UPSIDE_CONTINUATION",
+      "DOWNSIDE_PULLBACK",
+      "NO_BOUNDARY",
+      "RIGHT_CENSORED"
+    ],
+    "terminal_paths": [
+      "CONTINUATION",
+      "TRADABLE_PULLBACK",
+      "LARGE_PULLBACK",
+      "STRUCTURAL_BREAK",
+      "UNRESOLVED",
+      "RIGHT_CENSORED"
+    ],
+    "threshold_source": "HERD_OPPORTUNITY_CYCLE_TARGET_V1",
+    "large_pullback_threshold": "MAX_10_PERCENT_OR_TRADABLE_PULLBACK_THRESHOLD",
+    "right_censored_is_not_failure_or_continuation": true,
+    "all_path_types_must_be_reported": true
+  },
+  "economic_label_contract": {
+    "normalized_core_shares": 1.0,
+    "trim_fraction": 0.05,
+    "maximum_cumulative_trim_fraction": 0.15,
+    "one_way_fee_bps": 5.0,
+    "one_way_slippage_bps": 5.0,
+    "adjusted_open_formula": "OPEN_X_ADJ_CLOSE_DIV_CLOSE",
+    "open_trim_is_success": false,
+    "complete_cycle_requires_observable_reentry_signal": true,
+    "reentry_execution": "NEXT_SESSION_ADJUSTED_OPEN",
+    "primary_cycle_outputs": [
+      "SHARE_DELTA",
+      "TERMINAL_WEALTH_DELTA",
+      "DAYS_OUT"
+    ]
+  },
+  "labels_authorize_actions": false,
+  "forbidden": [
+    "USE_FUTURE_PATH_AS_FEATURE",
+    "USE_FUTURE_LOW_AS_REENTRY",
+    "OPTIMIZE_REENTRY_DATE_INSIDE_LABELER",
+    "COUNT_OPEN_TRIM_AS_SUCCESS",
+    "DROP_CONTINUATION_OR_CENSORED_PATHS",
+    "EXECUTE_ON_SIGNAL_CLOSE",
+    "CHANGE_PATH_THRESHOLDS_AFTER_RESULTS",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_PROSPECTIVE_SHADOW_OUTCOME"
+  ],
+  "research_basis": [
+    "https://academic.oup.com/eurheartj/article/35/42/2936/784255",
+    "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+    "https://www.nber.org/papers/w7159"
+  ]
+}

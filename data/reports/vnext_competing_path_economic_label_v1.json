@@ -1,0 +1,10 @@
+{
+  "report_version": "HERD_VNEXT_COMPETING_PATH_ECONOMIC_LABEL_AUDIT_V1",
+  "status": "COMPETING_PATH_AND_ECONOMIC_LABEL_CONTRACT_VERIFIED",
+  "horizon_sessions": 126,
+  "trim_fraction": 0.05,
+  "first_boundary_is_separate_from_terminal_path": true,
+  "open_trim_is_success": false,
+  "future_low_reentry_allowed": false,
+  "labels_authorize_actions": false
+}
