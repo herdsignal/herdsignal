@@ -1,0 +1,26 @@
+{
+  "report_version": "SEC_IDENTIFIER_GAP_QUEUE_V1",
+  "status": "HASH_LOCKED_TARGET_QUEUE_READY",
+  "protocol_sha256": "e029fce5853d3df10767b011b1d1a851f01dd1b9ed48c354ece14ca95ebdad02",
+  "target_entity_count": 25,
+  "target_cik_count": 26,
+  "unresolved_observed_ticker_dates": 682,
+  "classification_counts": {
+    "CORPORATE_SUCCESSION_NEW_CIK": 1,
+    "FOREIGN_ISSUER_COVER_GAP": 1,
+    "MULTI_CLASS_TAG_COVER_GAP": 2,
+    "PRIMARY_COVER_INTERVAL_GAP": 17,
+    "SAME_CIK_RENAME": 3,
+    "TICKER_REUSE_AND_CURRENT_ISSUER_RENAME": 1
+  },
+  "queue_path": "data/reports/sec_identifier_gap_queue_v1.csv",
+  "queue_sha256": "c84c158258c9920a16684eb2bd21c6f97f61e6c328898bb4e40b5f9daab08422",
+  "selection_is_price_outcome_independent": true,
+  "raw_denominator_is_not_lifecycle_adjusted": true,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_preregistered": false,
+  "herd_formula_change_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_priority": "COLLECT_ALL_ELIGIBLE_PRIMARY_COVER_FILINGS_FOR_QUEUE"
+}

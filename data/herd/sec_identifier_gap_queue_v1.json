@@ -1,0 +1,129 @@
+{
+  "protocol_version": "SEC_IDENTIFIER_GAP_QUEUE_V1",
+  "status": "LOCKED_BEFORE_TARGETED_COLLECTION_V2",
+  "locked_at": "2026-07-24",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Classify and lock the 25 entities with the largest unresolved observed FINRA ticker-date to time-valid CIK gaps without using price outcomes.",
+  "selection": {
+    "cohort": "CURRENT_SP500_REFERENCE_503",
+    "unit": "UNIQUE_CURRENT_REFERENCE_CIK",
+    "ranking": "MAX_UNRESOLVED_OBSERVED_TICKER_DATES_PER_CIK_DESC_THEN_TICKER_ASC",
+    "target_entity_count": 25,
+    "unresolved_observed_ticker_dates": "observed_settlement_dates - time_valid_cik_linked_dates",
+    "price_or_return_outcomes_used": false,
+    "current_ticker_metadata_is_discovery_only": true
+  },
+  "locked_inputs": [
+    {
+      "path": "data/reports/finra_short_interest_ticker_coverage_v4.csv",
+      "sha256": "1e7e5c28b53a2a28bce55f948a8ab762a885231daaa3a1e96cc09b275b642525",
+      "role": "COVERAGE_DETAIL"
+    },
+    {
+      "path": "data/reference/sec/sec-current-20260719/ticker_cik_current.csv",
+      "sha256": "0b2da960851af7d672cbd8e9b4bda8523ee587dbc05b1ed45186efe157063993",
+      "role": "CURRENT_SEC_DISCOVERY_METADATA"
+    }
+  ],
+  "classification_overrides": {
+    "0001754301": {
+      "classification": "MULTI_CLASS_TAG_COVER_GAP",
+      "accepted_symbols": [
+        "FOX",
+        "FOXA"
+      ]
+    },
+    "0001564708": {
+      "classification": "MULTI_CLASS_TAG_COVER_GAP",
+      "accepted_symbols": [
+        "NWS",
+        "NWSA"
+      ]
+    },
+    "0000765880": {
+      "classification": "TICKER_REUSE_AND_CURRENT_ISSUER_RENAME",
+      "accepted_symbols": [
+        "PEAK",
+        "DOC"
+      ],
+      "boundary_rule": "DOC observations before the verified PEAK to DOC transition must not be assigned to this CIK by ticker alone."
+    },
+    "0001996862": {
+      "classification": "CORPORATE_SUCCESSION_NEW_CIK",
+      "accepted_symbols": [
+        "BG"
+      ],
+      "additional_ciks": [
+        "0001144519"
+      ],
+      "boundary_rule": "The predecessor and successor CIK spans require separate primary cover anchors."
+    },
+    "0000849395": {
+      "classification": "FOREIGN_ISSUER_COVER_GAP",
+      "accepted_symbols": [
+        "CRH"
+      ]
+    },
+    "0001326801": {
+      "classification": "SAME_CIK_RENAME",
+      "accepted_symbols": [
+        "FB",
+        "META"
+      ]
+    },
+    "0001140859": {
+      "classification": "SAME_CIK_RENAME",
+      "accepted_symbols": [
+        "ABC",
+        "COR"
+      ]
+    },
+    "0001415404": {
+      "classification": "SAME_CIK_RENAME",
+      "accepted_symbols": [
+        "SATS",
+        "ECHO"
+      ]
+    }
+  },
+  "default_classification": {
+    "classification": "PRIMARY_COVER_INTERVAL_GAP",
+    "accepted_symbols": "CURRENT_REFERENCE_SYMBOLS_FOR_CIK"
+  },
+  "collection_policy": {
+    "period_start": "2021-06-01",
+    "period_end": "2026-06-30",
+    "eligible_forms": [
+      "10-K",
+      "10-K/A",
+      "10-Q",
+      "10-Q/A",
+      "8-K",
+      "8-K/A",
+      "20-F",
+      "20-F/A",
+      "40-F",
+      "40-F/A"
+    ],
+    "primary_document_only": true,
+    "tagged_dei_trading_symbol_required": true,
+    "current_submissions_ticker_array_is_not_evidence": true,
+    "minimum_distinct_primary_anchors_per_interval": 2,
+    "no_extrapolation_outside_primary_anchors": true
+  },
+  "lifecycle_denominator_policy": {
+    "raw_122_date_denominator_is_diagnostic_only": true,
+    "new_listing_or_spinoff_preexistence_dates_are_not_failures": true,
+    "ticker_reuse_requires_issue_identity_or_primary_boundary": true,
+    "same_cik_rename_may_join_only_at_verified_transition": true,
+    "corporate_successor_ciks_may_not_be_joined_by_name_similarity": true
+  },
+  "authority": {
+    "price_outcomes_opened": false,
+    "future_return_labels_allowed": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
