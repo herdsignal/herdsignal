@@ -1,0 +1,4797 @@
+{
+  "report_version": "SEC_COVER_PAGE_TARGETED_SOURCE_V1",
+  "snapshot_id": "sec-cover-page-targeted-v1-202106-202606-20260723",
+  "created_at": "2026-07-23T14:16:09.579918+00:00",
+  "protocol_path": "data/herd/sec_cover_page_targeted_ledger_v1.json",
+  "protocol_sha256": "9cf7ecc1a0634ea7b36b44a35c9c3f94b11247e6f54f6a83db67584c21627972",
+  "target_cik_count": 7,
+  "target_research_tickers": [
+    "BLK",
+    "BNY",
+    "BRK-B",
+    "CRH",
+    "GOOG",
+    "GOOGL",
+    "HON"
+  ],
+  "submissions_sources": [
+    {
+      "url": "https://data.sec.gov/submissions/CIK0000773840.json",
+      "path": "submissions/CIK0000773840.json",
+      "sha256": "97034e277755374d82576562fbafd7ffe52136059fa4e50bac64c58caed44c57",
+      "bytes": 158983
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0000849395.json",
+      "path": "submissions/CIK0000849395.json",
+      "sha256": "742d6cf7d2729b01064ce9c2922ccc50d240d17ca008da145c9468f205db06e5",
+      "bytes": 172437
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001067983.json",
+      "path": "submissions/CIK0001067983.json",
+      "sha256": "07d0bb0f178b729fb05ce15fedbaaba942a2f0867e622793923e5ac42c6cb690",
+      "bytes": 161224
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001364742.json",
+      "path": "submissions/CIK0001364742.json",
+      "sha256": "c881bb8130b15929b20c575da5e6eea22cd3e32c0b99c214fd2d80f7b0b93f25",
+      "bytes": 162252
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001364742-submissions-001.json",
+      "path": "submissions/CIK0001364742-submissions-001.json",
+      "sha256": "1a815b42dc34608548923d362626832d558b6a53a12bba6ca216a22d72046cda",
+      "bytes": 317465
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001364742-submissions-002.json",
+      "path": "submissions/CIK0001364742-submissions-002.json",
+      "sha256": "6b81a7a470b815a667851e291ea425674e469356f3466fc3c95244ab8f881a51",
+      "bytes": 314116
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001364742-submissions-003.json",
+      "path": "submissions/CIK0001364742-submissions-003.json",
+      "sha256": "433a134397a395f8500d6adc68307de194e5fe8064e6890389305204e27d4ec4",
+      "bytes": 288778
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001364742-submissions-004.json",
+      "path": "submissions/CIK0001364742-submissions-004.json",
+      "sha256": "fd82965d86acabd1b112233007d3da43ba337ee1e2fd27a0be4a7cbbb1217717",
+      "bytes": 301543
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001364742-submissions-005.json",
+      "path": "submissions/CIK0001364742-submissions-005.json",
+      "sha256": "29da480812ead0f6dd14dabae1ca24a58b53d43be8dbba3e6a637a66f613dad2",
+      "bytes": 294827
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001364742-submissions-006.json",
+      "path": "submissions/CIK0001364742-submissions-006.json",
+      "sha256": "e321b7f970627def8de7182060e9d3637f1aaded675185fd26fa3d3bb398d7a3",
+      "bytes": 380947
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001390777.json",
+      "path": "submissions/CIK0001390777.json",
+      "sha256": "119580b6e96c17e6291b0e27063698838fd96285af62a8882f930eff8459de89",
+      "bytes": 157186
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001390777-submissions-001.json",
+      "path": "submissions/CIK0001390777-submissions-001.json",
+      "sha256": "cb641791d336fbced9d6db9d6c32b63a426e2b011baa3b23f0809c98e6e5be56",
+      "bytes": 314630
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001652044.json",
+      "path": "submissions/CIK0001652044.json",
+      "sha256": "b823210bc497662ed61c0b2356d6c3677fc7e93822307392c139c5305803b31a",
+      "bytes": 153480
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0001652044-submissions-001.json",
+      "path": "submissions/CIK0001652044-submissions-001.json",
+      "sha256": "8b24485e80327c7500890a9a74e70c1c25037f0f9f500d8d97e7475d2ba2a7d0",
+      "bytes": 259569
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0002012383.json",
+      "path": "submissions/CIK0002012383.json",
+      "sha256": "9c93432350bf1185c63fb4d5431905c7d33a982432ab82fa01a98b03049ca071",
+      "bytes": 186839
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0002012383-submissions-001.json",
+      "path": "submissions/CIK0002012383-submissions-001.json",
+      "sha256": "bdb310336fbfc06551812c85fe0483abc65dc68a613cb0ceac384a9a3e14c732",
+      "bytes": 348913
+    },
+    {
+      "url": "https://data.sec.gov/submissions/CIK0002012383-submissions-002.json",
+      "path": "submissions/CIK0002012383-submissions-002.json",
+      "sha256": "e9a5f5a18e803a76c51f5e9c0b7cf38184ff46bea0c04867ac22d6d1f1f1f303",
+      "bytes": 266665
+    }
+  ],
+  "documents": [
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-21-000057",
+      "filing_date": "2021-07-23",
+      "accepted_at": "2021-07-23T13:09:25.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20210630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384021000057/hon-20210630.htm",
+      "path": "primary/0000773840/000077384021000057/hon-20210630.htm",
+      "sha256": "bc6aaa969ba4d55dd349f0913d474a8ad9ae331f897d9c49595a8601bde92e67",
+      "bytes": 2410121,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-21-000065",
+      "filing_date": "2021-10-22",
+      "accepted_at": "2021-10-22T12:31:29.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20210930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384021000065/hon-20210930.htm",
+      "path": "primary/0000773840/000077384021000065/hon-20210930.htm",
+      "sha256": "9a20740ac310b3d5135327689ec92c725cca585385c1b235d8c5292e8a488e14",
+      "bytes": 2461635,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-22-000018",
+      "filing_date": "2022-02-11",
+      "accepted_at": "2022-02-11T17:37:32.000Z",
+      "form": "10-K",
+      "primary_document": "hon-20211231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384022000018/hon-20211231.htm",
+      "path": "primary/0000773840/000077384022000018/hon-20211231.htm",
+      "sha256": "5a1123dc94cb74b29296967c57d15e01e7d3c63962e11d8eefeb4c5c043a734c",
+      "bytes": 5517294,
+      "extracted_symbols": [
+        "HON",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-22-000037",
+      "filing_date": "2022-04-29",
+      "accepted_at": "2022-04-29T13:03:57.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20220331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384022000037/hon-20220331.htm",
+      "path": "primary/0000773840/000077384022000037/hon-20220331.htm",
+      "sha256": "528eb2ad74333f15d1c71c6d6ddc6c2519be714a0849c9a14b304c691bde8ab1",
+      "bytes": 2116125,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-22-000054",
+      "filing_date": "2022-07-28",
+      "accepted_at": "2022-07-28T13:16:12.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20220630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384022000054/hon-20220630.htm",
+      "path": "primary/0000773840/000077384022000054/hon-20220630.htm",
+      "sha256": "c4149de23195f2254e76883b6949303b183d25eefff46c68a1f5fb25233d1938",
+      "bytes": 2811743,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-22-000071",
+      "filing_date": "2022-10-27",
+      "accepted_at": "2022-10-27T13:09:11.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20220930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384022000071/hon-20220930.htm",
+      "path": "primary/0000773840/000077384022000071/hon-20220930.htm",
+      "sha256": "160f550b9833a95617b59ad75ec00f1deb46de45a5e4789e18c6dd492cd795a9",
+      "bytes": 2817819,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-23-000013",
+      "filing_date": "2023-02-10",
+      "accepted_at": "2023-02-10T19:09:31.000Z",
+      "form": "10-K",
+      "primary_document": "hon-20221231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384023000013/hon-20221231.htm",
+      "path": "primary/0000773840/000077384023000013/hon-20221231.htm",
+      "sha256": "e6c4787de3b059c217a854df58d554a4c9922fc6399efbd9d349563e8a44fc0b",
+      "bytes": 5880615,
+      "extracted_symbols": [
+        "HON",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-23-000038",
+      "filing_date": "2023-04-27",
+      "accepted_at": "2023-04-27T13:09:13.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20230331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384023000038/hon-20230331.htm",
+      "path": "primary/0000773840/000077384023000038/hon-20230331.htm",
+      "sha256": "48936f3207ee71eb28e570d3a635cbe8712e8e7a7f08de76157d06d67d2f40fa",
+      "bytes": 2102677,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-23-000073",
+      "filing_date": "2023-07-27",
+      "accepted_at": "2023-07-27T13:02:54.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20230630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384023000073/hon-20230630.htm",
+      "path": "primary/0000773840/000077384023000073/hon-20230630.htm",
+      "sha256": "7dcf5518e34573679dae6f6593ba44b558aa4db51f927a9302c401645ee4de17",
+      "bytes": 2154283,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-23-000085",
+      "filing_date": "2023-10-26",
+      "accepted_at": "2023-10-26T13:15:45.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20230930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384023000085/hon-20230930.htm",
+      "path": "primary/0000773840/000077384023000085/hon-20230930.htm",
+      "sha256": "ce70139e66c7f721dd33e27aa39716f395923cb3c96ff7e862781db65bdb228e",
+      "bytes": 2114252,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-24-000014",
+      "filing_date": "2024-02-16",
+      "accepted_at": "2024-02-16T18:40:36.000Z",
+      "form": "10-K",
+      "primary_document": "hon-20231231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384024000014/hon-20231231.htm",
+      "path": "primary/0000773840/000077384024000014/hon-20231231.htm",
+      "sha256": "d99c5ec78fa8e16ac0e6ff368a98b8f07ec69c9832b01929fdf0375837837e4c",
+      "bytes": 4487403,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-24-000051",
+      "filing_date": "2024-04-25",
+      "accepted_at": "2024-04-25T13:42:46.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20240331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384024000051/hon-20240331.htm",
+      "path": "primary/0000773840/000077384024000051/hon-20240331.htm",
+      "sha256": "412409681f769feb51e8ba740ed466af35fb54c6053942ab7a0e2a8f6a51fb64",
+      "bytes": 1693492,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-24-000082",
+      "filing_date": "2024-07-25",
+      "accepted_at": "2024-07-25T13:38:50.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20240630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384024000082/hon-20240630.htm",
+      "path": "primary/0000773840/000077384024000082/hon-20240630.htm",
+      "sha256": "171db24301d00053ff5b4058c331c5caebcdeba4ff8019872525602ee89e794b",
+      "bytes": 2174159,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-24-000099",
+      "filing_date": "2024-10-24",
+      "accepted_at": "2024-10-24T13:37:57.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20240930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384024000099/hon-20240930.htm",
+      "path": "primary/0000773840/000077384024000099/hon-20240930.htm",
+      "sha256": "a602bd2dda2915f745e891512509aed951877aa0bc422f5d3d2051b457ab1f6f",
+      "bytes": 2288508,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-25-000010",
+      "filing_date": "2025-02-14",
+      "accepted_at": "2025-02-14T19:50:25.000Z",
+      "form": "10-K",
+      "primary_document": "hon-20241231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384025000010/hon-20241231.htm",
+      "path": "primary/0000773840/000077384025000010/hon-20241231.htm",
+      "sha256": "5b6f70f5c962a6f4f11e22776a47ca24546e6c2be5c5b8e2ef4dea4b5ad4714c",
+      "bytes": 4714491,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-25-000037",
+      "filing_date": "2025-04-29",
+      "accepted_at": "2025-04-29T13:46:21.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20250331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384025000037/hon-20250331.htm",
+      "path": "primary/0000773840/000077384025000037/hon-20250331.htm",
+      "sha256": "aeebf2ff59678d4052941686ff90d8e5af82716ed2dc728b24b407c28271d46a",
+      "bytes": 1805470,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-25-000064",
+      "filing_date": "2025-07-24",
+      "accepted_at": "2025-07-24T13:38:39.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20250630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384025000064/hon-20250630.htm",
+      "path": "primary/0000773840/000077384025000064/hon-20250630.htm",
+      "sha256": "415d90676eff8a012a22f7a282da7f2a564949ecb57c625e17aad93b38be30b4",
+      "bytes": 2329807,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-25-000105",
+      "filing_date": "2025-10-23",
+      "accepted_at": "2025-10-23T13:35:09.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20250930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384025000105/hon-20250930.htm",
+      "path": "primary/0000773840/000077384025000105/hon-20250930.htm",
+      "sha256": "48634021eeb73f025fb5cd48ef9877ea90a3dc9f558a4ff123db261a9a5f99e8",
+      "bytes": 2383066,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-26-000013",
+      "filing_date": "2026-02-17",
+      "accepted_at": "2026-02-17T11:07:11.000Z",
+      "form": "10-K",
+      "primary_document": "hon-20251231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384026000013/hon-20251231.htm",
+      "path": "primary/0000773840/000077384026000013/hon-20251231.htm",
+      "sha256": "53fd78cff2ec456e51700ed0207e5d445b77754c0a4d5aba2bfcb708fdfa0738",
+      "bytes": 5132529,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000773840",
+      "research_tickers": [
+        "HON"
+      ],
+      "accession_number": "0000773840-26-000057",
+      "filing_date": "2026-04-23",
+      "accepted_at": "2026-04-23T13:54:52.000Z",
+      "form": "10-Q",
+      "primary_document": "hon-20260331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384026000057/hon-20260331.htm",
+      "path": "primary/0000773840/000077384026000057/hon-20260331.htm",
+      "sha256": "5c896c9369d0eeb80e58b680c8c7ae1d78bb9e2882da5b6018a8ce9b960ec10e",
+      "bytes": 1908694,
+      "extracted_symbols": [
+        "HON",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000773840"
+      ],
+      "matched_expected_symbols": [
+        "HON"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001193125-22-072901",
+      "filing_date": "2022-03-11",
+      "accepted_at": "2022-03-11T15:24:12.000Z",
+      "form": "20-F",
+      "primary_document": "d231693d20f.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000119312522072901/d231693d20f.htm",
+      "path": "primary/0000849395/000119312522072901/d231693d20f.htm",
+      "sha256": "a52c0eb62bfa203f7a24804e145ad3d270aaa886527c6d4e6c92081faf8d57d1",
+      "bytes": 12452878,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-23-007435",
+      "filing_date": "2023-03-10",
+      "accepted_at": "2023-03-10T14:37:41.000Z",
+      "form": "20-F",
+      "primary_document": "crh-20221231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828023007435/crh-20221231.htm",
+      "path": "primary/0000849395/000162828023007435/crh-20221231.htm",
+      "sha256": "d0b3e71f1f7054746b37c077d9f74c52c4aeed6fab0be064b44a7deaac776d59",
+      "bytes": 8252771,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-24-007773",
+      "filing_date": "2024-02-29",
+      "accepted_at": "2024-02-29T11:25:45.000Z",
+      "form": "10-K",
+      "primary_document": "crh-20231231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024007773/crh-20231231.htm",
+      "path": "primary/0000849395/000162828024007773/crh-20231231.htm",
+      "sha256": "51342f7ca7d789feffc834d6f51b979e48b68d3cc097da09ecc62d50dc9b6bed",
+      "bytes": 3333888,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-24-011326",
+      "filing_date": "2024-03-15",
+      "accepted_at": "2024-03-15T13:00:58.000Z",
+      "form": "10-K/A",
+      "primary_document": "crh-20231231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024011326/crh-20231231.htm",
+      "path": "primary/0000849395/000162828024011326/crh-20231231.htm",
+      "sha256": "1833de7748dcc86cc206c4bb28828217fece4e180a62c043b4962ae22feecb93",
+      "bytes": 906219,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-24-022452",
+      "filing_date": "2024-05-10",
+      "accepted_at": "2024-05-10T10:11:24.000Z",
+      "form": "10-Q",
+      "primary_document": "crh-20240331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024022452/crh-20240331.htm",
+      "path": "primary/0000849395/000162828024022452/crh-20240331.htm",
+      "sha256": "384326070286a93dd87ad1d7c19e245d72e92087dd37945b690c4d223c6f05ad",
+      "bytes": 1308609,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-24-035823",
+      "filing_date": "2024-08-08",
+      "accepted_at": "2024-08-08T10:07:50.000Z",
+      "form": "10-Q",
+      "primary_document": "crh-20240630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024035823/crh-20240630.htm",
+      "path": "primary/0000849395/000162828024035823/crh-20240630.htm",
+      "sha256": "618d789409f290899c24a7fa6699087d42116d5c6dc17f56cd4d1fb2d23fc777",
+      "bytes": 1731666,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-24-045944",
+      "filing_date": "2024-11-07",
+      "accepted_at": "2024-11-07T11:18:32.000Z",
+      "form": "10-Q",
+      "primary_document": "crh-20240930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024045944/crh-20240930.htm",
+      "path": "primary/0000849395/000162828024045944/crh-20240930.htm",
+      "sha256": "56f26b843d4bd070b5b4f419c391d61582ff78e0a1505b96cd38560af0762179",
+      "bytes": 1790155,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-25-008179",
+      "filing_date": "2025-02-26",
+      "accepted_at": "2025-02-26T21:24:17.000Z",
+      "form": "10-K",
+      "primary_document": "crh-20241231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828025008179/crh-20241231.htm",
+      "path": "primary/0000849395/000162828025008179/crh-20241231.htm",
+      "sha256": "38a85f6d6fbcc91ec13d6b49451dd8767e933173a9d3330760cd7b4c9060123f",
+      "bytes": 3414102,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-25-022195",
+      "filing_date": "2025-05-05",
+      "accepted_at": "2025-05-05T20:23:48.000Z",
+      "form": "10-Q",
+      "primary_document": "crh-20250331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828025022195/crh-20250331.htm",
+      "path": "primary/0000849395/000162828025022195/crh-20250331.htm",
+      "sha256": "8592e73ead94e451dab21c8bac7555a3f4ebb747f586ced3ada95b1ece90f3d7",
+      "bytes": 1295432,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-25-038362",
+      "filing_date": "2025-08-06",
+      "accepted_at": "2025-08-06T20:23:26.000Z",
+      "form": "10-Q",
+      "primary_document": "crh-20250630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828025038362/crh-20250630.htm",
+      "path": "primary/0000849395/000162828025038362/crh-20250630.htm",
+      "sha256": "30953cffb41e955b04966bd54fa9bcf257d3dfd34de12d1a3beaa602693b80cb",
+      "bytes": 1746842,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-25-049574",
+      "filing_date": "2025-11-05",
+      "accepted_at": "2025-11-05T21:14:26.000Z",
+      "form": "10-Q",
+      "primary_document": "crh-20250930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828025049574/crh-20250930.htm",
+      "path": "primary/0000849395/000162828025049574/crh-20250930.htm",
+      "sha256": "781ca864a567356f786568b56c12fc2a1ccce73d2d2120049b52d077f10cc33c",
+      "bytes": 1785344,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-26-009043",
+      "filing_date": "2026-02-18",
+      "accepted_at": "2026-02-18T21:14:07.000Z",
+      "form": "10-K",
+      "primary_document": "crh-20251231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828026009043/crh-20251231.htm",
+      "path": "primary/0000849395/000162828026009043/crh-20251231.htm",
+      "sha256": "87f56e0348da3ab1805b1d302735b9f18e59e3b2c87f06aeb9bccca5a42b009a",
+      "bytes": 3553852,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0000849395",
+      "research_tickers": [
+        "CRH"
+      ],
+      "accession_number": "0001628280-26-028556",
+      "filing_date": "2026-04-30",
+      "accepted_at": "2026-04-30T10:18:07.000Z",
+      "form": "10-Q",
+      "primary_document": "crh-20260331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828026028556/crh-20260331.htm",
+      "path": "primary/0000849395/000162828026028556/crh-20260331.htm",
+      "sha256": "325e32d7d67dd5d418b9c4e673fc1db1b38b4b703657c9f0b01d68b9172ed53a",
+      "bytes": 1394678,
+      "extracted_symbols": [
+        "CRH",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0000849395"
+      ],
+      "matched_expected_symbols": [
+        "CRH"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0001564590-21-042312",
+      "filing_date": "2021-08-09",
+      "accepted_at": "2021-08-09T10:05:15.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-10q_20210630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459021042312/brka-10q_20210630.htm",
+      "path": "primary/0001067983/000156459021042312/brka-10q_20210630.htm",
+      "sha256": "5ebde9765edcbdc2f70b96085817fe05839fd4593a1d865d4c597036c682976d",
+      "bytes": 6434236,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK23",
+        "BRK23A",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0001564590-21-055032",
+      "filing_date": "2021-11-08",
+      "accepted_at": "2021-11-08T11:06:05.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-10q_20210930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459021055032/brka-10q_20210930.htm",
+      "path": "primary/0001067983/000156459021055032/brka-10q_20210930.htm",
+      "sha256": "6bde008a90848f7bfa866fcc4a1a0b5139e7cd2cc090ccc2e8a3fe763cbabcb1",
+      "bytes": 6574756,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK23",
+        "BRK23A",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0001564590-22-007322",
+      "filing_date": "2022-02-28",
+      "accepted_at": "2022-02-28T11:04:52.000Z",
+      "form": "10-K",
+      "primary_document": "brka-10k_20211231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459022007322/brka-10k_20211231.htm",
+      "path": "primary/0001067983/000156459022007322/brka-10k_20211231.htm",
+      "sha256": "7222543811d95843249d8b1af9922f188215cb3e17c958bef1849a67d0cec138",
+      "bytes": 12201751,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK23",
+        "BRK23A",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0001564590-22-016907",
+      "filing_date": "2022-05-02",
+      "accepted_at": "2022-05-02T10:04:12.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-10q_20220331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459022016907/brka-10q_20220331.htm",
+      "path": "primary/0001067983/000156459022016907/brka-10q_20220331.htm",
+      "sha256": "039adb6980566b5b7d2934a5f6187873a89592e3254053dded5b85d26bbd1b4e",
+      "bytes": 5086467,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK23",
+        "BRK23A",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0001564590-22-028282",
+      "filing_date": "2022-08-08",
+      "accepted_at": "2022-08-08T10:04:43.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-10q_20220630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459022028282/brka-10q_20220630.htm",
+      "path": "primary/0001067983/000156459022028282/brka-10q_20220630.htm",
+      "sha256": "8acbc29c5c23f78f62e7c90b1975ece66e4c5aecadc4666c109ad53f851dcae5",
+      "bytes": 6372369,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK23",
+        "BRK23A",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-22-022287",
+      "filing_date": "2022-11-07",
+      "accepted_at": "2022-11-07T11:04:15.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20220930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017022022287/brka-20220930.htm",
+      "path": "primary/0001067983/000095017022022287/brka-20220930.htm",
+      "sha256": "3976476d3a818bd789524c5e452ab8726af6d0169281477713d1981311b0cdd1",
+      "bytes": 7172520,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK23",
+        "BRK23A",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-23-004451",
+      "filing_date": "2023-02-27",
+      "accepted_at": "2023-02-27T11:04:49.000Z",
+      "form": "10-K",
+      "primary_document": "brka-20221231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017023004451/brka-20221231.htm",
+      "path": "primary/0001067983/000095017023004451/brka-20221231.htm",
+      "sha256": "e89516cf03303922d91e87386e62324157d4a5a0d5ebeff3903ed0775f7b8cac",
+      "bytes": 12630004,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK23",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-23-018438",
+      "filing_date": "2023-05-08",
+      "accepted_at": "2023-05-08T10:01:35.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20230331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017023018438/brka-20230331.htm",
+      "path": "primary/0001067983/000095017023018438/brka-20230331.htm",
+      "sha256": "0ce9ac1f5b7aa3564d2ae9a1fbe9e921a99760fd85293cf50267ba976a93b56e",
+      "bytes": 6670047,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-23-038705",
+      "filing_date": "2023-08-07",
+      "accepted_at": "2023-08-07T10:04:06.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20230630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017023038705/brka-20230630.htm",
+      "path": "primary/0001067983/000095017023038705/brka-20230630.htm",
+      "sha256": "c2cc9b731d887036e0cb517c95d840194b513f76537610f1b787ec38b43fcf4f",
+      "bytes": 7826524,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-23-058993",
+      "filing_date": "2023-11-06",
+      "accepted_at": "2023-11-06T11:05:03.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20230930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017023058993/brka-20230930.htm",
+      "path": "primary/0001067983/000095017023058993/brka-20230930.htm",
+      "sha256": "8591b589ab774b92596734e6a033e35e0325f446fbd3c47335cedddbbe3349bc",
+      "bytes": 6917288,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-24-019719",
+      "filing_date": "2024-02-26",
+      "accepted_at": "2024-02-26T11:08:31.000Z",
+      "form": "10-K",
+      "primary_document": "brka-20231231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017024019719/brka-20231231.htm",
+      "path": "primary/0001067983/000095017024019719/brka-20231231.htm",
+      "sha256": "24f288142fb85939d90bc8d015ac8602549ff44bc2866c298c8dd32ad6073834",
+      "bytes": 8815841,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK24",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-24-053185",
+      "filing_date": "2024-05-06",
+      "accepted_at": "2024-05-06T10:03:40.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20240331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017024053185/brka-20240331.htm",
+      "path": "primary/0001067983/000095017024053185/brka-20240331.htm",
+      "sha256": "59289961832d17f12844545f1266e59db71e11b774200d6383ad853bbb77288f",
+      "bytes": 4000754,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-24-090305",
+      "filing_date": "2024-08-05",
+      "accepted_at": "2024-08-05T10:05:01.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20240630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017024090305/brka-20240630.htm",
+      "path": "primary/0001067983/000095017024090305/brka-20240630.htm",
+      "sha256": "d3f52e65373df2e71d295614906439cdb139520e0537c89290fbc1a8eeb6c5fa",
+      "bytes": 4837481,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-24-120241",
+      "filing_date": "2024-11-04",
+      "accepted_at": "2024-11-04T11:01:42.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20240930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017024120241/brka-20240930.htm",
+      "path": "primary/0001067983/000095017024120241/brka-20240930.htm",
+      "sha256": "d0be8bb538eeda56ca00e7e10c2433d475926a51e03031204f316a009782eb65",
+      "bytes": 4952519,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-25-025210",
+      "filing_date": "2025-02-24",
+      "accepted_at": "2025-02-24T11:03:00.000Z",
+      "form": "10-K",
+      "primary_document": "brka-20241231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017025025210/brka-20241231.htm",
+      "path": "primary/0001067983/000095017025025210/brka-20241231.htm",
+      "sha256": "048d5e8c484b6ef1ee0fc492c71e586bf6de3c7acef5b2c1e505c60f5f2eb7b0",
+      "bytes": 10744089,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK25",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-25-063112",
+      "filing_date": "2025-05-05",
+      "accepted_at": "2025-05-05T10:03:55.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20250331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017025063112/brka-20250331.htm",
+      "path": "primary/0001067983/000095017025063112/brka-20250331.htm",
+      "sha256": "11649ac39e1a8d75c490747a77e1757075c0220cf3e79ca9502ea3c2821462c7",
+      "bytes": 5011368,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0000950170-25-101578",
+      "filing_date": "2025-08-04",
+      "accepted_at": "2025-08-04T10:03:50.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20250630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017025101578/brka-20250630.htm",
+      "path": "primary/0001067983/000095017025101578/brka-20250630.htm",
+      "sha256": "7011801513f18204727578e5a6517b6f496af6b6f238608230bd530c1da00ccf",
+      "bytes": 6518061,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0001193125-25-261548",
+      "filing_date": "2025-11-03",
+      "accepted_at": "2025-11-03T11:03:48.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20250930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312525261548/brka-20250930.htm",
+      "path": "primary/0001067983/000119312525261548/brka-20250930.htm",
+      "sha256": "3e58f02ec6daccfb07b95d6eb3d55bfb3a90e958cc4e0ea647e06d34905c493f",
+      "bytes": 6470123,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0001193125-26-083899",
+      "filing_date": "2026-03-02",
+      "accepted_at": "2026-03-02T11:02:28.000Z",
+      "form": "10-K",
+      "primary_document": "brka-20251231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312526083899/brka-20251231.htm",
+      "path": "primary/0001067983/000119312526083899/brka-20251231.htm",
+      "sha256": "878392c22e73b92722d63bb4f486586cdb5a0b8ce0d08bc403b1c0239b891282",
+      "bytes": 10396820,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001067983",
+      "research_tickers": [
+        "BRK-B"
+      ],
+      "accession_number": "0001193125-26-202243",
+      "filing_date": "2026-05-04",
+      "accepted_at": "2026-05-04T10:01:27.000Z",
+      "form": "10-Q",
+      "primary_document": "brka-20260331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312526202243/brka-20260331.htm",
+      "path": "primary/0001067983/000119312526202243/brka-20260331.htm",
+      "sha256": "0b59a86af96d0fa98fb87bb602153a9454372d69fe6e4267b235bcde9bf98cb9",
+      "bytes": 4949117,
+      "extracted_symbols": [
+        "BRK.A",
+        "BRK.B",
+        "BRK27",
+        "BRK28",
+        "BRK30",
+        "BRK34",
+        "BRK35",
+        "BRK39",
+        "BRK41",
+        "BRK59",
+        "S"
+      ],
+      "extracted_entity_ciks": [
+        "0001067983"
+      ],
+      "matched_expected_symbols": [
+        "BRK.B"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0001564590-21-041406",
+      "filing_date": "2021-08-05",
+      "accepted_at": "2021-08-05T13:36:35.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-10q_20210630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459021041406/blk-10q_20210630.htm",
+      "path": "primary/0001364742/000156459021041406/blk-10q_20210630.htm",
+      "sha256": "e3849db67237d0716eb9f965c8bac30fa0c2c5ec45f4621d9254b89e8eeef0b0",
+      "bytes": 10152269,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0001564590-21-054838",
+      "filing_date": "2021-11-05",
+      "accepted_at": "2021-11-05T13:55:20.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-10q_20210930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459021054838/blk-10q_20210930.htm",
+      "path": "primary/0001364742/000156459021054838/blk-10q_20210930.htm",
+      "sha256": "01cb0f5fff79848410e0da1ea27693572254ee1a7f6218cdfc3ab62ea90c3c73",
+      "bytes": 10215157,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0001564590-22-007117",
+      "filing_date": "2022-02-25",
+      "accepted_at": "2022-02-25T15:15:26.000Z",
+      "form": "10-K",
+      "primary_document": "blk-10k_20211231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459022007117/blk-10k_20211231.htm",
+      "path": "primary/0001364742/000156459022007117/blk-10k_20211231.htm",
+      "sha256": "2a9b395334c7f4e7b8bddce59311943bfca469e62641a534405bca3ee2c345f8",
+      "bytes": 10899660,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0001564590-22-018505",
+      "filing_date": "2022-05-06",
+      "accepted_at": "2022-05-06T12:40:30.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-10q_20220331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459022018505/blk-10q_20220331.htm",
+      "path": "primary/0001364742/000156459022018505/blk-10q_20220331.htm",
+      "sha256": "1f185ecbfd114146577bfbd268c7603ef42f26b8fa4261679deaf1aad99d8e5f",
+      "bytes": 6814270,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0001564590-22-028139",
+      "filing_date": "2022-08-05",
+      "accepted_at": "2022-08-05T11:50:44.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-10q_20220630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459022028139/blk-10q_20220630.htm",
+      "path": "primary/0001364742/000156459022028139/blk-10q_20220630.htm",
+      "sha256": "6ea97d7c40f10b53a12fe931dc39220291fde02683048016c939fe06e2518945",
+      "bytes": 9756681,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-22-022155",
+      "filing_date": "2022-11-04",
+      "accepted_at": "2022-11-04T14:30:31.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20220930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017022022155/blk-20220930.htm",
+      "path": "primary/0001364742/000095017022022155/blk-20220930.htm",
+      "sha256": "98370b6a80faeb01af0eed632cc05d047e46be9e59ea8dac3f711f97cec8a20a",
+      "bytes": 10438816,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-23-004343",
+      "filing_date": "2023-02-24",
+      "accepted_at": "2023-02-24T14:35:17.000Z",
+      "form": "10-K",
+      "primary_document": "blk-20221231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017023004343/blk-20221231.htm",
+      "path": "primary/0001364742/000095017023004343/blk-20221231.htm",
+      "sha256": "c954a18de00cd3be04c733fd7504fbb400d1081fced8ac467791055d16b4eeac",
+      "bytes": 11703294,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-23-018214",
+      "filing_date": "2023-05-05",
+      "accepted_at": "2023-05-05T13:21:58.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20230331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017023018214/blk-20230331.htm",
+      "path": "primary/0001364742/000095017023018214/blk-20230331.htm",
+      "sha256": "9b460e85a3a40bc9ccaeb5f42f74f1cfc087b17686828d05eff730f66510f3ab",
+      "bytes": 7280891,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-23-038497",
+      "filing_date": "2023-08-04",
+      "accepted_at": "2023-08-04T14:22:08.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20230630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017023038497/blk-20230630.htm",
+      "path": "primary/0001364742/000095017023038497/blk-20230630.htm",
+      "sha256": "e1aa6c054baf5213ac302bdb50223d1bec52ae98097b0f37fef92c00452438ca",
+      "bytes": 10482026,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-23-059279",
+      "filing_date": "2023-11-06",
+      "accepted_at": "2023-11-06T14:24:41.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20230930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017023059279/blk-20230930.htm",
+      "path": "primary/0001364742/000095017023059279/blk-20230930.htm",
+      "sha256": "c3568a8b70b08eac28168366a33e7c7457042b71de58120112e0f3fa4e6a1861",
+      "bytes": 9232688,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-24-019271",
+      "filing_date": "2024-02-23",
+      "accepted_at": "2024-02-23T14:28:07.000Z",
+      "form": "10-K",
+      "primary_document": "blk-20231231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017024019271/blk-20231231.htm",
+      "path": "primary/0001364742/000095017024019271/blk-20231231.htm",
+      "sha256": "2debace85ac4945d4b87f174132e21c18bcf7a5c4381982b329bc3bed05695a0",
+      "bytes": 8605487,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-24-054148",
+      "filing_date": "2024-05-07",
+      "accepted_at": "2024-05-07T12:07:25.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20240331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017024054148/blk-20240331.htm",
+      "path": "primary/0001364742/000095017024054148/blk-20240331.htm",
+      "sha256": "2424d88bd2760885931546c80bd33cc3b298d235cf8261dd9eb1886c4da0102b",
+      "bytes": 5306839,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001364742",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-24-091706",
+      "filing_date": "2024-08-06",
+      "accepted_at": "2024-08-06T15:57:51.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20240630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017024091706/blk-20240630.htm",
+      "path": "primary/0001364742/000095017024091706/blk-20240630.htm",
+      "sha256": "9aadceca746629aee67a69645f2b85980bd9cd11ac4e552a9f7659bb2ea105e1",
+      "bytes": 7491429,
+      "extracted_symbols": [
+        "BLK",
+        "BLK25"
+      ],
+      "extracted_entity_ciks": [
+        "0001364742"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-21-000070",
+      "filing_date": "2021-08-05",
+      "accepted_at": "2021-08-05T10:33:55.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20210630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077721000070/bk-20210630.htm",
+      "path": "primary/0001390777/000139077721000070/bk-20210630.htm",
+      "sha256": "b4d7fd20a9eac4cbf6492aeb3d3b876aba61ddd48c5c8dcf2debd31708951030",
+      "bytes": 9776920,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-21-000095",
+      "filing_date": "2021-11-05",
+      "accepted_at": "2021-11-05T10:49:08.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20210930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077721000095/bk-20210930.htm",
+      "path": "primary/0001390777/000139077721000095/bk-20210930.htm",
+      "sha256": "ce865e6520138380998cea346025d3377bf530e3ed4a7f6b192e34d74b282c5d",
+      "bytes": 10088792,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-22-000043",
+      "filing_date": "2022-02-25",
+      "accepted_at": "2022-02-25T12:05:13.000Z",
+      "form": "10-K",
+      "primary_document": "bk-20211231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077722000043/bk-20211231.htm",
+      "path": "primary/0001390777/000139077722000043/bk-20211231.htm",
+      "sha256": "429091585034dec13642d3a0a7f85a7587c411bf0936369b6449996a73ed7dbd",
+      "bytes": 1612758,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-22-000049",
+      "filing_date": "2022-05-06",
+      "accepted_at": "2022-05-06T20:11:07.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20220331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077722000049/bk-20220331.htm",
+      "path": "primary/0001390777/000139077722000049/bk-20220331.htm",
+      "sha256": "2aa2f5e77b9cd1649ac08ad5c62ebf1ab3fc868690ac7b67acdd8c9bc0778df5",
+      "bytes": 8461603,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-22-000075",
+      "filing_date": "2022-08-05",
+      "accepted_at": "2022-08-05T11:05:19.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20220630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077722000075/bk-20220630.htm",
+      "path": "primary/0001390777/000139077722000075/bk-20220630.htm",
+      "sha256": "ae5e72f5486427ab9239f621809c6438b2ed560868451389e1061e56224a29fe",
+      "bytes": 9867188,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-22-000101",
+      "filing_date": "2022-11-07",
+      "accepted_at": "2022-11-07T11:48:38.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20220930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077722000101/bk-20220930.htm",
+      "path": "primary/0001390777/000139077722000101/bk-20220930.htm",
+      "sha256": "75edb9df044979e8d41713b0a515571342913a7202aef587c0cdb8eaba6df8f8",
+      "bytes": 10088284,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-23-000033",
+      "filing_date": "2023-02-27",
+      "accepted_at": "2023-02-27T12:26:41.000Z",
+      "form": "10-K",
+      "primary_document": "bk-20221231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077723000033/bk-20221231.htm",
+      "path": "primary/0001390777/000139077723000033/bk-20221231.htm",
+      "sha256": "c200d7c304ddda1586f1b913deeda6258aea15478cddf3e7ece546fc5296366e",
+      "bytes": 1541912,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-23-000046",
+      "filing_date": "2023-05-05",
+      "accepted_at": "2023-05-05T11:03:15.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20230331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077723000046/bk-20230331.htm",
+      "path": "primary/0001390777/000139077723000046/bk-20230331.htm",
+      "sha256": "2b53c760d20ee6a37dfbf8ce7303250d1e6aaa01b3c0b4518eb5eb466dd851da",
+      "bytes": 8310989,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-23-000081",
+      "filing_date": "2023-08-04",
+      "accepted_at": "2023-08-04T11:08:11.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20230630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077723000081/bk-20230630.htm",
+      "path": "primary/0001390777/000139077723000081/bk-20230630.htm",
+      "sha256": "31e4189a3006ce33199ca6f4fad5ddef5756071804ca42422bfa3b2bf6b2489e",
+      "bytes": 7720408,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-23-000103",
+      "filing_date": "2023-11-03",
+      "accepted_at": "2023-11-03T11:03:04.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20230930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077723000103/bk-20230930.htm",
+      "path": "primary/0001390777/000139077723000103/bk-20230930.htm",
+      "sha256": "4cbdc628e8ebaf8e91898d119c6b7e8355b95a63c4e70ae4cf5dca24d765feab",
+      "bytes": 7815343,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-24-000051",
+      "filing_date": "2024-02-28",
+      "accepted_at": "2024-02-28T21:31:29.000Z",
+      "form": "10-K",
+      "primary_document": "bk-20231231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077724000051/bk-20231231.htm",
+      "path": "primary/0001390777/000139077724000051/bk-20231231.htm",
+      "sha256": "dfc712d1bc9c71988617f6d67966091343ec1a736cb0280c64bf26346e0d83a7",
+      "bytes": 1257473,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-24-000075",
+      "filing_date": "2024-05-03",
+      "accepted_at": "2024-05-03T11:00:57.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20240331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077724000075/bk-20240331.htm",
+      "path": "primary/0001390777/000139077724000075/bk-20240331.htm",
+      "sha256": "a1fca9c8a22881bdd55d68be73e80c962072db956fe746449e623c1c624aa700",
+      "bytes": 6527392,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-24-000105",
+      "filing_date": "2024-08-02",
+      "accepted_at": "2024-08-02T11:01:21.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20240630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077724000105/bk-20240630.htm",
+      "path": "primary/0001390777/000139077724000105/bk-20240630.htm",
+      "sha256": "15171963291b3104ce948b23bbb8409117b5c696ab729295c854443c66157ab8",
+      "bytes": 7640330,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-24-000133",
+      "filing_date": "2024-11-01",
+      "accepted_at": "2024-11-01T20:31:04.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20240930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077724000133/bk-20240930.htm",
+      "path": "primary/0001390777/000139077724000133/bk-20240930.htm",
+      "sha256": "f3926d3068c526d796f4fa13c0d1cd3d4131b03d5f62dcdafd26b6605954240b",
+      "bytes": 7662559,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-25-000046",
+      "filing_date": "2025-02-27",
+      "accepted_at": "2025-02-27T12:00:18.000Z",
+      "form": "10-K",
+      "primary_document": "bk-20241231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077725000046/bk-20241231.htm",
+      "path": "primary/0001390777/000139077725000046/bk-20241231.htm",
+      "sha256": "6b133ab71d31de2d9c6d519f2666778ef3586f7da4c49c58ace186ffef8b56f0",
+      "bytes": 1248402,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-25-000084",
+      "filing_date": "2025-05-02",
+      "accepted_at": "2025-05-02T11:02:08.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20250331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077725000084/bk-20250331.htm",
+      "path": "primary/0001390777/000139077725000084/bk-20250331.htm",
+      "sha256": "3847c0a95f6e702f343c53fff633fd27aaa03b7139266915deb4aedc5c52d571",
+      "bytes": 6332380,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-25-000118",
+      "filing_date": "2025-08-01",
+      "accepted_at": "2025-08-01T11:02:10.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20250630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077725000118/bk-20250630.htm",
+      "path": "primary/0001390777/000139077725000118/bk-20250630.htm",
+      "sha256": "22dedb1cbfd9553eeafa3cb65bd1a63281fb8c7c06fda774578e4913f57a0060",
+      "bytes": 7263148,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-25-000159",
+      "filing_date": "2025-10-31",
+      "accepted_at": "2025-10-31T11:02:57.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20250930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077725000159/bk-20250930.htm",
+      "path": "primary/0001390777/000139077725000159/bk-20250930.htm",
+      "sha256": "67398afb212878765a2ce08180bc37e8bbab6379b639649f9fbe10324277b79c",
+      "bytes": 7316938,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-26-000033",
+      "filing_date": "2026-02-25",
+      "accepted_at": "2026-02-25T12:31:48.000Z",
+      "form": "10-K",
+      "primary_document": "bk-20251231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077726000033/bk-20251231.htm",
+      "path": "primary/0001390777/000139077726000033/bk-20251231.htm",
+      "sha256": "4712d5ef9152a49feee0690e15ed8bfa68119981fef36ca22e646b14fefce35f",
+      "bytes": 1256889,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001390777",
+      "research_tickers": [
+        "BNY"
+      ],
+      "accession_number": "0001390777-26-000060",
+      "filing_date": "2026-05-01",
+      "accepted_at": "2026-05-01T11:01:15.000Z",
+      "form": "10-Q",
+      "primary_document": "bk-20260331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077726000060/bk-20260331.htm",
+      "path": "primary/0001390777/000139077726000060/bk-20260331.htm",
+      "sha256": "67e226ab5b9a966ef296bfddae05b04ccf9cbb6ed4392e57f76daf5a3a29cffa",
+      "bytes": 5613684,
+      "extracted_symbols": [
+        "BK"
+      ],
+      "extracted_entity_ciks": [
+        "0001390777"
+      ],
+      "matched_expected_symbols": [
+        "BK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-21-000047",
+      "filing_date": "2021-07-28",
+      "accepted_at": "2021-07-28T00:16:30.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20210630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204421000047/goog-20210630.htm",
+      "path": "primary/0001652044/000165204421000047/goog-20210630.htm",
+      "sha256": "da91472c94246b919b8348a8cffb4dae46e3b1e0d82ea4fbecaf01fe7eef7f72",
+      "bytes": 2541337,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-21-000057",
+      "filing_date": "2021-10-27",
+      "accepted_at": "2021-10-26T23:47:06.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20210930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204421000057/goog-20210930.htm",
+      "path": "primary/0001652044/000165204421000057/goog-20210930.htm",
+      "sha256": "13dbfb1f98d2fbd0961d1c5bcc3cc4b3aab22900bcdbe70acddc1ee35c3c0fa0",
+      "bytes": 2548022,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-22-000019",
+      "filing_date": "2022-02-02",
+      "accepted_at": "2022-02-02T02:08:02.000Z",
+      "form": "10-K",
+      "primary_document": "goog-20211231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000019/goog-20211231.htm",
+      "path": "primary/0001652044/000165204422000019/goog-20211231.htm",
+      "sha256": "68c4b06d728f42e47efda7eda080c6ebaf5635f379d7b5e465f988c3d5980799",
+      "bytes": 3015373,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-22-000029",
+      "filing_date": "2022-04-27",
+      "accepted_at": "2022-04-27T00:51:20.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20220331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000029/goog-20220331.htm",
+      "path": "primary/0001652044/000165204422000029/goog-20220331.htm",
+      "sha256": "bc9ae68bb503925f4123666e93ae85fa14093d940853618def1f496564400f63",
+      "bytes": 1970130,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-22-000071",
+      "filing_date": "2022-07-27",
+      "accepted_at": "2022-07-26T23:29:36.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20220630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000071/goog-20220630.htm",
+      "path": "primary/0001652044/000165204422000071/goog-20220630.htm",
+      "sha256": "c704e8f73db713f01733575436a0a4ac7a4f32e87db2014840261e7192c6ed62",
+      "bytes": 2553287,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-22-000090",
+      "filing_date": "2022-10-26",
+      "accepted_at": "2022-10-26T01:32:59.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20220930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000090/goog-20220930.htm",
+      "path": "primary/0001652044/000165204422000090/goog-20220930.htm",
+      "sha256": "be3e46603aa2c931264135cf26abcc890b98367e1cbd498de533368093baa682",
+      "bytes": 2587288,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-23-000016",
+      "filing_date": "2023-02-03",
+      "accepted_at": "2023-02-03T02:23:45.000Z",
+      "form": "10-K",
+      "primary_document": "goog-20221231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000016/goog-20221231.htm",
+      "path": "primary/0001652044/000165204423000016/goog-20221231.htm",
+      "sha256": "ae45cb015238b351e0ca68e5cb8d391842f9a42111a247a6e03800569deec6a0",
+      "bytes": 3038413,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-23-000045",
+      "filing_date": "2023-04-26",
+      "accepted_at": "2023-04-26T00:15:00.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20230331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000045/goog-20230331.htm",
+      "path": "primary/0001652044/000165204423000045/goog-20230331.htm",
+      "sha256": "3c32b5b17db247640a3b3756ed0fceffb961f0f64999de0d1cbdadbc98f68895",
+      "bytes": 2035971,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-23-000070",
+      "filing_date": "2023-07-26",
+      "accepted_at": "2023-07-25T23:13:26.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20230630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000070/goog-20230630.htm",
+      "path": "primary/0001652044/000165204423000070/goog-20230630.htm",
+      "sha256": "229c6f38a7a8c906b5972ef2f0dc74429dc4458c9d13aced038048d4bb8caaac",
+      "bytes": 2094505,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-23-000094",
+      "filing_date": "2023-10-25",
+      "accepted_at": "2023-10-24T22:39:13.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20230930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000094/goog-20230930.htm",
+      "path": "primary/0001652044/000165204423000094/goog-20230930.htm",
+      "sha256": "35b56787ca8435bff5e26e7de4b3c8ac3a0c7486771a2bc6d620015b047e5a6f",
+      "bytes": 2093815,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-24-000022",
+      "filing_date": "2024-01-31",
+      "accepted_at": "2024-01-31T02:43:43.000Z",
+      "form": "10-K",
+      "primary_document": "goog-20231231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm",
+      "path": "primary/0001652044/000165204424000022/goog-20231231.htm",
+      "sha256": "787dd59d770312b204d144b4c78b8de23db1e1d53aae4bf37a52d6d874e903b2",
+      "bytes": 2410403,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-24-000053",
+      "filing_date": "2024-04-26",
+      "accepted_at": "2024-04-26T00:22:11.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20240331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000053/goog-20240331.htm",
+      "path": "primary/0001652044/000165204424000053/goog-20240331.htm",
+      "sha256": "ac0ce380c0750afe4930545033bd51704c84861ba6e457a38ce7b8e13064df8c",
+      "bytes": 1493403,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-24-000079",
+      "filing_date": "2024-07-24",
+      "accepted_at": "2024-07-23T23:12:07.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20240630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000079/goog-20240630.htm",
+      "path": "primary/0001652044/000165204424000079/goog-20240630.htm",
+      "sha256": "21fdfa5029d11e91547430dfd33a7b8bd03c5153e821b59ce8a76a9f2e0660e9",
+      "bytes": 2022778,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-24-000118",
+      "filing_date": "2024-10-30",
+      "accepted_at": "2024-10-29T23:33:10.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20240930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000118/goog-20240930.htm",
+      "path": "primary/0001652044/000165204424000118/goog-20240930.htm",
+      "sha256": "b2b7f591bb361d4e28f3411136f5ddf7ba9f4f8418bf31a9fe2cd764f132f635",
+      "bytes": 2027270,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-25-000014",
+      "filing_date": "2025-02-05",
+      "accepted_at": "2025-02-05T01:41:40.000Z",
+      "form": "10-K",
+      "primary_document": "goog-20241231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-20241231.htm",
+      "path": "primary/0001652044/000165204425000014/goog-20241231.htm",
+      "sha256": "a70a2cc584744e7d678ec6c4fb669fa7c5c871861eb5820fb9de4357319db7d9",
+      "bytes": 2528344,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-25-000043",
+      "filing_date": "2025-04-25",
+      "accepted_at": "2025-04-25T01:05:29.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20250331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000043/goog-20250331.htm",
+      "path": "primary/0001652044/000165204425000043/goog-20250331.htm",
+      "sha256": "a7648d744f1503f28af30839ebca5872dcc1bcee16dd94a6700c8fc9843c710a",
+      "bytes": 1615481,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-25-000062",
+      "filing_date": "2025-07-24",
+      "accepted_at": "2025-07-23T23:44:01.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20250630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "path": "primary/0001652044/000165204425000062/goog-20250630.htm",
+      "sha256": "9d147bc0cd865420765cb1cff122df36ee8a34d0e1a289e7699f184e3385ed89",
+      "bytes": 2199722,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-25-000091",
+      "filing_date": "2025-10-30",
+      "accepted_at": "2025-10-30T01:55:01.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20250930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "path": "primary/0001652044/000165204425000091/goog-20250930.htm",
+      "sha256": "e68cbf35268433dd0f5e0dc4591c29b530af7369cfe685db16a1b65b5a19fcec",
+      "bytes": 2196990,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-26-000018",
+      "filing_date": "2026-02-05",
+      "accepted_at": "2026-02-05T02:56:03.000Z",
+      "form": "10-K",
+      "primary_document": "goog-20251231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "path": "primary/0001652044/000165204426000018/goog-20251231.htm",
+      "sha256": "c2f6301004f35411a20611c14ff01d80a85c0bcbab6053c80d8cc7f6fc747161",
+      "bytes": 2616499,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0001652044",
+      "research_tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "accession_number": "0001652044-26-000048",
+      "filing_date": "2026-04-30",
+      "accepted_at": "2026-04-30T01:02:11.000Z",
+      "form": "10-Q",
+      "primary_document": "goog-20260331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
+      "path": "primary/0001652044/000165204426000048/goog-20260331.htm",
+      "sha256": "2ff47ad277068104a8b165a86c897fa3f258546ee7c4a3aa354fa87d3cb0bd02",
+      "bytes": 1714713,
+      "extracted_symbols": [
+        "GOOG",
+        "GOOGL",
+        "TD"
+      ],
+      "extracted_entity_ciks": [
+        "0001652044"
+      ],
+      "matched_expected_symbols": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0002012383",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-24-122256",
+      "filing_date": "2024-11-06",
+      "accepted_at": "2024-11-06T21:09:36.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20240930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000095017024122256/blk-20240930.htm",
+      "path": "primary/0002012383/000095017024122256/blk-20240930.htm",
+      "sha256": "a9eb80ec9febe031a7b29b1b714450388a797f976f9dd95dbf50998992eaf889",
+      "bytes": 7436707,
+      "extracted_symbols": [
+        "BLK"
+      ],
+      "extracted_entity_ciks": [
+        "0002012383"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0002012383",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-25-026584",
+      "filing_date": "2025-02-25",
+      "accepted_at": "2025-02-25T20:59:36.000Z",
+      "form": "10-K",
+      "primary_document": "blk-20241231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000095017025026584/blk-20241231.htm",
+      "path": "primary/0002012383/000095017025026584/blk-20241231.htm",
+      "sha256": "83f135fb44d981608a61a975e48607efb9359dfed0ff450d44ac947a3056c0a0",
+      "bytes": 11025801,
+      "extracted_symbols": [
+        "BLK"
+      ],
+      "extracted_entity_ciks": [
+        "0002012383"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0002012383",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-25-065838",
+      "filing_date": "2025-05-07",
+      "accepted_at": "2025-05-07T20:51:08.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20250331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000095017025065838/blk-20250331.htm",
+      "path": "primary/0002012383/000095017025065838/blk-20250331.htm",
+      "sha256": "21d06d64686f3ff29d2bf9e67a120c7778f36bd8f42ab91cb64ba86c7da34d2b",
+      "bytes": 7359796,
+      "extracted_symbols": [
+        "BLK"
+      ],
+      "extracted_entity_ciks": [
+        "0002012383"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0002012383",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0000950170-25-103780",
+      "filing_date": "2025-08-06",
+      "accepted_at": "2025-08-06T17:46:16.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20250630.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000095017025103780/blk-20250630.htm",
+      "path": "primary/0002012383/000095017025103780/blk-20250630.htm",
+      "sha256": "1fd24ade7e61139e39925f839f86aadabca8d3cc6d384fe8e7b7935cb5320af1",
+      "bytes": 10208319,
+      "extracted_symbols": [
+        "BLK"
+      ],
+      "extracted_entity_ciks": [
+        "0002012383"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0002012383",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0001193125-25-267043",
+      "filing_date": "2025-11-05",
+      "accepted_at": "2025-11-05T21:29:06.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20250930.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000119312525267043/blk-20250930.htm",
+      "path": "primary/0002012383/000119312525267043/blk-20250930.htm",
+      "sha256": "f71c9f1b0775d52479c12873361882d4ee958bfae4e08f2fde3239d90e44a35e",
+      "bytes": 10899683,
+      "extracted_symbols": [
+        "BLK"
+      ],
+      "extracted_entity_ciks": [
+        "0002012383"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0002012383",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0001193125-26-071966",
+      "filing_date": "2026-02-25",
+      "accepted_at": "2026-02-25T21:57:59.000Z",
+      "form": "10-K",
+      "primary_document": "blk-20251231.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000119312526071966/blk-20251231.htm",
+      "path": "primary/0002012383/000119312526071966/blk-20251231.htm",
+      "sha256": "ae1e60a7e01f21e4398ba628b00df02181eb65f12a2d0c499b1613deac2d4493",
+      "bytes": 12551314,
+      "extracted_symbols": [
+        "BLK"
+      ],
+      "extracted_entity_ciks": [
+        "0002012383"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    },
+    {
+      "cik": "0002012383",
+      "research_tickers": [
+        "BLK"
+      ],
+      "accession_number": "0001193125-26-208766",
+      "filing_date": "2026-05-06",
+      "accepted_at": "2026-05-06T19:25:15.000Z",
+      "form": "10-Q",
+      "primary_document": "blk-20260331.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000119312526208766/blk-20260331.htm",
+      "path": "primary/0002012383/000119312526208766/blk-20260331.htm",
+      "sha256": "1aabca9dba28c6810e299c7dfcac3087b7c625a5d3f5fa7168036566d3c9a326",
+      "bytes": 7556138,
+      "extracted_symbols": [
+        "BLK"
+      ],
+      "extracted_entity_ciks": [
+        "0002012383"
+      ],
+      "matched_expected_symbols": [
+        "BLK"
+      ],
+      "status": "ACCEPTED_COVER_ANCHOR"
+    }
+  ],
+  "identity_events": [
+    {
+      "ticker": "BLK",
+      "old_cik": "0001364742",
+      "new_cik": "0002012383",
+      "effective_date": "2024-10-01",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000119312524230219/d871701ds8pos.htm",
+      "required_terms": [
+        "Reorganization was completed on October 1, 2024",
+        "Successor Registrant",
+        "Predecessor Registrant"
+      ],
+      "path": "identity-events/event-01.htm",
+      "sha256": "9202a8344b8dc0f734f2d504318853756a8005e6ee6d601d6ccf3d5f1d038737",
+      "bytes": 85716,
+      "required_terms_verified": true
+    }
+  ],
+  "accepted_anchors": [
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2021-07-23",
+      "accepted_at": "2021-07-23T13:09:25.000Z",
+      "accession_number": "0000773840-21-000057",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384021000057/hon-20210630.htm",
+      "document_sha256": "bc6aaa969ba4d55dd349f0913d474a8ad9ae331f897d9c49595a8601bde92e67"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2021-10-22",
+      "accepted_at": "2021-10-22T12:31:29.000Z",
+      "accession_number": "0000773840-21-000065",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384021000065/hon-20210930.htm",
+      "document_sha256": "9a20740ac310b3d5135327689ec92c725cca585385c1b235d8c5292e8a488e14"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2022-02-11",
+      "accepted_at": "2022-02-11T17:37:32.000Z",
+      "accession_number": "0000773840-22-000018",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384022000018/hon-20211231.htm",
+      "document_sha256": "5a1123dc94cb74b29296967c57d15e01e7d3c63962e11d8eefeb4c5c043a734c"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2022-04-29",
+      "accepted_at": "2022-04-29T13:03:57.000Z",
+      "accession_number": "0000773840-22-000037",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384022000037/hon-20220331.htm",
+      "document_sha256": "528eb2ad74333f15d1c71c6d6ddc6c2519be714a0849c9a14b304c691bde8ab1"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2022-07-28",
+      "accepted_at": "2022-07-28T13:16:12.000Z",
+      "accession_number": "0000773840-22-000054",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384022000054/hon-20220630.htm",
+      "document_sha256": "c4149de23195f2254e76883b6949303b183d25eefff46c68a1f5fb25233d1938"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2022-10-27",
+      "accepted_at": "2022-10-27T13:09:11.000Z",
+      "accession_number": "0000773840-22-000071",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384022000071/hon-20220930.htm",
+      "document_sha256": "160f550b9833a95617b59ad75ec00f1deb46de45a5e4789e18c6dd492cd795a9"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2023-02-10",
+      "accepted_at": "2023-02-10T19:09:31.000Z",
+      "accession_number": "0000773840-23-000013",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384023000013/hon-20221231.htm",
+      "document_sha256": "e6c4787de3b059c217a854df58d554a4c9922fc6399efbd9d349563e8a44fc0b"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2023-04-27",
+      "accepted_at": "2023-04-27T13:09:13.000Z",
+      "accession_number": "0000773840-23-000038",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384023000038/hon-20230331.htm",
+      "document_sha256": "48936f3207ee71eb28e570d3a635cbe8712e8e7a7f08de76157d06d67d2f40fa"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2023-07-27",
+      "accepted_at": "2023-07-27T13:02:54.000Z",
+      "accession_number": "0000773840-23-000073",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384023000073/hon-20230630.htm",
+      "document_sha256": "7dcf5518e34573679dae6f6593ba44b558aa4db51f927a9302c401645ee4de17"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2023-10-26",
+      "accepted_at": "2023-10-26T13:15:45.000Z",
+      "accession_number": "0000773840-23-000085",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384023000085/hon-20230930.htm",
+      "document_sha256": "ce70139e66c7f721dd33e27aa39716f395923cb3c96ff7e862781db65bdb228e"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2024-02-16",
+      "accepted_at": "2024-02-16T18:40:36.000Z",
+      "accession_number": "0000773840-24-000014",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384024000014/hon-20231231.htm",
+      "document_sha256": "d99c5ec78fa8e16ac0e6ff368a98b8f07ec69c9832b01929fdf0375837837e4c"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2024-04-25",
+      "accepted_at": "2024-04-25T13:42:46.000Z",
+      "accession_number": "0000773840-24-000051",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384024000051/hon-20240331.htm",
+      "document_sha256": "412409681f769feb51e8ba740ed466af35fb54c6053942ab7a0e2a8f6a51fb64"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2024-07-25",
+      "accepted_at": "2024-07-25T13:38:50.000Z",
+      "accession_number": "0000773840-24-000082",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384024000082/hon-20240630.htm",
+      "document_sha256": "171db24301d00053ff5b4058c331c5caebcdeba4ff8019872525602ee89e794b"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2024-10-24",
+      "accepted_at": "2024-10-24T13:37:57.000Z",
+      "accession_number": "0000773840-24-000099",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384024000099/hon-20240930.htm",
+      "document_sha256": "a602bd2dda2915f745e891512509aed951877aa0bc422f5d3d2051b457ab1f6f"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2025-02-14",
+      "accepted_at": "2025-02-14T19:50:25.000Z",
+      "accession_number": "0000773840-25-000010",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384025000010/hon-20241231.htm",
+      "document_sha256": "5b6f70f5c962a6f4f11e22776a47ca24546e6c2be5c5b8e2ef4dea4b5ad4714c"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2025-04-29",
+      "accepted_at": "2025-04-29T13:46:21.000Z",
+      "accession_number": "0000773840-25-000037",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384025000037/hon-20250331.htm",
+      "document_sha256": "aeebf2ff59678d4052941686ff90d8e5af82716ed2dc728b24b407c28271d46a"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2025-07-24",
+      "accepted_at": "2025-07-24T13:38:39.000Z",
+      "accession_number": "0000773840-25-000064",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384025000064/hon-20250630.htm",
+      "document_sha256": "415d90676eff8a012a22f7a282da7f2a564949ecb57c625e17aad93b38be30b4"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2025-10-23",
+      "accepted_at": "2025-10-23T13:35:09.000Z",
+      "accession_number": "0000773840-25-000105",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384025000105/hon-20250930.htm",
+      "document_sha256": "48634021eeb73f025fb5cd48ef9877ea90a3dc9f558a4ff123db261a9a5f99e8"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2026-02-17",
+      "accepted_at": "2026-02-17T11:07:11.000Z",
+      "accession_number": "0000773840-26-000013",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384026000013/hon-20251231.htm",
+      "document_sha256": "53fd78cff2ec456e51700ed0207e5d445b77754c0a4d5aba2bfcb708fdfa0738"
+    },
+    {
+      "cik": "0000773840",
+      "symbol": "HON",
+      "canonical_symbol": "HON",
+      "filing_date": "2026-04-23",
+      "accepted_at": "2026-04-23T13:54:52.000Z",
+      "accession_number": "0000773840-26-000057",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384026000057/hon-20260331.htm",
+      "document_sha256": "5c896c9369d0eeb80e58b680c8c7ae1d78bb9e2882da5b6018a8ce9b960ec10e"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2022-03-11",
+      "accepted_at": "2022-03-11T15:24:12.000Z",
+      "accession_number": "0001193125-22-072901",
+      "form": "20-F",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000119312522072901/d231693d20f.htm",
+      "document_sha256": "a52c0eb62bfa203f7a24804e145ad3d270aaa886527c6d4e6c92081faf8d57d1"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2023-03-10",
+      "accepted_at": "2023-03-10T14:37:41.000Z",
+      "accession_number": "0001628280-23-007435",
+      "form": "20-F",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828023007435/crh-20221231.htm",
+      "document_sha256": "d0b3e71f1f7054746b37c077d9f74c52c4aeed6fab0be064b44a7deaac776d59"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2024-02-29",
+      "accepted_at": "2024-02-29T11:25:45.000Z",
+      "accession_number": "0001628280-24-007773",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024007773/crh-20231231.htm",
+      "document_sha256": "51342f7ca7d789feffc834d6f51b979e48b68d3cc097da09ecc62d50dc9b6bed"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2024-03-15",
+      "accepted_at": "2024-03-15T13:00:58.000Z",
+      "accession_number": "0001628280-24-011326",
+      "form": "10-K/A",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024011326/crh-20231231.htm",
+      "document_sha256": "1833de7748dcc86cc206c4bb28828217fece4e180a62c043b4962ae22feecb93"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2024-05-10",
+      "accepted_at": "2024-05-10T10:11:24.000Z",
+      "accession_number": "0001628280-24-022452",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024022452/crh-20240331.htm",
+      "document_sha256": "384326070286a93dd87ad1d7c19e245d72e92087dd37945b690c4d223c6f05ad"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2024-08-08",
+      "accepted_at": "2024-08-08T10:07:50.000Z",
+      "accession_number": "0001628280-24-035823",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024035823/crh-20240630.htm",
+      "document_sha256": "618d789409f290899c24a7fa6699087d42116d5c6dc17f56cd4d1fb2d23fc777"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2024-11-07",
+      "accepted_at": "2024-11-07T11:18:32.000Z",
+      "accession_number": "0001628280-24-045944",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828024045944/crh-20240930.htm",
+      "document_sha256": "56f26b843d4bd070b5b4f419c391d61582ff78e0a1505b96cd38560af0762179"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2025-02-26",
+      "accepted_at": "2025-02-26T21:24:17.000Z",
+      "accession_number": "0001628280-25-008179",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828025008179/crh-20241231.htm",
+      "document_sha256": "38a85f6d6fbcc91ec13d6b49451dd8767e933173a9d3330760cd7b4c9060123f"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2025-05-05",
+      "accepted_at": "2025-05-05T20:23:48.000Z",
+      "accession_number": "0001628280-25-022195",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828025022195/crh-20250331.htm",
+      "document_sha256": "8592e73ead94e451dab21c8bac7555a3f4ebb747f586ced3ada95b1ece90f3d7"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2025-08-06",
+      "accepted_at": "2025-08-06T20:23:26.000Z",
+      "accession_number": "0001628280-25-038362",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828025038362/crh-20250630.htm",
+      "document_sha256": "30953cffb41e955b04966bd54fa9bcf257d3dfd34de12d1a3beaa602693b80cb"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2025-11-05",
+      "accepted_at": "2025-11-05T21:14:26.000Z",
+      "accession_number": "0001628280-25-049574",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828025049574/crh-20250930.htm",
+      "document_sha256": "781ca864a567356f786568b56c12fc2a1ccce73d2d2120049b52d077f10cc33c"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2026-02-18",
+      "accepted_at": "2026-02-18T21:14:07.000Z",
+      "accession_number": "0001628280-26-009043",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828026009043/crh-20251231.htm",
+      "document_sha256": "87f56e0348da3ab1805b1d302735b9f18e59e3b2c87f06aeb9bccca5a42b009a"
+    },
+    {
+      "cik": "0000849395",
+      "symbol": "CRH",
+      "canonical_symbol": "CRH",
+      "filing_date": "2026-04-30",
+      "accepted_at": "2026-04-30T10:18:07.000Z",
+      "accession_number": "0001628280-26-028556",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/849395/000162828026028556/crh-20260331.htm",
+      "document_sha256": "325e32d7d67dd5d418b9c4e673fc1db1b38b4b703657c9f0b01d68b9172ed53a"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2021-08-09",
+      "accepted_at": "2021-08-09T10:05:15.000Z",
+      "accession_number": "0001564590-21-042312",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459021042312/brka-10q_20210630.htm",
+      "document_sha256": "5ebde9765edcbdc2f70b96085817fe05839fd4593a1d865d4c597036c682976d"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2021-11-08",
+      "accepted_at": "2021-11-08T11:06:05.000Z",
+      "accession_number": "0001564590-21-055032",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459021055032/brka-10q_20210930.htm",
+      "document_sha256": "6bde008a90848f7bfa866fcc4a1a0b5139e7cd2cc090ccc2e8a3fe763cbabcb1"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2022-02-28",
+      "accepted_at": "2022-02-28T11:04:52.000Z",
+      "accession_number": "0001564590-22-007322",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459022007322/brka-10k_20211231.htm",
+      "document_sha256": "7222543811d95843249d8b1af9922f188215cb3e17c958bef1849a67d0cec138"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2022-05-02",
+      "accepted_at": "2022-05-02T10:04:12.000Z",
+      "accession_number": "0001564590-22-016907",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459022016907/brka-10q_20220331.htm",
+      "document_sha256": "039adb6980566b5b7d2934a5f6187873a89592e3254053dded5b85d26bbd1b4e"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2022-08-08",
+      "accepted_at": "2022-08-08T10:04:43.000Z",
+      "accession_number": "0001564590-22-028282",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000156459022028282/brka-10q_20220630.htm",
+      "document_sha256": "8acbc29c5c23f78f62e7c90b1975ece66e4c5aecadc4666c109ad53f851dcae5"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2022-11-07",
+      "accepted_at": "2022-11-07T11:04:15.000Z",
+      "accession_number": "0000950170-22-022287",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017022022287/brka-20220930.htm",
+      "document_sha256": "3976476d3a818bd789524c5e452ab8726af6d0169281477713d1981311b0cdd1"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2023-02-27",
+      "accepted_at": "2023-02-27T11:04:49.000Z",
+      "accession_number": "0000950170-23-004451",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017023004451/brka-20221231.htm",
+      "document_sha256": "e89516cf03303922d91e87386e62324157d4a5a0d5ebeff3903ed0775f7b8cac"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2023-05-08",
+      "accepted_at": "2023-05-08T10:01:35.000Z",
+      "accession_number": "0000950170-23-018438",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017023018438/brka-20230331.htm",
+      "document_sha256": "0ce9ac1f5b7aa3564d2ae9a1fbe9e921a99760fd85293cf50267ba976a93b56e"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2023-08-07",
+      "accepted_at": "2023-08-07T10:04:06.000Z",
+      "accession_number": "0000950170-23-038705",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017023038705/brka-20230630.htm",
+      "document_sha256": "c2cc9b731d887036e0cb517c95d840194b513f76537610f1b787ec38b43fcf4f"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2023-11-06",
+      "accepted_at": "2023-11-06T11:05:03.000Z",
+      "accession_number": "0000950170-23-058993",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017023058993/brka-20230930.htm",
+      "document_sha256": "8591b589ab774b92596734e6a033e35e0325f446fbd3c47335cedddbbe3349bc"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2024-02-26",
+      "accepted_at": "2024-02-26T11:08:31.000Z",
+      "accession_number": "0000950170-24-019719",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017024019719/brka-20231231.htm",
+      "document_sha256": "24f288142fb85939d90bc8d015ac8602549ff44bc2866c298c8dd32ad6073834"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2024-05-06",
+      "accepted_at": "2024-05-06T10:03:40.000Z",
+      "accession_number": "0000950170-24-053185",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017024053185/brka-20240331.htm",
+      "document_sha256": "59289961832d17f12844545f1266e59db71e11b774200d6383ad853bbb77288f"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2024-08-05",
+      "accepted_at": "2024-08-05T10:05:01.000Z",
+      "accession_number": "0000950170-24-090305",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017024090305/brka-20240630.htm",
+      "document_sha256": "d3f52e65373df2e71d295614906439cdb139520e0537c89290fbc1a8eeb6c5fa"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2024-11-04",
+      "accepted_at": "2024-11-04T11:01:42.000Z",
+      "accession_number": "0000950170-24-120241",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017024120241/brka-20240930.htm",
+      "document_sha256": "d0be8bb538eeda56ca00e7e10c2433d475926a51e03031204f316a009782eb65"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2025-02-24",
+      "accepted_at": "2025-02-24T11:03:00.000Z",
+      "accession_number": "0000950170-25-025210",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017025025210/brka-20241231.htm",
+      "document_sha256": "048d5e8c484b6ef1ee0fc492c71e586bf6de3c7acef5b2c1e505c60f5f2eb7b0"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2025-05-05",
+      "accepted_at": "2025-05-05T10:03:55.000Z",
+      "accession_number": "0000950170-25-063112",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017025063112/brka-20250331.htm",
+      "document_sha256": "11649ac39e1a8d75c490747a77e1757075c0220cf3e79ca9502ea3c2821462c7"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2025-08-04",
+      "accepted_at": "2025-08-04T10:03:50.000Z",
+      "accession_number": "0000950170-25-101578",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095017025101578/brka-20250630.htm",
+      "document_sha256": "7011801513f18204727578e5a6517b6f496af6b6f238608230bd530c1da00ccf"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2025-11-03",
+      "accepted_at": "2025-11-03T11:03:48.000Z",
+      "accession_number": "0001193125-25-261548",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312525261548/brka-20250930.htm",
+      "document_sha256": "3e58f02ec6daccfb07b95d6eb3d55bfb3a90e958cc4e0ea647e06d34905c493f"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2026-03-02",
+      "accepted_at": "2026-03-02T11:02:28.000Z",
+      "accession_number": "0001193125-26-083899",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312526083899/brka-20251231.htm",
+      "document_sha256": "878392c22e73b92722d63bb4f486586cdb5a0b8ce0d08bc403b1c0239b891282"
+    },
+    {
+      "cik": "0001067983",
+      "symbol": "BRK.B",
+      "canonical_symbol": "BRKB",
+      "filing_date": "2026-05-04",
+      "accepted_at": "2026-05-04T10:01:27.000Z",
+      "accession_number": "0001193125-26-202243",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312526202243/brka-20260331.htm",
+      "document_sha256": "0b59a86af96d0fa98fb87bb602153a9454372d69fe6e4267b235bcde9bf98cb9"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2021-08-05",
+      "accepted_at": "2021-08-05T13:36:35.000Z",
+      "accession_number": "0001564590-21-041406",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459021041406/blk-10q_20210630.htm",
+      "document_sha256": "e3849db67237d0716eb9f965c8bac30fa0c2c5ec45f4621d9254b89e8eeef0b0"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2021-11-05",
+      "accepted_at": "2021-11-05T13:55:20.000Z",
+      "accession_number": "0001564590-21-054838",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459021054838/blk-10q_20210930.htm",
+      "document_sha256": "01cb0f5fff79848410e0da1ea27693572254ee1a7f6218cdfc3ab62ea90c3c73"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2022-02-25",
+      "accepted_at": "2022-02-25T15:15:26.000Z",
+      "accession_number": "0001564590-22-007117",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459022007117/blk-10k_20211231.htm",
+      "document_sha256": "2a9b395334c7f4e7b8bddce59311943bfca469e62641a534405bca3ee2c345f8"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2022-05-06",
+      "accepted_at": "2022-05-06T12:40:30.000Z",
+      "accession_number": "0001564590-22-018505",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459022018505/blk-10q_20220331.htm",
+      "document_sha256": "1f185ecbfd114146577bfbd268c7603ef42f26b8fa4261679deaf1aad99d8e5f"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2022-08-05",
+      "accepted_at": "2022-08-05T11:50:44.000Z",
+      "accession_number": "0001564590-22-028139",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000156459022028139/blk-10q_20220630.htm",
+      "document_sha256": "6ea97d7c40f10b53a12fe931dc39220291fde02683048016c939fe06e2518945"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2022-11-04",
+      "accepted_at": "2022-11-04T14:30:31.000Z",
+      "accession_number": "0000950170-22-022155",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017022022155/blk-20220930.htm",
+      "document_sha256": "98370b6a80faeb01af0eed632cc05d047e46be9e59ea8dac3f711f97cec8a20a"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2023-02-24",
+      "accepted_at": "2023-02-24T14:35:17.000Z",
+      "accession_number": "0000950170-23-004343",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017023004343/blk-20221231.htm",
+      "document_sha256": "c954a18de00cd3be04c733fd7504fbb400d1081fced8ac467791055d16b4eeac"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2023-05-05",
+      "accepted_at": "2023-05-05T13:21:58.000Z",
+      "accession_number": "0000950170-23-018214",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017023018214/blk-20230331.htm",
+      "document_sha256": "9b460e85a3a40bc9ccaeb5f42f74f1cfc087b17686828d05eff730f66510f3ab"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2023-08-04",
+      "accepted_at": "2023-08-04T14:22:08.000Z",
+      "accession_number": "0000950170-23-038497",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017023038497/blk-20230630.htm",
+      "document_sha256": "e1aa6c054baf5213ac302bdb50223d1bec52ae98097b0f37fef92c00452438ca"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2023-11-06",
+      "accepted_at": "2023-11-06T14:24:41.000Z",
+      "accession_number": "0000950170-23-059279",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017023059279/blk-20230930.htm",
+      "document_sha256": "c3568a8b70b08eac28168366a33e7c7457042b71de58120112e0f3fa4e6a1861"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2024-02-23",
+      "accepted_at": "2024-02-23T14:28:07.000Z",
+      "accession_number": "0000950170-24-019271",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017024019271/blk-20231231.htm",
+      "document_sha256": "2debace85ac4945d4b87f174132e21c18bcf7a5c4381982b329bc3bed05695a0"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2024-05-07",
+      "accepted_at": "2024-05-07T12:07:25.000Z",
+      "accession_number": "0000950170-24-054148",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017024054148/blk-20240331.htm",
+      "document_sha256": "2424d88bd2760885931546c80bd33cc3b298d235cf8261dd9eb1886c4da0102b"
+    },
+    {
+      "cik": "0001364742",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2024-08-06",
+      "accepted_at": "2024-08-06T15:57:51.000Z",
+      "accession_number": "0000950170-24-091706",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1364742/000095017024091706/blk-20240630.htm",
+      "document_sha256": "9aadceca746629aee67a69645f2b85980bd9cd11ac4e552a9f7659bb2ea105e1"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2021-08-05",
+      "accepted_at": "2021-08-05T10:33:55.000Z",
+      "accession_number": "0001390777-21-000070",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077721000070/bk-20210630.htm",
+      "document_sha256": "b4d7fd20a9eac4cbf6492aeb3d3b876aba61ddd48c5c8dcf2debd31708951030"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2021-11-05",
+      "accepted_at": "2021-11-05T10:49:08.000Z",
+      "accession_number": "0001390777-21-000095",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077721000095/bk-20210930.htm",
+      "document_sha256": "ce865e6520138380998cea346025d3377bf530e3ed4a7f6b192e34d74b282c5d"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2022-02-25",
+      "accepted_at": "2022-02-25T12:05:13.000Z",
+      "accession_number": "0001390777-22-000043",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077722000043/bk-20211231.htm",
+      "document_sha256": "429091585034dec13642d3a0a7f85a7587c411bf0936369b6449996a73ed7dbd"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2022-05-06",
+      "accepted_at": "2022-05-06T20:11:07.000Z",
+      "accession_number": "0001390777-22-000049",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077722000049/bk-20220331.htm",
+      "document_sha256": "2aa2f5e77b9cd1649ac08ad5c62ebf1ab3fc868690ac7b67acdd8c9bc0778df5"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2022-08-05",
+      "accepted_at": "2022-08-05T11:05:19.000Z",
+      "accession_number": "0001390777-22-000075",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077722000075/bk-20220630.htm",
+      "document_sha256": "ae5e72f5486427ab9239f621809c6438b2ed560868451389e1061e56224a29fe"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2022-11-07",
+      "accepted_at": "2022-11-07T11:48:38.000Z",
+      "accession_number": "0001390777-22-000101",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077722000101/bk-20220930.htm",
+      "document_sha256": "75edb9df044979e8d41713b0a515571342913a7202aef587c0cdb8eaba6df8f8"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2023-02-27",
+      "accepted_at": "2023-02-27T12:26:41.000Z",
+      "accession_number": "0001390777-23-000033",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077723000033/bk-20221231.htm",
+      "document_sha256": "c200d7c304ddda1586f1b913deeda6258aea15478cddf3e7ece546fc5296366e"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2023-05-05",
+      "accepted_at": "2023-05-05T11:03:15.000Z",
+      "accession_number": "0001390777-23-000046",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077723000046/bk-20230331.htm",
+      "document_sha256": "2b53c760d20ee6a37dfbf8ce7303250d1e6aaa01b3c0b4518eb5eb466dd851da"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2023-08-04",
+      "accepted_at": "2023-08-04T11:08:11.000Z",
+      "accession_number": "0001390777-23-000081",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077723000081/bk-20230630.htm",
+      "document_sha256": "31e4189a3006ce33199ca6f4fad5ddef5756071804ca42422bfa3b2bf6b2489e"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2023-11-03",
+      "accepted_at": "2023-11-03T11:03:04.000Z",
+      "accession_number": "0001390777-23-000103",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077723000103/bk-20230930.htm",
+      "document_sha256": "4cbdc628e8ebaf8e91898d119c6b7e8355b95a63c4e70ae4cf5dca24d765feab"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2024-02-28",
+      "accepted_at": "2024-02-28T21:31:29.000Z",
+      "accession_number": "0001390777-24-000051",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077724000051/bk-20231231.htm",
+      "document_sha256": "dfc712d1bc9c71988617f6d67966091343ec1a736cb0280c64bf26346e0d83a7"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2024-05-03",
+      "accepted_at": "2024-05-03T11:00:57.000Z",
+      "accession_number": "0001390777-24-000075",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077724000075/bk-20240331.htm",
+      "document_sha256": "a1fca9c8a22881bdd55d68be73e80c962072db956fe746449e623c1c624aa700"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2024-08-02",
+      "accepted_at": "2024-08-02T11:01:21.000Z",
+      "accession_number": "0001390777-24-000105",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077724000105/bk-20240630.htm",
+      "document_sha256": "15171963291b3104ce948b23bbb8409117b5c696ab729295c854443c66157ab8"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2024-11-01",
+      "accepted_at": "2024-11-01T20:31:04.000Z",
+      "accession_number": "0001390777-24-000133",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077724000133/bk-20240930.htm",
+      "document_sha256": "f3926d3068c526d796f4fa13c0d1cd3d4131b03d5f62dcdafd26b6605954240b"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2025-02-27",
+      "accepted_at": "2025-02-27T12:00:18.000Z",
+      "accession_number": "0001390777-25-000046",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077725000046/bk-20241231.htm",
+      "document_sha256": "6b133ab71d31de2d9c6d519f2666778ef3586f7da4c49c58ace186ffef8b56f0"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2025-05-02",
+      "accepted_at": "2025-05-02T11:02:08.000Z",
+      "accession_number": "0001390777-25-000084",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077725000084/bk-20250331.htm",
+      "document_sha256": "3847c0a95f6e702f343c53fff633fd27aaa03b7139266915deb4aedc5c52d571"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2025-08-01",
+      "accepted_at": "2025-08-01T11:02:10.000Z",
+      "accession_number": "0001390777-25-000118",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077725000118/bk-20250630.htm",
+      "document_sha256": "22dedb1cbfd9553eeafa3cb65bd1a63281fb8c7c06fda774578e4913f57a0060"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2025-10-31",
+      "accepted_at": "2025-10-31T11:02:57.000Z",
+      "accession_number": "0001390777-25-000159",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077725000159/bk-20250930.htm",
+      "document_sha256": "67398afb212878765a2ce08180bc37e8bbab6379b639649f9fbe10324277b79c"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2026-02-25",
+      "accepted_at": "2026-02-25T12:31:48.000Z",
+      "accession_number": "0001390777-26-000033",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077726000033/bk-20251231.htm",
+      "document_sha256": "4712d5ef9152a49feee0690e15ed8bfa68119981fef36ca22e646b14fefce35f"
+    },
+    {
+      "cik": "0001390777",
+      "symbol": "BK",
+      "canonical_symbol": "BK",
+      "filing_date": "2026-05-01",
+      "accepted_at": "2026-05-01T11:01:15.000Z",
+      "accession_number": "0001390777-26-000060",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1390777/000139077726000060/bk-20260331.htm",
+      "document_sha256": "67e226ab5b9a966ef296bfddae05b04ccf9cbb6ed4392e57f76daf5a3a29cffa"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2021-07-28",
+      "accepted_at": "2021-07-28T00:16:30.000Z",
+      "accession_number": "0001652044-21-000047",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204421000047/goog-20210630.htm",
+      "document_sha256": "da91472c94246b919b8348a8cffb4dae46e3b1e0d82ea4fbecaf01fe7eef7f72"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2021-07-28",
+      "accepted_at": "2021-07-28T00:16:30.000Z",
+      "accession_number": "0001652044-21-000047",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204421000047/goog-20210630.htm",
+      "document_sha256": "da91472c94246b919b8348a8cffb4dae46e3b1e0d82ea4fbecaf01fe7eef7f72"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2021-10-27",
+      "accepted_at": "2021-10-26T23:47:06.000Z",
+      "accession_number": "0001652044-21-000057",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204421000057/goog-20210930.htm",
+      "document_sha256": "13dbfb1f98d2fbd0961d1c5bcc3cc4b3aab22900bcdbe70acddc1ee35c3c0fa0"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2021-10-27",
+      "accepted_at": "2021-10-26T23:47:06.000Z",
+      "accession_number": "0001652044-21-000057",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204421000057/goog-20210930.htm",
+      "document_sha256": "13dbfb1f98d2fbd0961d1c5bcc3cc4b3aab22900bcdbe70acddc1ee35c3c0fa0"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2022-02-02",
+      "accepted_at": "2022-02-02T02:08:02.000Z",
+      "accession_number": "0001652044-22-000019",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000019/goog-20211231.htm",
+      "document_sha256": "68c4b06d728f42e47efda7eda080c6ebaf5635f379d7b5e465f988c3d5980799"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2022-02-02",
+      "accepted_at": "2022-02-02T02:08:02.000Z",
+      "accession_number": "0001652044-22-000019",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000019/goog-20211231.htm",
+      "document_sha256": "68c4b06d728f42e47efda7eda080c6ebaf5635f379d7b5e465f988c3d5980799"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2022-04-27",
+      "accepted_at": "2022-04-27T00:51:20.000Z",
+      "accession_number": "0001652044-22-000029",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000029/goog-20220331.htm",
+      "document_sha256": "bc9ae68bb503925f4123666e93ae85fa14093d940853618def1f496564400f63"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2022-04-27",
+      "accepted_at": "2022-04-27T00:51:20.000Z",
+      "accession_number": "0001652044-22-000029",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000029/goog-20220331.htm",
+      "document_sha256": "bc9ae68bb503925f4123666e93ae85fa14093d940853618def1f496564400f63"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2022-07-27",
+      "accepted_at": "2022-07-26T23:29:36.000Z",
+      "accession_number": "0001652044-22-000071",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000071/goog-20220630.htm",
+      "document_sha256": "c704e8f73db713f01733575436a0a4ac7a4f32e87db2014840261e7192c6ed62"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2022-07-27",
+      "accepted_at": "2022-07-26T23:29:36.000Z",
+      "accession_number": "0001652044-22-000071",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000071/goog-20220630.htm",
+      "document_sha256": "c704e8f73db713f01733575436a0a4ac7a4f32e87db2014840261e7192c6ed62"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2022-10-26",
+      "accepted_at": "2022-10-26T01:32:59.000Z",
+      "accession_number": "0001652044-22-000090",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000090/goog-20220930.htm",
+      "document_sha256": "be3e46603aa2c931264135cf26abcc890b98367e1cbd498de533368093baa682"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2022-10-26",
+      "accepted_at": "2022-10-26T01:32:59.000Z",
+      "accession_number": "0001652044-22-000090",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204422000090/goog-20220930.htm",
+      "document_sha256": "be3e46603aa2c931264135cf26abcc890b98367e1cbd498de533368093baa682"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2023-02-03",
+      "accepted_at": "2023-02-03T02:23:45.000Z",
+      "accession_number": "0001652044-23-000016",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000016/goog-20221231.htm",
+      "document_sha256": "ae45cb015238b351e0ca68e5cb8d391842f9a42111a247a6e03800569deec6a0"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2023-02-03",
+      "accepted_at": "2023-02-03T02:23:45.000Z",
+      "accession_number": "0001652044-23-000016",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000016/goog-20221231.htm",
+      "document_sha256": "ae45cb015238b351e0ca68e5cb8d391842f9a42111a247a6e03800569deec6a0"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2023-04-26",
+      "accepted_at": "2023-04-26T00:15:00.000Z",
+      "accession_number": "0001652044-23-000045",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000045/goog-20230331.htm",
+      "document_sha256": "3c32b5b17db247640a3b3756ed0fceffb961f0f64999de0d1cbdadbc98f68895"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2023-04-26",
+      "accepted_at": "2023-04-26T00:15:00.000Z",
+      "accession_number": "0001652044-23-000045",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000045/goog-20230331.htm",
+      "document_sha256": "3c32b5b17db247640a3b3756ed0fceffb961f0f64999de0d1cbdadbc98f68895"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2023-07-26",
+      "accepted_at": "2023-07-25T23:13:26.000Z",
+      "accession_number": "0001652044-23-000070",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000070/goog-20230630.htm",
+      "document_sha256": "229c6f38a7a8c906b5972ef2f0dc74429dc4458c9d13aced038048d4bb8caaac"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2023-07-26",
+      "accepted_at": "2023-07-25T23:13:26.000Z",
+      "accession_number": "0001652044-23-000070",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000070/goog-20230630.htm",
+      "document_sha256": "229c6f38a7a8c906b5972ef2f0dc74429dc4458c9d13aced038048d4bb8caaac"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2023-10-25",
+      "accepted_at": "2023-10-24T22:39:13.000Z",
+      "accession_number": "0001652044-23-000094",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000094/goog-20230930.htm",
+      "document_sha256": "35b56787ca8435bff5e26e7de4b3c8ac3a0c7486771a2bc6d620015b047e5a6f"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2023-10-25",
+      "accepted_at": "2023-10-24T22:39:13.000Z",
+      "accession_number": "0001652044-23-000094",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204423000094/goog-20230930.htm",
+      "document_sha256": "35b56787ca8435bff5e26e7de4b3c8ac3a0c7486771a2bc6d620015b047e5a6f"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2024-01-31",
+      "accepted_at": "2024-01-31T02:43:43.000Z",
+      "accession_number": "0001652044-24-000022",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm",
+      "document_sha256": "787dd59d770312b204d144b4c78b8de23db1e1d53aae4bf37a52d6d874e903b2"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2024-01-31",
+      "accepted_at": "2024-01-31T02:43:43.000Z",
+      "accession_number": "0001652044-24-000022",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm",
+      "document_sha256": "787dd59d770312b204d144b4c78b8de23db1e1d53aae4bf37a52d6d874e903b2"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2024-04-26",
+      "accepted_at": "2024-04-26T00:22:11.000Z",
+      "accession_number": "0001652044-24-000053",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000053/goog-20240331.htm",
+      "document_sha256": "ac0ce380c0750afe4930545033bd51704c84861ba6e457a38ce7b8e13064df8c"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2024-04-26",
+      "accepted_at": "2024-04-26T00:22:11.000Z",
+      "accession_number": "0001652044-24-000053",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000053/goog-20240331.htm",
+      "document_sha256": "ac0ce380c0750afe4930545033bd51704c84861ba6e457a38ce7b8e13064df8c"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2024-07-24",
+      "accepted_at": "2024-07-23T23:12:07.000Z",
+      "accession_number": "0001652044-24-000079",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000079/goog-20240630.htm",
+      "document_sha256": "21fdfa5029d11e91547430dfd33a7b8bd03c5153e821b59ce8a76a9f2e0660e9"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2024-07-24",
+      "accepted_at": "2024-07-23T23:12:07.000Z",
+      "accession_number": "0001652044-24-000079",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000079/goog-20240630.htm",
+      "document_sha256": "21fdfa5029d11e91547430dfd33a7b8bd03c5153e821b59ce8a76a9f2e0660e9"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2024-10-30",
+      "accepted_at": "2024-10-29T23:33:10.000Z",
+      "accession_number": "0001652044-24-000118",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000118/goog-20240930.htm",
+      "document_sha256": "b2b7f591bb361d4e28f3411136f5ddf7ba9f4f8418bf31a9fe2cd764f132f635"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2024-10-30",
+      "accepted_at": "2024-10-29T23:33:10.000Z",
+      "accession_number": "0001652044-24-000118",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000118/goog-20240930.htm",
+      "document_sha256": "b2b7f591bb361d4e28f3411136f5ddf7ba9f4f8418bf31a9fe2cd764f132f635"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2025-02-05",
+      "accepted_at": "2025-02-05T01:41:40.000Z",
+      "accession_number": "0001652044-25-000014",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-20241231.htm",
+      "document_sha256": "a70a2cc584744e7d678ec6c4fb669fa7c5c871861eb5820fb9de4357319db7d9"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2025-02-05",
+      "accepted_at": "2025-02-05T01:41:40.000Z",
+      "accession_number": "0001652044-25-000014",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-20241231.htm",
+      "document_sha256": "a70a2cc584744e7d678ec6c4fb669fa7c5c871861eb5820fb9de4357319db7d9"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2025-04-25",
+      "accepted_at": "2025-04-25T01:05:29.000Z",
+      "accession_number": "0001652044-25-000043",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000043/goog-20250331.htm",
+      "document_sha256": "a7648d744f1503f28af30839ebca5872dcc1bcee16dd94a6700c8fc9843c710a"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2025-04-25",
+      "accepted_at": "2025-04-25T01:05:29.000Z",
+      "accession_number": "0001652044-25-000043",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000043/goog-20250331.htm",
+      "document_sha256": "a7648d744f1503f28af30839ebca5872dcc1bcee16dd94a6700c8fc9843c710a"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2025-07-24",
+      "accepted_at": "2025-07-23T23:44:01.000Z",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "document_sha256": "9d147bc0cd865420765cb1cff122df36ee8a34d0e1a289e7699f184e3385ed89"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2025-07-24",
+      "accepted_at": "2025-07-23T23:44:01.000Z",
+      "accession_number": "0001652044-25-000062",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000062/goog-20250630.htm",
+      "document_sha256": "9d147bc0cd865420765cb1cff122df36ee8a34d0e1a289e7699f184e3385ed89"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2025-10-30",
+      "accepted_at": "2025-10-30T01:55:01.000Z",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "document_sha256": "e68cbf35268433dd0f5e0dc4591c29b530af7369cfe685db16a1b65b5a19fcec"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2025-10-30",
+      "accepted_at": "2025-10-30T01:55:01.000Z",
+      "accession_number": "0001652044-25-000091",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "document_sha256": "e68cbf35268433dd0f5e0dc4591c29b530af7369cfe685db16a1b65b5a19fcec"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2026-02-05",
+      "accepted_at": "2026-02-05T02:56:03.000Z",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "document_sha256": "c2f6301004f35411a20611c14ff01d80a85c0bcbab6053c80d8cc7f6fc747161"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2026-02-05",
+      "accepted_at": "2026-02-05T02:56:03.000Z",
+      "accession_number": "0001652044-26-000018",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "document_sha256": "c2f6301004f35411a20611c14ff01d80a85c0bcbab6053c80d8cc7f6fc747161"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOG",
+      "canonical_symbol": "GOOG",
+      "filing_date": "2026-04-30",
+      "accepted_at": "2026-04-30T01:02:11.000Z",
+      "accession_number": "0001652044-26-000048",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
+      "document_sha256": "2ff47ad277068104a8b165a86c897fa3f258546ee7c4a3aa354fa87d3cb0bd02"
+    },
+    {
+      "cik": "0001652044",
+      "symbol": "GOOGL",
+      "canonical_symbol": "GOOGL",
+      "filing_date": "2026-04-30",
+      "accepted_at": "2026-04-30T01:02:11.000Z",
+      "accession_number": "0001652044-26-000048",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
+      "document_sha256": "2ff47ad277068104a8b165a86c897fa3f258546ee7c4a3aa354fa87d3cb0bd02"
+    },
+    {
+      "cik": "0002012383",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2024-11-06",
+      "accepted_at": "2024-11-06T21:09:36.000Z",
+      "accession_number": "0000950170-24-122256",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000095017024122256/blk-20240930.htm",
+      "document_sha256": "a9eb80ec9febe031a7b29b1b714450388a797f976f9dd95dbf50998992eaf889"
+    },
+    {
+      "cik": "0002012383",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2025-02-25",
+      "accepted_at": "2025-02-25T20:59:36.000Z",
+      "accession_number": "0000950170-25-026584",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000095017025026584/blk-20241231.htm",
+      "document_sha256": "83f135fb44d981608a61a975e48607efb9359dfed0ff450d44ac947a3056c0a0"
+    },
+    {
+      "cik": "0002012383",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2025-05-07",
+      "accepted_at": "2025-05-07T20:51:08.000Z",
+      "accession_number": "0000950170-25-065838",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000095017025065838/blk-20250331.htm",
+      "document_sha256": "21d06d64686f3ff29d2bf9e67a120c7778f36bd8f42ab91cb64ba86c7da34d2b"
+    },
+    {
+      "cik": "0002012383",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2025-08-06",
+      "accepted_at": "2025-08-06T17:46:16.000Z",
+      "accession_number": "0000950170-25-103780",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000095017025103780/blk-20250630.htm",
+      "document_sha256": "1fd24ade7e61139e39925f839f86aadabca8d3cc6d384fe8e7b7935cb5320af1"
+    },
+    {
+      "cik": "0002012383",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2025-11-05",
+      "accepted_at": "2025-11-05T21:29:06.000Z",
+      "accession_number": "0001193125-25-267043",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000119312525267043/blk-20250930.htm",
+      "document_sha256": "f71c9f1b0775d52479c12873361882d4ee958bfae4e08f2fde3239d90e44a35e"
+    },
+    {
+      "cik": "0002012383",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2026-02-25",
+      "accepted_at": "2026-02-25T21:57:59.000Z",
+      "accession_number": "0001193125-26-071966",
+      "form": "10-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000119312526071966/blk-20251231.htm",
+      "document_sha256": "ae1e60a7e01f21e4398ba628b00df02181eb65f12a2d0c499b1613deac2d4493"
+    },
+    {
+      "cik": "0002012383",
+      "symbol": "BLK",
+      "canonical_symbol": "BLK",
+      "filing_date": "2026-05-06",
+      "accepted_at": "2026-05-06T19:25:15.000Z",
+      "accession_number": "0001193125-26-208766",
+      "form": "10-Q",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2012383/000119312526208766/blk-20260331.htm",
+      "document_sha256": "1aabca9dba28c6810e299c7dfcac3087b7c625a5d3f5fa7168036566d3c9a326"
+    }
+  ],
+  "document_count": 113,
+  "accepted_document_count": 113,
+  "accepted_anchor_count": 133,
+  "quarantined_document_count": 0,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_preregistered": false,
+  "herd_formula_change_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_authority": false,
+  "operational_action_ratio": 0.0,
+  "snapshot_manifest_sha256": "d7894f67e4b03d1c6c0ab87bbeed01e0264faf1c4188cf93d99267aef7c24671",
+  "snapshot_path": "data/reference/sec/sec-cover-page-targeted-v1-202106-202606-20260723"
+}
