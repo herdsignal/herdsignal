@@ -1,0 +1,142 @@
+{
+  "protocol_version": "FINRA_SHORT_INTEREST_IMMUTABLE_CENSUS_V1",
+  "status": "LOCKED_BEFORE_COLLECTION",
+  "locked_at": "2026-07-23",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Build an append-only, hash-addressed census of official FINRA exchange-listed equity short-interest files without opening price outcomes or a directional hypothesis.",
+  "service_objective": "Evaluate whether twice-monthly short-interest data can later add economically distinct evidence to rare long-horizon partial profit-taking research.",
+  "prerequisite": {
+    "path": "data/reports/public_leading_data_feasibility_v1.json",
+    "sha256": "ceec024e622392ea0af806d35e8b26b5797d63bec89ee0504917be04455a4e4c",
+    "required_status": "NO_PUBLIC_SOURCE_READY_FOR_PRIMARY_OOS",
+    "required_next_priority": "BUILD_FINRA_SHORT_INTEREST_IMMUTABLE_CENSUS_FOR_RECENT_SENSITIVITY_AND_PROSPECTIVE_SHADOW_ONLY"
+  },
+  "official_source": {
+    "provider": "FINRA",
+    "file_index_url": "https://www.finra.org/finra-data/browse-catalog/equity-short-interest/files",
+    "about_url": "https://www.finra.org/finra-data/browse-catalog/equity-short-interest",
+    "glossary_url": "https://www.finra.org/finra-data/browse-catalog/equity-short-interest/glossary",
+    "reporting_schedule_url": "https://www.finra.org/filing-reporting/regulatory-filing-systems/short-interest",
+    "rule_url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/4560",
+    "download_host": "cdn.finra.org",
+    "download_path_prefix": "/equity/otcmarket/biweekly/",
+    "filename_pattern": "^shrt(?P<settlement_date>[0-9]{8})\\.csv$"
+  },
+  "collection_window": {
+    "minimum_settlement_date": "2021-06-01",
+    "as_of_date": "2026-07-23",
+    "reason": "FINRA states that files before June 2021 contain OTC positions only and do not include exchange-listed securities.",
+    "future_dated_files_forbidden": true
+  },
+  "point_in_time_policy": {
+    "settlement_date_is_not_publication_date": true,
+    "official_publication_rule": "SEVENTH_FINRA_BUSINESS_DAY_AFTER_SETTLEMENT",
+    "publication_time_precision": "DATE_ONLY",
+    "safe_availability_time": "NEXT_CALENDAR_DAY_00_00_AMERICA_NEW_YORK",
+    "holiday_calendar": "US_SECURITIES_MARKET_HOLIDAYS_V1",
+    "derived_dates_must_be_labeled": true,
+    "http_last_modified_is_revision_metadata_not_original_publication_time": true
+  },
+  "immutable_storage": {
+    "local_root": "data/reference/finra/short-interest-census-v1-202106-20260723",
+    "raw_layout": "raw/{settlement_date}/{sha256}.csv",
+    "receipt_layout": "receipts/{settlement_date}/{sha256}.json",
+    "append_only": true,
+    "overwrite_existing_hash_forbidden": true,
+    "same_settlement_date_new_hash_is_new_version": true,
+    "hash_algorithm": "SHA-256",
+    "preserve_http_metadata": [
+      "url",
+      "retrieved_at_utc",
+      "etag",
+      "last_modified",
+      "content_length",
+      "content_type"
+    ],
+    "source_revision_limitation": "FINRA exposes only the most recent corrected item; versions acquired before this census cannot be reconstructed."
+  },
+  "required_columns": [
+    "accountingYearMonthNumber",
+    "symbolCode",
+    "issueName",
+    "issuerServicesGroupExchangeCode",
+    "marketClassCode",
+    "currentShortPositionQuantity",
+    "previousShortPositionQuantity",
+    "stockSplitFlag",
+    "averageDailyVolumeQuantity",
+    "daysToCoverQuantity",
+    "revisionFlag",
+    "changePercent",
+    "changePreviousNumber",
+    "settlementDate"
+  ],
+  "identifier_policy": {
+    "primary_identifier": "SEC_CIK",
+    "observation_identifier": "FINRA_SYMBOL_AS_REPORTED",
+    "current_symbol_backfill_forbidden": true,
+    "allowed_links": [
+      "EXACT_TIME_VALID_SYMBOL_AND_CIK",
+      "VERIFIED_SEC_TICKER_ALIAS_INTERVAL",
+      "VERIFIED_FORMAT_NORMALIZATION"
+    ],
+    "unverified_or_ambiguous_links_remain_unresolved": true,
+    "locked_inputs": [
+      {
+        "path": "data/herd/price_universe_cik_periods.csv",
+        "sha256": "efb7ec2bcf35b5221494e5bd002d991d307b99b318eaace303d6b742d5393487"
+      },
+      {
+        "path": "data/herd/ticker_alias_ledger.csv",
+        "sha256": "5b5f27e472a3b676f89336d5fc8fb79ca7a92a9178c3392022cbe514d5208778"
+      },
+      {
+        "path": "data/reports/business_state_features_v2.csv",
+        "sha256": "515a0708594b3e5064e5edf7b46dbcb7d161d2682acfe4af42d22a773f1fb7f1"
+      },
+      {
+        "path": "data/reports/independent_universe_v1.csv",
+        "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8"
+      }
+    ]
+  },
+  "coverage_policy": {
+    "cohorts": [
+      "ORIGINAL_RESEARCH_51",
+      "INDEPENDENT_ELIGIBLE_388",
+      "CURRENT_SP500_REFERENCE_503"
+    ],
+    "measurements": [
+      "FILE_DATE_COMPLETENESS",
+      "RAW_SCHEMA_CONSISTENCY",
+      "REVISION_FLAG_RATE",
+      "TICKER_OBSERVATION_COVERAGE",
+      "TIME_VALID_CIK_LINK_COVERAGE",
+      "UNRESOLVED_SYMBOLS_BY_DATE"
+    ],
+    "coverage_does_not_authorize_hypothesis": true
+  },
+  "forbidden": [
+    "OPEN_PRICE_OR_RETURN_OUTCOMES",
+    "REGISTER_DIRECTIONAL_SHORT_INTEREST_HYPOTHESIS",
+    "RETUNE_ANY_THRESHOLD",
+    "TREAT_SETTLEMENT_DATE_AS_PUBLICATION_DATE",
+    "TREAT_HTTP_LAST_MODIFIED_AS_ORIGINAL_PUBLICATION_DATE",
+    "TREAT_FINRA_DAILY_SHORT_SALE_VOLUME_AS_SHORT_INTEREST",
+    "SILENTLY_OVERWRITE_A_REVISED_FILE",
+    "BACKFILL_CURRENT_TICKER_ACROSS_AN_UNVERIFIED_RENAME",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "allowed_research_role": "RECENT_SENSITIVITY_AND_PROSPECTIVE_SHADOW_ONLY",
+    "primary_long_horizon_oos_allowed": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_authority": false,
+    "operational_action_ratio": 0.0
+  }
+}
