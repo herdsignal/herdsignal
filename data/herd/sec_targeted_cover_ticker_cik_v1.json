@@ -1,0 +1,189 @@
+{
+  "protocol_version": "SEC_TARGETED_COVER_TICKER_CIK_V1",
+  "status": "LOCKED_BEFORE_TARGETED_COLLECTION",
+  "locked_at": "2026-07-23",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Fill the largest remaining FINRA ticker-to-CIK observation gaps with a small, hash-locked corpus of SEC cover-page primary filings.",
+  "selection_policy": {
+    "selection_input": "FINRA_SHORT_INTEREST_COVERAGE_AUDIT_V2",
+    "selected_without_price_outcomes": true,
+    "selection_reason": "Largest time-valid identifier gaps plus known ticker reuse, dual-class, foreign-issuer, or CIK succession structure.",
+    "full_universe_recollection_forbidden": true
+  },
+  "locked_inputs": [
+    {
+      "path": "data/herd/sec_time_valid_ticker_cik_ledger_v2.json",
+      "sha256": "a83d641fba1e14e247fa92b67ca4c1ccdd613b2a742d392f159b4f67c408e319"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v2.csv",
+      "sha256": "1c36d2a39699127d5f10fc3b1702c30a125afa64e9b1d8fa9a38ebf058e40df8"
+    },
+    {
+      "path": "data/reports/finra_short_interest_coverage_audit_v2.json",
+      "sha256": "aaf8c240dfcd6c3848f078ab0b8fa455751bff399cb2300cf8aee97189f48402"
+    },
+    {
+      "path": "data/reports/finra_short_interest_ticker_coverage_v2.csv",
+      "sha256": "f899bc62f225a5c953dffb7a1132e97b0d3e5e839b96e382ba08ef558e803bef"
+    },
+    {
+      "path": "data/herd/finra_short_interest_immutable_census_v1_manifest.json",
+      "sha256": "e30f5fcb1a498e062fa86afdd4452879be84b4ccc440d1d54b6c7a93994cb2c8"
+    }
+  ],
+  "official_source": {
+    "provider": "SEC_EDGAR",
+    "submissions_url": "https://data.sec.gov/submissions/CIK{cik}.json",
+    "submissions_history_url": "https://data.sec.gov/submissions/{name}",
+    "archive_url": "https://www.sec.gov/Archives/edgar/data/{cik}/{accession}/{document}",
+    "cover_page_rule_source": "https://www.sec.gov/resources-small-businesses/small-business-compliance-guides/fast-act-modernization-simplification-regulation-s-k",
+    "required_tag": "dei:TradingSymbol"
+  },
+  "period": {
+    "start": "2021-06-01",
+    "end": "2026-06-30",
+    "reason": "Matches the exchange-listed FINRA short-interest census window."
+  },
+  "eligible_forms": [
+    "10-K",
+    "10-K/A",
+    "10-Q",
+    "10-Q/A",
+    "8-K",
+    "8-K/A",
+    "20-F",
+    "20-F/A",
+    "40-F",
+    "40-F/A"
+  ],
+  "targets": [
+    {
+      "entity": "BLACKROCK",
+      "reference_ticker": "BLK",
+      "ciks": [
+        {
+          "cik": "0001364742",
+          "role": "PREDECESSOR_CIK_CANDIDATE"
+        },
+        {
+          "cik": "0002012383",
+          "role": "CURRENT_CIK"
+        }
+      ],
+      "accepted_canonical_symbols": [
+        "BLK"
+      ]
+    },
+    {
+      "entity": "BNY_MELLON",
+      "reference_ticker": "BNY",
+      "ciks": [
+        {
+          "cik": "0001390777",
+          "role": "CURRENT_CIK"
+        }
+      ],
+      "accepted_canonical_symbols": [
+        "BK",
+        "BNY"
+      ],
+      "finra_issue_name_required_regex": "^BANK OF NEW YORK MELLON"
+    },
+    {
+      "entity": "BERKSHIRE_HATHAWAY",
+      "reference_ticker": "BRK-B",
+      "ciks": [
+        {
+          "cik": "0001067983",
+          "role": "CURRENT_CIK"
+        }
+      ],
+      "accepted_canonical_symbols": [
+        "BRKA",
+        "BRKB"
+      ]
+    },
+    {
+      "entity": "CRH",
+      "reference_ticker": "CRH",
+      "ciks": [
+        {
+          "cik": "0000849395",
+          "role": "CURRENT_CIK"
+        }
+      ],
+      "accepted_canonical_symbols": [
+        "CRH"
+      ],
+      "foreign_issuer_forms_required": true
+    },
+    {
+      "entity": "ALPHABET",
+      "reference_ticker": "GOOG_GOOGL",
+      "ciks": [
+        {
+          "cik": "0001652044",
+          "role": "CURRENT_CIK"
+        }
+      ],
+      "accepted_canonical_symbols": [
+        "GOOG",
+        "GOOGL"
+      ]
+    }
+  ],
+  "document_policy": {
+    "primary_document_only": true,
+    "preserve_submissions_json": true,
+    "preserve_accession": true,
+    "preserve_acceptance_datetime": true,
+    "preserve_source_url": true,
+    "hash_algorithm": "SHA-256",
+    "accept_tagged_trading_symbol_only": true,
+    "plain_text_regex_symbol_is_evidence": false,
+    "current_submissions_ticker_array_is_evidence": false,
+    "target_symbol_allowlist_is_not_proof": true
+  },
+  "interval_policy": {
+    "minimum_distinct_accessions": 2,
+    "max_gap_days": 550,
+    "valid_from": "FIRST_TAGGED_PRIMARY_FILING_DATE",
+    "valid_to": "LAST_TAGGED_PRIMARY_FILING_DATE",
+    "extrapolate_before_first_anchor": false,
+    "extrapolate_after_last_anchor": false,
+    "same_cik_multiple_symbols_allowed": true,
+    "same_symbol_overlapping_multiple_ciks_is_conflict": true,
+    "conflict_resolution_requires_primary_corporate_action_evidence": true
+  },
+  "finra_reaudit_policy": {
+    "ticker_only_match_for_bny_forbidden": true,
+    "finra_issue_name_rule_applied_before_bny_observation": true,
+    "required_time_valid_cik_link_coverage": 0.95,
+    "required_cohorts": [
+      "ORIGINAL_RESEARCH_51",
+      "INDEPENDENT_ELIGIBLE_388"
+    ],
+    "passing_does_not_authorize_direction_hypothesis": true
+  },
+  "forbidden": [
+    "OPEN_PRICE_OR_RETURN_OUTCOMES",
+    "REGISTER_SHORT_INTEREST_DIRECTION_HYPOTHESIS",
+    "INFER_SYMBOL_FROM_CURRENT_SUBMISSIONS_ARRAY",
+    "MERGE_CIK_SUCCESSORS_FROM_NAME_SIMILARITY",
+    "BACKFILL_BEFORE_FIRST_PRIMARY_FILING",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "finra_role": "PROSPECTIVE_SHADOW_OBSERVATION_ONLY",
+    "primary_long_horizon_oos_allowed": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_authority": false,
+    "operational_action_ratio": 0.0
+  }
+}
