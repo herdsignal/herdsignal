@@ -4,14 +4,21 @@
 
 연구 파일이 많다는 이유만으로 삭제하지 않는다. 탈락 실험도 임계값을 바꿔
 다시 시도하는 일을 막고 과거 판정을 재현하는 근거다. 기계 판독 원장은
-`data/herd/research_artifact_catalog.json`이다.
+현행 원장은 `data/herd/research_artifact_catalog_v2.json`이다. 기존
+`research_artifact_catalog.json`은 2026-07-24 야간 PIT 완료 감사가 해시로
+참조하는 V1 영수증이므로 수정하지 않는다.
 
 | 상태 | 의미 | 현재 대표 묶음 |
 | --- | --- | --- |
-| `ACTIVE` | 다음 연구 판정에 직접 사용 | FINRA 증분 census·lifecycle ticker–CIK 원장 V5·통합 PIT shadow |
+| `ACTIVE` | 다음 연구 판정에 직접 사용 | 모델 헌장·현금흐름 계약·입력 manifest |
 | `DATA_PIPELINE` | 재현 입력 생성 | SEC PIT, 가격 스냅샷, S&P 구성, CIK·기업행동 |
-| `REJECTED` | 사전 기준에서 탈락 | Rush, RSI, 재진입, 완결 사이클 실험 |
-| `LEGACY` | 현행 판단에 미사용 | 과거 v3~v6.1 백테스트와 이전 검증 경로 |
+| `REJECTED` | 사전 기준에서 탈락 | Rush, RSI, Form 4·가이던스 방향, 완결 사이클 실험 |
+| `LEGACY_REFERENCE` | 비교에만 사용 | HERD v4·v6.1 공식과 재평가 |
+| `DIAGNOSTIC` | 승격 권한 없는 감사 | 지표 인벤토리·실패 정보 감사·parser V10 종료 판정 |
+
+V2는 파일을 상태별 명시적 chain에 한 번만 넣는다. 같은 파일이 두 상태에
+들어가거나 v4·v6.1이 `LEGACY_REFERENCE_ONLY`가 아니면 검증이 실패한다.
+신규 모델은 레거시 공식이나 탈락 가설을 import할 수 없다.
 
 Form 4 V1은 원문 parser 검수 역할로 유지한다. V2는 SEC 공식 분기 벌크
 2012Q1~2026Q2 58개를 해시 고정하고 438개 issuer의 Form 4/4-A

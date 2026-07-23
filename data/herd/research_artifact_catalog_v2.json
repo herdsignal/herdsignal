@@ -1,0 +1,109 @@
+{
+  "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V2",
+  "as_of": "2026-07-24",
+  "current_decision": {
+    "status": "NO_ADOPTABLE_CANDIDATE",
+    "new_model_name": "UNASSIGNED_UNTIL_PROMOTION",
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  },
+  "statuses": {
+    "ACTIVE": "현재 연구 경계와 다음 모델 판정에 직접 사용되는 계약",
+    "DATA_PIPELINE": "가격·SEC·FINRA·식별자 등 재현 가능한 입력을 만드는 기반",
+    "REJECTED": "사전 고정한 게이트에서 탈락해 가중치·임계값 재조정이 금지된 실험",
+    "LEGACY_REFERENCE": "비교와 실패 원인 분석에만 사용하는 과거 모델",
+    "DIAGNOSTIC": "연구 방향과 데이터 한계를 설명하지만 모델 승격 권한이 없는 감사 결과"
+  },
+  "model_boundaries": {
+    "HERD_V4": {
+      "role": "LEGACY_REFERENCE_ONLY",
+      "formula_reuse_allowed": false,
+      "threshold_retuning_allowed": false
+    },
+    "HERD_V6_1": {
+      "role": "LEGACY_REFERENCE_ONLY",
+      "formula_reuse_allowed": false,
+      "threshold_retuning_allowed": false
+    }
+  },
+  "chains": {
+    "ACTIVE": [
+      "data/herd/public_research_contract.json",
+      "data/herd/herd_vnext_model_charter_v1.json",
+      "data/herd/personal_cashflow_benchmark_v1.json",
+      "data/herd/research_input_manifest_v2.json",
+      "data/herd/vnext_prospective_shadow_protocol_v1.json",
+      "docs/HERD_RESEARCH_STATUS.md",
+      "docs/HERD_REPRODUCIBLE_RESEARCH.md"
+    ],
+    "DATA_PIPELINE": [
+      "data/herd/sec_form4_research_census_v2.json",
+      "data/reports/sec_form4_census_gate_v2.json",
+      "data/herd/sec_guidance_atomic_census_v2.json",
+      "data/reports/sec_guidance_atomic_bindings_v2.json",
+      "data/herd/finra_short_interest_incremental_v2.json",
+      "data/reports/finra_short_interest_incremental_v2.json",
+      "data/herd/sec_time_valid_ticker_cik_ledger_v5.json",
+      "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
+      "data/herd/unified_pit_shadow_panel_v1.json",
+      "data/reports/unified_pit_shadow_panel_v1.json"
+    ],
+    "REJECTED": [
+      "data/herd/vnext_joint_hypothesis_v1.json",
+      "data/reports/vnext_preholdout_evaluation_v1.json",
+      "data/herd/rush_downside_asymmetry_protocol_v1.json",
+      "data/reports/rush_downside_asymmetry_oos_v1.json",
+      "data/herd/sec_form4_insider_purchase_support_v1.json",
+      "data/reports/sec_form4_insider_purchase_oos_v1.json",
+      "data/herd/sec_guidance_lower_oos_v2.json",
+      "data/reports/sec_guidance_lower_oos_v2.json",
+      "data/reports/herd_candidate_oos_v2.json",
+      "data/reports/profit_take_oos_v2.json",
+      "data/reports/completed_cycle_gate_v5.json"
+    ],
+    "LEGACY_REFERENCE": [
+      "data/config/settings.py",
+      "data/herd/calculator.py",
+      "data/reports/legacy_model_evaluation_v2.json",
+      "backend/src/main/java/com/herdsignal/service/ActionDecisionService.java"
+    ],
+    "DIAGNOSTIC": [
+      "data/herd/research_artifact_catalog.json",
+      "data/herd/indicator_inventory_v2.json",
+      "data/reports/failed_price_information_audit_v1.json",
+      "data/reports/sec_guidance_structure_v10_final.json",
+      "data/reports/overnight_pit_shadow_completion_v1.json"
+    ]
+  },
+  "exclusion_rules": [
+    {
+      "id": "NO_LEGACY_FORMULA_REUSE",
+      "applies_to": ["HERD_V4", "HERD_V6_1"],
+      "rule": "새 HERD 후보는 과거 공식·가중치·임계값을 import하거나 재조정하지 않는다."
+    },
+    {
+      "id": "NO_REJECTED_HYPOTHESIS_RETUNING",
+      "applies_to": ["REJECTED"],
+      "rule": "새로운 경제적 가설과 사전등록이 없으면 같은 표본에서 기간·임계값·가중치를 바꾸지 않는다."
+    },
+    {
+      "id": "NO_PARSER_VERSION_LOOP",
+      "applies_to": ["SEC_GUIDANCE_V2_TO_V10"],
+      "rule": "기존 원문 오류 문법을 같은 방식으로 반복 수정하지 않고 검증된 atomic binding만 보조 veto 연구에 사용한다."
+    },
+    {
+      "id": "NO_ACTION_FROM_STATE_ALONE",
+      "applies_to": ["FLEE", "SCATTER", "DRIFT", "RUSH"],
+      "rule": "HERD 상태만으로 매수·익절 행동을 승인하지 않는다."
+    }
+  ],
+  "retention": {
+    "delete_only_when": [
+      "git import와 문서 참조가 모두 없음",
+      "고정 manifest 또는 hash 입력이 아님",
+      "실험 판정 재현에 필요하지 않음",
+      "전체 회귀 테스트 통과"
+    ],
+    "unclassified_policy": "REVIEW_REQUIRED"
+  }
+}

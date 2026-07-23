@@ -5,7 +5,10 @@
 
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
-`data/herd/research_artifact_catalog.json`을 기준으로 한다.
+현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.
+V1 `research_artifact_catalog.json`은 과거 야간 완료 감사의 해시 입력으로만
+보존한다. V2는 v4·v6.1을 `LEGACY_REFERENCE_ONLY`로 고정하고, 기각된
+vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 분리한다.
 
 ## HERD vNext 모델 헌장
 
