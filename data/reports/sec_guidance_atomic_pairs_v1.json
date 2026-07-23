@@ -1,0 +1,21 @@
+{
+  "report_version": "herd-sec-guidance-atomic-pairs-v1",
+  "atomic_source_fact_authority_only": true,
+  "pair_eligible_bindings": 306,
+  "atomic_revision_pairs": 80,
+  "distinct_tickers": 24,
+  "minimum_pairs": 150,
+  "minimum_distinct_tickers": 20,
+  "pair_coverage_gate_passed": false,
+  "direction_labels_created": false,
+  "guidance_veto_authorized": false,
+  "sell_authority": false,
+  "herd_weight_authority": false,
+  "next_decision": "ATOMIC_PAIR_COVERAGE_BLOCKED",
+  "atomic_bindings_sha256": "31fdaf629d8123eb5c49ef15bf6418438325116b084aa50be1e096981d903a10",
+  "atomic_report_sha256": "48c1de3eb2cef066f3210de0ee40d9eafa9477ee43ce95040b7c68f9ee033294",
+  "price_outcomes_observed": false,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "9164af1cab8815bf728c3cf3f8db75f97282b54d6fb9221bef3c34714a27ae77",
+  "pairs_sha256": "00c9931d24179acf46a19904138e32e74ee9e3fc053fb500485472fea604bf3d"
+}

@@ -1,0 +1,19 @@
+{
+  "report_version": "herd-sec-auxiliary-veto-authority-v1",
+  "guidance_pair_coverage_passed": false,
+  "guidance_independent_oos_passed": false,
+  "guidance_veto_enabled": false,
+  "business_veto_independent_oos_passed": false,
+  "business_veto_enabled": false,
+  "effective_sec_veto_enabled": false,
+  "allowed_runtime_effects": [],
+  "create_buy_authority": false,
+  "create_sell_authority": false,
+  "herd_weight_authority": false,
+  "action_ratio_authority": false,
+  "decision": "DISABLED_NO_ADMITTED_SEC_VETO",
+  "guidance_pair_report_sha256": "1104913c77395fb82c928cd0b73399afa82c2f50aab40bc4da5495f9897b75ac",
+  "business_veto_report_sha256": "de4facd71483f00298134e3e309579938ee68acbc5d2227cccc5e554dd393d07",
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "faef72e0f9affb876bd2960b0a7b5ad76b518d5ce456513a8035505b335eaf46"
+}

@@ -1,0 +1,10 @@
+{
+  "protocol_version": "HERD_SEC_AUXILIARY_VETO_AUTHORITY_V1",
+  "status": "LOCKED_AUTHORITY_FIREWALL",
+  "guidance_pair_report": "data/reports/sec_guidance_atomic_pairs_v1.json",
+  "business_veto_report": "data/reports/business_veto_admission_v2.json",
+  "allowed_authority_on_independent_oos_pass": ["BLOCK_ADD_BUY", "BLOCK_REENTRY"],
+  "always_forbidden_authority": ["CREATE_BUY", "CREATE_SELL", "CHANGE_HERD", "CHANGE_ACTION_RATIO"],
+  "guidance_requirements": ["PAIR_COVERAGE", "PREREGISTERED_VETO_TARGET", "INDEPENDENT_OOS_PASS"],
+  "business_requirements": ["PIT_FEATURES", "INDEPENDENT_OOS_PASS", "PRIMARY_OUTCOMES_2_OF_2"]
+}
