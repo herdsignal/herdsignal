@@ -1,0 +1,111 @@
+{
+  "protocol_version": "SEC_TIME_VALID_TICKER_CIK_LEDGER_V2",
+  "status": "LOCKED_BEFORE_INTERVAL_GENERATION",
+  "locked_at": "2026-07-23",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Expand a conservative time-valid ticker-to-CIK interval ledger from official SEC as-filed records without opening price outcomes or a directional hypothesis.",
+  "service_objective": "Make recent FINRA short-interest observations identity-safe enough for prospective shadow observation while keeping them outside HERD and user actions.",
+  "official_sources": [
+    {
+      "role": "CENSUS_OBSERVATION_ANCHOR",
+      "provider": "SEC",
+      "landing_page": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+      "local_manifest": "data/reference/sec/sec-form4-bulk-v2-2012q1-2026q2-20260723/manifest.json",
+      "sha256": "04763743fc3655786b7ee6360ccd4eb36f9198089c3edec7a331f53f1b4f31bb",
+      "source_semantics": "SEC_FLATTENED_AS_FILED_FORM_3_4_5_XML",
+      "limitation": "Official flattened data is not a substitute for the full filing and omits some filing metadata."
+    },
+    {
+      "role": "EXACT_TRANSITION_BOUNDARY",
+      "provider": "SEC_EDGAR_PRIMARY_FILING",
+      "local_path": "data/reference/sec/sec-trading-symbol-merged-v6-20160718-20260717-20260719.csv",
+      "sha256": "67a2c1b208d3d8f56615da3dc4d8dd21430bed0b44927b6d6796a8e18426d191",
+      "required_status": "SEC_IDENTITY_AND_EFFECTIVE_DATE_VERIFIED"
+    }
+  ],
+  "locked_universes": [
+    {
+      "path": "data/reports/business_state_features_v2.csv",
+      "sha256": "515a0708594b3e5064e5edf7b46dbcb7d161d2682acfe4af42d22a773f1fb7f1"
+    },
+    {
+      "path": "data/reports/independent_universe_v1.csv",
+      "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8"
+    }
+  ],
+  "interval_policy": {
+    "target_start": "2021-06-01",
+    "target_end": "2026-06-30",
+    "observation_time": "SEC_FILING_DATE",
+    "acceptance_datetime_available_in_form345_bulk": false,
+    "filing_date_is_not_intraday_availability": true,
+    "safe_availability": "NEXT_CALENDAR_DAY_00_00_AMERICA_NEW_YORK",
+    "canonical_symbol_rule": "UPPERCASE_REMOVE_NON_ALPHANUMERIC_FOR_FORMAT_MATCH_ONLY",
+    "preserve_reported_symbol": true,
+    "max_gap_between_same_cik_symbol_anchors_days": 550,
+    "minimum_anchor_count_per_interval": 2,
+    "first_anchor_is_inclusive": true,
+    "last_anchor_is_inclusive": true,
+    "extrapolate_before_first_anchor": false,
+    "extrapolate_after_last_anchor": false,
+    "verified_transition_boundary_may_split_or_clip_intervals": true,
+    "same_cik_multiple_symbols_allowed": true,
+    "same_symbol_overlapping_multiple_ciks_is_conflict": true,
+    "conflicting_intervals_are_excluded": true,
+    "current_ticker_backfill_forbidden": true
+  },
+  "evidence_policy": {
+    "anchor_required_fields": [
+      "ACCESSION_NUMBER",
+      "FILING_DATE",
+      "DOCUMENT_TYPE",
+      "ISSUERCIK",
+      "ISSUERTRADINGSYMBOL"
+    ],
+    "allowed_forms": [
+      "3",
+      "3/A",
+      "4",
+      "4/A",
+      "5",
+      "5/A"
+    ],
+    "blank_placeholder_or_invalid_symbol_is_rejected": true,
+    "raw_quarter_zip_hash_must_match_manifest": true,
+    "accession_and_source_quarter_must_be_preserved": true,
+    "exact_transition_requires_primary_filing_evidence": true,
+    "submissions_api_current_ticker_is_discovery_only": true
+  },
+  "finra_shadow_gate": {
+    "source_protocol": "data/herd/finra_short_interest_immutable_census_v1.json",
+    "source_protocol_sha256": "46bbc326af1bf1d4c2876d4c91615eb8feb4a8000b8d04b8da3ecab512be8128",
+    "source_manifest": "data/herd/finra_short_interest_immutable_census_v1_manifest.json",
+    "source_manifest_sha256": "e30f5fcb1a498e062fa86afdd4452879be84b4ccc440d1d54b6c7a93994cb2c8",
+    "required_time_valid_cik_link_coverage": 0.95,
+    "required_cohorts": [
+      "ORIGINAL_RESEARCH_51",
+      "INDEPENDENT_ELIGIBLE_388"
+    ],
+    "allowed_if_passed": "PROSPECTIVE_SHADOW_OBSERVATION_ONLY",
+    "primary_long_horizon_oos_allowed": false
+  },
+  "forbidden": [
+    "OPEN_PRICE_OR_RETURN_OUTCOMES",
+    "REGISTER_SHORT_INTEREST_DIRECTION_HYPOTHESIS",
+    "BACKFILL_CURRENT_TICKER",
+    "INFER_A_TICKER_CHANGE_FROM_FORM345_ANCHORS_ALONE",
+    "MERGE_CONFLICTING_CIKS",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "AUTHORIZE_BUY_OR_PROFIT_TAKE_ACTION"
+  ],
+  "authority": {
+    "finra_research_role": "PROSPECTIVE_SHADOW_OBSERVATION_ONLY",
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_authority": false,
+    "operational_action_ratio": 0.0
+  }
+}
