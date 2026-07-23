@@ -28,3 +28,5 @@ def test_core_return_quarantines_failed_formulas_and_sec_direction() -> None:
     assert report["sec_direction_authority"] is False
     assert report["new_hypothesis_preregistered"] is False
     assert report["next_decision"] == "PREREGISTER_ONE_NEW_NONREDUNDANT_ECONOMIC_HYPOTHESIS"
+    assert protocol["sample_boundary"]["economic_target_ledger_may_count_as_future_oos"] is False
+    assert protocol["sample_boundary"]["new_hypothesis_requires_fresh_locked_oos_sample"] is True

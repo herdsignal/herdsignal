@@ -26,6 +26,12 @@
     "PARTICIPATION_BREADTH", "DOWNSIDE_RISK"
   ],
   "standalone_before_combination": true,
+  "sample_boundary": {
+    "economic_target_ledger_role": "DISCOVERY_TARGET_DEFINITION_ONLY",
+    "economic_target_ledger_may_count_as_future_oos": false,
+    "new_hypothesis_requires_fresh_locked_oos_sample": true,
+    "blind_holdout_remains_sealed": true
+  },
   "failed_exact_hypotheses_not_reusable": [
     "PROFIT_TAKE_VOLATILITY_EXTENSION",
     "PROFIT_TAKE_TREND_DECELERATION",

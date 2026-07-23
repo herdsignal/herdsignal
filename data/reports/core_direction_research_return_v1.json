@@ -20,6 +20,6 @@
   "sec_authority_sha256": "f510a3c88dc9f816c7ecaea49df0facd671f0875d54394832c6758833f2491f9",
   "survivorship_readiness_sha256": "06c0d864eeff6e209231ff0da9bfac294285d1a6a35dd028d6fb64d6f3678442",
   "operational_action_ratio": 0.0,
-  "protocol_sha256": "c175319a6152506633ed2c04243e525aca7b5d0fdb53d013726e86b4b3ee09d5",
+  "protocol_sha256": "9897a86727145d359682d92e7931457c7441a621a387114e7d4e95360b3b2514",
   "targets_sha256": "3aaad8bf3e4c702b307131e51abacec97c1e8d58059332fa8c927c4c00f9f852"
 }
