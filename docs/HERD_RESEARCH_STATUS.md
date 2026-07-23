@@ -7,6 +7,25 @@
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 `data/herd/research_artifact_catalog.json`을 기준으로 한다.
 
+## HERD vNext 모델 헌장
+
+차세대 모델의 제품 범위와 출력 경계를
+`data/herd/herd_vnext_model_charter_v1.json`에 결과 확인 전에 고정했다.
+HerdSignal은 좋은 기업을 선택하는 모델이 아니라, 사용자가 장기 보유하기로
+선택한 미국 기업의 핵심 물량을 유지하면서 희소한 5% 익절·재진입의 완결
+경제 효과를 평가한다. 기본 행동은 `HOLD`, 전량 매도와 레버리지는 금지다.
+
+사용자에게는 HERD 0~100과 Flee~Rush 상태를 중심으로 보여주되, 내부 모델은
+`HERD_STATE → TRANSITION_STATE → BUSINESS_GATE → ACTION_EDGE →
+PORTFOLIO_POLICY → PROMOTION_GATE`를 분리한다. 개인 보유 비중과 현금은
+객관적 HERD 상태에 들어가지 않으며, 최종 행동 번역에만 사용한다.
+
+v4는 `LEGACY_STATE_BASELINE`, v6.1은
+`LEGACY_RESEARCH_ACTION_BASELINE`으로 동결한다. 두 모델의 임계값을 다시
+조정해 vNext로 승격하지 않는다. 2026-07-17까지의 과거 데이터는 이미
+연구자가 관측했으므로 pre-holdout 용도로만 사용하며, 최종 Blind 증거는
+공식·가중치·임계값을 잠근 이후의 prospective shadow 데이터로만 인정한다.
+
 ## Rush 종목 고유 하방 비대칭 독립 OOS
 
 기존 1,998개 discovery 사건에 포함된 381개 종목을 전부 제외하고, 최소

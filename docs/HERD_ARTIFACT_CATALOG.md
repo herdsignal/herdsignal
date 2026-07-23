@@ -23,6 +23,12 @@ issuer 검증 1,455건 → atomic 거래 3,661건까지 구축됐다. Form 4 검
 `REVIEW_SAMPLE_NOT_RESEARCH_CENSUS`다. 별도 연구 census V2를 완성하기
 전에는 방향 가설, 가격 OOS, HERD 가중치로 진행하지 않는다.
 
+차세대 연구의 최상위 계약은
+`data/herd/herd_vnext_model_charter_v1.json`이다. 이 계약은 v4·v6.1을
+레거시 기준선으로 동결하고 HERD 상태, 전환, 기업 veto, 행동 edge, 개인
+포트폴리오 번역과 운영 승격 권한을 분리한다. 이후 후보와 MVP 코드는 이
+계약을 완화할 수 없다.
+
 삭제는 import·문서 참조, 고정 hash 입력, 실험 재현 필요성을 모두 확인하고
 회귀 테스트를 통과한 파일에만 허용한다. 분류되지 않은 새 파일은 자동 삭제
 대상이 아니라 `REVIEW_REQUIRED`다.

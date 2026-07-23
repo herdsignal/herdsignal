@@ -1,0 +1,145 @@
+{
+  "contract_version": "HERD_VNEXT_MODEL_CHARTER_V1",
+  "status": "LOCKED_BEFORE_VNEXT_FEATURE_RESULTS",
+  "product_scope": {
+    "user": "LONG_TERM_HOLDER_OF_USER_SELECTED_US_EQUITIES",
+    "selection_responsibility": "USER_SELECTS_COMPANIES",
+    "model_responsibility": "PRESERVE_CORE_POSITION_AND_EVALUATE_RARE_PARTIAL_ACTIONS",
+    "default_action": "HOLD",
+    "does_not_select_good_companies": true,
+    "does_not_promise_monotonic_wealth": true,
+    "does_not_promise_buy_and_hold_outperformance": true
+  },
+  "objective": {
+    "primary": "IMPROVE_TERMINAL_WEALTH_AND_SHARE_COUNT_VERSUS_MATCHED_BUY_AND_HOLD_AFTER_COMPLETE_TRIM_REENTRY_CYCLES",
+    "secondary": "REDUCE_AVOIDABLE_DRAWDOWN_WITHOUT_DESTROYING_LONG_TERM_WINNER_UPSIDE",
+    "unit_of_evaluation": "COMPLETE_PROFIT_TAKE_TO_REENTRY_CYCLE",
+    "matched_conditions": [
+      "SAME_COMPANY",
+      "SAME_INITIAL_CAPITAL",
+      "SAME_EXTERNAL_CASH_FLOWS",
+      "SAME_EVALUATION_PERIOD",
+      "SAME_PRICE_AND_DIVIDEND_SERIES",
+      "NEXT_SESSION_OPEN_EXECUTION",
+      "SAME_COST_ASSUMPTIONS"
+    ]
+  },
+  "model_layers": [
+    {
+      "id": "HERD_STATE",
+      "role": "CROWDING_AND_CYCLE_POSITION",
+      "personal_portfolio_input_allowed": false,
+      "authorizes_action": false
+    },
+    {
+      "id": "TRANSITION_STATE",
+      "role": "CYCLE_DIRECTION_AND_CHANGE",
+      "personal_portfolio_input_allowed": false,
+      "authorizes_action": false
+    },
+    {
+      "id": "BUSINESS_GATE",
+      "role": "PIT_COMPANY_HEALTH_VETO",
+      "personal_portfolio_input_allowed": false,
+      "authorizes_action": false
+    },
+    {
+      "id": "ACTION_EDGE",
+      "role": "SEPARATE_PROFIT_TAKE_AND_REENTRY_ECONOMIC_EDGE",
+      "personal_portfolio_input_allowed": false,
+      "authorizes_action": false
+    },
+    {
+      "id": "PORTFOLIO_POLICY",
+      "role": "PERSONAL_POSITION_AND_CASH_TRANSLATION",
+      "personal_portfolio_input_allowed": true,
+      "authorizes_action": false
+    },
+    {
+      "id": "PROMOTION_GATE",
+      "role": "FINAL_OPERATIONAL_AUTHORITY",
+      "personal_portfolio_input_allowed": false,
+      "authorizes_action": true
+    }
+  ],
+  "output_contract": {
+    "herd": {
+      "score_range": [0, 100],
+      "stages": ["FLEE", "SCATTER", "CALM", "DRIFT", "RUSH"],
+      "meaning": "CURRENT_CROWDING_AND_CYCLE_POSITION_NOT_A_TRADE_COMMAND"
+    },
+    "transition": {
+      "values": ["EXPANDING", "MATURE", "COOLING", "BREAKING", "RECOVERING", "UNKNOWN"]
+    },
+    "business_gate": {
+      "values": ["PASS", "VETO", "UNKNOWN"],
+      "unknown_policy": "DOES_NOT_AUTHORIZE_ADD_OR_REENTRY"
+    },
+    "confidence": {
+      "range": [0, 100],
+      "meaning": "DATA_COVERAGE_AND_MODEL_CALIBRATION_NOT_ACTION_SIZE"
+    },
+    "action": {
+      "values": ["HOLD", "TRIM_5_PERCENT", "ADD_5_PERCENT"],
+      "research_default": "HOLD",
+      "unapproved_ratio": 0.0
+    }
+  },
+  "action_policy": {
+    "initial_profit_take_fraction": 0.05,
+    "maximum_cumulative_profit_take_fraction": 0.15,
+    "full_exit_allowed": false,
+    "maximum_profit_take_events_per_ticker_year": 2,
+    "maximum_completed_actions_per_ticker_year": 5,
+    "minimum_cooldown_weeks": 8,
+    "reentry_requires_prior_matched_sale_cash": true,
+    "profit_take_without_reentry_is_incomplete_cycle": true,
+    "leverage_supported": false
+  },
+  "evidence_policy": {
+    "candidate_blocks": [
+      "MARKET_AND_SECTOR_REGIME",
+      "STOCK_EXTENSION_AND_TRANSITION",
+      "PEER_PARTICIPATION",
+      "PIT_BUSINESS_VETO"
+    ],
+    "marginal_effect_required_for_every_block": false,
+    "single_economically_preregistered_interaction_allowed": true,
+    "block_ablation_required": true,
+    "failed_legacy_features_may_not_be_reweighted_without_new_preregistration": true,
+    "alternative_data_requires_source_accuracy_and_coverage_gates": true
+  },
+  "legacy_boundary": {
+    "HERD_v4": "LEGACY_STATE_BASELINE",
+    "HERD_v6.1": "LEGACY_RESEARCH_ACTION_BASELINE",
+    "legacy_model_promotion_allowed": false,
+    "legacy_threshold_retuning_allowed": false
+  },
+  "validation_boundary": {
+    "historical_data_observed_through": "2026-07-17",
+    "historical_data_role": "PRE_HOLDOUT_RESEARCH_ONLY",
+    "historical_period_may_be_relabelled_blind_holdout": false,
+    "final_blind_evidence": "PROSPECTIVE_SHADOW_ONLY",
+    "price_outcomes_opened_during_source_validation": false,
+    "operational_action_ratio_before_promotion": 0.0
+  },
+  "forbidden": [
+    "USE_HIGH_HERD_ALONE_AS_SELL",
+    "USE_LOW_HERD_ALONE_AS_BUY",
+    "PUT_PERSONAL_POSITION_INSIDE_OBJECTIVE_HERD",
+    "USE_BUSINESS_GATE_AS_STANDALONE_DIRECTION",
+    "MERGE_PROFIT_TAKE_AND_REENTRY_TARGETS",
+    "OPEN_PROSPECTIVE_OUTCOME_BEFORE_FREEZE",
+    "PROMOTE_WITHOUT_COMPLETE_CYCLE",
+    "PROMOTE_SURVIVORSHIP_BIASED_GENERAL_CLAIM",
+    "USE_LEVERAGE",
+    "FULL_EXIT"
+  ],
+  "research_basis": [
+    "https://www.nber.org/papers/w7159",
+    "https://www.nber.org/papers/w20439",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2900447",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551",
+    "https://investor.vanguard.com/investor-resources-education/portfolio-management/rebalancing-your-portfolio"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "report_version": "HERD_VNEXT_MODEL_CHARTER_AUDIT_V1",
+  "status": "VNEXT_CHARTER_VERIFIED",
+  "model_layers": [
+    "HERD_STATE",
+    "TRANSITION_STATE",
+    "BUSINESS_GATE",
+    "ACTION_EDGE",
+    "PORTFOLIO_POLICY",
+    "PROMOTION_GATE"
+  ],
+  "operational_action_authority": "PROMOTION_GATE",
+  "default_action": "HOLD",
+  "initial_action_fraction": 0.05,
+  "maximum_action_fraction": 0.15,
+  "historical_role": "PRE_HOLDOUT_RESEARCH_ONLY",
+  "final_blind_evidence": "PROSPECTIVE_SHADOW_ONLY",
+  "operational_action_ratio": 0.0
+}
