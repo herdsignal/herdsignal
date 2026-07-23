@@ -146,12 +146,24 @@ def audit(
     manifest_path: Path = MANIFEST,
     report_path: Path = REPORT,
     detail_path: Path = DETAIL,
+    *,
+    intervals_override: list[dict] | None = None,
+    strict_reference_cik: bool = True,
+    report_version: str = "FINRA_SHORT_INTEREST_COVERAGE_AUDIT_V1",
+    next_priority: str = (
+        "EXTEND_VERIFIED_SEC_TICKER_INTERVAL_LEDGER_"
+        "BEFORE_ANY_SHORT_INTEREST_HYPOTHESIS"
+    ),
 ) -> dict:
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     integrity = _verify_inputs(protocol_path, protocol, manifest)
     cohorts = _cohorts(protocol)
-    intervals = _verified_intervals(protocol)
+    intervals = (
+        list(intervals_override)
+        if intervals_override is not None
+        else _verified_intervals(protocol)
+    )
     intervals_by_symbol: dict[str, list[dict]] = defaultdict(list)
     for interval in intervals:
         intervals_by_symbol[interval["canonical_symbol"]].append(interval)
@@ -206,15 +218,27 @@ def audit(
                 tickers_ever_observed += 1
             else:
                 never_observed_tickers.append(ticker)
-            verified_dates = set()
             sources = set()
+            matched_ciks_by_date: dict[str, set[str]] = defaultdict(set)
+            matched_sources_by_date: dict[str, set[str]] = defaultdict(set)
             for interval in intervals_by_symbol.get(canonical, []):
-                if interval["cik"] != cik:
+                if strict_reference_cik and interval["cik"] != cik:
                     continue
-                sources.add(interval["source"])
-                verified_dates.update(
-                    day for day in ticker_dates if _date_in_interval(day, interval)
-                )
+                if strict_reference_cik:
+                    # V1의 고정 산출물은 날짜 밖 후보 source도 표시했다.
+                    # 역사 감사 파일의 byte-level 재현성을 위해 유지한다.
+                    sources.add(interval["source"])
+                for day in ticker_dates:
+                    if not _date_in_interval(day, interval):
+                        continue
+                    matched_ciks_by_date[day].add(interval["cik"])
+                    matched_sources_by_date[day].add(interval["source"])
+            verified_dates = {
+                day for day, matched_ciks in matched_ciks_by_date.items()
+                if len(matched_ciks) == 1
+            }
+            for day in verified_dates:
+                sources.update(matched_sources_by_date[day])
             verified_count = len(verified_dates)
             verified_cik_opportunities += verified_count
             if verified_count:
@@ -301,7 +325,7 @@ def audit(
         publication = date.fromisoformat(entry["derived_publication_date"])
         last_modified_after_publication += int(modified > publication)
     report = {
-        "report_version": "FINRA_SHORT_INTEREST_COVERAGE_AUDIT_V1",
+        "report_version": report_version,
         "status": (
             "HASH_LOCKED_AND_PIT_IDENTIFIER_READY"
             if integrity["all_raw_hashes_verified"] and pit_ready
@@ -360,9 +384,7 @@ def audit(
             if integrity["all_raw_hashes_verified"]
             else "BLOCK_CORPUS_USE"
         ),
-        "next_priority": (
-            "EXTEND_VERIFIED_SEC_TICKER_INTERVAL_LEDGER_BEFORE_ANY_SHORT_INTEREST_HYPOTHESIS"
-        ),
+        "next_priority": next_priority,
     }
     report_path.write_text(
         json.dumps(report, indent=2, ensure_ascii=False) + "\n",
