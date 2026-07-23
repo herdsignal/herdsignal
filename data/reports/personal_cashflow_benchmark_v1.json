@@ -1,0 +1,13 @@
+{
+  "report_version": "HERD_PERSONAL_CASHFLOW_BENCHMARK_AUDIT_V1",
+  "status": "CASHFLOW_BENCHMARK_CONTRACT_VERIFIED",
+  "scenario_ids": [
+    "NO_FUTURE_CONTRIBUTIONS",
+    "FIXED_MONTHLY_NEW_CASH",
+    "OBSERVED_PERSONAL_CASHFLOWS"
+  ],
+  "model_skill_metric": "TIME_WEIGHTED_RETURN",
+  "investor_experience_metric": "MONEY_WEIGHTED_RETURN_XIRR",
+  "matched_external_cashflows_required": true,
+  "operational_action_authority": false
+}

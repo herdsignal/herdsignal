@@ -72,6 +72,17 @@ class BenchmarkEngineTest(unittest.TestCase):
         self.assertAlmostEqual(float(result.daily_returns.iloc[1]), 0.0)
         self.assertEqual(result.contributed_capital, 11_000.0)
 
+    def test_contribution_day_return_uses_post_flow_opening_equity(self):
+        prices = _prices([100, 100], [100, 110])
+        contributions = pd.Series([0.0, 10_000.0], index=prices.index)
+        result = buy_and_hold(
+            prices,
+            config=BenchmarkConfig(fee_rate=0.0, slippage_rate=0.0),
+            contributions=contributions,
+        )
+
+        self.assertAlmostEqual(float(result.daily_returns.iloc[1]), 0.10)
+
     def test_initial_execution_cost_is_included_in_return(self):
         prices = _prices([100, 100])
         result = buy_and_hold(

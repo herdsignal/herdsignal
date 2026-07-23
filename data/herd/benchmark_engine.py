@@ -210,7 +210,12 @@ def simulate(
         cash *= 1 + daily_cash_rate
         equity = cash + shares * float(row["Close"])
         exposure = shares * float(row["Close"]) / equity if equity > 0 else 0.0
-        daily_return = (equity - contribution) / previous_equity - 1.0
+        opening_equity_after_flow = previous_equity + contribution
+        daily_return = (
+            equity / opening_equity_after_flow - 1.0
+            if opening_equity_after_flow > 0
+            else 0.0
+        )
 
         equity_values.append(equity)
         return_values.append(daily_return)

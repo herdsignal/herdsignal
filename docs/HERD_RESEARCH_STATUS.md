@@ -26,6 +26,16 @@ v4는 `LEGACY_STATE_BASELINE`, v6.1은
 연구자가 관측했으므로 pre-holdout 용도로만 사용하며, 최종 Blind 증거는
 공식·가중치·임계값을 잠근 이후의 prospective shadow 데이터로만 인정한다.
 
+## 개인 현금흐름 비교 계약
+
+- 계약: `data/herd/personal_cashflow_benchmark_v1.json`
+- 구현: `data/herd/personal_cashflow_benchmark_v1.py`
+- 모델 성과는 외부 입금 효과를 제거한 TWR로 평가한다.
+- 실제 계좌 경험은 입금 시점과 규모를 반영한 MWR(XIRR)로 별도 표시한다.
+- 추가 입금 없음, 고정 월 적립, 실제 입력 현금흐름을 분리한다.
+- HERD 후보와 Buy & Hold에는 초기 자본·입금·기간·가격·비용을 동일하게 적용한다.
+- 현금흐름 진단만으로 운영 행동을 승인할 수 없다.
+
 ## Rush 종목 고유 하방 비대칭 독립 OOS
 
 기존 1,998개 discovery 사건에 포함된 381개 종목을 전부 제외하고, 최소

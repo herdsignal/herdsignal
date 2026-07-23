@@ -11,6 +11,8 @@
     "data/herd/public_research_contract.json",
     "data/herd/herd_vnext_model_charter_v1.json",
     "data/reports/herd_vnext_model_charter_v1.json",
+    "data/herd/personal_cashflow_benchmark_v1.json",
+    "data/reports/personal_cashflow_benchmark_v1.json",
     "data/herd/research_input_manifest_v2.json",
     "data/herd/sec_8k_guidance_corpus_v1.json",
     "data/herd/sec_guidance_v7_independent_validation.json",
@@ -42,8 +44,8 @@
   "families": [
     {
       "status": "ACTIVE",
-      "patterns": ["herd_vnext_model_charter_v1*", "sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "research_input_manifest_v2*", "public_research_contract*", "failed_price_information_audit_v1*", "leading_information_readiness_v2*", "sec_form4_corpus_v1*", "sec_form4_accession_catalog_v1*", "sec_form4_atomic_v1*", "sec_form4_source_review_v1*", "sec_form4_source_review_gate_v1*", "sec_form4_review_protocol_v1*", "sec_form4_review_workbench_v1*", "sec_form4_structural_audit_v1*", "sec_form4_review_ledger_v1*", "sec_form4_coverage_audit_v1*", "sec_form4_issuer_year_coverage_v1*"],
-      "note": "vNext 모델 헌장, 공개 연구 경계, 실패 가격 정보 중복 감사, Form 4 원문 정확도와 연구 census coverage 게이트"
+      "patterns": ["herd_vnext_model_charter_v1*", "personal_cashflow_benchmark_v1*", "sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "research_input_manifest_v2*", "public_research_contract*", "failed_price_information_audit_v1*", "leading_information_readiness_v2*", "sec_form4_corpus_v1*", "sec_form4_accession_catalog_v1*", "sec_form4_atomic_v1*", "sec_form4_source_review_v1*", "sec_form4_source_review_gate_v1*", "sec_form4_review_protocol_v1*", "sec_form4_review_workbench_v1*", "sec_form4_structural_audit_v1*", "sec_form4_review_ledger_v1*", "sec_form4_coverage_audit_v1*", "sec_form4_issuer_year_coverage_v1*"],
+      "note": "vNext 모델·현금흐름 비교 계약, 공개 연구 경계, 실패 가격 정보 중복 감사, Form 4 원문 정확도와 연구 census coverage 게이트"
     },
     {
       "status": "DATA_PIPELINE",
