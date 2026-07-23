@@ -17,7 +17,10 @@
 issuer 검증 1,455건 → atomic 거래 3,661건까지 구축됐다. Form 4 검수
 표본 267건은 AI 보조 원문 판정과 독립 구조 감사에서 267건 모두
 `VALID`였고 Wilson 95% 하한은 98.58%다. 이는 parser 정확도 게이트만
-통과한 결과다. 기업·연도별 coverage와 연구용 census 완전성을 감사하기
+통과한 결과다. coverage 감사에서는 잠긴 68,478개 accession 중
+1,485개(2.17%)만 내려받은 parser 검수 표본이며, issuer 확인 후 atomic
+거래가 없는 원문 9건과 manifest 계보 불일치가 확인됐다. 판정은
+`REVIEW_SAMPLE_NOT_RESEARCH_CENSUS`다. 별도 연구 census V2를 완성하기
 전에는 방향 가설, 가격 OOS, HERD 가중치로 진행하지 않는다.
 
 삭제는 import·문서 참조, 고정 hash 입력, 실험 재현 필요성을 모두 확인하고

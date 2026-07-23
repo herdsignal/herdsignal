@@ -112,10 +112,24 @@ production parser를 import하지 않는 독립 구조 감사기는 267건의 �
 워크벤치 판정은 잠긴 queue와 별도 판정 원장에서 결합한다. 267개 atomic
 ID와 issuer·accession·거래코드·경제 분류·원문 SHA-256 중 하나라도
 달라지거나 표본이 빠지면 병합이 실패한다. 현재 판정 원장은 267건 모두
-`VALID`다. 다음 단계는 1,485개 문서가 연구용 전체 모집단이 아니라
-parser 검수용 해시 표본이라는 한계를 포함해 기업·연도별 coverage를
-감사하는 것이다. coverage를 통과하기 전에는 단일 방향 가설도
-사전등록하지 않는다.
+`VALID`다.
+
+기업·연도별 coverage 감사 결과, 이 corpus는 연구용 전수집단이 아님이
+확인됐다. 잠긴 accession catalog는 68,478건이지만 내려받은 원문은
+issuer·연도당 최대 2건을 고른 1,485건(2.17%)이다. 원문 중 issuer가
+확인된 문서는 1,455건, reporting-owner 역할 혼합으로 격리한 문서는
+30건, atomic 거래가 생성된 accession은 1,446건이다. issuer가
+확인됐지만 atomic 거래가 생성되지 않은 9건은 별도 원문 감사가 필요하다.
+743개 issuer-year 칸 중 catalog 전체가 내려받힌 칸은 1개뿐이다.
+
+또한 현재 검수 표본 CSV는 URL 정규화 이후의 파일이라, 최초 source
+manifest에 잠긴 표본 파일 hash와 다르다. accession identity 1,485건과
+source index hash는 일치하지만 파일 계보 전체가 일치하지 않으므로 V1을
+연구 corpus로 승격하지 않는다. 판정은
+`REVIEW_SAMPLE_NOT_RESEARCH_CENSUS`이며 단일 경제 가설 사전등록, 가격
+OOS, HERD 반영은 계속 차단한다. 다음 단계는 V1을 덮어쓰는 것이 아니라
+올바른 issuer URL, 문서 역할 판정, 미추출 문서 처리 기준을 먼저 잠근
+`RESEARCH_CENSUS_V2`를 별도로 구축하는 것이다.
 
 ## Rush episode 전환 연구
 

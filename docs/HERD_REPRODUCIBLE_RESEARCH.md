@@ -308,6 +308,33 @@ PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_review_ledger_v1 \
   --report-output data/reports/sec_form4_review_ledger_v1.json
 ```
 
+원문 정확도 게이트를 통과한 뒤에는 다음 coverage 감사를 반드시 실행한다.
+`source corpus == 검수 표본`만 확인해서는 연구 모집단이 되지 않는다.
+다운로드 accession, issuer 불일치 격리, atomic 거래 생성, 미해결 문서를
+기업·연도별로 각각 센다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_form4_coverage_audit_v1 \
+  data/reports/sec_form4_accession_catalog_v1.csv \
+  data/reports/sec_form4_source_sample_v1.csv \
+  data/reference/sec/sec-form4-source-v1-20260723/index.csv \
+  data/reference/sec/sec-form4-source-v1-20260723/manifest.json \
+  data/reports/sec_form4_atomic_transactions_v1.csv \
+  data/reports/sec_form4_issuer_rejections_v1.csv \
+  --source-gate data/reports/sec_form4_source_review_gate_v1.json \
+  --protocol data/herd/sec_form4_corpus_v1.json \
+  --detail-output data/reports/sec_form4_issuer_year_coverage_v1.csv \
+  --report-output data/reports/sec_form4_coverage_audit_v1.json
+```
+
+현재 V1은 `PARSER_AND_SOURCE_REVIEW_DEVELOPMENT_ONLY`이며 68,478개 catalog
+accession 중 1,485개만 내려받은 축소 표본이다. 따라서 parser 정확도
+게이트가 통과해도 `RESEARCH_CENSUS_COVERAGE_PASSED`가 될 수 없다.
+미해결 원문이 1건이라도 있거나 manifest 계보가 다르면 fail-closed한다.
+V1 산출물을 덮어써 연구용으로 재해석하지 않고 별도 V2 census와 manifest를
+만든 뒤 이 감사를 다시 실행한다.
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.
