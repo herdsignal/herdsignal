@@ -1,0 +1,24 @@
+{
+  "report_version": "HERD_SEC_FORM4_REVIEW_LEDGER_V1",
+  "status": "REVIEW_LEDGER_PENDING",
+  "transactions": 267,
+  "issuers": 51,
+  "decision_counts": {
+    "PENDING": 267
+  },
+  "locked_queue_sha256": "9e89fe468cacb3e218b5d402076d62a08689bc147e79a52265ea9cf2dcbf573d",
+  "submitted_decisions_sha256": "9e89fe468cacb3e218b5d402076d62a08689bc147e79a52265ea9cf2dcbf573d",
+  "adjudicated_output_sha256": "9e89fe468cacb3e218b5d402076d62a08689bc147e79a52265ea9cf2dcbf573d",
+  "identity_fields_verified": [
+    "atomicTransactionId",
+    "reviewHash",
+    "issuerCik",
+    "accessionNumber",
+    "transactionCode",
+    "economicClass",
+    "sourceSha256"
+  ],
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "operational_action_authority": false
+}

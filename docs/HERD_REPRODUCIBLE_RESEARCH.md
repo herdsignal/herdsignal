@@ -277,11 +277,23 @@ PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_structural_audit_v1 \
   --report-output data/reports/sec_form4_structural_audit_v1.json
 
 PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_source_review_gate_v1 \
-  data/reports/sec_form4_source_review_v1.csv \
+  data/reports/sec_form4_review_adjudicated_v1.csv \
   data/reports/sec_form4_atomic_transactions_v1.csv \
   --protocol data/herd/sec_form4_review_protocol_v1.json \
   --structural-audit data/reports/sec_form4_structural_audit_v1.json \
   --output data/reports/sec_form4_source_review_gate_v1.json
+```
+
+워크벤치에서 내보낸 판정은 곧바로 게이트에 넣지 않는다. 다음 병합기가
+atomic ID, 검수 해시, issuer, accession, 거래코드, 경제 분류와 원문
+SHA-256이 잠긴 queue와 완전히 같은지 확인한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_review_ledger_v1 \
+  data/reports/sec_form4_source_review_v1.csv \
+  <워크벤치에서-내보낸-decisions.csv> \
+  --output data/reports/sec_form4_review_adjudicated_v1.csv \
+  --report-output data/reports/sec_form4_review_ledger_v1.json
 ```
 
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지

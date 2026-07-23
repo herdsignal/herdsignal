@@ -96,6 +96,11 @@ production parser를 import하지 않는 독립 구조 감사기는 267건의 �
 여전히 267건 `PENDING`이므로 정확도·Wilson 게이트는 통과하지 않았다.
 coverage 감사와 방향 가설 단계는 이 게이트에서 중단한다.
 
+워크벤치 판정은 잠긴 queue와 별도 판정 원장에서 결합한다. 267개 atomic
+ID와 issuer·accession·거래코드·경제 분류·원문 SHA-256 중 하나라도
+달라지거나 표본이 빠지면 병합이 실패한다. 현재 판정 원장은 267건 모두
+`PENDING`이며 후속 연구 권한은 없다.
+
 ## Rush episode 전환 연구
 
 현재 검증 유니버스의 정확한 구성은 개별주 51개와 시장 ETF 4개다. ETF는
