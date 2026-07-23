@@ -1,0 +1,71 @@
+{
+  "report_version": "OVERNIGHT_PIT_SHADOW_COMPLETION_V1",
+  "status": "OVERNIGHT_PIPELINE_COMPLETE_RESEARCH_BLOCKED",
+  "stage_results": [
+    {
+      "stage": "PART_1",
+      "status": "COMPLETE"
+    },
+    {
+      "stage": "PART_2",
+      "status": "COMPLETE"
+    },
+    {
+      "stage": "PART_3",
+      "status": "COMPLETE"
+    },
+    {
+      "stage": "PART_4",
+      "status": "COMPLETE"
+    },
+    {
+      "stage": "PART_5",
+      "status": "COMPLETE"
+    },
+    {
+      "stage": "PART_6",
+      "status": "COMPLETE"
+    },
+    {
+      "stage": "PART_7",
+      "status": "COMPLETE"
+    }
+  ],
+  "all_stages_complete": true,
+  "locked_input_count": 11,
+  "artifact_catalog_missing_active": [],
+  "documentation_present": true,
+  "known_blockers": {
+    "individual_identifier_targets": [
+      "CRH",
+      "DOV",
+      "APO",
+      "DOW",
+      "DHI"
+    ],
+    "finra_pending_settlement_dates": [
+      "2026-07-15",
+      "2026-07-31",
+      "2026-08-14",
+      "2026-08-31",
+      "2026-09-15",
+      "2026-09-30",
+      "2026-10-15",
+      "2026-10-30",
+      "2026-11-13",
+      "2026-11-30",
+      "2026-12-15",
+      "2026-12-31"
+    ],
+    "admitted_buy_or_profit_take_direction_evidence": 0,
+    "primary_long_horizon_finra_oos_allowed": false
+  },
+  "pipeline_completion_is_not_model_adoption": true,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_preregistered": false,
+  "herd_formula_change_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_priority": "ACCUMULATE_PROSPECTIVE_SOURCE_FACTS_WITHOUT_ACTION_AUTHORITY",
+  "protocol_sha256": "3ec4f556d6a8a7e6f22fba6b36e85c4f36c6cacc3373bc07e3d3325c4779a1a0"
+}

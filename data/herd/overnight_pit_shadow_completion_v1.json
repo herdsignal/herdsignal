@@ -1,0 +1,81 @@
+{
+  "protocol_version": "OVERNIGHT_PIT_SHADOW_COMPLETION_V1",
+  "status": "LOCKED_BEFORE_COMPLETION_AUDIT",
+  "locked_at": "2026-07-24",
+  "objective": "Verify all seven overnight PIT expansion stages without confusing pipeline completion with model adoption.",
+  "locked_inputs": [
+    {
+      "path": "data/herd/overnight_pit_shadow_expansion_v1.json",
+      "sha256": "21a8f287e90663ab0cbd771f75708c6030d0baa17343db4a210546bbf26f02e7",
+      "role": "EXECUTION_CONTRACT"
+    },
+    {
+      "path": "data/reports/sec_identifier_gap_queue_v1.json",
+      "sha256": "24109da14a746595373cfdc904923b9be0f1672e77fea60ac4e20f1e58cd2f91",
+      "role": "IDENTIFIER_GAP_REPORT"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_corpus_v2.json",
+      "sha256": "bcda492b7a4fce7938b27c1aef796ff6e872a7fc90a73f3650231d40422cdfbe",
+      "role": "TARGETED_COVER_REPORT"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
+      "sha256": "8f399c79b9a21a148184e4973d436f7fe9871e32caff367564631c0aae32c37a",
+      "role": "LIFECYCLE_LEDGER_REPORT"
+    },
+    {
+      "path": "data/reports/finra_short_interest_lifecycle_coverage_v5.json",
+      "sha256": "4d5f34f2124ee0170f15cc6934b61be8bdd9e27e8bf1e5972edab936055a9333",
+      "role": "LIFECYCLE_COVERAGE_REPORT"
+    },
+    {
+      "path": "data/reports/finra_short_interest_incremental_v2.json",
+      "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f",
+      "role": "FINRA_INCREMENTAL_REPORT"
+    },
+    {
+      "path": "data/reports/unified_pit_shadow_panel_v1.json",
+      "sha256": "1f6377be98fb7a4d219a7b827e9d81f85e463e40a677c47cc1305c624bb07cdf",
+      "role": "UNIFIED_PANEL_REPORT"
+    },
+    {
+      "path": "data/reports/overnight_pit_shadow_regression_v1.json",
+      "sha256": "781781ceadcbacd36bfa3142f20235769386ec70db98858620cc0820bb0dafe2",
+      "role": "FULL_REGRESSION_REPORT"
+    },
+    {
+      "path": "data/herd/research_artifact_catalog.json",
+      "sha256": "e5c1e60c6a42e6a56d7fcab5e614889805e72a9fdc0c507270fc148d0fec841b",
+      "role": "ARTIFACT_CATALOG"
+    },
+    {
+      "path": "docs/HERD_RESEARCH_STATUS.md",
+      "sha256": "e50eb9ba20a9f179cdb5d7ec1ee0bac3f93ec7aafae2495b5aa5891df67e4818",
+      "role": "RESEARCH_STATUS_DOC"
+    },
+    {
+      "path": "docs/HERD_REPRODUCIBLE_RESEARCH.md",
+      "sha256": "53328629f638fc9af731bc30f7f8d848f322208fdad6854033a7052335079c19",
+      "role": "REPRODUCIBILITY_DOC"
+    }
+  ],
+  "json_report_roles": [
+    "EXECUTION_CONTRACT",
+    "IDENTIFIER_GAP_REPORT",
+    "TARGETED_COVER_REPORT",
+    "LIFECYCLE_LEDGER_REPORT",
+    "LIFECYCLE_COVERAGE_REPORT",
+    "FINRA_INCREMENTAL_REPORT",
+    "UNIFIED_PANEL_REPORT",
+    "FULL_REGRESSION_REPORT"
+  ],
+  "authority": {
+    "pipeline_completion_can_adopt_model": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

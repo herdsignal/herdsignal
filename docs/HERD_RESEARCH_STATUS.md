@@ -1,6 +1,6 @@
 # HERD 연구 현황
 
-기준일: 2026-07-23
+기준일: 2026-07-24
 판정: `NO_ADOPTABLE_CANDIDATE`
 
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
@@ -1713,3 +1713,73 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
   이력과 coverage 표본 재사용 위험 때문에 가격 결과와 방향 가설은 열지
   않았고, 허용 범위는 prospective shadow 관측뿐이다. HERD 공식·가중치,
   행동 비율 0%, Blind holdout 미개방은 그대로다.
+
+## 야간 PIT shadow 확장 V1
+
+### 식별자 공백 큐와 SEC 표지 corpus V2
+
+- 가격 결과를 보지 않고 FINRA 미연결 관측 기여도로 25개 표적을 잠갔다.
+  복수 주식 클래스, 동일 CIK 상호 변경, 새 CIK 승계, ticker 재사용,
+  외국기업, 일반 표지 공백을 서로 다른 경계 규칙으로 분류했다.
+- 26개 수집 CIK에서 10-K·10-Q·8-K·20-F·40-F·6-K와 정정본을
+  수집했다. 예상 1,800~2,200건은 작업량 추정치였고 실제 적격 원문은
+  3,569건이었다. 원문 3,597개와 ticker 앵커 4,455개를 해시 고정했으며
+  미해결 다운로드는 0건이다.
+- CRH 같은 외국기업 때문에 6-K/6-K-A 누락을 사전검수에서 발견해 적격
+  form에 추가했다. `CRH/29` 같은 별도 증권 표기를 `CRH`로 임의
+  정규화하지 않았다.
+
+### lifecycle ticker–CIK 원장 V5
+
+- V4와 새 표지 앵커를 병합하고 FOX/FOXA, NWS/NWSA, BG 승계,
+  DOC·COR·ECHO ticker 재사용, IIVI→COHR를 별도 감사했다. 검증 interval
+  531개, canonical symbol 528개, CIK 502개이며 충돌 제외는 0건이다.
+- FINRA 결제기준일 중 명시적 symbol·회사 identity가 실제 관측된 날짜만
+  분모로 사용했다. 기존 51개 98.22%, 독립 388개 97.55%, 현재 참고군
+  503개 97.67%로 세 cohort 모두 95% aggregate 게이트를 통과했다.
+- 표적 25개를 개별 감사하면 20개만 95%를 넘는다. CRH 84.43%, APO
+  86.89%, DHI·DOV·DOW 94.26%는 공개 표지 원문을 소진한 뒤에도
+  공백이 남는다. 이 5개를 현재 ticker로 소급하지 않고
+  `PUBLIC_PRIMARY_ANCHOR_GAP_AFTER_SOURCE_EXHAUSTION` blocker로 보존한다.
+
+### FINRA 증분 수집과 통합 prospective snapshot
+
+- 기존 122개 FINRA 원본을 전부 다시 받지 않는다. 모든 baseline SHA를
+  검증하고 최근 2개 결제기준일만 수정 여부를 재확인하며, 동일 날짜의 새
+  SHA는 새 버전으로 추가한다.
+- 공식 일정상 2026-07-15 기준 파일은 미국 동부시간 7월 24일 공개다.
+  이번 실행 시점은 아직 동부시간 7월 23일이라
+  `PENDING_OFFICIAL_PUBLICATION_WINDOW`가 정상 상태다. 2026년 남은 공식
+  12개 일정과 DST offset을 계약에 고정했다.
+- 통합 패널은 전체 역사를 복제하지 않고 cutoff 현재의 seed snapshot만
+  만든다. FINRA 최신 503개, Form 4 최신 P 거래 416건, source-reviewed
+  guidance 190건에서 숫자 사실 4,836행을 생성했다.
+- FINRA 최신일 중 42개는 V5 interval, 461개는 잠긴 현재 reference
+  ticker–CIK로 연결했다. 후자는 현재 prospective snapshot에만 허용하며
+  역사 OOS에 소급하는 코드는 테스트로 차단했다.
+- 통합 패널에는 가격 결과, 미래 수익률, 방향 라벨, 매수·익절 판정이 없다.
+  Form 4·guidance·FINRA 모두 source fact 권한만 가지며 direction·veto·
+  HERD 가중치·운영 행동 비율은 0이다.
+
+### 현재 판정
+
+- 데이터 수집·식별자·prospective 관측 기반은 이전보다 강해졌지만,
+  매수·부분 익절 방향 증거는 여전히 0개다.
+- FINRA는 약 5년의 짧은 이력 때문에 primary long-horizon OOS로 승격할
+  수 없다. 현재 5개 식별자 blocker도 장기 연구 한계로 남는다.
+- 상태 관찰과 source-fact 기록은 가능하지만 매수·익절 실행 권고는 계속
+  차단한다. Blind holdout은 열지 않았고 운영 행동 비율은 0%다.
+
+### 전체 회귀와 유지보수
+
+- Python 전체 847개, backend Gradle test, frontend lint, frontend
+  16개 파일·34개 테스트, production build, `git diff --check`를 실제
+  실행했고 6개 명령이 모두 통과했다.
+- 소스가 이미 존재하는 controller·domain·repository·service 디렉터리의
+  불필요한 `.gitkeep` 4개를 제거했다. 연구 파일은 개수가 많다는 이유로
+  삭제하지 않았으며 탈락 원장·고정 hash 입력·재현 경로는 보존했다.
+- 통합 패널은 3개 source adapter가 분리되어 있고 공통 atomic row 생성만
+  공유한다. 전체 source history를 복제하지 않아 추적 CSV는 약 3MB다.
+- 완료 감사는 7단계 산출물과 회귀 영수증을 다시 해시 검증한다. 이 감사가
+  통과해도 상태는 `OVERNIGHT_PIPELINE_COMPLETE_RESEARCH_BLOCKED`이며
+  채택 가능한 매수·익절 모델이 생겼다는 뜻이 아니다.

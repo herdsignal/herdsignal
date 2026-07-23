@@ -462,6 +462,65 @@ V4는 표적 SEC 표지 396건의 원문 SHA와 ticker 앵커 536개를 검증�
 결과는 방향성 OOS를 허용하지 않으며 FINRA는 prospective shadow 관측에만
 사용한다.
 
+야간 PIT 확장과 prospective seed snapshot은 아래 순서로 재현한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.overnight_pit_shadow_runner_v1 --preflight
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_identifier_gap_queue_v1
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_targeted_cover_corpus_v2
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_time_valid_ticker_cik_ledger_v5
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.finra_short_interest_lifecycle_coverage_v5
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.finra_short_interest_incremental_v2
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.unified_pit_shadow_panel_v1
+```
+
+SEC 표지 corpus V2의 원본은 append-only 로컬 디렉터리에 저장하고 추적
+저장소에는 accession·source SHA·추출 앵커·요약만 둔다. 예상 filing 수는
+중단 기준이 아니다. 적격 source가 모두 수집됐거나 항목별 blocker가
+기록됐을 때만 다음 단계로 이동한다.
+
+FINRA 증분 수집기는 미국 동부시간의 공식 공개시각 전에는 새 파일을
+요청하지 않는다. 공개 당일 파일을 받더라도 보수적인 PIT 사용 시각은 다음
+달력일 00:00 ET다. 통합 패널의 현재-reference CIK fallback은 최신
+prospective snapshot에만 허용하고 과거 결제기준일에는 사용할 수 없다.
+
+전체 회귀 영수증은 아래 명령으로 생성한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.overnight_pit_shadow_regression_v1
+```
+
+Python 전체, backend test, frontend lint·test·build, `git diff --check` 중
+하나라도 실패하면 보고서는 `FULL_REGRESSION_FAIL`이고 완료 감사는
+승인되지 않는다.
+
+회귀 영수증과 Part 1~6의 보고서, artifact catalog, 현황 문서를 고정한 뒤
+최종 완료 감사를 실행한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.overnight_pit_shadow_completion_v1
+```
+
+`OVERNIGHT_PIPELINE_COMPLETE_RESEARCH_BLOCKED`는 수집·식별자·증분 갱신·
+통합 snapshot·회귀가 완료됐다는 뜻이다. 방향 증거 0개, 개별 식별자
+blocker, FINRA 장기 OOS 불가 상태는 그대로이므로 모델 채택이나 운영
+행동 승인을 의미하지 않는다.
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.

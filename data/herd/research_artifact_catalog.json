@@ -1,6 +1,6 @@
 {
   "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V1",
-  "as_of": "2026-07-23",
+  "as_of": "2026-07-24",
   "statuses": {
     "ACTIVE": "현재 다음 판정에 직접 사용되는 프로토콜과 원장",
     "REJECTED": "게이트에서 탈락했지만 사후 선택 방지를 위해 보존하는 실험",
@@ -55,6 +55,26 @@
     "data/reports/sec_time_valid_ticker_cik_ledger_v4.json",
     "data/reports/finra_short_interest_coverage_audit_v4.json",
     "data/reports/finra_short_interest_ticker_coverage_v4.csv",
+    "data/herd/overnight_pit_shadow_expansion_v1.json",
+    "data/herd/sec_identifier_gap_queue_v1.json",
+    "data/reports/sec_identifier_gap_queue_v1.csv",
+    "data/reports/sec_identifier_gap_queue_v1.json",
+    "data/herd/sec_targeted_cover_corpus_v2.json",
+    "data/reports/sec_targeted_cover_anchors_v2.csv",
+    "data/reports/sec_targeted_cover_filing_catalog_v2.csv",
+    "data/reports/sec_targeted_cover_corpus_v2.json",
+    "data/herd/sec_time_valid_ticker_cik_ledger_v5.json",
+    "data/reports/sec_time_valid_ticker_cik_intervals_v5.csv",
+    "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
+    "data/reports/finra_short_interest_lifecycle_coverage_v5.json",
+    "data/reports/finra_short_interest_lifecycle_ticker_coverage_v5.csv",
+    "data/herd/finra_short_interest_incremental_v2.json",
+    "data/herd/finra_short_interest_incremental_v2_manifest.json",
+    "data/reports/finra_short_interest_incremental_v2.json",
+    "data/herd/unified_pit_shadow_panel_v1.json",
+    "data/reports/unified_pit_shadow_panel_v1.csv",
+    "data/reports/unified_pit_shadow_panel_v1.json",
+    "data/reports/overnight_pit_shadow_regression_v1.json",
     "data/herd/sec_form4_corpus_v1.json",
     "data/herd/sec_form4_review_protocol_v1.json",
     "data/reports/sec_form4_accession_catalog_v1.json",
@@ -97,8 +117,8 @@
   "families": [
     {
       "status": "ACTIVE",
-      "patterns": ["herd_vnext_model_charter_v1*", "personal_cashflow_benchmark_v1*", "vnext_competing_path_economic_label_v1*", "vnext_preholdout_evaluation_v1*", "vnext_preholdout_folds_v1*", "vnext_preholdout_predictions_v1*", "vnext_prospective_shadow_protocol_v1*", "sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "sec_guidance_atomic_census_v2*", "research_input_manifest_v2*", "public_research_contract*", "public_leading_data_feasibility_v1*", "finra_short_interest_*", "failed_price_information_audit_v1*", "sec_form4_corpus_v1*", "sec_form4_accession_catalog_v1*", "sec_form4_atomic_v1*", "sec_form4_source_review_v1*", "sec_form4_source_review_gate_v1*", "sec_form4_review_protocol_v1*", "sec_form4_review_workbench_v1*", "sec_form4_structural_audit_v1*", "sec_form4_review_ledger_v1*", "sec_form4_coverage_audit_v1*", "sec_form4_issuer_year_coverage_v1*", "sec_form4_research_census_v2*", "sec_form4_census_gate_v2*", "sec_form4_issuer_year_coverage_v2*", "sec_form4_bulk_primary_crosscheck_v2*"],
-      "note": "vNext 최상위 계약과 현재 탈락 판정, 최신 공개 선행정보 가능성, FINRA 불변 census와 PIT 식별자 게이트, SEC 가이던스 atomic source-review census, Form 4 원문 정확도와 공식 벌크 census coverage 게이트"
+      "patterns": ["herd_vnext_model_charter_v1*", "personal_cashflow_benchmark_v1*", "vnext_competing_path_economic_label_v1*", "vnext_preholdout_evaluation_v1*", "vnext_preholdout_folds_v1*", "vnext_preholdout_predictions_v1*", "vnext_prospective_shadow_protocol_v1*", "sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "sec_guidance_atomic_census_v2*", "research_input_manifest_v2*", "public_research_contract*", "public_leading_data_feasibility_v1*", "finra_short_interest_*", "failed_price_information_audit_v1*", "sec_form4_corpus_v1*", "sec_form4_accession_catalog_v1*", "sec_form4_atomic_v1*", "sec_form4_source_review_v1*", "sec_form4_source_review_gate_v1*", "sec_form4_review_protocol_v1*", "sec_form4_review_workbench_v1*", "sec_form4_structural_audit_v1*", "sec_form4_review_ledger_v1*", "sec_form4_coverage_audit_v1*", "sec_form4_issuer_year_coverage_v1*", "sec_form4_research_census_v2*", "sec_form4_census_gate_v2*", "sec_form4_issuer_year_coverage_v2*", "sec_form4_bulk_primary_crosscheck_v2*", "overnight_pit_shadow_*", "sec_identifier_gap_queue_v1*", "sec_targeted_cover_corpus_v2*", "sec_time_valid_ticker_cik_ledger_v5*", "unified_pit_shadow_panel_v1*"],
+      "note": "vNext 최상위 계약과 현재 탈락 판정, 공개 선행정보 가능성, FINRA 불변·증분 census, lifecycle PIT 식별자, 통합 prospective shadow, SEC 가이던스와 Form 4 source-fact 게이트"
     },
     {
       "status": "DATA_PIPELINE",
