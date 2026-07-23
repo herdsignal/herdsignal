@@ -1,0 +1,26 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_V10_FINAL_VALIDATION_V1",
+  "status": "LOCKED_BEFORE_FINAL_V10_PARSE_AND_SAMPLE_SELECTION",
+  "scope": "FINAL_ITERATIVE_PARSER_VALIDATION_ONLY",
+  "corpus": "data/reference/sec/sec-8k-guidance-v10-final-60-20260723",
+  "base_candidates": "data/reports/sec_guidance_structure_v10_candidates.csv",
+  "alias_registry": "data/herd/sec_guidance_metric_aliases_v1.csv",
+  "development_reviews": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv",
+    "data/reports/sec_guidance_structure_v5_reviewed.csv",
+    "data/reports/sec_guidance_structure_v6_reviewed.csv",
+    "data/reports/sec_guidance_structure_v7_reviewed.csv",
+    "data/reports/sec_guidance_structure_v8_reviewed.csv",
+    "data/reports/sec_guidance_structure_v9_reviewed.csv"
+  ],
+  "review_gate": {
+    "minimum_stratified_rows": 80,
+    "target_rows_per_metric": 12,
+    "minimum_distinct_tickers": 20,
+    "minimum_new_expansion_tickers": 4,
+    "minimum_wilson_95_lower_bound": 0.90
+  }
+}
