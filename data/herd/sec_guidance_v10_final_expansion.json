@@ -1,0 +1,35 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_V10_FINAL_EXPANSION_V1",
+  "status": "LOCKED_BEFORE_NEW_ISSUER_METADATA_COLLECTION",
+  "scope": "FINAL_ITERATIVE_PARSER_VALIDATION_ONLY",
+  "ticker_mapping": "data/reference/sec/sec-current-20260719/ticker_cik_current.csv",
+  "existing_universe": "data/reports/independent_universe_v1.csv",
+  "review_ledgers": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv",
+    "data/reports/sec_guidance_structure_v5_reviewed.csv",
+    "data/reports/sec_guidance_structure_v6_reviewed.csv",
+    "data/reports/sec_guidance_structure_v7_reviewed.csv",
+    "data/reports/sec_guidance_structure_v8_reviewed.csv",
+    "data/reports/sec_guidance_structure_v9_reviewed.csv"
+  ],
+  "exchanges": ["NYSE", "Nasdaq"],
+  "metadata_target_tickers": 120,
+  "minimum_eligible_filings_per_ticker": 8,
+  "collection_filings_per_ticker": 24,
+  "period": {"start": "2010-01-01", "end": "2026-07-17"},
+  "eligible_forms": ["8-K", "8-K/A"],
+  "eligible_items": ["2.02", "7.01"],
+  "selection_salt": "HERD_SEC_GUIDANCE_V10_FINAL_EXPANSION_V1",
+  "forbidden": [
+    "SELECT_BY_GUIDANCE_TEXT",
+    "SELECT_BY_PARSER_OUTPUT",
+    "SELECT_BY_SOURCE_REVIEW_LABEL",
+    "SELECT_BY_PRICE_OUTCOME",
+    "REUSE_REVIEWED_ISSUER_OR_ACCESSION",
+    "LOWER_SOURCE_PRECISION_GATE",
+    "CREATE_V11_AFTER_GATE_FAILURE"
+  ]
+}
