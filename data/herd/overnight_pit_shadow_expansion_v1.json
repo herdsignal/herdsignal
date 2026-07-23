@@ -1,0 +1,121 @@
+{
+  "contract_version": "HERD_OVERNIGHT_PIT_SHADOW_EXPANSION_V1",
+  "status": "LOCKED_BEFORE_OVERNIGHT_EXPANSION",
+  "locked_at": "2026-07-24",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Expand point-in-time public leading-information coverage without opening price outcomes or changing HERD behavior.",
+  "completion_semantics": {
+    "numeric_volume_is_estimate_only": true,
+    "stage_completes_on_eligible_source_exhaustion": true,
+    "missing_or_failed_items_must_be_resolved_or_explicitly_blocked": true,
+    "later_stage_must_not_start_while_current_stage_gate_fails": true
+  },
+  "stages": [
+    {
+      "id": "PART_1",
+      "name": "LOCK_EXECUTION_CONTRACT",
+      "gate": "CONTRACT_AND_PREFLIGHT_TESTS_PASS"
+    },
+    {
+      "id": "PART_2",
+      "name": "LOCK_IDENTIFIER_GAP_QUEUE",
+      "gate": "EVERY_TARGET_CLASSIFIED_WITHOUT_PRICE_OUTCOMES"
+    },
+    {
+      "id": "PART_3",
+      "name": "EXPAND_SEC_COVER_CORPUS_V2",
+      "estimated_filings": {
+        "minimum": 1800,
+        "maximum": 2200
+      },
+      "gate": "ALL_ELIGIBLE_TARGET_FILINGS_DOWNLOADED_OR_EXPLICITLY_BLOCKED"
+    },
+    {
+      "id": "PART_4",
+      "name": "BUILD_TIME_VALID_LEDGER_V5",
+      "gate": "ZERO_CONFLICT_AND_LIFECYCLE_DENOMINATORS_AUDITED"
+    },
+    {
+      "id": "PART_5",
+      "name": "UPDATE_FINRA_PROSPECTIVE_SHADOW",
+      "gate": "ALL_CURRENTLY_AVAILABLE_OFFICIAL_FILES_HASH_LOCKED"
+    },
+    {
+      "id": "PART_6",
+      "name": "BUILD_UNIFIED_PIT_SHADOW_PANEL",
+      "gate": "SOURCE_LINEAGE_AND_AVAILABILITY_TIMES_COMPLETE"
+    },
+    {
+      "id": "PART_7",
+      "name": "AUDIT_RESUME_CLEANUP_AND_REGRESSION",
+      "gate": "FULL_REGRESSION_AND_REPRODUCIBILITY_AUDIT_PASS"
+    }
+  ],
+  "authority": {
+    "price_outcomes_opened": false,
+    "future_return_labels_allowed": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "production_signal_allowed": false,
+    "operational_action_ratio": 0.0,
+    "automatic_commit_on_failure": false
+  },
+  "source_policy": {
+    "sec": {
+      "official_hosts_only": [
+        "www.sec.gov",
+        "data.sec.gov"
+      ],
+      "user_agent_required": true,
+      "requests_per_second": 3.0,
+      "official_maximum_requests_per_second": 10.0,
+      "retry_statuses": [
+        429,
+        500,
+        502,
+        503,
+        504
+      ],
+      "maximum_attempts": 6,
+      "initial_backoff_seconds": 2.0,
+      "maximum_backoff_seconds": 60.0
+    },
+    "finra": {
+      "official_source_only": true,
+      "revisions_are_new_versions": true,
+      "historical_files_are_never_overwritten": true
+    }
+  },
+  "storage_policy": {
+    "raw_sources_are_append_only": true,
+    "atomic_temp_to_final_publish": true,
+    "manifest_sha256_required": true,
+    "checkpoint_after_each_completed_item": true,
+    "resume_must_verify_contract_and_input_hashes": true,
+    "minimum_free_disk_bytes": 21474836480,
+    "maximum_expected_additional_bytes": 4294967296
+  },
+  "locked_inputs": [
+    {
+      "path": "data/herd/public_research_contract.json",
+      "sha256": "989d3922c5a9aeb0ee1f46be40a4b32bc88deb4c43c58590aa29e9da71f93a12"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_corpus_v1.json",
+      "sha256": "4991aac9c711bf26e23d9df3822dbab2e80a9967fb69df5fee854fd1c8168153"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v4.json",
+      "sha256": "e118ef64fd4e8ff3da89e2df35d8569ced8cc36ff8fabc864db9e0fb15719528"
+    },
+    {
+      "path": "data/reports/finra_short_interest_coverage_audit_v4.json",
+      "sha256": "50d3b83b12581d76610cc93ec35225dd96fd8ed28afa2dd77c2db5cc728cbe47"
+    },
+    {
+      "path": "data/herd/finra_short_interest_immutable_census_v1_manifest.json",
+      "sha256": "e30f5fcb1a498e062fa86afdd4452879be84b4ccc440d1d54b6c7a93994cb2c8"
+    }
+  ]
+}
