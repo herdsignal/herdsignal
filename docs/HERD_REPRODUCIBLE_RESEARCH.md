@@ -238,6 +238,21 @@ cd data
 PYTHONPATH=. python -m herd.research_input_contract --deep
 ```
 
+## 11. Form 4 원문·atomic 거래 corpus
+
+Form 4는 submissions 컨테이너 CIK를 issuer로 가정하지 않는다. 먼저
+거래 내용과 가격 결과를 보지 않고 issuer·연도별 accession 표본을 해시로
+잠근 뒤 SEC Archive의 `primaryDocument`를 내려받는다. 원문 XML의
+`issuerCik`가 기대 issuer와 일치한 문서만 atomic 원장에 포함하며,
+불일치는 삭제하지 않고 rejection 원장에 보존한다.
+
+atomic 거래는 EDGAR 접수시각, P/S 및 기타 거래코드, 가격·수량·거래 후
+보유량, 직접·간접 소유, 모든 각주를 보존한다. code F를 시장 매도로
+취급하지 않고 10b5-1 미표시 역사 문서는 `UNKNOWN`으로 둔다. 원문 검수
+267건, 40개 이상 issuer, 거래코드 coverage 98%, 필드 정확도 95%,
+Wilson 95% 하한 90%를 모두 통과하기 전에는 방향 가설이나 HERD 입력을
+만들지 않는다.
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.

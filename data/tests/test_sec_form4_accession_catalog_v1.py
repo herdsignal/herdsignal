@@ -50,3 +50,8 @@ def test_selected_rows_filter_without_materializing_unrelated_filings():
         "filingDate": "2024-01-02",
         "primaryDocument": "xslF345X05/form4.xml",
     }]
+
+
+def test_protocol_keeps_reporting_owner_and_issuer_cik_roles_separate():
+    protocol = load_protocol()
+    assert "JOIN_REPORTING_OWNER_CIK_AS_ISSUER_CIK" in protocol["forbidden"]

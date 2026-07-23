@@ -1,0 +1,70 @@
+{
+  "report_version": "HERD_SEC_FORM4_ATOMIC_V1",
+  "status": "SOURCE_REVIEW_PENDING",
+  "documents": 1485,
+  "documents_parsed": 1455,
+  "documents_rejected_issuer_mismatch": 30,
+  "transactions": 3661,
+  "issuers": 51,
+  "transaction_code_counts": {
+    "A": 1033,
+    "C": 45,
+    "D": 28,
+    "F": 427,
+    "G": 58,
+    "I": 8,
+    "J": 26,
+    "L": 4,
+    "M": 969,
+    "P": 30,
+    "S": 1033
+  },
+  "economic_class_counts": {
+    "COMPENSATION_OR_AWARD": 1069,
+    "OPEN_MARKET_SALE": 1033,
+    "OPTION_OR_DERIVATIVE": 1014,
+    "TAX_OR_EXERCISE_WITHHOLDING": 427,
+    "GIFT_OR_ESTATE": 58,
+    "OTHER_OR_REQUIRES_FOOTNOTE": 30,
+    "OPEN_MARKET_PURCHASE": 30
+  },
+  "known_code_coverage": 1.0,
+  "field_coverage": {
+    "transactionDate": 1.0,
+    "transactionCode": 1.0,
+    "transactionShares": 1.0,
+    "transactionPricePerShare": 0.9349904397705545,
+    "acquiredDisposedCode": 1.0,
+    "sharesOwnedFollowingTransaction": 1.0,
+    "directOrIndirectOwnership": 1.0,
+    "natureOfOwnership": 0.09013930620049167
+  },
+  "transactions_with_referenced_footnotes": 2973,
+  "ten_b5_1_status_counts": {
+    "UNKNOWN": 2263,
+    "TRUE": 782,
+    "FALSE": 616
+  },
+  "direct_indirect_counts": {
+    "D": 3331,
+    "I": 330
+  },
+  "review_sample_transactions": 267,
+  "review_sample_issuers": 51,
+  "review_sample_transaction_codes": 11,
+  "population_transaction_codes": 11,
+  "review_selection": "5_PER_ISSUER_PLUS_3_PER_TRANSACTION_CODE_BY_SHA256",
+  "reviewed_transactions": 0,
+  "valid_transactions": 0,
+  "field_accuracy": null,
+  "wilson_95_lower_bound": null,
+  "accuracy_gate_passed": false,
+  "source_manifest_sha256": "331a8fa66a8412b9d3098c5f279f34288409a2fd3a1f4b779354d4cf0ca125f6",
+  "atomic_output_sha256": "26feeba9e89f9f0026bb0cb075bf0d9f7d855bc28613319169cee2ac752fe59a",
+  "review_sample_sha256": "ac25792f97a93b8ea1b3e2ec50e8516cdd2ec67b95fd13dc19f5a382bddc5867",
+  "rejection_ledger_sha256": "c8e5ebbbbacc125873e0b47b57e2a7fa48630333b87dee87d2e778a2c96d1215",
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "operational_action_authority": false,
+  "next_decision": "COMPLETE_PRIMARY_SOURCE_REVIEW"
+}
