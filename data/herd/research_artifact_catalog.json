@@ -59,7 +59,11 @@
     "data/reports/sec_form4_insider_purchase_oos_folds_v1.csv",
     "data/reports/sec_form4_insider_purchase_oos_v1.json",
     "data/herd/sec_guidance_atomic_census_v2.json",
+    "data/herd/sec_guidance_atomic_census_v2_review.json",
+    "data/herd/sec_guidance_atomic_census_v2_review_labels.csv",
     "data/reports/sec_guidance_atomic_census_v2_review.csv",
+    "data/reports/sec_guidance_atomic_census_v2_reviewed.csv",
+    "data/reports/sec_guidance_atomic_census_v2_source_review.json",
     "data/reports/sec_guidance_atomic_census_v2.json",
     "docs/HERD_RESEARCH_STATUS.md"
   ],

@@ -1,0 +1,20 @@
+{
+  "review_version": "HERD_SEC_GUIDANCE_ATOMIC_CENSUS_V2_SOURCE_REVIEW",
+  "status": "LOCKED_AFTER_PRICE_BLIND_SOURCE_ADJUDICATION",
+  "protocol": "data/herd/sec_guidance_atomic_census_v2.json",
+  "review_template": "data/reports/sec_guidance_atomic_census_v2_review.csv",
+  "review_template_sha256": "153638d7ac77891e8a7f856e7937b9a9f36b37cd895d4c6107fe1bf3a6ca46d1",
+  "labels": "data/herd/sec_guidance_atomic_census_v2_review_labels.csv",
+  "allowed_decisions": [
+    "VALID",
+    "INVALID",
+    "AMBIGUOUS"
+  ],
+  "reviewer": "CODEX_SOURCE_AUDIT",
+  "reviewed_at": "2026-07-23",
+  "precision_denominator": "VALID_PLUS_INVALID; AMBIGUOUS_EXCLUDED",
+  "minimum_wilson_95_lower_bound": 0.9,
+  "price_outcomes_observed": false,
+  "blind_holdout_access": false,
+  "operational_action_authority": false
+}

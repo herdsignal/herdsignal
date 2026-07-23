@@ -1,0 +1,21 @@
+{
+  "report_version": "herd-sec-guidance-atomic-census-v2-source-review",
+  "review_rows": 159,
+  "valid_rows": 143,
+  "invalid_rows": 3,
+  "ambiguous_rows": 13,
+  "determinate_rows": 146,
+  "candidate_precision": 0.9794520547945206,
+  "wilson_95_lower_bound": 0.9413332370314517,
+  "minimum_wilson_95_lower_bound": 0.9,
+  "source_integrity_passed": true,
+  "source_review_gate_passed": true,
+  "price_outcomes_observed": false,
+  "blind_holdout_access": false,
+  "operational_action_authority": false,
+  "next_decision": "BUILD_SOURCE_REVIEWED_ATOMIC_BINDINGS_V2",
+  "template_sha256": "153638d7ac77891e8a7f856e7937b9a9f36b37cd895d4c6107fe1bf3a6ca46d1",
+  "labels_sha256": "01a86966440213f1e03e631b6a509813cba575fd06f404a16358384ce70f69fc",
+  "config_sha256": "33d5ae6017bb9c2d9451e15319b7082979ec0acae0359bd81a50f2919a57c5f2",
+  "reviewed_sha256": "091e2a11001199f9daee05b29ee2f0563a90856900fd18cac47f9e57bfaf9ac5"
+}

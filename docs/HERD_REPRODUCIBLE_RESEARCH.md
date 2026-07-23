@@ -375,12 +375,19 @@ PYTHONPATH=data data/.venv/bin/python \
   --review data/reports/sec_guidance_atomic_census_v2_review.csv \
   --report data/reports/sec_guidance_atomic_census_v2.json \
   --workbench data/reports/sec_guidance_atomic_census_v2_workbench.html
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_guidance_atomic_census_v2_review \
+  --reviewed data/reports/sec_guidance_atomic_census_v2_reviewed.csv \
+  --report data/reports/sec_guidance_atomic_census_v2_source_review.json
 ```
 
-워크벤치 159행은 모두 `PENDING`으로 시작한다. 지표·전망기간·회계기준·
-subtype·단위·현재 범위가 SEC 원문에서 모두 확인된 행만 `VALID`로 판정한다.
-검수 뒤 연속 수정쌍 150개·20개 종목과 Wilson 95% 하한 90%를 모두
-충족하기 전에는 방향 라벨, 가격 manifest, HERD 결합을 열지 않는다.
+워크벤치 159행은 모두 `PENDING`으로 시작하며 지표·전망기간·회계기준·
+subtype·단위·현재 범위가 SEC 원문에서 모두 확인된 행만 `VALID`로
+판정한다. 판정 결과는 VALID 143, INVALID 3, AMBIGUOUS 13이며 Wilson
+95% 하한 94.13%로 원문 정확도 게이트를 통과했다. 다음 단계에서도
+`VALID` 행만 atomic binding으로 승격하며 방향 라벨과 가격은 아직 열지
+않는다.
 
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
