@@ -176,6 +176,8 @@ def _merge_same_identity(intervals: list[dict]) -> list[dict]:
                 merged.append(current)
                 current = row
                 continue
+            current_end = current["valid_to"]
+            row_end = row["valid_to"]
             current["valid_to"] = max(current["valid_to"], row["valid_to"])
             current["valid_from"] = min(current["valid_from"], row["valid_from"])
             current["reported_symbols"] = "|".join(sorted(
@@ -186,9 +188,10 @@ def _merge_same_identity(intervals: list[dict]) -> list[dict]:
             current["first_accession"] = (
                 current["first_accession"] or row["first_accession"]
             )
-            current["last_accession"] = (
-                row["last_accession"] or current["last_accession"]
-            )
+            if row_end >= current_end:
+                current["last_accession"] = (
+                    row["last_accession"] or current["last_accession"]
+                )
             current["source_quarters"] = "|".join(filter(None, sorted(
                 set(current["source_quarters"].split("|"))
                 | set(row["source_quarters"].split("|"))
@@ -273,6 +276,11 @@ def generate(
     if protocol["status"] != "LOCKED_BEFORE_INTERVAL_GENERATION":
         raise SecTickerCikLedgerV4Error("V4 protocol is not locked")
     verified_inputs = _verify_inputs(protocol)
+    cover_report = json.loads(
+        _source_path(protocol, "TARGETED_COVER_REPORT").read_text(
+            encoding="utf-8"
+        )
+    )
     v2 = _v2_intervals(protocol)
     cover = _cover_intervals(protocol)
     intervals = _merge_same_identity([*v2, *cover])
@@ -294,6 +302,9 @@ def generate(
         },
         "v2_candidate_interval_count": len(v2),
         "targeted_cover_interval_count": len(cover),
+        "targeted_filing_count": cover_report["filing_count"],
+        "targeted_anchor_count": cover_report["anchor_count"],
+        "targeted_entity_count": cover_report["entity_count"],
         "candidate_interval_count": len(intervals),
         "verified_interval_count": len(verified),
         "conflict_excluded_interval_count": conflict_count,
@@ -307,6 +318,7 @@ def generate(
         "ledger_consumption_rule": "USE_TIME_VALID_CIK_VERIFIED_ROWS_ONLY",
         "source_is_not_full_filing_substitute": True,
         "current_ticker_backfill_performed": False,
+        "full_universe_rescan_performed": False,
         "price_outcomes_opened": False,
         "direction_hypothesis_preregistered": False,
         "herd_formula_change_allowed": False,

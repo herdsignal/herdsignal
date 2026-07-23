@@ -63,6 +63,24 @@
     "finra_role_even_if_gate_passes": "PROSPECTIVE_SHADOW_OBSERVATION_ONLY",
     "primary_long_horizon_oos_allowed": false
   },
+  "finra_reaudit_policy": {
+    "cohort_identity_aliases": {
+      "BNY": {
+        "symbols": [
+          "BK",
+          "BNY"
+        ],
+        "issue_name_regex": "^BANK OF NEW YORK MELLON"
+      }
+    },
+    "ticker_alias_requires_issue_name_match": true,
+    "required_time_valid_cik_link_coverage": 0.95,
+    "required_cohorts": [
+      "ORIGINAL_RESEARCH_51",
+      "INDEPENDENT_ELIGIBLE_388"
+    ],
+    "passing_does_not_authorize_direction_hypothesis": true
+  },
   "forbidden": [
     "BACKFILL_CURRENT_TICKER",
     "EXTRAPOLATE_OUTSIDE_PRIMARY_COVER_ANCHORS",

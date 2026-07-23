@@ -1,7 +1,7 @@
 {
   "report_version": "SEC_TIME_VALID_TICKER_CIK_LEDGER_V4",
   "status": "TIME_VALID_TARGETED_COVER_LEDGER_BUILT",
-  "protocol_sha256": "85f21bb3218f213ea595b3509127f98cee81da8adb787cae7570d8cc84200be8",
+  "protocol_sha256": "cf2a33cbf8229eb213630f70dfc9c033de9ec5c6a03b32e435c1c2da39cc86e0",
   "integrity": {
     "verified_file_count": 6,
     "files": [
@@ -39,6 +39,9 @@
   },
   "v2_candidate_interval_count": 533,
   "targeted_cover_interval_count": 9,
+  "targeted_filing_count": 396,
+  "targeted_anchor_count": 536,
+  "targeted_entity_count": 5,
   "candidate_interval_count": 529,
   "verified_interval_count": 529,
   "conflict_excluded_interval_count": 0,
@@ -108,10 +111,11 @@
     "blk_different_cik_overlap": false
   },
   "ledger_path": "data/reports/sec_time_valid_ticker_cik_intervals_v4.csv",
-  "ledger_sha256": "f4cf2601f3618d87e393158178cd1c4922b8977f605d1fc1779aed6f43e4225d",
+  "ledger_sha256": "77ec8b61a7327176556bf771d8cf50945420cd3f9b9c81e71a1f5be92990cd4b",
   "ledger_consumption_rule": "USE_TIME_VALID_CIK_VERIFIED_ROWS_ONLY",
   "source_is_not_full_filing_substitute": true,
   "current_ticker_backfill_performed": false,
+  "full_universe_rescan_performed": false,
   "price_outcomes_opened": false,
   "direction_hypothesis_preregistered": false,
   "herd_formula_change_allowed": false,

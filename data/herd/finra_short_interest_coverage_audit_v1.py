@@ -162,6 +162,7 @@ def audit(
         "BEFORE_ANY_SHORT_INTEREST_HYPOTHESIS"
     ),
     cohort_symbol_overrides: dict[str, str] | None = None,
+    cohort_identity_aliases: dict[str, dict] | None = None,
 ) -> dict:
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -179,6 +180,7 @@ def audit(
     dates = [entry["settlement_date"] for entry in manifest["entries"]]
     expected_date_set = set(dates)
     observed_dates: dict[str, set[str]] = defaultdict(set)
+    observed_issue_names: dict[tuple[str, str], set[str]] = defaultdict(set)
     symbols_by_canonical: dict[str, set[str]] = defaultdict(set)
     duplicate_symbol_rows = 0
     for entry in manifest["entries"]:
@@ -195,6 +197,9 @@ def audit(
                     duplicate_symbol_rows += 1
                 seen.add(canonical)
                 observed_dates[canonical].add(entry["settlement_date"])
+                observed_issue_names[
+                    (canonical, entry["settlement_date"])
+                ].add(row["issueName"].strip())
                 symbols_by_canonical[canonical].add(symbol)
 
     details: list[dict] = []
@@ -203,10 +208,14 @@ def audit(
     for cohort_name, members in cohorts.items():
         canonical_owner: dict[str, list[str]] = defaultdict(list)
         for ticker in members:
-            observed_ticker = _observation_symbol(
-                ticker, cohort_symbol_overrides
+            identity = (cohort_identity_aliases or {}).get(ticker)
+            observed_tickers = (
+                identity["symbols"]
+                if identity
+                else [_observation_symbol(ticker, cohort_symbol_overrides)]
             )
-            canonical_owner[_canonical_symbol(observed_ticker)].append(ticker)
+            for observed_ticker in observed_tickers:
+                canonical_owner[_canonical_symbol(observed_ticker)].append(ticker)
         ambiguous_canonical = {
             key: tickers for key, tickers in canonical_owner.items()
             if len(tickers) > 1
@@ -219,13 +228,37 @@ def audit(
         delayed_or_partial_tickers = []
         never_observed_tickers = []
         for ticker, cik in sorted(members.items()):
-            observed_ticker = _observation_symbol(
-                ticker, cohort_symbol_overrides
+            identity = (cohort_identity_aliases or {}).get(ticker)
+            observed_tickers = (
+                identity["symbols"]
+                if identity
+                else [_observation_symbol(ticker, cohort_symbol_overrides)]
             )
-            canonical = _canonical_symbol(observed_ticker)
-            ticker_dates = observed_dates.get(canonical, set())
-            if canonical in ambiguous_canonical:
-                ticker_dates = set()
+            canonical_symbols = [
+                _canonical_symbol(symbol) for symbol in observed_tickers
+            ]
+            issue_name_regex = (
+                re.compile(identity["issue_name_regex"], re.IGNORECASE)
+                if identity and identity.get("issue_name_regex")
+                else None
+            )
+            ticker_dates_by_symbol: dict[str, set[str]] = {}
+            for canonical in canonical_symbols:
+                dates_for_symbol = set(observed_dates.get(canonical, set()))
+                if canonical in ambiguous_canonical:
+                    dates_for_symbol = set()
+                if issue_name_regex:
+                    dates_for_symbol = {
+                        day for day in dates_for_symbol
+                        if any(
+                            issue_name_regex.search(name)
+                            for name in observed_issue_names.get(
+                                (canonical, day), set()
+                            )
+                        )
+                    }
+                ticker_dates_by_symbol[canonical] = dates_for_symbol
+            ticker_dates = set().union(*ticker_dates_by_symbol.values())
             observed_count = len(ticker_dates & expected_date_set)
             observed_opportunities += observed_count
             if observed_count:
@@ -235,18 +268,19 @@ def audit(
             sources = set()
             matched_ciks_by_date: dict[str, set[str]] = defaultdict(set)
             matched_sources_by_date: dict[str, set[str]] = defaultdict(set)
-            for interval in intervals_by_symbol.get(canonical, []):
-                if strict_reference_cik and interval["cik"] != cik:
-                    continue
-                if strict_reference_cik:
-                    # V1의 고정 산출물은 날짜 밖 후보 source도 표시했다.
-                    # 역사 감사 파일의 byte-level 재현성을 위해 유지한다.
-                    sources.add(interval["source"])
-                for day in ticker_dates:
-                    if not _date_in_interval(day, interval):
+            for canonical, symbol_dates in ticker_dates_by_symbol.items():
+                for interval in intervals_by_symbol.get(canonical, []):
+                    if strict_reference_cik and interval["cik"] != cik:
                         continue
-                    matched_ciks_by_date[day].add(interval["cik"])
-                    matched_sources_by_date[day].add(interval["source"])
+                    if strict_reference_cik:
+                        # V1의 고정 산출물은 날짜 밖 후보 source도 표시했다.
+                        # 역사 감사 파일의 byte-level 재현성을 위해 유지한다.
+                        sources.add(interval["source"])
+                    for day in symbol_dates:
+                        if not _date_in_interval(day, interval):
+                            continue
+                        matched_ciks_by_date[day].add(interval["cik"])
+                        matched_sources_by_date[day].add(interval["source"])
             verified_dates = {
                 day for day, matched_ciks in matched_ciks_by_date.items()
                 if len(matched_ciks) == 1
@@ -265,7 +299,11 @@ def audit(
                 "ticker": ticker,
                 "cik": cik,
                 "finra_symbols_observed": "|".join(
-                    sorted(symbols_by_canonical.get(canonical, set()))
+                    sorted({
+                        symbol
+                        for canonical in canonical_symbols
+                        for symbol in symbols_by_canonical.get(canonical, set())
+                    })
                 ),
                 "first_observed_settlement_date": (
                     sorted_observed[0] if sorted_observed else ""
@@ -289,10 +327,13 @@ def audit(
                     else "SYMBOL_NOT_OBSERVED"
                 ),
             }
-            if cohort_symbol_overrides:
-                detail["observation_ticker"] = observed_ticker
+            if cohort_symbol_overrides or cohort_identity_aliases:
+                detail["observation_ticker"] = "|".join(observed_tickers)
                 detail["cohort_symbol_overridden"] = (
-                    observed_ticker != ticker
+                    observed_tickers != [ticker]
+                )
+                detail["identity_issue_name_regex"] = (
+                    identity.get("issue_name_regex", "") if identity else ""
                 )
             details.append(detail)
         symbol_coverage = (
@@ -392,6 +433,10 @@ def audit(
                 "cohort_symbol_overrides": cohort_symbol_overrides,
                 "cohort_symbol_override_is_identity_correction": True,
             } if cohort_symbol_overrides else {}),
+            **({
+                "cohort_identity_aliases": cohort_identity_aliases,
+                "cohort_identity_aliases_require_issue_name_match": True,
+            } if cohort_identity_aliases else {}),
         },
         "cohorts": cohort_reports,
         "detail_path": detail_path.relative_to(ROOT).as_posix(),
