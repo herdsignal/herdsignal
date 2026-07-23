@@ -1,0 +1,59 @@
+{
+  "report_version": "HERD_SEC_FORM4_CENSUS_GATE_V2",
+  "status": "RESEARCH_CENSUS_READY_FOR_ONE_PREREGISTERED_HYPOTHESIS",
+  "passed": true,
+  "checks": {
+    "all_quarters_present": true,
+    "minimum_oos_issuers": true,
+    "minimum_primary_xml_crosscheck_transactions": true,
+    "minimum_bulk_to_primary_exact_match_rate": true,
+    "minimum_exact_match_wilson_95_lower": true,
+    "minimum_known_transaction_code_rate": true,
+    "minimum_p_or_s_with_owner_rate": true,
+    "lineage_verified": true,
+    "price_outcomes_remained_closed": true,
+    "action_authority_remained_zero": true
+  },
+  "quarter_count": 58,
+  "independent_issuers": 387,
+  "independent_issuer_year_cells": 5805,
+  "observed_zero_filing_cells": 157,
+  "submissions": 464619,
+  "transactions": 1133161,
+  "known_transaction_code_rate": 0.9999991175128689,
+  "independent_non_derivative_p_or_s_transactions": 199089,
+  "p_or_s_with_reporting_owner_rate": 1.0,
+  "primary_xml_crosscheck": {
+    "reviewed_primary_xml_transactions": 265,
+    "bulk_candidate_found": 265,
+    "exact_matches": 265,
+    "exact_match_rate": 1.0,
+    "exact_match_wilson_95_lower": 0.9857110624323155,
+    "field_match_rates": {
+      "transactionDate": 1.0,
+      "transactionCode": 1.0,
+      "transactionShares": 1.0,
+      "transactionPricePerShare": 1.0,
+      "acquiredDisposedCode": 1.0,
+      "sharesOwnedFollowingTransaction": 1.0,
+      "directOrIndirectOwnership": 1.0,
+      "isDerivative": 1.0
+    }
+  },
+  "hashes": {
+    "protocol_sha256": "261ef1483f4de4af744b285a627801e1a590f4057dd2315a616069d56f84f75e",
+    "download_manifest_sha256": "04763743fc3655786b7ee6360ccd4eb36f9198089c3edec7a331f53f1b4f31bb",
+    "normalized_manifest_sha256": "fc5877818e705cec2cb197e4b3d7929de1a34f3f5d07de592805e78ef7bcca67",
+    "independent_universe_sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8",
+    "adjudicated_review_sha256": "7a32cd95c45d4455d6bc315b17ecdd9482b187fad6965cde3a2efb1cf8436bb0",
+    "coverage_sha256": "b82b5e1d3497a7eb45bed32f26c07e7fd2151b54cce361089997643b0f2e9b15",
+    "crosscheck_sha256": "879e6ed42ea43c7479c859e0a336f6265e48ca9d8567918487fd3cd5362d9b4e"
+  },
+  "claim_boundary": "hypothesis-specific current-constituent robustness; not blind and not survivorship safe",
+  "price_outcomes_opened": false,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "operational_action_authority": false,
+  "single_hypothesis_preregistration_allowed": true,
+  "next_decision": "LOCK_ONE_INSIDER_PURCHASE_SUPPORT_HYPOTHESIS"
+}
