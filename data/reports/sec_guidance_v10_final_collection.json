@@ -1,0 +1,30 @@
+{
+  "report_version": "herd-sec-guidance-v10-final-collection-v1",
+  "scope": "FINAL_ITERATIVE_PARSER_VALIDATION_ONLY",
+  "metadata_tickers": 120,
+  "eligible_tickers": 68,
+  "selected_tickers": 60,
+  "selected_filings": 1379,
+  "minimum_eligible_filings_per_ticker": 8,
+  "maximum_filings_per_ticker": 24,
+  "selection_used_guidance_text": false,
+  "selection_used_parser_output": false,
+  "selection_used_source_review_labels": false,
+  "selection_used_price_outcomes": false,
+  "base_catalog_report": {
+    "report_version": "herd-sec-8k-guidance-candidate-catalog-v1",
+    "universe_tickers": 120,
+    "tickers_with_submissions": 120,
+    "missing_submissions": [],
+    "eligible_filings": 4904,
+    "tickers_with_eligible_filings": 80,
+    "first_accepted_at": "2010-01-13T17:27:39.000Z",
+    "last_accepted_at": "2026-07-16T21:17:50.000Z",
+    "guidance_direction_classified": 0,
+    "operational_action_ratio": 0.0
+  },
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "7f39063157516ae91fcb57106308c1ffcb6c756575d7b9031edc3e7c1216a6d2",
+  "universe_sha256": "83e6b203b75251d83d134fd0a12a385c492fa3edef39bd314ae05747f976186f",
+  "catalog_sha256": "095923c2b297b26ecf2a224cb854f4dc4425e3a09657f496989f99cf1660889c"
+}

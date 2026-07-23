@@ -1,0 +1,21 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_V10_FINAL_COLLECTION_V1",
+  "status": "LOCKED_BEFORE_ELIGIBLE_8K_SELECTION",
+  "scope": "FINAL_ITERATIVE_PARSER_VALIDATION_ONLY",
+  "expansion_contract": "data/herd/sec_guidance_v10_final_expansion.json",
+  "universe": "data/reports/sec_guidance_v10_final_expansion_universe.csv",
+  "submission_root": "data/reference/sec/sec-guidance-v10-final-meta-120-20260723/raw",
+  "filing_target_tickers": 60,
+  "selection_salt": "HERD_SEC_GUIDANCE_V10_FINAL_FILINGS_V1",
+  "download": {
+    "archive_base": "https://www.sec.gov/Archives/edgar/data",
+    "minimum_request_interval_seconds": 0.125,
+    "maximum_workers": 4,
+    "checkpoint_every_filings": 50,
+    "throttle_cooldown_seconds": 30.0,
+    "maximum_text_document_bytes": 10000000,
+    "extensions": [".htm", ".html", ".txt"],
+    "exclude_filename_patterns": [".xsd", "_cal.xml", "_def.xml", "_lab.xml", "_pre.xml", "-index", "index.json"],
+    "include_filename_patterns": ["ex99", "exhibit99", "earn", "release", "presentation", "investor", "slides", "guidance", "outlook"]
+  }
+}
