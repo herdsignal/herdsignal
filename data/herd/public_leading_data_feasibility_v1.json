@@ -1,0 +1,182 @@
+{
+  "protocol_version": "PUBLIC_LEADING_DATA_FEASIBILITY_V1",
+  "status": "LOCKED_BEFORE_LOCAL_FEASIBILITY_AUDIT",
+  "as_of": "2026-07-23",
+  "objective": "Determine whether a public, economically non-price leading-information source is fit for a new long-horizon OOS hypothesis after Form 4 purchase support and numeric guidance-lowering hypotheses were rejected.",
+  "service_objective": "Improve rare partial profit-taking and later re-entry decisions for an already selected long-term holding without turning crowding or a single disclosure into an action signal.",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "prior_research": [
+    {
+      "id": "FORM4_PURCHASE_SUPPORT",
+      "path": "data/reports/sec_form4_insider_purchase_oos_v1.json",
+      "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69",
+      "required_decision": "REJECT_INSIDER_PURCHASE_SUPPORT_HYPOTHESIS"
+    },
+    {
+      "id": "MANAGEMENT_GUIDANCE_LOWER",
+      "path": "data/reports/sec_guidance_lower_oos_v2.json",
+      "sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d",
+      "required_decision": "REJECT_GUIDANCE_LOWER_HYPOTHESIS"
+    }
+  ],
+  "public_research_contract": {
+    "path": "data/herd/public_research_contract.json",
+    "sha256": "989d3922c5a9aeb0ee1f46be40a4b32bc88deb4c43c58590aa29e9da71f93a12"
+  },
+  "primary_oos_gate": {
+    "minimum_point_in_time_history_years": 10,
+    "minimum_non_overlapping_eras": 4,
+    "maximum_information_lag_class": "WITHIN_10_BUSINESS_DAYS",
+    "requires_free_public_research_use": true,
+    "requires_security_level_observations": true,
+    "requires_publication_or_acceptance_timestamp": true,
+    "requires_historical_revision_preservation": true,
+    "requires_point_in_time_identifier_mapping": true,
+    "requires_local_immutable_corpus_before_hypothesis": true,
+    "all_required": true
+  },
+  "sources": [
+    {
+      "id": "FINRA_EXCHANGE_LISTED_SHORT_INTEREST",
+      "provider": "FINRA",
+      "economic_information": "TWICE_MONTHLY_AGGREGATE_SHORT_POSITION",
+      "economically_distinct_from_price": true,
+      "official_urls": [
+        "https://www.finra.org/finra-data/browse-catalog/equity-short-interest",
+        "https://www.finra.org/finra-data/browse-catalog/equity-short-interest/files",
+        "https://www.finra.org/rules-guidance/rulebooks/finra-rules/4560"
+      ],
+      "official_fact_checked_on": "2026-07-23",
+      "public_research_tier_compatible": true,
+      "cost_class": "FREE_PUBLIC_DOWNLOAD",
+      "security_level_observations": true,
+      "pit_start": "2021-06-01",
+      "pit_end": "2026-07-23",
+      "history_boundary": "Files before June 2021 contain OTC positions only and do not cover exchange-listed equities.",
+      "publication_timestamp_available": true,
+      "publication_lag_class": "WITHIN_10_BUSINESS_DAYS",
+      "publication_lag": "Published on the seventh business day after the reporting settlement date.",
+      "sampling_frequency": "TWICE_MONTHLY",
+      "historical_revision_preservation": false,
+      "revision_limitation": "FINRA notes that corrections replace the displayed item and only the most recent data is available.",
+      "point_in_time_identifier_mapping": false,
+      "identifier_requirement": "Historical symbol must be mapped through the corporate-action and CIK alias ledger.",
+      "local_corpus_glob": "data/reference/finra/short-interest-*",
+      "allowed_role_if_not_primary": "PROSPECTIVE_SHADOW_AND_RECENT_SENSITIVITY_ONLY"
+    },
+    {
+      "id": "SEC_13F_INSTITUTIONAL_HOLDINGS",
+      "provider": "SEC EDGAR",
+      "economic_information": "QUARTER_END_LONG_INSTITUTIONAL_HOLDINGS",
+      "economically_distinct_from_price": true,
+      "official_urls": [
+        "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets",
+        "https://www.sec.gov/rules-regulations/staff-guidance/division-investment-management-frequently-asked-questions/frequently-asked-questions-about-form-13f"
+      ],
+      "official_fact_checked_on": "2026-07-23",
+      "public_research_tier_compatible": true,
+      "cost_class": "FREE_PUBLIC_DOWNLOAD",
+      "security_level_observations": true,
+      "pit_start": "2013-05-01",
+      "pit_end": "2026-05-31",
+      "history_boundary": "SEC structured Form 13F data starts with XML submissions from May 2013.",
+      "publication_timestamp_available": true,
+      "publication_lag_class": "UP_TO_45_CALENDAR_DAYS",
+      "publication_lag": "Form 13F is due within 45 days after quarter end.",
+      "sampling_frequency": "QUARTERLY",
+      "historical_revision_preservation": true,
+      "point_in_time_identifier_mapping": false,
+      "identifier_requirement": "CUSIP and issuer name require a point-in-time security master; manager CIK is not issuer CIK.",
+      "semantic_limitations": [
+        "LONG_HOLDINGS_ONLY",
+        "NO_INTRQUARTER_FLOW_TIMING",
+        "CONFIDENTIAL_TREATMENT_CAN_DELAY_VISIBILITY",
+        "MANAGER_AGGREGATION_AND_AMENDMENTS_REQUIRED"
+      ],
+      "local_corpus_glob": "data/reference/sec/sec-13f-*",
+      "allowed_role_if_not_primary": "SLOW_CROWDING_CONTEXT_ONLY"
+    },
+    {
+      "id": "CBOE_EQUITY_OPTION_SURFACE",
+      "provider": "Cboe DataShop",
+      "economic_information": "OPTION_IV_SKEW_TERM_STRUCTURE_VOLUME_AND_OPEN_INTEREST",
+      "economically_distinct_from_price": true,
+      "official_urls": [
+        "https://datashop.cboe.com/option-eod-summary",
+        "https://www.cboe.com/data/market-data-services/us/options"
+      ],
+      "official_fact_checked_on": "2026-07-23",
+      "public_research_tier_compatible": false,
+      "cost_class": "LICENSED_PAID_HISTORICAL_PRODUCT",
+      "security_level_observations": true,
+      "pit_start": "2012-01-01",
+      "pit_end": "2026-07-23",
+      "publication_timestamp_available": true,
+      "publication_lag_class": "NEXT_SESSION_OR_VENDOR_DELIVERY",
+      "sampling_frequency": "DAILY",
+      "historical_revision_preservation": true,
+      "point_in_time_identifier_mapping": false,
+      "identifier_requirement": "OCC option roots and non-standard corporate-action roots require historical mapping.",
+      "local_corpus_glob": "data/reference/cboe/option-surface-*",
+      "allowed_role_if_not_primary": "BLOCKED_UNTIL_LICENSED_DATA_IS_EXPLICITLY_APPROVED"
+    },
+    {
+      "id": "CBOE_FREE_EQUITY_OPTION_VOLUME",
+      "provider": "Cboe",
+      "economic_information": "CBOE_EXCHANGE_OPTION_VOLUME_ONLY",
+      "economically_distinct_from_price": true,
+      "official_urls": [
+        "https://www.cboe.com/us/options/market_statistics/historical_data/"
+      ],
+      "official_fact_checked_on": "2026-07-23",
+      "public_research_tier_compatible": true,
+      "cost_class": "FREE_PUBLIC_DOWNLOAD",
+      "security_level_observations": true,
+      "pit_start": "2019-09-01",
+      "pit_end": "2026-07-23",
+      "publication_timestamp_available": true,
+      "publication_lag_class": "END_OF_PERIOD_DOWNLOAD",
+      "sampling_frequency": "DAILY_OR_AGGREGATED",
+      "historical_revision_preservation": false,
+      "point_in_time_identifier_mapping": false,
+      "semantic_limitations": [
+        "NO_IMPLIED_VOLATILITY",
+        "NO_SKEW",
+        "NO_TERM_STRUCTURE",
+        "NO_COMPLETE_OPEN_INTEREST_SURFACE",
+        "CBOE_EXCHANGES_NOT_COMPLETE_OPRA_MARKET"
+      ],
+      "local_corpus_glob": "data/reference/cboe/free-option-volume-*",
+      "allowed_role_if_not_primary": "REJECT_AS_OPTION_CROWDING_SURFACE_PROXY"
+    }
+  ],
+  "decision_order": [
+    "VERIFY_PRIOR_REJECTIONS_AND_PUBLIC_RESEARCH_CONTRACT",
+    "VERIFY_OFFICIAL_HISTORY_AND_PIT_LAG",
+    "REJECT_SEMANTICALLY_INCOMPLETE_PROXY",
+    "BLOCK_LICENSED_SOURCE_OUTSIDE_PUBLIC_TIER",
+    "LIMIT_SHORT_INTEREST_TO_PROSPECTIVE_OR_RECENT_LANE",
+    "LIMIT_13F_TO_SLOW_CONTEXT",
+    "REQUIRE_LOCAL_HASHED_CORPUS_BEFORE_ANY_HYPOTHESIS"
+  ],
+  "forbidden": [
+    "RETUNE_FORM4_OR_GUIDANCE_ON_THE_SAME_OUTCOMES",
+    "TREAT_DAILY_SHORT_SALE_VOLUME_AS_SHORT_INTEREST",
+    "TREAT_13F_QUARTER_END_AS_PUBLIC_INFORMATION_TIME",
+    "TREAT_13F_MANAGER_CIK_AS_ISSUER_CIK",
+    "TREAT_FREE_OPTION_VOLUME_AS_IV_OR_SKEW",
+    "USE_LICENSED_DATA_WITHOUT_EXPLICIT_TIER_CHANGE",
+    "PREREGISTER_DIRECTION_WITHOUT_LOCAL_IMMUTABLE_CORPUS",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "price_outcomes_opened": false,
+    "new_direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_authority": false,
+    "operational_action_ratio": 0.0
+  }
+}
