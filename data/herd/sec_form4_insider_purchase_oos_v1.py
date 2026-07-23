@@ -194,17 +194,24 @@ def attach_episode_feature(
     universe: pd.DataFrame,
     protocol: dict,
 ) -> pd.DataFrame:
-    ticker_to_cik = {
-        row.ticker: f"{int(row.cik):010d}"
-        for row in universe.itertuples(index=False)
-        if str(row.eligible).lower() == "true"
-    }
+    if "issuer_cik" in universe:
+        ticker_to_cik = {
+            row.ticker: f"{int(row.issuer_cik):010d}"
+            for row in universe.itertuples(index=False)
+        }
+    else:
+        ticker_to_cik = {
+            row.ticker: f"{int(row.cik):010d}"
+            for row in universe.itertuples(index=False)
+            if str(row.eligible).lower() == "true"
+        }
     panel = episodes.copy()
     panel = panel[
         panel["path_label"].isin(
             protocol["population"]["adverse_path_labels"]
             + protocol["population"]["non_adverse_path_labels"]
         )
+        & panel["ticker"].isin(ticker_to_cik)
     ].copy()
     panel["signal_date"] = pd.to_datetime(panel["signal_date"])
     panel["issuerCik"] = panel["ticker"].map(ticker_to_cik)
@@ -479,7 +486,10 @@ def run(
         )
     owner_events = build_owner_purchase_events(snapshot, protocol)
     episodes = pd.read_csv(episodes_path)
-    universe = pd.read_csv(universe_path, dtype={"cik": str})
+    universe = pd.read_csv(
+        snapshot / "normalized/independent_universe.csv",
+        dtype={"issuer_cik": str},
+    )
     panel = attach_episode_feature(episodes, owner_events, universe, protocol)
     folds, metrics = evaluate_panel(panel, protocol)
     output_events.parent.mkdir(parents=True, exist_ok=True)
@@ -513,6 +523,9 @@ def run(
             ),
             "episodes_sha256": sha256(episodes_path),
             "universe_sha256": sha256(universe_path),
+            "normalized_independent_universe_sha256": sha256(
+                snapshot / "normalized/independent_universe.csv"
+            ),
             "events_sha256": sha256(output_events),
             "panel_sha256": sha256(output_panel),
             "folds_sha256": sha256(output_folds),
