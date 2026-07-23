@@ -1,0 +1,124 @@
+{
+  "report_version": "FINRA_SHORT_INTEREST_INCREMENTAL_V2",
+  "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW",
+  "as_of_utc": "2026-07-23T16:35:23.436103+00:00",
+  "baseline_settlement_date_count": 122,
+  "resumed_existing_incremental_manifest": false,
+  "settlement_date_count": 122,
+  "last_settlement_date": "2026-06-30",
+  "new_versions_this_run": 0,
+  "pending_candidates": [
+    {
+      "settlement_date": "2026-07-15",
+      "official_publication_date": "2026-07-24",
+      "download_not_before": "2026-07-24T00:00:00-04:00",
+      "safe_pit_availability": "2026-07-25T00:00:00-04:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-07-31",
+      "official_publication_date": "2026-08-11",
+      "download_not_before": "2026-08-11T00:00:00-04:00",
+      "safe_pit_availability": "2026-08-12T00:00:00-04:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-08-14",
+      "official_publication_date": "2026-08-25",
+      "download_not_before": "2026-08-25T00:00:00-04:00",
+      "safe_pit_availability": "2026-08-26T00:00:00-04:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-08-31",
+      "official_publication_date": "2026-09-10",
+      "download_not_before": "2026-09-10T00:00:00-04:00",
+      "safe_pit_availability": "2026-09-11T00:00:00-04:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-09-15",
+      "official_publication_date": "2026-09-24",
+      "download_not_before": "2026-09-24T00:00:00-04:00",
+      "safe_pit_availability": "2026-09-25T00:00:00-04:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-09-30",
+      "official_publication_date": "2026-10-09",
+      "download_not_before": "2026-10-09T00:00:00-04:00",
+      "safe_pit_availability": "2026-10-10T00:00:00-04:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-10-15",
+      "official_publication_date": "2026-10-26",
+      "download_not_before": "2026-10-26T00:00:00-04:00",
+      "safe_pit_availability": "2026-10-27T00:00:00-04:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-10-30",
+      "official_publication_date": "2026-11-10",
+      "download_not_before": "2026-11-10T00:00:00-05:00",
+      "safe_pit_availability": "2026-11-11T00:00:00-05:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-11-13",
+      "official_publication_date": "2026-11-24",
+      "download_not_before": "2026-11-24T00:00:00-05:00",
+      "safe_pit_availability": "2026-11-25T00:00:00-05:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-11-30",
+      "official_publication_date": "2026-12-09",
+      "download_not_before": "2026-12-09T00:00:00-05:00",
+      "safe_pit_availability": "2026-12-10T00:00:00-05:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-12-15",
+      "official_publication_date": "2026-12-24",
+      "download_not_before": "2026-12-24T00:00:00-05:00",
+      "safe_pit_availability": "2026-12-25T00:00:00-05:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    },
+    {
+      "settlement_date": "2026-12-31",
+      "official_publication_date": "2027-01-12",
+      "download_not_before": "2027-01-12T00:00:00-05:00",
+      "safe_pit_availability": "2027-01-13T00:00:00-05:00",
+      "status": "PENDING_OFFICIAL_PUBLICATION_WINDOW"
+    }
+  ],
+  "attempt_results": [
+    {
+      "settlement_date": "2026-06-15",
+      "purpose": "REVISION_PROBE",
+      "status": "HASH_UNCHANGED",
+      "sha256": "28d27bf06fef46f24e391bf7ce166f4aedc402b6d8dcb73a796faa0d850ef889"
+    },
+    {
+      "settlement_date": "2026-06-30",
+      "purpose": "REVISION_PROBE",
+      "status": "HASH_UNCHANGED",
+      "sha256": "ed667b1431bb74c9cec4bd9bc114d94aceffb023e4eb555300fbda8d8cff3f55"
+    }
+  ],
+  "all_baseline_hashes_verified": true,
+  "manifest_path": "data/herd/finra_short_interest_incremental_v2_manifest.json",
+  "manifest_sha256": "f6c0e3685392ce38d8a30e2dcbcb9abbd7bd9664f8d1391b7c284ff5d3369588",
+  "lifecycle_gate": {
+    "finra_shadow_identifier_gate_passed": true,
+    "all_target_identifiers_complete": false,
+    "blocked_target_count": 5
+  },
+  "primary_long_horizon_oos_allowed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_preregistered": false,
+  "herd_formula_change_allowed": false,
+  "operational_action_ratio": 0.0,
+  "next_priority": "BUILD_UNIFIED_PROSPECTIVE_PIT_SHADOW_PANEL"
+}
