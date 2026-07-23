@@ -44,7 +44,8 @@
   "ten_b5_1_rules": {
     "explicit_checkbox_true": "TRUE",
     "explicit_checkbox_false": "FALSE",
-    "referenced_transaction_footnote_explicitly_mentions_10b5_1": "TRUE",
+    "referenced_transaction_footnote_states_transaction_was_executed_under_10b5_1": "TRUE",
+    "generic_policy_or_exception_mention_only": "UNKNOWN",
     "historical_absence_without_explicit_evidence": "UNKNOWN"
   },
   "gate": {

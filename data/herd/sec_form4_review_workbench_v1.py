@@ -37,6 +37,26 @@ def _transaction_xml(content: bytes, index: int) -> str:
     return ET.tostring(transactions[index], encoding="unicode")
 
 
+def _explicit_ten_b5_transaction_plan(text: str) -> bool:
+    if not re.search(r"\b10b5-?1\b", text, flags=re.IGNORECASE):
+        return False
+    normalized = re.sub(r"\[F\d+\]\s*", "", text)
+    patterns = (
+        r"(?:^|\n)\s*transactions?\s+(?:was\s+|were\s+)?(?:made\s+|effected\s+|executed\s+)?(?:pursuant\s+to|under)\b.{0,80}\b10b5-?1\b",
+        r"(?:this|the)\s+transactions?\b.{0,180}\bpursuant\s+to\b.{0,80}\b10b5-?1\b",
+        r"\btransactions?\s+(?:reported|made|effected|executed)\b.{0,180}\b10b5-?1\b",
+        r"\b(?:sales?|purchases?|exercises?)\s+reported\b.{0,180}\b10b5-?1\b",
+        r"\bsales?\b.{0,400}\bpursuant\s+to\b.{0,120}\b10b5-?1\b",
+        r"\boptions?\s+were\s+exercised\b.{0,180}\b10b5-?1\b",
+        r"\bsale\s+of\s+shares\b.{0,180}\b10b5-?1\b",
+        r"(?:^|\n)\s*pursuant\s+to\b.{0,80}\b10b5-?1\b",
+    )
+    return any(
+        re.search(pattern, normalized, flags=re.IGNORECASE | re.DOTALL)
+        for pattern in patterns
+    )
+
+
 def _review_context(row: dict, content: bytes) -> tuple[list[str], str, str]:
     root = ET.fromstring(content)
     checkbox = next(
@@ -50,8 +70,10 @@ def _review_context(row: dict, content: bytes) -> tuple[list[str], str, str]:
     referenced = row.get("footnoteText", "")
     if checkbox in {"1", "true", "yes", "0", "false", "no"}:
         ten_b5_evidence = "DOCUMENT_CHECKBOX"
-    elif re.search(r"\b10b5-?1\b", referenced, flags=re.IGNORECASE):
+    elif _explicit_ten_b5_transaction_plan(referenced):
         ten_b5_evidence = "REFERENCED_TRANSACTION_FOOTNOTE"
+    elif re.search(r"\b10b5-?1\b", referenced, flags=re.IGNORECASE):
+        ten_b5_evidence = "GENERIC_MENTION_NOT_TRANSACTION_EVIDENCE"
     else:
         ten_b5_evidence = "NO_EXPLICIT_EVIDENCE"
 
@@ -82,6 +104,7 @@ def _review_context(row: dict, content: bytes) -> tuple[list[str], str, str]:
                 "INDIRECT_OWNERSHIP",
                 "MULTIPLE_REPORTING_OWNERS",
                 "TEN_B5_REFERENCED_TRANSACTION_FOOTNOTE",
+                "TEN_B5_GENERIC_MENTION_NOT_TRANSACTION_EVIDENCE",
             }
             for flag in flags
         )

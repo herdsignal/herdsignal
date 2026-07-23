@@ -28,12 +28,13 @@
     "RARE_OR_SEMANTIC_CODE": 23,
     "REFERENCED_FOOTNOTES": 217,
     "TEN_B5_DOCUMENT_CHECKBOX": 65,
+    "TEN_B5_GENERIC_MENTION_NOT_TRANSACTION_EVIDENCE": 1,
     "TEN_B5_NO_EXPLICIT_EVIDENCE": 175,
-    "TEN_B5_REFERENCED_TRANSACTION_FOOTNOTE": 27
+    "TEN_B5_REFERENCED_TRANSACTION_FOOTNOTE": 26
   },
-  "review_queue_sha256": "1dafb55c76d43535915743a451c00e025303b9e63329e97a786effbbb18e5979",
+  "review_queue_sha256": "a61699476b87e12179cda2771ab2849cf75d45077b81e3ccc21a0f83d3d9ca9c",
   "source_manifest_sha256": "331a8fa66a8412b9d3098c5f279f34288409a2fd3a1f4b779354d4cf0ca125f6",
-  "protocol_sha256": "f870fff0d91298c53dbe22388541a697dea88dae150793c765bfee6dd2f4587f",
+  "protocol_sha256": "eb60ab587412de82edd0a9ee4930786d3a95be0edfda8b082849cbd05c5b18a7",
   "price_outcomes_opened": false,
   "automatic_valid_labels_created": false,
   "direction_hypothesis_allowed": false,

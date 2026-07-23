@@ -1,6 +1,10 @@
 import json
 
-from herd.sec_form4_atomic_v1 import IssuerCikMismatch, parse_document
+from herd.sec_form4_atomic_v1 import (
+    IssuerCikMismatch,
+    _explicit_ten_b5_transaction_plan,
+    parse_document,
+)
 
 
 XML = b"""<?xml version="1.0"?>
@@ -48,6 +52,23 @@ def test_parser_keeps_atomic_values_owners_and_footnotes():
     assert "10b5-1" in rows[0]["footnoteText"]
     assert json.loads(rows[0]["reportingOwner"])[0]["officerTitle"] == "CEO"
     assert rows[1]["economicClass"] == "TAX_OR_EXERCISE_WITHHOLDING"
+
+
+def test_ten_b5_requires_transaction_specific_statement():
+    assert _explicit_ten_b5_transaction_plan(
+        "[F1] This transaction was made pursuant to a Rule 10b5-1 plan."
+    )
+    assert _explicit_ten_b5_transaction_plan(
+        "[F1] Pursuant to a 10b5-1 Plan."
+    )
+    assert _explicit_ten_b5_transaction_plan(
+        "The sales reported were effected by a family trust, as applicable, "
+        "pursuant to its Rule 10b5-1 trading plan."
+    )
+    assert not _explicit_ten_b5_transaction_plan(
+        "Company policy permits trades after earnings, except pursuant "
+        "to approved 10b5-1 trading plans."
+    )
 
 
 def test_parser_rejects_issuer_cik_mismatch():

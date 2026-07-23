@@ -111,6 +111,26 @@ def _owners(root: ET.Element) -> str:
     return json.dumps(result, ensure_ascii=False, sort_keys=True)
 
 
+def _explicit_ten_b5_transaction_plan(text: str) -> bool:
+    if not re.search(r"\b10b5-?1\b", text, flags=re.IGNORECASE):
+        return False
+    normalized = re.sub(r"\[F\d+\]\s*", "", text)
+    patterns = (
+        r"(?:^|\n)\s*transactions?\s+(?:was\s+|were\s+)?(?:made\s+|effected\s+|executed\s+)?(?:pursuant\s+to|under)\b.{0,80}\b10b5-?1\b",
+        r"(?:this|the)\s+transactions?\b.{0,180}\bpursuant\s+to\b.{0,80}\b10b5-?1\b",
+        r"\btransactions?\s+(?:reported|made|effected|executed)\b.{0,180}\b10b5-?1\b",
+        r"\b(?:sales?|purchases?|exercises?)\s+reported\b.{0,180}\b10b5-?1\b",
+        r"\bsales?\b.{0,400}\bpursuant\s+to\b.{0,120}\b10b5-?1\b",
+        r"\boptions?\s+were\s+exercised\b.{0,180}\b10b5-?1\b",
+        r"\bsale\s+of\s+shares\b.{0,180}\b10b5-?1\b",
+        r"(?:^|\n)\s*pursuant\s+to\b.{0,80}\b10b5-?1\b",
+    )
+    return any(
+        re.search(pattern, normalized, flags=re.IGNORECASE | re.DOTALL)
+        for pattern in patterns
+    )
+
+
 def _ten_b5(root: ET.Element, referenced: str) -> str:
     for node in root.iter():
         if _name(node) in {"aff10b5One", "isTenB5One", "tenB5One"}:
@@ -119,11 +139,7 @@ def _ten_b5(root: ET.Element, referenced: str) -> str:
                 return "TRUE"
             if value in {"0", "false", "no"}:
                 return "FALSE"
-    return (
-        "TRUE"
-        if re.search(r"\b10b5-?1\b", referenced, flags=re.IGNORECASE)
-        else "UNKNOWN"
-    )
+    return "TRUE" if _explicit_ten_b5_transaction_plan(referenced) else "UNKNOWN"
 
 
 def independently_extract(content: bytes, metadata: dict, index: int) -> dict:
