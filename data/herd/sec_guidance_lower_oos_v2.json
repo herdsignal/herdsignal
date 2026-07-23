@@ -1,0 +1,136 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_LOWER_OOS_V2",
+  "status": "PREREGISTERED_BEFORE_PRICE_OUTCOME_JOIN",
+  "economic_hypothesis": {
+    "id": "MANAGEMENT_GUIDANCE_LOWER_PREDICTS_FUNDAMENTAL_DAMAGE",
+    "rationale": "A source-reviewed reduction in management's own comparable forward range is an expectation shock economically distinct from price momentum. If it contains persistent information, LOWER revisions should precede worse sector-relative six-month paths than the same issuers' RAISE or MAINTAIN revisions.",
+    "treatment": "midpoint_delta < 0",
+    "control": "midpoint_delta >= 0",
+    "continuous_feature": "midpoint_delta_ratio",
+    "claim_if_passed": "RESEARCH_ONLY_FUNDAMENTAL_DAMAGE_VETO_CANDIDATE",
+    "not_claimed": [
+      "DIRECT_SELL_SIGNAL",
+      "DIRECT_ADD_BUY_SIGNAL",
+      "GUIDANCE_CAUSES_RETURN",
+      "ALL_US_EQUITIES_GENERALIZATION"
+    ]
+  },
+  "locked_inputs": {
+    "atomic_pairs": {
+      "path": "data/reports/sec_guidance_atomic_pairs_v2.csv",
+      "sha256": "e86fb31124e64cb5b608b2e75e56c4fcb3bbdeadd6746a5674ca335b28ec8209"
+    },
+    "atomic_pair_report": {
+      "path": "data/reports/sec_guidance_atomic_pairs_v2.json",
+      "sha256": "fb22b066f8744018e7795ca69199262d4ce5292861e3a44db535ded48f72b034"
+    },
+    "primary_price_snapshot": {
+      "path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json",
+      "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b"
+    },
+    "supplemental_price_snapshot": {
+      "path": "data/snapshots/yf-independent-current-sp500-20260721/manifest.json",
+      "sha256": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781"
+    },
+    "sector_map": {
+      "path": "data/reports/independent_universe_v1.csv",
+      "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8"
+    }
+  },
+  "timing": {
+    "information_time": "SEC accepted_at",
+    "execution_session": "FIRST_TRADING_SESSION_STRICTLY_AFTER_ACCEPTED_AT",
+    "entry_price": "SPLIT_ADJUSTED_OPEN",
+    "horizon_sessions": 126,
+    "outcome_must_finish_by": "2026-07-17",
+    "same_accession_pairing": "FORBIDDEN"
+  },
+  "targets": {
+    "primary": "STOCK_TOTAL_RETURN_MINUS_SECTOR_ETF_TOTAL_RETURN_126_SESSIONS",
+    "co_primary_risk": "STOCK_FORWARD_MAX_DRAWDOWN_126_SESSIONS",
+    "secondary": [
+      "STOCK_TOTAL_RETURN_126_SESSIONS",
+      "SPY_RESIDUAL_RETURN_126_SESSIONS"
+    ],
+    "multiple_testing": "PRIMARY_AND_CO_PRIMARY_MUST_BOTH_PASS; SECONDARY_DESCRIPTIVE_ONLY"
+  },
+  "folds": [
+    {
+      "fold_id": "F01",
+      "start": "2012-01-03",
+      "end": "2015-12-31"
+    },
+    {
+      "fold_id": "F02",
+      "start": "2016-01-01",
+      "end": "2019-12-31"
+    },
+    {
+      "fold_id": "F03",
+      "start": "2020-01-01",
+      "end": "2022-12-31"
+    },
+    {
+      "fold_id": "F04",
+      "start": "2023-01-01",
+      "end": "2026-01-15"
+    }
+  ],
+  "estimation": {
+    "primary_unit": "ISSUER_CIK",
+    "event_rows_are_independent": false,
+    "issuer_balanced_effect": "MEAN_OF_WITHIN_ISSUER_TREATMENT_MINUS_CONTROL_MEANS",
+    "uncertainty": "DETERMINISTIC_ISSUER_CLUSTER_BOOTSTRAP_10000",
+    "bootstrap_seed": 20260723,
+    "fold_effect": "EVENT_MEDIAN_TREATMENT_MINUS_CONTROL_WITH_DIRECTION_ONLY",
+    "ticker_concentration_policy": "KEEP_ALL_LOCKED_ROWS_AND_BALANCE_BY_ISSUER"
+  },
+  "adoption_gate": {
+    "minimum_evaluated_pairs": 150,
+    "minimum_evaluated_tickers": 20,
+    "minimum_lower_events": 30,
+    "minimum_lower_tickers": 10,
+    "minimum_issuers_with_both_classes": 10,
+    "minimum_directionally_consistent_folds": 3,
+    "minimum_primary_effect": -0.02,
+    "primary_bootstrap_95_upper_must_be_below": 0.0,
+    "minimum_drawdown_effect": -0.02,
+    "drawdown_bootstrap_95_upper_must_be_below": 0.0,
+    "all_required": true
+  },
+  "claim_boundary": {
+    "survivorship_safe": false,
+    "reason": "Price snapshots and issuer census are dominated by current constituents.",
+    "allowed_use": "MODEL_ELIMINATION_AND_RESEARCH_CANDIDATE_ONLY",
+    "blind_holdout_access": false,
+    "operational_action_authority": false,
+    "operational_action_ratio": 0.0
+  },
+  "research_basis": [
+    {
+      "title": "SEC Form 8-K",
+      "url": "https://www.sec.gov/info/edgar/forms/form8-k.pdf"
+    },
+    {
+      "title": "SEC Regulation FD compliance guidance",
+      "url": "https://www.sec.gov/rules-regulations/staff-guidance/corporation-finance-interpretations/proxy-disclosure-enhancements-transition-reg-fd"
+    },
+    {
+      "title": "Management forecast form and analyst forecast revisions",
+      "doi": "10.1016/j.adiac.2011.01.005"
+    },
+    {
+      "title": "The informational feedback effect of stock prices on management forecasts",
+      "doi": "10.1016/j.jacceco.2016.03.001"
+    }
+  ],
+  "forbidden": [
+    "CHANGE_LOWER_THRESHOLD_AFTER_OUTCOMES",
+    "DROP_ISSUER_OR_METRIC_BY_FUTURE_RETURN",
+    "TREAT_GUIDANCE_OMISSION_AS_LOWER",
+    "COUNT_ROWS_AS_INDEPENDENT_OBSERVATIONS",
+    "COMBINE_WITH_RSI_MOMENTUM_OR_FORM4_BEFORE_INDEPENDENT_PASS",
+    "OPEN_BLIND_HOLDOUT",
+    "CHANGE_HERD_WEIGHT_OR_ACTION_RATIO"
+  ]
+}

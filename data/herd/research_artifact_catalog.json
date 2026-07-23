@@ -71,6 +71,7 @@
     "data/herd/sec_guidance_atomic_pairs_v2.json",
     "data/reports/sec_guidance_atomic_pairs_v2.csv",
     "data/reports/sec_guidance_atomic_pairs_v2.json",
+    "data/herd/sec_guidance_lower_oos_v2.json",
     "docs/HERD_RESEARCH_STATUS.md"
   ],
   "families": [

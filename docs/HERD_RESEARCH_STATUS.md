@@ -1570,3 +1570,19 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
 - 수정쌍 coverage 통과는 방향 예측력 통과가 아니다. 아직 상향·유지·하향
   라벨과 가격 결과를 만들지 않았고 매수·익절·veto·HERD 가중치 권한은
   모두 false다.
+
+### 경영진 가이던스 하향 단일 가설 사전등록
+
+- 가격 결과를 결합하기 전에
+  `MANAGEMENT_GUIDANCE_LOWER_PREDICTS_FUNDAMENTAL_DAMAGE` 하나만 잠갔다.
+  midpoint 하향을 treatment, 상향·유지를 control로 정의하며 임계값을
+  결과 확인 뒤 바꿀 수 없다.
+- 126거래일 섹터 잔차수익 악화와 최대낙폭 확대를 함께 요구한다. 행을
+  독립 표본으로 세지 않고 같은 issuer 안의 하향·비하향 평균 차이를 먼저
+  계산한 뒤 issuer 균형 효과와 issuer-cluster bootstrap을 사용한다.
+- 최소 150쌍·20기업, 하향 30건·10기업, 양쪽 class가 있는 10기업,
+  4개 시대 중 3개 방향 일치, 두 효과 각각 -2%p 이하와 bootstrap 95%
+  상한 0 미만을 모두 만족해야 한다.
+- 통과해도 `RESEARCH_ONLY_FUNDAMENTAL_DAMAGE_VETO_CANDIDATE`일 뿐 직접
+  매도·추가매수 권한은 아니다. 현존 구성종목 중심이라는 생존자 편향
+  한계 때문에 모델 탈락과 후속 연구 후보 선정에만 사용한다.
