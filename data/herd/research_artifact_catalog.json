@@ -72,6 +72,9 @@
     "data/reports/sec_guidance_atomic_pairs_v2.csv",
     "data/reports/sec_guidance_atomic_pairs_v2.json",
     "data/herd/sec_guidance_lower_oos_v2.json",
+    "data/reports/sec_guidance_lower_oos_panel_v2.csv",
+    "data/reports/sec_guidance_lower_oos_issuer_effects_v2.csv",
+    "data/reports/sec_guidance_lower_oos_v2.json",
     "docs/HERD_RESEARCH_STATUS.md"
   ],
   "families": [
@@ -92,7 +95,7 @@
     },
     {
       "status": "REJECTED",
-      "patterns": ["weekly_rsi_*", "rush_*", "opportunity_*", "profit_take_*", "reentry_*", "completed_cycle_*", "vnext_joint_hypothesis_v1*", "vnext_joint_panel_v1*", "sec_form4_insider_purchase_support_v1*", "sec_form4_insider_purchase_oos_v1*", "evidence_admission_registry_v9.json"],
+      "patterns": ["weekly_rsi_*", "rush_*", "opportunity_*", "profit_take_*", "reentry_*", "completed_cycle_*", "vnext_joint_hypothesis_v1*", "vnext_joint_panel_v1*", "sec_form4_insider_purchase_support_v1*", "sec_form4_insider_purchase_oos_v1*", "sec_guidance_lower_oos_v2*", "evidence_admission_registry_v9.json"],
       "note": "탈락 결과를 삭제하거나 임계값 조정에 재사용하지 않음"
     }
   ],

@@ -1,0 +1,96 @@
+{
+  "report_version": "herd-sec-guidance-lower-oos-v2",
+  "status": "INDEPENDENT_OOS_COMPLETE",
+  "hypothesis_id": "MANAGEMENT_GUIDANCE_LOWER_PREDICTS_FUNDAMENTAL_DAMAGE",
+  "evaluated_pairs": 170,
+  "evaluated_tickers": 27,
+  "lower_events": 36,
+  "lower_tickers": 11,
+  "issuers_with_both_classes": 11,
+  "issuer_balanced_sector_residual_effect": 0.05201918867059488,
+  "issuer_cluster_bootstrap_95_interval": [
+    -0.015007817984405857,
+    0.11677842795695739
+  ],
+  "issuer_balanced_max_drawdown_effect": 0.03807294087256023,
+  "drawdown_cluster_bootstrap_95_interval": [
+    -0.01964151879600984,
+    0.11156881490818608
+  ],
+  "directionally_consistent_folds": 1,
+  "folds": [
+    {
+      "fold_id": "F01",
+      "events": 29,
+      "tickers": 10,
+      "lower_events": 8,
+      "lower_tickers": 2,
+      "sector_residual_effect": -0.11198726265970327,
+      "max_drawdown_effect": -0.07564372422693644,
+      "both_effects_in_preregistered_direction": true
+    },
+    {
+      "fold_id": "F02",
+      "events": 28,
+      "tickers": 10,
+      "lower_events": 5,
+      "lower_tickers": 5,
+      "sector_residual_effect": 0.08052706921827979,
+      "max_drawdown_effect": -0.03984256585188828,
+      "both_effects_in_preregistered_direction": false
+    },
+    {
+      "fold_id": "F03",
+      "events": 43,
+      "tickers": 9,
+      "lower_events": 11,
+      "lower_tickers": 3,
+      "sector_residual_effect": 0.008346242241277224,
+      "max_drawdown_effect": 0.0036034321419398663,
+      "both_effects_in_preregistered_direction": false
+    },
+    {
+      "fold_id": "F04",
+      "events": 70,
+      "tickers": 11,
+      "lower_events": 12,
+      "lower_tickers": 3,
+      "sector_residual_effect": 0.0019741334943242372,
+      "max_drawdown_effect": -0.055330340584699156,
+      "both_effects_in_preregistered_direction": false
+    }
+  ],
+  "gate_checks": {
+    "minimum_evaluated_pairs": true,
+    "minimum_evaluated_tickers": true,
+    "minimum_lower_events": true,
+    "minimum_lower_tickers": true,
+    "minimum_issuers_with_both_classes": true,
+    "minimum_directionally_consistent_folds": false,
+    "minimum_primary_effect": false,
+    "primary_bootstrap_95_upper": false,
+    "minimum_drawdown_effect": false,
+    "drawdown_bootstrap_95_upper": false
+  },
+  "adoption_gate_passed": false,
+  "decision": "REJECT_GUIDANCE_LOWER_HYPOTHESIS",
+  "claim_boundary": {
+    "survivorship_safe": false,
+    "reason": "Price snapshots and issuer census are dominated by current constituents.",
+    "allowed_use": "MODEL_ELIMINATION_AND_RESEARCH_CANDIDATE_ONLY",
+    "blind_holdout_access": false,
+    "operational_action_authority": false,
+    "operational_action_ratio": 0.0
+  },
+  "exclusions": {
+    "STOCK_PRICE_MISSING": 1,
+    "SECTOR_MAPPING_MISSING": 4
+  },
+  "price_outcomes_observed": true,
+  "blind_holdout_access": false,
+  "operational_action_authority": false,
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "181f3a3d7f6ac3bb5698f1907c10e9d397403d32831c410e207004f310078b87",
+  "panel_sha256": "2ca387db303a93acb8c79417d32845b97dc85b012e031ab73119fee7691c584f",
+  "issuer_effects_sha256": "b434253f5d30ad8d07d918a7946619d988ac600ba380152628096c0a2a03c462"
+}

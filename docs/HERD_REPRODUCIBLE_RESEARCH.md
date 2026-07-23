@@ -405,6 +405,22 @@ PYTHONPATH=data data/.venv/bin/python \
 MCO가 23.86%를 차지하므로 이후 방향 OOS는 기업 균형 집계와 ticker
 cluster 불확실성 없이 실행할 수 없다.
 
+가격 결과를 열기 전에 `sec_guidance_lower_oos_v2.json`의 단일 하향
+가설·입력 해시·4개 시대·채택 기준을 먼저 커밋한다. 그 뒤 아래 명령으로
+issuer 균형 OOS를 재현한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_guidance_lower_oos_v2 \
+  --panel data/reports/sec_guidance_lower_oos_panel_v2.csv \
+  --issuer-effects data/reports/sec_guidance_lower_oos_issuer_effects_v2.csv \
+  --report data/reports/sec_guidance_lower_oos_v2.json
+```
+
+170쌍·27기업을 평가했지만 섹터 잔차수익과 최대낙폭 효과가 모두 예상과
+반대이고 4개 시대 중 1개만 방향이 일치해 가설은 탈락했다. 같은 표본에서
+하향 임계값이나 기간을 조정하지 않는다.
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.
