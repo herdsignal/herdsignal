@@ -29,7 +29,11 @@ def test_v1_catalog_remains_readable_for_historical_completion_receipts() -> Non
 def test_v2_catalog_has_no_conflicting_statuses() -> None:
     catalog = load_catalog(CATALOG)
     assert find_duplicate_chain_memberships(catalog) == {}
-    assert catalog["current_decision"]["status"] == "NO_ADOPTABLE_CANDIDATE"
+    assert catalog["current_decision"]["status"] == "STATE_OBSERVATION_MVP_READY"
+    assert (
+        catalog["current_decision"]["action_candidate"]
+        == "NO_ADOPTABLE_ACTION_CANDIDATE"
+    )
     assert catalog["current_decision"]["state_measurement"] == "HERD_STATE_S1"
     assert catalog["current_decision"]["state_display_ready"] is True
     assert catalog["current_decision"]["transition_measurement"] == "HERD_TRANSITION_S1"

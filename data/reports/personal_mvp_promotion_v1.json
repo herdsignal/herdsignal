@@ -1,0 +1,38 @@
+{
+  "report_version": "HERD_PERSONAL_MVP_PROMOTION_V1",
+  "status": "STATE_OBSERVATION_MVP_READY",
+  "decision": "NO_ADOPTABLE_ACTION_CANDIDATE",
+  "model_family": "HERD_STATE_S1",
+  "lifecycle": "PERSONAL_RESEARCH_MVP",
+  "state_observation_ready": true,
+  "transition_observation_ready": true,
+  "action_candidate_ready": false,
+  "action_model_status": "PERSONAL_POLICY_REJECTED_PREHOLDOUT",
+  "allowed_scope": [
+    "HERD_STATE_S1",
+    "HERD_TRANSITION_S1",
+    "SOURCE_DATE_AND_LIMITATION_DISCLOSURE",
+    "PERSONAL_OBSERVATION_LOG"
+  ],
+  "blocked_scope": [
+    "BUY_RATIO",
+    "PROFIT_TAKE_RATIO",
+    "REENTRY_RATIO",
+    "AUTOMATED_ORDER",
+    "PUBLIC_INVESTMENT_RECOMMENDATION"
+  ],
+  "default_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "user_action_suppressed": true,
+  "herd_state_role": "HERD_STATE_S1_OBSERVATION",
+  "historical_role": "PRE_HOLDOUT_RESEARCH_ONLY",
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "prospective_shadow_status": "ACTION_SHADOW_BLOCKED_POLICY_FAILED",
+  "promotion_blockers": [
+    "PERSONAL_POLICY_PREHOLDOUT_FAILED",
+    "BLIND_HOLDOUT_NOT_PASSED",
+    "SURVIVORSHIP_SAFE_FALSE"
+  ],
+  "contract_sha256": "ee8709dd8139d48924f047b57a4445532898477785a3ccf8cc4d6c24e352be67"
+}

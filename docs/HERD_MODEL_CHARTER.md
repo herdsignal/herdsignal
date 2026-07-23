@@ -115,7 +115,8 @@ Rush의 익절에는 Exhausted 또는 Breaking 확인이 필요하다.
 
 ## 현재 상태
 
-- HERD v4: 기존 운영 상태 점수이자 비교 기준
+- HERD v4: 현재 화면에 남은 레거시 상태 점수이자 비교 기준
+- HERD State S1·Transition S1: 개인 관찰 MVP 사용 가능
 - HERD v6.1 Action Layer: 채택되지 않은 레거시 연구 기준
 - 가격·추세·상대강도·위험·기업 상태 가설: 독립 OOS 채택 0개
 - Rush 종목 고유 하방 비대칭: 신규 59종목 OOS 탈락, 운영 권한 없음
@@ -124,7 +125,8 @@ Rush의 익절에는 Exhausted 또는 Breaking 확인이 필요하다.
 - SEC 8-K 가이던스: 구조 파서 V7 독립 원문 게이트 탈락, 수정쌍 생성 차단
 - 검증된 수정쌍·방향 가설·차세대 후보: 0개
 - Blind holdout: 미배정·미개방
-- 차세대 HERD: `NO_ADOPTABLE_CANDIDATE`
+- 개인 MVP: `STATE_OBSERVATION_MVP_READY`
+- 차세대 행동 후보: `NO_ADOPTABLE_ACTION_CANDIDATE`
 
 검증을 통과하지 않은 후보는 운영 점수나 확정 행동으로 표시하지 않는다.
 기계 판독 계약은

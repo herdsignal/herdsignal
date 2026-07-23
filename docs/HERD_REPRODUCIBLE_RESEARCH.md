@@ -571,6 +571,16 @@ PYTHONPATH=data data/.venv/bin/python -m herd.profit_giveback_economic_v1
 `operational_action_ratio=0.0`과 `blind_holdout_access=false`는
 pre-holdout 통과 전까지 변경할 수 없다.
 
+현재 증거에서 개인 MVP에 허용되는 범위는 다음 판정으로 고정한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.personal_mvp_promotion_v1
+```
+
+State S1과 Transition S1은 관찰 기능으로 승격할 수 있지만, 경제성
+pre-holdout과 Blind holdout을 통과하지 않은 매수·익절·재진입 비율은
+항상 차단한다.
+
 사건 생성 단계는 fold 종료 이후 가격을 정책 조건에 사용하지 않는다.
 `POLICY_EVENTS_READY`는 사전등록한 사건 수와 종목·fold coverage가
 충분하다는 뜻이며 경제성이나 매매 권한을 의미하지 않는다.

@@ -1,7 +1,7 @@
 # HERD 연구 현황
 
 기준일: 2026-07-24
-판정: `NO_ADOPTABLE_CANDIDATE`
+판정: `STATE_OBSERVATION_MVP_READY` / `NO_ADOPTABLE_ACTION_CANDIDATE`
 
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
@@ -191,18 +191,20 @@ HERD 후보에서 PASS 재진입은 9건, UNKNOWN 차단은 9건, VETO 차단은
   `NO_ADOPTABLE_CANDIDATE`다. prospective shadow는 시작하지 않으며
   운영 행동 비율은 0이다.
 
-## vNext 백엔드 안전 계약
+## 개인 MVP 백엔드 안전 계약
 
 - API: `GET /api/model/vnext-status`
 - 구현: `VNextModelStatusService`
-- 백엔드는 pre-holdout 결과의 계약 버전, 탈락 판정, 과거 데이터 역할,
-  생존자 편향 상태, Blind holdout 미개방, 운영 행동 0%를 함께 검증한다.
-- 정상 판정에서도 `RESEARCH_VALIDATION`, `NO_ADOPTABLE_CANDIDATE`,
-  `HOLD`, `0%`만 반환하며 연구 후보에는 사용자 행동 권한이 없다.
+- 백엔드는 `personal_mvp_promotion_v1.json`의 계약 버전, State·Transition
+  준비 상태, 행동 후보 탈락, 생존자 편향, Blind holdout 미개방과 운영
+  행동 0%를 함께 검증한다.
+- 정상 판정은 `PERSONAL_RESEARCH_MVP`,
+  `STATE_OBSERVATION_MVP_READY`, `NO_ADOPTABLE_ACTION_CANDIDATE`,
+  `HOLD`, `0%`를 반환한다.
 - 판정 파일 미생성·손상·버전 불일치·비율 변경·Blind holdout 상태 변경은
   모두 fail-closed 처리한다. 설정값만으로 후보를 승격할 수 없다.
-- v4는 레거시 HERD 상태 관측 역할만 유지한다. 이 API는 기존 v6.1 연구
-  비율을 vNext 행동으로 재사용하지 않는다.
+- HERD State S1과 Transition S1만 관찰 범위로 승인하며, v4·v6.1 비율을
+  새 행동으로 재사용하지 않는다.
 
 ## Rush 종목 고유 하방 비대칭 독립 OOS
 
@@ -1867,7 +1869,7 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
 
 ### 전체 회귀와 유지보수
 
-- Python 전체 847개, backend Gradle test, frontend lint, frontend
+- Python 전체 874개, backend 77개 Gradle test, frontend lint, frontend
   16개 파일·34개 테스트, production build, `git diff --check`를 실제
   실행했고 6개 명령이 모두 통과했다.
 - 소스가 이미 존재하는 controller·domain·repository·service 디렉터리의
@@ -1878,3 +1880,33 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
 - 완료 감사는 7단계 산출물과 회귀 영수증을 다시 해시 검증한다. 이 감사가
   통과해도 상태는 `OVERNIGHT_PIPELINE_COMPLETE_RESEARCH_BLOCKED`이며
   채택 가능한 매수·익절 모델이 생겼다는 뜻이 아니다.
+
+## State S1 개인 MVP 최종 리뷰
+
+- 연구 산출물 V2 원장에서 v4·v6.1은 레거시 참고로 격리했고 State S1,
+  Transition S1, 수익 반납 정책과 경제성 결과를 활성 체인에 연결했다.
+- State S1과 Transition S1은 계산 안정성·표시 빈도 게이트를 통과했다.
+  개인 연구 MVP에서 상태와 전환 관찰은 가능하다.
+- 5% 익절→회복 확인→재진입은 11개 완결 사이클 중 27.3%만 주식 수가
+  증가했고 중앙 초과 CAGR과 최종자산 차이가 음수였다. 행동 후보는
+  pre-holdout에서 탈락했으며 임계값을 다시 조정하지 않는다.
+- `/api/model/vnext-status`가 과거 vNext·v4 보고서를 읽던 불일치를
+  수정했다. 최신 개인 MVP 판정 보고서를 검증하며 정상·오류 모두
+  `HOLD`, 0%로 fail-closed 한다.
+- 새 경제성 코드는 가격·PIT 게이트·액션 스케줄을 독립 모듈로 분리했다.
+  기존 `ActionDecisionService`는 280줄로 이미 분해돼 이번 작업에서 다시
+  나누지 않았다.
+- 비어 있는 소스 파일과 안전하게 삭제할 수 있는 미분류 산출물은 없었다.
+  고정 해시 입력·탈락 실험·재현 원장은 파일 수만으로 삭제하지 않았다.
+- 남은 유지보수 대상은 `PortfolioService`와 `HerdService`의 책임 분리다.
+  둘 다 약 550줄이며 각각 Python 프로세스·현금·스냅샷, on-demand·조회·
+  DTO 조립을 함께 담당한다. 현재 회귀가 통과하므로 모델 연구와 섞어
+  위험하게 분해하지 않고 별도 유지보수 작업으로 남긴다.
+- 프론트엔드는 이번 범위에서 변경하지 않았다. 테스트의 React Router v7
+  future flag 경고 2종은 기능 오류가 아니며 라우터 업그레이드 작업에서
+  처리한다.
+
+최종 회귀는 Python 874개, backend 77개, frontend 16개 파일·34개 테스트,
+frontend lint와 production build가 모두 통과했다. 관찰용 연구 MVP와
+사용자 화면 연결은 아직 별도 작업이며, 현재 화면의 v4 점수를 State S1로
+바꿨다고 주장하지 않는다.

@@ -1,0 +1,67 @@
+{
+  "contract_version": "HERD_PERSONAL_MVP_PROMOTION_V1",
+  "status": "LOCKED_STATE_AND_ACTION_BOUNDARY",
+  "objective": "Promote only the capabilities supported by current evidence for a single-user research MVP.",
+  "inputs": {
+    "model_charter": {
+      "path": "data/herd/herd_vnext_model_charter_v1.json",
+      "sha256": "9ce2918eeab8aaf588670bea152de3ceebc8f55aff9f73e6382bd60d5dc3935d"
+    },
+    "public_research_contract": {
+      "path": "data/herd/public_research_contract.json",
+      "sha256": "989d3922c5a9aeb0ee1f46be40a4b32bc88deb4c43c58590aa29e9da71f93a12"
+    },
+    "state_report": {
+      "path": "data/reports/herd_state_s1.json",
+      "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121",
+      "required_status": "STATE_DISPLAY_READY"
+    },
+    "transition_report": {
+      "path": "data/reports/herd_transition_s1.json",
+      "sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248",
+      "required_status": "TRANSITION_DISPLAY_READY"
+    },
+    "economic_report": {
+      "path": "data/reports/profit_giveback_economic_v1.json",
+      "sha256": "6190d677a1b21fc482397c5f7ce4f0000306b4da2d5bde21bb51742d19b69124",
+      "passing_status": "PERSONAL_POLICY_PREHOLDOUT_PASSED",
+      "current_status": "PERSONAL_POLICY_REJECTED_PREHOLDOUT"
+    }
+  },
+  "capability_gates": {
+    "state_observation": [
+      "STATE_DISPLAY_READY",
+      "OUTCOME_BLIND_MEASUREMENT",
+      "ZERO_ACTION_AUTHORITY"
+    ],
+    "transition_observation": [
+      "TRANSITION_DISPLAY_READY",
+      "ZERO_ACTION_AUTHORITY"
+    ],
+    "buy_profit_take_ratio": [
+      "ECONOMIC_PREHOLDOUT_PASSED",
+      "PROSPECTIVE_BLIND_HOLDOUT_PASSED",
+      "SURVIVORSHIP_SAFE_OR_EXPLICIT_PERSONAL_EXCEPTION"
+    ]
+  },
+  "fail_closed_output": {
+    "default_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "full_exit_allowed": false,
+    "leverage_allowed": false,
+    "blind_holdout_access": false
+  },
+  "allowed_personal_mvp_scope": [
+    "HERD_STATE_S1",
+    "HERD_TRANSITION_S1",
+    "SOURCE_DATE_AND_LIMITATION_DISCLOSURE",
+    "PERSONAL_OBSERVATION_LOG"
+  ],
+  "blocked_scope": [
+    "BUY_RATIO",
+    "PROFIT_TAKE_RATIO",
+    "REENTRY_RATIO",
+    "AUTOMATED_ORDER",
+    "PUBLIC_INVESTMENT_RECOMMENDATION"
+  ]
+}

@@ -17,7 +17,7 @@ import java.util.HexFormat;
 import java.util.List;
 
 /**
- * vNext pre-holdout 판정을 운영 응답과 격리된 읽기 전용 상태로 변환한다.
+ * 최신 개인 MVP 승격 판정을 운영 응답과 격리된 읽기 전용 상태로 변환한다.
  *
  * <p>이 서비스는 후보를 승격하지 않는다. 입력이 없거나 예상 계약에서
  * 벗어나면 항상 행동 권한을 차단하는 fail-closed 응답을 반환한다.</p>
@@ -25,20 +25,20 @@ import java.util.List;
 @Service
 public class VNextModelStatusService {
 
-    static final String EXPECTED_REPORT_VERSION = "HERD_VNEXT_PREHOLDOUT_EVALUATION_REPORT_V1";
-    private static final String MODEL_FAMILY = "HERD_VNEXT_RESEARCH";
-    private static final String LIFECYCLE = "RESEARCH_VALIDATION";
-    private static final String NO_CANDIDATE = "NO_ADOPTABLE_CANDIDATE";
+    static final String EXPECTED_REPORT_VERSION = "HERD_PERSONAL_MVP_PROMOTION_V1";
+    private static final String MODEL_FAMILY = "HERD_STATE_S1";
+    private static final String LIFECYCLE = "PERSONAL_RESEARCH_MVP";
+    private static final String NO_CANDIDATE = "NO_ADOPTABLE_ACTION_CANDIDATE";
     private static final String HOLD = "HOLD";
-    private static final String HERD_STATE_ROLE = "HERD_v4_LEGACY_STATE_BASELINE";
+    private static final String HERD_STATE_ROLE = "HERD_STATE_S1_OBSERVATION";
 
     private final ObjectMapper objectMapper;
     private final Path reportPath;
 
     public VNextModelStatusService(
             ObjectMapper objectMapper,
-            @Value("${herdsignal.vnext.preholdout-report-path:"
-                    + "../data/reports/vnext_preholdout_evaluation_v1.json}")
+            @Value("${herdsignal.vnext.promotion-report-path:"
+                    + "../data/reports/personal_mvp_promotion_v1.json}")
             String reportPath
     ) {
         this.objectMapper = objectMapper;
@@ -48,48 +48,76 @@ public class VNextModelStatusService {
     public VNextModelStatusResponse getStatus() {
         try {
             if (!Files.isRegularFile(reportPath)) {
-                return failClosed("REPORT_UNAVAILABLE", "VNEXT_PREHOLDOUT_REPORT_UNAVAILABLE");
+                return failClosed(
+                        "REPORT_UNAVAILABLE",
+                        "PERSONAL_MVP_PROMOTION_REPORT_UNAVAILABLE"
+                );
             }
             byte[] source = Files.readAllBytes(reportPath);
             JsonNode root = objectMapper.readTree(source);
             if (root == null || !root.isObject()) {
                 throw new IllegalArgumentException("vNext 판정 파일은 JSON 객체여야 합니다.");
             }
-            validateRejectedPreHoldoutContract(root);
+            validatePersonalMvpContract(root);
             return accepted(root, sha256(source));
         } catch (IOException | IllegalArgumentException | NoSuchAlgorithmException exception) {
-            return failClosed("REPORT_INVALID", "VNEXT_PREHOLDOUT_REPORT_INVALID");
+            return failClosed(
+                    "REPORT_INVALID",
+                    "PERSONAL_MVP_PROMOTION_REPORT_INVALID"
+            );
         }
     }
 
-    private void validateRejectedPreHoldoutContract(JsonNode root) {
+    private void validatePersonalMvpContract(JsonNode root) {
         requireText(root, "report_version", EXPECTED_REPORT_VERSION);
-        requireText(root, "status", "PATH_MODEL_REJECTED_PREHOLDOUT");
+        requireText(root, "status", "STATE_OBSERVATION_MVP_READY");
         requireText(root, "decision", NO_CANDIDATE);
-        requireText(root, "historical_role", "PRE_HOLDOUT_ONLY");
-        requireText(root, "prospective_shadow_status", "BLOCKED_PATH_MODEL_FAILED");
-        requireBoolean(root, "path_model_passed", false);
+        requireText(root, "model_family", MODEL_FAMILY);
+        requireText(root, "lifecycle", LIFECYCLE);
+        requireText(root, "herd_state_role", HERD_STATE_ROLE);
+        requireText(root, "historical_role", "PRE_HOLDOUT_RESEARCH_ONLY");
+        requireText(
+                root,
+                "prospective_shadow_status",
+                "ACTION_SHADOW_BLOCKED_POLICY_FAILED"
+        );
+        requireText(root, "default_action", HOLD);
+        requireBoolean(root, "state_observation_ready", true);
+        requireBoolean(root, "transition_observation_ready", true);
+        requireBoolean(root, "action_candidate_ready", false);
+        requireBoolean(root, "user_action_suppressed", true);
+        requireText(
+                root,
+                "action_model_status",
+                "PERSONAL_POLICY_REJECTED_PREHOLDOUT"
+        );
         requireBoolean(root, "survivorship_safe", false);
         requireBoolean(root, "blind_holdout_access", false);
-        JsonNode protocol = root.path("protocol");
-        if (!protocol.isObject()) {
-            throw new IllegalArgumentException("pre-holdout 프로토콜이 필요합니다.");
-        }
-        requireText(
-                protocol,
-                "protocol_version",
-                "HERD_VNEXT_PREHOLDOUT_EVALUATION_V1"
-        );
-        requireText(protocol, "historical_role", "PRE_HOLDOUT_ONLY");
-        requireBoolean(protocol, "locked", true);
-
         requireZeroRatio(root, "operational_action_ratio");
-        requireZeroRatio(protocol, "operational_action_ratio");
 
         JsonNode blockers = root.path("promotion_blockers");
-        if (!blockers.isArray() || blockers.isEmpty()) {
-            throw new IllegalArgumentException("승격 차단 사유가 필요합니다.");
-        }
+        requireStringArrayContains(
+                blockers,
+                "승격 차단 사유",
+                "PERSONAL_POLICY_PREHOLDOUT_FAILED",
+                "BLIND_HOLDOUT_NOT_PASSED",
+                "SURVIVORSHIP_SAFE_FALSE"
+        );
+        JsonNode allowedScope = root.path("allowed_scope");
+        JsonNode blockedScope = root.path("blocked_scope");
+        requireStringArrayContains(
+                allowedScope,
+                "허용 기능",
+                "HERD_STATE_S1",
+                "HERD_TRANSITION_S1"
+        );
+        requireStringArrayContains(
+                blockedScope,
+                "차단 기능",
+                "BUY_RATIO",
+                "PROFIT_TAKE_RATIO",
+                "REENTRY_RATIO"
+        );
     }
 
     private VNextModelStatusResponse accepted(JsonNode root, String sourceSha256) {
@@ -126,7 +154,7 @@ public class VNextModelStatusService {
                 BigDecimal.ZERO,
                 true,
                 HERD_STATE_ROLE,
-                "PRE_HOLDOUT_ONLY",
+                "PRE_HOLDOUT_RESEARCH_ONLY",
                 false,
                 false,
                 "BLOCKED_SOURCE_CONTRACT",
@@ -154,6 +182,22 @@ public class VNextModelStatusService {
         if (!value.isNumber()
                 || value.decimalValue().compareTo(BigDecimal.ZERO) != 0) {
             throw new IllegalArgumentException("운영 행동 비율은 0이어야 합니다.");
+        }
+    }
+
+    private static void requireStringArrayContains(
+            JsonNode node,
+            String label,
+            String... required
+    ) {
+        if (!node.isArray() || node.isEmpty()) {
+            throw new IllegalArgumentException(label + " 목록이 필요합니다.");
+        }
+        List<String> values = strings(node);
+        for (String value : required) {
+            if (!values.contains(value)) {
+                throw new IllegalArgumentException(label + " 누락: " + value);
+            }
         }
     }
 
