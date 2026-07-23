@@ -38,11 +38,11 @@ issuer 검증 1,455건 → atomic 거래 3,661건까지 구축됐다. Form 4 검
 경제성을 분리한다. 첫 상승·하락 경계와 최종 경로를 함께 보존하고, 관측
 가능한 재진입 신호가 없는 익절은 성공으로 세지 않는다.
 
-`data/herd/vnext_joint_hypothesis_v1.json`은 시장·섹터, 종목 전환, peer
-참여, SEC PIT 기업 상태를 한 번만 결합하는 가설을 고정한다. 모델은 L2
-로지스틱 하나이며 탐색 가능한 가중치·상호작용은 추가하지 않는다. 현재
-구성종목 peer를 사용하므로 `survivorship_safe=false`이고 pre-holdout
-진단만 가능하다.
+`data/herd/vnext_joint_hypothesis_v1.json`으로 시장·섹터, 종목 전환,
+peer 참여, SEC PIT 기업 상태를 한 번만 결합해 검사했다. 고정 L2 모델은
+pre-holdout OOS에서 단순 양성률 기준선보다 나빠 `REJECTED`로 이동했다.
+현재 판정은 `data/reports/vnext_preholdout_evaluation_v1.json`이며,
+prospective shadow는 시작하지 않았다.
 
 삭제는 import·문서 참조, 고정 hash 입력, 실험 재현 필요성을 모두 확인하고
 회귀 테스트를 통과한 파일에만 허용한다. 분류되지 않은 새 파일은 자동 삭제

@@ -1,0 +1,28 @@
+{
+  "protocol_version": "HERD_VNEXT_PROSPECTIVE_SHADOW_PROTOCOL_V1",
+  "status": "NOT_STARTED",
+  "purpose": "FINAL_BLIND_EVIDENCE_AFTER_ALL_PREHOLDOUT_GATES",
+  "start_conditions": [
+    "PATH_MODEL_PREHOLDOUT_GATE_PASSED",
+    "COMPLETE_PROFIT_TAKE_REENTRY_RULE_FROZEN",
+    "SURVIVORSHIP_SAFE_CLAIM_BOUNDARY_RESOLVED",
+    "FEATURE_FORMULA_AND_MODEL_HASH_FROZEN",
+    "OPERATIONAL_ACTION_RATIO_REMAINS_ZERO"
+  ],
+  "collection": {
+    "append_only": true,
+    "prediction_written_before_outcome": true,
+    "minimum_outcome_delay_sessions": 126,
+    "outcome_opening_before_delay": false,
+    "manual_row_deletion": false
+  },
+  "current_readiness": "BLOCKED_BY_PREHOLDOUT_DECISION",
+  "operational_action_ratio": 0.0,
+  "forbidden": [
+    "BACKFILL_PROSPECTIVE_ROWS",
+    "EDIT_PREDICTION_AFTER_PRICE_OUTCOME",
+    "OPEN_OUTCOME_EARLY",
+    "CALL_HISTORICAL_DATA_BLIND",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}

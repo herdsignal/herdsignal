@@ -327,6 +327,8 @@ def build_joint_panel(
 def _feature_names(
     protocol: dict[str, Any],
     omitted_block: str | None = None,
+    *,
+    include_interaction: bool = True,
 ) -> list[str]:
     names = [
         feature
@@ -335,7 +337,7 @@ def _feature_names(
         for feature in features
     ]
     parents = {"STOCK_EXTENSION_AND_TRANSITION", "PEER_PARTICIPATION"}
-    if omitted_block not in parents:
+    if include_interaction and omitted_block not in parents:
         names.append(protocol["single_interaction"]["id"])
     return names
 
@@ -375,6 +377,7 @@ def fit_joint_model(
     protocol: dict[str, Any] | None = None,
     *,
     omitted_block: str | None = None,
+    include_interaction: bool = True,
 ) -> FittedJointModel:
     locked = protocol or load_protocol()
     validate_protocol(locked)
@@ -383,7 +386,11 @@ def fit_joint_model(
     eligible = train[train["target"].isin([0.0, 1.0])].copy()
     if eligible["target"].nunique() != 2:
         raise VNextJointModelError("training fold requires both target classes")
-    feature_names = _feature_names(locked, omitted_block)
+    feature_names = _feature_names(
+        locked,
+        omitted_block,
+        include_interaction=include_interaction,
+    )
     base = _base_feature_values(eligible, feature_names)
     all_missing = [name for name in base if base[name].notna().sum() == 0]
     if all_missing:

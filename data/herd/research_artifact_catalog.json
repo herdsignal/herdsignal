@@ -18,6 +18,11 @@
     "data/herd/vnext_joint_hypothesis_v1.json",
     "data/reports/vnext_joint_panel_v1.json",
     "data/reports/vnext_joint_panel_v1.csv",
+    "data/herd/vnext_preholdout_evaluation_v1.json",
+    "data/reports/vnext_preholdout_evaluation_v1.json",
+    "data/reports/vnext_preholdout_folds_v1.csv",
+    "data/reports/vnext_preholdout_predictions_v1.csv",
+    "data/herd/vnext_prospective_shadow_protocol_v1.json",
     "data/herd/research_input_manifest_v2.json",
     "data/herd/sec_8k_guidance_corpus_v1.json",
     "data/herd/sec_guidance_v7_independent_validation.json",
@@ -49,8 +54,8 @@
   "families": [
     {
       "status": "ACTIVE",
-      "patterns": ["herd_vnext_model_charter_v1*", "personal_cashflow_benchmark_v1*", "vnext_competing_path_economic_label_v1*", "vnext_joint_hypothesis_v1*", "vnext_joint_panel_v1*", "sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "research_input_manifest_v2*", "public_research_contract*", "failed_price_information_audit_v1*", "leading_information_readiness_v2*", "sec_form4_corpus_v1*", "sec_form4_accession_catalog_v1*", "sec_form4_atomic_v1*", "sec_form4_source_review_v1*", "sec_form4_source_review_gate_v1*", "sec_form4_review_protocol_v1*", "sec_form4_review_workbench_v1*", "sec_form4_structural_audit_v1*", "sec_form4_review_ledger_v1*", "sec_form4_coverage_audit_v1*", "sec_form4_issuer_year_coverage_v1*"],
-      "note": "vNext 모델·현금흐름·경로·단일 결합 가설 계약, 공개 연구 경계, 실패 가격 정보 중복 감사, Form 4 원문 정확도와 연구 census coverage 게이트"
+      "patterns": ["herd_vnext_model_charter_v1*", "personal_cashflow_benchmark_v1*", "vnext_competing_path_economic_label_v1*", "vnext_preholdout_evaluation_v1*", "vnext_preholdout_folds_v1*", "vnext_preholdout_predictions_v1*", "vnext_prospective_shadow_protocol_v1*", "sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "research_input_manifest_v2*", "public_research_contract*", "failed_price_information_audit_v1*", "leading_information_readiness_v2*", "sec_form4_corpus_v1*", "sec_form4_accession_catalog_v1*", "sec_form4_atomic_v1*", "sec_form4_source_review_v1*", "sec_form4_source_review_gate_v1*", "sec_form4_review_protocol_v1*", "sec_form4_review_workbench_v1*", "sec_form4_structural_audit_v1*", "sec_form4_review_ledger_v1*", "sec_form4_coverage_audit_v1*", "sec_form4_issuer_year_coverage_v1*"],
+      "note": "vNext 최상위 계약과 현재 탈락 판정, 공개 연구 경계, 실패 가격 정보 중복 감사, Form 4 원문 정확도와 연구 census coverage 게이트"
     },
     {
       "status": "DATA_PIPELINE",
@@ -64,7 +69,7 @@
     },
     {
       "status": "REJECTED",
-      "patterns": ["weekly_rsi_*", "rush_*", "opportunity_*", "profit_take_*", "reentry_*", "completed_cycle_*", "evidence_admission_registry_v9.json"],
+      "patterns": ["weekly_rsi_*", "rush_*", "opportunity_*", "profit_take_*", "reentry_*", "completed_cycle_*", "vnext_joint_hypothesis_v1*", "vnext_joint_panel_v1*", "evidence_admission_registry_v9.json"],
       "note": "탈락 결과를 삭제하거나 임계값 조정에 재사용하지 않음"
     }
   ],

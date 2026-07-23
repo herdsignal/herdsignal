@@ -65,6 +65,12 @@ def test_block_ablation_removes_parent_interaction():
     assert "STOCK_TREND_DAMAGE_X_PEER_HIGH_EXIT" not in model.feature_names
 
 
+def test_interaction_can_be_removed_only_for_ablation():
+    model = fit_joint_model(_synthetic(), include_interaction=False)
+    assert "STOCK_TREND_DAMAGE_X_PEER_HIGH_EXIT" not in model.feature_names
+    assert "PEER_HIGH_EXIT_SHARE_DELTA_4W" in model.feature_names
+
+
 def test_training_requires_both_classes():
     frame = _synthetic()
     frame["target"] = 1.0

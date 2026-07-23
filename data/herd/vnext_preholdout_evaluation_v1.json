@@ -1,0 +1,99 @@
+{
+  "protocol_version": "HERD_VNEXT_PREHOLDOUT_EVALUATION_V1",
+  "status": "LOCKED_BEFORE_VNEXT_PREHOLDOUT_RESULTS",
+  "input_panel": "data/reports/vnext_joint_panel_v1.csv",
+  "folds": [
+    {
+      "id": "F1",
+      "train_end": "2015-12-31",
+      "test_start": "2016-01-01",
+      "test_end": "2018-12-31"
+    },
+    {
+      "id": "F2",
+      "train_end": "2018-12-31",
+      "test_start": "2019-01-01",
+      "test_end": "2021-12-31"
+    },
+    {
+      "id": "F3",
+      "train_end": "2021-12-31",
+      "test_start": "2022-01-01",
+      "test_end": "2024-12-31"
+    },
+    {
+      "id": "F4",
+      "train_end": "2024-12-31",
+      "test_start": "2025-01-01",
+      "test_end": "2026-07-17"
+    }
+  ],
+  "purging": {
+    "train_outcome_must_end_before_test_start": true,
+    "horizon_sessions": 126,
+    "same_ticker_overlap_allowed_after_outcome_purge": true
+  },
+  "minimum_fold_data": {
+    "test_rows": 20,
+    "positive_rows": 10,
+    "negative_rows": 10
+  },
+  "probability_metrics": [
+    "ROC_AUC",
+    "BRIER",
+    "LOG_LOSS",
+    "BALANCED_ACCURACY_AT_TRAIN_PREVALENCE"
+  ],
+  "gate": {
+    "minimum_aggregate_roc_auc": 0.60,
+    "minimum_median_fold_roc_auc": 0.55,
+    "minimum_directional_folds": 3,
+    "minimum_brier_improvement_vs_train_prevalence": 0.0,
+    "minimum_log_loss_improvement_vs_train_prevalence": 0.0,
+    "maximum_ablation_log_loss_advantage": 0.01,
+    "interaction_must_not_worsen_log_loss": true
+  },
+  "ablations": [
+    "NO_INTERACTION",
+    "WITHOUT_MARKET_AND_SECTOR_REGIME",
+    "WITHOUT_STOCK_EXTENSION_AND_TRANSITION",
+    "WITHOUT_PEER_PARTICIPATION",
+    "WITHOUT_PIT_BUSINESS_VETO"
+  ],
+  "economic_diagnostic": {
+    "selection": "FULL_MODEL_PROBABILITY_AT_OR_ABOVE_TRAIN_90TH_PERCENTILE",
+    "maximum_candidates_per_ticker_year": 2,
+    "trim_fraction": 0.05,
+    "one_way_total_cost_bps": [10.0, 25.0, 50.0],
+    "open_trim_is_success": false,
+    "complete_cycle_required_for_promotion": true
+  },
+  "overfit_metrics": {
+    "tested_model_count": 1,
+    "pbo": "NOT_APPLICABLE_WITHOUT_COMPLETE_STRATEGY_RETURNS",
+    "deflated_sharpe": "NOT_APPLICABLE_WITHOUT_COMPLETE_STRATEGY_RETURNS"
+  },
+  "promotion_boundary": {
+    "historical_result_is_preholdout_only": true,
+    "survivorship_safe_required_for_general_claim": true,
+    "complete_cycle_required": true,
+    "prospective_shadow_is_final_blind": true,
+    "operational_action_ratio_before_all_gates": 0.0
+  },
+  "forbidden": [
+    "CHANGE_FOLDS_AFTER_RESULTS",
+    "CHANGE_MODEL_OR_FEATURES_AFTER_RESULTS",
+    "TUNE_PROBABILITY_THRESHOLD_ON_TEST",
+    "COUNT_OPEN_TRIM_AS_SUCCESS",
+    "CALCULATE_PBO_OR_DSR_FROM_CLASSIFICATION_PROBABILITIES",
+    "CLAIM_BLIND_HOLDOUT",
+    "CLAIM_SURVIVORSHIP_SAFE",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ],
+  "research_basis": [
+    "https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation",
+    "https://rpc.cfainstitute.org/sites/default/files/-/media/documents/article/rf-brief/investment-model-validation.pdf",
+    "https://www.nber.org/papers/w11468",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2460551"
+  ]
+}

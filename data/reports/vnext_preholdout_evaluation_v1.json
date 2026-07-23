@@ -1,0 +1,128 @@
+{
+  "report_version": "HERD_VNEXT_PREHOLDOUT_EVALUATION_REPORT_V1",
+  "status": "PATH_MODEL_REJECTED_PREHOLDOUT",
+  "decision": "NO_ADOPTABLE_CANDIDATE",
+  "protocol": {
+    "protocol_version": "HERD_VNEXT_PREHOLDOUT_EVALUATION_V1",
+    "locked": true,
+    "folds": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+    ],
+    "outcome_purge": true,
+    "tested_model_count": 1,
+    "historical_role": "PRE_HOLDOUT_ONLY",
+    "operational_action_ratio": 0.0
+  },
+  "aggregate_metrics": {
+    "FULL": {
+      "roc_auc": 0.5078657132468791,
+      "brier": 0.2749674369801617,
+      "log_loss": 0.7599567915841197,
+      "balanced_accuracy": 0.4903405647800267
+    },
+    "NO_INTERACTION": {
+      "roc_auc": 0.5027027027027027,
+      "brier": 0.2757762315558482,
+      "log_loss": 0.761584775140033,
+      "balanced_accuracy": 0.47504544903648044
+    },
+    "WITHOUT_MARKET_AND_SECTOR_REGIME": {
+      "roc_auc": 0.5028966185916859,
+      "brier": 0.2748284681063735,
+      "log_loss": 0.7548552944553003,
+      "balanced_accuracy": 0.4930432674827294
+    },
+    "WITHOUT_STOCK_EXTENSION_AND_TRANSITION": {
+      "roc_auc": 0.5297418494727911,
+      "brier": 0.2685087361653282,
+      "log_loss": 0.7426494679926614,
+      "balanced_accuracy": 0.5064355835656285
+    },
+    "WITHOUT_PEER_PARTICIPATION": {
+      "roc_auc": 0.5009816991879772,
+      "brier": 0.27412119190568746,
+      "log_loss": 0.7573688781928366,
+      "balanced_accuracy": 0.4818325051508908
+    },
+    "WITHOUT_PIT_BUSINESS_VETO": {
+      "roc_auc": 0.5099018300812023,
+      "brier": 0.2721669785690457,
+      "log_loss": 0.7518714373351681,
+      "balanced_accuracy": 0.4936250151496788
+    },
+    "TRAIN_PREVALENCE_BASELINE": {
+      "roc_auc": 0.5,
+      "brier": 0.2637736078906161,
+      "log_loss": 0.7240067954404183,
+      "balanced_accuracy": 0.5
+    }
+  },
+  "ablation_log_loss_advantage_over_full": {
+    "NO_INTERACTION": -0.001627983555913315,
+    "WITHOUT_MARKET_AND_SECTOR_REGIME": 0.0051014971288193545,
+    "WITHOUT_STOCK_EXTENSION_AND_TRANSITION": 0.017307323591458257,
+    "WITHOUT_PEER_PARTICIPATION": 0.0025879133912830588,
+    "WITHOUT_PIT_BUSINESS_VETO": 0.008085354248951515
+  },
+  "gate_checks": {
+    "aggregate_roc_auc": false,
+    "median_fold_roc_auc": false,
+    "directional_folds": false,
+    "brier_vs_baseline": false,
+    "log_loss_vs_baseline": false,
+    "no_ablation_materially_better": false,
+    "interaction_not_harmful": true
+  },
+  "path_model_passed": false,
+  "directional_folds": 1,
+  "median_fold_roc_auc": 0.4155450288797259,
+  "economic_candidate_count": 52,
+  "economic_diagnostic": {
+    "selection": "FULL_MODEL_PROBABILITY_AT_OR_ABOVE_TRAIN_90TH_PERCENTILE",
+    "selected_events": 52,
+    "scenarios": {
+      "10.0": {
+        "events": 52,
+        "positive_open_trim_fraction": 0.46153846153846156,
+        "median_open_trim_relative_edge": -0.025624295064594644,
+        "complete_cycles": 0,
+        "promotion_authority": false
+      },
+      "25.0": {
+        "events": 52,
+        "positive_open_trim_fraction": 0.46153846153846156,
+        "median_open_trim_relative_edge": -0.027144100542740853,
+        "complete_cycles": 0,
+        "promotion_authority": false
+      },
+      "50.0": {
+        "events": 52,
+        "positive_open_trim_fraction": 0.46153846153846156,
+        "median_open_trim_relative_edge": -0.029679682122368295,
+        "complete_cycles": 0,
+        "promotion_authority": false
+      }
+    },
+    "open_trim_is_success": false,
+    "complete_cycle_available": false
+  },
+  "overfit_metrics": {
+    "tested_model_count": 1,
+    "pbo": "NOT_APPLICABLE_WITHOUT_COMPLETE_STRATEGY_RETURNS",
+    "deflated_sharpe": "NOT_APPLICABLE_WITHOUT_COMPLETE_STRATEGY_RETURNS"
+  },
+  "promotion_blockers": [
+    "PATH_MODEL_PREHOLDOUT_GATE_FAILED",
+    "NO_COMPLETE_PROFIT_TAKE_REENTRY_CYCLE",
+    "SURVIVORSHIP_SAFE_FALSE",
+    "PROSPECTIVE_SHADOW_NOT_STARTED"
+  ],
+  "historical_role": "PRE_HOLDOUT_ONLY",
+  "survivorship_safe": false,
+  "prospective_shadow_status": "BLOCKED_PATH_MODEL_FAILED",
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}

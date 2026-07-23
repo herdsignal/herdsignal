@@ -66,8 +66,30 @@ v4는 `LEGACY_STATE_BASELINE`, v6.1은
 - SEC PIT 결합 중 월말 상태의 당일 공시 누수를 발견해, 월말 스냅샷은 다음
   날짜부터만 사용하고 신호 당일 접수 공시는 제외하도록 수정했다.
 - peer 집합은 현재 구성종목 기반이므로 `survivorship_safe=false`다.
-- 이 단계는 패널·모델 준비만 완료했으며 OOS 성능과 블록 ablation 판정은
-  Part E에서 수행한다. 운영 행동 비율은 0이다.
+- 아래 pre-holdout 판정에서 탈락했다. 패널과 가설은 임계값 재조정을 막기
+  위해 `REJECTED` 연구 산출물로 보존한다.
+
+## vNext pre-holdout OOS 판정
+
+- 계약: `data/herd/vnext_preholdout_evaluation_v1.json`
+- 결과: `data/reports/vnext_preholdout_evaluation_v1.json`
+- 4개 expanding fold에 126거래일 outcome embargo를 적용했다.
+- full model OOS ROC AUC는 0.508, Brier 0.275, log loss 0.760이다.
+- 단순 학습 양성률 기준선은 AUC 0.500, Brier 0.264, log loss 0.724로
+  full model보다 확률 예측이 더 낫다.
+- fold AUC 중앙값은 0.416이며 4개 fold 중 0.5를 넘은 fold는 1개다.
+- 종목 전환 블록을 제거하면 log loss가 0.017 개선돼 full model의 과설계
+  게이트도 실패했다. 허용한 단일 상호작용 자체는 미세하게 도움이 됐지만
+  전체 실패를 뒤집지 못했다.
+- 학습 확률 상위 10%, 종목당 연 2회로 제한한 OOS 후보는 52건이다.
+  편도 10bp에서 익절 현금 진단 양수 비율은 46.2%, 중앙 상대 효과는
+  -2.56%다. 25bp는 -2.71%, 50bp는 -2.97%다.
+- 이 진단은 재진입되지 않은 현금이라 성공이 아니며 완결 사이클은 0건이다.
+- PBO·Deflated Sharpe는 완결 전략 수익률이 없어 계산하지 않았다. 분류
+  확률을 전략 수익률처럼 취급해 수치를 만드는 것은 금지한다.
+- 판정은 `PATH_MODEL_REJECTED_PREHOLDOUT`,
+  `NO_ADOPTABLE_CANDIDATE`다. prospective shadow는 시작하지 않으며
+  운영 행동 비율은 0이다.
 
 ## Rush 종목 고유 하방 비대칭 독립 OOS
 
