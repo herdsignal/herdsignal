@@ -1,0 +1,217 @@
+{
+  "report_version": "FINRA_SHORT_INTEREST_LIFECYCLE_COVERAGE_V5",
+  "status": "HASH_LOCKED_LIFECYCLE_IDENTIFIER_READY_FOR_SHADOW",
+  "protocol_sha256": "46bbc326af1bf1d4c2876d4c91615eb8feb4a8000b8d04b8da3ecab512be8128",
+  "manifest_sha256": "e30f5fcb1a498e062fa86afdd4452879be84b4ccc440d1d54b6c7a93994cb2c8",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "allowed_research_role": "RECENT_SENSITIVITY_AND_PROSPECTIVE_SHADOW_ONLY",
+  "corpus": {
+    "file_count": 122,
+    "settlement_date_count": 122,
+    "first_settlement_date": "2021-06-15",
+    "last_settlement_date": "2026-06-30",
+    "total_bytes": 241305932,
+    "total_rows": 2472421,
+    "revision_flag_rows": 17170,
+    "files_with_revision_flag": 105,
+    "duplicate_canonical_symbol_rows": 0,
+    "local_prior_versions_recovered": 0,
+    "source_prior_versions_recoverable": false
+  },
+  "integrity": {
+    "files_expected": 122,
+    "files_missing": 0,
+    "files_with_bad_hash": 0,
+    "receipts_missing": 0,
+    "all_raw_hashes_verified": true
+  },
+  "publication_time_audit": {
+    "settlement_date_used_as_publication_date": false,
+    "derived_publication_date_count": 122,
+    "derivation": "SEVENTH_FINRA_BUSINESS_DAY_AFTER_SETTLEMENT",
+    "safe_availability": "NEXT_CALENDAR_DAY_00_00_AMERICA_NEW_YORK",
+    "exact_intraday_publication_time_available": false,
+    "http_last_modified_present_files": 122,
+    "http_last_modified_after_derived_publication_files": 122,
+    "http_last_modified_interpretation": "REVISION_METADATA_ONLY"
+  },
+  "identifier_ledger": {
+    "verified_interval_count": 531,
+    "verified_canonical_symbol_count": 528,
+    "current_symbol_presence_is_not_pit_cik_proof": true,
+    "current_ticker_backfill_performed": false,
+    "cohort_identity_aliases": {
+      "BG": {
+        "symbols": [
+          "BG"
+        ],
+        "issue_name_regex": "^Bunge (?:Limited|Global)"
+      },
+      "COHR": {
+        "symbols": [
+          "IIVI",
+          "COHR"
+        ],
+        "issue_name_regex": "^(?:II-VI Incorporated|Coherent Corp\\.)"
+      },
+      "COR": {
+        "symbols": [
+          "ABC",
+          "COR"
+        ],
+        "issue_name_regex": "^(?:AmerisourceBergen|Cencora)"
+      },
+      "DOC": {
+        "symbols": [
+          "PEAK",
+          "DOC"
+        ],
+        "issue_name_regex": "^Healthpeak Properties"
+      },
+      "ECHO": {
+        "symbols": [
+          "SATS",
+          "ECHO"
+        ],
+        "issue_name_regex": "^EchoStar"
+      },
+      "META": {
+        "symbols": [
+          "FB",
+          "META"
+        ],
+        "issue_name_regex": "^(?:Facebook|Meta Platforms)"
+      }
+    },
+    "cohort_identity_aliases_require_issue_name_match": true
+  },
+  "cohorts": [
+    {
+      "cohort": "ORIGINAL_RESEARCH_51",
+      "calendar_ticker_date_opportunities": 6222,
+      "calendar_time_valid_cik_link_coverage": 0.9821600771456124,
+      "identity_observed_opportunities": 6222,
+      "time_valid_cik_linked_opportunities": 6111,
+      "identity_observed_pit_link_coverage": 0.9821600771456124,
+      "tickers_without_matching_identity_observation": 0,
+      "required_coverage": 0.95,
+      "lifecycle_identifier_gate_passed": true
+    },
+    {
+      "cohort": "INDEPENDENT_ELIGIBLE_388",
+      "calendar_ticker_date_opportunities": 47336,
+      "calendar_time_valid_cik_link_coverage": 0.9614669596079094,
+      "identity_observed_opportunities": 46654,
+      "time_valid_cik_linked_opportunities": 45512,
+      "identity_observed_pit_link_coverage": 0.975521927380289,
+      "tickers_without_matching_identity_observation": 0,
+      "required_coverage": 0.95,
+      "lifecycle_identifier_gate_passed": true
+    },
+    {
+      "cohort": "CURRENT_SP500_REFERENCE_503",
+      "calendar_ticker_date_opportunities": 61366,
+      "calendar_time_valid_cik_link_coverage": 0.9515692728872666,
+      "identity_observed_opportunities": 59785,
+      "time_valid_cik_linked_opportunities": 58394,
+      "identity_observed_pit_link_coverage": 0.9767332943045914,
+      "tickers_without_matching_identity_observation": 0,
+      "required_coverage": 0.95,
+      "lifecycle_identifier_gate_passed": true
+    }
+  ],
+  "detail_path": "data/reports/finra_short_interest_lifecycle_ticker_coverage_v5.csv",
+  "detail_sha256": "96e36875438e6b2991c59e59e67ef1da3373d54a0a6cc4c14c4273cf9913957a",
+  "coverage_does_not_authorize_hypothesis": true,
+  "new_direction_hypothesis_preregistered": false,
+  "price_outcomes_opened": false,
+  "herd_formula_change_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_authority": false,
+  "operational_action_ratio": 0.0,
+  "decision": "ALLOW_PROSPECTIVE_SHADOW_WITH_EXPLICIT_TARGET_BLOCKERS",
+  "next_priority": "BUILD_UNIFIED_PROSPECTIVE_PIT_SHADOW_PANEL",
+  "sec_interval_ledger": {
+    "protocol_path": "data/herd/sec_time_valid_ticker_cik_ledger_v5.json",
+    "protocol_sha256": "68bd4c0bd18838101f200fde8be4a710c786b3bdf1b1eff5f638e5a724c5a244",
+    "ledger_report_path": "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
+    "ledger_report_sha256": "8f399c79b9a21a148184e4973d436f7fe9871e32caff367564631c0aae32c37a",
+    "ledger_path": "data/reports/sec_time_valid_ticker_cik_intervals_v5.csv",
+    "ledger_sha256": "4b10a272f1e5145cc1d73bdf6f91aace99502766d0a2d2c57cb30a206d6b9eed",
+    "verified_interval_count": 531,
+    "targeted_filing_count": 3569,
+    "targeted_anchor_count": 4455,
+    "targeted_entity_count": 25,
+    "full_universe_rescan_performed": false,
+    "current_ticker_backfill_performed": false,
+    "ledger_version": "V5"
+  },
+  "lifecycle_denominator": "FINRA_DATES_WITH_MATCHING_EXPLICIT_SYMBOL_AND_ISSUE_IDENTITY",
+  "lifecycle_denominator_is_not_sec_interval_span": true,
+  "first_finra_observation_used_as_sec_identity_proof": false,
+  "finra_shadow_identifier_gate_passed": true,
+  "target_gap_audit": {
+    "target_entity_count": 25,
+    "individual_minimum_coverage": 0.95,
+    "complete_target_count": 20,
+    "blocked_target_count": 5,
+    "all_target_identifiers_complete": false,
+    "blocked_targets": [
+      {
+        "ticker": "CRH",
+        "cik": "0000849395",
+        "identity_observed_opportunities": 122,
+        "time_valid_cik_linked_opportunities": 103,
+        "identity_observed_pit_link_coverage": 0.8442622950819673,
+        "required_coverage": 0.95,
+        "individual_identifier_gate_passed": false,
+        "blocker": "PUBLIC_PRIMARY_ANCHOR_GAP_AFTER_SOURCE_EXHAUSTION"
+      },
+      {
+        "ticker": "DOV",
+        "cik": "0000029905",
+        "identity_observed_opportunities": 122,
+        "time_valid_cik_linked_opportunities": 115,
+        "identity_observed_pit_link_coverage": 0.9426229508196722,
+        "required_coverage": 0.95,
+        "individual_identifier_gate_passed": false,
+        "blocker": "PUBLIC_PRIMARY_ANCHOR_GAP_AFTER_SOURCE_EXHAUSTION"
+      },
+      {
+        "ticker": "APO",
+        "cik": "0001858681",
+        "identity_observed_opportunities": 122,
+        "time_valid_cik_linked_opportunities": 106,
+        "identity_observed_pit_link_coverage": 0.8688524590163934,
+        "required_coverage": 0.95,
+        "individual_identifier_gate_passed": false,
+        "blocker": "PUBLIC_PRIMARY_ANCHOR_GAP_AFTER_SOURCE_EXHAUSTION"
+      },
+      {
+        "ticker": "DOW",
+        "cik": "0001751788",
+        "identity_observed_opportunities": 122,
+        "time_valid_cik_linked_opportunities": 115,
+        "identity_observed_pit_link_coverage": 0.9426229508196722,
+        "required_coverage": 0.95,
+        "individual_identifier_gate_passed": false,
+        "blocker": "PUBLIC_PRIMARY_ANCHOR_GAP_AFTER_SOURCE_EXHAUSTION"
+      },
+      {
+        "ticker": "DHI",
+        "cik": "0000882184",
+        "identity_observed_opportunities": 122,
+        "time_valid_cik_linked_opportunities": 115,
+        "identity_observed_pit_link_coverage": 0.9426229508196722,
+        "required_coverage": 0.95,
+        "individual_identifier_gate_passed": false,
+        "blocker": "PUBLIC_PRIMARY_ANCHOR_GAP_AFTER_SOURCE_EXHAUSTION"
+      }
+    ],
+    "current_ticker_backfill_performed": false,
+    "unsupported_symbol_normalization_performed": false,
+    "source_exhaustion_is_not_treated_as_identity_proof": true
+  },
+  "all_target_identifiers_complete": false,
+  "primary_long_horizon_oos_allowed": false
+}

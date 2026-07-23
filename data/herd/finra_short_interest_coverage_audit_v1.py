@@ -33,6 +33,13 @@ def _root_path(relative: str) -> Path:
     return path
 
 
+def _display_path(path: Path) -> str:
+    resolved = path.resolve()
+    if resolved.is_relative_to(ROOT.resolve()):
+        return resolved.relative_to(ROOT.resolve()).as_posix()
+    return resolved.as_posix()
+
+
 def _canonical_symbol(symbol: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", symbol.upper())
 
@@ -439,7 +446,7 @@ def audit(
             } if cohort_identity_aliases else {}),
         },
         "cohorts": cohort_reports,
-        "detail_path": detail_path.relative_to(ROOT).as_posix(),
+        "detail_path": _display_path(detail_path),
         "detail_sha256": _sha256(detail_path),
         "coverage_does_not_authorize_hypothesis": True,
         "new_direction_hypothesis_preregistered": False,

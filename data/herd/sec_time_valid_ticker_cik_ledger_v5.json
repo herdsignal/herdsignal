@@ -1,0 +1,130 @@
+{
+  "protocol_version": "SEC_TIME_VALID_TICKER_CIK_LEDGER_V5",
+  "status": "LOCKED_BEFORE_LIFECYCLE_LEDGER_GENERATION",
+  "locked_at": "2026-07-24",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Merge V4 with the exhausted V2 primary-cover corpus and audit ticker reuse, same-CIK renames, share classes, and successor CIKs without extrapolation.",
+  "locked_inputs": [
+    {
+      "path": "data/herd/sec_time_valid_ticker_cik_ledger_v4.json",
+      "sha256": "cf2a33cbf8229eb213630f70dfc9c033de9ec5c6a03b32e435c1c2da39cc86e0",
+      "role": "V4_PROTOCOL"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v4.csv",
+      "sha256": "77ec8b61a7327176556bf771d8cf50945420cd3f9b9c81e71a1f5be92990cd4b",
+      "role": "V4_INTERVAL_LEDGER"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v4.json",
+      "sha256": "e118ef64fd4e8ff3da89e2df35d8569ced8cc36ff8fabc864db9e0fb15719528",
+      "role": "V4_REPORT"
+    },
+    {
+      "path": "data/herd/sec_targeted_cover_corpus_v2.json",
+      "sha256": "1557887ce7327d200a89a98e3952143a6749d54b47bb5b220847b93463ff9f2a",
+      "role": "TARGETED_COVER_V2_PROTOCOL"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_anchors_v2.csv",
+      "sha256": "47cb9c69defd9c76ffe70881549aa2c1eb464fe782c9018991a4a61b162756c6",
+      "role": "TARGETED_COVER_V2_ANCHORS"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_filing_catalog_v2.csv",
+      "sha256": "5877bc8129a3d1b64ed6382468629914fc975762e6ccfe357ed0f738f1547e72",
+      "role": "TARGETED_COVER_V2_CATALOG"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_corpus_v2.json",
+      "sha256": "bcda492b7a4fce7938b27c1aef796ff6e872a7fc90a73f3650231d40422cdfbe",
+      "role": "TARGETED_COVER_V2_REPORT"
+    },
+    {
+      "path": "data/reports/sec_identifier_gap_queue_v1.csv",
+      "sha256": "c84c158258c9920a16684eb2bd21c6f97f61e6c328898bb4e40b5f9daab08422",
+      "role": "IDENTIFIER_GAP_QUEUE"
+    }
+  ],
+  "interval_policy": {
+    "minimum_distinct_accessions": 2,
+    "maximum_same_symbol_anchor_gap_days": 550,
+    "extrapolate_before_first_primary_anchor": false,
+    "extrapolate_after_last_primary_anchor": false,
+    "same_symbol_overlapping_different_ciks_is_conflict": true,
+    "conflicting_intervals_are_excluded": true
+  },
+  "explicit_predecessor_symbol_rules": {
+    "COHR": {
+      "cik": "0000820318",
+      "predecessor_symbol": "IIVI",
+      "successor_symbol": "COHR",
+      "rule": "Use tagged IIVI cover filings only before the first tagged COHR cover filing; do not include later IIVI preferred-security observations."
+    }
+  },
+  "finra_identity_aliases": {
+    "BG": {
+      "symbols": [
+        "BG"
+      ],
+      "issue_name_regex": "^Bunge (?:Limited|Global)"
+    },
+    "COHR": {
+      "symbols": [
+        "IIVI",
+        "COHR"
+      ],
+      "issue_name_regex": "^(?:II-VI Incorporated|Coherent Corp\\.)"
+    },
+    "COR": {
+      "symbols": [
+        "ABC",
+        "COR"
+      ],
+      "issue_name_regex": "^(?:AmerisourceBergen|Cencora)"
+    },
+    "DOC": {
+      "symbols": [
+        "PEAK",
+        "DOC"
+      ],
+      "issue_name_regex": "^Healthpeak Properties"
+    },
+    "ECHO": {
+      "symbols": [
+        "SATS",
+        "ECHO"
+      ],
+      "issue_name_regex": "^EchoStar"
+    },
+    "META": {
+      "symbols": [
+        "FB",
+        "META"
+      ],
+      "issue_name_regex": "^(?:Facebook|Meta Platforms)"
+    }
+  },
+  "lifecycle_coverage_policy": {
+    "denominator": "FINRA_DATES_WITH_MATCHING_EXPLICIT_SYMBOL_AND_ISSUE_IDENTITY",
+    "numerator": "DENOMINATOR_DATES_WITH_EXACTLY_ONE_TIME_VALID_SEC_CIK",
+    "calendar_122_date_coverage_remains_reported": true,
+    "first_observation_is_not_used_as_sec_identity_proof": true,
+    "minimum_coverage": 0.95,
+    "target_queue_requires_individual_coverage": true,
+    "required_cohorts": [
+      "ORIGINAL_RESEARCH_51",
+      "INDEPENDENT_ELIGIBLE_388",
+      "CURRENT_SP500_REFERENCE_503"
+    ]
+  },
+  "authority": {
+    "finra_role": "PROSPECTIVE_SHADOW_OBSERVATION_ONLY",
+    "price_outcomes_opened": false,
+    "future_return_labels_allowed": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
