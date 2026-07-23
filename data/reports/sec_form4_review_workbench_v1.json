@@ -16,6 +16,21 @@
     "P",
     "S"
   ],
+  "review_priority_counts": {
+    "HIGH": 76,
+    "STANDARD": 191
+  },
+  "review_flag_counts": {
+    "CODE_J_DESCRIPTION_REQUIRED": 4,
+    "DERIVATIVE_TABLE": 73,
+    "INDIRECT_OWNERSHIP": 22,
+    "PRICE_NOT_REPORTED": 20,
+    "RARE_OR_SEMANTIC_CODE": 23,
+    "REFERENCED_FOOTNOTES": 217,
+    "TEN_B5_DOCUMENT_CHECKBOX": 65,
+    "TEN_B5_NO_EXPLICIT_EVIDENCE": 175,
+    "TEN_B5_REFERENCED_TRANSACTION_FOOTNOTE": 27
+  },
   "review_queue_sha256": "1dafb55c76d43535915743a451c00e025303b9e63329e97a786effbbb18e5979",
   "source_manifest_sha256": "331a8fa66a8412b9d3098c5f279f34288409a2fd3a1f4b779354d4cf0ca125f6",
   "protocol_sha256": "f870fff0d91298c53dbe22388541a697dea88dae150793c765bfee6dd2f4587f",

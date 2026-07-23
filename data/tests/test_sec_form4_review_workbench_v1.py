@@ -36,8 +36,14 @@ def test_workbench_binds_locked_atomic_transaction_to_raw_xml(tmp_path):
         "candidateTickers": "TST",
         "accessionNumber": "x",
         "transactionCode": "P",
-        "economicClass": "OPEN_MARKET_PURCHASE",
+        "economicClass": "OPEN_MARKET_OR_PRIVATE_PURCHASE",
         "economicGroup": "PURCHASE",
+        "reportingOwner": "[]",
+        "transactionPricePerShare": "",
+        "directOrIndirectOwnership": "D",
+        "isDerivative": "False",
+        "footnoteIds": "",
+        "footnoteText": "",
         "sourceSha256": digest,
         "rawFootnotes": "{}",
         "reviewDecision": "PENDING",
@@ -49,6 +55,9 @@ def test_workbench_binds_locked_atomic_transaction_to_raw_xml(tmp_path):
         writer.writerow(row)
     payload, manifest = build_payload(review, corpus, protocol)
     assert payload[0]["rawTransactionXml"].startswith("<nonDerivativeTransaction>")
+    assert payload[0]["reviewPriority"] == "HIGH"
+    assert "PRICE_NOT_REPORTED" in payload[0]["reviewFlags"]
+    assert manifest["review_priority_counts"] == {"HIGH": 1}
     assert manifest["automatic_valid_labels_created"] is False
     output = tmp_path / "review.html"
     render(payload, manifest, output)

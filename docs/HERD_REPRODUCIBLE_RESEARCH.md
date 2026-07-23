@@ -266,6 +266,11 @@ PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_review_workbench_v1 \
   --manifest-output data/reports/sec_form4_review_workbench_v1.json
 ```
 
+워크벤치의 `HIGH`는 오류 판정이 아니다. 희소·서술형 거래코드, 가격
+미보고, 간접 소유, 다중 보고자, transaction 각주에서 확인한 10b5-1처럼
+의미를 먼저 확인할 대상을 뜻한다. `STANDARD`도 생략하지 않으며, 두
+집단 모두 판정이 끝나야 accuracy gate를 계산한다.
+
 원문 검수 판정과 자동 구조 검증은 합치지 않는다. 자동 검증만으로
 `VALID`를 생성하거나 검수 CSV를 덮어쓰면 정확도 게이트 입력으로 인정하지
 않는다.
