@@ -1,0 +1,607 @@
+{
+  "report_version": "HERD_FAILED_PRICE_INFORMATION_AUDIT_V1",
+  "status": "FAILED_PRICE_INFORMATION_REDUNDANCY_MEASURED",
+  "protocol_sha256": "d81863a60e8113a15f70338d5832ff8acb06f6389f1a19a0da25a97c5c9198b8",
+  "panel_sha256": "10eac5722a9fcd9cd155f626d5ec60ca06cfa961836a6605f9ab946d75687089",
+  "events": 1998,
+  "tickers": 381,
+  "folds": 4,
+  "features": [
+    {
+      "id": "BREAKDOWN_SEVERITY",
+      "column": "breakdown_severity_vol20",
+      "role": "trend_break"
+    },
+    {
+      "id": "BELOW_SMA50_SEVERITY",
+      "column": "below_sma50_severity_vol63",
+      "role": "trend_break"
+    },
+    {
+      "id": "RELATIVE_DAMAGE_21D",
+      "column": "relative_damage_21d",
+      "role": "market_sector_residual_damage"
+    },
+    {
+      "id": "DOWNSIDE_ACCELERATION",
+      "column": "downside_acceleration_5_21",
+      "role": "short_long_momentum_change"
+    },
+    {
+      "id": "DOWN_UP_VOLUME_RATIO",
+      "column": "down_up_volume_ratio_20d",
+      "role": "volume_participation"
+    },
+    {
+      "id": "REALIZED_VOL_EXPANSION",
+      "column": "realized_vol_expansion_20_63",
+      "role": "symmetric_risk_expansion"
+    }
+  ],
+  "missing_fraction": {
+    "breakdown_severity_vol20": 0.001001001001001001,
+    "below_sma50_severity_vol63": 0.001001001001001001,
+    "relative_damage_21d": 0.001001001001001001,
+    "downside_acceleration_5_21": 0.001001001001001001,
+    "down_up_volume_ratio_20d": 0.0015015015015015015,
+    "realized_vol_expansion_20_63": 0.001001001001001001
+  },
+  "pairwise": [
+    {
+      "left": "breakdown_severity_vol20",
+      "right": "below_sma50_severity_vol63",
+      "complete_pairs": 1996,
+      "spearman_rho": 0.1104349532370818,
+      "absolute_rho": 0.1104349532370818,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.02891928716214093
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.14425167285352183
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.2347936970882145
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.018119537162766534
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "breakdown_severity_vol20",
+      "right": "relative_damage_21d",
+      "complete_pairs": 1996,
+      "spearman_rho": -0.0395788144899459,
+      "absolute_rho": 0.0395788144899459,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.07660735637279292
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": -0.08299940844615467
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": -0.2796578296668978
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.06010020299465585
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "breakdown_severity_vol20",
+      "right": "downside_acceleration_5_21",
+      "complete_pairs": 1996,
+      "spearman_rho": 0.3396423160676809,
+      "absolute_rho": 0.3396423160676809,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.3246984638570427
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.33683994144333623
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.4260396531691138
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.2884971726582431
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "breakdown_severity_vol20",
+      "right": "down_up_volume_ratio_20d",
+      "complete_pairs": 1995,
+      "spearman_rho": 0.06441520486863797,
+      "absolute_rho": 0.06441520486863797,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 637,
+          "rho": 0.018395451795575002
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.09935597318423459
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.0970063734454058
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.039429112052621014
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "breakdown_severity_vol20",
+      "right": "realized_vol_expansion_20_63",
+      "complete_pairs": 1996,
+      "spearman_rho": -0.016240873762868813,
+      "absolute_rho": 0.016240873762868813,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.006733494150039115
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.04603578958875339
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": -0.0722525604986505
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": -0.13695989333361272
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "below_sma50_severity_vol63",
+      "right": "relative_damage_21d",
+      "complete_pairs": 1996,
+      "spearman_rho": -0.0356138233964229,
+      "absolute_rho": 0.0356138233964229,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.0692466575337504
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": -0.07314398730619844
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": -0.11111473240946464
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": -0.06062897377198829
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "below_sma50_severity_vol63",
+      "right": "downside_acceleration_5_21",
+      "complete_pairs": 1996,
+      "spearman_rho": 0.2306506083112912,
+      "absolute_rho": 0.2306506083112912,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.18587151337002478
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.2633488898990047
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.23497948879667024
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.17306427402160932
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "below_sma50_severity_vol63",
+      "right": "down_up_volume_ratio_20d",
+      "complete_pairs": 1995,
+      "spearman_rho": 0.0813564815449297,
+      "absolute_rho": 0.0813564815449297,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 637,
+          "rho": 0.048989605708598574
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.09124153098792404
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.14995165693901694
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.04544246021263263
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "below_sma50_severity_vol63",
+      "right": "realized_vol_expansion_20_63",
+      "complete_pairs": 1996,
+      "spearman_rho": 0.3328480913347584,
+      "absolute_rho": 0.3328480913347584,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.31557116106658717
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.33572187912227375
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.39593032656486044
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.30133984032814765
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "relative_damage_21d",
+      "right": "downside_acceleration_5_21",
+      "complete_pairs": 1996,
+      "spearman_rho": -0.08952293027576495,
+      "absolute_rho": 0.08952293027576495,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": -0.02268526882014326
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": -0.12213250473735628
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": -0.1746816557081185
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": -0.08739065237690773
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "relative_damage_21d",
+      "right": "down_up_volume_ratio_20d",
+      "complete_pairs": 1995,
+      "spearman_rho": 0.06971619766088019,
+      "absolute_rho": 0.06971619766088019,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 637,
+          "rho": 0.0973354411494819
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": -0.0056138319032990845
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.09242396618600707
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.12533734657582293
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "relative_damage_21d",
+      "right": "realized_vol_expansion_20_63",
+      "complete_pairs": 1996,
+      "spearman_rho": -0.07970312398194265,
+      "absolute_rho": 0.07970312398194265,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.020474707991587036
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": -0.19239107846945144
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": -0.01999886260807314
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": -0.07946290086314135
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "downside_acceleration_5_21",
+      "right": "down_up_volume_ratio_20d",
+      "complete_pairs": 1995,
+      "spearman_rho": 0.11096109761215142,
+      "absolute_rho": 0.11096109761215142,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 637,
+          "rho": 0.09500075512385077
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.07156566505420008
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.15306619119223763
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.13987319497301787
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "downside_acceleration_5_21",
+      "right": "realized_vol_expansion_20_63",
+      "complete_pairs": 1996,
+      "spearman_rho": 0.22523337804663937,
+      "absolute_rho": 0.22523337804663937,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 638,
+          "rho": 0.20729110323777458
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.30995638101291156
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.1464768448747949
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.13776823718120224
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    },
+    {
+      "left": "down_up_volume_ratio_20d",
+      "right": "realized_vol_expansion_20_63",
+      "complete_pairs": 1995,
+      "spearman_rho": 0.16176140323226113,
+      "absolute_rho": 0.16176140323226113,
+      "folds": [
+        {
+          "fold_id": "F01",
+          "complete_pairs": 637,
+          "rho": 0.08652809374102378
+        },
+        {
+          "fold_id": "F02",
+          "complete_pairs": 683,
+          "rho": 0.18965938585031134
+        },
+        {
+          "fold_id": "F03",
+          "complete_pairs": 243,
+          "rho": 0.21172550718480446
+        },
+        {
+          "fold_id": "F04",
+          "complete_pairs": 432,
+          "rho": 0.16415999018817581
+        }
+      ],
+      "redundant_overall": false,
+      "near_duplicate": false,
+      "redundant_consistent_folds": 0,
+      "stable_redundant_pair": false
+    }
+  ],
+  "stable_redundant_pairs": [],
+  "near_duplicate_pairs": [],
+  "vif": {
+    "breakdown_severity_vol20": 1.2044427957062922,
+    "below_sma50_severity_vol63": 1.56911736839526,
+    "relative_damage_21d": 1.014556346042182,
+    "downside_acceleration_5_21": 1.2114791929057354,
+    "down_up_volume_ratio_20d": 1.00181908120847,
+    "realized_vol_expansion_20_63": 1.543718503232193
+  },
+  "high_vif_features": {},
+  "pca": {
+    "explained_variance_ratio": [
+      0.3179287938849473,
+      0.17180318238483666,
+      0.16599434999524132,
+      0.1590719507467668,
+      0.12186297932499401,
+      0.0633387436632138
+    ],
+    "components_for_target": 5,
+    "target": 0.9
+  },
+  "family_redundant": false,
+  "family_compressed": true,
+  "non_comparable_families": [
+    {
+      "id": "RUSH_TRANSITION_V1",
+      "path": "data/reports/rush_transition_panel_v1.csv",
+      "reason": "different 51-ticker episode selector and sample",
+      "rows": 791,
+      "tickers": 51,
+      "sha256": "c290d0777117d023d203d9ef2c3ac039568de3999d171f501befe6e80a70676b",
+      "quantitative_cross_panel_correlation_executed": false
+    },
+    {
+      "id": "INDEPENDENT_RUSH_EVIDENCE_V1",
+      "path": "data/reports/independent_rush_evidence_panel_v1.csv",
+      "reason": "different independent-universe sample",
+      "rows": 2768,
+      "tickers": 383,
+      "sha256": "4a31610be132a39b780234101102718253a14426192e625d8e0f8e459d256de1",
+      "quantitative_cross_panel_correlation_executed": false
+    },
+    {
+      "id": "DOWNSIDE_ASYMMETRY_V1",
+      "path": "data/reports/rush_downside_asymmetry_events_v1.csv",
+      "reason": "new ticker-disjoint OOS sample",
+      "rows": 240,
+      "tickers": 51,
+      "sha256": "17454a61f59bd971032968fab54d0f30abc4c7c43a77b30aa0928a72f1334c7d",
+      "quantitative_cross_panel_correlation_executed": false
+    }
+  ],
+  "outcome_used_for_selection": false,
+  "feature_admission_count": 0,
+  "weights_allowed": false,
+  "herd_formula_change_allowed": false,
+  "operational_action_authority": false,
+  "blind_holdout_access": false,
+  "next_decision": "AUDIT_MISSING_NON_PRICE_INFORMATION_DOMAINS"
+}

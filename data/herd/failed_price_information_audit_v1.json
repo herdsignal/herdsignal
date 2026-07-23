@@ -1,0 +1,93 @@
+{
+  "protocol_version": "HERD_FAILED_PRICE_INFORMATION_AUDIT_V1",
+  "status": "LOCKED_BEFORE_REDUNDANCY_RESULTS",
+  "objective": "Measure whether rejected price-derived hypotheses repeatedly encode the same information without reviving or combining them.",
+  "comparable_panel": {
+    "path": "data/reports/rush_pre_damage_path_events_v2.csv",
+    "event_key": [
+      "ticker",
+      "episode_id",
+      "last_observed_session"
+    ],
+    "fold_field": "fold_id",
+    "features": [
+      {
+        "id": "BREAKDOWN_SEVERITY",
+        "column": "breakdown_severity_vol20",
+        "role": "trend_break"
+      },
+      {
+        "id": "BELOW_SMA50_SEVERITY",
+        "column": "below_sma50_severity_vol63",
+        "role": "trend_break"
+      },
+      {
+        "id": "RELATIVE_DAMAGE_21D",
+        "column": "relative_damage_21d",
+        "role": "market_sector_residual_damage"
+      },
+      {
+        "id": "DOWNSIDE_ACCELERATION",
+        "column": "downside_acceleration_5_21",
+        "role": "short_long_momentum_change"
+      },
+      {
+        "id": "DOWN_UP_VOLUME_RATIO",
+        "column": "down_up_volume_ratio_20d",
+        "role": "volume_participation"
+      },
+      {
+        "id": "REALIZED_VOL_EXPANSION",
+        "column": "realized_vol_expansion_20_63",
+        "role": "symmetric_risk_expansion"
+      }
+    ]
+  },
+  "non_comparable_families": [
+    {
+      "id": "RUSH_TRANSITION_V1",
+      "path": "data/reports/rush_transition_panel_v1.csv",
+      "reason": "different 51-ticker episode selector and sample"
+    },
+    {
+      "id": "INDEPENDENT_RUSH_EVIDENCE_V1",
+      "path": "data/reports/independent_rush_evidence_panel_v1.csv",
+      "reason": "different independent-universe sample"
+    },
+    {
+      "id": "DOWNSIDE_ASYMMETRY_V1",
+      "path": "data/reports/rush_downside_asymmetry_events_v1.csv",
+      "reason": "new ticker-disjoint OOS sample"
+    }
+  ],
+  "methods": {
+    "correlation": "pairwise Spearman on complete pairs",
+    "redundant_pair_absolute_rho": 0.7,
+    "near_duplicate_absolute_rho": 0.9,
+    "minimum_complete_pairs": 200,
+    "fold_consistency_minimum_folds": 3,
+    "vif_threshold": 5.0,
+    "pca_variance_target": 0.9,
+    "standardization": "median imputation then population z-score for VIF and PCA only"
+  },
+  "decision_rules": {
+    "family_redundant": "at least one pair reaches absolute rho 0.7 overall and in at least three folds, or any feature VIF is at least 5",
+    "family_compressed": "PCA components needed for 90 percent variance are fewer than feature count",
+    "feature_admission": "never; every input feature is already rejected",
+    "next_use": "remove duplicate research directions and define missing information domains only"
+  },
+  "forbidden": [
+    "LEARN_WEIGHTS",
+    "COMBINE_REJECTED_FEATURES",
+    "RETUNE_THRESHOLDS",
+    "USE_OUTCOME_LABEL_TO_SELECT_FEATURES",
+    "OPEN_BLIND_HOLDOUT",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ],
+  "policy": {
+    "descriptive_only": true,
+    "herd_formula_change_allowed": false,
+    "operational_action_authority": false,
+    "blind_holdout_access": false
+  }
+}
