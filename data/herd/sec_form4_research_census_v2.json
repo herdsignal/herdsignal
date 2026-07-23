@@ -1,0 +1,98 @@
+{
+  "version": "HERD_SEC_FORM4_RESEARCH_CENSUS_V2",
+  "status": "LOCKED_BEFORE_BULK_DOWNLOAD",
+  "locked_at": "2026-07-23",
+  "purpose": "Build a price-blind Form 4 research census before testing one insider-behavior hypothesis.",
+  "source": {
+    "publisher": "U.S. Securities and Exchange Commission",
+    "dataset": "Insider Transactions Data Sets",
+    "landing_page": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+    "documentation": "https://www.sec.gov/files/insider_transactions_readme.pdf",
+    "technical_specification": "https://www.sec.gov/submit-filings/technical-specifications",
+    "start_quarter": "2012Q1",
+    "end_quarter": "2026Q2",
+    "required_tables": [
+      "SUBMISSION.tsv",
+      "REPORTINGOWNER.tsv",
+      "NONDERIV_TRANS.tsv",
+      "DERIV_TRANS.tsv",
+      "FOOTNOTES.tsv"
+    ],
+    "forms_retained": [
+      "4",
+      "4/A"
+    ],
+    "as_filed_policy": "Retain amendments as separate later public observations; never rewrite an earlier filing in place."
+  },
+  "universe": {
+    "discovery_role": "Existing 51 equities are parser and feature-development context only.",
+    "oos_role": "Eligible current S&P 500 constituents in independent_universe_v1.csv after excluding the existing 51 equities.",
+    "oos_claim_boundary": "Hypothesis-specific current-constituent robustness only; not blind and not survivorship safe.",
+    "zero_filing_policy": "A zero-filing issuer-quarter is observed zero when the official quarterly ZIP is complete, not missing data."
+  },
+  "point_in_time": {
+    "source_time": "SEC filing date from the official bulk SUBMISSION table.",
+    "tradable_time": "First available price session strictly after filing date.",
+    "same_day_use_forbidden": true,
+    "acceptance_time_limitation": "The official flattened data omits acceptance timestamps, so same-day action is forbidden.",
+    "amendment_backfill_forbidden": true
+  },
+  "normalization": {
+    "preserve_reporting_owner_cik": true,
+    "preserve_direct_indirect_ownership": true,
+    "preserve_transaction_code": true,
+    "preserve_acquired_disposed_code": true,
+    "preserve_price_shares_and_post_transaction_holdings": true,
+    "preserve_footnote_references_and_text": true,
+    "preserve_derivative_transactions_as_context": true,
+    "aff10b5one_policy": "Use the filed checkbox when present; otherwise UNKNOWN. Footnotes may add explicit TRUE evidence but may not infer FALSE.",
+    "code_p_label": "OPEN_MARKET_OR_PRIVATE_PURCHASE",
+    "code_s_label": "OPEN_MARKET_OR_PRIVATE_SALE"
+  },
+  "research_firewall": {
+    "price_outcomes_opened_during_census_build": false,
+    "transaction_content_used_to_select_oos_issuers": false,
+    "blind_holdout_access": false,
+    "survivorship_safe": false,
+    "operational_action_authority": false,
+    "forbidden": [
+      "TREAT_ALL_SALES_AS_BEARISH",
+      "TREAT_CODE_P_AS_PROVEN_OPEN_MARKET",
+      "TREAT_MISSING_10B5_CHECKBOX_AS_FALSE",
+      "USE_SAME_DAY_PRICE_EXECUTION",
+      "RETROACTIVELY_APPLY_AMENDMENTS",
+      "TUNE_PRICE_THRESHOLDS",
+      "OPEN_BLIND_HOLDOUT",
+      "ENABLE_BUY_OR_PROFIT_TAKE_RECOMMENDATIONS"
+    ]
+  },
+  "coverage_gate": {
+    "all_quarters_required": true,
+    "minimum_oos_issuers": 300,
+    "minimum_primary_xml_crosscheck_transactions": 200,
+    "minimum_bulk_to_primary_exact_match_rate": 0.98,
+    "minimum_exact_match_wilson_95_lower": 0.9,
+    "minimum_known_transaction_code_rate": 0.995,
+    "minimum_non_derivative_code_p_or_s_with_owner_rate": 0.99,
+    "single_hypothesis_allowed_only_after_gate": true
+  },
+  "evidence_basis": [
+    {
+      "claim": "SEC quarterly files are flattened as-filed ownership XML and include amendments and footnotes.",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets"
+    },
+    {
+      "claim": "P and S mean open-market or private purchase/sale, so venue must not be invented.",
+      "url": "https://www.sec.gov/edgar/searchedgar/ownershipformcodes.html"
+    },
+    {
+      "claim": "Insider purchases have historically been more informative than sales.",
+      "url": "https://www.nber.org/papers/w6656"
+    },
+    {
+      "claim": "Routine trades are materially less informative than opportunistic trades.",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.2012.01740.x"
+    }
+  ],
+  "next_decision": "DOWNLOAD_HASH_AND_NORMALIZE_OFFICIAL_QUARTERLY_CENSUS"
+}
