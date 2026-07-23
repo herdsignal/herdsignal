@@ -1,0 +1,67 @@
+{
+  "protocol_version": "HERD_SEC_FORM4_SOURCE_REVIEW_V1",
+  "status": "LOCKED_BEFORE_HUMAN_SOURCE_REVIEW",
+  "objective": "Measure atomic Form 4 extraction and classification accuracy without observing any price outcome.",
+  "review_unit": "ONE_ATOMIC_TRANSACTION",
+  "required_checks": [
+    "issuerCik",
+    "reportingOwner",
+    "securityTitle",
+    "transactionDate",
+    "transactionCode",
+    "economicClass",
+    "transactionShares",
+    "transactionPricePerShare",
+    "acquiredDisposedCode",
+    "sharesOwnedFollowingTransaction",
+    "directOrIndirectOwnership",
+    "natureOfOwnership",
+    "footnoteIds",
+    "footnoteText",
+    "isDerivative",
+    "tenB5OneStatus",
+    "acceptanceDatetime"
+  ],
+  "decision_rules": {
+    "VALID": "All required fields that exist in the source transaction are bound correctly and the SEC-code economic class is correct.",
+    "INVALID": "At least one required source field or economic class is incorrectly extracted, bound, or classified.",
+    "AMBIGUOUS": "The SEC source itself does not permit a unique judgment. Ambiguous is not counted as valid.",
+    "PENDING": "Not reviewed and never counted as valid."
+  },
+  "classification_rules": {
+    "P": "OPEN_MARKET_PURCHASE",
+    "S": "OPEN_MARKET_SALE",
+    "F": "TAX_OR_EXERCISE_WITHHOLDING",
+    "A_D_I": "COMPENSATION_OR_AWARD",
+    "C_E_H_K_M_O_X": "OPTION_OR_DERIVATIVE",
+    "G_W": "GIFT_OR_ESTATE",
+    "J_L_U_V_Z": "OTHER_OR_REQUIRES_FOOTNOTE"
+  },
+  "ten_b5_1_rules": {
+    "explicit_checkbox_true": "TRUE",
+    "explicit_checkbox_false": "FALSE",
+    "referenced_transaction_footnote_explicitly_mentions_10b5_1": "TRUE",
+    "historical_absence_without_explicit_evidence": "UNKNOWN"
+  },
+  "gate": {
+    "minimum_reviewed_transactions": 200,
+    "minimum_distinct_issuers": 40,
+    "all_population_transaction_codes_must_be_present": true,
+    "minimum_transaction_code_volume_coverage": 0.98,
+    "minimum_required_field_accuracy": 0.95,
+    "minimum_wilson_95_lower_bound": 0.9
+  },
+  "review_firewall": {
+    "price_outcomes_visible": false,
+    "future_returns_visible": false,
+    "herd_scores_visible": false,
+    "direction_hypothesis_allowed": false,
+    "operational_action_authority": false
+  },
+  "sources": [
+    "https://www.sec.gov/submit-filings/technical-specifications",
+    "https://www.sec.gov/edgar/searchedgar/ownershipformcodes.html",
+    "https://www.sec.gov/resources-small-businesses/small-business-compliance-guides/insider-trading-arrangements-and-related-disclosures",
+    "https://itl.nist.gov/div898/handbook/prc/section2/prc241.htm"
+  ]
+}

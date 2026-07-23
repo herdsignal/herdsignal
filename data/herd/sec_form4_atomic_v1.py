@@ -176,6 +176,7 @@ def parse_document(content: bytes, metadata: dict) -> list[dict]:
         ).hexdigest()
         rows.append({
             "atomicTransactionId": atomic_id,
+            "transactionIndex": index,
             "issuerCik": issuer_cik,
             "issuerName": _text(issuer, "issuerName"),
             "issuerTradingSymbol": _text(issuer, "issuerTradingSymbol"),

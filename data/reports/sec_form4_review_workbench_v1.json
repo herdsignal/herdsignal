@@ -1,0 +1,26 @@
+{
+  "report_version": "HERD_SEC_FORM4_REVIEW_WORKBENCH_V1",
+  "status": "READY_FOR_HUMAN_SOURCE_REVIEW",
+  "transactions": 267,
+  "issuers": 51,
+  "transaction_codes": [
+    "A",
+    "C",
+    "D",
+    "F",
+    "G",
+    "I",
+    "J",
+    "L",
+    "M",
+    "P",
+    "S"
+  ],
+  "review_queue_sha256": "9e89fe468cacb3e218b5d402076d62a08689bc147e79a52265ea9cf2dcbf573d",
+  "source_manifest_sha256": "331a8fa66a8412b9d3098c5f279f34288409a2fd3a1f4b779354d4cf0ca125f6",
+  "protocol_sha256": "aff7fcb30da3e7dead77e7bc3506e26e23aefa2e97e2e453310b5204fd99b15b",
+  "price_outcomes_opened": false,
+  "automatic_valid_labels_created": false,
+  "direction_hypothesis_allowed": false,
+  "operational_action_authority": false
+}
