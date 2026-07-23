@@ -8,7 +8,7 @@
 
 | 상태 | 의미 | 현재 대표 묶음 |
 | --- | --- | --- |
-| `ACTIVE` | 다음 연구 판정에 직접 사용 | FINRA 불변 census·SEC ticker–CIK 원장 V2 |
+| `ACTIVE` | 다음 연구 판정에 직접 사용 | FINRA 불변 census·SEC 표지 보강 ticker–CIK 원장 V4 |
 | `DATA_PIPELINE` | 재현 입력 생성 | SEC PIT, 가격 스냅샷, S&P 구성, CIK·기업행동 |
 | `REJECTED` | 사전 기준에서 탈락 | Rush, RSI, 재진입, 완결 사이클 실험 |
 | `LEGACY` | 현행 판단에 미사용 | 과거 v3~v6.1 백테스트와 이전 검증 경로 |
@@ -49,10 +49,10 @@ pre-holdout OOS에서 단순 양성률 기준선보다 나빠 `REJECTED`로 이�
 prospective shadow는 시작하지 않았다.
 
 FINRA 공매도 잔고는 공식 원본 122개를 해시 고정했지만 장기 OOS 기간이
-부족하다. SEC Form 3·4·5 관측과 EDGAR ticker 전환 원문으로 533개
-time-valid ticker–CIK 구간을 만들었고, 독립군 연결률은 94.70%다. 사전
-95% 게이트를 통과하지 못했으므로 방향 가설·가격 결과·HERD 반영 없이
-prospective shadow 원본 관측만 유지한다.
+부족하다. V2의 큰 식별자 공백만 SEC 표지 396건·ticker 앵커 536개로
+보강했다. 기존 51개와 독립 388개의 PIT 연결률은 97.12%, 95.51%로
+식별자 게이트를 통과했다. 이는 방향 예측력이 아니라 안전한 종목 연결만
+증명한다. 가격 결과·HERD 반영 없이 prospective shadow 관측만 허용한다.
 
 삭제는 import·문서 참조, 고정 hash 입력, 실험 재현 필요성을 모두 확인하고
 회귀 테스트를 통과한 파일에만 허용한다. 분류되지 않은 새 파일은 자동 삭제

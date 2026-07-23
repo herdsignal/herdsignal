@@ -1693,3 +1693,23 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
   Blind holdout 접근은 0회다. 다음 식별자 작업은 전체 universe를 다시
   훑는 것이 아니라 BNY와 장기 공백 ticker의 SEC 10-K·10-Q·8-K 표지
   원문을 표적 수집하는 것이다.
+
+### SEC 표지 표적 보강·FINRA 재감사 V4
+
+- V2에서 공백 기여가 큰 BNY, CRH, BLK, BRK-B, GOOG/GOOGL만 선정했다.
+  전체 503개 기업을 다시 수집하지 않았다.
+- SEC 10-K·10-Q·8-K·20-F 표지 원문 396건을 해시 고정하고
+  `dei:TradingSymbol` 앵커 536개를 추출했다. 태그가 없는 일반 표지
+  문자열은 근거로 쓰지 않았고 원문·accession·접수시각을 보존했다.
+- BNY Mellon은 `BK` 구간과 2026년의 `BNY` 구간을 분리했다. FINRA
+  관측은 `Bank of New York Mellon` 회사명 정규식까지 일치해야 하므로
+  과거의 무관한 `BNY` 종목을 BNY Mellon CIK에 연결하지 않는다.
+- 병합한 V4 원장은 검증 interval 529개, canonical ticker 526개,
+  CIK 501개이며 겹치는 CIK 충돌은 0건이다.
+- 122개 FINRA 결제기준일 재감사에서 기존 51개는 97.12%, 독립 적격
+  388개는 95.51%로 사전 고정한 95% 식별자 게이트를 통과했다. 현재
+  S&P 500 참고군은 94.12%로 통과하지 못했다.
+- 이 판정은 short interest의 예측력을 증명하지 않는다. 약 5년의 짧은
+  이력과 coverage 표본 재사용 위험 때문에 가격 결과와 방향 가설은 열지
+  않았고, 허용 범위는 prospective shadow 관측뿐이다. HERD 공식·가중치,
+  행동 비율 0%, Blind holdout 미개방은 그대로다.

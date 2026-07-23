@@ -22,7 +22,7 @@ HERD를 검증한다. 현재 살아남은 종목을 과거 전체에 소급하�
 ### SEC ticker–CIK 관측 구간
 
 FINRA처럼 ticker만 제공하는 공개 자료는 현재 ticker 표를 과거로 소급하지
-않고 `sec_time_valid_ticker_cik_intervals_v2.csv`의 검증 구간 안에서만
+않고 `sec_time_valid_ticker_cik_intervals_v4.csv`의 검증 구간 안에서만
 CIK에 연결한다. SEC Form 3·4·5 평탄 자료는 `as-filed` XML에서 추출된
 공식 관측 앵커지만 전체 공시 원문을 대체하지 않으므로 다음을 강제한다.
 
@@ -33,9 +33,18 @@ CIK에 연결한다. SEC Form 3·4·5 평탄 자료는 `as-filed` XML에서 추�
 - 동일 CIK의 동시 복수 주식 클래스는 별도 ticker로 보존
 - SEC `submissions`의 현재 ticker 배열은 후보 발견에만 사용
 
-FINRA V2 연결률은 기존 51개 95.95%, 독립 적격 388개 94.70%다. 두
-cohort 모두 95%여야 하는 게이트를 아직 통과하지 못했으므로 FINRA는
-prospective shadow 원본 관측에만 사용한다.
+V4는 전체 universe를 다시 수집하지 않고 BNY Mellon, CRH, BlackRock,
+Berkshire Hathaway, Alphabet의 SEC 10-K·10-Q·8-K·20-F 표지 396건만
+해시 고정했다. `dei:TradingSymbol` 앵커 536개를 기존 V2 원장에
+병합했다. BNY Mellon은 2026년 `BK`에서 `BNY`로 바뀌었으므로 두 symbol을
+별도 as-filed 구간으로 유지한다. FINRA에서는 회사명이
+`Bank of New York Mellon`과 일치하는 행만 허용해 과거의 무관한 `BNY`
+종목을 연결하지 않는다.
+
+FINRA V4 연결률은 기존 51개 97.12%, 독립 적격 388개 95.51%로 두
+필수 cohort의 95% 식별자 게이트를 통과했다. 현재 S&P 500 참고군은
+94.12%로 미달이다. 통과 범위는 prospective shadow용 안전한 식별자
+연결까지이며 방향 가설·가격 결과·HERD 반영은 계속 금지한다.
 
 ## 구성원 스키마
 

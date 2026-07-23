@@ -442,6 +442,12 @@ PYTHONPATH=data data/.venv/bin/python \
 
 PYTHONPATH=data data/.venv/bin/python \
   data/herd/finra_short_interest_coverage_audit_v1.py
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_time_valid_ticker_cik_ledger_v4
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.finra_short_interest_coverage_audit_v4
 ```
 
 대용량 CSV와 receipt는 `data/reference/finra`에 로컬 보관하고, 전체 URL·
@@ -450,9 +456,11 @@ PYTHONPATH=data data/.venv/bin/python \
 
 coverage 감사는 short position 값과 가격을 결합하지 않는다. 현재 ticker
 표기 관측률과 날짜 유효 CIK 연결률을 분리하며, 검증된 SEC alias interval이
-없는 symbol은 `CURRENT_SYMBOL_OBSERVED_PIT_CIK_UNVERIFIED`로 남긴다. 현재
-상태는 원본 122개가 해시 고정됐지만 PIT CIK 원장이 부족하므로 방향 가설
-사전등록과 OOS는 차단된다.
+없는 symbol은 `CURRENT_SYMBOL_OBSERVED_PIT_CIK_UNVERIFIED`로 남긴다.
+V4는 표적 SEC 표지 396건의 원문 SHA와 ticker 앵커 536개를 검증한 뒤
+기존 51개 97.12%, 독립 388개 95.51%로 식별자 게이트를 통과했다. 이
+결과는 방향성 OOS를 허용하지 않으며 FINRA는 prospective shadow 관측에만
+사용한다.
 
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
