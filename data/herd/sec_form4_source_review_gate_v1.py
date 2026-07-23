@@ -76,10 +76,11 @@ def evaluate(
         "wilson_95_lower_bound": lower,
         "accuracy_gate_passed": passed,
         "price_outcomes_opened": False,
-        "direction_hypothesis_allowed": passed,
+        "coverage_audit_allowed": passed,
+        "direction_hypothesis_allowed": False,
         "operational_action_authority": False,
         "next_decision": (
-            "PREREGISTER_ONE_FORM4_HYPOTHESIS"
+            "AUDIT_FORM4_ISSUER_YEAR_COVERAGE"
             if passed else "COMPLETE_OR_REPAIR_PRIMARY_SOURCE_REVIEW"
         ),
     }

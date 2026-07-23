@@ -276,7 +276,9 @@ PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_review_workbench_v1 \
 
 원문 검수 판정과 자동 구조 검증은 합치지 않는다. 자동 검증만으로
 `VALID`를 생성하거나 검수 CSV를 덮어쓰면 정확도 게이트 입력으로 인정하지
-않는다.
+않는다. 완료 판정에는 검수자 ID, UTC 시각, 검수 방식이 모두 필요하다.
+현재 판정은 `AI_ASSISTED_PRIMARY_SOURCE_DIRECT`로 명시하며 독립 사람
+검수라고 표현하지 않는다.
 
 ```bash
 PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_structural_audit_v1 \
@@ -301,7 +303,7 @@ SHA-256이 잠긴 queue와 완전히 같은지 확인한다.
 ```bash
 PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_review_ledger_v1 \
   data/reports/sec_form4_source_review_v1.csv \
-  <워크벤치에서-내보낸-decisions.csv> \
+  data/reports/sec_form4_review_decisions_v1.csv \
   --output data/reports/sec_form4_review_adjudicated_v1.csv \
   --report-output data/reports/sec_form4_review_ledger_v1.json
 ```

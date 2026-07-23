@@ -16,6 +16,9 @@ def _rows():
             "sourceSha256": "s1",
             "reviewDecision": "PENDING",
             "reviewNotes": "",
+            "reviewerId": "reviewer",
+            "reviewedAtUtc": "2026-07-23T00:00:00Z",
+            "reviewMethod": "PRIMARY_SOURCE_DIRECT",
         },
         {
             "atomicTransactionId": "b",
@@ -28,6 +31,9 @@ def _rows():
             "sourceSha256": "s2",
             "reviewDecision": "PENDING",
             "reviewNotes": "",
+            "reviewerId": "reviewer",
+            "reviewedAtUtc": "2026-07-23T00:00:00Z",
+            "reviewMethod": "PRIMARY_SOURCE_DIRECT",
         },
     ]
 

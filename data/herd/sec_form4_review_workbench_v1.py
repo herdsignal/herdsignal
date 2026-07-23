@@ -158,6 +158,9 @@ def build_payload(review_path: Path, corpus: Path, protocol_path: Path) -> tuple
             "rawFootnotes": row["rawFootnotes"],
             "decision": row["reviewDecision"],
             "notes": row["reviewNotes"],
+            "reviewerId": row.get("reviewerId", ""),
+            "reviewedAtUtc": row.get("reviewedAtUtc", ""),
+            "reviewMethod": row.get("reviewMethod", ""),
         })
     flag_counts = Counter(
         flag for row in payload for flag in row["reviewFlags"]
@@ -206,7 +209,10 @@ main{{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 92px)
 <header><h1>Form 4 원문 검수</h1><div class="toolbar">
 <select id="filter"><option value="">전체</option><option>PENDING</option><option>VALID</option><option>INVALID</option><option>AMBIGUOUS</option></select>
 <select id="priority"><option value="">모든 우선순위</option><option>HIGH</option><option>STANDARD</option></select>
-<input id="search" placeholder="ticker / accession / code / flag"><button id="export">판정 CSV 내보내기</button>
+<input id="search" placeholder="ticker / accession / code / flag">
+<input id="reviewer" placeholder="검수자 ID">
+<select id="method"><option>PRIMARY_SOURCE_DIRECT</option><option>AI_ASSISTED_PRIMARY_SOURCE_DIRECT</option></select>
+<button id="export">판정 CSV 내보내기</button>
 </div><div class="meta">가격 결과·HERD 점수 비공개 · 자동 VALID 없음 · {len(payload)}건</div></header>
 <main><aside id="list"></aside><section id="detail"><pre>{manifest_json}</pre></section></main>
 <script>
@@ -214,9 +220,9 @@ const rows={data}; let selected=null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]));
 function visible(r){{const f=filter.value,p=priority.value,q=search.value.toLowerCase();return(!f||r.decision===f)&&(!p||r.reviewPriority===p)&&(!q||[r.ticker,r.accessionNumber,r.transactionCode,r.economicClass,...r.reviewFlags].join(' ').toLowerCase().includes(q))}}
 function drawList(){{const shown=rows.filter(visible);list.innerHTML=`<div class="item muted">${{shown.length}} / ${{rows.length}}건</div>`+shown.map(r=>`<div class="item ${{selected===r.atomicTransactionId?'active':''}}" data-id="${{r.atomicTransactionId}}"><span class=code>${{esc(r.transactionCode)}}</span> ${{esc(r.ticker)}} · ${{esc(r.reviewPriority)}}<br><span class=muted>${{esc(r.decision)}} · ${{esc(r.accessionNumber)}}</span></div>`).join('');list.querySelectorAll('.item[data-id]').forEach(x=>x.onclick=()=>show(x.dataset.id))}}
-function show(id){{selected=id;const r=rows.find(x=>x.atomicTransactionId===id);detail.innerHTML=`<h2>${{esc(r.ticker)}} · code ${{esc(r.transactionCode)}} · ${{esc(r.economicClass)}}</h2><div class=muted>${{esc(r.economicGroup)}} · ${{esc(r.accessionNumber)}} · SHA ${{esc(r.sourceSha256)}}</div><p><b>${{esc(r.reviewPriority)}}</b> · ${{r.reviewFlags.map(esc).join(' · ')}}</p><p class=muted>10b5-1 근거: ${{esc(r.tenB5OneEvidence)}}</p><div class=grid>${{Object.entries(r.parsed).map(([k,v])=>`<div class=field><b>${{esc(k)}}</b>${{esc(v)}}</div>`).join('')}}</div><h3>원문 transaction XML</h3><pre>${{esc(r.rawTransactionXml)}}</pre><h3>문서 전체 각주</h3><pre>${{esc(r.rawFootnotes)}}</pre><div class=decision><select id=decision>${{['PENDING','VALID','INVALID','AMBIGUOUS'].map(v=>`<option ${{r.decision===v?'selected':''}}>${{v}}</option>`).join('')}}</select><a href="${{esc(r.sourceUrl)}}" target=_blank>SEC 원문</a></div><textarea id=notes placeholder="오류 필드와 근거">${{esc(r.notes)}}</textarea>`;decision.onchange=e=>{{r.decision=e.target.value;drawList()}};notes.oninput=e=>r.notes=e.target.value;drawList()}}
+function show(id){{selected=id;const r=rows.find(x=>x.atomicTransactionId===id);detail.innerHTML=`<h2>${{esc(r.ticker)}} · code ${{esc(r.transactionCode)}} · ${{esc(r.economicClass)}}</h2><div class=muted>${{esc(r.economicGroup)}} · ${{esc(r.accessionNumber)}} · SHA ${{esc(r.sourceSha256)}}</div><p><b>${{esc(r.reviewPriority)}}</b> · ${{r.reviewFlags.map(esc).join(' · ')}}</p><p class=muted>10b5-1 근거: ${{esc(r.tenB5OneEvidence)}} · 검수: ${{esc(r.reviewerId||'-')}} / ${{esc(r.reviewMethod||'-')}} / ${{esc(r.reviewedAtUtc||'-')}}</p><div class=grid>${{Object.entries(r.parsed).map(([k,v])=>`<div class=field><b>${{esc(k)}}</b>${{esc(v)}}</div>`).join('')}}</div><h3>원문 transaction XML</h3><pre>${{esc(r.rawTransactionXml)}}</pre><h3>문서 전체 각주</h3><pre>${{esc(r.rawFootnotes)}}</pre><div class=decision><select id=decision>${{['PENDING','VALID','INVALID','AMBIGUOUS'].map(v=>`<option ${{r.decision===v?'selected':''}}>${{v}}</option>`).join('')}}</select><a href="${{esc(r.sourceUrl)}}" target=_blank>SEC 원문</a></div><textarea id=notes placeholder="오류 필드와 근거">${{esc(r.notes)}}</textarea>`;decision.onchange=e=>{{r.decision=e.target.value;if(r.decision!=='PENDING'){{r.reviewerId=reviewer.value.trim();r.reviewMethod=method.value;r.reviewedAtUtc=new Date().toISOString()}}else{{r.reviewerId='';r.reviewMethod='';r.reviewedAtUtc=''}}drawList()}};notes.oninput=e=>r.notes=e.target.value;drawList()}}
 function csv(v){{return '"'+String(v??'').replaceAll('"','""')+'"'}}
-export.onclick=()=>{{const cols=['atomicTransactionId','reviewHash','issuerCik','ticker','accessionNumber','transactionCode','economicClass','economicGroup','sourceSha256','reviewDecision','reviewNotes'];const lines=[cols.join(','),...rows.map(r=>[r.atomicTransactionId,r.reviewHash,r.issuerCik,r.ticker,r.accessionNumber,r.transactionCode,r.economicClass,r.economicGroup,r.sourceSha256,r.decision,r.notes].map(csv).join(','))];const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\\n')],{{type:'text/csv'}}));a.download='sec_form4_review_decisions_v1.csv';a.click()}}
+export.onclick=()=>{{const cols=['atomicTransactionId','reviewHash','issuerCik','ticker','accessionNumber','transactionCode','economicClass','economicGroup','sourceSha256','reviewDecision','reviewNotes','reviewerId','reviewedAtUtc','reviewMethod'];const lines=[cols.join(','),...rows.map(r=>[r.atomicTransactionId,r.reviewHash,r.issuerCik,r.ticker,r.accessionNumber,r.transactionCode,r.economicClass,r.economicGroup,r.sourceSha256,r.decision,r.notes,r.reviewerId,r.reviewedAtUtc,r.reviewMethod].map(csv).join(','))];const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\\n')],{{type:'text/csv'}}));a.download='sec_form4_review_decisions_v1.csv';a.click()}}
 filter.onchange=drawList;priority.onchange=drawList;search.oninput=drawList;drawList();
 </script></body></html>"""
     output.parent.mkdir(parents=True, exist_ok=True)

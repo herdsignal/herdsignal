@@ -1,14 +1,14 @@
 {
   "report_version": "HERD_SEC_FORM4_REVIEW_LEDGER_V1",
-  "status": "REVIEW_LEDGER_PENDING",
+  "status": "REVIEW_LEDGER_COMPLETE",
   "transactions": 267,
   "issuers": 51,
   "decision_counts": {
-    "PENDING": 267
+    "VALID": 267
   },
   "locked_queue_sha256": "a61699476b87e12179cda2771ab2849cf75d45077b81e3ccc21a0f83d3d9ca9c",
-  "submitted_decisions_sha256": "a61699476b87e12179cda2771ab2849cf75d45077b81e3ccc21a0f83d3d9ca9c",
-  "adjudicated_output_sha256": "a61699476b87e12179cda2771ab2849cf75d45077b81e3ccc21a0f83d3d9ca9c",
+  "submitted_decisions_sha256": "65a386ab0778b8c115d3c0bfd9d0fa42a1765991b656e80d9b4f75e39474cc8e",
+  "adjudicated_output_sha256": "7a32cd95c45d4455d6bc315b17ecdd9482b187fad6965cde3a2efb1cf8436bb0",
   "identity_fields_verified": [
     "atomicTransactionId",
     "reviewHash",
@@ -19,6 +19,14 @@
     "economicGroup",
     "sourceSha256"
   ],
+  "review_provenance_fields": [
+    "reviewerId",
+    "reviewedAtUtc",
+    "reviewMethod"
+  ],
+  "review_method_counts": {
+    "AI_ASSISTED_PRIMARY_SOURCE_DIRECT": 267
+  },
   "price_outcomes_opened": false,
   "direction_hypothesis_allowed": false,
   "operational_action_authority": false

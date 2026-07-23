@@ -1,6 +1,6 @@
 {
   "report_version": "HERD_SEC_FORM4_SOURCE_REVIEW_GATE_V1",
-  "status": "SOURCE_REVIEW_PENDING",
+  "status": "SOURCE_REVIEW_PASSED",
   "sample_transactions": 267,
   "sample_issuers": 51,
   "population_transaction_codes": [
@@ -32,15 +32,16 @@
   "transaction_code_volume_coverage": 1.0,
   "structural_audit_status": "STRUCTURAL_AUDIT_PASSED",
   "structural_audit_transactions": 267,
-  "valid": 0,
+  "valid": 267,
   "invalid": 0,
   "ambiguous": 0,
-  "pending": 267,
-  "required_field_accuracy": null,
-  "wilson_95_lower_bound": null,
-  "accuracy_gate_passed": false,
+  "pending": 0,
+  "required_field_accuracy": 1.0,
+  "wilson_95_lower_bound": 0.9858165775748635,
+  "accuracy_gate_passed": true,
   "price_outcomes_opened": false,
+  "coverage_audit_allowed": true,
   "direction_hypothesis_allowed": false,
   "operational_action_authority": false,
-  "next_decision": "COMPLETE_OR_REPAIR_PRIMARY_SOURCE_REVIEW"
+  "next_decision": "AUDIT_FORM4_ISSUER_YEAR_COVERAGE"
 }

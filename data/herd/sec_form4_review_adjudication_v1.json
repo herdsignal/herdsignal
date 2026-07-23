@@ -1,0 +1,62 @@
+{
+  "adjudication_version": "HERD_SEC_FORM4_SOURCE_ADJUDICATION_V1",
+  "status": "LOCKED_AI_ASSISTED_PRIMARY_SOURCE_REVIEW",
+  "reviewer_id": "codex-gpt-5.6-source-audit",
+  "reviewed_at_utc": "2026-07-23T08:23:37.343727+00:00",
+  "review_method": "AI_ASSISTED_PRIMARY_SOURCE_DIRECT",
+  "scope": {
+    "transactions": 267,
+    "issuers": 51,
+    "high_priority_transactions": 76,
+    "standard_transactions": 191,
+    "transaction_codes": [
+      "A",
+      "C",
+      "D",
+      "F",
+      "G",
+      "I",
+      "J",
+      "L",
+      "M",
+      "P",
+      "S"
+    ]
+  },
+  "evidence_reviewed": [
+    "HASH_LOCKED_PRIMARY_DOCUMENT_XML",
+    "ATOMIC_TRANSACTION_XML",
+    "ALL_PROTOCOL_REQUIRED_FIELDS",
+    "REFERENCED_AND_DOCUMENT_FOOTNOTES",
+    "SEC_OFFICIAL_TRANSACTION_CODE_MEANINGS",
+    "DOCUMENT_OR_TRANSACTION_SPECIFIC_10B5_1_EVIDENCE",
+    "INDEPENDENT_STRUCTURAL_EXTRACTION"
+  ],
+  "review_findings": {
+    "parser_errors_found_before_final_adjudication": 1,
+    "parser_error": "A generic company trading-policy footnote mentioning a 10b5-1 exception was incorrectly treated as evidence that the transaction used a plan.",
+    "repair": "Require a document checkbox or a transaction-specific execution statement; generic mentions remain UNKNOWN.",
+    "post_repair_structure_matches": 267,
+    "post_repair_structure_mismatches": 0,
+    "valid": 267,
+    "invalid": 0,
+    "ambiguous": 0
+  },
+  "hashes": {
+    "locked_queue_sha256": "a61699476b87e12179cda2771ab2849cf75d45077b81e3ccc21a0f83d3d9ca9c",
+    "protocol_sha256": "eb60ab587412de82edd0a9ee4930786d3a95be0edfda8b082849cbd05c5b18a7",
+    "structural_audit_sha256": "1ea7ca572d5ebaa46a6a89ea0208dca56996b7e17faf89188574a26caaf3e56c",
+    "decisions_sha256": "65a386ab0778b8c115d3c0bfd9d0fa42a1765991b656e80d9b4f75e39474cc8e"
+  },
+  "firewall": {
+    "price_outcomes_opened": false,
+    "future_returns_opened": false,
+    "herd_scores_opened": false,
+    "operational_action_authority": false
+  },
+  "limitations": [
+    "This is an AI-assisted source adjudication, not a claim of independent human review.",
+    "Passing source accuracy permits a coverage audit only; it is not directional or trading evidence.",
+    "A separate human re-audit is required before external production or publication."
+  ]
+}

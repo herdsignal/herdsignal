@@ -21,6 +21,11 @@ IDENTITY_FIELDS = (
     "sourceSha256",
 )
 ALLOWED_DECISIONS = {"PENDING", "VALID", "INVALID", "AMBIGUOUS"}
+PROVENANCE_FIELDS = ("reviewerId", "reviewedAtUtc", "reviewMethod")
+ALLOWED_REVIEW_METHODS = {
+    "PRIMARY_SOURCE_DIRECT",
+    "AI_ASSISTED_PRIMARY_SOURCE_DIRECT",
+}
 
 
 class ReviewLedgerError(RuntimeError):
@@ -64,10 +69,25 @@ def merge(
     needs_note = ordered["reviewDecision"].isin({"INVALID", "AMBIGUOUS"})
     if (needs_note & notes.str.strip().eq("")).any():
         raise ReviewLedgerError("INVALID and AMBIGUOUS decisions require notes")
+    completed = ordered["reviewDecision"].ne("PENDING")
+    for field in PROVENANCE_FIELDS:
+        if field not in ordered:
+            raise ReviewLedgerError(f"decisions missing provenance field: {field}")
+        if (completed & ordered[field].str.strip().eq("")).any():
+            raise ReviewLedgerError(
+                f"completed decisions require provenance: {field}"
+            )
+    methods = set(ordered.loc[completed, "reviewMethod"])
+    if unexpected := methods - ALLOWED_REVIEW_METHODS:
+        raise ReviewLedgerError(
+            f"unexpected source review methods: {sorted(unexpected)}"
+        )
 
     merged = queue.copy()
     merged["reviewDecision"] = ordered["reviewDecision"].to_numpy()
     merged["reviewNotes"] = notes.to_numpy()
+    for field in PROVENANCE_FIELDS:
+        merged[field] = ordered[field].to_numpy()
     output_path.parent.mkdir(parents=True, exist_ok=True)
     merged.to_csv(output_path, index=False)
     counts = merged["reviewDecision"].value_counts().to_dict()
@@ -84,6 +104,12 @@ def merge(
         "submitted_decisions_sha256": _sha256(decisions_path),
         "adjudicated_output_sha256": _sha256(output_path),
         "identity_fields_verified": list(IDENTITY_FIELDS),
+        "review_provenance_fields": list(PROVENANCE_FIELDS),
+        "review_method_counts": (
+            merged.loc[
+                merged["reviewDecision"].ne("PENDING"), "reviewMethod"
+            ].value_counts().to_dict()
+        ),
         "price_outcomes_opened": False,
         "direction_hypothesis_allowed": False,
         "operational_action_authority": False,

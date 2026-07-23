@@ -61,4 +61,7 @@ def test_complete_accurate_review_can_pass_without_action_authority(tmp_path):
     ]).to_csv(atomic, index=False)
     result = evaluate(review, atomic, protocol, structural)
     assert result["accuracy_gate_passed"] is True
+    assert result["coverage_audit_allowed"] is True
+    assert result["direction_hypothesis_allowed"] is False
+    assert result["next_decision"] == "AUDIT_FORM4_ISSUER_YEAR_COVERAGE"
     assert result["operational_action_authority"] is False
