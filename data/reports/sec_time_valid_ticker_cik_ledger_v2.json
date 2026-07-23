@@ -1,0 +1,66 @@
+{
+  "report_version": "SEC_TIME_VALID_TICKER_CIK_LEDGER_V2",
+  "status": "TIME_VALID_INTERVAL_LEDGER_BUILT",
+  "protocol_sha256": "a83d641fba1e14e247fa92b67ca4c1ccdd613b2a742d392f159b4f67c408e319",
+  "integrity": {
+    "verified_file_count": 8,
+    "files": [
+      {
+        "path": "data/reference/sec/sec-form4-bulk-v2-2012q1-2026q2-20260723/manifest.json",
+        "sha256": "04763743fc3655786b7ee6360ccd4eb36f9198089c3edec7a331f53f1b4f31bb"
+      },
+      {
+        "path": "data/reference/sec/sec-trading-symbol-merged-v6-20160718-20260717-20260719.csv",
+        "sha256": "67a2c1b208d3d8f56615da3dc4d8dd21430bed0b44927b6d6796a8e18426d191"
+      },
+      {
+        "path": "data/reports/business_state_features_v2.csv",
+        "sha256": "515a0708594b3e5064e5edf7b46dbcb7d161d2682acfe4af42d22a773f1fb7f1"
+      },
+      {
+        "path": "data/reports/independent_universe_v1.csv",
+        "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8"
+      },
+      {
+        "path": "data/herd/price_universe_cik_periods.csv",
+        "sha256": "efb7ec2bcf35b5221494e5bd002d991d307b99b318eaace303d6b742d5393487"
+      },
+      {
+        "path": "data/herd/ticker_alias_ledger.csv",
+        "sha256": "5b5f27e472a3b676f89336d5fc8fb79ca7a92a9178c3392022cbe514d5208778"
+      }
+    ]
+  },
+  "source_semantics": "SEC_FLATTENED_AS_FILED_FORM345_OBSERVATION_WITH_PRIMARY_EDGAR_TRANSITIONS",
+  "source_is_not_full_filing_substitute": true,
+  "anchor_audit": {
+    "target_cik_count": 504,
+    "selected_quarters": 21,
+    "anchor_count": 183009,
+    "anchored_cik_count": 500,
+    "anchored_canonical_symbol_count": 528,
+    "rejected_rows": {
+      "invalid_or_blank_symbol": 192,
+      "outside_window": 7240
+    }
+  },
+  "verified_primary_transition_count": 18,
+  "transition_boundary_extensions": 17,
+  "candidate_interval_count": 533,
+  "verified_interval_count": 533,
+  "conflict_excluded_interval_count": 0,
+  "verified_canonical_symbol_count": 525,
+  "verified_cik_count": 500,
+  "ledger_path": "data/reports/sec_time_valid_ticker_cik_intervals_v2.csv",
+  "ledger_sha256": "1c36d2a39699127d5f10fc3b1702c30a125afa64e9b1d8fa9a38ebf058e40df8",
+  "ledger_consumption_rule": "USE_TIME_VALID_CIK_VERIFIED_ROWS_ONLY",
+  "current_ticker_backfill_performed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_preregistered": false,
+  "herd_formula_change_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_authority": false,
+  "operational_action_ratio": 0.0,
+  "finra_authority": "PROSPECTIVE_SHADOW_OBSERVATION_ONLY",
+  "next_priority": "RECALCULATE_FINRA_TIME_VALID_CIK_COVERAGE_WITH_LEDGER_V2"
+}

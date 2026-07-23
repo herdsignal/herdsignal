@@ -33,6 +33,16 @@
       "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8"
     }
   ],
+  "locked_identity_inputs": [
+    {
+      "path": "data/herd/price_universe_cik_periods.csv",
+      "sha256": "efb7ec2bcf35b5221494e5bd002d991d307b99b318eaace303d6b742d5393487"
+    },
+    {
+      "path": "data/herd/ticker_alias_ledger.csv",
+      "sha256": "5b5f27e472a3b676f89336d5fc8fb79ca7a92a9178c3392022cbe514d5208778"
+    }
+  ],
   "interval_policy": {
     "target_start": "2021-06-01",
     "target_end": "2026-06-30",
@@ -53,6 +63,13 @@
     "same_symbol_overlapping_multiple_ciks_is_conflict": true,
     "conflicting_intervals_are_excluded": true,
     "current_ticker_backfill_forbidden": true
+  },
+  "cohort_identity_policy": {
+    "cohort_membership_key": "TICKER",
+    "single_current_or_feature_cik_must_not_be_backfilled": true,
+    "successor_ciks_from_locked_identity_inputs_must_be_scanned": true,
+    "resolved_cik_is_selected_from_the_unique_verified_interval_on_each_date": true,
+    "disney_and_broadcom_successor_boundaries_are_not_optional": true
   },
   "evidence_policy": {
     "anchor_required_fields": [
