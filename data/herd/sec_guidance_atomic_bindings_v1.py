@@ -33,12 +33,23 @@ def _text(value: object) -> str:
 
 
 def build(protocol: dict) -> tuple[pd.DataFrame, dict]:
+    source_review_report = {}
+    if protocol.get("source_review_report"):
+        source_review_report_path = Path(protocol["source_review_report"])
+        source_review_report = json.loads(source_review_report_path.read_text(encoding="utf-8"))
+        if not source_review_report.get("source_review_gate_passed", False):
+            raise ValueError("source review gate did not pass")
     frames = []
     ledger_hashes = {}
     for name in protocol["review_ledgers"]:
         path = Path(name)
         digest = _sha256(path)
         ledger_hashes[name] = digest
+        if (
+            name == protocol.get("gated_review_ledger")
+            and digest != source_review_report.get("reviewed_sha256")
+        ):
+            raise ValueError("gated review ledger hash differs from source review report")
         frame = pd.read_csv(path, dtype={"cik": str})
         frame["review_ledger"] = name
         frame["review_ledger_sha256"] = digest
@@ -89,7 +100,9 @@ def build(protocol: dict) -> tuple[pd.DataFrame, dict]:
     if output["binding_id"].duplicated().any():
         raise ValueError("atomic binding id collision")
     report = {
-        "report_version": "herd-sec-guidance-atomic-bindings-v1",
+        "report_version": protocol.get(
+            "report_version", "herd-sec-guidance-atomic-bindings-v1"
+        ),
         "review_rows_audited": len(reviewed),
         "valid_rows_promoted": len(output),
         "distinct_tickers": int(output["ticker"].nunique()),
@@ -103,6 +116,10 @@ def build(protocol: dict) -> tuple[pd.DataFrame, dict]:
         "ready_for_revision_pair_build": bool(output["pair_eligible"].any()),
         "ready_for_direction_research": False,
         "ledger_hashes": ledger_hashes,
+        "source_review_report_sha256": (
+            _sha256(Path(protocol["source_review_report"]))
+            if protocol.get("source_review_report") else None
+        ),
         "operational_action_ratio": 0.0,
     }
     return output, report

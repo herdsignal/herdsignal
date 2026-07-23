@@ -65,6 +65,12 @@
     "data/reports/sec_guidance_atomic_census_v2_reviewed.csv",
     "data/reports/sec_guidance_atomic_census_v2_source_review.json",
     "data/reports/sec_guidance_atomic_census_v2.json",
+    "data/herd/sec_guidance_atomic_bindings_v2.json",
+    "data/reports/sec_guidance_atomic_bindings_v2.csv",
+    "data/reports/sec_guidance_atomic_bindings_v2.json",
+    "data/herd/sec_guidance_atomic_pairs_v2.json",
+    "data/reports/sec_guidance_atomic_pairs_v2.csv",
+    "data/reports/sec_guidance_atomic_pairs_v2.json",
     "docs/HERD_RESEARCH_STATUS.md"
   ],
   "families": [

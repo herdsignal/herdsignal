@@ -389,6 +389,22 @@ subtype·단위·현재 범위가 SEC 원문에서 모두 확인된 행만 `VALI
 `VALID` 행만 atomic binding으로 승격하며 방향 라벨과 가격은 아직 열지
 않는다.
 
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_guidance_atomic_bindings_v2 \
+  --bindings data/reports/sec_guidance_atomic_bindings_v2.csv \
+  --report data/reports/sec_guidance_atomic_bindings_v2.json
+
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_guidance_atomic_pairs_v2 \
+  --pairs data/reports/sec_guidance_atomic_pairs_v2.csv \
+  --report data/reports/sec_guidance_atomic_pairs_v2.json
+```
+
+수정쌍은 176개·31기업·15개 접수연도로 coverage 게이트를 통과한다.
+MCO가 23.86%를 차지하므로 이후 방향 OOS는 기업 균형 집계와 ticker
+cluster 불확실성 없이 실행할 수 없다.
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.

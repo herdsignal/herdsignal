@@ -1,0 +1,69 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_ATOMIC_BINDINGS_V2",
+  "report_version": "herd-sec-guidance-atomic-bindings-v2",
+  "status": "LOCKED_BEFORE_SOURCE_REVIEWED_LEDGER_MERGE",
+  "scope": "SOURCE_REVIEWED_FACTS_ONLY",
+  "source_review_report": "data/reports/sec_guidance_atomic_census_v2_source_review.json",
+  "gated_review_ledger": "data/reports/sec_guidance_atomic_census_v2_reviewed.csv",
+  "review_ledgers": [
+    "data/reports/sec_guidance_block_reviewed_v1.csv",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv",
+    "data/reports/sec_guidance_structure_v5_reviewed.csv",
+    "data/reports/sec_guidance_structure_v6_reviewed.csv",
+    "data/reports/sec_guidance_structure_v7_reviewed.csv",
+    "data/reports/sec_guidance_structure_v8_reviewed.csv",
+    "data/reports/sec_guidance_structure_v9_reviewed.csv",
+    "data/reports/sec_guidance_atomic_census_v2_reviewed.csv"
+  ],
+  "required_fields": [
+    "ticker",
+    "cik",
+    "accession_number",
+    "accepted_at",
+    "document_name",
+    "source_url",
+    "source_sha256",
+    "metric",
+    "fiscal_period",
+    "accounting_basis",
+    "unit",
+    "lower_bound",
+    "upper_bound",
+    "review_id",
+    "reviewer",
+    "reviewed_at"
+  ],
+  "pair_identity": [
+    "cik",
+    "metric",
+    "fiscal_period",
+    "accounting_basis",
+    "metric_subtype",
+    "unit"
+  ],
+  "pair_ineligible_accounting_basis": [
+    "UNSPECIFIED"
+  ],
+  "pair_ineligible_metric_subtype": [
+    "",
+    "UNSPECIFIED"
+  ],
+  "authority": {
+    "source_fact": true,
+    "direction": false,
+    "sell": false,
+    "add_buy": false,
+    "business_veto": false,
+    "herd_weight": false
+  },
+  "forbidden": [
+    "INCLUDE_INVALID_AMBIGUOUS_OR_PENDING_ROW",
+    "IGNORE_SOURCE_REVIEW_GATE_OR_LEDGER_HASH",
+    "RESOLVE_COLLISION_BY_TICKER_EXCEPTION",
+    "CREATE_DIRECTION_LABEL",
+    "USE_PRICE_OUTCOME",
+    "CHANGE_HERD_OR_ACTION_RATIO"
+  ]
+}

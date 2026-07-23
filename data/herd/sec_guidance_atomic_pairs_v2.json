@@ -1,0 +1,28 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_ATOMIC_PAIRS_V2",
+  "report_version": "herd-sec-guidance-atomic-pairs-v2",
+  "status": "LOCKED_BEFORE_PAIR_BUILD_AND_BEFORE_PRICE_OUTCOMES",
+  "atomic_bindings": "data/reports/sec_guidance_atomic_bindings_v2.csv",
+  "atomic_report": "data/reports/sec_guidance_atomic_bindings_v2.json",
+  "pair_identity": [
+    "cik",
+    "metric",
+    "fiscal_period",
+    "accounting_basis",
+    "metric_subtype",
+    "unit"
+  ],
+  "minimum_pairs": 150,
+  "minimum_distinct_tickers": 20,
+  "minimum_distinct_accepted_years": 10,
+  "ticker_concentration_warning_threshold": 0.2,
+  "concentration_policy": "WARN_AND_REQUIRE_TICKER_BALANCED_OOS; DO_NOT_DROP_ROWS_AFTER_DIRECTION_IS_KNOWN",
+  "forbidden": [
+    "USE_PAIR_INELIGIBLE_BINDING",
+    "PAIR_ACROSS_IDENTITY",
+    "CREATE_UP_DOWN_LABEL_BEFORE_COVERAGE",
+    "USE_PRICE_OUTCOME",
+    "AUTHORIZE_VETO_SELL_OR_HERD",
+    "TUNE_COVERAGE_BY_FUTURE_RETURN"
+  ]
+}

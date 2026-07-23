@@ -54,24 +54,53 @@ def build(protocol: dict) -> tuple[pd.DataFrame, dict]:
                 ),
             })
     frame = pd.DataFrame(pairs)
+    ticker_counts = (
+        frame["ticker"].value_counts().sort_index().to_dict() if not frame.empty else {}
+    )
+    accepted_years = (
+        pd.to_datetime(frame["current_accepted_at"], utc=True).dt.year.nunique()
+        if not frame.empty else 0
+    )
+    maximum_ticker_share = (
+        max(ticker_counts.values()) / len(frame) if ticker_counts else 0.0
+    )
     coverage = bool(
         len(frame) >= protocol["minimum_pairs"]
         and frame["ticker"].nunique() >= protocol["minimum_distinct_tickers"]
+        and accepted_years >= protocol.get("minimum_distinct_accepted_years", 0)
     ) if not frame.empty else False
+    concentration_warning = (
+        maximum_ticker_share > protocol.get("ticker_concentration_warning_threshold", 1.0)
+    )
     report = {
-        "report_version": "herd-sec-guidance-atomic-pairs-v1",
+        "report_version": protocol.get(
+            "report_version", "herd-sec-guidance-atomic-pairs-v1"
+        ),
         "atomic_source_fact_authority_only": source_report["source_fact_authority_only"],
         "pair_eligible_bindings": len(eligible),
         "atomic_revision_pairs": len(frame),
         "distinct_tickers": int(frame["ticker"].nunique()) if not frame.empty else 0,
         "minimum_pairs": protocol["minimum_pairs"],
         "minimum_distinct_tickers": protocol["minimum_distinct_tickers"],
+        "distinct_accepted_years": int(accepted_years),
+        "minimum_distinct_accepted_years": protocol.get(
+            "minimum_distinct_accepted_years", 0
+        ),
+        "pairs_by_ticker": ticker_counts,
+        "maximum_ticker_pair_share": maximum_ticker_share,
+        "ticker_concentration_warning_threshold": protocol.get(
+            "ticker_concentration_warning_threshold", 1.0
+        ),
+        "ticker_concentration_warning": concentration_warning,
         "pair_coverage_gate_passed": coverage,
         "direction_labels_created": False,
         "guidance_veto_authorized": False,
         "sell_authority": False,
         "herd_weight_authority": False,
-        "next_decision": "PREREGISTER_GUIDANCE_VETO_OOS" if coverage else "ATOMIC_PAIR_COVERAGE_BLOCKED",
+        "next_decision": (
+            "PREREGISTER_TICKER_BALANCED_GUIDANCE_OOS"
+            if coverage else "ATOMIC_PAIR_COVERAGE_BLOCKED"
+        ),
         "atomic_bindings_sha256": _sha256(bindings_path),
         "atomic_report_sha256": _sha256(report_path),
         "price_outcomes_observed": False,
