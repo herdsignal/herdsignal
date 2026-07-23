@@ -1,0 +1,108 @@
+{
+  "contract_version": "HERD_STATE_S1",
+  "status": "LOCKED_BEFORE_STATE_STABILITY_RESULTS",
+  "purpose": "Describe current crowding and cycle position without using future returns or authorizing a trade.",
+  "legacy_boundary": {
+    "HERD_V4": "REFERENCE_ONLY_NO_FORMULA_OR_WEIGHT_REUSE",
+    "HERD_V6_1": "REFERENCE_ONLY_NO_FORMULA_OR_WEIGHT_REUSE"
+  },
+  "inputs": {
+    "primary_snapshot_manifest": {
+      "path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json",
+      "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b"
+    },
+    "independent_snapshot_manifest": {
+      "path": "data/snapshots/yf-independent-current-sp500-20260721/manifest.json",
+      "sha256": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781"
+    },
+    "independent_universe": {
+      "path": "data/reports/independent_universe_v1.csv",
+      "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8"
+    }
+  },
+  "observation_contract": {
+    "price": "ADJUSTED_CLOSE",
+    "volume": "RAW_VOLUME",
+    "frequency": "COMPLETED_WEEK_ENDING_FRIDAY",
+    "normalization": "TRAILING_WITHIN_TICKER_PERCENTILE",
+    "normalization_window_sessions": 756,
+    "minimum_normalization_sessions": 252,
+    "future_outcomes_allowed": false,
+    "personal_portfolio_inputs_allowed": false,
+    "business_facts_in_score_allowed": false
+  },
+  "families": [
+    {
+      "id": "PRICE_EXTENSION",
+      "weight": 0.25,
+      "components": [
+        "VOL_NORMALIZED_LOG_DISTANCE_TO_SMA200",
+        "POSITION_IN_TRAILING_252_SESSION_RANGE"
+      ]
+    },
+    {
+      "id": "TREND_POSITION",
+      "weight": 0.25,
+      "components": [
+        "VOL_NORMALIZED_126_SESSION_LOG_RETURN",
+        "VOL_NORMALIZED_252_SESSION_LOG_RETURN"
+      ]
+    },
+    {
+      "id": "RELATIVE_POSITION",
+      "weight": 0.25,
+      "components": [
+        "126_SESSION_STOCK_MINUS_SECTOR_LOG_RETURN",
+        "126_SESSION_SECTOR_MINUS_SPY_LOG_RETURN"
+      ]
+    },
+    {
+      "id": "PARTICIPATION",
+      "weight": 0.25,
+      "components": [
+        "63_SESSION_SIGNED_VOLUME_BALANCE",
+        "SECTOR_PEER_POSITIVE_TREND_BREADTH"
+      ]
+    }
+  ],
+  "context_only": [
+    {
+      "id": "DOWNSIDE_RISK",
+      "formula": "63_SESSION_ANNUALIZED_DOWNSIDE_VOLATILITY_PERCENTILE",
+      "score_weight": 0.0,
+      "authority": "CONTEXT_ONLY"
+    }
+  ],
+  "aggregation": {
+    "within_family": "MEDIAN_OF_COMPONENT_PERCENTILES",
+    "across_families": "FIXED_EQUAL_WEIGHT_MEAN",
+    "required_families": 4,
+    "missing_policy": "DO_NOT_EMIT_STATE_UNTIL_ALL_FAMILIES_AVAILABLE"
+  },
+  "stages": [
+    {"id": "FLEE", "minimum": 0, "maximum": 15},
+    {"id": "SCATTER", "minimum": 15, "maximum": 40},
+    {"id": "CALM", "minimum": 40, "maximum": 60},
+    {"id": "DRIFT", "minimum": 60, "maximum": 75},
+    {"id": "RUSH", "minimum": 75, "maximum": 100}
+  ],
+  "stability_gates": {
+    "primary_minimum_covered_tickers": 50,
+    "independent_minimum_covered_tickers": 350,
+    "minimum_median_weekly_rows": 400,
+    "minimum_score_1_to_99_percentile_span": 55,
+    "minimum_flee_fraction": 0.002,
+    "minimum_rush_fraction": 0.002,
+    "maximum_25_point_weekly_jump_fraction": 0.02,
+    "maximum_pairwise_family_spearman": 0.95,
+    "maximum_long_run_sector_median_spread": 15
+  },
+  "claim_boundary": {
+    "state_display_may_be_approved": true,
+    "direction_prediction": false,
+    "buy_or_profit_take_authority": false,
+    "operational_action_ratio": 0.0,
+    "survivorship_safe": false,
+    "blind_holdout_access": false
+  }
+}

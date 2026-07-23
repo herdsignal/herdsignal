@@ -29,6 +29,29 @@ v4는 `LEGACY_STATE_BASELINE`, v6.1은
 연구자가 관측했으므로 pre-holdout 용도로만 사용하며, 최종 Blind 증거는
 공식·가중치·임계값을 잠근 이후의 prospective shadow 데이터로만 인정한다.
 
+## HERD State S1
+
+- 계약: `data/herd/herd_state_s1.json`
+- 구현: `data/herd/herd_state_s1.py`
+- 결과: `data/reports/herd_state_s1.json`
+- 최신 상태: `data/reports/herd_state_s1_latest.csv`
+
+v4·v6.1 공식과 가중치를 사용하지 않는 outcome-blind 상태 측정기를
+구축했다. 가격 확장, 추세 위치, 시장·섹터 상대 위치, 거래량·동종 기업
+참여를 각각 trailing percentile로 정규화하고 네 가족을 동일 비중으로
+결합한다. 하방 위험은 점수에 넣지 않고 context로만 보존한다.
+
+14년 주 표본 51종목 32,304주와 독립 현재 구성 표본 388종목 249,335주를
+평가했다. 두 표본 모두 coverage, 점수 범위, 극단 상태 발생, 주간 급변,
+가족 중복, 장기 섹터 편향 게이트를 통과해 `STATE_DISPLAY_READY`다.
+최신 섹터 점수 차이는 실제 시장 상태일 수 있어 승격 게이트가 아니라
+진단값으로만 기록한다.
+
+이 판정은 HERD가 설명형 상태 지수로 안정적으로 계산된다는 뜻이다. 미래
+하락 예측, 매수·익절 방향, 완결 사이클 경제성을 증명하지 않으며 운영 행동
+비율은 계속 0%다. 두 표본 모두 현재 구성종목 중심이므로
+`survivorship_safe=false`다.
+
 ## 개인 현금흐름 비교 계약
 
 - 계약: `data/herd/personal_cashflow_benchmark_v1.json`

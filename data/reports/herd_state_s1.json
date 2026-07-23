@@ -1,0 +1,145 @@
+{
+  "report_version": "HERD_STATE_S1",
+  "status": "STATE_DISPLAY_READY",
+  "contract_sha256": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489",
+  "input_manifest_sha256": {
+    "PRIMARY": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b",
+    "INDEPENDENT_CURRENT_CONSTITUENTS": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781"
+  },
+  "panels": {
+    "PRIMARY": {
+      "path": "data/walk_forward/herd-state-s1/primary.csv.gz",
+      "sha256": "0d79aa816ca8cb58569e22c8bddffc2b19987bb9b2c8fd1440f8863b442b5152",
+      "rows": 32304
+    },
+    "INDEPENDENT_CURRENT_CONSTITUENTS": {
+      "path": "data/walk_forward/herd-state-s1/independent_current_constituents.csv.gz",
+      "sha256": "bb5f1f65e4329232ca8149b8ea44eed004e39e46ee5e88fb5458029c99ba072d",
+      "rows": 249335
+    }
+  },
+  "universes": [
+    {
+      "role": "PRIMARY",
+      "rows": 32304,
+      "tickers": 51,
+      "date_start": "2013-10-18",
+      "date_end": "2026-07-17",
+      "median_weekly_rows_per_ticker": 666.0,
+      "score_1_to_99_percentile_span": 86.47488078348438,
+      "stage_fraction": {
+        "SCATTER": 0.30401807825656263,
+        "CALM": 0.2617632491332343,
+        "DRIFT": 0.20022288261515603,
+        "RUSH": 0.15648216939078752,
+        "FLEE": 0.07751362060425954
+      },
+      "weekly_25_point_jump_fraction": 0.008389053987122337,
+      "pairwise_family_spearman": {
+        "PRICE_EXTENSION": {
+          "PRICE_EXTENSION": 1.0,
+          "TREND_POSITION": 0.8929024110563495,
+          "RELATIVE_POSITION": 0.6330459386694712,
+          "PARTICIPATION": 0.7170153717748855
+        },
+        "TREND_POSITION": {
+          "PRICE_EXTENSION": 0.8929024110563495,
+          "TREND_POSITION": 1.0,
+          "RELATIVE_POSITION": 0.6302080916368588,
+          "PARTICIPATION": 0.6141847442074985
+        },
+        "RELATIVE_POSITION": {
+          "PRICE_EXTENSION": 0.6330459386694712,
+          "TREND_POSITION": 0.6302080916368588,
+          "RELATIVE_POSITION": 1.0,
+          "PARTICIPATION": 0.46783965211193496
+        },
+        "PARTICIPATION": {
+          "PRICE_EXTENSION": 0.7170153717748855,
+          "TREND_POSITION": 0.6141847442074985,
+          "RELATIVE_POSITION": 0.46783965211193496,
+          "PARTICIPATION": 1.0
+        }
+      },
+      "maximum_absolute_pairwise_family_spearman": 0.8929024110563495,
+      "long_run_sector_median_spread": 6.644578061314952,
+      "latest_sector_median_spread_diagnostic": 52.30654761904763,
+      "checks": {
+        "minimum_covered_tickers": true,
+        "minimum_median_weekly_rows": true,
+        "minimum_score_span": true,
+        "minimum_flee_fraction": true,
+        "minimum_rush_fraction": true,
+        "maximum_weekly_jump_fraction": true,
+        "maximum_pairwise_family_spearman": true,
+        "maximum_long_run_sector_median_spread": true
+      },
+      "passed": true
+    },
+    {
+      "role": "INDEPENDENT_CURRENT_CONSTITUENTS",
+      "rows": 249335,
+      "tickers": 388,
+      "date_start": "2013-10-18",
+      "date_end": "2026-07-17",
+      "median_weekly_rows_per_ticker": 666.0,
+      "score_1_to_99_percentile_span": 84.92890211640211,
+      "stage_fraction": {
+        "SCATTER": 0.3144845288467323,
+        "CALM": 0.27706098221268577,
+        "DRIFT": 0.20053341889425874,
+        "RUSH": 0.13988810235225702,
+        "FLEE": 0.06803296769406622
+      },
+      "weekly_25_point_jump_fraction": 0.007756632642829928,
+      "pairwise_family_spearman": {
+        "PRICE_EXTENSION": {
+          "PRICE_EXTENSION": 1.0,
+          "TREND_POSITION": 0.8949731144518297,
+          "RELATIVE_POSITION": 0.6299628262776615,
+          "PARTICIPATION": 0.6628742712275861
+        },
+        "TREND_POSITION": {
+          "PRICE_EXTENSION": 0.8949731144518297,
+          "TREND_POSITION": 1.0,
+          "RELATIVE_POSITION": 0.6379885973745396,
+          "PARTICIPATION": 0.5575678103079142
+        },
+        "RELATIVE_POSITION": {
+          "PRICE_EXTENSION": 0.6299628262776615,
+          "TREND_POSITION": 0.6379885973745396,
+          "RELATIVE_POSITION": 1.0,
+          "PARTICIPATION": 0.4022547117681895
+        },
+        "PARTICIPATION": {
+          "PRICE_EXTENSION": 0.6628742712275861,
+          "TREND_POSITION": 0.5575678103079142,
+          "RELATIVE_POSITION": 0.4022547117681895,
+          "PARTICIPATION": 1.0
+        }
+      },
+      "maximum_absolute_pairwise_family_spearman": 0.8949731144518297,
+      "long_run_sector_median_spread": 5.175451941208777,
+      "latest_sector_median_spread_diagnostic": 44.576719576719576,
+      "checks": {
+        "minimum_covered_tickers": true,
+        "minimum_median_weekly_rows": true,
+        "minimum_score_span": true,
+        "minimum_flee_fraction": true,
+        "minimum_rush_fraction": true,
+        "maximum_weekly_jump_fraction": true,
+        "maximum_pairwise_family_spearman": true,
+        "maximum_long_run_sector_median_spread": true
+      },
+      "passed": true
+    }
+  ],
+  "latest_rows": 439,
+  "latest_sha256": "bc227ab4aa6db5a4124a7962ce1c4bc4ff0fbb344b8b28722dc1e0a3a91e4c46",
+  "future_outcomes_read": false,
+  "direction_prediction": false,
+  "buy_or_profit_take_authority": false,
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false,
+  "state_display_ready": true
+}

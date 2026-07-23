@@ -30,6 +30,8 @@ def test_v2_catalog_has_no_conflicting_statuses() -> None:
     catalog = load_catalog(CATALOG)
     assert find_duplicate_chain_memberships(catalog) == {}
     assert catalog["current_decision"]["status"] == "NO_ADOPTABLE_CANDIDATE"
+    assert catalog["current_decision"]["state_measurement"] == "HERD_STATE_S1"
+    assert catalog["current_decision"]["state_display_ready"] is True
     assert catalog["model_boundaries"]["HERD_V4"]["role"] == "LEGACY_REFERENCE_ONLY"
     assert catalog["model_boundaries"]["HERD_V6_1"]["role"] == "LEGACY_REFERENCE_ONLY"
 

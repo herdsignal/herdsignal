@@ -4,6 +4,8 @@
   "current_decision": {
     "status": "NO_ADOPTABLE_CANDIDATE",
     "new_model_name": "UNASSIGNED_UNTIL_PROMOTION",
+    "state_measurement": "HERD_STATE_S1",
+    "state_display_ready": true,
     "blind_holdout_access": false,
     "operational_action_ratio": 0.0
   },
@@ -32,6 +34,9 @@
       "data/herd/herd_vnext_model_charter_v1.json",
       "data/herd/personal_cashflow_benchmark_v1.json",
       "data/herd/research_input_manifest_v2.json",
+      "data/herd/herd_state_s1.json",
+      "data/reports/herd_state_s1.json",
+      "data/reports/herd_state_s1_latest.csv",
       "data/herd/vnext_prospective_shadow_protocol_v1.json",
       "docs/HERD_RESEARCH_STATUS.md",
       "docs/HERD_REPRODUCIBLE_RESEARCH.md"
