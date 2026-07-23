@@ -20,13 +20,29 @@
     "S": 1033
   },
   "economic_class_counts": {
-    "COMPENSATION_OR_AWARD": 1069,
-    "OPEN_MARKET_SALE": 1033,
-    "OPTION_OR_DERIVATIVE": 1014,
+    "RULE16B3_GRANT_AWARD_OR_ACQUISITION": 1033,
+    "OPEN_MARKET_OR_PRIVATE_SALE": 1033,
+    "RULE16B3_DERIVATIVE_EXERCISE_OR_CONVERSION": 969,
+    "TAX_OR_EXERCISE_WITHHOLDING": 427,
+    "BONA_FIDE_GIFT": 58,
+    "DERIVATIVE_CONVERSION": 45,
+    "OPEN_MARKET_OR_PRIVATE_PURCHASE": 30,
+    "RULE16B3_DISPOSITION_TO_ISSUER": 28,
+    "OTHER_REQUIRES_DESCRIPTION": 26,
+    "RULE16B3_DISCRETIONARY_TRANSACTION": 8,
+    "SMALL_ACQUISITION_RULE16A6": 4
+  },
+  "economic_group_counts": {
+    "COMPENSATION": 1033,
+    "SALE": 1033,
+    "DERIVATIVE": 1014,
     "TAX_OR_EXERCISE_WITHHOLDING": 427,
     "GIFT_OR_ESTATE": 58,
-    "OTHER_OR_REQUIRES_FOOTNOTE": 30,
-    "OPEN_MARKET_PURCHASE": 30
+    "PURCHASE": 30,
+    "COMPENSATION_RELATED_DISPOSITION": 28,
+    "OTHER": 26,
+    "BENEFIT_PLAN_TRANSACTION": 8,
+    "OTHER_EXEMPT_ACQUISITION": 4
   },
   "known_code_coverage": 1.0,
   "field_coverage": {
@@ -60,8 +76,8 @@
   "wilson_95_lower_bound": null,
   "accuracy_gate_passed": false,
   "source_manifest_sha256": "331a8fa66a8412b9d3098c5f279f34288409a2fd3a1f4b779354d4cf0ca125f6",
-  "atomic_output_sha256": "1f1ca40b447be6c8102b1f6ed58f416ba20b35793243ecd53a1e897c8c486b96",
-  "review_sample_sha256": "9e89fe468cacb3e218b5d402076d62a08689bc147e79a52265ea9cf2dcbf573d",
+  "atomic_output_sha256": "dd48b77e0676124625ca02283e3b3e83d8311aa9d77dd734d1905d0466102695",
+  "review_sample_sha256": "1dafb55c76d43535915743a451c00e025303b9e63329e97a786effbbb18e5979",
   "rejection_ledger_sha256": "c8e5ebbbbacc125873e0b47b57e2a7fa48630333b87dee87d2e778a2c96d1215",
   "price_outcomes_opened": false,
   "direction_hypothesis_allowed": false,

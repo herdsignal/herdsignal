@@ -49,7 +49,8 @@ def _inputs(tmp_path, corrupt=False):
     protocol.write_text(json.dumps({
         "required_checks": [
             "issuerCik", "reportingOwner", "securityTitle", "transactionDate",
-            "transactionCode", "economicClass", "transactionShares",
+            "transactionCode", "economicClass", "economicGroup",
+            "transactionShares",
             "transactionPricePerShare", "acquiredDisposedCode",
             "sharesOwnedFollowingTransaction", "directOrIndirectOwnership",
             "natureOfOwnership", "footnoteIds", "footnoteText", "isDerivative",

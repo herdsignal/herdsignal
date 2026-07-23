@@ -37,6 +37,7 @@ def test_workbench_binds_locked_atomic_transaction_to_raw_xml(tmp_path):
         "accessionNumber": "x",
         "transactionCode": "P",
         "economicClass": "OPEN_MARKET_PURCHASE",
+        "economicGroup": "PURCHASE",
         "sourceSha256": digest,
         "rawFootnotes": "{}",
         "reviewDecision": "PENDING",

@@ -16,9 +16,9 @@
     "P",
     "S"
   ],
-  "review_queue_sha256": "9e89fe468cacb3e218b5d402076d62a08689bc147e79a52265ea9cf2dcbf573d",
+  "review_queue_sha256": "1dafb55c76d43535915743a451c00e025303b9e63329e97a786effbbb18e5979",
   "source_manifest_sha256": "331a8fa66a8412b9d3098c5f279f34288409a2fd3a1f4b779354d4cf0ca125f6",
-  "protocol_sha256": "aff7fcb30da3e7dead77e7bc3506e26e23aefa2e97e2e453310b5204fd99b15b",
+  "protocol_sha256": "f870fff0d91298c53dbe22388541a697dea88dae150793c765bfee6dd2f4587f",
   "price_outcomes_opened": false,
   "automatic_valid_labels_created": false,
   "direction_hypothesis_allowed": false,

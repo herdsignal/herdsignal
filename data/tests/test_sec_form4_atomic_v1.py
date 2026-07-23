@@ -40,7 +40,8 @@ def metadata():
 def test_parser_keeps_atomic_values_owners_and_footnotes():
     rows = parse_document(XML, metadata())
     assert len(rows) == 2
-    assert rows[0]["economicClass"] == "OPEN_MARKET_PURCHASE"
+    assert rows[0]["economicClass"] == "OPEN_MARKET_OR_PRIVATE_PURCHASE"
+    assert rows[0]["economicGroup"] == "PURCHASE"
     assert rows[0]["transactionPricePerShare"] == "5.5"
     assert rows[0]["directOrIndirectOwnership"] == "D"
     assert rows[0]["tenB5OneStatus"] == "TRUE"

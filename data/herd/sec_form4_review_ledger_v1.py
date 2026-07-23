@@ -17,6 +17,7 @@ IDENTITY_FIELDS = (
     "accessionNumber",
     "transactionCode",
     "economicClass",
+    "economicGroup",
     "sourceSha256",
 )
 ALLOWED_DECISIONS = {"PENDING", "VALID", "INVALID", "AMBIGUOUS"}

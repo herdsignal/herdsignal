@@ -10,6 +10,7 @@
     "transactionDate",
     "transactionCode",
     "economicClass",
+    "economicGroup",
     "transactionShares",
     "transactionPricePerShare",
     "acquiredDisposedCode",
@@ -29,13 +30,16 @@
     "PENDING": "Not reviewed and never counted as valid."
   },
   "classification_rules": {
-    "P": "OPEN_MARKET_PURCHASE",
-    "S": "OPEN_MARKET_SALE",
+    "P": "OPEN_MARKET_OR_PRIVATE_PURCHASE",
+    "S": "OPEN_MARKET_OR_PRIVATE_SALE",
     "F": "TAX_OR_EXERCISE_WITHHOLDING",
-    "A_D_I": "COMPENSATION_OR_AWARD",
-    "C_E_H_K_M_O_X": "OPTION_OR_DERIVATIVE",
-    "G_W": "GIFT_OR_ESTATE",
-    "J_L_U_V_Z": "OTHER_OR_REQUIRES_FOOTNOTE"
+    "A": "RULE16B3_GRANT_AWARD_OR_ACQUISITION",
+    "D": "RULE16B3_DISPOSITION_TO_ISSUER",
+    "I": "RULE16B3_DISCRETIONARY_TRANSACTION",
+    "C_E_H_K_M_O_X": "CODE_SPECIFIC_DERIVATIVE_CLASS",
+    "G": "BONA_FIDE_GIFT",
+    "W": "WILL_OR_DESCENT_DISTRIBUTION",
+    "J_L_U_V_Z": "CODE_SPECIFIC_OTHER_CLASS"
   },
   "ten_b5_1_rules": {
     "explicit_checkbox_true": "TRUE",

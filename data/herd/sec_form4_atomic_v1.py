@@ -17,26 +17,48 @@ from herd.sec_guidance_table_review_gate_v1 import wilson_lower
 
 
 CLASS_BY_CODE = {
-    "P": "OPEN_MARKET_PURCHASE",
-    "S": "OPEN_MARKET_SALE",
-    "A": "COMPENSATION_OR_AWARD",
-    "D": "COMPENSATION_OR_AWARD",
-    "I": "COMPENSATION_OR_AWARD",
+    "P": "OPEN_MARKET_OR_PRIVATE_PURCHASE",
+    "S": "OPEN_MARKET_OR_PRIVATE_SALE",
+    "A": "RULE16B3_GRANT_AWARD_OR_ACQUISITION",
+    "D": "RULE16B3_DISPOSITION_TO_ISSUER",
+    "I": "RULE16B3_DISCRETIONARY_TRANSACTION",
     "F": "TAX_OR_EXERCISE_WITHHOLDING",
-    "C": "OPTION_OR_DERIVATIVE",
-    "E": "OPTION_OR_DERIVATIVE",
-    "H": "OPTION_OR_DERIVATIVE",
-    "M": "OPTION_OR_DERIVATIVE",
-    "O": "OPTION_OR_DERIVATIVE",
-    "X": "OPTION_OR_DERIVATIVE",
-    "K": "OPTION_OR_DERIVATIVE",
+    "C": "DERIVATIVE_CONVERSION",
+    "E": "SHORT_DERIVATIVE_EXPIRATION",
+    "H": "LONG_DERIVATIVE_EXPIRATION_OR_CANCELLATION",
+    "M": "RULE16B3_DERIVATIVE_EXERCISE_OR_CONVERSION",
+    "O": "OUT_OF_MONEY_DERIVATIVE_EXERCISE",
+    "X": "IN_OR_AT_MONEY_DERIVATIVE_EXERCISE",
+    "K": "EQUITY_SWAP_OR_SIMILAR_INSTRUMENT",
+    "G": "BONA_FIDE_GIFT",
+    "W": "WILL_OR_DESCENT_DISTRIBUTION",
+    "J": "OTHER_REQUIRES_DESCRIPTION",
+    "L": "SMALL_ACQUISITION_RULE16A6",
+    "U": "CHANGE_OF_CONTROL_TENDER_DISPOSITION",
+    "V": "VOLUNTARY_EARLY_REPORT",
+    "Z": "VOTING_TRUST_DEPOSIT_OR_WITHDRAWAL",
+}
+GROUP_BY_CODE = {
+    "P": "PURCHASE",
+    "S": "SALE",
+    "A": "COMPENSATION",
+    "D": "COMPENSATION_RELATED_DISPOSITION",
+    "I": "BENEFIT_PLAN_TRANSACTION",
+    "F": "TAX_OR_EXERCISE_WITHHOLDING",
+    "C": "DERIVATIVE",
+    "E": "DERIVATIVE",
+    "H": "DERIVATIVE",
+    "M": "DERIVATIVE",
+    "O": "DERIVATIVE",
+    "X": "DERIVATIVE",
+    "K": "DERIVATIVE",
     "G": "GIFT_OR_ESTATE",
     "W": "GIFT_OR_ESTATE",
-    "J": "OTHER_OR_REQUIRES_FOOTNOTE",
-    "L": "OTHER_OR_REQUIRES_FOOTNOTE",
-    "U": "OTHER_OR_REQUIRES_FOOTNOTE",
-    "V": "OTHER_OR_REQUIRES_FOOTNOTE",
-    "Z": "OTHER_OR_REQUIRES_FOOTNOTE",
+    "J": "OTHER",
+    "L": "OTHER_EXEMPT_ACQUISITION",
+    "U": "CORPORATE_ACTION",
+    "V": "OTHER",
+    "Z": "OTHER",
 }
 REQUIRED_ACCURACY_FIELDS = (
     "transactionCode", "transactionShares", "transactionPricePerShare",
@@ -199,6 +221,9 @@ def parse_document(content: bytes, metadata: dict) -> list[dict]:
             "economicClass": CLASS_BY_CODE.get(
                 code or "", "UNKNOWN_TRANSACTION_CODE"
             ),
+            "economicGroup": GROUP_BY_CODE.get(
+                code or "", "UNKNOWN_TRANSACTION_CODE"
+            ),
             "equitySwapInvolved": _text(coding, "equitySwapInvolved"),
             "transactionShares": _value(amounts, "transactionShares"),
             "transactionPricePerShare": _value(
@@ -302,6 +327,7 @@ def build(
         )
     }
     class_counts = frame["economicClass"].value_counts().to_dict()
+    group_counts = frame["economicGroup"].value_counts().to_dict()
     report = {
         "report_version": "HERD_SEC_FORM4_ATOMIC_V1",
         "status": "SOURCE_REVIEW_PENDING",
@@ -312,6 +338,7 @@ def build(
         "issuers": int(frame["issuerCik"].nunique()),
         "transaction_code_counts": dict(sorted(code_counts.items())),
         "economic_class_counts": class_counts,
+        "economic_group_counts": group_counts,
         "known_code_coverage": known / len(frame),
         "field_coverage": field_coverage,
         "transactions_with_referenced_footnotes": int(
