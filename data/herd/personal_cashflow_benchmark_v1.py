@@ -282,6 +282,18 @@ def compare_with_matched_buy_and_hold(
         contributions=external_cashflows,
     )
     metrics = performance_metrics(strategy, benchmark)
+    elapsed_days = int(
+        (strategy.equity.index[-1] - strategy.equity.index[0]).days
+    )
+    if elapsed_days < 365:
+        for metric in (
+            "cagr",
+            "excess_cagr",
+            "downside_deviation",
+            "sortino",
+            "calmar",
+        ):
+            metrics[metric] = None
     return MatchedCashflowComparison(
         scenario=scenario,
         strategy=strategy,

@@ -114,6 +114,11 @@
     "pbo": "NOT_APPLICABLE_WITHOUT_COMPLETE_STRATEGY_RETURNS",
     "deflated_sharpe": "NOT_APPLICABLE_WITHOUT_COMPLETE_STRATEGY_RETURNS"
   },
+  "input_artifacts": {
+    "evaluation_protocol_sha256": "c86dcdb7a0e54b79b7c23abbfb5dda699a512726484e4ddc261e0b4806771762",
+    "joint_protocol_sha256": "04bf4d743adbae0f4a0553a1331730ba394e62d631b969ce3ca05c43c2ca275a",
+    "joint_panel_sha256": "fab6654e76a3ed211c82ded86a77a5408bedaf44fee14ea11d63d7e2f014ae30"
+  },
   "promotion_blockers": [
     "PATH_MODEL_PREHOLDOUT_GATE_FAILED",
     "NO_COMPLETE_PROFIT_TAKE_REENTRY_CYCLE",

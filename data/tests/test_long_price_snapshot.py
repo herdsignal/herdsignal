@@ -1,4 +1,6 @@
 from datetime import date, datetime, timezone
+import hashlib
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -7,6 +9,7 @@ import pytest
 
 from herd.long_price_snapshot import (
     LongPriceSnapshotError,
+    _canonical,
     create_snapshot,
     verify_snapshot,
 )
@@ -83,3 +86,38 @@ def test_research_snapshot_can_record_individual_equity_failure():
         assert "BBB" not in manifest["completed_tickers"]
         assert "BBB" in manifest["failures"]
         assert manifest["policy"]["allow_equity_failures"] is True
+
+
+def test_snapshot_rejects_unsafe_manifest_path():
+    with TemporaryDirectory() as directory:
+        snapshot = create_snapshot(
+            "unsafe-path", start=date(2012, 1, 3), end=date(2026, 7, 18),
+            equities=["AAA"], sector_etfs=["XLC"], root=Path(directory),
+            collector=_history,
+        )
+        manifest_path = snapshot / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["files"]["AAA"]["path"] = "../outside.csv.gz"
+        body = {
+            key: value
+            for key, value in manifest.items()
+            if key != "snapshot_sha256"
+        }
+        manifest["snapshot_sha256"] = hashlib.sha256(_canonical(body)).hexdigest()
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        with pytest.raises(LongPriceSnapshotError, match="unsafe"):
+            verify_snapshot(snapshot)
+
+
+def test_snapshot_rejects_untracked_price_file():
+    with TemporaryDirectory() as directory:
+        snapshot = create_snapshot(
+            "untracked-file", start=date(2012, 1, 3), end=date(2026, 7, 18),
+            equities=["AAA"], sector_etfs=["XLC"], root=Path(directory),
+            collector=_history,
+        )
+        (snapshot / "prices" / "EXTRA.csv.gz").write_bytes(b"not tracked")
+
+        with pytest.raises(LongPriceSnapshotError, match="untracked"):
+            verify_snapshot(snapshot)

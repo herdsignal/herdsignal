@@ -72,8 +72,12 @@ def _price_frame(prices: pd.DataFrame) -> pd.DataFrame:
     if missing:
         raise ValueError(f"missing price columns: {sorted(missing)}")
     frame = frame[["Open", "Close"]].astype(float).dropna()
-    if frame.empty or (frame <= 0).any().any():
-        raise ValueError("prices must contain positive Open and Close values")
+    if (
+        frame.empty
+        or not np.isfinite(frame.to_numpy()).all()
+        or (frame <= 0).any().any()
+    ):
+        raise ValueError("prices must contain finite positive Open and Close values")
     if frame.index.has_duplicates:
         raise ValueError("price dates must be unique")
     return frame

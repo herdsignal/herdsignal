@@ -103,6 +103,12 @@ class VNextModelStatusServiceTest {
                   "status": "PATH_MODEL_REJECTED_PREHOLDOUT",
                   "decision": "NO_ADOPTABLE_CANDIDATE",
                   "path_model_passed": false,
+                  "protocol": {
+                    "protocol_version": "HERD_VNEXT_PREHOLDOUT_EVALUATION_V1",
+                    "locked": true,
+                    "historical_role": "PRE_HOLDOUT_ONLY",
+                    "operational_action_ratio": 0.0
+                  },
                   "promotion_blockers": [
                     "PATH_MODEL_PREHOLDOUT_GATE_FAILED",
                     "SURVIVORSHIP_SAFE_FALSE"

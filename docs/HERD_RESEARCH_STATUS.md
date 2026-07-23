@@ -65,6 +65,9 @@ v4는 `LEGACY_STATE_BASELINE`, v6.1은
 - 51개 종목, peer 최소 13개, 입력별 결측률은 최대 5.82%다.
 - SEC PIT 결합 중 월말 상태의 당일 공시 누수를 발견해, 월말 스냅샷은 다음
   날짜부터만 사용하고 신호 당일 접수 공시는 제외하도록 수정했다.
+- 패널 생성 시 두 가격 스냅샷의 manifest와 모든 가격 파일 SHA-256을
+  재검증하며, 프로토콜·라벨·episode·기업 상태·스냅샷 해시를 결과에
+  고정한다.
 - peer 집합은 현재 구성종목 기반이므로 `survivorship_safe=false`다.
 - 아래 pre-holdout 판정에서 탈락했다. 패널과 가설은 임계값 재조정을 막기
   위해 `REJECTED` 연구 산출물로 보존한다.
@@ -87,6 +90,8 @@ v4는 `LEGACY_STATE_BASELINE`, v6.1은
 - 이 진단은 재진입되지 않은 현금이라 성공이 아니며 완결 사이클은 0건이다.
 - PBO·Deflated Sharpe는 완결 전략 수익률이 없어 계산하지 않았다. 분류
   확률을 전략 수익률처럼 취급해 수치를 만드는 것은 금지한다.
+- 평가 프로토콜·결합 가설·입력 패널 SHA-256을 결과에 기록해 같은
+  판정이 어느 입력에서 나왔는지 재현할 수 있게 했다.
 - 판정은 `PATH_MODEL_REJECTED_PREHOLDOUT`,
   `NO_ADOPTABLE_CANDIDATE`다. prospective shadow는 시작하지 않으며
   운영 행동 비율은 0이다.

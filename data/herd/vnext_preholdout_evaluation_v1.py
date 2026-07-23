@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 from pathlib import Path
 from statistics import median
@@ -17,6 +18,7 @@ from herd.vnext_competing_path_economic_label_v1 import (
     load_contract as load_label_contract,
 )
 from herd.vnext_joint_model_v1 import (
+    PROTOCOL_PATH as JOINT_PROTOCOL_PATH,
     ROOT,
     _read_snapshot_frames,
     fit_joint_model,
@@ -31,6 +33,10 @@ PROTOCOL_VERSION = "HERD_VNEXT_PREHOLDOUT_EVALUATION_V1"
 
 class VNextPreholdoutError(ValueError):
     """OOS fold·게이트·승격 경계가 완화됐을 때 발생한다."""
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def load_protocol(path: Path = PROTOCOL_PATH) -> dict[str, Any]:
@@ -416,6 +422,11 @@ def run() -> tuple[pd.DataFrame, pd.DataFrame, dict[str, Any], dict[str, Any]]:
         **summary,
         "economic_diagnostic": economics,
         "overfit_metrics": protocol["overfit_metrics"],
+        "input_artifacts": {
+            "evaluation_protocol_sha256": _sha256(PROTOCOL_PATH),
+            "joint_protocol_sha256": _sha256(JOINT_PROTOCOL_PATH),
+            "joint_panel_sha256": _sha256(ROOT / protocol["input_panel"]),
+        },
         "promotion_blockers": blockers,
         "historical_role": "PRE_HOLDOUT_ONLY",
         "survivorship_safe": False,

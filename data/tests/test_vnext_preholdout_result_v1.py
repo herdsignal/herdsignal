@@ -17,3 +17,6 @@ def test_rejected_preholdout_result_cannot_authorize_actions():
     assert report["blind_holdout_access"] is False
     assert report["path_model_passed"] is False
     assert "PATH_MODEL_PREHOLDOUT_GATE_FAILED" in report["promotion_blockers"]
+    assert len(report["input_artifacts"]["evaluation_protocol_sha256"]) == 64
+    assert len(report["input_artifacts"]["joint_protocol_sha256"]) == 64
+    assert len(report["input_artifacts"]["joint_panel_sha256"]) == 64

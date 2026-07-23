@@ -101,3 +101,10 @@ def test_contract_cannot_enable_future_low_reentry():
     contract["forbidden"].remove("USE_FUTURE_LOW_AS_REENTRY")
     with pytest.raises(VNextLabelError, match="weakened"):
         validate_contract(contract)
+
+
+def test_non_finite_execution_price_is_rejected():
+    frame, signal = _frame(list(np.linspace(100.0, 90.0, 126)))
+    frame.loc[frame.index[90], "Open"] = np.inf
+    with pytest.raises(VNextLabelError, match="finite"):
+        evaluate_trim_counterfactual(frame, signal)

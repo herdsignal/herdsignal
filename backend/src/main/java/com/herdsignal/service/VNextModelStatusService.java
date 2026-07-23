@@ -71,11 +71,20 @@ public class VNextModelStatusService {
         requireBoolean(root, "path_model_passed", false);
         requireBoolean(root, "survivorship_safe", false);
         requireBoolean(root, "blind_holdout_access", false);
-
-        JsonNode ratio = root.path("operational_action_ratio");
-        if (!ratio.isNumber() || ratio.decimalValue().compareTo(BigDecimal.ZERO) != 0) {
-            throw new IllegalArgumentException("운영 행동 비율은 0이어야 합니다.");
+        JsonNode protocol = root.path("protocol");
+        if (!protocol.isObject()) {
+            throw new IllegalArgumentException("pre-holdout 프로토콜이 필요합니다.");
         }
+        requireText(
+                protocol,
+                "protocol_version",
+                "HERD_VNEXT_PREHOLDOUT_EVALUATION_V1"
+        );
+        requireText(protocol, "historical_role", "PRE_HOLDOUT_ONLY");
+        requireBoolean(protocol, "locked", true);
+
+        requireZeroRatio(root, "operational_action_ratio");
+        requireZeroRatio(protocol, "operational_action_ratio");
 
         JsonNode blockers = root.path("promotion_blockers");
         if (!blockers.isArray() || blockers.isEmpty()) {
@@ -137,6 +146,14 @@ public class VNextModelStatusService {
         JsonNode value = root.path(field);
         if (!value.isBoolean() || value.asBoolean() != expected) {
             throw new IllegalArgumentException("예상하지 않은 필드: " + field);
+        }
+    }
+
+    private static void requireZeroRatio(JsonNode root, String field) {
+        JsonNode value = root.path(field);
+        if (!value.isNumber()
+                || value.decimalValue().compareTo(BigDecimal.ZERO) != 0) {
+            throw new IllegalArgumentException("운영 행동 비율은 0이어야 합니다.");
         }
     }
 

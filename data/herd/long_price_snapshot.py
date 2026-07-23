@@ -223,13 +223,24 @@ def verify_snapshot(path: Path) -> dict:
         raise LongPriceSnapshotError("manifest checksum mismatch")
     if manifest.get("policy", {}).get("survivorship_safe") is not False:
         raise LongPriceSnapshotError("snapshot cannot claim survivorship safety")
+    expected_paths = set()
     for ticker, metadata in manifest.get("files", {}).items():
-        file = root / metadata["path"]
+        relative = Path(metadata["path"])
+        if relative.is_absolute() or ".." in relative.parts:
+            raise LongPriceSnapshotError(f"{ticker}: unsafe price path")
+        file = root / relative
+        expected_paths.add(relative.as_posix())
         if not file.is_file() or file.stat().st_size != metadata["bytes"] or _sha256(file) != metadata["sha256"]:
             raise LongPriceSnapshotError(f"{ticker}: price checksum mismatch")
         normalized = normalize_history(pd.read_csv(file), ticker)
         if len(normalized) != metadata["rows"]:
             raise LongPriceSnapshotError(f"{ticker}: row count mismatch")
+    actual_paths = {
+        file.relative_to(root).as_posix()
+        for file in (root / "prices").glob("*.csv.gz")
+    }
+    if actual_paths != expected_paths:
+        raise LongPriceSnapshotError("unexpected or untracked price files")
     return manifest
 
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -13,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from herd.validation_universe import TICKER_SECTOR_ETF
+from herd.long_price_snapshot import verify_snapshot
 from herd.vnext_competing_path_economic_label_v1 import (
     classify_competing_path,
     load_contract as load_label_contract,
@@ -102,8 +104,16 @@ def validate_protocol(protocol: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _read_snapshot_frames(snapshot: Path, tickers: set[str]) -> dict[str, pd.DataFrame]:
-    manifest = json.loads((snapshot / "manifest.json").read_text(encoding="utf-8"))
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _read_snapshot_frames(
+    snapshot: Path,
+    tickers: set[str],
+    manifest: dict[str, Any] | None = None,
+) -> dict[str, pd.DataFrame]:
+    manifest = manifest or verify_snapshot(snapshot)
     missing = sorted(tickers - set(manifest["files"]))
     if missing:
         raise VNextJointModelError(f"snapshot missing tickers: {missing[:5]}")
@@ -122,10 +132,11 @@ def _peer_feature_series(
     snapshot: Path,
     universe_path: Path,
     event_dates: pd.DataFrame,
+    manifest: dict[str, Any] | None = None,
 ) -> pd.DataFrame:
     audit = pd.read_csv(universe_path)
     eligible = audit[audit["eligible"].astype(str).str.lower().eq("true")].copy()
-    manifest = json.loads((snapshot / "manifest.json").read_text(encoding="utf-8"))
+    manifest = manifest or verify_snapshot(snapshot)
     rows = []
     for sector_etf, subjects in event_dates.groupby("sector_etf"):
         peers = eligible[eligible["sector_etf"] == sector_etf]["ticker"].tolist()
@@ -240,7 +251,15 @@ def build_joint_panel(
         raise VNextJointModelError("episode sector mapping is incomplete")
 
     subjects = set(episodes["ticker"])
-    subject_frames = _read_snapshot_frames(ROOT / boundary["price_snapshot"], subjects)
+    price_snapshot = ROOT / boundary["price_snapshot"]
+    peer_snapshot = ROOT / boundary["peer_snapshot"]
+    price_manifest = verify_snapshot(price_snapshot)
+    peer_manifest = verify_snapshot(peer_snapshot)
+    subject_frames = _read_snapshot_frames(
+        price_snapshot,
+        subjects,
+        price_manifest,
+    )
     label_contract = load_label_contract()
     labels = []
     for event in episodes.itertuples(index=False):
@@ -268,9 +287,10 @@ def build_joint_panel(
         ["ticker", "episode_id", "signal_date", "sector_etf"]
     ].copy()
     peers = _peer_feature_series(
-        ROOT / boundary["peer_snapshot"],
+        peer_snapshot,
         ROOT / "data/reports/independent_universe_v1.csv",
         peer_input,
+        peer_manifest,
     )
     panel = panel.merge(
         peers[
@@ -316,6 +336,21 @@ def build_joint_panel(
             if panel["peer_count"].notna().any()
             else None
         ),
+        "input_artifacts": {
+            "joint_protocol_sha256": _sha256(PROTOCOL_PATH),
+            "label_contract_sha256": _sha256(
+                ROOT
+                / "data/herd/vnext_competing_path_economic_label_v1.json"
+            ),
+            "episode_source_sha256": _sha256(
+                ROOT / boundary["episode_source"]
+            ),
+            "business_source_sha256": _sha256(
+                ROOT / boundary["business_source"]
+            ),
+            "price_snapshot_sha256": price_manifest["snapshot_sha256"],
+            "peer_snapshot_sha256": peer_manifest["snapshot_sha256"],
+        },
         "historical_role": "PRE_HOLDOUT_ONLY",
         "survivorship_safe": False,
         "operational_action_ratio": 0.0,
@@ -410,6 +445,7 @@ def fit_joint_model(
     beta = np.zeros(x.shape[1], dtype=float)
     regularizer = np.eye(x.shape[1]) * penalty
     regularizer[0, 0] = 0.0
+    converged = False
     for _ in range(int(locked["model"]["maximum_iterations"])):
         logits = np.clip(x @ beta, -35, 35)
         probabilities = 1.0 / (1.0 + np.exp(-logits))
@@ -422,8 +458,11 @@ def fit_joint_model(
             locked["model"]["convergence_tolerance"]
         ):
             beta = next_beta
+            converged = True
             break
         beta = next_beta
+    if not converged:
+        raise VNextJointModelError("fixed logistic model did not converge")
     return FittedJointModel(
         feature_names=tuple(feature_names),
         medians=medians,

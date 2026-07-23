@@ -123,8 +123,15 @@ def _close_series(prices: pd.DataFrame) -> pd.Series:
     close = prices[column].astype(float).copy()
     close.index = pd.to_datetime(close.index)
     close = close.sort_index().dropna()
-    if close.empty or (close <= 0).any() or close.index.has_duplicates:
-        raise VNextLabelError("adjusted close must be positive and unique")
+    if (
+        close.empty
+        or not np.isfinite(close.to_numpy()).all()
+        or (close <= 0).any()
+        or close.index.has_duplicates
+    ):
+        raise VNextLabelError(
+            "adjusted close must be finite, positive, and unique"
+        )
     return close
 
 
@@ -144,8 +151,15 @@ def _adjusted_price_frame(prices: pd.DataFrame) -> pd.DataFrame:
     frame["AdjustedOpen"] = frame["Open"].astype(float) * adjusted_close / raw_close
     frame["AdjustedClose"] = adjusted_close
     frame = frame[["AdjustedOpen", "AdjustedClose"]].dropna()
-    if frame.empty or (frame <= 0).any().any() or frame.index.has_duplicates:
-        raise VNextLabelError("adjusted execution prices must be positive and unique")
+    if (
+        frame.empty
+        or not np.isfinite(frame.to_numpy()).all()
+        or (frame <= 0).any().any()
+        or frame.index.has_duplicates
+    ):
+        raise VNextLabelError(
+            "adjusted execution prices must be finite, positive, and unique"
+        )
     return frame
 
 

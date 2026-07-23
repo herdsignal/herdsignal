@@ -117,6 +117,29 @@ class PersonalCashflowBenchmarkV1Test(unittest.TestCase):
         with self.assertRaisesRegex(CashflowBenchmarkError, "cannot authorize"):
             validate_contract(contract)
 
+    def test_period_shorter_than_one_year_does_not_report_annualized_metrics(self):
+        prices = _prices(periods=120)
+        flows = build_external_cashflows(
+            prices.index,
+            "FIXED_MONTHLY_NEW_CASH",
+            monthly_amount=100.0,
+        )
+        comparison = compare_with_matched_buy_and_hold(
+            "FIXED_MONTHLY_NEW_CASH",
+            prices,
+            pd.Series(1.0, index=prices.index),
+            flows,
+            config=BenchmarkConfig(fee_rate=0.0, slippage_rate=0.0),
+        )
+        for metric in (
+            "cagr",
+            "excess_cagr",
+            "downside_deviation",
+            "sortino",
+            "calmar",
+        ):
+            self.assertIsNone(comparison.comparison_metrics[metric])
+
 
 if __name__ == "__main__":
     unittest.main()
