@@ -1,0 +1,50 @@
+{
+  "report_version": "HERD_VNEXT_JOINT_PANEL_V1",
+  "status": "PRE_HOLDOUT_PANEL_READY",
+  "protocol": {
+    "protocol_version": "HERD_VNEXT_JOINT_HYPOTHESIS_V1",
+    "locked": true,
+    "blocks": [
+      "MARKET_AND_SECTOR_REGIME",
+      "STOCK_EXTENSION_AND_TRANSITION",
+      "PEER_PARTICIPATION",
+      "PIT_BUSINESS_VETO"
+    ],
+    "single_interaction": "STOCK_TREND_DAMAGE_X_PEER_HIGH_EXIT",
+    "l2_penalty": 1.0,
+    "historical_role": "PRE_HOLDOUT_ONLY",
+    "survivorship_safe": false,
+    "operational_action_authority": false
+  },
+  "episodes": 791,
+  "tickers": 51,
+  "path_counts": {
+    "CONTINUATION": 267,
+    "UNRESOLVED": 245,
+    "LARGE_PULLBACK": 198,
+    "TRADABLE_PULLBACK": 49,
+    "STRUCTURAL_BREAK": 32
+  },
+  "fit_eligible_rows": 546,
+  "feature_missing_fraction": {
+    "SECTOR_RS_DAMAGE_DELTA_4W": 0.05815423514538559,
+    "MARKET_STRESS_DELTA_4W": 0.018963337547408345,
+    "TREND_QUALITY_DELTA_4W": 0.0050568900126422255,
+    "DECELERATION_DELTA_4W": 0.0050568900126422255,
+    "HIGH_FAILURE_DELTA_4W": 0.04298356510745891,
+    "PEER_HIGH_EXIT_SHARE_DELTA_4W": 0.039190897597977246,
+    "PEER_ADVANCE_BREADTH_DELTA_4W": 0.0,
+    "BUSINESS_VETO": 0.0,
+    "BUSINESS_UNKNOWN": 0.0
+  },
+  "business_state_counts": {
+    "PASS": 505,
+    "UNKNOWN": 163,
+    "VETO": 123
+  },
+  "minimum_peer_count": 13,
+  "historical_role": "PRE_HOLDOUT_ONLY",
+  "survivorship_safe": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}

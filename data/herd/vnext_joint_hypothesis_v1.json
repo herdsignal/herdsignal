@@ -1,0 +1,86 @@
+{
+  "protocol_version": "HERD_VNEXT_JOINT_HYPOTHESIS_V1",
+  "status": "LOCKED_BEFORE_JOINT_MODEL_RESULTS",
+  "hypothesis": "WITHIN_AN_OBSERVED_RUSH_EPISODE_STOCK_TREND_DAMAGE_AND_PEER_HIGH_EXIT_JOINTLY_INCREASE_ADVERSE_PATH_RISK_AFTER_MARKET_SECTOR_CONTEXT_WHILE_PIT_BUSINESS_STATE_REMAINS_A_NON_DIRECTIONAL_GATE",
+  "population": "USER_SELECTED_LONG_TERM_WINNERS_ALREADY_IN_RUSH_EPISODES",
+  "target": {
+    "positive": ["LARGE_PULLBACK", "STRUCTURAL_BREAK"],
+    "negative": ["CONTINUATION", "TRADABLE_PULLBACK"],
+    "reported_but_not_fitted": ["UNRESOLVED", "RIGHT_CENSORED"],
+    "horizon_sessions": 126
+  },
+  "blocks": {
+    "MARKET_AND_SECTOR_REGIME": [
+      "SECTOR_RS_DAMAGE_DELTA_4W",
+      "MARKET_STRESS_DELTA_4W"
+    ],
+    "STOCK_EXTENSION_AND_TRANSITION": [
+      "TREND_QUALITY_DELTA_4W",
+      "DECELERATION_DELTA_4W",
+      "HIGH_FAILURE_DELTA_4W"
+    ],
+    "PEER_PARTICIPATION": [
+      "PEER_HIGH_EXIT_SHARE_DELTA_4W",
+      "PEER_ADVANCE_BREADTH_DELTA_4W"
+    ],
+    "PIT_BUSINESS_VETO": [
+      "BUSINESS_VETO",
+      "BUSINESS_UNKNOWN"
+    ]
+  },
+  "single_interaction": {
+    "id": "STOCK_TREND_DAMAGE_X_PEER_HIGH_EXIT",
+    "formula": "NEGATIVE_Z_TREND_QUALITY_DELTA_4W_X_Z_PEER_HIGH_EXIT_SHARE_DELTA_4W",
+    "economic_reason": "A subject trend break is more credible when related companies also leave their highs."
+  },
+  "model": {
+    "family": "RIDGE_LOGISTIC_REGRESSION",
+    "l2_penalty": 1.0,
+    "maximum_iterations": 100,
+    "convergence_tolerance": 1e-08,
+    "numeric_scaling": "TRAIN_MEDIAN_AND_IQR",
+    "missing_policy": "TRAIN_MEDIAN_IMPUTATION_WITH_BUSINESS_UNKNOWN_EXPLICIT",
+    "hyperparameter_search": false,
+    "probability_cutoff_is_not_an_action_threshold": true
+  },
+  "data_boundary": {
+    "episode_source": "data/reports/rush_transition_panel_v1.csv",
+    "price_snapshot": "data/snapshots/yf-long14-actions-sector-20260721",
+    "peer_snapshot": "data/snapshots/yf-independent-current-sp500-20260721",
+    "peer_universe": "CURRENT_CONSTITUENTS_EXCLUDING_ORIGINAL_51",
+    "business_source": "data/reports/business_state_features_v2.csv",
+    "historical_role": "PRE_HOLDOUT_ONLY",
+    "survivorship_safe": false,
+    "final_blind_evidence": "PROSPECTIVE_SHADOW_ONLY"
+  },
+  "ablation": {
+    "full_model_required": true,
+    "remove_each_block_once": true,
+    "interaction_removed_with_either_parent_block": true,
+    "business_block_may_only_improve_classification_or_fail_closed": true
+  },
+  "promotion_boundary": {
+    "this_part_authorizes_actions": false,
+    "this_part_opens_blind_holdout": false,
+    "part_e_oos_gate_required": true
+  },
+  "forbidden": [
+    "RETUNE_LEGACY_THRESHOLDS",
+    "SEARCH_L2_PENALTY",
+    "ADD_INTERACTIONS_AFTER_RESULTS",
+    "USE_PATH_LABEL_AS_FEATURE",
+    "USE_PIT_FACT_ACCEPTED_AFTER_SIGNAL",
+    "TREAT_BUSINESS_VETO_AS_STANDALONE_SELL",
+    "DROP_NON_TARGET_PATH_COUNTS_FROM_REPORT",
+    "CLAIM_SURVIVORSHIP_SAFE",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_PROSPECTIVE_SHADOW_OUTCOME"
+  ],
+  "research_basis": [
+    "https://www.nber.org/papers/w20439",
+    "https://www.nber.org/papers/w20660",
+    "https://www.nber.org/papers/w23191",
+    "https://www.nber.org/reporter-2020-02/behavioral-biases-analysts-and-investors",
+    "https://www.nber.org/papers/w10852"
+  ]
+}
