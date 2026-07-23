@@ -1,0 +1,29 @@
+{
+  "report_version": "herd-sec-guidance-atomic-bindings-v1",
+  "review_rows_audited": 725,
+  "valid_rows_promoted": 557,
+  "distinct_tickers": 100,
+  "distinct_accessions": 409,
+  "semantic_locator_collision_rows": 27,
+  "pair_eligible_rows": 306,
+  "direction_authorized_rows": 0,
+  "veto_authorized_rows": 0,
+  "unreviewed_v10_rows_promoted": 0,
+  "source_fact_authority_only": true,
+  "ready_for_revision_pair_build": true,
+  "ready_for_direction_research": false,
+  "ledger_hashes": {
+    "data/reports/sec_guidance_block_reviewed_v1.csv": "3bcbc33cf8a2e31daad86ab1efe0ac00613f8600d8ad6b4567845bb942c19448",
+    "data/reports/sec_guidance_structure_reviewed_v2.csv": "17fdf4b78a4cbd25736b98d819353836b3a628b2f8844f55cbd6e00cc87fd450",
+    "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv": "d0311fb80cc79251d5d68dba60918c153dad8e6455f09b2c6d5265223d3e56c7",
+    "data/reports/sec_guidance_structure_v4_reviewed.csv": "4dc9d06815f00c8cad99ce98ed1d8f14b3b119332318c0fc28f446d5b0b7ea17",
+    "data/reports/sec_guidance_structure_v5_reviewed.csv": "e68915245fadfca3d682664fe9a0cf3dc0f5758201c807fe8bc95d5f0ee92767",
+    "data/reports/sec_guidance_structure_v6_reviewed.csv": "57fb33071afcdbc2f5d458f53d8002893d847b38e1b59e77241a8e6236792a63",
+    "data/reports/sec_guidance_structure_v7_reviewed.csv": "cb1b3c5177936ad1c6f00da992980fabb272b537d40c1d46f398db1269c6706a",
+    "data/reports/sec_guidance_structure_v8_reviewed.csv": "f1c6671aaa4cd7bd12001b72701420b2181a30bd6c4cab592e6a66b4dd25325f",
+    "data/reports/sec_guidance_structure_v9_reviewed.csv": "0f8d57c5a3efbf9e97eff7e7e715ae52be53b19e7b21fc799f888875b4691b92"
+  },
+  "operational_action_ratio": 0.0,
+  "protocol_sha256": "c710bd106b51ec20705c4196ec34cc0c6aee96c9751f15a87a5344bb61fee2dd",
+  "bindings_sha256": "31fdaf629d8123eb5c49ef15bf6418438325116b084aa50be1e096981d903a10"
+}
