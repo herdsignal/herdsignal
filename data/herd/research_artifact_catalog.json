@@ -36,8 +36,8 @@
     "data/reports/rush_downside_asymmetry_oos_v1.json",
     "data/herd/failed_price_information_audit_v1.json",
     "data/reports/failed_price_information_audit_v1.json",
-    "data/herd/leading_information_readiness_v2.json",
-    "data/reports/leading_information_readiness_v2.json",
+    "data/herd/public_leading_data_feasibility_v1.json",
+    "data/reports/public_leading_data_feasibility_v1.json",
     "data/herd/sec_form4_corpus_v1.json",
     "data/herd/sec_form4_review_protocol_v1.json",
     "data/reports/sec_form4_accession_catalog_v1.json",
@@ -80,8 +80,8 @@
   "families": [
     {
       "status": "ACTIVE",
-      "patterns": ["herd_vnext_model_charter_v1*", "personal_cashflow_benchmark_v1*", "vnext_competing_path_economic_label_v1*", "vnext_preholdout_evaluation_v1*", "vnext_preholdout_folds_v1*", "vnext_preholdout_predictions_v1*", "vnext_prospective_shadow_protocol_v1*", "sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "sec_guidance_atomic_census_v2*", "research_input_manifest_v2*", "public_research_contract*", "failed_price_information_audit_v1*", "leading_information_readiness_v2*", "sec_form4_corpus_v1*", "sec_form4_accession_catalog_v1*", "sec_form4_atomic_v1*", "sec_form4_source_review_v1*", "sec_form4_source_review_gate_v1*", "sec_form4_review_protocol_v1*", "sec_form4_review_workbench_v1*", "sec_form4_structural_audit_v1*", "sec_form4_review_ledger_v1*", "sec_form4_coverage_audit_v1*", "sec_form4_issuer_year_coverage_v1*", "sec_form4_research_census_v2*", "sec_form4_census_gate_v2*", "sec_form4_issuer_year_coverage_v2*", "sec_form4_bulk_primary_crosscheck_v2*"],
-      "note": "vNext 최상위 계약과 현재 탈락 판정, 공개 연구 경계, SEC 가이던스 atomic source-review census, Form 4 원문 정확도와 공식 벌크 census coverage 게이트"
+      "patterns": ["herd_vnext_model_charter_v1*", "personal_cashflow_benchmark_v1*", "vnext_competing_path_economic_label_v1*", "vnext_preholdout_evaluation_v1*", "vnext_preholdout_folds_v1*", "vnext_preholdout_predictions_v1*", "vnext_prospective_shadow_protocol_v1*", "sec_guidance_structure_parser_v7*", "sec_guidance_structure_v7*", "sec_guidance_v7_independent*", "sec_guidance_atomic_census_v2*", "research_input_manifest_v2*", "public_research_contract*", "public_leading_data_feasibility_v1*", "failed_price_information_audit_v1*", "sec_form4_corpus_v1*", "sec_form4_accession_catalog_v1*", "sec_form4_atomic_v1*", "sec_form4_source_review_v1*", "sec_form4_source_review_gate_v1*", "sec_form4_review_protocol_v1*", "sec_form4_review_workbench_v1*", "sec_form4_structural_audit_v1*", "sec_form4_review_ledger_v1*", "sec_form4_coverage_audit_v1*", "sec_form4_issuer_year_coverage_v1*", "sec_form4_research_census_v2*", "sec_form4_census_gate_v2*", "sec_form4_issuer_year_coverage_v2*", "sec_form4_bulk_primary_crosscheck_v2*"],
+      "note": "vNext 최상위 계약과 현재 탈락 판정, 최신 공개 선행정보 가능성, SEC 가이던스 atomic source-review census, Form 4 원문 정확도와 공식 벌크 census coverage 게이트"
     },
     {
       "status": "DATA_PIPELINE",
@@ -90,7 +90,7 @@
     },
     {
       "status": "LEGACY",
-      "patterns": ["backtest_v*", "legacy_*", "validation_v2*", "evidence_admission_registry.json", "evidence_admission_registry_v[2-8].json"],
+      "patterns": ["backtest_v*", "legacy_*", "validation_v2*", "leading_information_feasibility_v1*", "leading_information_readiness_v2*", "evidence_admission_registry.json", "evidence_admission_registry_v[2-8].json"],
       "note": "운영·신규 연구에서 import 금지, 재현용 보존"
     },
     {

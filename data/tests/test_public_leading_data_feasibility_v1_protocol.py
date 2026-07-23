@@ -35,6 +35,11 @@ def test_prior_research_and_public_contract_hashes_are_immutable():
 
 def test_source_boundaries_match_official_public_tier_claims():
     sources = {source["id"]: source for source in _protocol()["sources"]}
+    assert all(
+        url.startswith("https://")
+        for source in sources.values()
+        for url in source["official_urls"]
+    )
     finra = sources["FINRA_EXCHANGE_LISTED_SHORT_INTEREST"]
     assert finra["pit_start"] == "2021-06-01"
     assert finra["publication_lag_class"] == "WITHIN_10_BUSINESS_DAYS"

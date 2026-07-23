@@ -421,6 +421,19 @@ PYTHONPATH=data data/.venv/bin/python \
 반대이고 4개 시대 중 1개만 방향이 일치해 가설은 탈락했다. 같은 표본에서
 하향 임계값이나 기간을 조정하지 않는다.
 
+탈락한 Form 4와 가이던스를 같은 표본에서 재조정하지 않고, 다음 공개
+정보원의 실제 연구 가능성을 아래 명령으로 판정한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.public_leading_data_feasibility_v1 \
+  --output data/reports/public_leading_data_feasibility_v1.json
+```
+
+FINRA는 약 5.14년이라 최근 민감도·prospective shadow만 허용하고, 13F는
+최대 45일 지연 때문에 느린 context로 제한한다. 전체 옵션 surface는 유료,
+무료 Cboe 거래량은 IV·skew 대체가 아니므로 1차 OOS 준비 정보원은 0개다.
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.

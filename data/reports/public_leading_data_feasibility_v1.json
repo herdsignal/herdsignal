@@ -1,0 +1,176 @@
+{
+  "report_version": "PUBLIC_LEADING_DATA_FEASIBILITY_V1",
+  "status": "NO_PUBLIC_SOURCE_READY_FOR_PRIMARY_OOS",
+  "protocol_sha256": "64624ac69750632d13a48b9f89ebc7491b6d108d96ce47054fcca442f29fb443",
+  "as_of": "2026-07-23",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "prerequisites": [
+    {
+      "id": "FORM4_PURCHASE_SUPPORT",
+      "path": "data/reports/sec_form4_insider_purchase_oos_v1.json",
+      "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69",
+      "verified": true,
+      "decision": "REJECT_INSIDER_PURCHASE_SUPPORT_HYPOTHESIS"
+    },
+    {
+      "id": "MANAGEMENT_GUIDANCE_LOWER",
+      "path": "data/reports/sec_guidance_lower_oos_v2.json",
+      "sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d",
+      "verified": true,
+      "decision": "REJECT_GUIDANCE_LOWER_HYPOTHESIS"
+    },
+    {
+      "id": "PUBLIC_RESEARCH_CONTRACT",
+      "path": "data/herd/public_research_contract.json",
+      "sha256": "989d3922c5a9aeb0ee1f46be40a4b32bc88deb4c43c58590aa29e9da71f93a12",
+      "verified": true
+    }
+  ],
+  "source_decisions": [
+    {
+      "source": "FINRA_EXCHANGE_LISTED_SHORT_INTEREST",
+      "status": "PROSPECTIVE_SHADOW_AND_RECENT_SENSITIVITY_ONLY",
+      "history_years": 5.1417893591244175,
+      "potential_non_overlapping_eras": 2,
+      "era_length_years": 2.5,
+      "pit_start": "2021-06-01",
+      "pit_end": "2026-07-23",
+      "cost_class": "FREE_PUBLIC_DOWNLOAD",
+      "publication_lag_class": "WITHIN_10_BUSINESS_DAYS",
+      "sampling_frequency": "TWICE_MONTHLY",
+      "local_corpora": [],
+      "gate_checks": {
+        "minimum_point_in_time_history_years": false,
+        "minimum_non_overlapping_eras": false,
+        "free_public_research_use": true,
+        "security_level_observations": true,
+        "publication_or_acceptance_timestamp": true,
+        "information_lag": true,
+        "historical_revision_preservation": false,
+        "point_in_time_identifier_mapping": false,
+        "local_immutable_corpus": false,
+        "semantic_fit_for_intended_hypothesis": true
+      },
+      "primary_oos_ready": false,
+      "allowed_role": "PROSPECTIVE_SHADOW_AND_RECENT_SENSITIVITY_ONLY",
+      "direction_hypothesis_allowed": false,
+      "operational_action_authority": false
+    },
+    {
+      "source": "SEC_13F_INSTITUTIONAL_HOLDINGS",
+      "status": "SLOW_CONTEXT_ONLY",
+      "history_years": 13.081719679391089,
+      "potential_non_overlapping_eras": 5,
+      "era_length_years": 2.5,
+      "pit_start": "2013-05-01",
+      "pit_end": "2026-05-31",
+      "cost_class": "FREE_PUBLIC_DOWNLOAD",
+      "publication_lag_class": "UP_TO_45_CALENDAR_DAYS",
+      "sampling_frequency": "QUARTERLY",
+      "local_corpora": [],
+      "gate_checks": {
+        "minimum_point_in_time_history_years": true,
+        "minimum_non_overlapping_eras": true,
+        "free_public_research_use": true,
+        "security_level_observations": true,
+        "publication_or_acceptance_timestamp": true,
+        "information_lag": false,
+        "historical_revision_preservation": true,
+        "point_in_time_identifier_mapping": false,
+        "local_immutable_corpus": false,
+        "semantic_fit_for_intended_hypothesis": true
+      },
+      "primary_oos_ready": false,
+      "allowed_role": "SLOW_CROWDING_CONTEXT_ONLY",
+      "direction_hypothesis_allowed": false,
+      "operational_action_authority": false
+    },
+    {
+      "source": "CBOE_EQUITY_OPTION_SURFACE",
+      "status": "BLOCKED_BY_PUBLIC_RESEARCH_TIER",
+      "history_years": 14.557451556157895,
+      "potential_non_overlapping_eras": 5,
+      "era_length_years": 2.5,
+      "pit_start": "2012-01-01",
+      "pit_end": "2026-07-23",
+      "cost_class": "LICENSED_PAID_HISTORICAL_PRODUCT",
+      "publication_lag_class": "NEXT_SESSION_OR_VENDOR_DELIVERY",
+      "sampling_frequency": "DAILY",
+      "local_corpora": [],
+      "gate_checks": {
+        "minimum_point_in_time_history_years": true,
+        "minimum_non_overlapping_eras": true,
+        "free_public_research_use": false,
+        "security_level_observations": true,
+        "publication_or_acceptance_timestamp": true,
+        "information_lag": true,
+        "historical_revision_preservation": true,
+        "point_in_time_identifier_mapping": false,
+        "local_immutable_corpus": false,
+        "semantic_fit_for_intended_hypothesis": true
+      },
+      "primary_oos_ready": false,
+      "allowed_role": "BLOCKED_UNTIL_LICENSED_DATA_IS_EXPLICITLY_APPROVED",
+      "direction_hypothesis_allowed": false,
+      "operational_action_authority": false
+    },
+    {
+      "source": "CBOE_FREE_EQUITY_OPTION_VOLUME",
+      "status": "REJECTED_AS_INCOMPLETE_OPTION_SURFACE_PROXY",
+      "history_years": 6.891311936590074,
+      "potential_non_overlapping_eras": 2,
+      "era_length_years": 2.5,
+      "pit_start": "2019-09-01",
+      "pit_end": "2026-07-23",
+      "cost_class": "FREE_PUBLIC_DOWNLOAD",
+      "publication_lag_class": "END_OF_PERIOD_DOWNLOAD",
+      "sampling_frequency": "DAILY_OR_AGGREGATED",
+      "local_corpora": [],
+      "gate_checks": {
+        "minimum_point_in_time_history_years": false,
+        "minimum_non_overlapping_eras": false,
+        "free_public_research_use": true,
+        "security_level_observations": true,
+        "publication_or_acceptance_timestamp": true,
+        "information_lag": false,
+        "historical_revision_preservation": false,
+        "point_in_time_identifier_mapping": false,
+        "local_immutable_corpus": false,
+        "semantic_fit_for_intended_hypothesis": false
+      },
+      "primary_oos_ready": false,
+      "allowed_role": "REJECT_AS_OPTION_CROWDING_SURFACE_PROXY",
+      "direction_hypothesis_allowed": false,
+      "operational_action_authority": false
+    }
+  ],
+  "ready_primary_sources": [],
+  "ready_primary_source_count": 0,
+  "sec_13f_master_inventory": {
+    "master_manifest_sha256": "6d3ae55f5f8049a79860ca11f01040333239ecf95ee0f3406cc84e7dcbda89f1",
+    "inventory_cache": "data/reports/leading_information_readiness_v2.json",
+    "inventory_cache_sha256": "1f29c2f3de1acf51965d68d04fbd8f001b37be045a843d516d8ac70893bf5e84",
+    "forms": {
+      "13F-HR": 252112,
+      "13F-HR/A": 11980
+    },
+    "filings": 264092,
+    "first_filed_date": "2016-07-01",
+    "last_filed_date": "2026-07-17",
+    "warning": "This proves filing abundance only. Manager CIK and raw master rows are not an issuer-linked point-in-time holdings corpus."
+  },
+  "finra_recent_lane_feasible": true,
+  "new_direction_hypothesis_preregistered": false,
+  "price_outcomes_opened": false,
+  "herd_formula_change_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_authority": false,
+  "operational_action_ratio": 0.0,
+  "next_priority": "BUILD_FINRA_SHORT_INTEREST_IMMUTABLE_CENSUS_FOR_RECENT_SENSITIVITY_AND_PROSPECTIVE_SHADOW_ONLY",
+  "stop_conditions": [
+    "DO_NOT_CALL_FINRA_RECENT_LANE_PRIMARY_OOS",
+    "DO_NOT_USE_13F_AS_RARE_TIMING_TRIGGER",
+    "DO_NOT_SUBSTITUTE_FREE_OPTION_VOLUME_FOR_IV_OR_SKEW",
+    "DO_NOT_CHANGE_HERD_OR_ACTION_RATIO"
+  ]
+}
