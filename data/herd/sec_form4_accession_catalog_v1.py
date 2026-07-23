@@ -122,9 +122,10 @@ def build_catalog(protocol_path: Path = PROTOCOL) -> tuple[pd.DataFrame, pd.Data
                         continue
                     reporting_owner_cik = f"{int(accession.split('-')[0]):010d}"
                     accession_compact = accession.replace("-", "")
+                    archive_document = Path(primary).name
                     source_url = (
                         f"https://www.sec.gov/Archives/edgar/data/{int(reporting_owner_cik)}/"
-                        f"{accession_compact}/{primary}"
+                        f"{accession_compact}/{archive_document}"
                     )
                     key = (issuer_cik, accession)
                     candidate = {

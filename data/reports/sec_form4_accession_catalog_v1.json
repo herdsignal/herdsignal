@@ -27,6 +27,6 @@
   "operational_action_authority": false,
   "blind_holdout_access": false,
   "next_decision": "COLLECT_HASH_LOCKED_PRIMARY_XML",
-  "catalog_sha256": "6860571a136ac7c581c953b0ea40841bc44fb452d3972f4bade8f7656848c3e5",
-  "review_sample_sha256": "a825dce2645458327c34714791ca311e4623eff88ee1fe00355d966910f0113f"
+  "catalog_sha256": "32ee9d45a31b5188921d2101da4f704747b647b0a7ec55cbfe503f419018abe4",
+  "review_sample_sha256": "fb41ade29d57acc7b2605106d651df710fcb1578a216fd4ebd62ed85822c7fab"
 }

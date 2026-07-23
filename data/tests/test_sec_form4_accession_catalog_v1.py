@@ -1,7 +1,11 @@
 import json
 from pathlib import Path
 
-from herd.sec_form4_accession_catalog_v1 import _filing_rows, load_protocol
+from herd.sec_form4_accession_catalog_v1 import (
+    _filing_rows,
+    _selected_filing_rows,
+    load_protocol,
+)
 
 
 def test_protocol_is_development_only_and_keeps_footnotes():
@@ -28,3 +32,21 @@ def test_filing_rows_rejects_misaligned_columns():
         assert "inconsistent" in str(error)
     else:
         raise AssertionError("misaligned SEC columns must fail closed")
+
+
+def test_selected_rows_filter_without_materializing_unrelated_filings():
+    rows = list(_selected_filing_rows(
+        {
+            "form": ["8-K", "4"],
+            "filingDate": ["2024-01-01", "2024-01-02"],
+            "primaryDocument": ["report.htm", "xslF345X05/form4.xml"],
+        },
+        {"4", "4/A"},
+        "2024-01-01",
+        "2024-12-31",
+    ))
+    assert rows == [{
+        "form": "4",
+        "filingDate": "2024-01-02",
+        "primaryDocument": "xslF345X05/form4.xml",
+    }]
