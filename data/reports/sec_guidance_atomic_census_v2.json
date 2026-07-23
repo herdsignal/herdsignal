@@ -1,0 +1,31 @@
+{
+  "report_version": "herd-sec-guidance-atomic-census-v2",
+  "status": "LOCKED_PENDING_SOURCE_REVIEW",
+  "existing_pair_eligible_bindings": 306,
+  "existing_revision_pairs": 80,
+  "existing_revision_pair_tickers": 24,
+  "raw_candidate_rows": 530,
+  "strict_unique_candidate_rows": 225,
+  "locked_review_rows": 159,
+  "locked_review_tickers": 14,
+  "locked_review_accessions": 85,
+  "potential_revision_pairs_if_all_valid": 183,
+  "potential_revision_pair_tickers_if_all_valid": 31,
+  "potential_pair_uplift_if_all_valid": 103,
+  "coverage_target_revision_pairs": 150,
+  "source_documents_available": 159,
+  "all_rows_pending": true,
+  "source_review_complete": false,
+  "price_outcomes_observed": false,
+  "direction_hypothesis_preregistered": false,
+  "operational_action_ratio": 0.0,
+  "input_hashes": {
+    "data/reports/sec_guidance_atomic_bindings_v1.csv": "31fdaf629d8123eb5c49ef15bf6418438325116b084aa50be1e096981d903a10",
+    "data/reports/sec_guidance_structure_v10_candidates.csv": "1fd0dd4546f07bfc437cef4be10b117bd8f10ed47f6cb3d68ea898bd5a783d8c",
+    "data/reports/sec_guidance_structure_v10_final_candidates.csv": "a25331c661d73aa5b9296bc89759ebe769bec4187dc178b6fda8566404e52723"
+  },
+  "next_decision": "COMPLETE_ATOMIC_SOURCE_REVIEW",
+  "protocol_sha256": "218792c414647f093789aaee6200d6f1ebc52f7ab0bfbb2db65238146171e66e",
+  "review_sha256": "153638d7ac77891e8a7f856e7937b9a9f36b37cd895d4c6107fe1bf3a6ca46d1",
+  "workbench_sha256": "5efc8d533eab7c7678869ed9e37ed7557ebdb4fac95831ad8010a7e169832f1e"
+}

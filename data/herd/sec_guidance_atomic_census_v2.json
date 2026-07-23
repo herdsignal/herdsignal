@@ -1,0 +1,97 @@
+{
+  "protocol_version": "HERD_SEC_GUIDANCE_ATOMIC_CENSUS_V2",
+  "status": "LOCKED_BEFORE_SOURCE_REVIEW_AND_PRICE_JOIN",
+  "objective": "Expand source-reviewed management-guidance revision coverage without another parser version or any price-outcome access.",
+  "economic_information": "MANAGEMENT_ISSUED_FORWARD_EXPECTATION_CHANGE",
+  "existing_atomic_bindings": {
+    "path": "data/reports/sec_guidance_atomic_bindings_v1.csv",
+    "sha256": "31fdaf629d8123eb5c49ef15bf6418438325116b084aa50be1e096981d903a10"
+  },
+  "candidate_sources": [
+    {
+      "path": "data/reports/sec_guidance_structure_v10_candidates.csv",
+      "sha256": "1fd0dd4546f07bfc437cef4be10b117bd8f10ed47f6cb3d68ea898bd5a783d8c"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v10_final_candidates.csv",
+      "sha256": "a25331c661d73aa5b9296bc89759ebe769bec4187dc178b6fda8566404e52723"
+    }
+  ],
+  "source_corpus_glob": "data/reference/sec/sec-8k-guidance-*",
+  "required_semantics": [
+    "ticker",
+    "cik",
+    "accession_number",
+    "accepted_at",
+    "source_url",
+    "source_sha256",
+    "metric",
+    "fiscal_period",
+    "accounting_basis",
+    "metric_subtype",
+    "unit",
+    "lower_bound",
+    "upper_bound",
+    "source_excerpt"
+  ],
+  "pair_identity": [
+    "cik",
+    "metric",
+    "fiscal_period",
+    "accounting_basis",
+    "metric_subtype",
+    "unit"
+  ],
+  "candidate_contract": {
+    "numeric_role": "CURRENT_GUIDANCE_RANGE",
+    "semantic_role": "CURRENT_GUIDANCE_RANGE",
+    "excluded_accounting_basis": [
+      "UNSPECIFIED"
+    ],
+    "excluded_metric_subtype": [
+      "",
+      "UNSPECIFIED"
+    ],
+    "review_decisions": [
+      "VALID",
+      "INVALID",
+      "AMBIGUOUS"
+    ],
+    "all_rows_start_as": "PENDING"
+  },
+  "coverage_gate": {
+    "minimum_source_reviewed_revision_pairs": 150,
+    "minimum_distinct_tickers": 20,
+    "minimum_valid_review_rows": 100,
+    "minimum_wilson_95_lower_bound": 0.9
+  },
+  "point_in_time_rule": {
+    "available_at": "EDGAR_ACCEPTED_AT",
+    "earliest_price_session": "FIRST_TRADING_SESSION_STRICTLY_AFTER_ACCEPTED_AT",
+    "same_day_price_forbidden": true
+  },
+  "authority": {
+    "source_fact": false,
+    "direction": false,
+    "sell": false,
+    "add_buy": false,
+    "herd_weight": false,
+    "operational_action": false
+  },
+  "forbidden": [
+    "OPEN_PRICE_OUTCOMES_BEFORE_SOURCE_REVIEW_AND_PAIR_COVERAGE_PASS",
+    "AUTO_PROMOTE_PARSER_CANDIDATE_TO_ATOMIC_FACT",
+    "LOWER_150_PAIR_OR_20_TICKER_GATE_AFTER_SEEING_COVERAGE",
+    "CREATE_PARSER_V11_FOR_THE_SAME_DOCUMENTS",
+    "PAIR_ACROSS_METRIC_PERIOD_BASIS_SUBTYPE_OR_UNIT",
+    "TREAT_GUIDANCE_OMISSION_AS_DOWNGRADE",
+    "USE_ANALYST_CONSENSUS_WITHOUT_POINT_IN_TIME_LICENSED_DATA",
+    "CHANGE_HERD_SCORE_OR_ACTION_RATIO",
+    "OPEN_BLIND_HOLDOUT"
+  ],
+  "research_basis": {
+    "sec_form_8k": "https://www.sec.gov/info/edgar/forms/form8-k.pdf",
+    "sec_edgar_timestamp": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "management_forecast_form": "https://doi.org/10.1016/j.adiac.2011.01.005"
+  }
+}

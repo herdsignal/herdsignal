@@ -364,6 +364,24 @@ PYTHONPATH=data data/.venv/bin/python \
   data/reference/sec/sec-form4-bulk-v2-2012q1-2026q2-20260723
 ```
 
+Form 4 가설 탈락 뒤에는 같은 표본의 기간이나 거래 분류를 조정하지 않는다.
+경제적으로 독립된 경영진 전망 변화는 SEC 가이던스 atomic fact로만
+확장한다. V10 자동 파서 후보는 사실로 승격하지 않고, 가격 결과를 열기 전에
+원문 검수 모집단과 해시를 먼저 잠근다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_guidance_atomic_census_v2 \
+  --review data/reports/sec_guidance_atomic_census_v2_review.csv \
+  --report data/reports/sec_guidance_atomic_census_v2.json \
+  --workbench data/reports/sec_guidance_atomic_census_v2_workbench.html
+```
+
+워크벤치 159행은 모두 `PENDING`으로 시작한다. 지표·전망기간·회계기준·
+subtype·단위·현재 범위가 SEC 원문에서 모두 확인된 행만 `VALID`로 판정한다.
+검수 뒤 연속 수정쌍 150개·20개 종목과 Wilson 95% 하한 90%를 모두
+충족하기 전에는 방향 라벨, 가격 manifest, HERD 결합을 열지 않는다.
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.
