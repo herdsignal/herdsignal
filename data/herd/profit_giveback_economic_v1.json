@@ -1,0 +1,113 @@
+{
+  "contract_version": "HERD_PROFIT_GIVEBACK_ECONOMIC_V1",
+  "status": "LOCKED_BEFORE_ECONOMIC_RESULTS",
+  "objective": "Test whether a sparse five-percent trim followed by an observable recovery reentry improves a no-contribution long-term holding after costs without materially losing upside.",
+  "inputs": {
+    "policy_contract": {
+      "path": "data/herd/profit_giveback_policy_v1.json",
+      "sha256": "2048b98e1bf482d6c50a90b9fd3a27881a61d507645ff03f309e99a5e77ba9f2"
+    },
+    "policy_report": {
+      "path": "data/reports/profit_giveback_policy_v1.json",
+      "sha256": "68d68ab462ab92e04829727021323d6f1d5b25bfe876fe800a1aa6b74996a5cc",
+      "required_status": "POLICY_EVENTS_READY"
+    },
+    "policy_events": {
+      "path": "data/reports/profit_giveback_policy_v1_events.csv",
+      "sha256": "6214746d3e4ebc0e7ad806486cfbdb71d9b46ada56ee87b44c6e4c66ea7ee90d"
+    },
+    "transition_report": {
+      "path": "data/reports/herd_transition_s1.json",
+      "sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248",
+      "required_status": "TRANSITION_DISPLAY_READY",
+      "panel_role": "PRIMARY"
+    },
+    "business_features": {
+      "path": "data/reports/business_state_features_v2.csv",
+      "sha256": "515a0708594b3e5064e5edf7b46dbcb7d161d2682acfe4af42d22a773f1fb7f1"
+    },
+    "business_report": {
+      "path": "data/reports/business_state_oos_v2.json",
+      "sha256": "722c12a52b03dc2f1e6e6d7e723dc64cc00e67023778620558c18bde52127c8b",
+      "required_decision": "REJECT_BUSINESS_GUARD_PREDICTIVE_EVIDENCE",
+      "permitted_role": "SAFETY_VETO_ONLY"
+    },
+    "personal_cashflow_contract": {
+      "path": "data/herd/personal_cashflow_benchmark_v1.json",
+      "sha256": "5ebcbb1f3647a283cde1a3160c67530d71bd82932a7d2e5068e6c96be5e8c025"
+    },
+    "price_snapshot_manifest": {
+      "path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json",
+      "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b"
+    },
+    "fold_manifest": {
+      "path": "data/walk_forward/long-oos-v2-20260721/manifest.json",
+      "sha256": "b9a1f6c7658a00fcdd857f29d66963f971f5c8e4b6a62f627cb454102fff46ea",
+      "lane": "PRICE_TIMING_6M",
+      "lane_sha256": "18d82f2edd3e9be0d0d5882dedc88c6763203f24c042a2e65909c6ffbee9b831",
+      "required_folds": 9
+    }
+  },
+  "cohort_contract": {
+    "primary_lane": "NO_EXTERNAL_CONTRIBUTIONS",
+    "initial_capital": 10000.0,
+    "initial_stock_weight": 1.0,
+    "entry": "FIRST_TEST_SESSION_ADJUSTED_OPEN",
+    "eligible_rows": "ALL_AVAILABLE_TICKER_FOLD_COHORTS",
+    "action_efficacy_rows": "COHORTS_WITH_AT_LEAST_ONE_POLICY_TRIM",
+    "company_selection": "OUTSIDE_MODEL"
+  },
+  "price_contract": {
+    "adjusted_open_formula": "OPEN_X_ADJ_CLOSE_DIV_CLOSE",
+    "mark_price": "ADJ_CLOSE",
+    "reason": "Keep split and dividend treatment internally consistent for synthetic fractional shares.",
+    "same_prices_for_all_policies": true
+  },
+  "execution_contract": {
+    "signal_time": "AFTER_OBSERVED_SESSION_CLOSE",
+    "execution": "NEXT_TRADING_SESSION_ADJUSTED_OPEN",
+    "trim_fraction_of_current_shares": 0.05,
+    "minimum_reentry_delay_calendar_days": 56,
+    "reentry_transition": "RECOVERING",
+    "business_gate": "PASS_REQUIRED_AS_SAFETY_VETO",
+    "reentry_fraction_of_available_cash": 1.0,
+    "base_one_way_cost_bps": 10,
+    "stress_one_way_cost_bps": [25, 50],
+    "annual_cash_yield": 0.0,
+    "same_day_sell_and_buy_allowed": false
+  },
+  "business_time_contract": {
+    "availability": "MONTH_END_PLUS_ONE_CALENDAR_DAY",
+    "accepted_fact_must_precede_signal_day": true,
+    "missing_unknown_or_veto": "BLOCK_REENTRY",
+    "pass_is_directional_evidence": false
+  },
+  "comparators": [
+    "BUY_AND_HOLD",
+    "TRIM_AND_KEEP_CASH",
+    "GIVEBACK_BASELINE_COMPLETED_CYCLE",
+    "HERD_GIVEBACK_S1_COMPLETED_CYCLE"
+  ],
+  "adoption_gates": {
+    "minimum_fold_count": 9,
+    "minimum_completed_cycles": 20,
+    "minimum_completed_cycle_tickers": 10,
+    "minimum_completed_cycle_folds": 5,
+    "minimum_positive_completed_cycle_rate": 0.55,
+    "minimum_positive_terminal_wealth_rate_activated": 0.55,
+    "minimum_median_excess_cagr_activated": 0.0,
+    "minimum_median_mdd_improvement_activated": 0.0,
+    "minimum_median_upside_capture_activated": 0.9,
+    "minimum_median_average_exposure_activated": 0.85,
+    "minimum_stress_25bps_median_terminal_wealth_delta": 0.0,
+    "minimum_incremental_median_terminal_wealth_vs_generic_baseline": 0.0
+  },
+  "decision_policy": {
+    "all_gates_required": true,
+    "failed_gate_action": "REJECT_OR_KEEP_RESEARCH_ONLY",
+    "threshold_retuning_after_results": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio_before_promotion": 0.0,
+    "survivorship_safe": false
+  }
+}

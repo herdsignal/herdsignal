@@ -90,8 +90,36 @@ peak drawdown, profit giveback fraction을 계산한다.
 
 9개 fold에서 baseline 182건·39종목, S1 후보 88건·36종목이 생성돼 사건
 coverage 게이트를 통과했다. 이는 미래 가격을 사용하지 않은 trim 검토
-사건일 뿐이다. 경제성, 재진입, 완결 사이클은 아직 평가하지 않았으며 운영
-행동 비율은 0%다.
+사건일 뿐이며, 아래 완결 사이클 평가를 통과하기 전에는 행동 권한이 없다.
+
+## Profit Giveback 완결 사이클 경제성 V1
+
+- 계약: `data/herd/profit_giveback_economic_v1.json`
+- 실행: `data/herd/profit_giveback_economic_v1.py`
+- 체결 규칙: `data/herd/profit_giveback_cycle_execution.py`
+- 결과: `data/reports/profit_giveback_economic_v1.json`
+- 코호트: `data/reports/profit_giveback_economic_v1_rows.csv`
+- 행동 감사: `data/reports/profit_giveback_economic_v1_actions.csv`
+
+결과를 보기 전에 9개 가격 OOS fold, 외부 입금 없음, 5% 부분 익절,
+8주 뒤 `RECOVERING`, SEC PIT `PASS` 안전 게이트, 다음 거래일 시가,
+편도 10bp와 25·50bp 비용 스트레스를 고정했다. 분할·배당 처리가 체결과
+평가에서 일치하도록 `Open × Adj Close / Close`를 조정 시가로,
+`Adj Close`를 평가 종가로 사용했다.
+
+HERD 후보는 459개 종목-fold 중 77개 코호트에서 매도가 실제 체결됐다.
+완결 사이클은 11개·9종목·6개 fold였고, 재진입 후 주식 수가 증가한
+사이클은 27.3%였다. 활성 코호트의 중앙 초과 CAGR은 -0.44%p, 중앙
+최종자산 차이는 -43.29달러였다. 중앙 MDD는 0.25%p 개선되고 상승
+포착률은 98.3%였지만, 상승을 놓친 비용과 잘못된 재진입을 상쇄하지
+못했다. 편도 25bp에서도 중앙 최종자산 차이는 -44.12달러였다.
+
+SEC 기업 상태는 방향 근거로 사용하지 않고 재진입 안전 veto로만 사용했다.
+HERD 후보에서 PASS 재진입은 9건, UNKNOWN 차단은 9건, VETO 차단은
+9건이었다. 사전 고정한 coverage·완결률·최종자산·비용·HERD 고유성
+게이트 중 다수가 실패해 판정은 `PERSONAL_POLICY_REJECTED_PREHOLDOUT`이다.
+임계값을 다시 조정하지 않으며 운영 행동 비율과 Blind holdout은 계속
+0%·미개방이다.
 
 ## 개인 현금흐름 비교 계약
 

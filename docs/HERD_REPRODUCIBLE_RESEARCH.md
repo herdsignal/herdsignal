@@ -559,6 +559,18 @@ PYTHONPATH=data data/.venv/bin/python -m herd.herd_transition_s1
 PYTHONPATH=data data/.venv/bin/python -m herd.profit_giveback_policy_v1
 ```
 
+완결 사이클 경제성 평가는 고정 사건, transition, SEC PIT 기업 상태,
+가격·fold manifest의 해시를 다시 확인한 뒤 실행한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.profit_giveback_economic_v1
+```
+
+계약은 외부 입금 없음, 조정 시가, 다음 거래일 체결, 10·25·50bp 비용과
+통과 기준을 결과 전에 고정한다. 결과 파일의
+`operational_action_ratio=0.0`과 `blind_holdout_access=false`는
+pre-holdout 통과 전까지 변경할 수 없다.
+
 사건 생성 단계는 fold 종료 이후 가격을 정책 조건에 사용하지 않는다.
 `POLICY_EVENTS_READY`는 사전등록한 사건 수와 종목·fold coverage가
 충분하다는 뜻이며 경제성이나 매매 권한을 의미하지 않는다.

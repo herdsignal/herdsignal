@@ -1,0 +1,146 @@
+{
+  "report_version": "HERD_PROFIT_GIVEBACK_ECONOMIC_V1",
+  "status": "PERSONAL_POLICY_REJECTED_PREHOLDOUT",
+  "passed": false,
+  "checks": {
+    "minimum_fold_count": true,
+    "minimum_completed_cycles": false,
+    "minimum_completed_cycle_tickers": false,
+    "minimum_completed_cycle_folds": true,
+    "minimum_positive_completed_cycle_rate": false,
+    "minimum_positive_terminal_wealth_rate_activated": false,
+    "minimum_median_excess_cagr_activated": false,
+    "minimum_median_mdd_improvement_activated": true,
+    "minimum_median_upside_capture_activated": true,
+    "minimum_median_average_exposure_activated": true,
+    "minimum_stress_25bps_median_terminal_wealth_delta": false,
+    "minimum_incremental_median_terminal_wealth_vs_generic_baseline": false
+  },
+  "service_base": {
+    "cohorts": 459,
+    "activated_cohorts": 77,
+    "completed_cycles": 11,
+    "completed_cycle_tickers": 9,
+    "completed_cycle_folds": 6,
+    "positive_completed_cycle_rate": 0.2727272727272727,
+    "positive_terminal_wealth_rate_activated": 0.3116883116883117,
+    "median_excess_cagr_activated": -0.004350539914009133,
+    "median_mdd_improvement_activated": 0.0025114533974837094,
+    "median_upside_capture_activated": 0.9826379810605508,
+    "median_downside_capture_activated": 0.9854238258538188,
+    "median_average_exposure_activated": 0.985731305577321,
+    "median_terminal_wealth_delta_activated": -43.291285814695584,
+    "median_keep_cash_terminal_wealth_delta_activated": -48.91154959396954,
+    "median_terminal_share_delta_completed": -0.2579563037935628
+  },
+  "generic_base": {
+    "cohorts": 459,
+    "activated_cohorts": 98,
+    "completed_cycles": 30,
+    "completed_cycle_tickers": 13,
+    "completed_cycle_folds": 6,
+    "positive_completed_cycle_rate": 0.1,
+    "positive_terminal_wealth_rate_activated": 0.24489795918367346,
+    "median_excess_cagr_activated": -0.00782802416597661,
+    "median_mdd_improvement_activated": 0.004708362565729041,
+    "median_upside_capture_activated": 0.9762709898262234,
+    "median_downside_capture_activated": 0.9753273834132464,
+    "median_average_exposure_activated": 0.9784195641265105,
+    "median_terminal_wealth_delta_activated": -78.14881030880406,
+    "median_keep_cash_terminal_wealth_delta_activated": -78.72694188082096,
+    "median_terminal_share_delta_completed": -1.11818992613469
+  },
+  "service_stress_25bps": {
+    "cohorts": 459,
+    "activated_cohorts": 77,
+    "completed_cycles": 11,
+    "completed_cycle_tickers": 9,
+    "completed_cycle_folds": 6,
+    "positive_completed_cycle_rate": 0.2727272727272727,
+    "positive_terminal_wealth_rate_activated": 0.3116883116883117,
+    "median_excess_cagr_activated": -0.004433360125122521,
+    "median_mdd_improvement_activated": 0.0024608454295140803,
+    "median_upside_capture_activated": 0.9826430579142553,
+    "median_downside_capture_activated": 0.9854662769070498,
+    "median_average_exposure_activated": 0.9857517015965627,
+    "median_terminal_wealth_delta_activated": -44.115681466606475,
+    "median_keep_cash_terminal_wealth_delta_activated": -49.70044767127729,
+    "median_terminal_share_delta_completed": -0.26920723168953486
+  },
+  "service_stress_50bps": {
+    "cohorts": 459,
+    "activated_cohorts": 77,
+    "completed_cycles": 11,
+    "completed_cycle_tickers": 9,
+    "completed_cycle_folds": 6,
+    "positive_completed_cycle_rate": 0.18181818181818182,
+    "positive_terminal_wealth_rate_activated": 0.3116883116883117,
+    "median_excess_cagr_activated": -0.004638511391438227,
+    "median_mdd_improvement_activated": 0.0023765832367129702,
+    "median_upside_capture_activated": 0.9826613588006832,
+    "median_downside_capture_activated": 0.9855356616585256,
+    "median_average_exposure_activated": 0.9857856673526195,
+    "median_terminal_wealth_delta_activated": -46.38511391437896,
+    "median_keep_cash_terminal_wealth_delta_activated": -51.00847861127477,
+    "median_terminal_share_delta_completed": -0.2878061976135484
+  },
+  "incremental_median_terminal_wealth_vs_generic_baseline": 0.0,
+  "contract_sha256": "c9480823f343a20d049ced10fe625b27b51a8e2bc426551f8d6f3575e08f8fea",
+  "rows_sha256": "d339addb90ae4d4064ca16bab129669e489838bf01dcd92fe6666bf9b166115b",
+  "actions_sha256": "bffbbe33909a56f077247951d93b1760a2fd8429507199f39f4a7ff6e4e9d250",
+  "rows": 2754,
+  "action_audit_rows": 329,
+  "folds": 9,
+  "tickers": 51,
+  "costs_bps": [
+    10,
+    25,
+    50
+  ],
+  "action_audit": {
+    "policies": {
+      "GIVEBACK_BASELINE": {
+        "trim_signals": 182,
+        "reentry_signals": 16,
+        "blocked_reentry_candidates": 16,
+        "blocked_by_state": {
+          "UNKNOWN": 10,
+          "VETO": 6
+        }
+      },
+      "HERD_GIVEBACK_S1": {
+        "trim_signals": 88,
+        "reentry_signals": 9,
+        "blocked_reentry_candidates": 18,
+        "blocked_by_state": {
+          "UNKNOWN": 9,
+          "VETO": 9
+        }
+      }
+    }
+  },
+  "failed_gates": [
+    "minimum_completed_cycles",
+    "minimum_completed_cycle_tickers",
+    "minimum_positive_completed_cycle_rate",
+    "minimum_positive_terminal_wealth_rate_activated",
+    "minimum_median_excess_cagr_activated",
+    "minimum_stress_25bps_median_terminal_wealth_delta",
+    "minimum_incremental_median_terminal_wealth_vs_generic_baseline"
+  ],
+  "price_adjustment": {
+    "adjusted_open_formula": "OPEN_X_ADJ_CLOSE_DIV_CLOSE",
+    "mark_price": "ADJ_CLOSE",
+    "reason": "Keep split and dividend treatment internally consistent for synthetic fractional shares.",
+    "same_prices_for_all_policies": true
+  },
+  "business_gate_role": "SAFETY_VETO_ONLY",
+  "business_directional_evidence_used": false,
+  "external_contributions": false,
+  "future_prices_used_for_signal": false,
+  "same_session_execution": false,
+  "thresholds_changed_after_results": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false
+}
