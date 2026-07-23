@@ -26,6 +26,9 @@ def test_gap_queue_protocol_is_locked_without_outcomes():
     assert protocol["selection"]["price_or_return_outcomes_used"] is False
     assert protocol["authority"]["future_return_labels_allowed"] is False
     assert protocol["authority"]["operational_action_ratio"] == 0.0
+    assert {"20-F", "6-K", "40-F"}.issubset(
+        protocol["collection_policy"]["eligible_forms"]
+    )
 
 
 def test_gap_queue_is_deterministic_and_hash_locked(tmp_path):

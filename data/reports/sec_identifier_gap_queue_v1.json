@@ -1,7 +1,7 @@
 {
   "report_version": "SEC_IDENTIFIER_GAP_QUEUE_V1",
   "status": "HASH_LOCKED_TARGET_QUEUE_READY",
-  "protocol_sha256": "e029fce5853d3df10767b011b1d1a851f01dd1b9ed48c354ece14ca95ebdad02",
+  "protocol_sha256": "ea90e23e3cc1394a5c48f80e02a6e4926b96933a16b4407c57fabab2799874c4",
   "target_entity_count": 25,
   "target_cik_count": 26,
   "unresolved_observed_ticker_dates": 682,
