@@ -1,0 +1,28 @@
+{
+  "report_version": "HERD_SEC_FORM4_STRUCTURAL_AUDIT_V1",
+  "status": "STRUCTURAL_AUDIT_PASSED",
+  "transactions": 267,
+  "issuers": 51,
+  "transaction_codes": [
+    "A",
+    "C",
+    "D",
+    "F",
+    "G",
+    "I",
+    "J",
+    "L",
+    "M",
+    "P",
+    "S"
+  ],
+  "structure_matches": 267,
+  "structure_mismatches": 0,
+  "mismatch_field_counts": {},
+  "human_valid_labels_created": false,
+  "human_review_pending": 267,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "operational_action_authority": false,
+  "next_decision": "COMPLETE_HUMAN_SOURCE_REVIEW"
+}

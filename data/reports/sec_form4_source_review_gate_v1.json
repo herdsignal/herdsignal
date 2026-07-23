@@ -30,6 +30,8 @@
     "S"
   ],
   "transaction_code_volume_coverage": 1.0,
+  "structural_audit_status": "STRUCTURAL_AUDIT_PASSED",
+  "structural_audit_transactions": 267,
   "valid": 0,
   "invalid": 0,
   "ambiguous": 0,

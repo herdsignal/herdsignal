@@ -9,15 +9,22 @@ from pathlib import Path
 import pandas as pd
 
 from herd.sec_guidance_table_review_gate_v1 import wilson_lower
-from herd.sec_form4_accession_catalog_v1 import load_protocol
-
-
-def evaluate(review_path: Path, atomic_path: Path, protocol_path: Path) -> dict:
-    protocol = load_protocol(protocol_path)
-    gate = protocol["source_review_gate"]
+def evaluate(
+    review_path: Path,
+    atomic_path: Path,
+    protocol_path: Path,
+    structural_audit_path: Path,
+) -> dict:
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    if protocol.get("status") != "LOCKED_BEFORE_HUMAN_SOURCE_REVIEW":
+        raise ValueError("source review protocol must be locked")
+    gate = protocol["gate"]
+    structural = json.loads(
+        structural_audit_path.read_text(encoding="utf-8")
+    )
     review = pd.read_csv(review_path, keep_default_na=False)
     atomic = pd.read_csv(atomic_path, keep_default_na=False)
-    allowed = set(gate["labels"])
+    allowed = set(protocol["decision_rules"]) - {"PENDING"}
     decisions = review["reviewDecision"].astype(str)
     unexpected = sorted(set(decisions) - allowed - {"PENDING"})
     if unexpected:
@@ -38,9 +45,12 @@ def evaluate(review_path: Path, atomic_path: Path, protocol_path: Path) -> dict:
     lower = wilson_lower(valid, total) if pending == 0 else None
     passed = all([
         pending == 0,
+        structural.get("status") == "STRUCTURAL_AUDIT_PASSED",
+        structural.get("transactions") == total,
         total >= gate["minimum_reviewed_transactions"],
         review["issuerCik"].nunique() >= gate["minimum_distinct_issuers"],
-        code_volume_coverage >= gate["minimum_transaction_code_coverage"],
+        code_volume_coverage
+        >= gate["minimum_transaction_code_volume_coverage"],
         reviewed_codes == population_codes,
         accuracy is not None
         and accuracy >= gate["minimum_required_field_accuracy"],
@@ -56,6 +66,8 @@ def evaluate(review_path: Path, atomic_path: Path, protocol_path: Path) -> dict:
         "population_transaction_codes": sorted(population_codes),
         "reviewed_transaction_codes": sorted(reviewed_codes),
         "transaction_code_volume_coverage": code_volume_coverage,
+        "structural_audit_status": structural.get("status"),
+        "structural_audit_transactions": structural.get("transactions"),
         "valid": valid,
         "invalid": invalid,
         "ambiguous": ambiguous,
@@ -78,9 +90,12 @@ def main() -> None:
     parser.add_argument("review", type=Path)
     parser.add_argument("atomic", type=Path)
     parser.add_argument("--protocol", type=Path, required=True)
+    parser.add_argument("--structural-audit", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = evaluate(args.review, args.atomic, args.protocol)
+    result = evaluate(
+        args.review, args.atomic, args.protocol, args.structural_audit
+    )
     args.output.write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

@@ -268,6 +268,22 @@ PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_review_workbench_v1 \
 `VALID`를 생성하거나 검수 CSV를 덮어쓰면 정확도 게이트 입력으로 인정하지
 않는다.
 
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_structural_audit_v1 \
+  data/reports/sec_form4_source_review_v1.csv \
+  data/reference/sec/sec-form4-source-v1-20260723 \
+  --protocol data/herd/sec_form4_review_protocol_v1.json \
+  --detail-output data/reports/sec_form4_structural_audit_v1.csv \
+  --report-output data/reports/sec_form4_structural_audit_v1.json
+
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_source_review_gate_v1 \
+  data/reports/sec_form4_source_review_v1.csv \
+  data/reports/sec_form4_atomic_transactions_v1.csv \
+  --protocol data/herd/sec_form4_review_protocol_v1.json \
+  --structural-audit data/reports/sec_form4_structural_audit_v1.json \
+  --output data/reports/sec_form4_source_review_gate_v1.json
+```
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.
