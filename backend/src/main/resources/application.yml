@@ -70,6 +70,9 @@ herdsignal:
   python:
     executable: ${HERD_PYTHON_EXECUTABLE:}
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}
+  vnext:
+    # vNext는 이 판정 파일을 읽기만 하며, 채택 전에는 HOLD·0%로 fail-closed 한다.
+    preholdout-report-path: ${HERD_VNEXT_PREHOLDOUT_REPORT_PATH:../data/reports/vnext_preholdout_evaluation_v1.json}
   promotion:
     approval-path: ${HERD_PROMOTION_APPROVAL_PATH:}
   action:

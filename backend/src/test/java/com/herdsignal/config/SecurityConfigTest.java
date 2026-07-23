@@ -27,6 +27,16 @@ class SecurityConfigTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.authenticated").value(false));
 
+        mockMvc.perform(get("/api/model/vnext-status"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.sourceContractAccepted").value(true))
+                .andExpect(jsonPath("$.data.validationStatus")
+                        .value("PATH_MODEL_REJECTED_PREHOLDOUT"))
+                .andExpect(jsonPath("$.data.decision").value("NO_ADOPTABLE_CANDIDATE"))
+                .andExpect(jsonPath("$.data.action").value("HOLD"))
+                .andExpect(jsonPath("$.data.operationalActionRatio").value(0))
+                .andExpect(jsonPath("$.data.userActionSuppressed").value(true));
+
         mockMvc.perform(get("/api/portfolio"))
                 .andExpect(status().isUnauthorized());
     }

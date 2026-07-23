@@ -3,8 +3,10 @@ package com.herdsignal.controller;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.ModelValidationReportResponse;
 import com.herdsignal.dto.ShadowModelStatusResponse;
+import com.herdsignal.dto.VNextModelStatusResponse;
 import com.herdsignal.service.ModelValidationReportService;
 import com.herdsignal.service.ShadowModelStatusService;
+import com.herdsignal.service.VNextModelStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ModelValidationController {
     private final ModelValidationReportService reportService;
     private final ShadowModelStatusService shadowModelStatusService;
+    private final VNextModelStatusService vNextModelStatusService;
 
     @GetMapping("/validation")
     public ResponseEntity<ApiResponse<ModelValidationReportResponse>> getValidationReport() {
@@ -27,5 +30,10 @@ public class ModelValidationController {
     @GetMapping("/shadow-status")
     public ResponseEntity<ApiResponse<ShadowModelStatusResponse>> getShadowStatus() {
         return ResponseEntity.ok(ApiResponse.success(shadowModelStatusService.getStatus()));
+    }
+
+    @GetMapping("/vnext-status")
+    public ResponseEntity<ApiResponse<VNextModelStatusResponse>> getVNextStatus() {
+        return ResponseEntity.ok(ApiResponse.success(vNextModelStatusService.getStatus()));
     }
 }

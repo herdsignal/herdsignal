@@ -91,6 +91,19 @@ v4는 `LEGACY_STATE_BASELINE`, v6.1은
   `NO_ADOPTABLE_CANDIDATE`다. prospective shadow는 시작하지 않으며
   운영 행동 비율은 0이다.
 
+## vNext 백엔드 안전 계약
+
+- API: `GET /api/model/vnext-status`
+- 구현: `VNextModelStatusService`
+- 백엔드는 pre-holdout 결과의 계약 버전, 탈락 판정, 과거 데이터 역할,
+  생존자 편향 상태, Blind holdout 미개방, 운영 행동 0%를 함께 검증한다.
+- 정상 판정에서도 `RESEARCH_VALIDATION`, `NO_ADOPTABLE_CANDIDATE`,
+  `HOLD`, `0%`만 반환하며 연구 후보에는 사용자 행동 권한이 없다.
+- 판정 파일 미생성·손상·버전 불일치·비율 변경·Blind holdout 상태 변경은
+  모두 fail-closed 처리한다. 설정값만으로 후보를 승격할 수 없다.
+- v4는 레거시 HERD 상태 관측 역할만 유지한다. 이 API는 기존 v6.1 연구
+  비율을 vNext 행동으로 재사용하지 않는다.
+
 ## Rush 종목 고유 하방 비대칭 독립 OOS
 
 기존 1,998개 discovery 사건에 포함된 381개 종목을 전부 제외하고, 최소
