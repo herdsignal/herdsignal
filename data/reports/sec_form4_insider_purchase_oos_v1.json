@@ -1,0 +1,66 @@
+{
+  "report_version": "HERD_SEC_FORM4_INSIDER_PURCHASE_OOS_V1",
+  "status": "REJECT_INSIDER_PURCHASE_SUPPORT_HYPOTHESIS",
+  "hypothesis": "Recent non-routine insider P purchase support lowers adverse Rush path risk.",
+  "result": {
+    "checks": {
+      "minimum_resolved_episodes": true,
+      "minimum_feature_positive_episodes": true,
+      "minimum_feature_positive_tickers": true,
+      "minimum_folds_with_at_least_10_positive_episodes": false,
+      "minimum_direction_consistent_folds": true,
+      "maximum_pooled_adverse_risk_difference": true,
+      "maximum_pooled_relative_risk": true,
+      "bootstrap_upper_risk_difference_below_zero": false
+    },
+    "passed": false,
+    "episodes": 2626,
+    "tickers": 382,
+    "adverse_episodes": 1160,
+    "feature_positive_episodes": 51,
+    "feature_positive_tickers": 31,
+    "feature_positive_adverse_rate": 0.3333333333333333,
+    "feature_negative_adverse_rate": 0.4438834951456311,
+    "pooled_adverse_risk_difference": -0.11055016181229776,
+    "pooled_relative_risk": 0.7509477981918926,
+    "odds_ratio": 0.626421697287839,
+    "fisher_two_sided_p_value": 0.11991197978739174,
+    "binary_feature_auc": 0.5042685938749588,
+    "folds_with_at_least_10_positive_episodes": 2,
+    "direction_consistent_folds": 4,
+    "ticker_cluster_bootstrap": {
+      "iterations": 2000,
+      "valid_iterations": 2000,
+      "risk_difference_ci_95": [
+        -0.2264889227643045,
+        0.011820016038598682
+      ]
+    }
+  },
+  "routine_status_counts": {
+    "UNKNOWN_WARMUP": 4160,
+    "NON_ROUTINE_CANDIDATE": 836,
+    "ROUTINE": 664
+  },
+  "owner_purchase_events": 5660,
+  "owner_purchase_event_issuers": 366,
+  "hashes": {
+    "protocol_sha256": "35bca939462085b0ef37e5eacf29d1dea37a976a7347a258e502752b8b092341",
+    "census_gate_sha256": "b8e5e658baeab37f1acea3900f9a2df3ff089c706040772cd70d0dfdea0cd773",
+    "normalized_manifest_sha256": "fc5877818e705cec2cb197e4b3d7929de1a34f3f5d07de592805e78ef7bcca67",
+    "episodes_sha256": "4a31610be132a39b780234101102718253a14426192e625d8e0f8e459d256de1",
+    "universe_sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8",
+    "normalized_independent_universe_sha256": "eaa9f99a242dd96236d39d2ccb4aac049a1cdfee78b5cf665383a732f38e4f91",
+    "events_sha256": "b7d401f22dbd17df508c93cb079955213cc9c3c515c6d9d8d3938451399a26ba",
+    "panel_sha256": "22ae2580fad5163083fb6f46285e96fda05c90deb5b3ef0ae8be879c06369a8f",
+    "folds_sha256": "b44ab76c12ad0b556a6e317834ccaa6f3dd13bcfe4d73301a063cc3d8027bd6a"
+  },
+  "claim_boundary": "hypothesis-specific current-constituent OOS robustness; not blind and not survivorship safe",
+  "interpretation": "No insider evidence may enter HERD or action translation.",
+  "price_thresholds_tuned": false,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "operational_action_authority": false,
+  "buy_or_profit_take_recommendations_enabled": false,
+  "next_decision": "KEEP_HERD_AS_STATE_OBSERVATION_AND_SEEK_DIFFERENT_INFORMATION"
+}

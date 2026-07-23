@@ -13,15 +13,19 @@
 | `REJECTED` | 사전 기준에서 탈락 | Rush, RSI, 재진입, 완결 사이클 실험 |
 | `LEGACY` | 현행 판단에 미사용 | 과거 v3~v6.1 백테스트와 이전 검증 경로 |
 
-현재 연구 사슬은 SEC 8-K 구조 파서와 별개로 Form 4 원문 1,485건 →
-issuer 검증 1,455건 → atomic 거래 3,661건까지 구축됐다. Form 4 검수
-표본 267건은 AI 보조 원문 판정과 독립 구조 감사에서 267건 모두
-`VALID`였고 Wilson 95% 하한은 98.58%다. 이는 parser 정확도 게이트만
-통과한 결과다. coverage 감사에서는 잠긴 68,478개 accession 중
-1,485개(2.17%)만 내려받은 parser 검수 표본이며, issuer 확인 후 atomic
-거래가 없는 원문 9건과 manifest 계보 불일치가 확인됐다. 판정은
-`REVIEW_SAMPLE_NOT_RESEARCH_CENSUS`다. 별도 연구 census V2를 완성하기
-전에는 방향 가설, 가격 OOS, HERD 가중치로 진행하지 않는다.
+Form 4 V1은 원문 parser 검수 역할로 유지한다. V2는 SEC 공식 분기 벌크
+2012Q1~2026Q2 58개를 해시 고정하고 438개 issuer의 Form 4/4-A
+464,619건과 원자 거래 1,133,161건을 정규화했다. 기존 원문 판정 중 벌크
+기간에 포함된 265건은 SEC 2자리 정밀도 기준으로 265건 모두 일치했고
+Wilson 95% 하한은 98.57%다. 독립 issuer 387개·issuer-year 5,805칸을
+관측해 census coverage 게이트는 통과했다.
+
+그 뒤 하나만 잠근 비정기 P 매수 지지 가설은 독립 Rush 2,626건에서
+방향은 예상과 같았지만 feature 양성 51건·31개 종목뿐이었다. 4개 fold 중
+양성 10건 이상은 2개뿐이고 ticker-cluster bootstrap 95% 신뢰구간 상단이
++1.18%p로 0을 넘었다. 판정은 `REJECTED`다. 내부자 정보는 HERD나 행동
+비율에 들어가지 않으며 같은 표본에서 기간·routine 기준을 다시 조정하지
+않는다.
 
 차세대 연구의 최상위 계약은
 `data/herd/herd_vnext_model_charter_v1.json`이다. 이 계약은 v4·v6.1을

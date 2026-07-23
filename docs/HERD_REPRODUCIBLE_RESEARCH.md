@@ -335,6 +335,35 @@ accession 중 1,485개만 내려받은 축소 표본이다. 따라서 parser 정
 V1 산출물을 덮어써 연구용으로 재해석하지 않고 별도 V2 census와 manifest를
 만든 뒤 이 감사를 다시 실행한다.
 
+V2는 SEC `Insider Transactions Data Sets`의 2012Q1~2026Q2 공식 분기 ZIP
+58개를 사용한다. ZIP은 분기별 SHA-256으로 고정하며 수집이 중단돼도 완료된
+분기부터 재개한다. 공식 벌크는 acceptance timestamp를 제공하지 않으므로
+신고일 당일에는 사용할 수 없고, 신고일보다 엄격히 뒤의 가격 세션에서만
+사용한다. 벌크 숫자는 SEC `NUMBER(16,2)` 정밀도이므로 원문 XML과의
+동등성은 반올림 후 비교하며, 버려진 소수 정밀도는 feature로 사용하지 않는다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_bulk_v2 download \
+  sec-form4-bulk-v2-2012q1-2026q2-20260723
+
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_bulk_v2 normalize \
+  data/reference/sec/sec-form4-bulk-v2-2012q1-2026q2-20260723
+
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_form4_census_gate_v2 \
+  data/reference/sec/sec-form4-bulk-v2-2012q1-2026q2-20260723
+```
+
+coverage 게이트 통과 뒤에도 여러 내부자 지표를 탐색하지 않는다. 잠근
+`NON_ROUTINE_CODE_P_PURCHASE_SUPPORT_90D` 가설 하나만 다음 명령으로
+실행한다. 결과가 탈락하면 기간·routine 기준·대상 경로를 조정해 같은
+표본을 재시험하지 않는다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  -m herd.sec_form4_insider_purchase_oos_v1 \
+  data/reference/sec/sec-form4-bulk-v2-2012q1-2026q2-20260723
+```
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.
