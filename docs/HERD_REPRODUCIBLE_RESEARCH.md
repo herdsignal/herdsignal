@@ -541,6 +541,17 @@ PYTHONPATH=data data/.venv/bin/python -m herd.herd_state_s1
 `STATE_DISPLAY_READY`는 상태 측정 안정성만 승인하며 방향 예측이나 행동
 권한을 승인하지 않는다.
 
+상태 패널이 준비된 뒤 전환 패널은 다음 명령으로 재현한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.herd_transition_s1
+```
+
+전환 계산은 raw 분류와 안정화 결과를 모두 보존한다. 방향 전환은 완료
+주봉 두 번 연속 확인되어야 하며 최근 4주 안의 반대 방향은 `NEUTRAL`로
+억제한다. 억제 규칙은 예측력을 높이기 위한 사후 임계값이 아니라 표시
+상태의 주간 진동을 막는 outcome-blind 계약이다.
+
 ## 11. 장기 라벨 OOS 분할
 
 라벨 길이가 다른 가격 타이밍과 기업 상태를 같은 fold로 평가하지 않는다.

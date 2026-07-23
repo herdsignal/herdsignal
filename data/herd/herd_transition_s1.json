@@ -1,0 +1,86 @@
+{
+  "contract_version": "HERD_TRANSITION_S1",
+  "status": "LOCKED_BEFORE_TRANSITION_STABILITY_RESULTS",
+  "state_input": {
+    "contract": "data/herd/herd_state_s1.json",
+    "report": "data/reports/herd_state_s1.json",
+    "required_status": "STATE_DISPLAY_READY"
+  },
+  "observation_contract": {
+    "frequency": "COMPLETED_WEEK_ENDING_FRIDAY",
+    "short_change_weeks": 4,
+    "extreme_memory_weeks": 13,
+    "moderate_score_change": 5,
+    "severe_score_change": 10,
+    "moderate_family_change": 5,
+    "moderate_family_votes": 2,
+    "severe_family_votes": 3,
+    "direction_confirmation_weeks": 2,
+    "opposite_direction_cooldown_weeks": 4,
+    "future_outcomes_allowed": false,
+    "personal_portfolio_inputs_allowed": false
+  },
+  "classification_priority": [
+    {
+      "id": "BREAKING",
+      "rule": "RECENT_13W_MAX_HERD_AT_LEAST_75_AND_4W_DELTA_AT_MOST_MINUS_10_AND_AT_LEAST_3_FAMILIES_DOWN"
+    },
+    {
+      "id": "RECOVERING",
+      "rule": "RECENT_13W_MIN_HERD_AT_MOST_40_AND_4W_DELTA_AT_LEAST_10_AND_AT_LEAST_3_FAMILIES_UP"
+    },
+    {
+      "id": "COOLING",
+      "rule": "HERD_AT_LEAST_60_AND_4W_DELTA_AT_MOST_MINUS_5_AND_AT_LEAST_2_FAMILIES_DOWN"
+    },
+    {
+      "id": "EXTENDING",
+      "rule": "HERD_AT_LEAST_60_AND_4W_DELTA_AT_LEAST_5_AND_AT_LEAST_2_FAMILIES_UP"
+    },
+    {
+      "id": "FALLING",
+      "rule": "HERD_AT_MOST_40_AND_4W_DELTA_AT_MOST_MINUS_5_AND_AT_LEAST_2_FAMILIES_DOWN"
+    },
+    {
+      "id": "STABILIZING",
+      "rule": "HERD_AT_MOST_40_AND_ABSOLUTE_4W_DELTA_BELOW_5"
+    },
+    {
+      "id": "PLATEAU",
+      "rule": "HERD_AT_LEAST_60_AND_ABSOLUTE_4W_DELTA_BELOW_5"
+    },
+    {
+      "id": "NEUTRAL",
+      "rule": "ALL_OTHER_FULLY_OBSERVED_STATES"
+    },
+    {
+      "id": "UNKNOWN",
+      "rule": "INSUFFICIENT_TRAILING_OBSERVATIONS"
+    }
+  ],
+  "stabilization": {
+    "raw_transition_preserved": true,
+    "directional_transition_requires_consecutive_raw_observations": 2,
+    "opposite_direction_inside_cooldown": "NEUTRAL",
+    "cooldown_weeks": 4
+  },
+  "stability_gates": {
+    "primary_minimum_rows": 30000,
+    "independent_minimum_rows": 240000,
+    "maximum_unknown_fraction": 0.03,
+    "primary_minimum_breaking_rows": 50,
+    "independent_minimum_breaking_rows": 300,
+    "primary_minimum_recovering_rows": 50,
+    "independent_minimum_recovering_rows": 300,
+    "maximum_opposite_flip_within_4_weeks_fraction": 0.1,
+    "maximum_median_highlighted_events_per_ticker_year": 12
+  },
+  "claim_boundary": {
+    "transition_display_may_be_approved": true,
+    "direction_prediction": false,
+    "buy_or_profit_take_authority": false,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

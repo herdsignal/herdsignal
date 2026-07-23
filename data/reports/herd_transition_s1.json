@@ -1,0 +1,89 @@
+{
+  "report_version": "HERD_TRANSITION_S1",
+  "status": "TRANSITION_DISPLAY_READY",
+  "contract_sha256": "cfcb7f805bb04f084f891cc54d95112aa36d5f0609c6922e244b0a8da4e09d9b",
+  "state_report_sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121",
+  "state_contract_sha256": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489",
+  "panels": {
+    "PRIMARY": {
+      "path": "data/walk_forward/herd-transition-s1/primary.csv.gz",
+      "sha256": "a28024a8b836827301faa9a9f9ac546eb36ce186b3317315c74d6f4eb747e66a",
+      "rows": 32304
+    },
+    "INDEPENDENT_CURRENT_CONSTITUENTS": {
+      "path": "data/walk_forward/herd-transition-s1/independent_current_constituents.csv.gz",
+      "sha256": "b10fdfd7d0c16a0963419154ec717f0724fb62677d3a41f1650bf85f720f6bf2",
+      "rows": 249335
+    }
+  },
+  "universes": [
+    {
+      "role": "PRIMARY",
+      "rows": 32304,
+      "tickers": 51,
+      "transition_counts": {
+        "NEUTRAL": 15986,
+        "STABILIZING": 3907,
+        "PLATEAU": 3649,
+        "RECOVERING": 2622,
+        "FALLING": 2387,
+        "BREAKING": 1491,
+        "EXTENDING": 1464,
+        "UNKNOWN": 612,
+        "COOLING": 186
+      },
+      "unknown_fraction": 0.018945022288261514,
+      "opposite_flip_within_4_weeks_fraction": 0.0,
+      "highlighted_transition_events": 1780,
+      "median_highlighted_events_per_ticker_year": 3.0,
+      "opposite_direction_suppressed": 1453,
+      "checks": {
+        "minimum_rows": true,
+        "maximum_unknown_fraction": true,
+        "minimum_breaking_rows": true,
+        "minimum_recovering_rows": true,
+        "maximum_opposite_flip_fraction": true,
+        "maximum_median_highlighted_events": true
+      },
+      "passed": true
+    },
+    {
+      "role": "INDEPENDENT_CURRENT_CONSTITUENTS",
+      "rows": 249335,
+      "tickers": 388,
+      "transition_counts": {
+        "NEUTRAL": 126245,
+        "STABILIZING": 30295,
+        "PLATEAU": 26893,
+        "FALLING": 18753,
+        "RECOVERING": 18750,
+        "EXTENDING": 11299,
+        "BREAKING": 11119,
+        "UNKNOWN": 4656,
+        "COOLING": 1325
+      },
+      "unknown_fraction": 0.018673671967433372,
+      "opposite_flip_within_4_weeks_fraction": 0.0,
+      "highlighted_transition_events": 13070,
+      "median_highlighted_events_per_ticker_year": 3.0,
+      "opposite_direction_suppressed": 10701,
+      "checks": {
+        "minimum_rows": true,
+        "maximum_unknown_fraction": true,
+        "minimum_breaking_rows": true,
+        "minimum_recovering_rows": true,
+        "maximum_opposite_flip_fraction": true,
+        "maximum_median_highlighted_events": true
+      },
+      "passed": true
+    }
+  ],
+  "latest_rows": 439,
+  "latest_sha256": "9fa1c554256a0c88b004334070e387ecb6c3031c9119d76dc50ba0f2cb12b6fb",
+  "future_outcomes_read": false,
+  "direction_prediction": false,
+  "buy_or_profit_take_authority": false,
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false,
+  "transition_display_ready": true
+}

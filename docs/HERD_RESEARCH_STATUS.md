@@ -52,6 +52,25 @@ v4·v6.1 공식과 가중치를 사용하지 않는 outcome-blind 상태 측정�
 비율은 계속 0%다. 두 표본 모두 현재 구성종목 중심이므로
 `survivorship_safe=false`다.
 
+## HERD Transition S1
+
+- 계약: `data/herd/herd_transition_s1.json`
+- 구현: `data/herd/herd_transition_s1.py`
+- 결과: `data/reports/herd_transition_s1.json`
+- 최신 상태: `data/reports/herd_transition_s1_latest.csv`
+
+State S1의 현재값, 4주 변화, 13주 극단 기억과 네 가족의 변화 투표만으로
+`EXTENDING`, `PLATEAU`, `COOLING`, `BREAKING`, `FALLING`,
+`STABILIZING`, `RECOVERING`, `NEUTRAL`을 계산한다. 첫 계산에서 4주 안의
+반대 방향 전환이 약 37%로 나타나 raw 값을 바로 노출하면 상태가
+흔들린다는 결함을 발견했다. raw 분류를 보존하면서 2주 연속 확인과 4주
+반대 방향 cooldown을 추가했고, 억제 건수도 감사값으로 남긴다.
+
+주 표본과 독립 표본 모두 transition coverage, UNKNOWN 비율, 극단 전환
+수, 반대 방향 급반전, 연간 강조 이벤트 빈도 게이트를 통과했다. 종목·연도
+중앙 강조 이벤트는 3회다. `TRANSITION_DISPLAY_READY`는 관측 가능한
+상태 변화 표시만 승인하며 미래 경로 예측이나 행동 권한은 승인하지 않는다.
+
 ## 개인 현금흐름 비교 계약
 
 - 계약: `data/herd/personal_cashflow_benchmark_v1.json`
