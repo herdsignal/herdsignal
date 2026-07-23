@@ -37,6 +37,13 @@ def _canonical_symbol(symbol: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", symbol.upper())
 
 
+def _observation_symbol(
+    research_ticker: str,
+    overrides: dict[str, str] | None,
+) -> str:
+    return (overrides or {}).get(research_ticker, research_ticker)
+
+
 def _read_rows(path: Path) -> list[dict]:
     with path.open(newline="", encoding="utf-8-sig") as handle:
         return list(csv.DictReader(handle))
@@ -154,6 +161,7 @@ def audit(
         "EXTEND_VERIFIED_SEC_TICKER_INTERVAL_LEDGER_"
         "BEFORE_ANY_SHORT_INTEREST_HYPOTHESIS"
     ),
+    cohort_symbol_overrides: dict[str, str] | None = None,
 ) -> dict:
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -195,7 +203,10 @@ def audit(
     for cohort_name, members in cohorts.items():
         canonical_owner: dict[str, list[str]] = defaultdict(list)
         for ticker in members:
-            canonical_owner[_canonical_symbol(ticker)].append(ticker)
+            observed_ticker = _observation_symbol(
+                ticker, cohort_symbol_overrides
+            )
+            canonical_owner[_canonical_symbol(observed_ticker)].append(ticker)
         ambiguous_canonical = {
             key: tickers for key, tickers in canonical_owner.items()
             if len(tickers) > 1
@@ -208,7 +219,10 @@ def audit(
         delayed_or_partial_tickers = []
         never_observed_tickers = []
         for ticker, cik in sorted(members.items()):
-            canonical = _canonical_symbol(ticker)
+            observed_ticker = _observation_symbol(
+                ticker, cohort_symbol_overrides
+            )
+            canonical = _canonical_symbol(observed_ticker)
             ticker_dates = observed_dates.get(canonical, set())
             if canonical in ambiguous_canonical:
                 ticker_dates = set()
@@ -246,7 +260,7 @@ def audit(
             sorted_observed = sorted(ticker_dates)
             if observed_count and observed_count < len(dates):
                 delayed_or_partial_tickers.append(ticker)
-            details.append({
+            detail = {
                 "cohort": cohort_name,
                 "ticker": ticker,
                 "cik": cik,
@@ -274,7 +288,13 @@ def audit(
                     if observed_count > 0
                     else "SYMBOL_NOT_OBSERVED"
                 ),
-            })
+            }
+            if cohort_symbol_overrides:
+                detail["observation_ticker"] = observed_ticker
+                detail["cohort_symbol_overridden"] = (
+                    observed_ticker != ticker
+                )
+            details.append(detail)
         symbol_coverage = (
             observed_opportunities / total_opportunities if total_opportunities else 0.0
         )
@@ -368,6 +388,10 @@ def audit(
             "verified_canonical_symbol_count": len(intervals_by_symbol),
             "current_symbol_presence_is_not_pit_cik_proof": True,
             "current_ticker_backfill_performed": False,
+            **({
+                "cohort_symbol_overrides": cohort_symbol_overrides,
+                "cohort_symbol_override_is_identity_correction": True,
+            } if cohort_symbol_overrides else {}),
         },
         "cohorts": cohort_reports,
         "detail_path": detail_path.relative_to(ROOT).as_posix(),
