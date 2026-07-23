@@ -1,0 +1,123 @@
+{
+  "report_version": "SEC_TIME_VALID_TICKER_CIK_LEDGER_V4",
+  "status": "TIME_VALID_TARGETED_COVER_LEDGER_BUILT",
+  "protocol_sha256": "85f21bb3218f213ea595b3509127f98cee81da8adb787cae7570d8cc84200be8",
+  "integrity": {
+    "verified_file_count": 6,
+    "files": [
+      {
+        "path": "data/herd/sec_time_valid_ticker_cik_ledger_v2.json",
+        "sha256": "a83d641fba1e14e247fa92b67ca4c1ccdd613b2a742d392f159b4f67c408e319",
+        "role": "V2_PROTOCOL"
+      },
+      {
+        "path": "data/reports/sec_time_valid_ticker_cik_intervals_v2.csv",
+        "sha256": "1c36d2a39699127d5f10fc3b1702c30a125afa64e9b1d8fa9a38ebf058e40df8",
+        "role": "V2_INTERVAL_LEDGER"
+      },
+      {
+        "path": "data/reports/sec_time_valid_ticker_cik_ledger_v2.json",
+        "sha256": "a4e3afef3e74775d0c522fe336cd3857b1bd3431805b9de2ab69ff21c8e1f31b",
+        "role": "V2_REPORT"
+      },
+      {
+        "path": "data/herd/sec_targeted_cover_ticker_cik_v1.json",
+        "sha256": "5befde9b815513b385ade75421bb25c9162cc7ecca7247fad8bb00febfe4293b",
+        "role": "TARGETED_COVER_PROTOCOL"
+      },
+      {
+        "path": "data/reports/sec_targeted_cover_anchors_v1.csv",
+        "sha256": "92bdbe054e3b247675c7937534c862fa5e2991dde37a53655ad0156bf0c5ea4c",
+        "role": "TARGETED_COVER_ANCHORS"
+      },
+      {
+        "path": "data/reports/sec_targeted_cover_corpus_v1.json",
+        "sha256": "4991aac9c711bf26e23d9df3822dbab2e80a9967fb69df5fee854fd1c8168153",
+        "role": "TARGETED_COVER_REPORT"
+      }
+    ]
+  },
+  "v2_candidate_interval_count": 533,
+  "targeted_cover_interval_count": 9,
+  "candidate_interval_count": 529,
+  "verified_interval_count": 529,
+  "conflict_excluded_interval_count": 0,
+  "verified_canonical_symbol_count": 526,
+  "verified_cik_count": 501,
+  "edge_case_audit": {
+    "target_interval_count": 8,
+    "target_intervals": [
+      {
+        "canonical_symbol": "BK",
+        "cik": "0001390777",
+        "valid_from": "2021-06-28",
+        "valid_to": "2026-05-01",
+        "boundary_sources": "SEC_FORM345_AS_FILED_OBSERVATION_SPAN|SEC_PRIMARY_COVER_DEI_TRADING_SYMBOL_AS_FILED_SPAN"
+      },
+      {
+        "canonical_symbol": "BLK",
+        "cik": "0001364742",
+        "valid_from": "2021-07-14",
+        "valid_to": "2024-09-13",
+        "boundary_sources": "SEC_PRIMARY_COVER_DEI_TRADING_SYMBOL_AS_FILED_SPAN"
+      },
+      {
+        "canonical_symbol": "BLK",
+        "cik": "0002012383",
+        "valid_from": "2024-10-02",
+        "valid_to": "2026-06-30",
+        "boundary_sources": "SEC_FORM345_AS_FILED_OBSERVATION_SPAN|SEC_PRIMARY_COVER_DEI_TRADING_SYMBOL_AS_FILED_SPAN"
+      },
+      {
+        "canonical_symbol": "BNY",
+        "cik": "0001390777",
+        "valid_from": "2026-06-12",
+        "valid_to": "2026-06-24",
+        "boundary_sources": "SEC_PRIMARY_COVER_DEI_TRADING_SYMBOL_AS_FILED_SPAN"
+      },
+      {
+        "canonical_symbol": "BRKB",
+        "cik": "0001067983",
+        "valid_from": "2021-06-23",
+        "valid_to": "2026-05-07",
+        "boundary_sources": "SEC_FORM345_AS_FILED_OBSERVATION_SPAN|SEC_PRIMARY_COVER_DEI_TRADING_SYMBOL_AS_FILED_SPAN"
+      },
+      {
+        "canonical_symbol": "CRH",
+        "cik": "0000849395",
+        "valid_from": "2022-03-11",
+        "valid_to": "2026-06-22",
+        "boundary_sources": "SEC_FORM345_AS_FILED_OBSERVATION_SPAN|SEC_PRIMARY_COVER_DEI_TRADING_SYMBOL_AS_FILED_SPAN"
+      },
+      {
+        "canonical_symbol": "GOOG",
+        "cik": "0001652044",
+        "valid_from": "2021-06-01",
+        "valid_to": "2026-06-11",
+        "boundary_sources": "SEC_FORM345_AS_FILED_OBSERVATION_SPAN|SEC_PRIMARY_COVER_DEI_TRADING_SYMBOL_AS_FILED_SPAN"
+      },
+      {
+        "canonical_symbol": "GOOGL",
+        "cik": "0001652044",
+        "valid_from": "2021-06-04",
+        "valid_to": "2026-06-30",
+        "boundary_sources": "SEC_FORM345_AS_FILED_OBSERVATION_SPAN|SEC_PRIMARY_COVER_DEI_TRADING_SYMBOL_AS_FILED_SPAN"
+      }
+    ],
+    "bny_historical_ticker_reuse_backfilled": false,
+    "blk_different_cik_overlap": false
+  },
+  "ledger_path": "data/reports/sec_time_valid_ticker_cik_intervals_v4.csv",
+  "ledger_sha256": "f4cf2601f3618d87e393158178cd1c4922b8977f605d1fc1779aed6f43e4225d",
+  "ledger_consumption_rule": "USE_TIME_VALID_CIK_VERIFIED_ROWS_ONLY",
+  "source_is_not_full_filing_substitute": true,
+  "current_ticker_backfill_performed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_preregistered": false,
+  "herd_formula_change_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_authority": false,
+  "operational_action_ratio": 0.0,
+  "finra_authority": "PROSPECTIVE_SHADOW_OBSERVATION_ONLY",
+  "next_priority": "REAUDIT_FINRA_COVERAGE_WITH_ISSUE_NAME_SAFE_BNY_HANDLING"
+}

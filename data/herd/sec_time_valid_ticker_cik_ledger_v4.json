@@ -1,0 +1,85 @@
+{
+  "protocol_version": "SEC_TIME_VALID_TICKER_CIK_LEDGER_V4",
+  "status": "LOCKED_BEFORE_INTERVAL_GENERATION",
+  "locked_at": "2026-07-23",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Merge the V2 time-valid identity ledger with a preselected SEC primary cover-page corpus while preserving exact as-filed symbol boundaries.",
+  "service_objective": "Improve PIT identity safety for prospective FINRA shadow observations without opening price outcomes or a short-interest direction hypothesis.",
+  "locked_inputs": [
+    {
+      "path": "data/herd/sec_time_valid_ticker_cik_ledger_v2.json",
+      "sha256": "a83d641fba1e14e247fa92b67ca4c1ccdd613b2a742d392f159b4f67c408e319",
+      "role": "V2_PROTOCOL"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v2.csv",
+      "sha256": "1c36d2a39699127d5f10fc3b1702c30a125afa64e9b1d8fa9a38ebf058e40df8",
+      "role": "V2_INTERVAL_LEDGER"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v2.json",
+      "sha256": "a4e3afef3e74775d0c522fe336cd3857b1bd3431805b9de2ab69ff21c8e1f31b",
+      "role": "V2_REPORT"
+    },
+    {
+      "path": "data/herd/sec_targeted_cover_ticker_cik_v1.json",
+      "sha256": "5befde9b815513b385ade75421bb25c9162cc7ecca7247fad8bb00febfe4293b",
+      "role": "TARGETED_COVER_PROTOCOL"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_anchors_v1.csv",
+      "sha256": "92bdbe054e3b247675c7937534c862fa5e2991dde37a53655ad0156bf0c5ea4c",
+      "role": "TARGETED_COVER_ANCHORS"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_corpus_v1.json",
+      "sha256": "4991aac9c711bf26e23d9df3822dbab2e80a9967fb69df5fee854fd1c8168153",
+      "role": "TARGETED_COVER_REPORT"
+    }
+  ],
+  "interval_policy": {
+    "target_start": "2021-06-01",
+    "target_end": "2026-06-30",
+    "minimum_distinct_accessions": 2,
+    "maximum_same_symbol_anchor_gap_days": 550,
+    "merge_same_symbol_same_cik_only_when_overlapping_or_adjacent": true,
+    "extrapolate_before_first_primary_cover_anchor": false,
+    "extrapolate_after_last_primary_cover_anchor": false,
+    "same_symbol_overlapping_different_ciks_is_conflict": true,
+    "conflicting_intervals_are_excluded_from_consumption": true
+  },
+  "identity_edge_cases": {
+    "BNY": "BK and BNY are separate as-filed intervals for CIK 0001390777. Historical unrelated FINRA BNY rows are never assigned by ticker alone.",
+    "BLK": "CIK 0001364742 and 0002012383 remain separate and may not overlap.",
+    "BRK_B": "Canonical BRKB comes from the filed BRK.B share-class symbol.",
+    "GOOG_GOOGL": "Both filed share classes may map to the same CIK over the same dates.",
+    "CRH": "20-F, 6-K/8-K cover evidence is admitted only when dei:TradingSymbol is tagged."
+  },
+  "consumption_policy": {
+    "required_status": "TIME_VALID_CIK_VERIFIED",
+    "unique_cik_required_per_symbol_date": true,
+    "ticker_only_join_forbidden": true,
+    "current_ticker_backfill_forbidden": true,
+    "finra_role_even_if_gate_passes": "PROSPECTIVE_SHADOW_OBSERVATION_ONLY",
+    "primary_long_horizon_oos_allowed": false
+  },
+  "forbidden": [
+    "BACKFILL_CURRENT_TICKER",
+    "EXTRAPOLATE_OUTSIDE_PRIMARY_COVER_ANCHORS",
+    "MERGE_OVERLAPPING_DIFFERENT_CIKS",
+    "LINK_HISTORICAL_UNRELATED_BNY_ROWS_TO_BNY_MELLON",
+    "OPEN_PRICE_OR_RETURN_OUTCOMES",
+    "REGISTER_SHORT_INTEREST_DIRECTION_HYPOTHESIS",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_authority": false,
+    "operational_action_ratio": 0.0
+  }
+}
