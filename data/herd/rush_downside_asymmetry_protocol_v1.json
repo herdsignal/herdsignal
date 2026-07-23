@@ -1,0 +1,112 @@
+{
+  "protocol_version": "HERD_RUSH_DOWNSIDE_ASYMMETRY_V1",
+  "status": "LOCKED_BEFORE_OOS_MEASUREMENT",
+  "research_question": "Does a newly expanding stock-specific downside asymmetry inside a locked V61 Rush episode identify rare adverse paths without selling ordinary long-term winners?",
+  "economic_hypothesis": {
+    "id": "RUSH_IDIOSYNCRATIC_DOWNSIDE_ASYMMETRY_TRANSITION",
+    "rationale": "Downside exposure is economically distinct from symmetric volatility. A sudden increase in negative residual variation after removing market and sector returns may indicate that a Rush is changing from broad momentum into stock-specific damage.",
+    "non_redundancy": [
+      "not RSI level or price extension",
+      "not total realized volatility expansion",
+      "not residual cumulative return damage",
+      "not fast-minus-slow trend or relative-strength slope",
+      "not a weighted combination of previously failed features"
+    ]
+  },
+  "sample": {
+    "source_snapshot_id": "yf-independent-current-sp500-20260721",
+    "exclude_tickers_present_in": "data/reports/rush_pre_damage_path_events_v2.csv",
+    "minimum_price_sessions": 1260,
+    "minimum_tickers": 40,
+    "required_sector_count": 8,
+    "signal_start_inclusive": "2016-01-01",
+    "signal_end_inclusive": "2026-01-14",
+    "selector": "V61_RUSH",
+    "selector_definition": "locked rush_selector_protocol_v1.json with 42-calendar-day episode collapse",
+    "claim_boundary": "independent ticker OOS among current constituents; not point-in-time membership and not survivorship safe"
+  },
+  "observation": {
+    "return": "daily log adjusted-close return",
+    "factor_model": "stock_return = alpha + beta_market * SPY_return + beta_sector * (sector_ETF_return - SPY_return) + residual",
+    "estimation_window_sessions": 126,
+    "estimation_gap_sessions": 20,
+    "current_window_sessions": 20,
+    "comparison_lag_sessions": 5,
+    "epsilon": 1e-8,
+    "downside_semideviation": "sqrt(mean(min(residual, 0)^2))",
+    "upside_semideviation": "sqrt(mean(max(residual, 0)^2))",
+    "score": "log((current_down/current_up) / (baseline_down/baseline_up))",
+    "threshold": 0.4054651081081644,
+    "threshold_meaning": "current downside-to-upside residual semideviation ratio is at least 1.5 times its baseline ratio",
+    "transition": "score at observation close is above threshold and the score five sessions earlier is not above threshold",
+    "availability": "computed after signal-session close; earliest execution is next available open",
+    "episode_cooldown_sessions": 126,
+    "maximum_events_per_ticker_calendar_year": 2
+  },
+  "target": {
+    "horizon_sessions": 126,
+    "adverse_labels": [
+      "LARGE_PULLBACK",
+      "STRUCTURAL_BREAK"
+    ],
+    "benign_labels": [
+      "TEMPORARY_PULLBACK",
+      "CONTINUATION"
+    ],
+    "unresolved_excluded_from_direction_test": true,
+    "economic_probe": "sell 5 percent at next open and hold the proceeds as cash; no re-entry and no action authority",
+    "economic_horizons_sessions": [
+      21,
+      63,
+      126
+    ],
+    "one_way_cost_bps": 10
+  },
+  "failure_gate": {
+    "minimum_total_events": 60,
+    "minimum_adverse_events": 20,
+    "minimum_benign_events": 20,
+    "minimum_event_tickers": 20,
+    "maximum_missing_fraction": 0.1,
+    "maximum_median_annual_events_per_ticker": 2.0,
+    "minimum_directional_rank_biserial": 0.1,
+    "maximum_one_sided_p_value": 0.05,
+    "minimum_positive_time_folds": 2,
+    "required_time_folds": 3,
+    "minimum_median_63d_partial_sale_uplift": 0.0,
+    "all_conditions_required": true,
+    "on_failure": "reject the hypothesis without threshold tuning or combination"
+  },
+  "time_folds": [
+    {
+      "id": "OOS_2016_2019",
+      "start": "2016-01-01",
+      "end": "2019-12-31"
+    },
+    {
+      "id": "OOS_2020_2022",
+      "start": "2020-01-01",
+      "end": "2022-12-31"
+    },
+    {
+      "id": "OOS_2023_2026",
+      "start": "2023-01-01",
+      "end": "2026-01-14"
+    }
+  ],
+  "policy": {
+    "threshold_tuning_after_results": false,
+    "combine_with_failed_evidence": false,
+    "blind_holdout_access": false,
+    "operational_action_authority": false,
+    "herd_weight_change_allowed": false,
+    "survivorship_safe": false
+  },
+  "research_basis": [
+    "https://www.nber.org/papers/w11824",
+    "https://www.nber.org/papers/w7330",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4182040",
+    "https://www.nber.org/papers/w20439",
+    "https://www.nber.org/papers/w20660"
+  ]
+}
