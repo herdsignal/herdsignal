@@ -1,0 +1,104 @@
+{
+  "protocol_version": "UNIFIED_PIT_SHADOW_PANEL_V1",
+  "status": "LOCKED_BEFORE_PANEL_BUILD",
+  "locked_at": "2026-07-24",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Create a compact prospective seed snapshot of economically distinct public facts without creating a direction label or duplicating each source corpus.",
+  "panel_cutoff_utc": "2026-07-23T15:00:00+00:00",
+  "locked_inputs": [
+    {
+      "path": "data/herd/finra_short_interest_incremental_v2_manifest.json",
+      "sha256": "f6c0e3685392ce38d8a30e2dcbcb9abbd7bd9664f8d1391b7c284ff5d3369588",
+      "role": "FINRA_INCREMENTAL_MANIFEST"
+    },
+    {
+      "path": "data/reports/finra_short_interest_incremental_v2.json",
+      "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f",
+      "role": "FINRA_INCREMENTAL_REPORT"
+    },
+    {
+      "path": "data/herd/sec_time_valid_ticker_cik_ledger_v5.json",
+      "sha256": "68bd4c0bd18838101f200fde8be4a710c786b3bdf1b1eff5f638e5a724c5a244",
+      "role": "SEC_IDENTITY_PROTOCOL"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
+      "sha256": "8f399c79b9a21a148184e4973d436f7fe9871e32caff367564631c0aae32c37a",
+      "role": "SEC_IDENTITY_REPORT"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v5.csv",
+      "sha256": "4b10a272f1e5145cc1d73bdf6f91aace99502766d0a2d2c57cb30a206d6b9eed",
+      "role": "SEC_IDENTITY_INTERVALS"
+    },
+    {
+      "path": "data/reports/sec_form4_owner_purchase_events_v1.csv",
+      "sha256": "b7d401f22dbd17df508c93cb079955213cc9c3c515c6d9d8d3938451399a26ba",
+      "role": "FORM4_PURCHASE_FACTS"
+    },
+    {
+      "path": "data/reports/sec_form4_census_gate_v2.json",
+      "sha256": "b8e5e658baeab37f1acea3900f9a2df3ff089c706040772cd70d0dfdea0cd773",
+      "role": "FORM4_CENSUS_GATE"
+    },
+    {
+      "path": "data/herd/sec_form4_research_census_v2.json",
+      "sha256": "261ef1483f4de4af744b285a627801e1a590f4057dd2315a616069d56f84f75e",
+      "role": "FORM4_PROTOCOL"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_bindings_v2.csv",
+      "sha256": "aeb0a548085626349584628c953f4f26c1e0ea110161091a0db659f91fc2c221",
+      "role": "GUIDANCE_SOURCE_REVIEWED_FACTS"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_bindings_v2.json",
+      "sha256": "cce0ad8b539b36841f8c5c48499264d8e97e1ca03024533560bdd23e1a8c04c6",
+      "role": "GUIDANCE_BINDING_REPORT"
+    },
+    {
+      "path": "data/herd/sec_guidance_atomic_bindings_v2.json",
+      "sha256": "debb4ec6241b45c1f62d177b99d64e03065b8412e92466ad17e89d9c57ce0afc",
+      "role": "GUIDANCE_PROTOCOL"
+    },
+    {
+      "path": "data/reports/independent_universe_v1.csv",
+      "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8",
+      "role": "CURRENT_REFERENCE_UNIVERSE"
+    }
+  ],
+  "snapshot_policy": {
+    "role": "PROSPECTIVE_SEED_SNAPSHOT_NOT_OOS_CORPUS",
+    "finra": "Latest available settlement snapshot only, linked by one time-valid SEC CIK.",
+    "finra_current_snapshot_identity_fallback": "A locked current-reference ticker-CIK may be used only for the latest prospective snapshot when no V5 interval reaches that date; it must never backfill historical dates.",
+    "minimum_finra_current_reference_ticker_coverage": 0.95,
+    "current_reference_identity_fallback_for_historical_dates": false,
+    "form4": "Latest filing-date purchase facts per current-reference issuer CIK only.",
+    "guidance": "Latest accepted source-reviewed fact per CIK and metric identity only.",
+    "preserve_atomic_source_record_id": true,
+    "store_one_numeric_fact_per_row": true,
+    "duplicate_full_source_history": false,
+    "records_available_after_cutoff_forbidden": true
+  },
+  "authority": {
+    "source_fact": true,
+    "direction": false,
+    "veto": false,
+    "herd_weight": false,
+    "primary_long_horizon_oos_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  },
+  "forbidden": [
+    "ADD_PRICE_OR_RETURN_OUTCOME",
+    "CREATE_BUY_SELL_OR_PROFIT_TAKE_LABEL",
+    "INFER_DIRECTION_FROM_A_SOURCE_FACT",
+    "TREAT_FORM4_SALE_OR_PURCHASE_AS_DIRECTION_AUTHORITY",
+    "TREAT_GUIDANCE_BINDING_AS_DIRECTION_OR_VETO_AUTHORITY",
+    "TREAT_FINRA_SHORT_INTEREST_AS_PROVEN_DIRECTION",
+    "BACKFILL_AN_UNVERIFIED_TICKER",
+    "USE_CURRENT_REFERENCE_CIK_FOR_A_HISTORICAL_FINRA_DATE",
+    "CHANGE_HERD_WEIGHTS",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}

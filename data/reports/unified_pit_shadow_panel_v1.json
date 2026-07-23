@@ -1,0 +1,53 @@
+{
+  "report_version": "UNIFIED_PIT_SHADOW_PANEL_V1",
+  "status": "HASH_LOCKED_PROSPECTIVE_SEED_SNAPSHOT_READY",
+  "panel_cutoff_utc": "2026-07-23T15:00:00Z",
+  "panel_role": "PROSPECTIVE_SEED_SNAPSHOT_NOT_OOS_CORPUS",
+  "row_count": 4836,
+  "source_counts": {
+    "FINRA_SHORT_INTEREST": 3018,
+    "SEC_8K_GUIDANCE": 570,
+    "SEC_FORM4_CODE_P": 1248
+  },
+  "source_summaries": {
+    "FINRA_SHORT_INTEREST": {
+      "latest_settlement_date": "2026-06-30",
+      "source_records": 503,
+      "current_reference_ticker_count": 503,
+      "current_reference_tickers_observed": 503,
+      "current_reference_ticker_coverage": 1.0,
+      "time_valid_interval_linked_tickers": 42,
+      "current_snapshot_reference_linked_tickers": 461,
+      "current_reference_identity_used_for_historical_backfill": false
+    },
+    "SEC_FORM4_CODE_P": {
+      "current_reference_ciks_with_purchase_fact": 366,
+      "source_records": 416
+    },
+    "SEC_8K_GUIDANCE": {
+      "latest_metric_identities": 181,
+      "source_records": 190
+    }
+  },
+  "finra_current_snapshot_coverage_gate": {
+    "minimum": 0.95,
+    "actual": 1.0,
+    "passed": true,
+    "historical_current_reference_backfill_performed": false
+  },
+  "distinct_tickers": 519,
+  "distinct_ciks": 516,
+  "panel_path": "data/reports/unified_pit_shadow_panel_v1.csv",
+  "panel_sha256": "9d63daf8e8a484119d4e1c8274037906731e4c19e6621b4b9ec3be796d40a0bd",
+  "protocol_sha256": "fe19920d1b17255ca0ecd52bf2498dd007ad57efb57f6661f21248560fa4a4ec",
+  "full_source_history_duplicated": false,
+  "price_or_return_outcomes_opened": false,
+  "direction_labels_created": false,
+  "direction_hypothesis_preregistered": false,
+  "veto_authority_granted": false,
+  "herd_formula_change_allowed": false,
+  "primary_long_horizon_oos_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_priority": "AUDIT_RECOVERY_LINEAGE_AND_RUN_FULL_REGRESSION"
+}
