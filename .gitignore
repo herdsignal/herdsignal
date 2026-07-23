@@ -60,3 +60,5 @@ data/reference/point_in_time/*
 !data/reference/point_in_time/README.md
 data/reference/sec/*
 !data/reference/sec/README.md
+data/reference/finra/*
+!data/reference/finra/README.md
