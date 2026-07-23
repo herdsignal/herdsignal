@@ -1,0 +1,152 @@
+{
+  "protocol_version": "HERD_SEC_FORM4_CORPUS_V1",
+  "status": "LOCKED_BEFORE_ACCESSION_CATALOG",
+  "objective": "Build a hash-locked issuer-linked Form 4 XML development corpus without observing price outcomes or creating a trading direction.",
+  "scope": {
+    "role": "PARSER_AND_SOURCE_REVIEW_DEVELOPMENT_ONLY",
+    "universe": "51 previously researched equities; never a future independent OOS",
+    "start_inclusive": "2012-01-03",
+    "end_inclusive": "2026-07-17",
+    "forms": [
+      "4",
+      "4/A"
+    ],
+    "submission_corpora": [
+      "data/reference/sec/sec-pit-price50-20120103-20260717-20260721",
+      "data/reference/sec/sec-pit-xom34088-20120103-20260717-20260721",
+      "data/reference/sec/sec-pit-long-predecessors-20120103-20260717-20260721"
+    ],
+    "context_only_tickers": [
+      "SPY",
+      "QQQ",
+      "DIA",
+      "IWM"
+    ]
+  },
+  "review_sample": {
+    "selection": "lowest SHA256 of issuer_cik|calendar_year|accession_number",
+    "maximum_accessions_per_issuer_year": 2,
+    "selection_may_use_transaction_content": false,
+    "selection_may_use_price_outcome": false
+  },
+  "source_contract": {
+    "metadata_source": "SEC submissions JSON already fixed in immutable local corpora",
+    "document_source": "SEC EDGAR Archives primaryDocument",
+    "required_metadata": [
+      "issuer_cik",
+      "candidate_tickers",
+      "accession_number",
+      "form",
+      "filing_date",
+      "report_date",
+      "acceptance_datetime",
+      "primary_document",
+      "source_url"
+    ],
+    "hash_algorithm": "SHA-256",
+    "immutable_after_creation": true
+  },
+  "atomic_transaction_contract": {
+    "required": [
+      "issuerCik",
+      "issuerName",
+      "issuerTradingSymbol",
+      "periodOfReport",
+      "documentType",
+      "reportingOwner",
+      "isDirector",
+      "isOfficer",
+      "isTenPercentOwner",
+      "officerTitle",
+      "securityTitle",
+      "transactionDate",
+      "transactionCode",
+      "equitySwapInvolved",
+      "transactionShares",
+      "transactionPricePerShare",
+      "acquiredDisposedCode",
+      "sharesOwnedFollowingTransaction",
+      "directOrIndirectOwnership",
+      "natureOfOwnership",
+      "footnoteIds",
+      "footnoteText",
+      "isDerivative",
+      "tenB5OneCheckbox",
+      "acceptanceDatetime"
+    ],
+    "retain_nulls": true,
+    "retain_raw_footnotes": true
+  },
+  "classification": {
+    "OPEN_MARKET_PURCHASE": [
+      "P"
+    ],
+    "OPEN_MARKET_SALE": [
+      "S"
+    ],
+    "COMPENSATION_OR_AWARD": [
+      "A",
+      "D",
+      "F",
+      "I"
+    ],
+    "OPTION_OR_DERIVATIVE": [
+      "C",
+      "E",
+      "H",
+      "M",
+      "O",
+      "X",
+      "K"
+    ],
+    "GIFT_OR_ESTATE": [
+      "G",
+      "W"
+    ],
+    "OTHER_OR_REQUIRES_FOOTNOTE": [
+      "J",
+      "L",
+      "U",
+      "V",
+      "Z"
+    ],
+    "ten_b5_1": "Use the document checkbox when present; before mandatory 2023 disclosure, UNKNOWN unless the filing explicitly identifies the plan.",
+    "tax": "Code F is TAX_OR_EXERCISE_WITHHOLDING, not an open-market sale."
+  },
+  "source_review_gate": {
+    "minimum_reviewed_transactions": 200,
+    "minimum_distinct_issuers": 40,
+    "minimum_transaction_code_coverage": 0.98,
+    "minimum_required_field_accuracy": 0.95,
+    "minimum_wilson_95_lower_bound": 0.9,
+    "labels": [
+      "VALID",
+      "INVALID",
+      "AMBIGUOUS"
+    ],
+    "pending_is_not_valid": true
+  },
+  "research_basis": [
+    "https://www.sec.gov/submit-filings/technical-specifications",
+    "https://www.sec.gov/edgar/searchedgar/ownershipformcodes.html",
+    "https://www.sec.gov/newsroom/modernizing-rule-10b5-1-insider-trading-plans"
+  ],
+  "forbidden": [
+    "USE_PRICE_OUTCOMES",
+    "TREAT_ALL_SALES_AS_BEARISH",
+    "TREAT_CODE_F_AS_OPEN_MARKET_SALE",
+    "INFER_10B5_1_FALSE_WHEN_HISTORICAL_CHECKBOX_IS_ABSENT",
+    "DROP_FOOTNOTES",
+    "JOIN_REPORTING_OWNER_CIK_AS_ISSUER_CIK",
+    "AUTHORIZE_BUY_OR_SELL",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT"
+  ],
+  "policy": {
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "operational_action_authority": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "report_version": "HERD_SEC_FORM4_ACCESSION_CATALOG_V1",
+  "status": "ACCESSION_CATALOG_AND_SOURCE_SAMPLE_LOCKED",
+  "protocol_sha256": "fc0ca3ee510546d5fb241781f2f0ee1d3bdb53204bc169b111a005d242baee98",
+  "source_manifest_hashes": {
+    "data/reference/sec/sec-pit-price50-20120103-20260717-20260721": "8eb580a62147523025d3828e6db8561392699e517e0b2d4d83472c4b19aef5ec",
+    "data/reference/sec/sec-pit-xom34088-20120103-20260717-20260721": "2c1de9d97471fbe2bd79511d48eef8b5fe9ab94c627c7fdc76737cc5606276c2",
+    "data/reference/sec/sec-pit-long-predecessors-20120103-20260717-20260721": "bb5adb0413d2164ca2afd6453cb6ffd4d356fcdd6984e2b125335657396aa64a"
+  },
+  "accessions": 68478,
+  "issuers": 51,
+  "covered_tickers": 51,
+  "first_filing_date": "2012-01-03",
+  "last_filing_date": "2026-07-17",
+  "form_counts": {
+    "4": 67947,
+    "4/A": 531
+  },
+  "missing_acceptance_datetimes": 0,
+  "review_source_accessions": 1485,
+  "review_source_issuers": 51,
+  "review_source_years": 15,
+  "selection_used_transaction_content": false,
+  "selection_used_price_outcome": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "operational_action_authority": false,
+  "blind_holdout_access": false,
+  "next_decision": "COLLECT_HASH_LOCKED_PRIMARY_XML",
+  "catalog_sha256": "6860571a136ac7c581c953b0ea40841bc44fb452d3972f4bade8f7656848c3e5",
+  "review_sample_sha256": "a825dce2645458327c34714791ca311e4623eff88ee1fe00355d966910f0113f"
+}
