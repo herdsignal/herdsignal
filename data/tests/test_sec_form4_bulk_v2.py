@@ -195,7 +195,7 @@ def test_normalize_preserves_owner_footnote_and_authority_boundary(tmp_path):
     )["price_outcomes_opened"] is False
 
 
-def test_normalize_rejects_discovery_overlap(tmp_path):
+def test_normalize_excludes_discovery_issuer_overlap(tmp_path):
     protocol = _protocol(tmp_path / "protocol.json")
     snapshot = download(
         tmp_path,
@@ -216,10 +216,12 @@ def test_normalize_rejects_discovery_overlap(tmp_path):
         "issuer_cik": "1",
         "candidate_tickers": "IND",
     }]).to_csv(discovery, index=False)
-    with pytest.raises(Form4BulkError, match="overlaps discovery"):
-        normalize(
-            snapshot,
-            independent_universe=independent,
-            discovery_catalog=discovery,
-            protocol_path=protocol,
-        )
+    result = normalize(
+        snapshot,
+        independent_universe=independent,
+        discovery_catalog=discovery,
+        protocol_path=protocol,
+    )
+    assert result["independent_issuers"] == 0
+    assert result["independent_issuer_overlap_excluded"] == 1
+    assert result["independent_issuer_overlap_tickers"] == ["IND"]

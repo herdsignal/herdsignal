@@ -1,0 +1,114 @@
+{
+  "version": "HERD_SEC_FORM4_INSIDER_PURCHASE_SUPPORT_V1",
+  "status": "LOCKED_CONDITIONAL_ON_CENSUS_GATE_BEFORE_FEATURE_OUTCOME_JOIN",
+  "locked_at": "2026-07-23",
+  "research_question": "Does recent non-routine insider purchase support identify Rush episodes with lower subsequent large-pullback or structural-break risk?",
+  "economic_hypothesis": {
+    "feature": "NON_ROUTINE_CODE_P_PURCHASE_SUPPORT_90D",
+    "expected_direction": "LOWER_ADVERSE_PATH_RISK",
+    "interpretation_if_passed": "Protective veto evidence against premature profit-taking; never a buy or sell trigger by itself.",
+    "forbidden_inverse": "Absence of purchase support must not be interpreted as evidence to sell."
+  },
+  "population": {
+    "episodes": "data/reports/independent_rush_evidence_panel_v1.csv",
+    "universe": "Eligible current S&P 500 constituents excluding the existing 51 equities.",
+    "claim_boundary": "Hypothesis-specific current-constituent OOS robustness; not blind and not survivorship safe.",
+    "exclude_path_labels": [
+      "UNRESOLVED"
+    ],
+    "adverse_path_labels": [
+      "LARGE_PULLBACK",
+      "STRUCTURAL_BREAK"
+    ],
+    "non_adverse_path_labels": [
+      "CONTINUATION",
+      "TEMPORARY_PULLBACK"
+    ]
+  },
+  "feature_definition": {
+    "lookback_calendar_days": 90,
+    "availability_rule": "filingDate must be strictly earlier than signal_date",
+    "document_type": "4",
+    "amendments_excluded": true,
+    "transaction_table": "NONDERIV_TRANS",
+    "transaction_code": "P",
+    "code_p_semantics": "OPEN_MARKET_OR_PRIVATE_PURCHASE_CANDIDATE",
+    "positive_shares_and_price_required": true,
+    "direct_ownership_required": true,
+    "eligible_owner_relationships": [
+      "Officer",
+      "Director"
+    ],
+    "aff10b5one_true_excluded": true,
+    "explicit_footnote_exclusions": [
+      "private placement",
+      "privately negotiated",
+      "directly from the issuer",
+      "employee stock purchase plan",
+      "401(k)",
+      "dividend reinvestment"
+    ],
+    "routine_rule": "At the filing date, the same owner and issuer had qualifying P purchases in the same calendar month in each of the three immediately preceding calendar years.",
+    "warmup_rule": "Before three full prior calendar years are observable for that owner-issuer pair, routine status is UNKNOWN and the event cannot create the feature.",
+    "non_routine_rule": "After warmup, a qualifying event not matching the routine rule is a non-routine purchase-support candidate.",
+    "aggregation": "Episode feature is 1 when at least one qualifying non-routine owner event is publicly available in the lookback window."
+  },
+  "oos_folds": [
+    {
+      "id": "OOS_2016_2018",
+      "start": "2016-01-01",
+      "end": "2018-12-31"
+    },
+    {
+      "id": "OOS_2019_2021",
+      "start": "2019-01-01",
+      "end": "2021-12-31"
+    },
+    {
+      "id": "OOS_2022_2023",
+      "start": "2022-01-01",
+      "end": "2023-12-31"
+    },
+    {
+      "id": "OOS_2024_2026Q2",
+      "start": "2024-01-01",
+      "end": "2026-06-30"
+    }
+  ],
+  "adoption_gate": {
+    "minimum_resolved_episodes": 1500,
+    "minimum_feature_positive_episodes": 50,
+    "minimum_feature_positive_tickers": 30,
+    "minimum_folds_with_at_least_10_positive_episodes": 3,
+    "minimum_direction_consistent_folds": 3,
+    "maximum_pooled_adverse_risk_difference": -0.05,
+    "maximum_pooled_relative_risk": 0.85,
+    "maximum_ticker_cluster_bootstrap_95_upper_risk_difference": 0.0,
+    "minimum_fisher_two_sided_p_value_is_not_a_gate": true
+  },
+  "research_firewall": {
+    "census_gate_must_pass": true,
+    "single_hypothesis_only": true,
+    "no_parameter_search": true,
+    "no_price_threshold_tuning": true,
+    "blind_holdout_access": false,
+    "survivorship_safe": false,
+    "operational_action_authority": false,
+    "buy_or_profit_take_recommendations_enabled": false
+  },
+  "evidence_basis": [
+    {
+      "claim": "Insider purchases have historically been more informative than sales.",
+      "url": "https://www.nber.org/papers/w6656"
+    },
+    {
+      "claim": "Purchase portfolios earned abnormal returns while sale portfolios did not in the cited historical sample.",
+      "url": "https://www.nber.org/papers/w6913"
+    },
+    {
+      "claim": "Routine insider trades were substantially less informative than opportunistic trades.",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.2012.01740.x"
+    }
+  ],
+  "next_decision": "RUN_ONCE_ONLY_AFTER_FORM4_CENSUS_GATE_PASSES"
+}

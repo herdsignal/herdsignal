@@ -256,7 +256,7 @@ def _normalize_cik(value: object) -> str:
 def load_universe(
     independent_universe: Path,
     discovery_catalog: Path,
-) -> tuple[pd.DataFrame, dict[str, str]]:
+) -> tuple[pd.DataFrame, dict[str, str], pd.DataFrame]:
     independent = pd.read_csv(independent_universe, dtype={"cik": str})
     required = {"ticker", "cik", "eligible", "rejection_reasons"}
     if not required.issubset(independent.columns):
@@ -266,6 +266,9 @@ def load_universe(
     ].copy()
     eligible["issuer_cik"] = eligible["cik"].map(_normalize_cik)
     eligible = eligible[eligible["issuer_cik"].ne("")]
+    for column in ("company", "gics_sector", "sector_etf"):
+        if column not in eligible:
+            eligible[column] = ""
     if eligible["ticker"].duplicated().any():
         raise Form4BulkError("independent universe contains duplicate tickers")
 
@@ -275,14 +278,12 @@ def load_universe(
     discovery_ciks = {
         _normalize_cik(value) for value in discovery["issuer_cik"] if str(value).strip()
     }
+    overlap = eligible[eligible["issuer_cik"].isin(discovery_ciks)].copy()
+    eligible = eligible[~eligible["issuer_cik"].isin(discovery_ciks)].copy()
     split_by_cik = {cik: "DISCOVERY_51" for cik in discovery_ciks}
     for row in eligible.itertuples(index=False):
-        if row.issuer_cik in split_by_cik:
-            raise Form4BulkError(
-                f"independent issuer overlaps discovery issuer: {row.ticker}"
-            )
         split_by_cik[row.issuer_cik] = "INDEPENDENT_CURRENT_CONSTITUENT"
-    return eligible, split_by_cik
+    return eligible, split_by_cik, overlap
 
 
 def _read_table(archive: zipfile.ZipFile, name: str) -> pd.DataFrame:
@@ -332,7 +333,9 @@ def normalize(
     manifest = verify_download(snapshot, protocol_path=protocol_path)
     if (snapshot / "normalized_manifest.json").exists():
         return verify_normalized(snapshot, protocol_path=protocol_path)
-    eligible, split_by_cik = load_universe(independent_universe, discovery_catalog)
+    eligible, split_by_cik, overlap = load_universe(
+        independent_universe, discovery_catalog
+    )
     target_ciks = set(split_by_cik)
     submissions: list[dict] = []
     owners: list[dict] = []
@@ -472,6 +475,13 @@ def normalize(
     _write_frame(temporary / "reporting_owners.csv", owners)
     _write_frame(temporary / "transactions.csv", transactions)
     _write_frame(temporary / "footnotes.csv", footnotes)
+    eligible[[
+        "ticker",
+        "issuer_cik",
+        "company",
+        "gics_sector",
+        "sector_etf",
+    ]].to_csv(temporary / "independent_universe.csv", index=False)
     if normalized.exists():
         raise Form4BulkError("normalized directory exists without manifest")
     temporary.rename(normalized)
@@ -492,6 +502,8 @@ def normalize(
         "quarters": int(manifest["quarter_count"]),
         "selected_issuers": len(target_ciks),
         "independent_issuers": int(eligible["issuer_cik"].nunique()),
+        "independent_issuer_overlap_excluded": len(overlap),
+        "independent_issuer_overlap_tickers": sorted(overlap["ticker"].tolist()),
         "submissions": len(submissions),
         "reporting_owners": len(owners),
         "transactions": len(transactions),
