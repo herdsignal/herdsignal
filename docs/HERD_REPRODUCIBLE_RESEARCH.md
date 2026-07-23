@@ -434,6 +434,26 @@ FINRA는 약 5.14년이라 최근 민감도·prospective shadow만 허용하고,
 최대 45일 지연 때문에 느린 context로 제한한다. 전체 옵션 surface는 유료,
 무료 Cboe 거래량은 IV·skew 대체가 아니므로 1차 OOS 준비 정보원은 0개다.
 
+FINRA 최근 lane은 먼저 공식 원본을 append-only SHA corpus로 고정한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python \
+  data/herd/finra_short_interest_census_v1.py
+
+PYTHONPATH=data data/.venv/bin/python \
+  data/herd/finra_short_interest_coverage_audit_v1.py
+```
+
+대용량 CSV와 receipt는 `data/reference/finra`에 로컬 보관하고, 전체 URL·
+결제기준일·유도 공개일·HTTP 정정 메타데이터·SHA-256은 추적 manifest에
+커밋한다. 같은 결제기준일의 새 SHA는 기존 원본을 덮어쓰지 않는다.
+
+coverage 감사는 short position 값과 가격을 결합하지 않는다. 현재 ticker
+표기 관측률과 날짜 유효 CIK 연결률을 분리하며, 검증된 SEC alias interval이
+없는 symbol은 `CURRENT_SYMBOL_OBSERVED_PIT_CIK_UNVERIFIED`로 남긴다. 현재
+상태는 원본 122개가 해시 고정됐지만 PIT CIK 원장이 부족하므로 방향 가설
+사전등록과 OOS는 차단된다.
+
 `--deep`은 manifest뿐 아니라 가격 55종목과 SEC 원본의 개별 SHA-256까지
 대조한다. 현재 구성 스냅샷은 차단 사건 4건이 남은 진단본이므로 모델
 탈락과 민감도 연구에만 사용하며 최종 채택·운영 신호에는 사용할 수 없다.

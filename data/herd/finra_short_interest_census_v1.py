@@ -196,8 +196,7 @@ def extract_official_urls(
     return sorted(urls)
 
 
-def discover_urls(protocol: dict, timeout: int = 60) -> list[str]:
-    source = protocol["official_source"]
+def discover_urls(protocol: dict) -> list[str]:
     window = protocol["collection_window"]
     minimum = date.fromisoformat(window["minimum_settlement_date"])
     as_of = date.fromisoformat(window["as_of_date"])
@@ -340,7 +339,7 @@ def collect(
     protocol = load_and_verify_protocol(protocol_path)
     corpus_root = _root_path(protocol["immutable_storage"]["local_root"])
     corpus_root.mkdir(parents=True, exist_ok=True)
-    urls = discover_urls(protocol, timeout=timeout)
+    urls = discover_urls(protocol)
     if not urls:
         raise ValueError("no official FINRA files discovered")
     entries = []
