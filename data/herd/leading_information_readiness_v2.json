@@ -1,0 +1,123 @@
+{
+  "protocol_version": "HERD_LEADING_INFORMATION_READINESS_V2",
+  "status": "LOCKED_BEFORE_LOCAL_COVERAGE_AUDIT",
+  "objective": "Decide whether public non-price information is locally ready for a new independent OOS hypothesis before collecting or changing HERD.",
+  "minimum_primary_history_years": 10,
+  "sources": [
+    {
+      "id": "SEC_8K_GUIDANCE_REVISION",
+      "role": "EXPECTATION_CHANGE_CANDIDATE",
+      "official_url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+      "local_atomic_report": "data/reports/sec_guidance_atomic_bindings_v1.json",
+      "local_pair_report": "data/reports/sec_guidance_atomic_pairs_v1.json",
+      "minimum_revision_pairs": 150,
+      "minimum_tickers": 20,
+      "pit_time": "EDGAR acceptance datetime",
+      "direct_sell_authority": false
+    },
+    {
+      "id": "SEC_FORM4_INSIDER_TRANSACTIONS",
+      "role": "BUSINESS_STATE_OR_EXPECTATION_CONTEXT_CANDIDATE",
+      "official_url": "https://www.sec.gov/files/form4data%2C0.pdf",
+      "master_forms": [
+        "4",
+        "4/A"
+      ],
+      "local_corpus_glob": "data/reference/sec/sec-form4-*",
+      "minimum_issuer_tickers": 40,
+      "minimum_transactions": 500,
+      "pit_time": "EDGAR acceptance datetime; never transaction date alone",
+      "required_atomic_fields": [
+        "issuerCik",
+        "issuerTradingSymbol",
+        "periodOfReport",
+        "acceptanceDatetime",
+        "transactionDate",
+        "transactionCode",
+        "acquiredDisposedCode",
+        "transactionShares",
+        "transactionPricePerShare",
+        "sharesOwnedFollowingTransaction",
+        "directOrIndirectOwnership",
+        "footnotes"
+      ],
+      "allowed_initial_transaction_codes": [
+        "P",
+        "S"
+      ],
+      "exclude_from_direction": [
+        "AWARD_GRANT",
+        "OPTION_EXERCISE",
+        "GIFT",
+        "TAX_WITHHOLDING",
+        "DERIVATIVE_ONLY",
+        "UNCLASSIFIED_FOOTNOTE"
+      ],
+      "historical_sell_limitation": "Reliable machine-readable Rule 10b5-1 plan separation is not available uniformly across the full ten-year period.",
+      "direct_sell_authority": false
+    },
+    {
+      "id": "SEC_13F_INSTITUTIONAL_HOLDINGS",
+      "role": "SLOW_CONTEXT_ONLY",
+      "official_url": "https://www.sec.gov/rules-regulations/staff-guidance/division-investment-management-frequently-asked-questions/frequently-asked-questions-about-form-13f",
+      "master_forms": [
+        "13F-HR",
+        "13F-HR/A"
+      ],
+      "local_corpus_glob": "data/reference/sec/sec-13f-*",
+      "maximum_publication_lag_days": 45,
+      "requires_security_mapping": "CUSIP or FIGI to point-in-time ticker",
+      "direct_sell_authority": false
+    },
+    {
+      "id": "FINRA_EQUITY_SHORT_INTEREST",
+      "role": "RECENT_EXPLORATORY_ONLY",
+      "official_url": "https://www.finra.org/finra-data/browse-catalog/equity-short-interest",
+      "local_corpus_glob": "data/reference/finra/short-interest-*",
+      "public_history_years": 5,
+      "publication_lag": "seventh business day after settlement date",
+      "direct_sell_authority": false
+    },
+    {
+      "id": "HISTORICAL_ANALYST_ESTIMATE_REVISIONS",
+      "role": "DATA_BLOCKED",
+      "reason": "No complete free public point-in-time consensus revision archive with revision timestamps.",
+      "direct_sell_authority": false
+    },
+    {
+      "id": "HISTORICAL_EQUITY_OPTION_SURFACE",
+      "role": "DATA_BLOCKED",
+      "reason": "Deep corporate-action-adjusted option IV, skew, term structure and open-interest history requires licensed data.",
+      "direct_sell_authority": false
+    }
+  ],
+  "master_index": {
+    "path": "data/reference/sec/sec-master-2016q3-2026q3-20260719",
+    "warning": "Form 4 master-index CIK is the reporting owner, and 13F master-index CIK is the manager; neither can be joined directly to issuer CIK."
+  },
+  "decision_order": [
+    "AUDIT_GUIDANCE_ATOMIC_PAIR_COVERAGE",
+    "AUDIT_FORM4_SOURCE_INVENTORY_AND_LOCAL_ISSUER_XML",
+    "AUDIT_13F_CONTEXT_AVAILABILITY",
+    "AUDIT_FINRA_HISTORY_AND_LOCAL_ARCHIVE",
+    "KEEP_LICENSED_EXPECTATION_AND_OPTION_DATA_BLOCKED"
+  ],
+  "forbidden": [
+    "JOIN_FORM4_REPORTING_OWNER_CIK_TO_ISSUER_CIK",
+    "JOIN_13F_MANAGER_CIK_TO_ISSUER_CIK",
+    "TREAT_ALL_INSIDER_SALES_AS_BEARISH",
+    "TREAT_13F_QUARTER_END_AS_PUBLICATION_DATE",
+    "TREAT_DAILY_SHORT_VOLUME_AS_SHORT_INTEREST",
+    "USE_UNLICENSED_SCRAPED_CONSENSUS",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ],
+  "policy": {
+    "coverage_audit_only": true,
+    "price_outcomes_opened": false,
+    "herd_formula_change_allowed": false,
+    "operational_action_authority": false,
+    "blind_holdout_access": false
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "report_version": "HERD_LEADING_INFORMATION_READINESS_V2",
+  "status": "NO_NON_PRICE_DIRECTION_SOURCE_READY",
+  "protocol_sha256": "9f06161ad78daa5829dd6787996e672efd3802acde742c4feb75dd7569834b28",
+  "master_manifest_sha256": "6d3ae55f5f8049a79860ca11f01040333239ecf95ee0f3406cc84e7dcbda89f1",
+  "master_form_inventory": {
+    "master_files": 41,
+    "forms": {
+      "13F-HR": 252112,
+      "13F-HR/A": 11980,
+      "4": 3772740,
+      "4/A": 72338
+    },
+    "yearly": {
+      "2016": {
+        "13F-HR": 8525,
+        "13F-HR/A": 480,
+        "4": 154252,
+        "4/A": 3521
+      },
+      "2017": {
+        "13F-HR": 17625,
+        "13F-HR/A": 1026,
+        "4": 376572,
+        "4/A": 8143
+      },
+      "2018": {
+        "13F-HR": 19179,
+        "13F-HR/A": 1041,
+        "4": 375242,
+        "4/A": 7807
+      },
+      "2019": {
+        "13F-HR": 20413,
+        "13F-HR/A": 1102,
+        "4": 364713,
+        "4/A": 7873
+      },
+      "2020": {
+        "13F-HR": 21798,
+        "13F-HR/A": 974,
+        "4": 376274,
+        "4/A": 7827
+      },
+      "2021": {
+        "13F-HR": 24215,
+        "13F-HR/A": 1146,
+        "4": 409163,
+        "4/A": 7785
+      },
+      "2022": {
+        "13F-HR": 27501,
+        "13F-HR/A": 1265,
+        "4": 381051,
+        "4/A": 7351
+      },
+      "2023": {
+        "13F-HR": 28457,
+        "13F-HR/A": 1407,
+        "4": 378210,
+        "4/A": 7059
+      },
+      "2024": {
+        "13F-HR": 30817,
+        "13F-HR/A": 1518,
+        "4": 370615,
+        "4/A": 6037
+      },
+      "2025": {
+        "13F-HR": 33739,
+        "13F-HR/A": 1239,
+        "4": 351055,
+        "4/A": 5288
+      },
+      "2026": {
+        "13F-HR": 19843,
+        "13F-HR/A": 782,
+        "4": 235593,
+        "4/A": 3647
+      }
+    },
+    "first_filed_date": "2016-07-01",
+    "last_filed_date": "2026-07-17"
+  },
+  "source_decisions": [
+    {
+      "source": "SEC_8K_GUIDANCE_REVISION",
+      "status": "BLOCKED_ATOMIC_REVISION_PAIR_COVERAGE",
+      "atomic_bindings": 557,
+      "atomic_revision_pairs": 80,
+      "distinct_tickers": 24,
+      "minimum_revision_pairs": 150,
+      "minimum_tickers": 20,
+      "coverage_passed": false,
+      "next_action": "Do not resume parser versioning; add only human-reviewed atomic bindings from naturally arriving filings."
+    },
+    {
+      "source": "SEC_FORM4_INSIDER_TRANSACTIONS",
+      "status": "COLLECTION_FEASIBLE_NOT_LOCALLY_READY",
+      "master_index_filings": 3845078,
+      "issuer_linked_xml_corpora": 0,
+      "master_cik_join_allowed": false,
+      "sell_direction_allowed": false,
+      "reason": "Master index proves source abundance but identifies reporting owners, not issuers. Issuer-linked XML, acceptance time, transaction semantics and footnotes are not collected locally.",
+      "next_action": "BUILD_HASHED_FORM4_ISSUER_XML_CORPUS_WITHOUT_PRICE_OUTCOMES"
+    },
+    {
+      "source": "SEC_13F_INSTITUTIONAL_HOLDINGS",
+      "status": "CONTEXT_ONLY_NOT_DIRECTION_READY",
+      "master_index_filings": 264092,
+      "manager_corpora": 0,
+      "manager_cik_join_allowed": false,
+      "publication_lag_days": 45,
+      "sell_direction_allowed": false,
+      "next_action": "DEFER_UNTIL_A_DIRECTION_SOURCE_PASSES"
+    },
+    {
+      "source": "FINRA_EQUITY_SHORT_INTEREST",
+      "status": "RECENT_EXPLORATORY_DATA_NOT_LOCALLY_ARCHIVED",
+      "local_corpora": 0,
+      "public_history_years": 5,
+      "minimum_primary_history_years": 10,
+      "primary_oos_ready": false,
+      "sell_direction_allowed": false,
+      "next_action": "DO_NOT_USE_FOR_PRIMARY_LONG_HORIZON_OOS"
+    },
+    {
+      "source": "HISTORICAL_ANALYST_ESTIMATE_REVISIONS",
+      "status": "DATA_BLOCKED",
+      "reason": "No complete free public point-in-time consensus revision archive with revision timestamps.",
+      "sell_direction_allowed": false,
+      "next_action": "REQUIRE_LICENSED_DATA_OR_KEEP_BLOCKED"
+    },
+    {
+      "source": "HISTORICAL_EQUITY_OPTION_SURFACE",
+      "status": "DATA_BLOCKED",
+      "reason": "Deep corporate-action-adjusted option IV, skew, term structure and open-interest history requires licensed data.",
+      "sell_direction_allowed": false,
+      "next_action": "REQUIRE_LICENSED_DATA_OR_KEEP_BLOCKED"
+    }
+  ],
+  "ready_sources": [],
+  "ready_source_count": 0,
+  "price_outcomes_opened": false,
+  "new_hypothesis_preregistered": false,
+  "herd_formula_change_allowed": false,
+  "operational_action_authority": false,
+  "blind_holdout_access": false,
+  "next_priority": "BUILD_FORM4_SOURCE_CORPUS_ONLY"
+}
