@@ -5,6 +5,10 @@ from herd.sec_cover_page_targeted_source_v1 import (
     _filing_rows,
     extract_entity_ciks,
 )
+from herd.sec_cover_page_targeted_ledger_v1 import (
+    _mark_conflicts,
+    build_targeted_intervals,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -68,3 +72,65 @@ def test_submission_rows_require_acceptance_datetime_alignment():
         "primaryDocument": ["report.htm"],
     })
     assert rows[0]["accepted_at"] == "2025-01-01T16:30:00.000Z"
+
+
+def test_targeted_intervals_apply_exact_blackrock_cik_boundary():
+    protocol = _protocol()
+    source = {
+        "accepted_anchors": [
+            {
+                "cik": "0001364742",
+                "symbol": "BLK",
+                "canonical_symbol": "BLK",
+                "filing_date": day,
+                "accepted_at": f"{day}T16:00:00Z",
+                "accession_number": f"old-{position}",
+                "form": "10-Q",
+                "document_sha256": str(position) * 64,
+            }
+            for position, day in enumerate(("2024-02-01", "2024-08-01"), start=1)
+        ] + [
+            {
+                "cik": "0002012383",
+                "symbol": "BLK",
+                "canonical_symbol": "BLK",
+                "filing_date": day,
+                "accepted_at": f"{day}T16:00:00Z",
+                "accession_number": f"new-{position}",
+                "form": "10-Q",
+                "document_sha256": str(position + 2) * 64,
+            }
+            for position, day in enumerate(("2024-11-01", "2025-02-01"), start=1)
+        ],
+        "identity_events": [{
+            **protocol["exact_identity_events"][0],
+            "required_terms_verified": True,
+        }],
+    }
+    intervals = [
+        row for row in build_targeted_intervals(protocol, source)
+        if row["canonical_symbol"] == "BLK"
+    ]
+    assert {
+        (row["cik"], row["valid_from"], row["valid_to"])
+        for row in intervals
+    } == {
+        ("0001364742", "2024-02-01", "2024-09-30"),
+        ("0002012383", "2024-10-01", "2025-02-01"),
+    }
+    assert _mark_conflicts(intervals) == 0
+
+
+def test_generated_targeted_ledger_is_hash_locked_and_non_operational():
+    report_path = ROOT / "data/reports/sec_cover_page_targeted_ledger_v1.json"
+    if not report_path.exists():
+        return
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report["targeted_document_count"] == 113
+    assert report["targeted_anchor_count"] == 133
+    assert report["conflict_excluded_interval_count"] == 0
+    assert report["cohort_symbol_overrides"] == {"BNY": "BK"}
+    assert report["bny_linked_to_bny_mellon_cik"] is False
+    assert report["blackrock_exact_transition_applied"] is True
+    assert report["operational_action_authority"] is False
+    assert report["operational_action_ratio"] == 0.0
