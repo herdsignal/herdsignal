@@ -1,0 +1,92 @@
+{
+  "contract_version": "HERD_PROFIT_GIVEBACK_POLICY_V1",
+  "status": "LOCKED_BEFORE_POLICY_EVENT_RESULTS",
+  "objective": "Reduce excessive giveback of an existing long-term winner while preserving at least 85 percent of the core position.",
+  "scope": {
+    "investor": "EXISTING_LONG_TERM_HOLDER",
+    "external_contributions": "NONE_IN_PRIMARY_RESEARCH_LANE",
+    "company_selection": "OUTSIDE_MODEL",
+    "leverage_allowed": false,
+    "full_exit_allowed": false
+  },
+  "inputs": {
+    "transition_report": {
+      "path": "data/reports/herd_transition_s1.json",
+      "sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248",
+      "required_status": "TRANSITION_DISPLAY_READY"
+    },
+    "price_snapshot_manifest": {
+      "path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json",
+      "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b"
+    },
+    "fold_manifest": {
+      "path": "data/walk_forward/long-oos-v2-20260721/manifest.json",
+      "sha256": "b9a1f6c7658a00fcdd857f29d66963f971f5c8e4b6a62f627cb454102fff46ea",
+      "lane": "PRICE_TIMING_6M",
+      "required_folds": 9
+    }
+  },
+  "position_contract": {
+    "historical_entry": "FIRST_TRADING_SESSION_ON_OR_AFTER_EACH_TEST_START",
+    "entry_price": "ADJUSTED_CLOSE_FOR_SIGNAL_MEASUREMENT",
+    "peak_price": "MAXIMUM_ADJUSTED_CLOSE_OBSERVED_SINCE_ENTRY",
+    "peak_gain": "PEAK_PRICE_DIVIDED_BY_ENTRY_PRICE_MINUS_ONE",
+    "drawdown_from_peak": "CURRENT_PRICE_DIVIDED_BY_PEAK_PRICE_MINUS_ONE",
+    "profit_giveback_fraction": "PEAK_PRICE_MINUS_CURRENT_PRICE_DIVIDED_BY_PEAK_PRICE_MINUS_ENTRY_PRICE",
+    "future_price_allowed": false
+  },
+  "policies": [
+    {
+      "id": "GIVEBACK_BASELINE",
+      "role": "PERSONAL_RISK_BASELINE",
+      "minimum_peak_gain": 0.3,
+      "minimum_peak_drawdown": 0.1,
+      "minimum_profit_giveback_fraction": 0.25,
+      "requires_recent_rush": false,
+      "required_transitions": []
+    },
+    {
+      "id": "HERD_GIVEBACK_S1",
+      "role": "SERVICE_CANDIDATE",
+      "minimum_peak_gain": 0.3,
+      "minimum_peak_drawdown": 0.1,
+      "minimum_profit_giveback_fraction": 0.25,
+      "requires_recent_rush": true,
+      "recent_rush_window_weeks": 13,
+      "required_transitions": ["COOLING", "BREAKING"]
+    }
+  ],
+  "execution_policy": {
+    "trim_fraction_of_current_shares": 0.05,
+    "maximum_cumulative_trim_fraction": 0.15,
+    "maximum_trim_events_per_ticker_year": 2,
+    "minimum_trim_cooldown_weeks": 8,
+    "execution": "NEXT_TRADING_SESSION_OPEN",
+    "base_one_way_cost_bps": 10,
+    "stress_one_way_cost_bps": [25, 50]
+  },
+  "reentry_preregistration": {
+    "requires_prior_unspent_matched_sale_cash": true,
+    "required_transition": "RECOVERING",
+    "minimum_weeks_after_trim": 8,
+    "business_gate": "PASS_REQUIRED",
+    "maximum_reentry_cost": "UNSPENT_MATCHED_SALE_PROCEEDS",
+    "execution": "NEXT_TRADING_SESSION_OPEN"
+  },
+  "event_generation_gates": {
+    "required_fold_count": 9,
+    "minimum_giveback_baseline_events": 50,
+    "minimum_service_candidate_events": 20,
+    "minimum_service_candidate_tickers": 10,
+    "minimum_service_candidate_folds": 5
+  },
+  "claim_boundary": {
+    "event_is_not_prediction": true,
+    "event_is_not_trade_authority": true,
+    "economic_evaluation_required": true,
+    "completed_cycle_required": true,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

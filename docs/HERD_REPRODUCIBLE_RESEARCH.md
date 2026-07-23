@@ -552,6 +552,17 @@ PYTHONPATH=data data/.venv/bin/python -m herd.herd_transition_s1
 억제한다. 억제 규칙은 예측력을 높이기 위한 사후 임계값이 아니라 표시
 상태의 주간 진동을 막는 outcome-blind 계약이다.
 
+신규 현금이 없는 기존 보유자 코호트의 수익 반납 정책 사건은 다음 명령으로
+생성한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.profit_giveback_policy_v1
+```
+
+사건 생성 단계는 fold 종료 이후 가격을 정책 조건에 사용하지 않는다.
+`POLICY_EVENTS_READY`는 사전등록한 사건 수와 종목·fold coverage가
+충분하다는 뜻이며 경제성이나 매매 권한을 의미하지 않는다.
+
 ## 11. 장기 라벨 OOS 분할
 
 라벨 길이가 다른 가격 타이밍과 기업 상태를 같은 fold로 평가하지 않는다.

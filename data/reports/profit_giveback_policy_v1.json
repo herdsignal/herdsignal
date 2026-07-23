@@ -1,0 +1,43 @@
+{
+  "report_version": "HERD_PROFIT_GIVEBACK_POLICY_V1",
+  "status": "POLICY_EVENTS_READY",
+  "contract_sha256": "2048b98e1bf482d6c50a90b9fd3a27881a61d507645ff03f309e99a5e77ba9f2",
+  "events_sha256": "6214746d3e4ebc0e7ad806486cfbdb71d9b46ada56ee87b44c6e4c66ea7ee90d",
+  "events": 270,
+  "folds": 9,
+  "policy_results": {
+    "GIVEBACK_BASELINE": {
+      "events": 182,
+      "tickers": 39,
+      "folds": 9,
+      "median_peak_gain": 0.4760727897558261,
+      "median_drawdown_from_peak": -0.1340018399812984,
+      "median_profit_giveback_fraction": 0.42420449680731415
+    },
+    "HERD_GIVEBACK_S1": {
+      "events": 88,
+      "tickers": 36,
+      "folds": 9,
+      "median_peak_gain": 0.49446044870062733,
+      "median_drawdown_from_peak": -0.14976887241544679,
+      "median_profit_giveback_fraction": 0.4461339844047908
+    }
+  },
+  "maximum_events_per_ticker_year": 2,
+  "checks": {
+    "required_fold_count": true,
+    "minimum_giveback_baseline_events": true,
+    "minimum_service_candidate_events": true,
+    "minimum_service_candidate_tickers": true,
+    "minimum_service_candidate_folds": true,
+    "maximum_events_per_ticker_year": true
+  },
+  "passed": true,
+  "future_prices_used_for_event": false,
+  "future_outcomes_labeled": false,
+  "economic_evaluation_executed": false,
+  "event_is_trade_authority": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "survivorship_safe": false
+}

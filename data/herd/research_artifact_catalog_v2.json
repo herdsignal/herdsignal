@@ -8,6 +8,8 @@
     "state_display_ready": true,
     "transition_measurement": "HERD_TRANSITION_S1",
     "transition_display_ready": true,
+    "personal_policy_candidate": "HERD_GIVEBACK_S1",
+    "personal_policy_events_ready": true,
     "blind_holdout_access": false,
     "operational_action_ratio": 0.0
   },
@@ -42,6 +44,9 @@
       "data/herd/herd_transition_s1.json",
       "data/reports/herd_transition_s1.json",
       "data/reports/herd_transition_s1_latest.csv",
+      "data/herd/profit_giveback_policy_v1.json",
+      "data/reports/profit_giveback_policy_v1.json",
+      "data/reports/profit_giveback_policy_v1_events.csv",
       "data/herd/vnext_prospective_shadow_protocol_v1.json",
       "docs/HERD_RESEARCH_STATUS.md",
       "docs/HERD_REPRODUCIBLE_RESEARCH.md"

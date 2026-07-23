@@ -71,6 +71,28 @@ State S1의 현재값, 4주 변화, 13주 극단 기억과 네 가족의 변화 
 중앙 강조 이벤트는 3회다. `TRANSITION_DISPLAY_READY`는 관측 가능한
 상태 변화 표시만 승인하며 미래 경로 예측이나 행동 권한은 승인하지 않는다.
 
+## Profit Giveback Policy V1
+
+- 계약: `data/herd/profit_giveback_policy_v1.json`
+- 구현: `data/herd/profit_giveback_policy_v1.py`
+- 사건 원장: `data/reports/profit_giveback_policy_v1_events.csv`
+- 결과: `data/reports/profit_giveback_policy_v1.json`
+
+신규 현금이 없는 기존 장기 보유자의 수익 반납 문제를 HERD 점수 밖의 개인
+정책으로 사전등록했다. 각 1년 가격 OOS fold의 첫 거래일에 동일 종목을
+보유한 코호트를 만들고, 당시까지의 최고 가격과 현재 가격만으로 peak gain,
+peak drawdown, profit giveback fraction을 계산한다.
+
+`GIVEBACK_BASELINE`은 peak gain 30% 이상, 고점 하락 10% 이상, 최고
+미실현이익 반납 25% 이상을 요구한다. `HERD_GIVEBACK_S1`은 같은 조건에
+최근 13주 Rush와 현재 `COOLING` 또는 `BREAKING`을 추가한다. 두 정책 모두
+5% 검토, 연 2회, 8주 cooldown, 누적 15% 상한을 고정했다.
+
+9개 fold에서 baseline 182건·39종목, S1 후보 88건·36종목이 생성돼 사건
+coverage 게이트를 통과했다. 이는 미래 가격을 사용하지 않은 trim 검토
+사건일 뿐이다. 경제성, 재진입, 완결 사이클은 아직 평가하지 않았으며 운영
+행동 비율은 0%다.
+
 ## 개인 현금흐름 비교 계약
 
 - 계약: `data/herd/personal_cashflow_benchmark_v1.json`
