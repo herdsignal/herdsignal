@@ -1,0 +1,84 @@
+{
+  "protocol_version": "SEC_TARGETED_COVER_CORPUS_V2",
+  "status": "LOCKED_BEFORE_PRIMARY_SOURCE_COLLECTION",
+  "locked_at": "2026-07-24",
+  "research_tier": "PUBLIC_RESEARCH_ONLY",
+  "objective": "Exhaust the eligible SEC primary cover filings for the locked 25-entity identifier-gap queue and preserve tagged trading-symbol evidence.",
+  "locked_inputs": [
+    {
+      "path": "data/herd/sec_identifier_gap_queue_v1.json",
+      "sha256": "ea90e23e3cc1394a5c48f80e02a6e4926b96933a16b4407c57fabab2799874c4",
+      "role": "QUEUE_PROTOCOL"
+    },
+    {
+      "path": "data/reports/sec_identifier_gap_queue_v1.csv",
+      "sha256": "c84c158258c9920a16684eb2bd21c6f97f61e6c328898bb4e40b5f9daab08422",
+      "role": "TARGET_QUEUE"
+    },
+    {
+      "path": "data/reports/sec_identifier_gap_queue_v1.json",
+      "sha256": "24109da14a746595373cfdc904923b9be0f1672e77fea60ac4e20f1e58cd2f91",
+      "role": "QUEUE_REPORT"
+    },
+    {
+      "path": "data/herd/overnight_pit_shadow_expansion_v1.json",
+      "sha256": "21a8f287e90663ab0cbd771f75708c6030d0baa17343db4a210546bbf26f02e7",
+      "role": "OVERNIGHT_CONTRACT"
+    }
+  ],
+  "official_sources": {
+    "submissions": "https://data.sec.gov/submissions/CIK{cik}.json",
+    "submission_history": "https://data.sec.gov/submissions/{name}",
+    "primary_document": "https://www.sec.gov/Archives/edgar/data/{cik}/{accession}/{document}"
+  },
+  "period": {
+    "start": "2021-06-01",
+    "end": "2026-06-30"
+  },
+  "eligible_forms_from_queue_protocol": true,
+  "evidence_policy": {
+    "primary_document_only": true,
+    "dei_trading_symbol_tag_required": true,
+    "plain_text_regex_is_evidence": false,
+    "current_submissions_ticker_array_is_evidence": false,
+    "accepted_symbol_allowlist_is_not_proof": true,
+    "one_anchor_per_accepted_tagged_symbol": true
+  },
+  "collection": {
+    "snapshot_id": "sec-targeted-cover-v2-20210601-20260630-20260724",
+    "requests_per_second": 3.0,
+    "maximum_attempts": 6,
+    "retry_statuses": [
+      403,
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "initial_backoff_seconds": 2.0,
+    "maximum_backoff_seconds": 60.0,
+    "request_timeout_seconds": 90,
+    "checkpoint_every_filings": 20,
+    "resume_partial_snapshot": true,
+    "append_only_raw_sources": true,
+    "atomic_final_publish": true
+  },
+  "completion_gate": {
+    "estimated_filing_count_minimum": 1800,
+    "estimated_filing_count_maximum": 2200,
+    "estimate_is_not_a_pass_threshold": true,
+    "all_discovered_eligible_filings_must_be_downloaded": true,
+    "unresolved_download_failures_allowed": 0,
+    "all_artifact_hashes_must_verify": true,
+    "all_target_collection_ciks_must_have_submissions": true
+  },
+  "authority": {
+    "price_outcomes_opened": false,
+    "future_return_labels_allowed": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
