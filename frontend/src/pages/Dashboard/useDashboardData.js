@@ -8,13 +8,8 @@ import {
   getCashBalance,
   updateCashBalance,
   removeFromPortfolio,
-  updateTargetWeight,
 } from '../../api/herdApi'
-import { formatKRW } from '../../utils/currency'
-import { buildPortfolioAlerts } from '../../utils/alertRules'
 import {
-  portfolioRows,
-  portfolioRiskWarnings,
   targetWeightsFromPortfolio,
 } from '../../utils/portfolioTools'
 import { useAuth } from '../../auth/AuthContext'
@@ -24,7 +19,6 @@ import {
   CACHE_KEY_HERD,
   CACHE_KEY_HERD_TIME,
   CACHE_KEY_TIME,
-  CACHE_KEY_PORTFOLIO_SORT,
   readUserCache,
   writeUserCache,
   userCacheKey,
@@ -33,14 +27,14 @@ import {
   saveCacheTime,
   isDashboardCacheFresh,
   clearPortfolioCaches,
-  buildPositionAction,
-  queuePriority,
-  sortPortfolioItems,
   refreshResultText,
 } from './dashboardModel'
 import { useDashboardMarketData } from './useDashboardMarketData'
 import { useDashboardAssetHistory } from './useDashboardAssetHistory'
 import { useDashboardSupportingData } from './useDashboardSupportingData'
+import { useDashboardPreferences } from './useDashboardPreferences'
+import { usePortfolioViewModel } from './usePortfolioViewModel'
+import { useTargetWeightEditor } from './useTargetWeightEditor'
 
 export function useDashboardData() {
 
@@ -66,19 +60,11 @@ export function useDashboardData() {
     const t = localStorage.getItem(userCacheKey(CACHE_KEY_TIME, userId))
     return t ? new Date(t) : null
   })
-  const [currencyMode,   setCurrencyMode]   = useState(
-    () => localStorage.getItem('herdsignal_currency') || 'KRW'
-  )
   const [editMode,       setEditMode]       = useState(false)
-  const [portfolioSort,  setPortfolioSort]  = useState(
-    () => localStorage.getItem(CACHE_KEY_PORTFOLIO_SORT) || 'action'
-  )
-  const [targetWeights,  setTargetWeights]  = useState({})
   const [cashBalance,    setCashBalance]    = useState(0)
   const [cashDraft,      setCashDraft]      = useState('')
   const [cashSaving,     setCashSaving]     = useState(false)
   const refreshNoticeTimer = useRef(null)
-  const targetWeightTimers = useRef({})
   const summaryRequest = useRef(0)
   const lastSummaryValidation = useRef(0)
   const {
@@ -108,6 +94,23 @@ export function useDashboardData() {
     assetPeriodLabel,
     assetStartLabel,
   } = assetHistoryState
+  const preferences = useDashboardPreferences(exchangeRate)
+  const {
+    currencyMode,
+    portfolioSort,
+    handleCurrencyToggle,
+    handlePortfolioSortChange,
+    displayAmount,
+    displayPnl,
+  } = preferences
+  const handleTargetWeightError = useCallback((ticker) => {
+    setRefreshNotice(`${ticker} 목표 비중 저장에 실패했습니다.`)
+  }, [])
+  const {
+    targetWeights,
+    setTargetWeights,
+    handleTargetWeightChange,
+  } = useTargetWeightEditor(handleTargetWeightError)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -211,7 +214,7 @@ export function useDashboardData() {
     } finally {
       setLoading(false)
     }
-  }, [userId, revalidatePortfolioSummary])
+  }, [userId, revalidatePortfolioSummary, setTargetWeights])
 
   useEffect(() => { fetchData() }, [fetchData])
 
@@ -240,43 +243,6 @@ export function useDashboardData() {
     summary?.stocks?.forEach((s) => { map[s.ticker] = s })
     return map
   }, [summary])
-
-  /* 통화 모드 전환 — localStorage에 저장 */
-  const handleCurrencyToggle = useCallback((mode) => {
-    setCurrencyMode(mode)
-    localStorage.setItem('herdsignal_currency', mode)
-  }, [])
-
-  /**
-   * USD 금액 → 통화 모드에 맞게 표시.
-   * 원화: "22,515,837원" / 달러: "$14,518.01"
-   */
-  const displayAmount = useCallback((usdValue) => {
-    if (usdValue == null) return '—'
-    if (currencyMode === 'KRW' && exchangeRate != null) {
-      return formatKRW(usdValue, exchangeRate)
-    }
-    return fmtUSD(usdValue)
-  }, [currencyMode, exchangeRate])
-
-  /**
-   * USD 손익 → 통화 모드에 맞게 부호 포함 표시.
-   * 원화: "+3,139,172원" / 달러: "+$1,234.56"
-   */
-  const displayPnl = useCallback((usdPnl) => {
-    if (usdPnl == null) return '—'
-    const n    = Number(usdPnl)
-    const sign = n >= 0 ? '+' : ''
-    if (currencyMode === 'KRW' && exchangeRate != null) {
-      const krw = Math.round(n * exchangeRate)
-      return `${sign}${krw.toLocaleString('ko-KR')}원`
-    }
-    const absStr = Math.abs(n).toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
-    return `${n < 0 ? '-' : '+'}$${absStr}`
-  }, [currencyMode, exchangeRate])
 
   /*
    * 수동 새로고침 — yfinance 현재가 + DB HERD 데이터를 재조회 후 캐시 갱신.
@@ -387,12 +353,6 @@ export function useDashboardData() {
     }
   }
 
-  function handlePortfolioSortChange(mode) {
-    setPortfolioSort(mode)
-    localStorage.setItem(CACHE_KEY_PORTFOLIO_SORT, mode)
-  }
-
-
   /*
    * 모달 저장 완료 → 로컬 상태 즉시 업데이트 + localStorage 캐시 갱신.
    * summary는 항상 USD 단위로 저장. displayAmount/displayPnl이 통화 변환 담당.
@@ -448,70 +408,20 @@ export function useDashboardData() {
   }, [modalTicker, priceMap, portfolio, fetchData, cashBalance, userId])
 
   const modalStock = portfolio.find((p) => p.ticker === modalTicker)
-  const rows = useMemo(
-    () => portfolioRows(portfolio, summary, herdMap, targetWeights),
-    [portfolio, summary, herdMap, targetWeights]
-  )
-  const sortedPortfolio = useMemo(
-    () => sortPortfolioItems(portfolio, rows, herdMap, portfolioSort),
-    [portfolio, rows, herdMap, portfolioSort]
-  )
-  const riskWarnings = useMemo(
-    () => portfolioRiskWarnings(rows, summary),
-    [rows, summary]
-  )
-  const portfolioAlerts = useMemo(
-    () => buildPortfolioAlerts(rows, riskWarnings),
-    [rows, riskWarnings]
-  )
-  const actionQueueCards = useMemo(() => {
-    const rowMap = new Map(rows.map((row) => [row.ticker, row]))
-    return sortedPortfolio
-      .map((item) => {
-        const herd = herdMap[item.ticker]
-        const row = rowMap.get(item.ticker)
-        if (!herd || !row) return null
-        const action = buildPositionAction(herd, row)
-        const score = Math.round(herd.herdV4 ?? herd.herdScore ?? 0)
-        const stage = herd.herdStage?.startsWith('Herd ')
-          ? herd.herdStage.slice(5)
-          : herd.herdStage ?? 'Calm'
-        return {
-          ticker: item.ticker,
-          herd,
-          row,
-          action,
-          score,
-          stage,
-          price: priceMap[item.ticker],
-          priority: queuePriority(action.code),
-        }
-      })
-      .filter(Boolean)
-      .sort((a, b) => {
-        if (a.priority !== b.priority) return a.priority - b.priority
-        return Number(b.herd.actionScore ?? 0) - Number(a.herd.actionScore ?? 0)
-      })
-      .slice(0, 3)
-  }, [sortedPortfolio, rows, herdMap, priceMap])
-  function handleTargetWeightChange(ticker, value) {
-    const next = { ...targetWeights }
-    if (value === '') {
-      delete next[ticker]
-    } else {
-      const n = Number(value)
-      if (!Number.isFinite(n)) return
-      next[ticker] = String(Math.min(100, Math.max(0, n)))
-    }
-    setTargetWeights(next)
-    clearTimeout(targetWeightTimers.current[ticker])
-    targetWeightTimers.current[ticker] = setTimeout(() => {
-      const targetWeight = value === '' ? 0 : Number(value) / 100
-      updateTargetWeight(ticker, targetWeight).catch(() => {
-        setRefreshNotice(`${ticker} 목표 비중 저장에 실패했습니다.`)
-      })
-    }, 400)
-  }
+  const {
+    rows,
+    sortedPortfolio,
+    riskWarnings,
+    portfolioAlerts,
+    actionQueueCards,
+  } = usePortfolioViewModel({
+    portfolio,
+    summary,
+    herdMap,
+    targetWeights,
+    portfolioSort,
+    priceMap,
+  })
 
   return {
     portfolio, summary, herdMap, dataStatus, dataStatusError,
