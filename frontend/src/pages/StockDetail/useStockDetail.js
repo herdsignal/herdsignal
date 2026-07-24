@@ -6,7 +6,7 @@ import {
   getSignalJournal, createSignalJournal, deleteSignalJournal,
 } from '../../api/herdApi'
 import { useAuth } from '../../auth/AuthContext'
-import { clearPortfolioCaches } from '../Dashboard/dashboardModel'
+import { clearPortfolioCaches } from '../../features/portfolio/portfolioCache'
 import { buildDecision } from '../../utils/decision'
 import { qualityColor } from '../../utils/dataQuality'
 import { getHerdMomentum } from '../../utils/herdMomentum'

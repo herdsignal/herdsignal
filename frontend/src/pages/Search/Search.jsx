@@ -22,7 +22,7 @@ import {
 } from '../../api/herdApi'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import { useAuth } from '../../auth/AuthContext'
-import { clearPortfolioCaches } from '../Dashboard/dashboardModel'
+import { clearPortfolioCaches } from '../../features/portfolio/portfolioCache'
 import SearchResultContent from './SearchResultContent'
 import {
   STOCK_CANDIDATES,

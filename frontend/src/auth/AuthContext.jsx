@@ -1,6 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { getCurrentUser, logout as requestLogout, prepareCsrf } from '../api/herdApi'
-import { clearPortfolioCaches } from '../pages/Dashboard/dashboardModel'
+import {
+  getCurrentUser,
+  logout as requestLogout,
+  prepareCsrf,
+  setUnauthorizedHandler,
+} from '../api/herdApi'
+import { clearPortfolioCaches } from '../features/portfolio/portfolioCache'
 
 const AuthContext = createContext(null)
 
@@ -8,6 +13,11 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [authError, setAuthError] = useState(null)
+
+  useEffect(() => setUnauthorizedHandler(() => {
+    clearPortfolioCaches(user?.id)
+    setUser({ authenticated: false })
+  }), [user?.id])
 
   useEffect(() => {
     let active = true

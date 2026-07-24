@@ -1,15 +1,36 @@
 import { API_HOST } from '../../utils/apiConfig'
 import { HERD_HISTORY_PERIODS } from '../../utils/historyPeriods'
+import {
+  CACHE_KEY_REALTIME,
+  CACHE_KEY_HERD,
+  CACHE_KEY_HERD_TIME,
+  CACHE_KEY_TIME,
+  clearAllPortfolioCaches,
+  clearPortfolioCaches,
+  readCache,
+  readUserCache,
+  userCacheKey,
+  writeCache,
+  writeUserCache,
+} from '../../features/portfolio/portfolioCache'
 
 export { API_HOST }
 
-export const CACHE_KEY_REALTIME = 'hs_portfolio_realtime'
-export const CACHE_KEY_HERD = 'hs_portfolio_herd'
-export const CACHE_KEY_HERD_TIME = 'hs_portfolio_herd_time'
+export {
+  CACHE_KEY_REALTIME,
+  CACHE_KEY_HERD,
+  CACHE_KEY_HERD_TIME,
+  CACHE_KEY_TIME,
+  clearPortfolioCaches,
+  readCache,
+  readUserCache,
+  userCacheKey,
+  writeCache,
+  writeUserCache,
+}
 export const CACHE_KEY_SPY = 'hs_spy_herd'
 export const CACHE_KEY_SPY_HISTORY = 'hs_spy_history'
 export const CACHE_KEY_SPY_HISTORY_VERSION = 'v2'
-export const CACHE_KEY_TIME = 'hs_cache_time'
 export const CACHE_KEY_VERSION = 'hs_dashboard_cache_version'
 export const CACHE_KEY_PORTFOLIO_SORT = 'hs_dashboard_sort'
 export const DASHBOARD_CACHE_VERSION = 'v4-user-scoped-prices'
@@ -32,33 +53,6 @@ export const PORTFOLIO_SORT_OPTIONS = [
 
 export const REFRESH_SCOPE_TITLE = 'yfinance 현재가, HERD DB 조회, SPY 최신 점수만 갱신합니다. 히스토리와 신뢰도는 각 화면에서 별도 조회됩니다.'
 
-export function readCache(key) {
-  try {
-    const raw = localStorage.getItem(key)
-    return raw ? JSON.parse(raw) : null
-  } catch {
-    return null
-  }
-}
-
-export function writeCache(key, data) {
-  try {
-    localStorage.setItem(key, JSON.stringify(data))
-  } catch { /* 저장소 접근 실패는 다음 API 조회로 복구 */ }
-}
-
-export function userCacheKey(key, userId) {
-  return `${key}:${userId || 'anonymous'}`
-}
-
-export function readUserCache(key, userId) {
-  return readCache(userCacheKey(key, userId))
-}
-
-export function writeUserCache(key, userId, data) {
-  writeCache(userCacheKey(key, userId), data)
-}
-
 export function formatInputDate(value) {
   const date = value ? new Date(value) : new Date()
   if (Number.isNaN(date.getTime())) return ''
@@ -75,12 +69,9 @@ export function ensureDashboardCacheVersion() {
     if (localStorage.getItem(CACHE_KEY_VERSION) === DASHBOARD_CACHE_VERSION) return false
 
     const cacheKeys = [
-      CACHE_KEY_REALTIME,
-      CACHE_KEY_HERD,
-      CACHE_KEY_HERD_TIME,
       CACHE_KEY_SPY,
-      CACHE_KEY_TIME,
     ].concat(HISTORY_PERIODS.map((period) => spyHistoryCacheKey(period.value)))
+    clearAllPortfolioCaches()
     cacheKeys.forEach((key) => localStorage.removeItem(key))
     localStorage.setItem(CACHE_KEY_VERSION, DASHBOARD_CACHE_VERSION)
     return true
@@ -147,11 +138,4 @@ export function isDashboardCacheFresh(userId, now = Date.now()) {
   } catch {
     return false
   }
-}
-
-export function clearPortfolioCaches(userId) {
-  try {
-    ;[CACHE_KEY_REALTIME, CACHE_KEY_HERD, CACHE_KEY_HERD_TIME, CACHE_KEY_TIME]
-      .forEach((key) => localStorage.removeItem(userCacheKey(key, userId)))
-  } catch { /* 저장소 접근 실패는 다음 API 조회로 복구 */ }
 }

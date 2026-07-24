@@ -23,6 +23,26 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
+let unauthorizedHandler = null
+
+export function setUnauthorizedHandler(handler) {
+  unauthorizedHandler = handler
+  return () => {
+    if (unauthorizedHandler === handler) unauthorizedHandler = null
+  }
+}
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) unauthorizedHandler?.()
+    return Promise.reject(error)
+  }
+)
+
+const tickerPath = (ticker) =>
+  encodeURIComponent(String(ticker ?? '').trim().toUpperCase())
+
 /* ── 인증 ──────────────────────────────────── */
 
 export const getCurrentUser = () => api.get('/api/auth/me')
@@ -44,7 +64,7 @@ export const refreshPortfolioHerd = () =>
 export const addToPortfolio = (ticker) => api.post('/api/portfolio', { ticker })
 
 /** 포트폴리오 종목 삭제 */
-export const removeFromPortfolio = (ticker) => api.delete(`/api/portfolio/${ticker}`)
+export const removeFromPortfolio = (ticker) => api.delete(`/api/portfolio/${tickerPath(ticker)}`)
 
 /** 포트폴리오 목록 조회 */
 export const getPortfolio = () => api.get('/api/portfolio')
@@ -61,7 +81,7 @@ export const getWatchlist = () => api.get('/api/watchlist')
 export const addToWatchlist = (ticker, memo) => api.post('/api/watchlist', { ticker, memo })
 
 /** 관심 종목 삭제 */
-export const removeFromWatchlist = (ticker) => api.delete(`/api/watchlist/${ticker}`)
+export const removeFromWatchlist = (ticker) => api.delete(`/api/watchlist/${tickerPath(ticker)}`)
 
 /* ── 포트폴리오 평가금액 ─────────────────────── */
 
@@ -74,7 +94,7 @@ export const getPortfolioRealtime = () =>
 
 /** 포트폴리오 자산 히스토리 시계열 */
 export const getPortfolioHistory = (period) =>
-  api.get(`/api/portfolio/history?period=${period}`)
+  api.get('/api/portfolio/history', { params: { period } })
 
 /** 현재 현금 보유액 조회 */
 export const getCashBalance = () => api.get('/api/portfolio/cash')
@@ -85,10 +105,10 @@ export const updateCashBalance = (cashAmount) =>
 
 /** 보유 종목의 평균 매수가·수량 수정 */
 export const updateAvgPrice = (ticker, avgPrice, quantity) =>
-  api.patch(`/api/portfolio/${ticker}/avg-price`, { avgPrice, quantity })
+  api.patch(`/api/portfolio/${tickerPath(ticker)}/avg-price`, { avgPrice, quantity })
 
 export const updateTargetWeight = (ticker, targetWeight) =>
-  api.patch(`/api/portfolio/${ticker}/target-weight`, { targetWeight })
+  api.patch(`/api/portfolio/${tickerPath(ticker)}/target-weight`, { targetWeight })
 
 /* ── HERD 판단 기록 ────────────────────────── */
 
@@ -106,26 +126,29 @@ export const deleteSignalJournal = (id) => api.delete(`/api/journal/${id}`)
 
 /** 회사명/티커 기반 종목 검색 */
 export const searchStocks = (query) =>
-  api.get(`/api/stocks/search?q=${encodeURIComponent(query)}`)
+  api.get('/api/stocks/search', { params: { q: query } })
 
 /** 특정 종목 HERD 점수 + 지표 분해값 조회 */
-export const getStockHerd = (ticker) => api.get(`/api/stocks/${ticker}/herd`)
+export const getStockHerd = (ticker) => api.get(`/api/stocks/${tickerPath(ticker)}/herd`)
 
 /** 특정 종목 HERD 점수 강제 갱신 */
 export const refreshStockHerd = (ticker) =>
-  api.post(`/api/stocks/${ticker}/herd/refresh`, null, { timeout: 60_000 })
+  api.post(`/api/stocks/${tickerPath(ticker)}/herd/refresh`, null, { timeout: 60_000 })
 
 /** 특정 종목 재무 가드용 핵심 재무정보 조회 */
 export const getStockFinancials = (ticker) =>
-  api.get(`/api/stocks/${ticker}/financials`, { timeout: 40_000 })
+  api.get(`/api/stocks/${tickerPath(ticker)}/financials`, { timeout: 40_000 })
 
 /** 특정 종목 HERD 히스토리 조회 (기본 3y) */
 export const getStockHerdHistory = (ticker, period = '3y') =>
-  api.get(`/api/stocks/${ticker}/herd/history?period=${period}`)
+  api.get(`/api/stocks/${tickerPath(ticker)}/herd/history`, { params: { period } })
 
 /** 특정 종목 HERD 신호 신뢰도 조회 */
 export const getStockHerdReliability = (ticker, years = 3) =>
-  api.get(`/api/stocks/${ticker}/herd/reliability?years=${years}`, { timeout: 70_000 })
+  api.get(`/api/stocks/${tickerPath(ticker)}/herd/reliability`, {
+    params: { years },
+    timeout: 70_000,
+  })
 
 /** SPY HERD 히스토리 조회 (기본 3y) */
 export const getSpyHerdHistory = (period = '3y') =>
