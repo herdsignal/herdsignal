@@ -144,7 +144,7 @@ Rush    #EF4444  (레드)
   - 관심 종목 삭제
   - S&P 500 HERD 배너 (Dashboard와 같은 1일/1달/1년 평균 표시)
 - HerdLab (`/herd-lab`)
-  - 현재 HERD 모델 버전(`HERD_v6`) 검증 히어로 보드
+  - 레거시 모델과 차세대 연구 상태 검증 히어로 보드
   - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
   - 모델 버전/검증 기간/수익률 보존/MDD 개선/연간 행동 수/신뢰 체크를 상단 보드에 압축 표시
   - 종목별 백테스트 verdict 표시
@@ -182,12 +182,12 @@ Rush    #EF4444  (레드)
 - StockDetail 상단 회사명/섹터/로고는 `GET /api/stocks/{ticker}/herd` 응답의 `companyName`/`sector`/`logoUrl`을 사용한다.
 - HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, `src/utils/dataQuality.js` 기준으로 낮은 품질만 `데이터 제한/부족`과 제한 사유를 표시한다.
 - HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 모델 적합도, 표본 품질, 매수/익절 edge를 보여준다.
-- Action Layer는 backend 응답의 `actionScore`/`actionLabel`/`actionRatio`/`actionReasons`를 사용하며, frontend에서는 actionScore를 `강도`로 표시하고 별도 행동 점수 계산을 하지 않는다.
+- Action Layer는 backend 응답을 그대로 표시하며 별도 행동 점수를 계산하지 않는다. v6.1은 레거시 연구 비교값이고 승격 전 운영 `actionRatio`는 0%다.
 - Dashboard/Watchlist/StockDetail은 backend 응답의 `signalDurationDays`/`stageDurationDays`를 사용해 현재 HERD 신호가 초입/진행/장기 지속 중 어디에 있는지 표시한다.
 - Search에서 포트폴리오/관심종목 추가는 HERD 데이터가 준비된 종목만 허용한다. 포트폴리오 추가 성공 시 Dashboard localStorage 캐시(`hs_portfolio_realtime`, `hs_portfolio_herd`, `hs_cache_time`)를 비우고 평단가·수량 입력 모달을 연다.
-- Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 하루 경계는 backend에서 KST 22:30 기준으로 계산한다.
+- Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 기준일은 backend의 미국 정규장 세션 계산을 따른다.
 - Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.
-- Dashboard/Watchlist의 SPY 배너에서 SPY 종가, 1개월 수익률은 아직 `—` placeholder.
+- Dashboard/Watchlist의 SPY 배너는 backend의 SPY 가격 요약을 사용하며 데이터가 없을 때만 placeholder를 표시한다.
 - HERD 단계 표시 기준은 `src/utils/herdStage.js`에서 관리한다. backend Action Layer와 같은 Rush 75 / Flee 15 기준을 따른다.
 
 ## API 연동

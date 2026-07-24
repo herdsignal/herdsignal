@@ -13,6 +13,7 @@ from pathlib import Path
 DATA_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LOCK = DATA_ROOT / "requirements.lock"
 REQUIREMENT = re.compile(r"^([A-Za-z0-9_.-]+)==([^;\\s]+)$")
+FORBIDDEN_PACKAGES = ("pandas-ta",)
 
 
 def normalize_package_name(name: str) -> str:
@@ -60,8 +61,22 @@ def inspect_environment(lock_path: Path = DEFAULT_LOCK) -> dict:
             mismatches.append(item)
 
     supported_python = sys.version_info[:2] == (3, 12)
+    forbidden_packages = []
+    for package in FORBIDDEN_PACKAGES:
+        try:
+            forbidden_packages.append({
+                "package": package,
+                "actual": metadata.version(package),
+                "status": "FORBIDDEN_INSTALLED",
+            })
+        except metadata.PackageNotFoundError:
+            continue
     return {
-        "status": "PASS" if supported_python and not mismatches else "FAIL",
+        "status": (
+            "PASS"
+            if supported_python and not mismatches and not forbidden_packages
+            else "FAIL"
+        ),
         "python": {
             "required": "3.12.x",
             "actual": ".".join(map(str, sys.version_info[:3])),
@@ -71,6 +86,7 @@ def inspect_environment(lock_path: Path = DEFAULT_LOCK) -> dict:
         "lock_sha256": hashlib.sha256(lock_path.read_bytes()).hexdigest(),
         "packages": packages,
         "mismatches": mismatches,
+        "forbidden_packages": forbidden_packages,
     }
 
 
@@ -92,6 +108,11 @@ def main() -> int:
             print(
                 f"- {mismatch['package']}: "
                 f"expected={mismatch['expected']} actual={mismatch['actual']}"
+            )
+        for forbidden in report["forbidden_packages"]:
+            print(
+                f"- {forbidden['package']}: "
+                f"forbidden installed version={forbidden['actual']}"
             )
     return 0 if report["status"] == "PASS" else 1
 

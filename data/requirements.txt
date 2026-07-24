@@ -1,5 +1,5 @@
 # HerdSignal data 엔진 의존 패키지
-# Python 3.11+ 기준
+# Python 3.12 기준
 
 # 주가 데이터 수집
 yfinance>=0.2.40

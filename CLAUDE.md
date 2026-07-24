@@ -46,9 +46,9 @@ Python은 계산 + 저장만. Spring Boot는 서빙만. 역할 분리 엄수.
 
 ## 기술 스택
 
-- Python 3.11+ / yfinance / pandas / pandas-ta / scipy / SQLAlchemy / PyMySQL / APScheduler
+- Python 3.12 / yfinance / pandas / scipy / SQLAlchemy / PyMySQL / APScheduler
 - Spring Boot 3.5.3 / Java 17 / Gradle / JPA / MariaDB
-- React 18.3 / Vite 5 / react-router-dom / axios / recharts
+- React 18.3 / Vite 6 / react-router-dom / axios / recharts
 
 ## AI 작업 원칙
 
@@ -85,7 +85,7 @@ type 종류:
 예시:
 
 ```
-git commit -m "feat: RSI 계산 함수 구현" -m "- 월봉/주봉 RSI 계산 로직 추가" -m "- pandas_ta 라이브러리 활용" -m "- 종목별 역사적 상대값 정규화 적용"
+git commit -m "feat: RSI 계산 함수 구현" -m "- 월봉/주봉 Wilder RSI 계산 로직 추가" -m "- 종목별 역사적 상대값 정규화 적용"
 ```
 
 규칙:
@@ -151,11 +151,11 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
 **frontend/**
 
 - Dashboard: S&P 500 Herd Flow 배너(Overview 애니메이션 + Timeline HERD 히스토리 + HERD 강도 변화), 총자산/현금 포함 포트폴리오 평가 요약, 편집 모드 현금 입력, 1개월/1년/전체 자산 히스토리 차트(입출금 포함 총자산 흐름과 주식 평가액 변화 분리 표시), HERD 판단 기록 전체 요약, KRW/USD 통화 토글, 핵심 리밸런싱 체크, 포트폴리오 리스크 체크, 알림 조건 패널, HERD 신호와 목표비중 차이를 함께 반영한 보유 종목 액션 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침 피드백
-- StockDetail: HERD v4 점수·단계·신호, HERD_v6 Action Layer 행동 비율, 현재 신호 근거 데이터 보드, 지표 분해·보정 승수, 현재 신호 기준 신뢰도, HERD Index 히스토리 차트, Fundamental Guard, DB 기반 HERD 판단 기록(가격·수량·총액·수익률·메모)과 기록 요약
+- StockDetail: 레거시 HERD v4 상태 점수·단계, 운영 차단된 v6.1 연구 비율, 현재 신호 근거 데이터 보드, 지표 분해·보정 승수, 현재 신호 기준 신뢰도, HERD Index 히스토리 차트, Fundamental Guard, DB 기반 HERD 판단 기록(가격·수량·총액·수익률·메모)과 기록 요약
 - StockDetail: 최근 3년 HERD 신호 신뢰도 데이터 보드(Flee/Rush 적중률, 매수 후 1/3/6개월 평균 수익률, 익절 후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 모델 적합도, 표본 품질, 매수/익절 edge)
 - HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공. frontend에서는 낮은 품질만 `데이터 제한/부족`과 제한 사유로 표시한다.
-- HERD 모델 구분: HERD_v4는 DB에 저장되는 점수 모델, HERD_v6는 HERD_v4 점수에 Progressive Action Layer를 얹은 응답 시점 행동 모델이다.
-- HERD Action Layer: HERD 점수·지표 분해값·데이터 품질·최근 HERD 변화율·신호 지속 기간을 기반으로 actionModelVersion/actionScore/actionLabel/actionRatio/actionRegime 응답 제공. frontend에서는 actionScore를 `강도`로 표시하고, DB 저장 없이 backend 응답 시점에 계산한다.
+- HERD 모델 구분: HERD_v4는 현재 DB에 저장되는 레거시 상태 기준이고, v6.1 Progressive Action Layer는 비교 재현용 연구 모델이다. 둘 다 새 매수·익절 모델로 승격되지 않았다.
+- HERD Action Layer: 연구 비교값은 backend 응답 시점에 계산하지만 승격 승인 전 운영 `signal`은 `HOLD`, `actionRatio`는 `0%`로 제한한다.
 - HERD 신호 지속 기간: backend가 저장된 HERD 히스토리 기준으로 현재 signal/stage 시작일과 지속 일수를 응답하고, frontend는 보유종목/관심종목/상세 화면에 `초입 신호/진행 신호/장기 지속`으로 해석해 표시한다.
 - Responsive UI: frontend는 데스크톱 사이드바와 모바일 하단 탭을 함께 지원하며, 모바일에서는 Dashboard/Watchlist/Search/HERD Lab 핵심 흐름을 우선 노출한다.
 - Search: Finnhub 심볼 검색 API, Inclusion Check 상태 패널, 디바운스 검색, HERD 미리보기, 편입 판단, HERD 준비됨/계산 필요/데이터 부족 상태 표시, 최근 검색, 포트폴리오/관심종목 추가, 포트폴리오 추가 후 평단가·수량 입력 연결
@@ -301,7 +301,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - 수동 새로고침은 DB 조회 기반 빠른 갱신
 - [x] StockDetail (`/stock/:ticker`)
   - HERD v4 점수/단계/Timing Signal
-  - Action Layer 행동 비율
+  - 운영 차단된 레거시 Action Layer 연구 비율
   - 현재 신호 기준 HERD 신뢰도
   - 지표 분해 UI + EPS/섹터 강도 보정 승수
   - HERD Index 히스토리 차트
@@ -319,7 +319,7 @@ git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
   - 매수 우선도순 자동 정렬
   - 관심 종목 삭제
 - [x] HERD Lab (`/herd-lab`)
-  - 현재 HERD 모델 버전(`HERD_v6`) 검증 데이터 보드
+  - 레거시 모델과 차세대 연구 상태 검증 데이터 보드
   - Action Layer 백테스트 요약
   - 5단계 행동 매트릭스
 - [x] AiRebalance (`/ai`)
@@ -362,8 +362,8 @@ HERD 판단 기록은 localStorage가 아니라 DB `signal_journal`과 backend `
 - 목표 비중과 리밸런싱 설정은 localStorage 저장이며 DB 저장 기능은 없다.
 - History의 자산 진단은 portfolio_history 기반 수익률/MDD 요약이며 실제 HERD 전략 백테스트가 아니다.
 - `backtest_v5_volatility.py`는 v5 후보 검증용이며 운영 HERD 점수에는 미반영이다.
-- 로그인/멀티유저 UI는 없음. MVP는 `AppConstants.DEFAULT_USER_ID` 기반 `local` 사용자 고정.
-- SPY 배너의 SPY 종가, 1개월 수익률 표시는 아직 `—` placeholder.
+- Google OAuth 로그인과 사용자별 포트폴리오·관심종목·판단 기록을 지원한다. 인증 비활성 로컬 개발에서만 `local` 사용자로 폴백한다.
+- SPY 배너는 저장된 SPY HERD와 시장 가격 요약을 표시하며 데이터가 없을 때만 placeholder를 사용한다.
 - Dashboard 알림 조건은 `frontend/src/utils/alertRules.js`에서 생성한다. 실제 푸시/이메일 알림은 아직 없으며, 화면에는 강한 매수/익절 후보, 목표비중 이탈, 장기 신호 지속, 포트폴리오 리스크만 저빈도 조건으로 표시한다.
 
 ---
@@ -371,8 +371,8 @@ HERD 판단 기록은 localStorage가 아니라 DB `signal_journal`과 backend `
 ## README와 현재 코드의 차이
 
 - README.md는 현재 구현과 모델 검증 상태를 반영하는 한국어 단일 문서로 관리한다.
-- 공개 소개 문서에서는 운영 중인 HERD v4, Herd Flow, HERD_v6 Action Layer, Dashboard/Watchlist/Search/HERD Lab 중심 MVP만 전면에 둔다.
-- README에서 구현 완료로 보이면 안 되는 항목은 Claude API 기반 AI 리밸런싱, 멀티유저/인증, 증권사 연동, 배포다.
+- 공개 소개 문서에서는 Herd Flow와 객관적 상태 관찰, Dashboard/Watchlist/Search/HERD Lab 중심 MVP만 전면에 둔다. v4·v6.1을 승인된 매매 모델로 표현하지 않는다.
+- README에서 구현 완료로 보이면 안 되는 항목은 Claude API 기반 AI 리밸런싱, 증권사 연동, 배포, 승인된 매수·익절 비율이다.
 - StockDetail은 가격 차트가 아니라 HERD Index 히스토리 차트를 보여준다.
 - 뉴스/애널리스트/내부자 거래/가격 히스토리 API는 현재 backend 공개 API에서 제거했다. 필요하면 별도 기능으로 재도입한다.
 

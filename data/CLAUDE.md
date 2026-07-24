@@ -87,7 +87,7 @@ EPS 서프라이즈 승수와 섹터 상대 강도 승수를 곱해 최종 점�
 
 ### HERD_v6 Action Layer 검증
 - `backtest_action_layer.py`는 HERD 점수와 가격 기반 추세 품질을 조합해 동적 매수/익절 비율을 검증한다.
-- 운영 HERD 점수 저장값은 변경하지 않는다. HERD_v6는 backend 응답 시점에 HERD_v4 점수를 신호 생애주기와 함께 행동 비율로 번역하는 Progressive Action Layer다.
+- 운영 HERD 점수 저장값은 변경하지 않는다. v6.1은 레거시 비교 재현용이며 backend가 계산해도 승격 전 운영 행동 비율은 0%로 차단된다.
 - 채택 기준은 수익률 보존율 70% 이상, MDD 개선 5%p 이상, 연평균 행동 수 4~10회 수준이다.
 
 ### 임계값 기준
@@ -189,7 +189,7 @@ DB URL은 `settings.py`에서 DB 사용자명/비밀번호를 URL 인코딩해 �
 - DB 스키마 변경 시 init_db.py와 saver.py 함께 수정
 - `backtest_v4.py`는 현재 승수를 3년 HERD 시계열에 적용하는 sanity check이며, 과거 시점별 EPS/섹터 승수를 완전히 복원하지는 않음
 - `backtest_v5_volatility.py`는 v5 후보 검증용이며, 운영 HERD 점수에는 아직 영향을 주지 않음
-- `backtest_action_layer.py`는 HERD_v6 Action Layer 검증 기준이다. 운영 HERD 점수 저장값은 변경하지 않지만 backend API 응답의 행동 비율 계산에 반영된다.
+- `backtest_action_layer.py`는 레거시 v6.1 Action Layer 비교 기준이다. 운영 HERD 점수 저장값을 변경하지 않으며 승인된 행동 비율로 사용하지 않는다.
 - `backtest.py`, `compare_v1_v2.py`, `diagnose_xom.py` 등 초기 실험 스크립트는 연구/진단 아카이브로 본다. 운영 계산 기준은 `calculator.py`, `saver.py`, `scheduler/herd_scheduler.py`, `history_backfill.py`를 우선 확인한다.
 - `backfill_spy.py`가 남아 있다면 과거 SPY 전용 백필 유틸로 보고, 신규 백필은 `history_backfill.py`를 사용한다.
 - 로컬 실행은 루트에서 `./scripts/run-data.sh <script>`를 우선 사용한다.

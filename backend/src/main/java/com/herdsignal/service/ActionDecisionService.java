@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * HERD Action Layer 계산 서비스.
- * HERD 점수는 시장 상태를, Action Layer는 장기투자자가 움직일 강도를 담당한다.
+ * 레거시 HERD v6.1 Action Layer를 연구 비교용으로 재현한다.
+ * 운영 승격 게이트를 통과하기 전에는 계산 결과와 별개로 행동 비율을 0%로 제한한다.
  */
 @Service
 public class ActionDecisionService {
