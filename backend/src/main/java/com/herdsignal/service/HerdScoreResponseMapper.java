@@ -1,0 +1,128 @@
+package com.herdsignal.service;
+
+import com.herdsignal.domain.HerdIndicator;
+import com.herdsignal.domain.HerdScore;
+import com.herdsignal.domain.Stock;
+import com.herdsignal.dto.ActionDecision;
+import com.herdsignal.dto.HerdScoreResponse;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+/** 영속 모델과 계산 결과를 공개 HERD API 계약으로만 변환한다. */
+@Component
+public class HerdScoreResponseMapper {
+
+    public HerdScoreResponse map(
+            HerdScore score,
+            HerdIndicator indicator,
+            HerdQualityEvaluator.HerdQuality quality,
+            ActionDecision decision,
+            Stock stock,
+            HerdScoreResponse.SignalDuration duration
+    ) {
+        boolean authorized = decision != null
+                && decision.getActionRatio() != null
+                && decision.getActionRatio().compareTo(BigDecimal.ZERO) > 0;
+        String legacySignal = normalizeSignal(score.getSignal());
+        String operationalAction = authorized ? legacySignal : "HOLD";
+
+        HerdScoreResponse.HerdScoreResponseBuilder builder = HerdScoreResponse.builder()
+                .ticker(score.getTicker())
+                .companyName(stock != null ? stock.getName() : null)
+                .sector(stock != null ? stock.getSector() : null)
+                .logoUrl(stock != null ? stock.getLogoUrl() : null)
+                .herdScore(score.getHerdScore())
+                .herdBase(score.getHerdScore())
+                .epsMultiplier(BigDecimal.ONE)
+                .sectorMultiplier(BigDecimal.ONE)
+                .herdV4(score.getHerdScore())
+                .herdStage(score.getHerdStage())
+                .signal(operationalAction)
+                .legacySignal(legacySignal)
+                .operationalAction(operationalAction)
+                .actionAuthorized(authorized)
+                .scoreDate(score.getScoreDate())
+                .signalStartedAt(authorized && duration != null ? duration.getSignalStartedAt() : null)
+                .signalDurationDays(authorized && duration != null ? duration.getSignalDurationDays() : null)
+                .legacySignalStartedAt(duration != null ? duration.getSignalStartedAt() : null)
+                .legacySignalDurationDays(duration != null ? duration.getSignalDurationDays() : null)
+                .stageStartedAt(duration != null ? duration.getStageStartedAt() : null)
+                .stageDurationDays(duration != null ? duration.getStageDurationDays() : null)
+                .qualityScore(quality != null ? quality.score() : null)
+                .qualityLevel(quality != null ? quality.level() : null)
+                .qualityLabel(quality != null ? quality.label() : null)
+                .qualitySummary(quality != null ? quality.summary() : null)
+                .qualityFlags(quality != null ? quality.flags() : List.of())
+                .qualityReasons(quality != null ? quality.reasons() : List.of())
+                .operationalModelVersion("HERD_v4")
+                .actionDisclaimer("검증되지 않은 Action Layer의 운영 비율은 0%이며 연구 결과만 별도로 제공합니다.")
+                .oosValidationSummary("최신 전체 OOS 수치와 채택 게이트 결과는 HERD Lab에서 확인할 수 있습니다.");
+
+        mapDecision(builder, decision);
+        mapIndicator(builder, score, indicator);
+        return builder.build();
+    }
+
+    private void mapDecision(
+            HerdScoreResponse.HerdScoreResponseBuilder builder,
+            ActionDecision decision
+    ) {
+        if (decision == null) return;
+        builder.actionModelVersion(decision.getActionModelVersion())
+                .actionModelName(decision.getActionModelName())
+                .baseModelVersion(decision.getBaseModelVersion())
+                .actionModelStatus(decision.getActionModelStatus())
+                .investorStrategy(decision.getInvestorStrategy())
+                .investorStrategyLabel(decision.getInvestorStrategyLabel())
+                .actionScore(decision.getActionScore())
+                .actionGrade(decision.getActionGrade())
+                .actionLabel(decision.getActionLabel())
+                .actionRatio(decision.getActionRatio())
+                .researchActionRatio(decision.getResearchActionRatio())
+                .researchActionLabel(decision.getResearchActionLabel())
+                .actionRegime(decision.getActionRegime())
+                .actionRegimeLabel(decision.getActionRegimeLabel())
+                .actionReasons(decision.getActionReasons())
+                .actionWarnings(decision.getActionWarnings())
+                .actionCooldownActive(decision.getActionCooldownActive())
+                .actionCooldownRemainingDays(decision.getActionCooldownRemainingDays())
+                .lastActionDate(decision.getLastActionDate())
+                .currentTickerWeight(decision.getCurrentTickerWeight())
+                .currentEquityRatio(decision.getCurrentEquityRatio())
+                .targetEquityRatio(decision.getTargetEquityRatio())
+                .actionIntensity(decision.getActionIntensity())
+                .actionIntensityLabel(decision.getActionIntensityLabel());
+    }
+
+    private void mapIndicator(
+            HerdScoreResponse.HerdScoreResponseBuilder builder,
+            HerdScore score,
+            HerdIndicator indicator
+    ) {
+        if (indicator == null) return;
+        builder.weeklyRsi(indicator.getWeeklyRsi())
+                .monthlyRsi(indicator.getMonthlyRsi())
+                .position52w(indicator.getPosition52w())
+                .ma200Deviation(indicator.getMa200Deviation())
+                .volumeStrength(indicator.getVolumeStrength())
+                .ma200Weekly(indicator.getMa200Weekly())
+                .herdBase(indicator.getHerdBase() != null
+                        ? indicator.getHerdBase()
+                        : score.getHerdScore())
+                .epsMultiplier(indicator.getEpsMultiplier() != null
+                        ? indicator.getEpsMultiplier()
+                        : BigDecimal.ONE)
+                .sectorMultiplier(indicator.getSectorMultiplier() != null
+                        ? indicator.getSectorMultiplier()
+                        : BigDecimal.ONE)
+                .herdV4(score.getHerdScore());
+    }
+
+    private String normalizeSignal(String signal) {
+        return signal == null || signal.isBlank()
+                ? "HOLD"
+                : signal.trim().toUpperCase();
+    }
+}

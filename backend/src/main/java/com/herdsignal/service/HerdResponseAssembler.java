@@ -21,6 +21,7 @@ public class HerdResponseAssembler {
     private final HerdQualityEvaluator qualityEvaluator;
     private final HerdSignalDurationCalculator durationCalculator;
     private final ActionDecisionService actionDecisionService;
+    private final HerdScoreResponseMapper responseMapper;
 
     public HerdScoreResponse assemble(
             HerdScore score,
@@ -43,15 +44,10 @@ public class HerdResponseAssembler {
                 cooldown,
                 portfolioContext
         );
-        return HerdScoreResponse.of(
+        return responseMapper.map(
                 score,
                 indicator,
-                quality.score(),
-                quality.level(),
-                quality.label(),
-                quality.summary(),
-                quality.flags(),
-                quality.reasons(),
+                quality,
                 actionDecision,
                 stock,
                 durationCalculator.calculate(score, history)

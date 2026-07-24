@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.domain.HerdIndicator;
 import com.herdsignal.domain.HerdScore;
+import com.herdsignal.service.HerdScoreResponseMapper;
+import com.herdsignal.service.HerdQualityEvaluator;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
@@ -38,9 +40,10 @@ class HerdV4BoundaryContractTest {
                         .sectorMultiplier(testCase.path("sectorMultiplier").decimalValue())
                         .build();
 
-                HerdScoreResponse response = HerdScoreResponse.of(
-                        score, indicator, null, null, null, null,
-                        null, null, null, null
+                HerdQualityEvaluator.HerdQuality quality =
+                        new HerdQualityEvaluator().evaluate(score, indicator);
+                HerdScoreResponse response = new HerdScoreResponseMapper().map(
+                        score, indicator, quality, null, null, null
                 );
 
                 assertThat(response.getOperationalModelVersion()).isEqualTo("HERD_v4");
