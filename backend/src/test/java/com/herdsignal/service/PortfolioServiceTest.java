@@ -108,6 +108,29 @@ class PortfolioServiceTest {
     }
 
     @Test
+    void calculatesSummaryTotalsFromTheSameRows() {
+        DailyPrice currentPrice = price(LocalDate.now(), "110");
+        when(portfolioRepository.findByUserId("user-1"))
+                .thenReturn(List.of(holding("NVDA")));
+        when(dailyPriceRepository
+                .findTopByTickerAndPriceDateLessThanEqualAndClosePriceIsNotNullOrderByPriceDateDesc(
+                        anyString(), any(LocalDate.class)))
+                .thenReturn(Optional.of(currentPrice));
+
+        PortfolioSummaryResponse response = portfolioService.getPortfolioSummary("user-1");
+
+        assertThat(response.getTotalValue()).isEqualByComparingTo("110.00");
+        assertThat(response.getInvestedValue()).isEqualByComparingTo("110.00");
+        assertThat(response.getTotalValue()).isEqualByComparingTo(
+                response.getStocks().stream()
+                        .map(stock -> stock.getMarketValue())
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        );
+        assertThat(response.getTotalCost()).isEqualByComparingTo("90.00");
+        assertThat(response.getTotalReturnPct()).isEqualByComparingTo("22.22");
+    }
+
+    @Test
     void persistsTargetWeightOnHolding() {
         UserPortfolio holding = holding("NVDA");
         when(portfolioRepository.findByUserIdAndTicker("user-1", "NVDA"))

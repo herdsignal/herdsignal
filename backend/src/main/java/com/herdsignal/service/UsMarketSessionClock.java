@@ -6,6 +6,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * 미국 정규장 기준으로 포트폴리오 스냅샷에 사용할 거래일을 계산한다.
@@ -15,13 +16,13 @@ import java.time.ZoneId;
 @Component
 public class UsMarketSessionClock {
 
-    static final ZoneId KST_ZONE = ZoneId.of("Asia/Seoul");
-    static final LocalTime US_MARKET_DAY_START_KST = LocalTime.of(22, 30);
+    static final ZoneId MARKET_ZONE = ZoneId.of("America/New_York");
+    static final LocalTime REGULAR_MARKET_CLOSE = LocalTime.of(16, 0);
 
     private final Clock clock;
 
     public UsMarketSessionClock() {
-        this(Clock.system(KST_ZONE));
+        this(Clock.systemUTC());
     }
 
     UsMarketSessionClock(Clock clock) {
@@ -29,8 +30,13 @@ public class UsMarketSessionClock {
     }
 
     public LocalDate currentSessionDate() {
-        LocalDate today = LocalDate.now(clock);
-        LocalTime now = LocalTime.now(clock);
-        return now.isBefore(US_MARKET_DAY_START_KST) ? today.minusDays(1) : today;
+        ZonedDateTime marketNow = ZonedDateTime.now(clock).withZoneSameInstant(MARKET_ZONE);
+        LocalDate candidate = marketNow.toLocalTime().isBefore(REGULAR_MARKET_CLOSE)
+                ? marketNow.toLocalDate().minusDays(1)
+                : marketNow.toLocalDate();
+        while (candidate.getDayOfWeek().getValue() >= 6) {
+            candidate = candidate.minusDays(1);
+        }
+        return candidate;
     }
 }

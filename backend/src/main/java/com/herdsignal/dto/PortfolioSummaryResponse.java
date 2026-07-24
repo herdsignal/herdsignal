@@ -11,8 +11,8 @@ import java.util.List;
  * 포트폴리오 전체 요약 응답 DTO.
  * 집계 데이터(총액·수익률)와 종목별 상세 데이터를 함께 반환.
  *
- * 총액 데이터 출처: portfolio_history 최신 스냅샷 (Python 스케줄러가 매일 갱신)
- * 종목별 데이터 출처: user_portfolio + daily_prices 현재가 실시간 조합
+ * 총액과 종목별 데이터 모두 user_portfolio + 동일 조회 기준의 daily_prices에서 계산한다.
+ * portfolio_history는 과거 차트에만 사용한다.
  */
 @Getter
 @Builder
@@ -38,8 +38,7 @@ public class PortfolioSummaryResponse {
 
     /**
      * 포트폴리오 일일 등락률 (%).
-     * portfolio_history 최신 2개 스냅샷의 total_value 변화율.
-     * 스냅샷이 1개뿐이면 0.0.
+     * 각 종목의 동일 조회 기준 일일 변동을 평가금액으로 가중한 변화율.
      */
     private BigDecimal dailyChangePct;
 

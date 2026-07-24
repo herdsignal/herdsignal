@@ -8,7 +8,6 @@ import com.herdsignal.dto.StockHoldingResponse;
 import com.herdsignal.repository.PortfolioHistoryRepository;
 import com.herdsignal.repository.UserPortfolioRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,6 @@ import java.util.Objects;
  * <p>보유 종목 평가와 현금 원장은 각 전용 서비스에 위임하고, 이 클래스는 API 응답
  * 단위의 집계만 담당한다.</p>
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -55,10 +53,7 @@ public class PortfolioQueryService {
                 .orElse(null);
 
         BigDecimal cashBalance = cashService.currentAmount(userId);
-        PortfolioTotals totals = historyRepository
-                .findTopByUserIdOrderBySnapshotDateDesc(userId)
-                .map(latest -> totalsFromSnapshot(userId, latest))
-                .orElseGet(() -> totalsFromHoldings(userId, holdings, stocks));
+        PortfolioTotals totals = totalsFromHoldings(holdings, stocks);
 
         return PortfolioSummaryResponse.builder()
                 .totalValue(scale(totals.totalValue()))
@@ -88,36 +83,60 @@ public class PortfolioQueryService {
         return PortfolioHistoryResponse.builder().points(points).build();
     }
 
-    private PortfolioTotals totalsFromSnapshot(String userId, PortfolioHistory latest) {
-        List<PortfolioHistory> recent =
-                historyRepository.findTop2ByUserIdOrderBySnapshotDateDesc(userId);
-        BigDecimal dailyChange = recent.size() >= 2
-                ? percentChange(recent.get(0).getTotalValue(), recent.get(1).getTotalValue())
-                : BigDecimal.ZERO;
-        return new PortfolioTotals(
-                latest.getTotalValue(),
-                latest.getTotalCost(),
-                latest.getTotalReturnPct(),
-                dailyChange
-        );
-    }
-
     private PortfolioTotals totalsFromHoldings(
-            String userId,
             List<UserPortfolio> holdings,
             List<StockHoldingResponse> stocks
     ) {
-        log.warn("[{}] portfolio_history 없음 — 실시간 계산으로 폴백", userId);
         BigDecimal totalValue = stocks.stream()
                 .map(StockHoldingResponse::getMarketValue)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalCost = holdings.stream()
+        Map<String, UserPortfolio> holdingByTicker = holdings.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        UserPortfolio::getTicker,
+                        holding -> holding,
+                        (first, ignored) -> first
+                ));
+        BigDecimal totalCost = stocks.stream()
+                .map(StockHoldingResponse::getTicker)
+                .map(holdingByTicker::get)
+                .filter(Objects::nonNull)
                 .map(holding -> holding.getAvgPrice().multiply(holding.getQuantity()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalReturn = totalCost.compareTo(BigDecimal.ZERO) > 0
                 ? percentChange(totalValue, totalCost)
                 : BigDecimal.ZERO;
-        return new PortfolioTotals(totalValue, totalCost, totalReturn, BigDecimal.ZERO);
+        return new PortfolioTotals(
+                totalValue,
+                totalCost,
+                totalReturn,
+                weightedDailyChange(stocks, totalValue)
+        );
+    }
+
+    private BigDecimal weightedDailyChange(
+            List<StockHoldingResponse> stocks,
+            BigDecimal currentTotal
+    ) {
+        if (currentTotal.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal previousTotal = stocks.stream()
+                .map(stock -> previousMarketValue(
+                        stock.getMarketValue(),
+                        stock.getDailyChangePct()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return previousTotal.compareTo(BigDecimal.ZERO) == 0
+                ? BigDecimal.ZERO
+                : percentChange(currentTotal, previousTotal);
+    }
+
+    private BigDecimal previousMarketValue(BigDecimal currentValue, BigDecimal changePct) {
+        if (changePct == null) return currentValue;
+        BigDecimal multiplier = BigDecimal.ONE.add(
+                changePct.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_UP));
+        return multiplier.compareTo(BigDecimal.ZERO) <= 0
+                ? currentValue
+                : currentValue.divide(multiplier, 8, RoundingMode.HALF_UP);
     }
 
     private PortfolioHistoryResponse.HistoryPoint toHistoryPoint(
@@ -149,7 +168,10 @@ public class PortfolioQueryService {
     }
 
     private boolean hasPosition(UserPortfolio holding) {
-        return holding.getAvgPrice() != null && holding.getQuantity() != null;
+        return holding.getAvgPrice() != null
+                && holding.getAvgPrice().compareTo(BigDecimal.ZERO) > 0
+                && holding.getQuantity() != null
+                && holding.getQuantity().compareTo(BigDecimal.ZERO) > 0;
     }
 
     private BigDecimal percentChange(BigDecimal current, BigDecimal previous) {
