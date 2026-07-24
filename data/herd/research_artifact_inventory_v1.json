@@ -1235,6 +1235,22 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/reports/sec_13f_security_intervals_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_13f_security_ledger_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_13f_security_mapping_review_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_13f_target_identities_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/reports/sec_8k_guidance_candidates_v1.csv",
       "status": "REVIEW_REQUIRED"
     },

@@ -1,0 +1,82 @@
+{
+  "report_version": "SEC_13F_SECURITY_LEDGER_V1",
+  "status": "SECURITY_IDENTIFIER_LEDGER_GATE_PASSED",
+  "source_snapshot_id": "sec-13f-bulk-2013q2-2026m05-v1",
+  "source_manifest_sha256": "5466724ab4d3b0183c278f614fd9317971aa761afb61d90877bdd238eb897736",
+  "protocol_sha256": "6ba8ddf9d847a2019587f0aa321fd7e45b551933eb4e2213a20694d6cd555320",
+  "universe_sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8",
+  "identity_ledger": {
+    "path": "data/reports/sec_13f_target_identities_v1.csv",
+    "sha256": "6a5058fb1ed144fc1129433b7c1a958edfe5cbf4e4ee0edc0a64d2d9af24094f",
+    "rows": 1248,
+    "distinct_ciks": 438,
+    "distinct_tickers": 439
+  },
+  "security_interval_ledger": {
+    "path": "data/reports/sec_13f_security_intervals_v1.csv",
+    "sha256": "d7c23e00161aef8dc1120d3c9dfb03f7117a6fa7f9c9cd34d62a187855dce2a5",
+    "rows": 539,
+    "distinct_cusips": 539,
+    "distinct_figis": 7
+  },
+  "coverage_review": {
+    "path": "data/reports/sec_13f_security_mapping_review_v1.csv",
+    "sha256": "796018a5af0486b969aaa3fb67333db713e48e861eecba0be9d62728660d30d3",
+    "target_tickers": 439,
+    "target_ciks": 438,
+    "mapped_tickers": 438,
+    "evaluable_tickers": 379,
+    "overall_interval_coverage": 0.855754,
+    "unmapped_tickers": [
+      "LYB"
+    ]
+  },
+  "diagnostics": {
+    "AMBIGUOUS_SHARE_CLASS": 50933,
+    "INVALID_CUSIP": 53960,
+    "identifier_conflicts_resolved_by_dominance": 773,
+    "identifier_conflicts_excluded_as_ambiguous": 1849,
+    "primary_equity_security_intervals": 539
+  },
+  "mapping_policy": {
+    "mode": "EXACT_OFFICIAL_SEC_CURRENT_OR_FORMER_NAME_OR_UNIQUE_DETERMINISTIC_TOKEN_SIGNATURE",
+    "fuzzy_name_matching_allowed": false,
+    "identifier_backfill_without_name_match_allowed": false,
+    "unmatched_rows": "EXCLUDED_AND_RESERVED_FOR_SEPARATE_SOURCE_REVIEW",
+    "security_selection": "PRIMARY_EQUITY_TITLE_AND_MAXIMUM_DISTINCT_FILING_ROWS_PER_TICKER_REPORT_PERIOD",
+    "identifier_conflict_rule": "DOMINANT_CIK_AT_LEAST_95_PERCENT_AND_10X_RUNNER_UP"
+  },
+  "share_class_policy": {
+    "multi_ticker_ciks": {
+      "0001652044": [
+        "GOOG",
+        "GOOGL"
+      ]
+    },
+    "locked_rules": {
+      "0001652044": {
+        "A": "GOOGL",
+        "C": "GOOG"
+      }
+    },
+    "locked_cusip_rules": {
+      "0001652044": {
+        "02079K305": "GOOGL",
+        "02079K107": "GOOG"
+      }
+    },
+    "ambiguous_classes_excluded": true
+  },
+  "gate_results": {
+    "minimum_mapped_research_tickers": true,
+    "minimum_overall_ticker_quarter_mapping_fraction": true,
+    "minimum_per_ticker_mapping_fraction_for_evaluation": true,
+    "zero_identifier_collisions_admitted": true
+  },
+  "price_outcomes_opened": false,
+  "direction_hypothesis_executed": false,
+  "exact_acceptance_datetime_ready": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "next_step": "ENRICH_RELEVANT_ACCESSION_ACCEPTANCE_DATETIMES"
+}

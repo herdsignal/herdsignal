@@ -22,6 +22,24 @@ PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_13f_bulk_v1.py
 원본 ZIP과 manifest는
 `data/reference/sec/sec-13f-bulk-2013q2-2026m05-v1`에 로컬 보관한다.
 
+## SEC 13F 종목 식별 원장
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_13f_security_ledger_v1
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_13f_security_ledger_v1 --verify-only
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_13f_security_ledger_v1.py
+```
+
+공식 SEC submissions 회사명·former name과 13F issuer name을 결과 데이터
+없이 연결한다. fuzzy match는 금지한다. 보통주·주식 클래스·REIT 지분만
+남기고 ETF·펀드·채권·우선주·워런트는 제외한다. 같은 분기에는 고유
+accession 수가 가장 많은 보통주 CUSIP를 대표 식별자로 선택한다. 충돌
+CUSIP는 한 CIK가 95% 이상이면서 차순위의 10배 이상일 때만 채택한다.
+
+로컬 전체 스캔 캐시는 원본 snapshot의 `derived/`에 gzip JSON으로 저장한다.
+cache key가 공식 manifest, 종목 universe, SEC identity, scan rule 중 하나와
+달라지면 전체 원본을 다시 읽는다.
+
 ## 1. 가격 데이터 스냅샷
 
 ### 목적

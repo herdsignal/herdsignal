@@ -65,6 +65,10 @@
     ],
     "DATA_PIPELINE": [
       "data/reports/sec_13f_bulk_v1.json",
+      "data/reports/sec_13f_target_identities_v1.csv",
+      "data/reports/sec_13f_security_intervals_v1.csv",
+      "data/reports/sec_13f_security_mapping_review_v1.csv",
+      "data/reports/sec_13f_security_ledger_v1.json",
       "data/herd/sec_form4_research_census_v2.json",
       "data/reports/sec_form4_census_gate_v2.json",
       "data/herd/sec_guidance_atomic_census_v2.json",

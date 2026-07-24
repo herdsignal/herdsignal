@@ -38,6 +38,27 @@ vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 �
 - 가격·수익률 결과는 열지 않았고 행동 권한은 0%다. 판정은
   `OFFICIAL_13F_RAW_CORPUS_HASH_LOCKED`다.
 
+### 13F 종목 식별 원장
+
+- 현재 연구 universe 439개 ticker·438개 SEC CIK를 공식 submissions
+  회사명과 former name에 연결했다. 결과 데이터와 fuzzy match는 사용하지
+  않았다.
+- 이름만 같은 BlackRock·Invesco 등의 펀드가 회사 보통주로 섞이지 않도록
+  ETF·펀드·채권·우선주·워런트를 제외했다. 분기별 고유 accession 수가
+  가장 많은 보통주 CUSIP만 대표 식별자로 채택했다.
+- 정상 CUSIP가 제출자 한 명의 오기로 전부 탈락하지 않도록 한 CIK가 전체
+  관측의 95% 이상이면서 차순위의 10배 이상일 때만 우세 소유자로
+  확정한다. 우세하지 않은 충돌은 제외한다.
+- GOOG·GOOGL은 동일 CIK라 회사명으로 나눌 수 없어 공식 13F CUSIP
+  `02079K107`·`02079K305`를 각각 Class C·A로 잠갔다.
+- 최종 원장은 대표 보통주 CUSIP 539개, mapped ticker 438개, 평가 가능
+  ticker 379개다. 전체 분기 coverage 85.58%로 사전 고정한 80%와 최소
+  300개 ticker 게이트를 통과했다. 미연결 LYB는 억지 연결하지 않고
+  제외했다.
+- 가격·수익률·방향 가설·Blind holdout은 열지 않았고 행동 비율은 0%다.
+  다음 단계는 관련 filing의 보수적 공개시점과 amendment 의미를 정규화하는
+  것이다.
+
 ## HERD vNext 모델 헌장
 
 차세대 모델의 제품 범위와 출력 경계를
