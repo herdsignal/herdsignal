@@ -1,4 +1,11 @@
-from scheduler.realtime_portfolio import empty_portfolio, value_holdings
+from datetime import date
+
+from scheduler import realtime_portfolio
+from scheduler.realtime_portfolio import (
+    calculate_current_portfolio,
+    empty_portfolio,
+    value_holdings,
+)
 
 
 def test_value_holdings_calculates_position_and_portfolio_totals():
@@ -42,3 +49,36 @@ def test_empty_portfolio_returns_a_new_collection():
     first["stocks"].append({"ticker": "NVDA"})
 
     assert second["stocks"] == []
+
+
+def test_calculate_current_portfolio_uses_injected_price_and_snapshot_date(monkeypatch):
+    holdings = [{"ticker": "NVDA", "avg_price": 90.0, "quantity": 2.0}]
+    snapshot_calls = []
+    monkeypatch.setattr(
+        realtime_portfolio,
+        "load_holdings",
+        lambda user_id, session_factory: holdings,
+    )
+    monkeypatch.setattr(
+        realtime_portfolio,
+        "upsert_snapshot",
+        lambda *args: snapshot_calls.append(args),
+    )
+
+    result = calculate_current_portfolio(
+        "user-1",
+        session_factory=object(),
+        price_loader=lambda tickers: {
+            "NVDA": {
+                "price": 110.0,
+                "prev_close": 100.0,
+                "change_pct": 10.0,
+                "price_date": "2026-07-23",
+            },
+        },
+        snapshot_date=date(2026, 7, 24),
+    )
+
+    assert result["total_value"] == 220.0
+    assert result["market_data_date"] == "2026-07-23"
+    assert snapshot_calls[0][0:2] == ("user-1", date(2026, 7, 24))

@@ -18,6 +18,7 @@ from herd.sec_guidance_table_extraction_v1 import expand_table
 
 
 PROTOCOL = Path(__file__).with_suffix(".json")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PRIOR_COLUMN = re.compile(r"\b(?:prior|previous|original|initial)\b", re.I)
 INITIAL_GUIDANCE = re.compile(r"\binitial\s+guidance\b", re.I)
 UNCHANGED = re.compile(r"\bunchanged\b", re.I)
@@ -39,6 +40,8 @@ class SourceLocator:
         self.paths: dict[str, Path] = {}
         for corpus_name in corpora:
             corpus = Path(corpus_name)
+            if not corpus.is_absolute() and not corpus.exists():
+                corpus = PROJECT_ROOT / corpus
             index = pd.read_csv(corpus / "index.csv", dtype=str)
             for _, row in index.iterrows():
                 digest = str(row.get("source_sha256", ""))

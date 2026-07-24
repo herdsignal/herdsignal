@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date
+from typing import Callable
 
 from init_db import PortfolioHistory, UserPortfolio
 
@@ -110,4 +111,63 @@ def empty_portfolio() -> dict:
         "total_return_pct": 0.0,
         "daily_change_pct": 0.0,
         "stocks": [],
+    }
+
+
+def calculate_current_portfolio(
+    user_id: str,
+    *,
+    session_factory,
+    price_loader: Callable[[list[str]], dict],
+    snapshot_date: date | None = None,
+) -> dict:
+    """현재가로 포트폴리오를 평가하고 같은 날짜의 스냅샷을 갱신한다."""
+    effective_date = snapshot_date or date.today()
+    holdings = load_holdings(user_id, session_factory)
+    if not holdings:
+        logger.warning("[Tier3][%s] 평가 가능한 보유 종목 없음", user_id)
+        return empty_portfolio()
+
+    prices = price_loader([holding["ticker"] for holding in holdings])
+    stocks, totals = value_holdings(holdings, prices)
+    if not stocks:
+        logger.warning("[Tier3][%s] 유효한 현재가가 있는 종목 없음", user_id)
+        return empty_portfolio()
+
+    total_value = totals["total_value"]
+    total_cost = totals["total_cost"]
+    total_return_pct = (
+        (total_value - total_cost) / total_cost * 100
+        if total_cost > 0
+        else 0.0
+    )
+    daily_change_pct = (
+        (totals["daily_current_value"] - totals["previous_value"])
+        / totals["previous_value"]
+        * 100
+        if totals["previous_value"] > 0
+        else 0.0
+    )
+    upsert_snapshot(
+        user_id,
+        effective_date,
+        total_value,
+        total_cost,
+        total_return_pct,
+        session_factory,
+    )
+    logger.info(
+        "[Tier3][%s] 보유 %s종목 총 평가 $%s 수익률 %.2f%%",
+        user_id,
+        len(stocks),
+        f"{total_value:,.2f}",
+        total_return_pct,
+    )
+    return {
+        "total_value": round(total_value, 2),
+        "total_cost": round(total_cost, 2),
+        "total_return_pct": round(total_return_pct, 4),
+        "daily_change_pct": round(daily_change_pct, 4),
+        "market_data_date": min(stock["price_date"] for stock in stocks),
+        "stocks": stocks,
     }

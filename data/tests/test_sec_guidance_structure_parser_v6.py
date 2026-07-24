@@ -42,7 +42,10 @@ def test_reported_basis_is_bound_to_its_exact_range() -> None:
 
 
 def test_all_v5_failures_are_corrected_without_dropping_valid_rows() -> None:
-    audit = audit_v5_review("data/reports/sec_guidance_structure_v5_reviewed.csv", LOCATOR)
+    audit = audit_v5_review(
+        str(ROOT / "data/reports/sec_guidance_structure_v5_reviewed.csv"),
+        LOCATOR,
+    )
     assert audit == {
         "v5_invalid_bindings_audited": 10,
         "v5_invalid_bindings_dropped": 6,

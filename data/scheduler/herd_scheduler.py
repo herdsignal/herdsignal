@@ -23,12 +23,7 @@ Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
 import argparse
 import logging
 import sys
-from datetime import date, timedelta
 from pathlib import Path
-from zoneinfo import ZoneInfo
-
-from apscheduler.schedulers.blocking import BlockingScheduler
-from apscheduler.triggers.cron import CronTrigger
 
 # data/ 하위에서 실행 시에도 패키지 import가 가능하도록 경로 추가
 _DATA_DIR = Path(__file__).resolve().parent.parent
@@ -46,21 +41,19 @@ from config.settings import (                                           # noqa: 
     SCHEDULER_HOUR_ET,
     SCHEDULER_MINUTE_ET,
 )
+from scheduler.daemon import run_scheduler as start_scheduler                 # noqa: E402
 from scheduler.incident_alerts import IncidentAlertConfig, send_scheduler_alert  # noqa: E402
+from scheduler.on_demand import (                                             # noqa: E402
+    calculate_many as calculate_many_cached,
+    calculate_on_demand as calculate_cached,
+)
 from scheduler.run_history import SchedulerRunRecorder                          # noqa: E402
 from scheduler.ticker_job import execute_tickers                                # noqa: E402
-from scheduler.realtime_portfolio import (                                      # noqa: E402
-    empty_portfolio,
-    load_holdings,
-    upsert_snapshot,
-    value_holdings,
-)
+from scheduler.realtime_portfolio import calculate_current_portfolio as value_portfolio  # noqa: E402
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
 from init_db import (                                                   # noqa: E402
-    HerdIndicator,
-    HerdScore,
     UserPortfolio,
     UserWatchlist,
 )
@@ -76,9 +69,6 @@ def _get_session_factory():
     if _SessionFactory is None:
         _SessionFactory = get_session_factory(create_db_engine())
     return _SessionFactory
-
-# 미국 동부시간 타임존 (EDT/EST 자동 전환)
-_ET = ZoneInfo("America/New_York")
 
 # on-demand 캐시를 식별하는 user_id
 _CACHE_USER_ID = "cache"
@@ -252,106 +242,16 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
 # ══════════════════════════════════════════════
 
 def calculate_on_demand(ticker: str, force: bool = False) -> dict:
-    """
-    Tier 2: 요청 시 실시간 HERD 계산 + 캐싱.
-
-    동작 흐름:
-      1. herd_scores 테이블에서 해당 ticker의 최신 데이터 조회
-      2. force=False이고 CACHE_DAYS(7일) 이내 데이터 있음 → 캐시에서 바로 반환
-      3. force=True이거나 데이터 없거나 7일 이상 지남 → 즉시 계산 후 DB 저장
-         - herd_scores / herd_indicators / daily_prices / stocks 업데이트
-
-    Args:
-        ticker: 종목 티커 (예: "RKLB", "AAPL")
-        force: True면 캐시가 있어도 재계산
-
-    Returns:
-        {
-            "ticker":     str,    # 티커
-            "score":      float,  # HERD 점수 (0~100)
-            "stage":      str,    # 단계 (Flee/Scatter/Calm/Drift/Rush)
-            "signal":     str,    # 매매 신호 (BUY/ADD/HOLD/REDUCE/SELL)
-            "indicators": dict,   # 5개 지표 분해값
-            "score_date": str,    # 기준 날짜 (YYYY-MM-DD)
-            "from_cache": bool,   # True = 캐시 반환, False = 신규 계산
-        }
-    """
-    ticker = ticker.upper().strip()
-    cache_cutoff = date.today() - timedelta(days=CACHE_DAYS)
-
-    # ── 1. 캐시 확인 ──────────────────────────
-    with _get_session_factory()() as session:
-        latest_score = (
-            session.query(HerdScore)
-            .filter(HerdScore.ticker == ticker)
-            .order_by(HerdScore.score_date.desc())
-            .first()
-        )
-
-        if not force and latest_score and latest_score.score_date >= cache_cutoff:
-            # 캐시 히트 — 지표 분해값도 조회
-            ind_row = (
-                session.query(HerdIndicator)
-                .filter(
-                    HerdIndicator.ticker     == ticker,
-                    HerdIndicator.score_date == latest_score.score_date,
-                )
-                .first()
-            )
-
-            # Decimal 타입을 float으로 변환해 반환
-            indicators: dict = {}
-            if ind_row:
-                indicators = {
-                    "weekly_rsi":      float(ind_row.weekly_rsi or 0),
-                    "monthly_rsi":     float(ind_row.monthly_rsi or 0),
-                    "position_52w":    float(ind_row.position_52w or 0),
-                    "ma200_deviation": float(ind_row.ma200_deviation or 0),
-                    "volume_strength": float(ind_row.volume_strength or 0),
-                }
-
-            logger.info(
-                f"[Tier2][{ticker}] 캐시 히트 — "
-                f"score_date={latest_score.score_date}  "
-                f"score={float(latest_score.herd_score):.2f}"
-            )
-            return {
-                "ticker":     ticker,
-                "score":      float(latest_score.herd_score),
-                "stage":      latest_score.herd_stage,
-                "signal":     latest_score.signal or "HOLD",
-                "indicators": indicators,
-                "score_date": str(latest_score.score_date),
-                "from_cache": True,
-            }
-
-    # ── 2. 캐시 미스/만료 또는 강제 갱신 → 즉시 계산 ──────
-    logger.info(
-        f"[Tier2][{ticker}] {'강제 갱신' if force else '캐시 미스'} — "
-        f"(최신={latest_score.score_date if latest_score else '없음'}) "
-        f"실시간 계산 시작"
+    """호환 진입점: 캐시 조회와 계산은 on_demand 모듈에 위임한다."""
+    return calculate_cached(
+        ticker,
+        force=force,
+        cache_days=CACHE_DAYS,
+        session_factory=_get_session_factory(),
+        collect=collect,
+        calculate=run,
+        save=save_herd_result,
     )
-
-    # 데이터 수집 + HERD 계산 + DB 저장
-    df          = collect(ticker)
-    herd_result = run(ticker, df)
-    if not save_herd_result(ticker, herd_result, df):
-        raise RuntimeError(f"[{ticker}] HERD 계산 결과 DB 저장 실패")
-
-    logger.info(
-        f"[Tier2][{ticker}] ✅ 계산 완료 — "
-        f"score={herd_result['score']:.2f}  stage={herd_result['stage']}"
-    )
-
-    return {
-        "ticker":     ticker,
-        "score":      herd_result["score"],
-        "stage":      herd_result["stage"],
-        "signal":     herd_result.get("signal", "HOLD"),
-        "indicators": herd_result["indicators"],
-        "score_date": str(date.today()),
-        "from_cache": False,
-    }
 
 
 def calculate_many_on_demand(tickers: list[str], force: bool = False) -> dict:
@@ -359,20 +259,14 @@ def calculate_many_on_demand(tickers: list[str], force: bool = False) -> dict:
     여러 티커의 HERD를 한 Python 프로세스 안에서 순차 갱신한다.
     Spring Boot 수동 새로고침에서 종목마다 프로세스를 새로 띄우는 비용을 줄이기 위한 배치 경로.
     """
-    results: list[dict] = []
-    errors:  list[dict] = []
-
-    for ticker in dict.fromkeys(t.upper().strip() for t in tickers if t and t.strip()):
-        try:
-            results.append(calculate_on_demand(ticker, force=force))
-        except Exception as e:
-            logger.error(f"[Tier2][{ticker}] 배치 갱신 실패: {e}", exc_info=True)
-            errors.append({"ticker": ticker, "error": str(e)})
-
-    return {
-        "results": results,
-        "errors":  errors,
-    }
+    return calculate_many_cached(
+        tickers,
+        calculate_one=lambda ticker, should_force: calculate_on_demand(
+            ticker,
+            force=should_force,
+        ),
+        force=force,
+    )
 
 
 # ══════════════════════════════════════════════
@@ -380,99 +274,12 @@ def calculate_many_on_demand(tickers: list[str], force: bool = False) -> dict:
 # ══════════════════════════════════════════════
 
 def calculate_current_portfolio(user_id: str) -> dict:
-    """
-    yfinance 실시간 현재가(15분 지연)로 포트폴리오 평가금액을 즉시 계산한다.
-
-    daily_prices DB를 거치지 않으므로 장중에도 최신 가격 반영 가능.
-    계산 결과는 portfolio_history에 UPSERT (오늘 날짜 스냅샷 갱신).
-
-    동작 흐름:
-      1. user_portfolio에서 avg_price·quantity가 모두 있는 종목만 조회
-      2. get_current_prices()로 yfinance 현재가 일괄 조회
-      3. 종목별 market_value·return_pct·daily_change_pct 계산
-      4. 전체 합산 지표 산출
-      5. portfolio_history UPSERT 후 결과 반환
-
-    Args:
-        user_id: 사용자 ID (MVP 기본값 'local')
-
-    Returns:
-        {
-            "total_value":      float,  # 총 평가금액 (USD)
-            "total_cost":       float,  # 총 매입금액 (USD)
-            "total_return_pct": float,  # 총 수익률 (%)
-            "daily_change_pct": float,  # 포트폴리오 일일 등락률 (%)
-            "stocks": [
-                {
-                    "ticker":           str,
-                    "avg_price":        float,
-                    "quantity":         float,
-                    "current_price":    float,
-                    "price_date":       str,
-                    "market_value":     float,
-                    "return_pct":       float,
-                    "daily_change_pct": float,
-                }
-            ]
-        }
-    """
-    today = date.today()
-    session_factory = _get_session_factory()
-    holdings_data = load_holdings(user_id, session_factory)
-
-    if not holdings_data:
-        logger.warning(f"[Tier3][{user_id}] avg_price·quantity가 있는 보유 종목 없음")
-        return empty_portfolio()
-
-    tickers = [h["ticker"] for h in holdings_data]
-    logger.info(f"[Tier3][{user_id}] 실시간 조회 대상: {tickers}")
-
-    # ── 2. yfinance 현재가 일괄 조회 ──────────────────────────────────────
-    prices = get_current_prices(tickers)
-
-    # ── 3. 종목별 계산 ────────────────────────────────────────────────────
-    stocks, totals = value_holdings(holdings_data, prices)
-
-    if not stocks:
-        logger.warning(f"[Tier3][{user_id}] 유효한 현재가가 있는 종목 없음")
-        return empty_portfolio()
-
-    # ── 4. 전체 합산 지표 산출 ────────────────────────────────────────────
-    total_value = totals["total_value"]
-    total_cost = totals["total_cost"]
-    total_return_pct = (total_value - total_cost) / total_cost * 100 if total_cost > 0 else 0.0
-    portfolio_daily  = (
-        (totals["daily_current_value"] - totals["previous_value"])
-        / totals["previous_value"] * 100
-        if totals["previous_value"] > 0 else 0.0
-    )
-
-    # ── 5. portfolio_history UPSERT (오늘 날짜) ───────────────────────────
-    upsert_snapshot(
+    """호환 진입점: 실시간 평가는 realtime_portfolio 모듈에 위임한다."""
+    return value_portfolio(
         user_id,
-        today,
-        total_value,
-        total_cost,
-        total_return_pct,
-        session_factory,
+        session_factory=_get_session_factory(),
+        price_loader=get_current_prices,
     )
-
-    logger.info(
-        f"[Tier3][{user_id}] 실시간 계산 완료 — "
-        f"보유 {len(stocks)}종목  "
-        f"총 평가 ${total_value:,.2f}  수익률 {total_return_pct:.2f}%"
-    )
-
-    market_data_date = min(stock["price_date"] for stock in stocks)
-
-    return {
-        "total_value":      round(total_value, 2),
-        "total_cost":       round(total_cost,  2),
-        "total_return_pct": round(total_return_pct, 4),
-        "daily_change_pct": round(portfolio_daily,  4),
-        "market_data_date": market_data_date,
-        "stocks":           stocks,
-    }
 
 
 # ══════════════════════════════════════════════
@@ -480,42 +287,12 @@ def calculate_current_portfolio(user_id: str) -> dict:
 # ══════════════════════════════════════════════
 
 def run_scheduler() -> None:
-    """
-    APScheduler BlockingScheduler로 Tier 1 데몬 실행.
-    미국 동부시간(ET) 기준 매일 SCHEDULER_HOUR_ET:SCHEDULER_MINUTE_ET에 run_herd_job 실행.
-    - 여름(EDT) 16:30 ET = 다음날 05:30 KST
-    - 겨울(EST) 16:30 ET = 다음날 06:30 KST
-    """
-    scheduler = BlockingScheduler(timezone=_ET)
-
-    scheduler.add_job(
-        func               = run_herd_job,
-        kwargs             = {"trigger_type": "SCHEDULED"},
-        trigger            = CronTrigger(
-            hour     = SCHEDULER_HOUR_ET,
-            minute   = SCHEDULER_MINUTE_ET,
-            timezone = _ET,
-        ),
-        id                 = "herd_daily_job",
-        name               = "HERD Tier1 일일 계산 잡",
-        replace_existing   = True,
-        max_instances      = 1,          # 동시 실행 방지
-        misfire_grace_time = 30 * 60,   # 30분 내 미실행 시 재시도
+    """호환 진입점: 데몬 구성은 daemon 모듈에 위임한다."""
+    start_scheduler(
+        run_herd_job,
+        hour_et=SCHEDULER_HOUR_ET,
+        minute_et=SCHEDULER_MINUTE_ET,
     )
-
-    logger.info(
-        f"[Tier1] 스케줄러 시작 — "
-        f"매일 {SCHEDULER_HOUR_ET:02d}:{SCHEDULER_MINUTE_ET:02d} ET에 실행 "
-        f"(여름: 다음날 05:{SCHEDULER_MINUTE_ET:02d} KST | "
-        f"겨울: 다음날 06:{SCHEDULER_MINUTE_ET:02d} KST)"
-    )
-    logger.info("종료하려면 Ctrl+C를 누르세요.")
-
-    try:
-        scheduler.start()
-    except (KeyboardInterrupt, SystemExit):
-        logger.info("[Tier1] 스케줄러 종료 요청 — 정상 종료")
-        scheduler.shutdown(wait=False)
 
 
 # ──────────────────────────────────────────────

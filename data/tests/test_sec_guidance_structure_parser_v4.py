@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from lxml import html
 
 from herd.sec_guidance_block_extraction_v1 import load_aliases
@@ -5,7 +7,8 @@ from herd.sec_guidance_structure_parser_v4 import _narrative_binding, _table_bin
 from herd.sec_guidance_structure_v4_regression_audit import audit
 
 
-ALIASES = load_aliases(__import__("pathlib").Path("data/herd/sec_guidance_metric_aliases_v1.csv"))
+ROOT = Path(__file__).resolve().parents[2]
+ALIASES = load_aliases(ROOT / "data/herd/sec_guidance_metric_aliases_v1.csv")
 
 
 def test_table_grid_binds_latest_column_and_multilevel_header() -> None:
@@ -72,8 +75,8 @@ def test_flattened_slide_div_is_not_reparsed_as_narrative() -> None:
 def test_v3_invalid_bindings_do_not_survive_v4_regression() -> None:
     import pandas as pd
 
-    v3 = pd.read_csv("data/reports/sec_guidance_structure_expansion_reviewed_v3.csv")
-    v4 = pd.read_csv("data/reports/sec_guidance_structure_v4_candidates.csv")
+    v3 = pd.read_csv(ROOT / "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv")
+    v4 = pd.read_csv(ROOT / "data/reports/sec_guidance_structure_v4_candidates.csv")
     report = audit(v3, v4)
     assert report["v4_exact_invalid_bindings_retained"] == 0
     assert report["development_regression_passed"] is True
@@ -83,7 +86,7 @@ def test_v3_invalid_bindings_do_not_survive_v4_regression() -> None:
 def test_v4_holdout_sample_is_ready_but_not_source_approved() -> None:
     import json
 
-    report = json.loads(__import__("pathlib").Path("data/reports/sec_guidance_structure_v4.json").read_text())
+    report = json.loads((ROOT / "data/reports/sec_guidance_structure_v4.json").read_text())
     assert report["fresh_review_rows"] == 80
     assert report["fresh_review_tickers"] == 23
     assert report["review_sample_gate_ready"] is True
