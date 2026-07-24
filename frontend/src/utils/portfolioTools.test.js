@@ -12,6 +12,18 @@ describe('portfolioTools operational boundary', () => {
     expect(row.reason).toBe('BUY 연구 상태')
   })
 
+  it('prefers the explicit API action boundary over legacy fields', () => {
+    const item = {
+      signal: 'HOLD',
+      legacySignal: 'BUY',
+      operationalAction: 'HOLD',
+      actionAuthorized: false,
+      actionRatio: 0.25,
+    }
+    expect(operationalSignal(item)).toBe('HOLD')
+    expect(opportunityRows([item])[0].stateSignal).toBe('BUY')
+  })
+
   it('uses a signal only after an operational action ratio is present', () => {
     expect(operationalSignal({ signal: 'ADD', actionRatio: 0.05 })).toBe('ADD')
   })

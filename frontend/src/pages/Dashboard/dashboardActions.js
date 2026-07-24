@@ -18,8 +18,8 @@ export function stageDesc(stage) {
   switch (normalizeStage(stage)) {
     case 'rush': return '군중 밀집 · 익절 근거 미채택'
     case 'drift': return '쏠림 진행 · 행동 검증 중'
-    case 'scatter': return '군중 흩어짐 · 분할 매수'
-    case 'flee': return '군중 이탈 · 적극 매수'
+    case 'scatter': return '군중 분산 · 매수 근거 미채택'
+    case 'flee': return '군중 이탈 · 매수 근거 미채택'
     default: return '군중 균형 · 보유 유지'
   }
 }

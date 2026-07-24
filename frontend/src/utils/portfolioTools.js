@@ -39,7 +39,18 @@ function equalTargetWeight(count) {
  * actionRatio가 0보다 큰 경우만 사용자가 실행할 수 있는 신호로 본다.
  */
 export function operationalSignal(item) {
+  if (item?.actionAuthorized === false) return 'HOLD'
+  if (item?.operationalAction) return item.operationalAction
   return num(item?.actionRatio) > 0 ? (item?.signal ?? 'HOLD') : 'HOLD'
+}
+
+/** 과거 모델의 구간 파생값. 상태 진단 외의 행동 계산에는 사용하지 않는다. */
+export function legacySignal(item) {
+  return item?.legacySignal ?? item?.stateSignal ?? (
+    item?.actionAuthorized == null && num(item?.actionRatio) === 0
+      ? item?.signal
+      : null
+  ) ?? 'HOLD'
 }
 
 export function portfolioRows(portfolio, summary, herdMap, targetWeights) {
@@ -55,7 +66,7 @@ export function portfolioRows(portfolio, summary, herdMap, targetWeights) {
     const targetWeight = num(targetWeights[item.ticker], fallbackTarget)
     const drift = currentWeight - targetWeight
     const herd = herdMap[item.ticker]
-    const stateSignal = herd?.signal ?? 'HOLD'
+    const stateSignal = legacySignal(herd)
     const signal = operationalSignal(herd)
 
     let action = '유지'
@@ -178,7 +189,7 @@ export function opportunityRows(watchlist) {
   return [...watchlist]
     .map((item, index) => {
       const score = num(item.herdV4 ?? item.herdScore, 50)
-      const stateSignal = item.signal ?? 'HOLD'
+      const stateSignal = legacySignal(item)
       const signal = operationalSignal(item)
       const actionScore = num(item.actionScore)
       const signalDays = num(item.signalDurationDays)

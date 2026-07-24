@@ -48,17 +48,35 @@ public class HerdScoreResponse {
     /** 단계 (Herd Flee / Scatter / Calm / Drift / Rush) */
     private String herdStage;
 
-    /** 매매 신호 (BUY / SELL / HOLD / ADD / REDUCE) */
+    /**
+     * 운영 승인된 행동 코드.
+     * 하위 호환을 위해 필드명은 signal을 유지하지만, 연구 단계에서는 항상 HOLD다.
+     */
     private String signal;
+
+    /** 과거 HERD v4가 점수 구간에서 파생한 연구용 분류. 운영 행동에 사용하지 않는다. */
+    private String legacySignal;
+
+    /** 의미가 명시된 운영 행동 코드. signal과 같은 값이다. */
+    private String operationalAction;
+
+    /** 운영 행동 비율이 0보다 커 실제 행동이 승인됐는지 여부. */
+    private Boolean actionAuthorized;
 
     /** 점수 산출 기준 날짜 */
     private LocalDate scoreDate;
 
-    /** 현재 매매 신호가 시작된 날짜 */
+    /** 현재 승인된 운영 행동이 시작된 날짜. 승인되지 않았으면 null이다. */
     private LocalDate signalStartedAt;
 
-    /** 현재 매매 신호 지속 일수 */
+    /** 현재 승인된 운영 행동 지속 일수. 승인되지 않았으면 null이다. */
     private Integer signalDurationDays;
+
+    /** 과거 HERD v4 분류가 시작된 날짜. 연구 상태 관찰에만 사용한다. */
+    private LocalDate legacySignalStartedAt;
+
+    /** 과거 HERD v4 분류 지속 일수. 연구 상태 관찰에만 사용한다. */
+    private Integer legacySignalDurationDays;
 
     /** 현재 HERD 단계가 시작된 날짜 */
     private LocalDate stageStartedAt;
@@ -269,6 +287,13 @@ public class HerdScoreResponse {
             Stock stock,
             SignalDuration signalDuration
     ) {
+        boolean actionAuthorized = actionDecision != null
+                && actionDecision.getActionRatio() != null
+                && actionDecision.getActionRatio().compareTo(BigDecimal.ZERO) > 0;
+        String operationalAction = actionAuthorized
+                ? normalizeSignal(score.getSignal())
+                : "HOLD";
+
         HerdScoreResponseBuilder builder = HerdScoreResponse.builder()
                 .ticker(score.getTicker())
                 .companyName(stock != null ? stock.getName() : null)
@@ -280,10 +305,23 @@ public class HerdScoreResponse {
                 .sectorMultiplier(BigDecimal.ONE)
                 .herdV4(score.getHerdScore())
                 .herdStage(score.getHerdStage())
-                .signal(score.getSignal())
+                .signal(operationalAction)
+                .legacySignal(normalizeSignal(score.getSignal()))
+                .operationalAction(operationalAction)
+                .actionAuthorized(actionAuthorized)
                 .scoreDate(score.getScoreDate())
-                .signalStartedAt(signalDuration != null ? signalDuration.getSignalStartedAt() : null)
-                .signalDurationDays(signalDuration != null ? signalDuration.getSignalDurationDays() : null)
+                .signalStartedAt(actionAuthorized && signalDuration != null
+                        ? signalDuration.getSignalStartedAt()
+                        : null)
+                .signalDurationDays(actionAuthorized && signalDuration != null
+                        ? signalDuration.getSignalDurationDays()
+                        : null)
+                .legacySignalStartedAt(signalDuration != null
+                        ? signalDuration.getSignalStartedAt()
+                        : null)
+                .legacySignalDurationDays(signalDuration != null
+                        ? signalDuration.getSignalDurationDays()
+                        : null)
                 .stageStartedAt(signalDuration != null ? signalDuration.getStageStartedAt() : null)
                 .stageDurationDays(signalDuration != null ? signalDuration.getStageDurationDays() : null)
                 .qualityScore(qualityScore)
@@ -345,6 +383,12 @@ public class HerdScoreResponse {
         }
 
         return builder.build();
+    }
+
+    private static String normalizeSignal(String signal) {
+        return signal == null || signal.isBlank()
+                ? "HOLD"
+                : signal.trim().toUpperCase();
     }
 
     /** 현재 신호/단계 지속 기간 DTO */

@@ -1,8 +1,9 @@
 import { actionIntensityLabel } from './actionIntensity'
+import { operationalSignal } from './portfolioTools'
 
 export function notificationFingerprint(item) {
   return [
-    item?.signal ?? 'HOLD',
+    operationalSignal(item),
     item?.actionRegime ?? '',
     actionIntensityLabel(item),
     item?.actionCooldownActive ? 'cooldown' : 'ready',
@@ -24,28 +25,28 @@ export function buildActionNotificationState(items, previous = {}) {
   const summary = { buy: 0, hold: 0, reduce: 0, total: items.length }
 
   items.forEach((item) => {
+    const signal = operationalSignal(item)
     const fingerprint = notificationFingerprint(item)
     snapshot[item.ticker] = {
       fingerprint,
       scoreDate: item.scoreDate ?? null,
-      signal: item.signal ?? 'HOLD',
+      signal,
     }
 
     if (previous[item.ticker] && previous[item.ticker].fingerprint !== fingerprint) {
       changes.push({
         ticker: item.ticker,
         source: item.source,
-        signal: item.signal ?? 'HOLD',
+        signal,
         actionLabel: item.actionLabel ?? '판단 변경',
         intensity: actionIntensityLabel(item),
       })
     }
 
-    if (['BUY', 'ADD'].includes(item.signal)) summary.buy += 1
-    else if (['SELL', 'REDUCE'].includes(item.signal)) summary.reduce += 1
+    if (['BUY', 'ADD'].includes(signal)) summary.buy += 1
+    else if (['SELL', 'REDUCE'].includes(signal)) summary.reduce += 1
     else summary.hold += 1
   })
 
   return { snapshot, changes, summary }
 }
-

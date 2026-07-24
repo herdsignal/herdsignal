@@ -9,6 +9,7 @@ import { signalDesc } from '../../utils/decision'
 import { stageBadgeStyle, stageColor } from '../../utils/herdStage'
 import { formatSignalAgeLabel, formatSignalDuration } from '../../utils/signalDuration'
 import { signalStyle } from '../../utils/signalStyle'
+import { operationalSignal } from '../../utils/portfolioTools'
 import sharedStyles from './Watchlist.module.css'
 import componentStyles from './WatchlistQueue.module.css'
 
@@ -23,9 +24,9 @@ export default function WatchlistQueue({
   onOpenStock,
 }) {
   const readyCount = scoredWatchlist.filter((item) => item.queueState === 'READY').length
-  const waitCount = watchlist.filter((item) => item.signal === 'HOLD').length
+  const waitCount = watchlist.filter((item) => operationalSignal(item) === 'HOLD').length
   const sellWatchCount = watchlist.filter(
-    (item) => item.signal === 'SELL' || item.signal === 'REDUCE'
+    (item) => ['Herd Drift', 'Herd Rush'].includes(item.herdStage)
   ).length
 
   return (
@@ -89,7 +90,8 @@ function SectionHeader({ title, hint }) {
 
 function QueueRow({ item, deletingTicker, onDelete, onOpenStock }) {
   const color = stageColor(item.herdStage)
-  const signal = signalStyle(item.signal)
+  const action = operationalSignal(item)
+  const signal = signalStyle(action)
   const stageName = item.herdStage.startsWith('Herd ')
     ? item.herdStage.slice(5)
     : item.herdStage
@@ -143,16 +145,17 @@ function QueueRow({ item, deletingTicker, onDelete, onOpenStock }) {
 }
 
 function formatActionText(item) {
-  const action = item?.actionLabel ?? signalDesc(item?.signal)
+  const signal = operationalSignal(item)
+  const action = item?.actionLabel ?? signalDesc(signal)
   return [formatActionScore(item?.actionScore), actionIntensityLabel(item), action]
     .filter(Boolean)
     .join(' · ')
 }
 
 function formatActionCode(item) {
-  if (!item?.signal) return 'HOLD'
+  const signal = operationalSignal(item)
   const intensity = actionIntensityLabel(item)
-  return intensity === '관찰' ? item.signal : `${item.signal} · ${intensity}`
+  return intensity === '관찰' ? signal : `${signal} · ${intensity}`
 }
 
 function formatDate(dateString) {

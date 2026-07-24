@@ -30,7 +30,7 @@ class HerdV4BoundaryContractTest {
                         .scoreDate(LocalDate.of(2026, 1, 2))
                         .herdScore(expectedV4)
                         .herdStage(testCase.path("expectedStage").asText())
-                        .signal("HOLD")
+                        .signal("BUY")
                         .build();
                 HerdIndicator indicator = HerdIndicator.builder()
                         .herdBase(expectedBase)
@@ -48,6 +48,10 @@ class HerdV4BoundaryContractTest {
                 assertThat(response.getHerdV4()).isEqualByComparingTo(expectedV4);
                 assertThat(response.getHerdScore()).isEqualByComparingTo(expectedV4);
                 assertThat(response.getHerdStage()).isEqualTo(testCase.path("expectedStage").asText());
+                assertThat(response.getSignal()).isEqualTo("HOLD");
+                assertThat(response.getOperationalAction()).isEqualTo("HOLD");
+                assertThat(response.getActionAuthorized()).isFalse();
+                assertThat(response.getLegacySignal()).isEqualTo("BUY");
             }
         }
     }
