@@ -1,0 +1,102 @@
+{
+  "protocol_version": "SEC_13F_SLOW_CONTEXT_V1",
+  "status": "LOCKED_BEFORE_FEATURE_BUILD_AND_PRICE_OUTCOMES",
+  "locked_at": "2026-07-25",
+  "objective": "Build point-in-time quarterly institutional crowding context without treating delayed Form 13F holdings as a standalone direction signal.",
+  "pinned_inputs": [
+    {
+      "path": "data/herd/sec_13f_crowding_protocol_v1.json",
+      "sha256": "6ba8ddf9d847a2019587f0aa321fd7e45b551933eb4e2213a20694d6cd555320",
+      "required_status": "LOCKED_BEFORE_13F_COLLECTION_AND_PRICE_OUTCOMES"
+    },
+    {
+      "path": "data/reports/sec_13f_pit_holdings_v1.json",
+      "sha256": "93ebf83131a929b623d3192bee1493fa05c7c919322b1a4426477199a2a572ae",
+      "required_status": "CONSERVATIVE_PIT_HOLDINGS_LEDGER_GATE_PASSED"
+    },
+    {
+      "path": "data/reports/sec_13f_source_review_v1.json",
+      "sha256": "e9c7858222b7a0d916d1dfdf8618739bcf284f778c97e231f50c8785500993e2",
+      "required_status": "STRATIFIED_SEC_SOURCE_REVIEW_GATE_PASSED"
+    },
+    {
+      "path": "data/reports/sec_13f_security_ledger_v1.json",
+      "sha256": "38bf6342a0980e3de35753a20890af3be66d4f5963e63e36d49cd8add52929ae",
+      "required_status": "SECURITY_IDENTIFIER_LEDGER_GATE_PASSED"
+    }
+  ],
+  "history": {
+    "first_valid_report_period": "2013-06-30",
+    "expected_last_report_period": "2026-03-31",
+    "calendar_quarter_ends_only": true,
+    "legacy_report_periods_before_bulk_history": "EXCLUDE_AND_COUNT",
+    "partial_2013_q1_wave": "EXCLUDE_BECAUSE_STRUCTURED_13F_COVERAGE_STARTS_AFTER_THE_COMMON_PUBLICATION_CUTOFF"
+  },
+  "publication_wave": {
+    "statutory_lag_days": 45,
+    "deadline_rule": "FIRST_US_SECURITIES_MARKET_SESSION_ON_OR_AFTER_QUARTER_END_PLUS_45_CALENDAR_DAYS",
+    "common_availability_rule": "NEXT_US_SECURITIES_MARKET_SESSION_AFTER_DEADLINE_SESSION",
+    "included_event_rule": "AMENDMENT_USABLE_AND_AVAILABILITY_DATE_LE_COMMON_AVAILABILITY_DATE",
+    "late_filing_or_amendment_rule": "EXCLUDE_FROM_THAT_QUARTER_SNAPSHOT_AND_COUNT",
+    "reason": "Delay the cross-manager aggregate until a common public cutoff instead of exposing incomplete staggered filings."
+  },
+  "features": [
+    {
+      "id": "REPORTING_MANAGER_BREADTH",
+      "formula": "count of distinct filing-manager CIKs with positive reported shares"
+    },
+    {
+      "id": "REPORTING_MANAGER_BREADTH_CHANGE_1Q",
+      "formula": "current breadth minus prior active-quarter breadth"
+    },
+    {
+      "id": "NEW_REPORTING_MANAGERS_1Q",
+      "formula": "current positive manager set minus prior active-quarter manager set"
+    },
+    {
+      "id": "EXITED_REPORTING_MANAGERS_1Q",
+      "formula": "prior active-quarter manager set minus current positive manager set"
+    },
+    {
+      "id": "TOP1_REPORTED_SHARE_CONCENTRATION",
+      "formula": "largest manager reported shares divided by all reporting-manager shares for the security"
+    },
+    {
+      "id": "TOP5_REPORTED_SHARE_CONCENTRATION",
+      "formula": "five largest managers' reported shares divided by all reporting-manager shares for the security"
+    },
+    {
+      "id": "REPORTED_SHARE_HHI",
+      "formula": "sum of squared manager shares of total reporting-manager shares"
+    }
+  ],
+  "measurement_limits": {
+    "reporting_manager_is_beneficial_owner": false,
+    "shared_discretion_double_count_fully_resolved": false,
+    "reported_share_total_is_total_shares_outstanding": false,
+    "reported_value_used": false,
+    "split_adjusted_reported_share_change_1q": "BLOCKED_UNTIL_TIME_VALID_CORPORATE_ACTION_LEDGER",
+    "standalone_direction_allowed": false,
+    "standalone_buy_or_sell_allowed": false,
+    "herd_weight_change_allowed": false
+  },
+  "gates": {
+    "minimum_distinct_report_periods": 40,
+    "minimum_history_years": 10.0,
+    "minimum_active_tickers": 300,
+    "minimum_evaluable_tickers": 300,
+    "minimum_per_ticker_nonzero_fraction": 0.7,
+    "maximum_duplicate_feature_keys": 0,
+    "maximum_non_quarter_end_periods": 0,
+    "maximum_future_available_rows": 0,
+    "maximum_feature_range_violations": 0,
+    "maximum_reported_value_uses": 0
+  },
+  "research_firewall": {
+    "price_outcomes_opened": false,
+    "direction_hypothesis_executed": false,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "next_allowed_test": "RUSH_BREAKING_PLUS_13F_SLOW_CONTEXT_VS_RUSH_BREAKING_ONLY"
+  }
+}

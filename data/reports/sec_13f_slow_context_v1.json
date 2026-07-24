@@ -1,0 +1,60 @@
+{
+  "report_version": "SEC_13F_SLOW_CONTEXT_V1",
+  "status": "SEC_13F_SLOW_CONTEXT_GATE_PASSED",
+  "features": {
+    "path": "data/reports/sec_13f_slow_context_v1.csv",
+    "sha256": "f749f0ceb9348379f263987364334e55e1de9c09efa5287e10c70c40a72e6120",
+    "rows": 22392,
+    "distinct_tickers": 438,
+    "evaluable_tickers": 435,
+    "distinct_report_periods": 52,
+    "first_report_period": "2013-06-30",
+    "last_report_period": "2026-03-31",
+    "history_years": 12.7502,
+    "minimum_nonzero_fraction": 0.403846,
+    "median_nonzero_fraction": 1.0
+  },
+  "coverage": {
+    "path": "data/reports/sec_13f_slow_context_coverage_v1.csv",
+    "sha256": "51692a02c6eee04b6c0023241050a3540c389bc0fd96a909dbbf83508a93dca3",
+    "rows": 438,
+    "ineligible_tickers": [
+      "APA",
+      "LIN",
+      "VTRS"
+    ]
+  },
+  "availability": {
+    "first_context_available_date": "2013-08-15",
+    "last_context_available_date": "2026-05-18",
+    "legacy_report_periods_excluded": 46,
+    "late_or_excluded_filings": 23610,
+    "common_publication_wave": true
+  },
+  "measurement_limits": {
+    "reporting_manager_is_beneficial_owner": false,
+    "shared_discretion_double_count_fully_resolved": false,
+    "reported_share_total_is_total_shares_outstanding": false,
+    "reported_value_used": false,
+    "split_adjusted_reported_share_change_1q": "BLOCKED_UNTIL_TIME_VALID_CORPORATE_ACTION_LEDGER",
+    "standalone_direction_allowed": false,
+    "standalone_buy_or_sell_allowed": false,
+    "herd_weight_change_allowed": false
+  },
+  "gate_results": {
+    "minimum_distinct_report_periods": true,
+    "minimum_history_years": true,
+    "minimum_active_tickers": true,
+    "minimum_evaluable_tickers": true,
+    "maximum_duplicate_feature_keys": true,
+    "maximum_non_quarter_end_periods": true,
+    "maximum_future_available_rows": true,
+    "maximum_feature_range_violations": true,
+    "maximum_reported_value_uses": true
+  },
+  "price_outcomes_opened": false,
+  "direction_hypothesis_executed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "next_step": "RUN_INCREMENTAL_13F_CONTEXT_OOS"
+}

@@ -209,6 +209,18 @@ restatement, new holdings, 의미 불명 amendment와 최초 amendment 사건을
 방향 신호가 아니다. 기관 breadth·concentration·change를 느린 맥락으로
 만든 뒤 기존 Rush 전환 사건에 독립 OOS 증분이 있는지를 별도 검증해야 한다.
 
+`sec_13f_slow_context_v1.py`는 분기 말부터 45일 후의 deadline session
+다음 거래일을 공통 공개시점으로 사용한다. manager마다 다른 제출일을
+그대로 섞어 불완전한 집계를 조기 노출하지 않는다. 2013년 1분기는 SEC
+구조화 자료가 제출 wave 중간부터 시작해 제외했고, 완전한 52개 분기만
+집계했다.
+
+종목별 coverage 70% 이상인 435개만 후속 평가에 사용할 수 있다.
+APA·LIN·VTRS는 ticker·기업 승계 구간 공백 때문에 제외한다. manager CIK는
+실소유자가 아니며 shared discretion 중복도 완전히 제거되지 않으므로
+breadth와 concentration은 `reporting-manager context`로만 부른다.
+분할 보정 없는 총 주식 수 변화는 생성하지 않는다.
+
 `sec_point_in_time_fundamentals.py`는 다음을 강제한다.
 
 - 기본 submissions와 과거 filings 조각의 accession–접수 시각 색인

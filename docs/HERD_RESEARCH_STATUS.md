@@ -97,6 +97,26 @@ vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 �
   다음 단계는 manager별 보유를 기관 breadth·concentration·change의
   느린 군중 맥락으로 변환하는 것이다.
 
+### 13F 느린 군중 맥락
+
+- 2013년 1분기 제출 파동은 SEC 구조화 자료 시작일보다 앞부분이 잘려
+  manager 보유가 0건으로 나타나는 결함을 발견해 제외했다. 완전한 첫
+  분기인 2013-06-30부터 2026-03-31까지 52개 분기만 사용한다.
+- 분기별 공시가 서로 다른 날 들어오는 문제를 피하기 위해 분기 말 45일
+  뒤 deadline session의 다음 거래일까지 기다린 공통 공개 wave를 사용한다.
+  그 시점까지 공개된 각 manager의 최신 usable filing만 집계한다.
+- 22,392개 ticker×quarter, 438개 ticker, 12.75년을 만들었다. 435개가
+  종목별 70% coverage를 통과했고 APA·LIN·VTRS는 과거 식별 구간 공백으로
+  평가 대상에서 제외했다.
+- 출력은 reporting-manager breadth와 변화, 신규·이탈 manager 수,
+  reported-share 기준 top 1·5 concentration과 HHI다. 보고 manager를
+  실소유자로 해석하지 않으며 총 보고 주식 수를 발행주식 수로 해석하지
+  않는다.
+- 시점 유효 분할·기업행동 원장이 완성되기 전까지 총 주식 수의 분기 변화는
+  비워 두고 `BLOCKED_NO_TIME_VALID_CORPORATE_ACTION_LEDGER`로 표시한다.
+- 판정은 `SEC_13F_SLOW_CONTEXT_GATE_PASSED`다. 가격 결과와 방향 가설은
+  아직 열지 않았으며 13F 단독 행동과 HERD 가중치 변경은 금지된다.
+
 ## HERD vNext 모델 헌장
 
 차세대 모델의 제품 범위와 출력 경계를

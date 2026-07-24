@@ -339,6 +339,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/sec_13f_slow_context_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/herd/sec_13f_source_review_v1.json",
       "status": "DATA_PIPELINE"
     },
@@ -1256,6 +1260,18 @@
     },
     {
       "path": "data/reports/sec_13f_security_mapping_review_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_13f_slow_context_coverage_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_13f_slow_context_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_13f_slow_context_v1.json",
       "status": "DATA_PIPELINE"
     },
     {
