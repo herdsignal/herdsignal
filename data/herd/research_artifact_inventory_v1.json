@@ -1227,6 +1227,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/reports/sec_13f_bulk_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/reports/sec_13f_crowding_protocol_v1.json",
       "status": "ACTIVE"
     },

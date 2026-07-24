@@ -1,0 +1,17 @@
+{
+  "report_version": "SEC_13F_BULK_V1",
+  "status": "OFFICIAL_13F_RAW_CORPUS_HASH_LOCKED",
+  "snapshot_path": "data/reference/sec/sec-13f-bulk-2013q2-2026m05-v1",
+  "manifest_sha256": "5466724ab4d3b0183c278f614fd9317971aa761afb61d90877bdd238eb897736",
+  "archive_count": 53,
+  "bytes": 2950464662,
+  "earliest_archive": "2013q2_form13f.zip",
+  "latest_archive": "01mar2026-31may2026_form13f.zip",
+  "exact_acceptance_datetime_ready": false,
+  "availability_fallback": "NEXT_TRADING_SESSION_AFTER_FILING_DATE",
+  "price_outcomes_opened": false,
+  "direction_hypothesis_executed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "next_step": "BUILD_TIME_VALID_SECURITY_IDENTIFIER_LEDGER"
+}

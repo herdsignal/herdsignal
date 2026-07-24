@@ -11,6 +11,17 @@ PYTHONPATH=data data/.venv/bin/python -m herd.sec_13f_crowding_protocol_v1
 PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_13f_crowding_protocol_v1.py
 ```
 
+## SEC 13F 공식 원본 수집·검증
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_13f_bulk_v1
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_13f_bulk_v1 --verify-only
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_13f_bulk_v1.py
+```
+
+원본 ZIP과 manifest는
+`data/reference/sec/sec-13f-bulk-2013q2-2026m05-v1`에 로컬 보관한다.
+
 ## 1. 가격 데이터 스냅샷
 
 ### 목적

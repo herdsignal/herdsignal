@@ -26,6 +26,18 @@ vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 �
 - OOS·완결 사이클·비용 스트레스 기준을 수집 전에 잠갔다. 현재 판정은
   `PROTOCOL_LOCKED_COLLECTION_NOT_STARTED`, 운영 행동 비율은 0%다.
 
+### 공식 13F 원본 해시 고정
+
+- SEC 공식 데이터 페이지에서 2013년 2분기부터 2026년 5월까지 53개
+  구조화 ZIP, 2,950,464,662바이트를 수집했다.
+- 모든 ZIP의 전체 무결성과 필수 `SUBMISSION`, `COVERPAGE`, `INFOTABLE`
+  테이블을 검사하고 파일별 SHA-256과 공식 URL을 manifest에 고정했다.
+- 원본 구조화 자료는 정확한 접수시각이 아니라 제출일만 제공한다. 관련
+  accession의 EDGAR 접수시각을 보강하기 전에는 제출일 다음 거래일부터만
+  보수적으로 사용할 수 있다.
+- 가격·수익률 결과는 열지 않았고 행동 권한은 0%다. 판정은
+  `OFFICIAL_13F_RAW_CORPUS_HASH_LOCKED`다.
+
 ## HERD vNext 모델 헌장
 
 차세대 모델의 제품 범위와 출력 경계를
