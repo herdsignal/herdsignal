@@ -1,0 +1,40 @@
+{
+  "protocol_version": "SEC_13F_COMPLETED_CYCLE_GATE_V1",
+  "status": "LOCKED_UPSTREAM_PROMOTION_GATE",
+  "locked_at": "2026-07-25",
+  "objective": "Prevent a 5 percent profit-take and re-entry cycle from running unless the preregistered 13F direction hypothesis passes every independent OOS gate.",
+  "pinned_inputs": [
+    {
+      "path": "data/herd/sec_13f_crowding_incremental_oos_v1.json",
+      "sha256": "81263f92a3a060dadbcacdf9e4762576e58d45ceb9367c255585366064e52cd6",
+      "required_protocol_status": "LOCKED_BEFORE_13F_DIRECTION_OUTCOMES"
+    },
+    {
+      "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json",
+      "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"
+    },
+    {
+      "path": "data/herd/sec_13f_crowding_protocol_v1.json",
+      "sha256": "6ba8ddf9d847a2019587f0aa321fd7e45b551933eb4e2213a20694d6cd555320",
+      "required_protocol_status": "LOCKED_BEFORE_13F_COLLECTION_AND_PRICE_OUTCOMES"
+    }
+  ],
+  "required_upstream_status": "SEC_13F_DIRECTION_HYPOTHESIS_PASSED",
+  "required_upstream_decision": "ALLOW_COMPLETED_5_PERCENT_CYCLE_TEST",
+  "blocked_operations": [
+    "EXECUTE_5_PERCENT_PROFIT_TAKE",
+    "SEARCH_REENTRY_RULE",
+    "RUN_25_BPS_ROUND_TRIP_COST",
+    "RUN_50_BPS_ROUND_TRIP_COST",
+    "RUN_100_BPS_ROUND_TRIP_COST",
+    "CHANGE_HERD_WEIGHT",
+    "ENABLE_OPERATIONAL_ACTION_RATIO",
+    "OPEN_BLIND_HOLDOUT"
+  ],
+  "on_failure": {
+    "cycle_executed": false,
+    "cost_stress_executed": false,
+    "result_interpretation": "UPSTREAM_DIRECTION_EVIDENCE_REJECTED_NOT_ZERO_ECONOMIC_RETURN",
+    "next_step": "FINAL_REVIEW_WITH_13F_AS_NON_DIRECTIONAL_DATA_PIPELINE"
+  }
+}

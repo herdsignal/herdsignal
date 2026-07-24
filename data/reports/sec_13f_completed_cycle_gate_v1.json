@@ -1,0 +1,31 @@
+{
+  "report_version": "SEC_13F_COMPLETED_CYCLE_GATE_V1",
+  "status": "SEC_13F_COMPLETED_CYCLE_BLOCKED_UPSTREAM",
+  "upstream_status": "SEC_13F_DIRECTION_HYPOTHESIS_REJECTED",
+  "upstream_decision": "KEEP_13F_AS_NON_DIRECTIONAL_CONTEXT_ONLY",
+  "upstream_gate_results": {
+    "minimum_evaluable_events": true,
+    "minimum_distinct_tickers": true,
+    "minimum_non_overlapping_folds": true,
+    "minimum_positive_direction_folds": false,
+    "maximum_median_events_per_ticker_year": true,
+    "minimum_incremental_roc_auc": false,
+    "maximum_candidate_minus_baseline_log_loss": false,
+    "minimum_ticker_cluster_bootstrap_probability_positive_auc_edge": false
+  },
+  "blockers": [
+    "DIRECTION_HYPOTHESIS_REJECTED",
+    "minimum_positive_direction_folds",
+    "minimum_incremental_roc_auc",
+    "maximum_candidate_minus_baseline_log_loss",
+    "minimum_ticker_cluster_bootstrap_probability_positive_auc_edge"
+  ],
+  "cycle_executed": false,
+  "cost_stress_executed": false,
+  "completed_cycles": null,
+  "economic_metrics": null,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "interpretation": "UPSTREAM_DIRECTION_EVIDENCE_REJECTED_NOT_ZERO_ECONOMIC_RETURN",
+  "next_step": "FINAL_REVIEW_WITH_13F_AS_NON_DIRECTIONAL_DATA_PIPELINE"
+}

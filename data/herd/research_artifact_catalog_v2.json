@@ -95,6 +95,8 @@
       "data/reports/sec_13f_crowding_incremental_panel_v1.csv",
       "data/reports/sec_13f_crowding_incremental_folds_v1.csv",
       "data/reports/sec_13f_crowding_incremental_oos_v1.json",
+      "data/herd/sec_13f_completed_cycle_gate_v1.json",
+      "data/reports/sec_13f_completed_cycle_gate_v1.json",
       "data/herd/vnext_joint_hypothesis_v1.json",
       "data/reports/vnext_preholdout_evaluation_v1.json",
       "data/herd/rush_downside_asymmetry_protocol_v1.json",

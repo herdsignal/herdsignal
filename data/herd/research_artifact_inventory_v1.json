@@ -335,6 +335,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/sec_13f_completed_cycle_gate_v1.json",
+      "status": "REJECTED"
+    },
+    {
       "path": "data/herd/sec_13f_crowding_incremental_oos_v1.json",
       "status": "REJECTED"
     },
@@ -1245,6 +1249,10 @@
     {
       "path": "data/reports/sec_13f_bulk_v1.json",
       "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_13f_completed_cycle_gate_v1.json",
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/sec_13f_crowding_incremental_folds_v1.csv",
