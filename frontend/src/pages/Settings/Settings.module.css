@@ -3,3 +3,87 @@
 .page > header span { color: var(--text-3); font-size: 10px; font-weight: 800; }
 .page > header h1 { margin-top: 8px; color: var(--text-1); font-size: 30px; letter-spacing: -0.04em; }
 .page > header p { margin-top: 8px; color: var(--text-2); font-size: 12px; }
+
+.panel {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent), var(--surface);
+}
+
+.disclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 17px 20px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.disclosure > summary::-webkit-details-marker { display: none; }
+.disclosure > summary::after { color: var(--text-3); content: '+'; font-size: 18px; }
+.disclosure[open] > summary::after { content: '−'; }
+.disclosure summary > div { display: grid; gap: 5px; }
+.disclosure summary span {
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.disclosure summary strong { font-family: 'Space Grotesk', sans-serif; font-size: 15px; }
+.disclosure summary em { color: var(--text-3); font-size: 10px; font-style: normal; }
+
+.profileForm {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--border);
+}
+.profileForm label { position: relative; display: grid; gap: 6px; padding-top: 16px; }
+.profileForm label > span { color: var(--text-2); font-size: 11px; }
+.profileForm select,
+.profileForm input {
+  min-width: 0;
+  padding: 10px 34px 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface2);
+  color: var(--text-1);
+}
+.profileForm label small {
+  position: absolute;
+  right: 11px;
+  bottom: 11px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+.formActions {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.formActions button {
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--flee);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 750;
+}
+.formActions em,
+.inlineStatus { color: var(--text-3); font-size: 11px; font-style: normal; }
+.inlineStatus { padding: 18px 20px; }
+
+@media (max-width: 760px) {
+  .disclosure > summary,
+  .profileForm {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .profileForm { grid-template-columns: 1fr; }
+  .formActions { grid-column: auto; }
+}

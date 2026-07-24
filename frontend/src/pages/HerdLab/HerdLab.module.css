@@ -27,7 +27,6 @@
 .metrics span,
 .trustLine span,
 .sectionHead span,
-.disclosure summary span,
 .methodology summary span {
   color: var(--text-3);
   font-size: 10px;
@@ -117,7 +116,6 @@
 .rush { background: var(--rush); }
 
 .sectionHead,
-.disclosure > summary,
 .methodology > summary {
   display: flex;
   align-items: center;
@@ -127,204 +125,44 @@
 }
 
 .sectionHead > div,
-.disclosure summary > div,
 .methodology summary > div {
   display: grid;
   gap: 5px;
 }
 
 .sectionHead strong,
-.disclosure summary strong,
 .methodology summary strong {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
 }
 
 .sectionHead p,
-.disclosure summary em,
 .methodology summary em {
   color: var(--text-3);
   font-size: 10px;
   font-style: normal;
 }
 
-.disclosure > summary,
 .methodology > summary,
 .tableDisclosure > summary {
   cursor: pointer;
   list-style: none;
 }
 
-.disclosure > summary::-webkit-details-marker,
 .methodology > summary::-webkit-details-marker,
 .tableDisclosure > summary::-webkit-details-marker {
   display: none;
 }
 
-.disclosure > summary::after,
 .methodology > summary::after {
   color: var(--text-3);
   content: '+';
   font-size: 18px;
 }
 
-.disclosure[open] > summary::after,
 .methodology[open] > summary::after {
   content: '−';
 }
-
-.profileForm {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  padding: 0 20px 20px;
-  border-top: 1px solid var(--border);
-}
-
-.profileForm label {
-  position: relative;
-  display: grid;
-  gap: 6px;
-  padding-top: 16px;
-}
-
-.profileForm label > span {
-  color: var(--text-2);
-  font-size: 11px;
-}
-
-.profileForm select,
-.profileForm input {
-  min-width: 0;
-  padding: 10px 34px 10px 11px;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: var(--surface2);
-  color: var(--text-1);
-}
-
-.profileForm label small {
-  position: absolute;
-  right: 11px;
-  bottom: 11px;
-  color: var(--text-3);
-  pointer-events: none;
-}
-
-.formActions {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.formActions button {
-  padding: 9px 16px;
-  border: 0;
-  border-radius: 9px;
-  background: var(--flee);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 750;
-}
-
-.formActions em,
-.inlineStatus {
-  color: var(--text-3);
-  font-size: 11px;
-  font-style: normal;
-}
-
-.inlineStatus {
-  padding: 18px 20px;
-}
-
-.actionGuide {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  padding: 0 20px 20px;
-}
-
-.decisionRail {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 20px 14px;
-  color: var(--text-3);
-  font-size: 10px;
-  font-weight: 750;
-}
-
-.decisionRail span,
-.decisionRail strong {
-  padding: 5px 9px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface2);
-}
-
-.decisionRail strong {
-  border-color: rgba(59, 130, 246, 0.3);
-  color: var(--flee);
-}
-
-.decisionRail i {
-  font-style: normal;
-}
-
-.actionGuide article {
-  min-width: 0;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface2);
-}
-
-.actionGuide article > span {
-  display: inline-flex;
-  padding: 3px 7px;
-  border-radius: 999px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 9px;
-  font-weight: 850;
-}
-
-.actionGuide strong {
-  font-size: 12px;
-}
-
-.actionGuide p {
-  margin-top: 14px;
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 17px;
-  font-weight: 800;
-}
-
-.actionFormula {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 14px;
-}
-
-.actionFormula em,
-.actionFormula i,
-.actionFormula b {
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-}
-
-.actionFormula em {
-  color: var(--text-2);
-  font-weight: 750;
-}
-
-.buy > span { color: var(--flee); background: rgba(59, 130, 246, 0.14); }
-.hold > span { color: var(--calm); background: rgba(163, 170, 184, 0.14); }
-.reduce > span { color: var(--drift); background: rgba(249, 115, 22, 0.14); }
 
 .sectorList {
   display: grid;
@@ -560,7 +398,6 @@
 @media (max-width: 760px) {
   .overview,
   .sectionHead,
-  .disclosure > summary,
   .methodology > summary {
     padding-left: 16px;
     padding-right: 16px;
@@ -568,17 +405,12 @@
 
   .overview h1 { font-size: 34px; }
 
-  .actionGuide,
-  .decisionRail,
   .sectorList,
-  .methodGrid,
-  .profileForm {
+  .methodGrid {
     grid-template-columns: 1fr;
   }
 
-  .actionGuide,
   .sectorList,
-  .profileForm,
   .methodGrid,
   .modelNotes {
     padding-left: 16px;
@@ -591,12 +423,7 @@
     gap: 7px;
   }
 
-  .decisionRail {
-    flex-wrap: wrap;
-  }
-
   .sectorList article { grid-template-columns: 115px minmax(0, 1fr); }
-  .formActions { grid-column: auto; }
   .tr { grid-template-columns: 1fr; gap: 5px; padding: 13px 0; }
   .th { display: none; }
   .tr span { display: flex; justify-content: space-between; }

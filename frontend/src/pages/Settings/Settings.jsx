@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getInvestorProfile, updateInvestorProfile } from '../../api/herdApi'
-import { ActionGuide, InvestorProfilePanel } from '../HerdLab/HerdLabSections'
+import InvestorProfilePanel from './InvestorProfilePanel'
 import styles from './Settings.module.css'
 
 export default function Settings() {
@@ -44,7 +44,7 @@ export default function Settings() {
       <header>
         <span>PERSONAL SETTINGS</span>
         <h1>나의 투자 기준</h1>
-        <p>HERD 점수는 그대로 두고 행동 강도와 목표 비중에만 반영됩니다.</p>
+        <p>행동 모델 승인 후 적용할 개인별 한도를 설정합니다.</p>
       </header>
       <InvestorProfilePanel
         profile={profile}
@@ -52,7 +52,6 @@ export default function Settings() {
         onChange={changeProfile}
         onSubmit={saveProfile}
       />
-      <ActionGuide />
     </div>
   )
 }
