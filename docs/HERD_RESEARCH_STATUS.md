@@ -10,6 +10,22 @@ V1 `research_artifact_catalog.json`은 과거 야간 완료 감사의 해시 입
 보존한다. V2는 v4·v6.1을 `LEGACY_REFERENCE_ONLY`로 고정하고, 기각된
 vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 분리한다.
 
+## SEC 13F 군중 맥락 연구 계약
+
+- 차세대 행동 후보는 기존 가격 지표를 다시 조합하지 않고, 실제 기관 보유
+  군중 정보를 `SLOW_CROWDING_CONTEXT_ONLY`로 검증한다.
+- 13F의 공개 시점은 분기 말이 아니라 EDGAR 접수시각이며, 같은 날 공시는
+  다음 거래일부터만 사용할 수 있다. 수정 공시는 접수 이후에만 대체 또는
+  추가한다.
+- manager CIK를 issuer CIK로 연결하지 않는다. CUSIP 또는 제출된 FIGI를
+  시점 유효 종목 식별자에 연결하며, 매핑되지 않은 보유는 제외 수량으로
+  보존한다.
+- 13F 단독 매수·익절, HERD 가중치 변경, 가격 결과 열람, Blind holdout
+  접근은 금지했다. 검증 가능한 유일한 증분 비교는
+  `Rush Breaking + 기관 군중 맥락` 대 `Rush Breaking 단독`이다.
+- OOS·완결 사이클·비용 스트레스 기준을 수집 전에 잠갔다. 현재 판정은
+  `PROTOCOL_LOCKED_COLLECTION_NOT_STARTED`, 운영 행동 비율은 0%다.
+
 ## HERD vNext 모델 헌장
 
 차세대 모델의 제품 범위와 출력 경계를

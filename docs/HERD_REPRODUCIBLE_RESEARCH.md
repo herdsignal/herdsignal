@@ -4,6 +4,13 @@ HERD 후보는 같은 데이터와 같은 시간 분할로 다시 실행했을 �
 나와야 비교 대상이 된다. 이 문서는 데이터 스냅샷과 Walk-forward 산출물의
 고정 규칙이다.
 
+## SEC 13F 군중 맥락 계약 검증
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_13f_crowding_protocol_v1
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_13f_crowding_protocol_v1.py
+```
+
 ## 1. 가격 데이터 스냅샷
 
 ### 목적

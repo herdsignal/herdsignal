@@ -1,0 +1,39 @@
+{
+  "report_version": "SEC_13F_CROWDING_PROTOCOL_V1",
+  "status": "PROTOCOL_LOCKED_COLLECTION_NOT_STARTED",
+  "contract_sha256": "6ba8ddf9d847a2019587f0aa321fd7e45b551933eb4e2213a20694d6cd555320",
+  "prerequisites": [
+    {
+      "path": "data/herd/herd_vnext_model_charter_v1.json",
+      "sha256": "9ce2918eeab8aaf588670bea152de3ceebc8f55aff9f73e6382bd60d5dc3935d",
+      "verified": true
+    },
+    {
+      "path": "data/reports/herd_state_s1.json",
+      "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121",
+      "verified": true
+    },
+    {
+      "path": "data/reports/herd_transition_s1.json",
+      "sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248",
+      "verified": true
+    },
+    {
+      "path": "data/reports/vnext_preholdout_evaluation_v1.json",
+      "sha256": "1bf604eb91e2f12af874f68a92066dcba3269868a24bf5f15072f2499030a88e",
+      "verified": true
+    },
+    {
+      "path": "data/reports/public_leading_data_feasibility_v1.json",
+      "sha256": "ceec024e622392ea0af806d35e8b26b5797d63bec89ee0504917be04455a4e4c",
+      "verified": true
+    }
+  ],
+  "source_role": "SLOW_CROWDING_CONTEXT_ONLY",
+  "price_outcomes_opened": false,
+  "direction_hypothesis_executed": false,
+  "herd_weight_change_allowed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "next_step": "BUILD_OFFICIAL_13F_IMMUTABLE_CORPUS"
+}

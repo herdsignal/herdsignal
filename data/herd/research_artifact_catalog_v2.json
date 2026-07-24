@@ -40,6 +40,8 @@
     "ACTIVE": [
       "data/herd/public_research_contract.json",
       "data/herd/herd_vnext_model_charter_v1.json",
+      "data/herd/sec_13f_crowding_protocol_v1.json",
+      "data/reports/sec_13f_crowding_protocol_v1.json",
       "data/herd/personal_cashflow_benchmark_v1.json",
       "data/herd/research_input_manifest_v2.json",
       "data/herd/herd_state_s1.json",

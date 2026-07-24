@@ -1,0 +1,179 @@
+{
+  "protocol_version": "SEC_13F_CROWDING_PROTOCOL_V1",
+  "status": "LOCKED_BEFORE_13F_COLLECTION_AND_PRICE_OUTCOMES",
+  "locked_at": "2026-07-24",
+  "objective": "Test whether slow, point-in-time institutional crowding context adds independent economic value to weekly HERD transition evidence for rare 5 percent profit-taking and matched re-entry.",
+  "model_boundary": {
+    "state_model": "HERD_STATE_S1",
+    "transition_model": "HERD_TRANSITION_S1",
+    "candidate_context": "SEC_13F_INSTITUTIONAL_CROWDING_C1",
+    "legacy_models": [
+      "HERD_V4_REFERENCE_ONLY",
+      "HERD_V6_1_REFERENCE_ONLY"
+    ],
+    "default_action": "HOLD",
+    "operational_action_ratio": 0.0
+  },
+  "pinned_prerequisites": [
+    {
+      "path": "data/herd/herd_vnext_model_charter_v1.json",
+      "sha256": "9ce2918eeab8aaf588670bea152de3ceebc8f55aff9f73e6382bd60d5dc3935d"
+    },
+    {
+      "path": "data/reports/herd_state_s1.json",
+      "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"
+    },
+    {
+      "path": "data/reports/herd_transition_s1.json",
+      "sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248"
+    },
+    {
+      "path": "data/reports/vnext_preholdout_evaluation_v1.json",
+      "sha256": "1bf604eb91e2f12af874f68a92066dcba3269868a24bf5f15072f2499030a88e",
+      "required_decision": "NO_ADOPTABLE_CANDIDATE"
+    },
+    {
+      "path": "data/reports/public_leading_data_feasibility_v1.json",
+      "sha256": "ceec024e622392ea0af806d35e8b26b5797d63bec89ee0504917be04455a4e4c",
+      "required_source": "SEC_13F_INSTITUTIONAL_HOLDINGS",
+      "required_source_status": "SLOW_CONTEXT_ONLY"
+    }
+  ],
+  "official_source": {
+    "dataset_url": "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets",
+    "documentation_url": "https://www.sec.gov/files/form_13f.pdf",
+    "faq_url": "https://www.sec.gov/rules-regulations/staff-guidance/division-investment-management-frequently-asked-questions/frequently-asked-questions-about-form-13f",
+    "history_start": "2013-05-01",
+    "as_filed_data": true,
+    "sampling_frequency": "QUARTERLY",
+    "maximum_statutory_lag_days": 45
+  },
+  "point_in_time_contract": {
+    "information_available_at": "EDGAR_ACCEPTANCE_DATETIME",
+    "quarter_end_is_publication_time": false,
+    "same_day_policy": "AVAILABLE_NEXT_TRADING_SESSION_AFTER_ACCEPTANCE",
+    "amendment_policy": {
+      "restatement": "REPLACE_PRIOR_HOLDINGS_ONLY_FROM_AMENDMENT_ACCEPTANCE_DATETIME",
+      "addition": "ADD_HOLDINGS_ONLY_FROM_AMENDMENT_ACCEPTANCE_DATETIME",
+      "unknown_amendment_type": "EXCLUDE_FROM_FEATURES"
+    },
+    "manager_identifier": "FILING_MANAGER_CIK",
+    "manager_cik_is_issuer_cik": false,
+    "security_identifiers": [
+      "CUSIP",
+      "FIGI_WHEN_FILED"
+    ],
+    "security_mapping": "TIME_VALID_CUSIP_OR_FIGI_TO_ISSUER_AND_TICKER_INTERVAL",
+    "unmapped_security_policy": "EXCLUDE_AND_COUNT",
+    "future_price_or_return_access_during_collection": false
+  },
+  "allowed_context_features": [
+    {
+      "id": "REPORTING_MANAGER_BREADTH",
+      "definition": "Distinct effective filing managers holding the security at the latest publicly available quarter."
+    },
+    {
+      "id": "REPORTING_MANAGER_BREADTH_CHANGE_1Q",
+      "definition": "Change in manager breadth between comparable effective quarters."
+    },
+    {
+      "id": "SPLIT_ADJUSTED_REPORTED_SHARE_CHANGE_1Q",
+      "definition": "Quarterly change in reported shares after point-in-time corporate-action adjustment."
+    },
+    {
+      "id": "TOP_MANAGER_SHARE_CONCENTRATION",
+      "definition": "Share of reported security units held by the largest effective managers."
+    },
+    {
+      "id": "TOP_MANAGER_CONCENTRATION_CHANGE_1Q",
+      "definition": "Quarterly change in top-manager concentration."
+    }
+  ],
+  "feature_firewall": {
+    "role": "SLOW_CROWDING_CONTEXT_ONLY",
+    "standalone_direction_allowed": false,
+    "standalone_sell_allowed": false,
+    "standalone_buy_allowed": false,
+    "herd_weight_change_allowed": false,
+    "allowed_incremental_test": "RUSH_BREAKING_PLUS_CROWDING_CONTEXT_VS_RUSH_BREAKING_ONLY"
+  },
+  "collection_gates": {
+    "minimum_history_years": 10.0,
+    "minimum_distinct_quarters": 40,
+    "minimum_mapped_research_tickers": 300,
+    "minimum_overall_ticker_quarter_mapping_fraction": 0.8,
+    "minimum_per_ticker_mapping_fraction_for_evaluation": 0.7,
+    "minimum_non_overlapping_eras": 4,
+    "maximum_duplicate_effective_holding_keys": 0,
+    "maximum_future_available_rows": 0,
+    "maximum_quarter_end_as_availability_rows": 0
+  },
+  "source_review_gates": {
+    "minimum_locked_rows": 100,
+    "minimum_distinct_managers": 20,
+    "minimum_distinct_securities": 20,
+    "minimum_wilson_95_lower_bound": 0.95,
+    "required_fields": [
+      "accession_number",
+      "filing_manager_cik",
+      "report_period",
+      "acceptance_datetime",
+      "cusip",
+      "issuer_name",
+      "value",
+      "shares_or_principal_amount",
+      "shares_or_principal_type",
+      "investment_discretion",
+      "voting_authority"
+    ]
+  },
+  "oos_gates": {
+    "minimum_evaluable_events": 200,
+    "minimum_distinct_tickers": 50,
+    "minimum_non_overlapping_folds": 4,
+    "minimum_positive_direction_folds": 3,
+    "maximum_median_events_per_ticker_year": 2.0,
+    "minimum_incremental_roc_auc": 0.02,
+    "maximum_incremental_log_loss": -0.005,
+    "cluster_bootstrap_unit": "TICKER",
+    "minimum_cluster_bootstrap_probability_of_positive_edge": 0.95
+  },
+  "economic_gates": {
+    "profit_take_fraction": 0.05,
+    "maximum_cumulative_profit_take_fraction": 0.15,
+    "minimum_completed_cycles": 40,
+    "minimum_completed_cycle_tickers": 20,
+    "minimum_positive_completed_cycle_rate": 0.55,
+    "minimum_median_terminal_wealth_delta": 0.0,
+    "minimum_median_terminal_share_delta": 0.0,
+    "minimum_median_excess_cagr": 0.0,
+    "minimum_median_upside_capture": 0.98,
+    "minimum_median_mdd_improvement": 0.0,
+    "base_round_trip_cost_bps": 25,
+    "stress_round_trip_cost_bps": [
+      50,
+      100
+    ],
+    "stress_gate": "ALL_STRESS_LEVELS_MUST_KEEP_POSITIVE_MEDIAN_TERMINAL_WEALTH_DELTA"
+  },
+  "promotion_gates": {
+    "independent_oos_passed": true,
+    "incremental_ablation_passed": true,
+    "completed_cycle_economics_passed": true,
+    "cost_stress_passed": true,
+    "historical_constituent_robustness_required_for_general_claim": true,
+    "blind_holdout_must_remain_closed_until_all_preholdout_gates_pass": true
+  },
+  "forbidden": [
+    "TREAT_QUARTER_END_AS_PUBLICATION_TIME",
+    "JOIN_MANAGER_CIK_DIRECTLY_TO_ISSUER_CIK",
+    "USE_REPORTED_VALUE_CHANGE_WITHOUT_SEPARATING_PRICE_CHANGE",
+    "FORWARD_FILL_CONTEXT_BEFORE_ACCEPTANCE_DATETIME",
+    "IGNORE_RESTATEMENT_OR_ADDITION_SEMANTICS",
+    "OPTIMIZE_THRESHOLDS_ON_OOS_OR_HOLDOUT",
+    "COMBINE_WITH_REJECTED_PRICE_FEATURES",
+    "AUTHORIZE_ACTION_FROM_13F_ALONE",
+    "OPEN_BLIND_HOLDOUT",
+    "ENABLE_NONZERO_OPERATIONAL_ACTION_RATIO"
+  ]
+}
