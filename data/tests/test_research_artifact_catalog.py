@@ -3,16 +3,20 @@ from pathlib import Path
 import pytest
 
 from herd.research_artifact_catalog import (
+    build_inventory,
+    discover_artifact_paths,
     find_duplicate_chain_memberships,
     load_catalog,
     validate_active_chain,
     validate_all_chain_paths,
+    validate_inventory,
 )
 
 
 ROOT = Path(__file__).resolve().parents[2]
 V1_CATALOG = ROOT / "data" / "herd" / "research_artifact_catalog.json"
 CATALOG = ROOT / "data" / "herd" / "research_artifact_catalog_v2.json"
+INVENTORY = ROOT / "data" / "herd" / "research_artifact_inventory_v1.json"
 
 
 def test_active_research_chain_exists() -> None:
@@ -57,3 +61,34 @@ def test_v2_catalog_rejects_conflicting_chain_membership(tmp_path: Path) -> None
     path.write_text(__import__("json").dumps(payload), encoding="utf-8")
     with pytest.raises(ValueError, match="conflicting statuses"):
         load_catalog(path)
+
+
+def test_inventory_covers_current_research_artifact_names() -> None:
+    import json
+
+    catalog = load_catalog(CATALOG)
+    inventory = json.loads(INVENTORY.read_text())
+
+    assert validate_inventory(catalog, inventory, ROOT) == {
+        "new_paths": [],
+        "missing_paths": [],
+        "status_changes": {},
+    }
+    assert len(discover_artifact_paths(catalog, ROOT)) == len(inventory["artifacts"])
+
+
+def test_inventory_detects_unreviewed_new_artifact(tmp_path: Path) -> None:
+    catalog = load_catalog(CATALOG)
+    catalog["retention"]["inventory_scope"] = {
+        "roots": [{"path": "reports", "extensions": [".json"]}],
+        "exclude": [],
+    }
+    reports = tmp_path / "reports"
+    reports.mkdir()
+    (reports / "known.json").write_text("{}")
+    inventory = build_inventory(catalog, tmp_path)
+    (reports / "new.json").write_text("{}")
+
+    assert validate_inventory(catalog, inventory, tmp_path)["new_paths"] == [
+        "reports/new.json"
+    ]

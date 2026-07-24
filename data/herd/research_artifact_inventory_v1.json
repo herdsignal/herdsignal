@@ -1,0 +1,2158 @@
+{
+  "version": "HERD_RESEARCH_ARTIFACT_INVENTORY_V1",
+  "catalog_version": "HERD_RESEARCH_ARTIFACT_CATALOG_V2",
+  "artifacts": [
+    {
+      "path": "data/herd/action_direction_hypotheses.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/business_guard_protocol.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/business_state_v2_protocol.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/business_veto_admission_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/completed_cycle_gate_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/completed_cycle_gate_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/completed_cycle_gate_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/completed_cycle_gate_v5.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/confirmed_reentry_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/constituent_research_pipeline.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/core_direction_research_return_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/cycle_action_policy.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/cycle_value_protocol_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/entry_add_buy_policy.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry_v5.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry_v6.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry_v7.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry_v8.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_admission_registry_v9.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_redundancy_gate_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/evidence_target_matrix_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/expectation_business_features_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/expectation_combination_gate_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/expectation_completed_cycle_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/expectation_evidence_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/experiment_ledger.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/failed_price_information_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/fast_slow_transition_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/finra_short_interest_immutable_census_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/finra_short_interest_immutable_census_v1_manifest.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/finra_short_interest_incremental_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/finra_short_interest_incremental_v2_manifest.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/herd_candidate_protocol_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/herd_model_construction_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/herd_model_construction_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/herd_model_construction_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/herd_state_s1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/herd_transition_s1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/herd_vnext_model_charter_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/idiosyncratic_relative_damage_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/idiosyncratic_shock_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/immediate_healthy_add_baseline_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/independent_evidence_protocol_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/indicator_inventory_v2.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "path": "data/herd/leading_information_feasibility_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/leading_information_readiness_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/model_lineage_contract_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/model_release_readiness_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/oos_fold_protocol.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/opportunity_context_features_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/opportunity_cycle_target_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/opportunity_hypotheses_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/opportunity_price_features_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/overnight_pit_shadow_completion_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/overnight_pit_shadow_expansion_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/peer_cluster_breadth_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/personal_cashflow_benchmark_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/personal_mvp_promotion_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/profit_giveback_economic_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/profit_giveback_policy_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/profit_take_measurements_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/public_leading_data_feasibility_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/public_research_contract.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/reentry_feature_discovery_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/reentry_worthwhile_target_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/research_artifact_catalog.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "path": "data/herd/research_artifact_catalog_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/research_input_contract.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/research_input_manifest_v2.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/rush_damage_path_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/rush_damage_profit_take_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/rush_downside_asymmetry_protocol_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/herd/rush_episode_protocol_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/rush_hypothesis_preregistration_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/rush_path_comparison_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/rush_pre_damage_path_audit_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/rush_selector_protocol_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/rush_transition_features_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/rush_turning_point_protocol.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_8k_guidance_corpus_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_auxiliary_veto_authority_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_form4_corpus_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_form4_insider_purchase_support_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/herd/sec_form4_research_census_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/sec_form4_review_adjudication_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_form4_review_protocol_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_atomic_bindings_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_atomic_bindings_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_atomic_census_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/sec_guidance_atomic_census_v2_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_atomic_pairs_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_atomic_pairs_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_block_extraction_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_block_review_labels_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_direction_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_expansion_corpus_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_lower_oos_v2.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/herd/sec_guidance_normalization_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_research_gate_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_research_gate_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_research_gate_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_revision_pairs_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_expansion_review_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_parser_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_parser_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_parser_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_parser_v5.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_parser_v6.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_parser_v7.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_parser_v8.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_review_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v10_contract.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v4_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v5_base.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v5_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v6_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v7_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v8_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v9_contract.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_structure_v9_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_table_extraction_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v10_final_collection.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v10_final_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v10_final_validation.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v10_independent_validation.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v4_issuer_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v5_broad_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v5_issuer_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v6_issuer_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v6_second_wave.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v6_validation_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v7_independent_validation.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v8_independent_validation.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v8_second_wave_validation.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v9_historical_validation.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_guidance_v9_independent_validation.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_identifier_gap_queue_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_targeted_cover_corpus_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_targeted_cover_ticker_cik_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_time_valid_ticker_cik_ledger_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_time_valid_ticker_cik_ledger_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/sec_time_valid_ticker_cik_ledger_v5.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/sparse_action_protocol_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/survivorship_evidence_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/systematic_healthy_pullback_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/timing_hypothesis_registry.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/timing_oos_protocol.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/unified_pit_shadow_panel_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/valuation_expectation_expansion_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/vnext_competing_path_economic_label_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/vnext_joint_hypothesis_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/herd/vnext_preholdout_evaluation_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/vnext_prospective_shadow_protocol_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/weekly_rsi_oos_protocol_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/weekly_rsi_path_measurement_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/action_direction_oos_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/action_direction_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/blind_holdout_decision_vnext.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_guard_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_guard_features_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_guard_features_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_guard_oos_summary_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_guard_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_state_events_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_state_features_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_state_oos_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_state_oos_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/business_veto_admission_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/candidate_generalization_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/candidate_model_evaluation_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/completed_cycle_gate_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/completed_cycle_gate_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/completed_cycle_gate_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/completed_cycle_gate_v5.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/confirmed_reentry_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/confirmed_reentry_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/confirmed_reentry_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/core_direction_economic_targets_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/core_direction_research_return_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/cycle_value_ceiling_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/cycle_value_ceiling_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/data_quality_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/evidence_family_validation_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/evidence_family_validation_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/evidence_redundancy_gate_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/evidence_target_matrix_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/evidence_target_matrix_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/expectation_business_features_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/expectation_business_features_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/expectation_combination_gate_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/expectation_completed_cycle_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/expectation_evidence_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/expectation_evidence_oos_v1_comparison.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/expectation_evidence_oos_v1_events.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/failed_price_information_audit_v1.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "path": "data/reports/fast_slow_transition_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/fast_slow_transition_panel_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/fast_slow_transition_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_short_interest_coverage_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_short_interest_coverage_audit_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_short_interest_coverage_audit_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_short_interest_incremental_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/finra_short_interest_lifecycle_coverage_v5.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_short_interest_lifecycle_ticker_coverage_v5.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_short_interest_ticker_coverage_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_short_interest_ticker_coverage_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_short_interest_ticker_coverage_v4.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/herd_candidate_features_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/herd_candidate_features_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/herd_candidate_oos_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/herd_candidate_oos_v2.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/herd_candidate_protocol_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/herd_model_construction_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/herd_model_construction_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/herd_model_construction_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/herd_state_s1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/herd_state_s1_latest.csv",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/herd_transition_s1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/herd_transition_s1_latest.csv",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/herd_vnext_model_charter_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/idiosyncratic_relative_damage_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/idiosyncratic_relative_damage_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/idiosyncratic_shock_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/idiosyncratic_shock_panel_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/idiosyncratic_shock_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/immediate_healthy_add_baseline_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/immediate_healthy_add_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/immediate_healthy_add_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/independent_rush_evidence_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/independent_rush_evidence_panel_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/independent_rush_evidence_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/independent_universe_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/independent_universe_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/indicator_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/indicator_inventory_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/indicator_inventory_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/leading_information_feasibility_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/leading_information_readiness_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/legacy_model_evaluation_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/legacy_model_evaluation_v2.json",
+      "status": "LEGACY_REFERENCE"
+    },
+    {
+      "path": "data/reports/long_price_snapshot_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/model_lineage_contract_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/model_release_readiness_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/opportunity_context_features_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/opportunity_cycle_gate_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/opportunity_cycle_path_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/opportunity_cycle_paths_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/opportunity_oos_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/opportunity_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/opportunity_price_features_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/overnight_pit_shadow_completion_v1.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "path": "data/reports/overnight_pit_shadow_regression_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/peer_cluster_breadth_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/peer_cluster_breadth_panel_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/peer_cluster_breadth_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/personal_cashflow_benchmark_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/personal_mvp_promotion_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/pit_uncertainty_sensitivity_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/profit_giveback_economic_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/profit_giveback_economic_v1_actions.csv",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/profit_giveback_economic_v1_rows.csv",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/profit_giveback_policy_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/profit_giveback_policy_v1_events.csv",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/profit_take_events_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/profit_take_oos_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/profit_take_oos_v2.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/public_leading_data_feasibility_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/reentry_feature_discovery_report_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/reentry_feature_discovery_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/reentry_worthwhile_target_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/reentry_worthwhile_target_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_confirmation_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_damage_path_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_damage_path_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_damage_path_feature_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_damage_profit_take_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_damage_profit_take_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_damage_profit_take_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_downside_asymmetry_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_downside_asymmetry_oos_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/rush_downside_asymmetry_universe_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_downside_asymmetry_universe_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_episode_paths_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_episode_study_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_feature_selection_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_feature_selection_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_five_percent_cycle_gate_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_hypothesis_preregistration_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_path_comparison_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_path_comparison_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_pre_damage_path_audit_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_pre_damage_path_events_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_pre_damage_path_feature_comparison_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_selector_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_selector_paths_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_transition_comparison_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_transition_features_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_transition_panel_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_turning_point_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_turning_point_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_turning_point_summary_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_8k_guidance_candidates_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_8k_guidance_corpus_manifest_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_8k_guidance_coverage_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_8k_guidance_filings_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_8k_guidance_text_coverage_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_8k_guidance_ticker_year_coverage_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_auxiliary_veto_authority_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_accession_catalog_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_accession_catalog_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_atomic_transactions_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_atomic_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_bulk_primary_crosscheck_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_census_gate_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_form4_coverage_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_insider_purchase_oos_folds_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_insider_purchase_oos_panel_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_insider_purchase_oos_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/sec_form4_issuer_rejections_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_issuer_year_coverage_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_issuer_year_coverage_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_owner_purchase_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_review_adjudicated_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_review_decisions_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_review_ledger_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_review_workbench_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_source_review_gate_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_source_review_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_source_sample_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_structural_audit_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_structural_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_bindings_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_bindings_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_bindings_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_bindings_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_census_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_census_v2_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_census_v2_reviewed.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_census_v2_source_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_pairs_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_pairs_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_pairs_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_atomic_pairs_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_block_candidates_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_block_extraction_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_block_review_gate_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_block_review_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_block_reviewed_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_block_source_review_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_comparable_pairs_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_direction_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_expansion_catalog_v3.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_expansion_corpus_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_expansion_universe_candidates_v3.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_expansion_universe_v3.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_lower_oos_issuer_effects_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_lower_oos_panel_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_lower_oos_v2.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/sec_guidance_normalization_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_normalized_ranges_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_research_gate_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_research_gate_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_research_gate_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_revision_pairs_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_revision_pairs_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_expansion_reviewed_v3.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_expansion_source_review_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_expansion_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_expansion_v3_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_expansion_v3_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_reviewed_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_source_review_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v10.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v10_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v10_final.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v10_final_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v10_final_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v10_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v2_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v2_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v3.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v3_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v3_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v4_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v4_regression_audit.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v4_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v4_reviewed.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v4_source_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5_base.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5_base_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5_broad_base.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5_broad_base_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5_reviewed.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v5_source_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v6.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v6_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v6_expanded_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v6_expanded_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v6_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v6_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v6_reviewed.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v6_source_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v7.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v7_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v7_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v7_reviewed.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v7_source_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v8.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v8_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v8_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v8_reviewed.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v8_second_wave.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v8_second_wave_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v8_second_wave_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v8_source_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v9.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v9_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v9_historical.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v9_historical_candidates.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v9_historical_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v9_review.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v9_reviewed.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_structure_v9_source_review.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_table_candidates_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_table_extraction_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_table_review_gate_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_table_review_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v10_final_collection.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v10_final_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v10_final_expansion_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v10_final_filing_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v10_final_filing_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v4_issuer_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v4_issuer_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v4_issuer_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v5_broad_filing_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v5_broad_filing_selection.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v5_broad_filing_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v5_broad_metadata_selection.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v5_broad_metadata_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v5_issuer_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v5_issuer_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v5_issuer_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_filing_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_issuer_expansion.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_issuer_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_second_wave.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_second_wave_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_second_wave_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_supplement.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_supplement_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_supplement_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_third_wave_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_third_wave_filing_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_third_wave_filings.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_third_wave_metadata.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v6_third_wave_metadata.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v7_filing_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v7_filing_selection.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v7_filing_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v7_independent_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v7_independent_universe.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v8_coverage_completion_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v8_coverage_completion_selection.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v8_filing_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v8_filing_selection.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v9_historical_filing_catalog.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v9_historical_filing_selection.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_guidance_v9_historical_universe.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_identifier_gap_queue_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_identifier_gap_queue_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_pit_feature_readiness_audit_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_pit_feature_readiness_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_pit_long50_audit_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_pit_long_predecessors_audit_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_pit_long_readiness_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_pit_long_xom_audit_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_price_cik_collection_queue_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_price_fold_link_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_price_long_business_fold_link_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_price_pit_audit_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_price_xom_legacy_cik_queue.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_anchors_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_anchors_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_corpus_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_corpus_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_targeted_cover_filing_catalog_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v4.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v5.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v4.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/survivorship_readiness_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/systematic_healthy_pullback_comparison_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/systematic_healthy_pullback_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/systematic_healthy_pullback_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/timing_evidence_oos_v2.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/timing_evidence_oos_v2.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/unified_pit_shadow_panel_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/unified_pit_shadow_panel_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/v61_baseline_diagnostic_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/v61_baseline_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/valuation_expectation_expansion_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/valuation_expectation_expansion_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/vnext_competing_path_economic_label_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/vnext_joint_panel_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/vnext_joint_panel_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/vnext_preholdout_evaluation_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/vnext_preholdout_folds_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/vnext_preholdout_predictions_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/weekly_rsi_events_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/weekly_rsi_events_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/weekly_rsi_oos_pairs_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/weekly_rsi_oos_summary_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/weekly_rsi_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/weekly_rsi_paths_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/weekly_rsi_paths_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_ADOPTION_POLICY.md",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_ARTIFACT_CATALOG.md",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_BUSINESS_GUARD_STUDY.md",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_CONSTITUENT_EVENT_RESOLUTION.md",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_MODEL_CHARTER.md",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_OOS_EVIDENCE_PROTOCOL.md",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_POINT_IN_TIME_DATA.md",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_REPRODUCIBLE_RESEARCH.md",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "docs/HERD_RESEARCH_STATUS.md",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "docs/HERD_RUSH_TURNING_POINT_STUDY.md",
+      "status": "REVIEW_REQUIRED"
+    }
+  ]
+}

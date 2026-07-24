@@ -129,6 +129,25 @@
       "실험 판정 재현에 필요하지 않음",
       "전체 회귀 테스트 통과"
     ],
-    "unclassified_policy": "REVIEW_REQUIRED"
+    "unclassified_policy": "REVIEW_REQUIRED",
+    "inventory_scope": {
+      "roots": [
+        {
+          "path": "data/herd",
+          "extensions": [".json"]
+        },
+        {
+          "path": "data/reports",
+          "extensions": [".json", ".csv", ".md"]
+        },
+        {
+          "path": "docs",
+          "extensions": [".md"]
+        }
+      ],
+      "exclude": [
+        "data/herd/research_artifact_inventory_v1.json"
+      ]
+    }
   }
 }

@@ -24,6 +24,7 @@ else
   PYTHON="$(command -v python3)"
 fi
 "$PYTHON" "$ROOT_DIR/data/tools/environment_check.py"
+"$PYTHON" "$ROOT_DIR/data/herd/research_artifact_catalog.py"
 
 echo "[6/6] Python data-engine tests"
 (cd "$ROOT_DIR" && "$PYTHON" -m pytest -q)

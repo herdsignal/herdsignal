@@ -20,6 +20,13 @@ V2는 파일을 상태별 명시적 chain에 한 번만 넣는다. 같은 파일
 들어가거나 v4·v6.1이 `LEGACY_REFERENCE_ONLY`가 아니면 검증이 실패한다.
 신규 모델은 레거시 공식이나 탈락 가설을 import할 수 없다.
 
+`research_artifact_inventory_v1.json`은 `data/herd`의 JSON,
+`data/reports`의 JSON·CSV·Markdown, `docs`의 Markdown 파일명을 고정한다.
+새 산출물·삭제·상태 변경이 생기면 기본 검증은 실패한다. 내용을 검토하고
+카탈로그 분류를 갱신한 뒤에만
+`python -m herd.research_artifact_catalog --refresh-inventory`로 원장을
+갱신한다. 기존 미분류 파일은 삭제 후보가 아니라 `REVIEW_REQUIRED`로 남는다.
+
 Form 4 V1은 원문 parser 검수 역할로 유지한다. V2는 SEC 공식 분기 벌크
 2012Q1~2026Q2 58개를 해시 고정하고 438개 issuer의 Form 4/4-A
 464,619건과 원자 거래 1,133,161건을 정규화했다. 기존 원문 판정 중 벌크
