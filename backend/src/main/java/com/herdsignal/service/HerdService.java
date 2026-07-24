@@ -101,53 +101,22 @@ public class HerdService {
     }
 
     /**
-     * 특정 종목 HERD 조회 (Tier 1 + Tier 2 통합).
+     * 특정 종목의 저장된 최신 HERD를 조회한다.
      *
-     * DB에 데이터가 있으면 바로 반환 (Tier 1 경로).
-     * DB에 데이터가 없으면 Python calculate_on_demand를 ProcessBuilder로 실행 후
-     * DB에 저장된 결과를 재조회해 반환 (Tier 2 경로).
-     *
-     * NOT_SUPPORTED 사용 이유:
-     * Python 프로세스는 자체 커넥션으로 DB에 직접 커밋한다.
-     * Spring 트랜잭션(REPEATABLE READ)이 살아있으면 재조회 시 Python 커밋 전
-     * 스냅샷이 보여 데이터를 찾지 못한다 → 트랜잭션 없이 각 쿼리가
-     * 별도 커넥션을 사용하도록 NOT_SUPPORTED 적용.
-     *
-     * @param ticker 티커 심볼 (대문자)
+     * <p>GET 요청은 외부 프로세스 실행이나 DB 쓰기를 절대 발생시키지 않는다.
+     * 데이터 생성은 인증된 refreshStockHerd 유스케이스에서만 수행한다.</p>
      */
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public HerdScoreResponse getStockHerd(String ticker, String userId) {
-        // ── 1. DB 조회 (Tier 1: 스케줄러가 미리 계산한 데이터) ────────────
-        Optional<HerdScore> scoreOpt =
-                herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker);
-
-        if (scoreOpt.isEmpty()) {
-            // ── 2. 데이터 없음 → Python on-demand 계산 (Tier 2) ───────────
-            log.info("[{}] DB에 HERD 데이터 없음 → Python on-demand 계산 시작", ticker);
-            try {
-                onDemandRunner.refresh(ticker, false);
-            } catch (Exception e) {
-                log.error("[{}] Python on-demand 실패: {}", ticker, e.getMessage());
-                throw new ResourceNotFoundException(
-                        ticker + " HERD 계산 실패: " + e.getMessage()
-                );
-            }
-
-            // ── 3. Python 커밋 후 DB 재조회 ──────────────────────────────
-            scoreOpt = herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker);
-            if (scoreOpt.isEmpty()) {
-                throw new ResourceNotFoundException(
-                        ticker + " on-demand 계산 완료 후에도 DB에 데이터가 없습니다."
-                );
-            }
-        }
+        HerdScore score = herdScoreRepository.findTopByTickerOrderByScoreDateDesc(ticker)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ticker + " HERD 데이터가 없습니다. 로그인 후 새로고침을 실행하세요."));
 
         // 지표 분해값은 없어도 점수만 반환 (null 허용)
         HerdIndicator indicator = herdIndicatorRepository
                 .findTopByTickerOrderByScoreDateDesc(ticker)
                 .orElse(null);
 
-        return buildResponse(scoreOpt.get(), indicator, userId);
+        return buildResponse(score, indicator, userId);
     }
 
     /**

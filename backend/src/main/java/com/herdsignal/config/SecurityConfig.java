@@ -44,7 +44,7 @@ public class SecurityConfig {
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers("/oauth2/**", "/login/**", "/error", "/actuator/health/**").permitAll()
                             .requestMatchers("/api/auth/**", "/api/model/**").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/api/stocks/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/stocks/SPY/herd").permitAll()
                             .anyRequest().authenticated())
                     .oauth2Login(login -> login
                             .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcAppUserService))
