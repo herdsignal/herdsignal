@@ -1,144 +1,23 @@
-/**
- * Watchlist.jsx — 관심 종목 페이지 (/watchlist)
- *
- * Dashboard 구조 재사용. 주요 차이점:
- *   - API: getWatchlistHerd() (Portfolio 대신)
- *   - 카드: 평단가/수익률 섹션 없이 HERD 점수 + 시그널 + 삭제만
- *   - 삭제: removeFromWatchlist(ticker) → 성공 시 로컬 상태에서 즉시 제거
- *   - 빈 상태: "관심 종목이 없습니다" + 종목 검색 버튼
- *
- * API: getWatchlistHerd() + 공통 SPY 시장 데이터 훅
- */
-
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { useNavigate }   from 'react-router-dom'
-import {
-  getWatchlistHerd,
-  removeFromWatchlist,
-} from '../../api/herdApi'
-import { useDashboardMarketData } from '../Dashboard/useDashboardMarketData'
-import HerdDots  from '../../components/HerdDots/HerdDots'
-import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
-import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
-import StockAvatar from '../../components/StockAvatar/StockAvatar'
-import { signalDesc as decisionSignalDesc } from '../../utils/decision'
-import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
-import {
-  scoreColor,
-  stageBadgeStyle,
-  stageColor,
-  stageDescription,
-  stageLabelFromScore,
-} from '../../utils/herdStage'
-import { formatSignalAgeLabel, formatSignalDuration } from '../../utils/signalDuration'
-import {
-  actionBasisLabel,
-  actionIntensityLabel,
-  formatActionScore,
-} from '../../utils/actionIntensity'
-import { opportunityRows } from '../../utils/portfolioTools'
-import { signalStyle } from '../../utils/signalStyle'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { getWatchlistHerd, removeFromWatchlist } from '../../api/herdApi'
 import { API_HOST } from '../../utils/apiConfig'
-import { HERD_HISTORY_PERIODS } from '../../utils/historyPeriods'
-import styles    from './Watchlist.module.css'
-
-const HISTORY_PERIODS = HERD_HISTORY_PERIODS
+import { opportunityRows } from '../../utils/portfolioTools'
+import { useDashboardMarketData } from '../Dashboard/useDashboardMarketData'
+import styles from './Watchlist.module.css'
+import WatchlistMarketBanner from './WatchlistMarketBanner'
+import WatchlistQueue from './WatchlistQueue'
 
 const REFRESH_SCOPE_TITLE = '관심종목 HERD DB 조회와 SPY 최신 점수만 갱신합니다. 히스토리는 Timeline 탭에서 별도 조회됩니다.'
 
-/* ── 유틸 (Dashboard와 동일) ──────────────── */
-
-const stageDesc = stageDescription
-const badgeStyle = stageBadgeStyle
-
-function formatActionText(item) {
-  const action = item?.actionLabel ?? decisionSignalDesc(item?.signal)
-  const strength = formatActionScore(item?.actionScore)
-  return [strength, actionIntensityLabel(item), action].filter(Boolean).join(' · ')
-}
-
-function formatActionBasis(item) {
-  return actionBasisLabel(item)
-}
-
-function formatActionCode(item) {
-  if (!item?.signal) return 'HOLD'
-  const intensity = actionIntensityLabel(item)
-  return intensity === '관찰' ? item.signal : `${item.signal} · ${intensity}`
-}
-
-/** scoreDate → 한국어 날짜 문자열 */
-function formatDate(dateStr) {
-  if (!dateStr) return '—'
-  const d = new Date(dateStr)
-  if (isNaN(d)) return dateStr
-  return d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
-}
-
-function fmtScoreDate(dateStr) {
-  if (!dateStr) return '—'
-
-  const nowKST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
-  const pad = (n) => String(n).padStart(2, '0')
-  const todayStr = `${nowKST.getFullYear()}-${pad(nowKST.getMonth() + 1)}-${pad(nowKST.getDate())}`
-  const ystKST = new Date(nowKST)
-  ystKST.setDate(ystKST.getDate() - 1)
-  const ystStr = `${ystKST.getFullYear()}-${pad(ystKST.getMonth() + 1)}-${pad(ystKST.getDate())}`
-
-  if (dateStr === todayStr) return '오늘'
-  if (dateStr === ystStr) return '어제'
-
-  const d = new Date(dateStr)
-  return isNaN(d) ? dateStr : d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
-}
-
-function scoreToColor(score) {
-  return score == null ? 'var(--text-1)' : scoreColor(score)
-}
-
-function scoreToStage(score) {
-  return stageLabelFromScore(score, true)
-}
-
-function BannerStat({ label, point }) {
-  const stage = scoreToStage(point?.score)
-
-  return (
-    <div className={styles.bannerStatItem}>
-      <div className={styles.bannerStatLabel}>{label}</div>
-      {point && stage ? (
-        <>
-          <div className={styles.bannerStatMain}>
-            <span className={styles.bannerStatValue} style={{ color: scoreToColor(point.score) }}>
-              {Math.round(point.score)}
-            </span>
-            <span className={styles.bannerStatStage}>{stage}</span>
-          </div>
-          <div className={styles.bannerStatDesc}>{stageDesc(stage)}</div>
-        </>
-      ) : (
-        <div className={styles.bannerStatValue}>—</div>
-      )}
-    </div>
-  )
-}
-
-/* ── 컴포넌트 ─────────────────────────────── */
-
 export default function Watchlist() {
   const navigate = useNavigate()
-  const {
-    spyData, spyHistory, spyHistoryPeriod, setSpyHistoryPeriod,
-    spyHistoryLoading, spyTab, setSpyTab,
-    spyScore, spyStage, d1AvgPoint, m1AvgPoint, y1AvgPoint, spyMomentum,
-  } = useDashboardMarketData()
-
-  const [watchlist,      setWatchlist]      = useState([])
-  const [loading,        setLoading]        = useState(true)
-  const [refreshing,     setRefreshing]     = useState(false)
-  const [refreshNotice,  setRefreshNotice]  = useState(null)
-  const [error,          setError]          = useState(null)
-  /* 삭제 중인 ticker — 중복 요청 방지 */
+  const market = useDashboardMarketData()
+  const [watchlist, setWatchlist] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+  const [refreshNotice, setRefreshNotice] = useState(null)
+  const [error, setError] = useState(null)
   const [deletingTicker, setDeletingTicker] = useState(null)
   const refreshNoticeTimer = useRef(null)
 
@@ -146,77 +25,64 @@ export default function Watchlist() {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
 
-  /* 관심 종목 조회 (SPY와 분리) */
   const fetchData = useCallback(async (silent = false) => {
     if (silent) {
       setRefreshing(true)
-      if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
+      clearTimeout(refreshNoticeTimer.current)
       setRefreshNotice('관심종목 HERD 조회 중')
     } else {
       setLoading(true)
     }
     setError(null)
-    try {
-      const watchlistRes = await getWatchlistHerd().catch(() => null)
 
-      if (watchlistRes) {
-        const responseData = watchlistRes.data?.data
-        /* API 응답: { stocks: [...], averageScore, totalCount } 또는 배열 */
-        const stocks = responseData?.stocks
-          ?? (Array.isArray(responseData) ? responseData : [])
-        setWatchlist(stocks)
-        if (silent) setRefreshNotice('관심종목 HERD 갱신')
-      } else {
+    try {
+      const response = await getWatchlistHerd().catch(() => null)
+      if (!response) {
         setWatchlist([])
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
         if (silent) setRefreshNotice('관심종목 HERD 조회 실패')
+        return
       }
+
+      const data = response.data?.data
+      setWatchlist(data?.stocks ?? (Array.isArray(data) ? data : []))
+      if (silent) setRefreshNotice('관심종목 HERD 갱신')
     } finally {
       setLoading(false)
       setRefreshing(false)
       if (silent) {
-        refreshNoticeTimer.current = setTimeout(() => {
-          setRefreshNotice(null)
-        }, 3200)
+        refreshNoticeTimer.current = setTimeout(() => setRefreshNotice(null), 3200)
       }
     }
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
-  useEffect(() => () => {
-    if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
-  }, [])
+  useEffect(() => () => clearTimeout(refreshNoticeTimer.current), [])
 
-  /* 관심 종목 삭제 — API 성공 시 로컬 상태 즉시 제거 */
-  async function handleDelete(e, ticker) {
-    e.stopPropagation()
+  async function handleDelete(event, ticker) {
+    event.stopPropagation()
     if (deletingTicker) return
     setDeletingTicker(ticker)
     try {
       await removeFromWatchlist(ticker)
-      setWatchlist(prev => prev.filter(item => item.ticker !== ticker))
+      setWatchlist((current) => current.filter((item) => item.ticker !== ticker))
     } catch {
-      /* 삭제 실패 — 목록 그대로 유지 */
+      // 삭제 실패 시 현재 목록을 유지한다.
     } finally {
       setDeletingTicker(null)
     }
   }
 
   const scoredWatchlist = useMemo(() => opportunityRows(watchlist), [watchlist])
-
-  const opportunityQueue = useMemo(() => (
-    scoredWatchlist
+  const opportunityQueue = useMemo(
+    () => scoredWatchlist
       .filter((item) => item.signal === 'BUY' || item.signal === 'ADD')
-      .slice(0, 5)
-  ), [scoredWatchlist])
-  const readyCount = scoredWatchlist.filter((item) => item.queueState === 'READY').length
-  const waitCount = watchlist.filter((item) => item.signal === 'HOLD').length
-  const sellWatchCount = watchlist.filter((item) => item.signal === 'SELL' || item.signal === 'REDUCE').length
+      .slice(0, 5),
+    [scoredWatchlist]
+  )
 
   return (
     <div>
-
-      {/* ── 페이지 헤더 ── */}
       <div className={styles.pageHeader}>
         <div>
           <div className={styles.pageDate}>{today}</div>
@@ -224,11 +90,7 @@ export default function Watchlist() {
           <p className={styles.pageDesc}>관심종목 중 HERD가 매수권에 가까운 종목부터 확인합니다.</p>
         </div>
         <div className={styles.headerActions}>
-          {refreshNotice && (
-            <span className={styles.refreshNotice}>
-              {refreshNotice}
-            </span>
-          )}
+          {refreshNotice && <span className={styles.refreshNotice}>{refreshNotice}</span>}
           <button
             className={styles.btnRefresh}
             onClick={() => fetchData(true)}
@@ -243,102 +105,14 @@ export default function Watchlist() {
         </div>
       </div>
 
-      {/* ── S&P500 HERD 배너 (Dashboard와 동일) ── */}
-      <div className={styles.marketBanner}>
-        <div className={styles.bannerScoreBlock}>
-          <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
-          <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
-            {spyData ? Math.round(spyScore) : '—'}
-          </div>
-          <div className={styles.bannerStage} style={{ color: stageColor(spyStage) }}>
-            {spyStage.startsWith('Herd ') ? spyStage : `Herd ${spyStage}`}
-          </div>
-          <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
-        </div>
+      <WatchlistMarketBanner {...market} />
 
-        <div className={styles.bannerRight}>
-          <div className={styles.bannerTabs}>
-            <button
-              className={`${styles.bannerTab} ${spyTab === 'overview' ? styles.bannerTabActive : ''}`}
-              onClick={() => setSpyTab('overview')}
-            >Overview</button>
-            <button
-              className={`${styles.bannerTab} ${spyTab === 'timeline' ? styles.bannerTabActive : ''}`}
-              onClick={() => setSpyTab('timeline')}
-            >Timeline</button>
-          </div>
-
-          {spyTab === 'overview' && (
-            <div className={styles.bannerOverview}>
-              <div className={styles.bannerAnimBlock}>
-                <HerdDots
-                  score={spyScore}
-                  momentum={spyMomentum.delta ?? (spyScore - 50) / 3}
-                  actionRatio={spyData?.actionRatio ?? 0}
-                  enhanced
-                  fill
-                  dotCount={84}
-                />
-                <div className={styles.bannerAnimLabel}>
-                  <span>← Flee · 군중 이탈</span>
-                  <span>Rush · 군중 밀집 →</span>
-                </div>
-                <div className={styles.bannerSpectrumOverlay}>
-                  <SpectrumBar score={spyScore} height={3} />
-                </div>
-              </div>
-
-              <div className={styles.bannerHistStats}>
-                <BannerStat label="1일 평균" point={d1AvgPoint} />
-                <BannerStat label="1달 평균" point={m1AvgPoint} />
-                <BannerStat label="1년 평균" point={y1AvgPoint} />
-                <div className={styles.bannerStatItem}>
-                  <div className={styles.bannerStatLabel}>업데이트</div>
-                  <div className={styles.bannerStatUpdate}>
-                    {spyData ? fmtScoreDate(spyData.scoreDate) : '—'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {spyTab === 'timeline' && (
-            <div className={styles.bannerTimeline}>
-              <div className={styles.bannerPeriodTabs}>
-                {HISTORY_PERIODS.map((p) => (
-                  <button
-                    key={p.value}
-                    className={`${styles.bannerPeriodTab} ${spyHistoryPeriod === p.value ? styles.bannerPeriodTabActive : ''}`}
-                    onClick={() => setSpyHistoryPeriod(p.value)}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-              {spyHistoryLoading ? (
-                <div className={styles.bannerTimelineEmpty}>로딩 중…</div>
-              ) : spyHistory.length === 0 ? (
-                <div className={styles.bannerTimelineEmpty}>데이터 없음</div>
-              ) : (
-                <HerdHistoryChart
-                  points={spyHistory}
-                  currentScore={spyScore}
-                  height={190}
-                />
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── 로딩 상태 ── */}
       {loading && (
         <div className={styles.loadingState}>
           <span className={styles.loadingText}>로딩 중…</span>
         </div>
       )}
 
-      {/* ── 에러 상태 ── */}
       {!loading && error && (
         <div className={styles.errorState}>
           <p className={styles.errorText}>{error}</p>
@@ -346,148 +120,17 @@ export default function Watchlist() {
         </div>
       )}
 
-      {/* ── 관심 종목 Action Queue ── */}
       {!loading && !error && watchlist.length > 0 && (
-        <>
-          <div className={styles.watchSummary}>
-            <div>
-              <span>Ready</span>
-              <strong>{readyCount}개</strong>
-              <em>우선 확인 후보</em>
-            </div>
-            <div>
-              <span>Observe</span>
-              <strong>{waitCount}개</strong>
-              <em>보유·관찰 구간</em>
-            </div>
-            <div>
-              <span>Overheat</span>
-              <strong>{sellWatchCount}개</strong>
-              <em>쏠림·밀집 후보</em>
-            </div>
-          </div>
-
-          <div className={styles.opportunityPanel}>
-            <div className={styles.sectionRow}>
-              <div className={styles.sectionTitle}>매수 대기열</div>
-            <div className={styles.sectionHint}>준비도·신호일수 기준</div>
-            </div>
-            {opportunityQueue.length > 0 ? (
-              <div className={styles.opportunityList}>
-                {opportunityQueue.map((item, index) => {
-                  const signal = signalStyle(item.signal)
-                  return (
-                    <button
-                      key={item.ticker}
-                      className={styles.opportunityItem}
-                      onClick={() => navigate(`/stock/${item.ticker}`)}
-                    >
-                      <span>{index + 1}</span>
-                      <strong>{item.ticker}</strong>
-                      <em>{formatActionCode(item)}</em>
-                      <small style={{ color: signal.color }}>
-                        {item.queueLabel} · {formatActionBasis(item)} · HERD {Math.round(item.herdV4 ?? item.herdScore)}
-                        {formatSignalDuration(item) ? ` · ${formatSignalAgeLabel(item)}` : ''}
-                      </small>
-                    </button>
-                  )
-                })}
-              </div>
-            ) : (
-              <div className={styles.opportunityEmpty}>
-                지금은 추가매수 후보가 없습니다.
-              </div>
-            )}
-          </div>
-
-          <div className={styles.sectionRow}>
-            <div className={styles.sectionTitle}>관찰 종목 · {watchlist.length}</div>
-            <div className={styles.sectionHint}>준비도 높은 순</div>
-          </div>
-
-          <div className={styles.queueTable}>
-            <div className={styles.queueHead}>
-              <span>종목</span>
-              <span>HERD</span>
-              <span>액션</span>
-              <span>준비도</span>
-              <span>업데이트</span>
-            </div>
-            {scoredWatchlist.map((item) => {
-              const color      = stageColor(item.herdStage)
-              const badge      = badgeStyle(item.herdStage)
-              const signal     = signalStyle(item.signal)
-              const stageName  = item.herdStage.startsWith('Herd ')
-                ? item.herdStage.slice(5)
-                : item.herdStage
-              const isDeleting = deletingTicker === item.ticker
-              const opportunity = item.opportunityScore
-
-              return (
-                <div
-                  key={item.ticker}
-                  className={styles.queueRow}
-                  onClick={() => navigate(`/stock/${item.ticker}`)}
-                  style={{ opacity: isDeleting ? 0.4 : 1 }}
-                >
-                  <span className={styles.queueStripe} style={{ background: color, color }} />
-
-                  <div className={styles.queueStock}>
-                    <StockAvatar
-                      ticker={item.ticker}
-                      logoUrl={item.logoUrl}
-                      tone={badge}
-                    />
-                    <div>
-                      <strong>{item.ticker}</strong>
-                      <em style={{ color }}>{stageName} · 매수 우선도 {Math.round(opportunity)}</em>
-                      {shouldShowQuality(item) && (
-                        <small
-                          style={{ color: qualityColor(item.qualityLevel) }}
-                          title={qualityReasonText(item)}
-                        >
-                          {qualityWarningText(item)}
-                        </small>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className={styles.queueHerd}>
-                    <strong style={{ color }}>{Math.round(item.herdV4 ?? item.herdScore)}</strong>
-                    <span>{stageName}</span>
-                  </div>
-
-                  <div className={styles.queueAction}>
-                    <strong style={{ color: signal.color }}>{formatActionCode(item)}</strong>
-                    <span>{formatActionText(item)}</span>
-                  </div>
-
-                  <div className={styles.queueSignal}>
-                    <strong>{item.queueLabel}</strong>
-                    <span>{item.queueDetail} · {formatSignalAgeLabel(item)}</span>
-                  </div>
-
-                  <div className={styles.queueMeta}>
-                    <strong>{formatDate(item.scoreDate)}</strong>
-                    <span>DB 최신 HERD</span>
-                  </div>
-
-                  <button
-                    className={styles.queueDeleteBtn}
-                    onClick={e => handleDelete(e, item.ticker)}
-                    disabled={!!deletingTicker}
-                    title={`${item.ticker} 관심 종목에서 삭제`}
-                  >
-                    {isDeleting ? '…' : '✕'}
-                  </button>
-                </div>
-              )
-            })}
-          </div>
-        </>
+        <WatchlistQueue
+          watchlist={watchlist}
+          scoredWatchlist={scoredWatchlist}
+          opportunityQueue={opportunityQueue}
+          deletingTicker={deletingTicker}
+          onDelete={handleDelete}
+          onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
+        />
       )}
 
-      {/* ── 빈 상태 UI ── */}
       {!loading && !error && watchlist.length === 0 && (
         <div className={styles.emptyState}>
           <p className={styles.emptyTitle}>관심 종목이 없습니다.</p>

@@ -1,0 +1,38 @@
+/* DashboardDataStatus 전용 스타일 — Dashboard.module.css에서 분리 */
+
+.dataStatusBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin: -10px 0 20px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text-2);
+  font-size: 11px;
+}
+
+.dataStatusBar strong {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dataStatusBar span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dataStatusBar em {
+  margin-left: auto;
+  color: var(--text-3);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.dataStatusNO_DATA strong,
+.dataStatusUnknown strong { color: var(--text-3); }

@@ -4,7 +4,10 @@ import {
   fmtNumber,
   fundamentalTone,
 } from './stockDetailModel'
-import styles from './StockDetail.module.css'
+import sharedStyles from './StockDetail.module.css'
+import componentStyles from './StockDetailFundamentals.module.css'
+
+const styles = { ...sharedStyles, ...componentStyles }
 
 export default function StockDetailFundamentals({ loading, financials, guard }) {
   return (

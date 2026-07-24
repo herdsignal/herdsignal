@@ -1,6 +1,9 @@
 import { pctColor, fmtPct, signalStyle } from './dashboardModel'
 import DecisionFlow from '../../components/DecisionFlow/DecisionFlow'
-import styles from './Dashboard.module.css'
+import sharedStyles from './Dashboard.module.css'
+import componentStyles from './DashboardTodayBrief.module.css'
+
+const styles = { ...sharedStyles, ...componentStyles }
 
 export default function DashboardTodayBrief({
   cards,

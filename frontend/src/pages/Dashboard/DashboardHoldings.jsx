@@ -12,7 +12,10 @@ import {
   signalStyle,
   stageColor,
 } from './dashboardModel'
-import styles from './Dashboard.module.css'
+import sharedStyles from './Dashboard.module.css'
+import componentStyles from './DashboardHoldings.module.css'
+
+const styles = { ...sharedStyles, ...componentStyles }
 
 export default function DashboardHoldings({
   portfolio,

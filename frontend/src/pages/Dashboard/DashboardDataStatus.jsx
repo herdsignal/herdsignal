@@ -1,5 +1,8 @@
 import { fmtAxisDate } from './dashboardModel'
-import styles from './Dashboard.module.css'
+import sharedStyles from './Dashboard.module.css'
+import componentStyles from './DashboardDataStatus.module.css'
+
+const styles = { ...sharedStyles, ...componentStyles }
 
 const STATUS_LABEL = {
   FRESH: '최신',

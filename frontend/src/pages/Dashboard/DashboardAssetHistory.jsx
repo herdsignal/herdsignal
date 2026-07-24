@@ -3,7 +3,10 @@ import {
   Tooltip, XAxis, YAxis,
 } from 'recharts'
 import { ASSET_HISTORY_PERIODS, fmtAxisDate, fmtPct, pctColor } from './dashboardModel'
-import styles from './Dashboard.module.css'
+import sharedStyles from './Dashboard.module.css'
+import componentStyles from './DashboardAssetHistory.module.css'
+
+const styles = { ...sharedStyles, ...componentStyles }
 
 export default function DashboardAssetHistory({
   summary, cashBalance, history, latest, first, startValue,

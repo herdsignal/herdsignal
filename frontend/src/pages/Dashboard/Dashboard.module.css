@@ -6,6 +6,7 @@
 }
 
 /* ── 페이지 헤더 ── */
+
 .pageHeader {
   display: flex;
   align-items: flex-end;
@@ -51,9 +52,11 @@
   letter-spacing: 0;
   transition: opacity 0.15s;
 }
+
 .btnPrimary:hover { opacity: 0.8; }
 
 /* 헤더 우측 — 업데이트 시간 + 버튼 묶음 */
+
 .headerActions {
   display: flex;
   align-items: center;
@@ -61,6 +64,7 @@
 }
 
 /* 마지막 업데이트 시간 */
+
 .updateTime {
   font-size: 11px;
   color: var(--text-3);
@@ -83,48 +87,16 @@
   white-space: nowrap;
 }
 
-.dataStatusBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  margin: -10px 0 20px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: rgba(255, 255, 255, 0.025);
-  color: var(--text-2);
-  font-size: 11px;
-}
-
-.dataStatusBar strong {
-  flex: 0 0 auto;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.dataStatusBar span {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dataStatusBar em {
-  margin-left: auto;
-  color: var(--text-3);
-  font-style: normal;
-  white-space: nowrap;
-}
-
 .dataStatusFRESH strong { color: #22c55e; }
+
 .dataStatusWARNING strong { color: #f59e0b; }
+
 .dataStatusSTALE strong { color: #ef4444; }
+
 .dataStatusRUNNING strong { color: #60a5fa; }
-.dataStatusNO_DATA strong,
-.dataStatusUnknown strong { color: var(--text-3); }
 
 /* 새로고침 보조 버튼 — 종목 추가보다 덜 강조 */
+
 .btnRefresh {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border2);
@@ -139,16 +111,19 @@
   transition: color 0.15s, border-color 0.15s;
   white-space: nowrap;
 }
+
 .btnRefresh:hover:not(:disabled) {
   color: var(--text-1);
   border-color: var(--text-3);
 }
+
 .btnRefresh:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
 /* 편집 모드 토글 버튼 */
+
 .btnEdit {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border2);
@@ -163,15 +138,18 @@
   transition: color 0.15s, border-color 0.15s, background 0.15s;
   white-space: nowrap;
 }
+
 .btnEdit:hover { color: var(--text-1); border-color: var(--text-3); }
 
 /* 편집 모드 활성 시 ("완료" 상태) */
+
 .btnEditActive {
   border-color: var(--text-2);
   color: var(--text-1);
 }
 
 /* 통화 토글 버튼 묶음 */
+
 .currencyToggle {
   display: flex;
   background: var(--surface2);
@@ -192,14 +170,17 @@
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;
 }
+
 .currencyBtn:hover { color: var(--text-1); }
 
 /* 선택된 통화 버튼 */
+
 .currencyBtnActive {
   background: var(--text-1);
   color: var(--bg);
   font-weight: 600;
 }
+
 .currencyBtnActive:hover { color: var(--bg); }
 
 .cashInputRow {
@@ -342,6 +323,7 @@
 }
 
 /* 요약 카드 아래 환율 정보 한 줄 */
+
 .exchangeRateRow {
   display: flex;
   justify-content: flex-end;
@@ -353,79 +335,6 @@
   font-size: 11px;
   color: var(--text-3);
   letter-spacing: 0;
-}
-
-.riskPanel {
-  display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
-  gap: 14px;
-  margin-bottom: 18px;
-  padding: 16px 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
-    var(--surface);
-}
-
-:global(body.light) .riskPanel {
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
-}
-
-.riskPanelHead {
-  display: grid;
-  align-content: center;
-  gap: 6px;
-}
-
-.riskPanelHead span,
-.riskItem span {
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0;
-}
-
-.riskPanelHead strong {
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 20px;
-  font-weight: 850;
-  line-height: 1;
-}
-
-.riskList {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.riskItem {
-  display: grid;
-  gap: 5px;
-  min-width: 0;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--calm);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.025);
-}
-
-.riskItem strong {
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 17px;
-  font-weight: 850;
-}
-
-.riskItem em {
-  overflow: hidden;
-  color: var(--text-3);
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .riskItem_high {
@@ -460,92 +369,6 @@
   color: var(--status-success);
 }
 
-.alertPanel {
-  display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
-  gap: 14px;
-  margin-bottom: 18px;
-  padding: 16px 18px;
-  border: 1px solid rgba(96, 165, 250, 0.22);
-  border-radius: var(--card-radius);
-  background:
-    linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.01)),
-    var(--surface);
-}
-
-:global(body.light) .alertPanel {
-  background:
-    linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.68)),
-    var(--surface);
-}
-
-.alertPanelHead {
-  display: grid;
-  align-content: center;
-  gap: 6px;
-}
-
-.alertPanelHead span,
-.alertItem span {
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0;
-}
-
-.alertPanelHead strong {
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 20px;
-  font-weight: 850;
-  line-height: 1;
-}
-
-.alertList {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.alertItem {
-  display: grid;
-  gap: 5px;
-  min-width: 0;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.025);
-  cursor: pointer;
-  text-align: left;
-  transition: border-color var(--t-fast), transform var(--t-fast), background var(--t-fast);
-}
-
-.alertItem:hover {
-  transform: translateY(-1px);
-  border-color: rgba(96, 165, 250, 0.36);
-  background: rgba(96, 165, 250, 0.06);
-}
-
-.alertItem strong {
-  overflow: hidden;
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 850;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.alertItem em {
-  overflow: hidden;
-  color: var(--text-3);
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .alertItem_high span {
   color: var(--rush);
 }
@@ -568,32 +391,6 @@
   background: var(--surface);
   box-shadow: none;
 }
-
-.supportingDetails {
-  margin-bottom: 18px;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.supportingDetails > summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px 4px;
-  cursor: pointer;
-  list-style: none;
-}
-
-.supportingDetails > summary::-webkit-details-marker { display: none; }
-.supportingDetails > summary div { display: flex; align-items: baseline; gap: 10px; }
-.supportingDetails > summary span { color: var(--text-3); font-size: 10px; font-weight: 800; text-transform: uppercase; }
-.supportingDetails > summary strong { color: var(--text-1); font-size: 13px; }
-.supportingDetails > summary em { color: var(--text-3); font-size: 10px; font-style: normal; }
-.supportingDetails[open] > summary em::after { content: ' · 닫기'; }
-.supportingDetailsBody { display: grid; gap: 10px; padding: 0 0 14px; }
-.supportingDetailsBody .riskPanel,
-.supportingDetailsBody .alertPanel,
-.supportingDetailsBody .journalOverview { margin-bottom: 0; border-color: var(--border); background: var(--surface2); box-shadow: none; }
 
 :global(body.light) .commandFrame {
   background:
@@ -766,165 +563,6 @@
   background: rgba(255, 255, 255, 0.045);
 }
 
-.journalOverview {
-  display: grid;
-  grid-template-columns: 190px minmax(0, 1fr) minmax(240px, 0.9fr);
-  align-items: stretch;
-  gap: 14px;
-  margin-bottom: 24px;
-  padding: 14px 16px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
-    var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.14);
-}
-
-:global(body.light) .journalOverview {
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
-}
-
-.journalOverviewHead {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
-  min-width: 0;
-}
-
-.journalOverviewHead span,
-.journalOverviewStats span {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.journalOverviewHead strong {
-  display: block;
-  margin-top: 4px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text-1);
-  letter-spacing: 0;
-}
-
-.journalOverviewLink {
-  width: fit-content;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--surface2);
-  color: var(--text-2);
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 7px 10px;
-  transition: color var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
-  white-space: nowrap;
-}
-
-.journalOverviewLink:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: var(--border2);
-  color: var(--text-1);
-}
-
-.journalOverviewLink:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
-.journalOverviewStats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.journalOverviewStats div {
-  min-width: 0;
-  padding: 11px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--surface2);
-}
-
-.journalOverviewStats strong {
-  display: block;
-  margin-top: 6px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text-1);
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-.journalOverviewStats em {
-  display: block;
-  margin-top: 4px;
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 700;
-}
-
-.journalRecentList {
-  display: grid;
-  gap: 7px;
-  min-width: 0;
-}
-
-.journalRecentItem {
-  display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--surface2);
-  color: var(--text-2);
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  padding: 8px 10px;
-  text-align: left;
-  transition: border-color var(--t-fast), transform var(--t-fast);
-}
-
-.journalRecentItem:hover {
-  transform: translateY(-1px);
-  border-color: var(--border2);
-}
-
-.journalRecentItem strong {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  color: var(--text-1);
-  letter-spacing: 0;
-}
-
-.journalRecentItem span {
-  overflow: hidden;
-  color: var(--text-2);
-  font-size: 11px;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.journalRecentItem em {
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
 .assetPanel {
   margin-top: -12px;
   margin-bottom: 24px;
@@ -941,156 +579,10 @@
   box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
 }
 
-.assetPanelHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.assetPanelLabel {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-3);
-  margin-bottom: 6px;
-}
-
-.assetPanelTitle {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-1);
-  line-height: 1;
-}
-
-.assetPanelSub {
-  margin-top: 8px;
-  color: var(--text-3);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.assetPeriodToggle {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-}
-
-.assetPeriodBtn {
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-3);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  white-space: nowrap;
-}
-
-.assetPeriodBtn:hover {
-  color: var(--text-1);
-}
-
-.assetPeriodBtnActive {
-  color: var(--bg);
-  background: var(--text-1);
-}
-
-.assetStats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.assetStats div {
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-}
-
-:global(body.light) .assetStats div {
-  background: rgba(15, 23, 42, 0.025);
-}
-
-.assetStats span {
-  display: block;
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 5px;
-}
-
-.assetStats strong {
-  display: block;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  color: var(--text-1);
-  letter-spacing: 0;
-}
-
-.assetStats em {
-  display: block;
-  margin-top: 5px;
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 700;
-}
-
-.assetState {
-  min-height: 190px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-3);
-  font-size: 13px;
-}
-
-.assetTooltip {
-  min-width: 160px;
-  padding: 12px 14px;
-  background: rgba(16, 22, 32, 0.98);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
-}
-
-:global(body.light) .assetTooltip {
-  background: rgba(255, 255, 255, 0.98);
-}
-
-.assetTooltipDate {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-3);
-  margin-bottom: 8px;
-}
-
-.assetTooltipRow {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 5px;
-  font-size: 12px;
-  color: var(--text-3);
-}
-
-.assetTooltipRow strong {
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12px;
-}
-
 /* ────────────────────────────
    S&P500 HERD 배너
    ──────────────────────────── */
+
 .marketBanner {
   background:
     radial-gradient(circle at 74% 42%, rgba(251, 146, 60, 0.10), transparent 24%),
@@ -1200,6 +692,7 @@
 }
 
 /* 우측 패널 — 탭 + 컨텐츠 */
+
 .bannerRight {
   display: flex;
   flex-direction: column;
@@ -1208,6 +701,7 @@
 }
 
 /* 탭 버튼 묶음 */
+
 .bannerTabs {
   position: absolute;
   top: 14px;
@@ -1233,6 +727,7 @@
   letter-spacing: 0;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
+
 .bannerTab:hover { color: var(--text-1); border-color: var(--text-3); }
 
 .bannerTabActive {
@@ -1240,9 +735,11 @@
   color: var(--bg);
   border-color: var(--text-1);
 }
+
 .bannerTabActive:hover { color: var(--bg); }
 
 /* Overview 탭 — HERD 히스토리 차트(좌) + 통계(우) */
+
 .bannerOverview {
   flex: 1;
   display: flex;
@@ -1251,6 +748,7 @@
 }
 
 /* 히스토리 통계 패널 */
+
 .bannerHistStats {
   width: 190px;
   flex-shrink: 0;
@@ -1263,6 +761,7 @@
 }
 
 /* Timeline 탭 */
+
 .bannerTimeline {
   position: relative;
   flex: 1;
@@ -1420,364 +919,26 @@
 /* ────────────────────────────
    섹션 헤더
    ──────────────────────────── */
-.sectionRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.sectionTitle {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.sortTabs {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.025);
-}
-
-:global(body.light) .sortTabs {
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.sortTab {
-  min-width: 0;
-  padding: 6px 9px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.sortTab:hover {
-  color: var(--text-2);
-}
-
-.sortTabActive {
-  background: var(--text-1);
-  color: var(--bg);
-}
-
-:global(body.light) .sortTabActive {
-  background: #111827;
-  color: #FFFFFF;
-}
 
 /* ────────────────────────────
    보유 종목 테이블
    ──────────────────────────── */
-.holdingsTable {
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--card-radius) + 2px);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.006)),
-    var(--surface);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
-}
-
-:global(body.light) .holdingsTable {
-  background: rgba(255, 255, 255, 0.84);
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
-}
-
-:global(body.light) .holdingsHeader {
-  background: rgba(241, 245, 249, 0.76);
-  color: #64748B;
-}
-
-:global(body.light) .holdingRow {
-  background: rgba(255, 255, 255, 0.50);
-}
-
-:global(body.light) .holdingRow:hover {
-  background: rgba(239, 246, 255, 0.74);
-}
-
-.holdingsHeader,
-.holdingRow {
-  display: grid;
-  grid-template-columns: minmax(210px, 1.35fr) minmax(110px, 0.72fr) minmax(150px, 0.95fr) minmax(120px, 0.78fr) minmax(86px, 0.54fr) minmax(210px, 1.18fr);
-  align-items: center;
-  gap: 18px;
-}
-
-.holdingsHeader {
-  padding: 13px 20px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text-3);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.holdingRow {
-  position: relative;
-  min-height: 86px;
-  padding: 17px 20px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background var(--t-fast), border-color var(--t-fast);
-}
-
-.holdingRow:last-child {
-  border-bottom: none;
-}
-
-.holdingRow:hover {
-  background: rgba(59, 130, 246, 0.045);
-}
-
-.holdingRowEdit {
-  cursor: default;
-  grid-template-rows: auto auto;
-}
 
 /* 좌측 HERD 단계 컬러 스트라이프 */
-.cardStripe {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  box-shadow: 0 0 18px currentColor;
-}
 
 /* 삭제 버튼 — 편집 모드 우측 */
-.cardDeleteBtn {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background: none;
-  color: var(--text-3);
-  font-size: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.3;
-  transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s;
-}
-.holdingRow:hover .cardDeleteBtn { opacity: 1; }
-.cardDeleteBtn:hover:not(:disabled) {
-  color: var(--status-danger);
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.08);
-}
-.cardDeleteBtn:disabled { opacity: 0.2; cursor: default; }
-
-.holdingStockCell {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.holdingStockText {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-
-.holdingStockText strong {
-  overflow: hidden;
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 0;
-  line-height: 1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.holdingStockText span {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-.holdingStockText em {
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.holdingMetric,
-.holdingHerdCell,
-.holdingActionCell {
-  display: grid;
-  gap: 5px;
-  min-width: 0;
-}
-
-.holdingMetric span,
-.holdingHerdCell strong,
-.holdingActionCell strong {
-  overflow: hidden;
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0;
-  line-height: 1.05;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.holdingHerdCell strong {
-  font-size: 22px;
-}
-
-.holdingActionCell strong {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.holdingMetric em,
-.holdingHerdCell span,
-.holdingActionCell span {
-  overflow: hidden;
-  color: var(--text-2);
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.holdingMetric small,
-.holdingHerdCell em,
-.holdingActionCell em {
-  overflow: hidden;
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.holdingEditTray {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  padding-top: 12px;
-}
-
-.cardDash {
-  font-size: 13px;
-  color: var(--text-3);
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-}
-
-.cardInputBtn {
-  flex-shrink: 0;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--action-buy);
-  background: transparent;
-  color: var(--action-add);
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  white-space: nowrap;
-  transition: background 0.15s;
-}
-.cardInputBtn:hover { background: rgba(59, 130, 246, 0.1); }
-
-.targetEditRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: rgba(255, 255, 255, 0.025);
-}
-
-:global(body.light) .targetEditRow {
-  background: rgba(15, 23, 42, 0.025);
-}
-
-.targetLabel {
-  color: var(--text-2);
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.targetInputWrap {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.targetInput {
-  width: 72px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border2);
-  background: var(--surface2);
-  color: var(--text-1);
-  font-size: 12px;
-  font-weight: 700;
-  font-family: 'Inter', sans-serif;
-  text-align: right;
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-
-.targetInput::-webkit-outer-spin-button,
-.targetInput::-webkit-inner-spin-button {
-  margin: 0;
-  -webkit-appearance: none;
-}
 
 /* ────────────────────────────
    로딩 / 에러 / 빈 상태
    ──────────────────────────── */
+
 .loadingState {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 60px 0;
 }
+
 .loadingText {
   font-size: 14px;
   color: var(--text-3);
@@ -1790,12 +951,14 @@
   padding: 60px 0;
   gap: 16px;
 }
+
 .errorText {
   font-size: 14px;
   color: var(--text-2);
   text-align: center;
   line-height: 1.6;
 }
+
 .retryBtn {
   background: none;
   border: 1px solid var(--border2);
@@ -1807,6 +970,7 @@
   font-family: 'Inter', sans-serif;
   transition: border-color 0.15s;
 }
+
 .retryBtn:hover { border-color: var(--text-3); }
 
 .emptyState {
@@ -1817,6 +981,7 @@
   padding: 80px 0;
   gap: 8px;
 }
+
 .emptyTitle {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 16px;
@@ -1824,6 +989,7 @@
   color: var(--text-2);
   margin-bottom: 4px;
 }
+
 .emptyDesc {
   font-size: 13px;
   color: var(--text-3);
@@ -1882,16 +1048,6 @@
   .bannerScoreBlock {
     border-right: none;
     border-bottom: 1px solid var(--border);
-  }
-
-  .holdingsHeader,
-  .holdingRow {
-    grid-template-columns: minmax(190px, 1.35fr) minmax(100px, 0.7fr) minmax(130px, 0.9fr) minmax(100px, 0.7fr) minmax(78px, 0.52fr) minmax(180px, 1.1fr);
-    gap: 12px;
-  }
-
-  .journalOverview {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .portfolioEditPanel {
@@ -1967,49 +1123,6 @@
   .commandFrameMeta button {
     height: 36px;
     flex: 1 1 auto;
-  }
-
-  .sectionRow {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .riskPanel {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .riskList {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .alertPanel {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .alertList {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .journalOverviewStats {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .journalRecentItem {
-    grid-template-columns: 48px minmax(0, 1fr);
-  }
-
-  .journalRecentItem em {
-    grid-column: 2;
-  }
-
-  .sortTabs {
-    width: 100%;
-    overflow-x: auto;
-  }
-
-  .sortTab {
-    flex: 1 0 auto;
   }
 
   .portfolioSummaryBar {
@@ -2093,43 +1206,6 @@
     font-size: 24px;
   }
 
-  .holdingsHeader {
-    display: none;
-  }
-
-  .holdingRow {
-    grid-template-columns: minmax(0, 1fr) minmax(150px, 0.8fr);
-    gap: 14px;
-    padding: 18px 18px 18px 20px;
-  }
-
-  .holdingStockCell,
-  .holdingActionCell {
-    grid-column: 1 / -1;
-  }
-
-  .holdingActionCell {
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-
-  .holdingStockText strong {
-    font-size: 22px;
-  }
-
-  .holdingHerdCell strong {
-    font-size: 26px;
-  }
-
-  .holdingEditTray {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .targetEditRow {
-    width: 100%;
-  }
-
   .cashEditControl {
     align-items: stretch;
     flex-direction: column;
@@ -2137,14 +1213,6 @@
 
   .cashSaveBtn {
     width: 100%;
-  }
-
-  .assetStats {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .assetPanelHeader {
-    flex-direction: column;
   }
 
 }
@@ -2219,22 +1287,6 @@
     font-size: 18px;
   }
 
-  .holdingRow {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    padding: 17px 16px 17px 18px;
-  }
-
-  .holdingMetric,
-  .holdingHerdCell {
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-
-  .holdingActionCell {
-    align-items: start;
-  }
-
   .portfolioEditPanel,
   .assetPanel {
     padding-left: 16px;
@@ -2242,13 +1294,9 @@
   }
 }
 
-
 /* ────────────────────────────
    Mobile Dashboard App View
    ──────────────────────────── */
-.mobileDashboard {
-  display: none;
-}
 
 @media (max-width: 720px) {
   .dashboardShell {
@@ -2310,375 +1358,6 @@
     display: none;
   }
 
-  .mobileDashboard {
-    display: grid;
-    gap: 14px;
-    margin-bottom: 24px;
-  }
-
-  .mobileSignalCard,
-  .mobileActionPanel,
-  .mobileAssetSummary {
-    overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    background:
-      radial-gradient(circle at 72% 18%, rgba(59, 130, 246, 0.13), transparent 28%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
-      var(--surface);
-    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
-  }
-
-  :global(body.light) .mobileSignalCard,
-  :global(body.light) .mobileActionPanel,
-  :global(body.light) .mobileAssetSummary {
-    background: rgba(255, 255, 255, 0.88);
-    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.09);
-  }
-
-  .mobileSignalCard {
-    background:
-      radial-gradient(circle at 72% 34%, rgba(251, 146, 60, 0.12), transparent 24%),
-      radial-gradient(circle at 30% 32%, rgba(59, 130, 246, 0.13), transparent 30%),
-      linear-gradient(180deg, rgba(32, 42, 56, 0.94), rgba(18, 25, 36, 0.98)),
-      var(--surface);
-  }
-
-  :global(body.light) .mobileSignalCard {
-    background:
-      radial-gradient(circle at 72% 34%, rgba(251, 146, 60, 0.10), transparent 24%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(239, 246, 255, 0.92)),
-      var(--surface);
-  }
-
-  .mobileSignalTop,
-  .mobileSectionHead,
-  .mobileAssetTop {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .mobileSignalTop {
-    padding: 18px 18px 0;
-  }
-
-  .mobileKicker {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-3);
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0;
-    text-transform: uppercase;
-  }
-
-  .mobileSignalTitle,
-  .mobileSectionHead strong,
-  .mobileAssetTop strong {
-    color: var(--text-1);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: 0;
-  }
-
-  .mobileSignalUpdate {
-    flex: 0 0 auto;
-    color: var(--text-3);
-    font-size: 11px;
-    font-weight: 700;
-  }
-
-  .mobileSignalMain {
-    display: grid;
-    grid-template-columns: 104px minmax(0, 1fr);
-    min-height: 204px;
-    padding: 10px 14px 8px 18px;
-  }
-
-  .mobileSignalScore {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-width: 0;
-    z-index: 1;
-  }
-
-  .mobileSignalScore strong {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 68px;
-    font-weight: 800;
-    letter-spacing: 0;
-    line-height: 0.86;
-  }
-
-  .mobileSignalScore span {
-    margin-top: 10px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
-    font-weight: 800;
-  }
-
-  .mobileSignalScore em {
-    margin-top: 6px;
-    color: var(--text-3);
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 1.35;
-  }
-
-  .mobileSignalFlow {
-    position: relative;
-    min-width: 0;
-    min-height: 188px;
-    border-left: 1px solid var(--border);
-  }
-
-  .mobileSpectrum {
-    position: absolute;
-    left: 16px;
-    right: 8px;
-    bottom: 8px;
-    z-index: 2;
-  }
-
-  .mobileSignalStats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
-    border-top: 1px solid var(--border);
-    background: var(--border);
-  }
-
-  .mobileSignalStats div {
-    min-width: 0;
-    padding: 13px 14px;
-    background: rgba(255, 255, 255, 0.025);
-  }
-
-  :global(body.light) .mobileSignalStats div {
-    background: rgba(255, 255, 255, 0.72);
-  }
-
-  .mobileSignalStats span,
-  .mobileAssetGrid span {
-    display: block;
-    color: var(--text-3);
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0;
-    text-transform: uppercase;
-  }
-
-  .mobileSignalStats strong {
-    display: block;
-    margin-top: 5px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 19px;
-    font-weight: 800;
-    letter-spacing: 0;
-  }
-
-  .mobileSignalStats em {
-    display: block;
-    overflow: hidden;
-    margin-top: 2px;
-    color: var(--text-3);
-    font-size: 10px;
-    font-style: normal;
-    font-weight: 700;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .mobileActionPanel,
-  .mobileAssetSummary {
-    padding: 16px;
-  }
-
-  .mobileSectionHead button {
-    flex: 0 0 auto;
-    height: 34px;
-    padding: 0 12px;
-    border: 1px solid var(--border2);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--text-2);
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-  }
-
-  .mobileActionList {
-    display: grid;
-    gap: 10px;
-    margin-top: 14px;
-  }
-
-  .mobileActionItem {
-    display: grid;
-    grid-template-columns: 74px minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    min-height: 78px;
-    padding: 13px 14px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.028);
-    color: var(--text-1);
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    text-align: left;
-  }
-
-  .mobileActionBuy {
-    background:
-      linear-gradient(90deg, rgba(59, 130, 246, 0.16), rgba(255, 255, 255, 0.018) 52%),
-      rgba(255, 255, 255, 0.028);
-  }
-
-  .mobileActionHold {
-    background:
-      linear-gradient(90deg, rgba(148, 163, 184, 0.12), rgba(255, 255, 255, 0.018) 52%),
-      rgba(255, 255, 255, 0.028);
-  }
-
-  .mobileActionSell {
-    background:
-      linear-gradient(90deg, rgba(239, 68, 68, 0.14), rgba(251, 146, 60, 0.07) 42%, rgba(255, 255, 255, 0.018) 62%),
-      rgba(255, 255, 255, 0.028);
-  }
-
-  :global(body.light) .mobileActionItem {
-    background-color: rgba(248, 250, 252, 0.86);
-  }
-
-  .mobileActionCode {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 23px;
-    font-weight: 800;
-    letter-spacing: 0;
-  }
-
-  .mobileActionBody {
-    display: grid;
-    gap: 4px;
-    min-width: 0;
-  }
-
-  .mobileActionBody strong {
-    color: var(--text-1);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 19px;
-    font-weight: 800;
-    letter-spacing: 0;
-  }
-
-  .mobileActionBody span,
-  .mobileActionBody em,
-  .mobileActionMeta em {
-    overflow: hidden;
-    color: var(--text-3);
-    font-size: 11px;
-    font-style: normal;
-    font-weight: 700;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .mobileActionBody em {
-    color: var(--text-2);
-  }
-
-  .mobileActionMeta {
-    display: grid;
-    justify-items: end;
-    gap: 4px;
-    min-width: 58px;
-  }
-
-  .mobileActionMeta span {
-    color: var(--text-1);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    font-weight: 800;
-  }
-
-  .mobileActionEmpty {
-    padding: 16px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    color: var(--text-3);
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.45;
-  }
-
-  .mobileAssetTop {
-    align-items: center;
-  }
-
-  .mobileAssetTop strong {
-    display: block;
-    font-size: 27px;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  .mobileAssetTop em {
-    display: block;
-    margin-top: 8px;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 800;
-  }
-
-  .mobileAssetGrid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-    margin-top: 16px;
-  }
-
-  .mobileAssetGrid div {
-    min-width: 0;
-    padding: 11px 12px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.025);
-  }
-
-  .mobileAssetGrid strong {
-    display: block;
-    overflow: hidden;
-    margin-top: 6px;
-    color: var(--text-1);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .mobileAssetButton {
-    width: 100%;
-    min-height: 42px;
-    margin-top: 12px;
-    border: 1px solid var(--border2);
-    border-radius: 14px;
-    background: rgba(59, 130, 246, 0.08);
-    color: var(--text-1);
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-  }
-
   .assetPanel {
     margin-top: 0;
     border-radius: 20px;
@@ -2688,236 +1367,4 @@
     justify-content: flex-start;
     margin: -4px 0 18px;
   }
-
-  .journalOverview {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    border-radius: 20px;
-  }
-
-  .sectionRow {
-    margin-top: 6px;
-  }
-
-  .holdingsTable {
-    display: grid;
-    gap: 12px;
-    overflow: visible;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  :global(body.light) .holdingsTable {
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .holdingsHeader {
-    display: none;
-  }
-
-  .holdingRow {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    min-height: 0;
-    padding: 18px 16px 16px 18px;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012)),
-      var(--surface);
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
-  }
-
-  :global(body.light) .holdingRow {
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
-  }
-
-  .holdingStockCell {
-    grid-column: 1 / -1;
-    gap: 12px;
-    padding-right: 28px;
-  }
-
-  .holdingStockText strong {
-    font-size: 24px;
-  }
-
-  .holdingStockText span {
-    font-size: 14px;
-  }
-
-  .holdingMetric,
-  .holdingHerdCell {
-    min-height: 58px;
-    padding: 11px 12px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.022);
-  }
-
-  .holdingMetric span {
-    font-size: 17px;
-  }
-
-  .holdingHerdCell strong {
-    font-size: 29px;
-  }
-
-  .holdingActionCell {
-    grid-column: 1 / -1;
-    padding: 14px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.026);
-  }
-
-  .holdingActionCell strong {
-    font-size: 24px;
-  }
-}
-
-@media (max-width: 420px) {
-  .mobileSignalMain {
-    grid-template-columns: 96px minmax(0, 1fr);
-    gap: 0;
-    min-height: 188px;
-    padding: 8px 12px 8px 16px;
-  }
-
-  .mobileSignalFlow {
-    min-height: 172px;
-    border-top: 0;
-    border-left: 1px solid var(--border);
-  }
-
-  .mobileSignalScore strong {
-    font-size: 62px;
-  }
-
-  .mobileSignalScore span {
-    font-size: 14px;
-  }
-
-  .mobileSignalScore em {
-    font-size: 11px;
-    line-height: 1.25;
-  }
-
-  .mobileSignalStats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .mobileSignalStats div {
-    padding: 10px 11px;
-  }
-
-  .mobileSignalStats strong {
-    font-size: 17px;
-  }
-
-  .mobileSignalStats em {
-    font-size: 9px;
-  }
-
-  .mobileAssetTop {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .mobileAssetGrid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .mobileActionItem {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .mobileActionMeta {
-    justify-items: start;
-  }
-
-  .holdingRow {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-.todayBrief {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.todayConclusion,
-.todayPriority {
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--surface);
-}
-
-.todayConclusion {
-  padding: 24px;
-  background:
-    radial-gradient(circle at 8% 10%, rgba(59, 130, 246, 0.14), transparent 34%),
-    var(--surface);
-}
-
-.todayConclusion > span,
-.todayPriority header span {
-  color: var(--text-3);
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.todayConclusion h2 {
-  margin-top: 10px;
-  color: var(--text-1);
-  font-size: 25px;
-  letter-spacing: -0.04em;
-}
-
-.todayConclusion p {
-  margin-top: 8px;
-  color: var(--text-2);
-  font-size: 11px;
-  line-height: 1.7;
-}
-
-.todayPortfolio {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.todayPortfolio strong { color: var(--text-1); font-size: 19px; }
-.todayPortfolio em { font-size: 11px; font-style: normal; font-weight: 800; }
-.todayPriority { padding: 18px; }
-.todayPriority header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.todayPriority header div { display: flex; align-items: baseline; gap: 8px; }
-.todayPriority header strong { color: var(--text-1); font-size: 13px; }
-.todayPriority header em { color: var(--text-3); font-size: 9px; font-style: normal; }
-.todayPriorityList { display: grid; gap: 6px; }
-.todayPriorityList > button { display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px; width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface2); color: inherit; text-align: left; cursor: pointer; }
-.todayPriorityList > button:hover { border-color: var(--border2); transform: translateY(-1px); }
-.todayPriorityList > button div { display: flex; flex-direction: column; gap: 3px; }
-.todayPriorityList > button div:last-child { align-items: flex-end; text-align: right; }
-.todayPriorityList strong { color: var(--text-1); font-size: 12px; }
-.todayPriorityList span { color: var(--text-3); font-size: 9px; }
-.todayEmpty { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 24px 12px; border: 1px dashed var(--border); border-radius: 11px; color: var(--text-3); text-align: center; }
-.todayEmpty strong { color: var(--text-2); font-size: 12px; }
-.todayEmpty span { font-size: 10px; }
-.todayDecisionFlow { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-
-@media (max-width: 1100px) {
-  .todayBrief { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 760px) {
-  .todayBrief { display: none; }
 }

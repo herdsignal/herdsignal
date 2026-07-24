@@ -4,7 +4,10 @@ import {
   formatJournalCount,
   formatJournalProfit,
 } from '../../utils/signalJournal'
-import styles from './Dashboard.module.css'
+import sharedStyles from './Dashboard.module.css'
+import componentStyles from './DashboardSupportingDetails.module.css'
+
+const styles = { ...sharedStyles, ...componentStyles }
 
 export default function DashboardSupportingDetails({
   riskWarnings,

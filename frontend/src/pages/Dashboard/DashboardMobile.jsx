@@ -10,7 +10,10 @@ import {
   stageColor,
   stageDesc,
 } from './dashboardModel'
-import styles from './Dashboard.module.css'
+import sharedStyles from './Dashboard.module.css'
+import componentStyles from './DashboardMobile.module.css'
+
+const styles = { ...sharedStyles, ...componentStyles }
 
 export default function DashboardMobile({
   spyData, spyScore, spyStage, spyMomentum, lastUpdated,

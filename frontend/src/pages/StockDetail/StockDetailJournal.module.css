@@ -1,0 +1,157 @@
+/* StockDetailJournal 전용 스타일 — StockDetail.module.css에서 분리 */
+
+.journalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.journalSummaryItem {
+  min-width: 0;
+  padding: 13px 14px;
+  background: var(--surface2);
+}
+
+.journalSummaryItem span,
+.journalSummaryItem strong,
+.journalSummaryItem em {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journalSummaryItem span {
+  margin-bottom: 6px;
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+.journalSummaryItem strong {
+  margin-bottom: 3px;
+  color: var(--text-1);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.journalSummaryItem em {
+  color: var(--text-3);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.journalBtn {
+  border: 1px solid var(--border2);
+  border-radius: var(--card-radius);
+  background: var(--surface2);
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 12px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.journalBtn:hover {
+  border-color: var(--flee);
+  color: var(--text-1);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.journalList {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--border);
+}
+
+.journalItem {
+  display: grid;
+  grid-template-columns: 120px 100px minmax(0, 1fr) minmax(0, 160px) 44px;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 11px 13px;
+  background: var(--surface2);
+}
+
+.journalItem span,
+.journalItem strong,
+.journalItem em,
+.journalItem small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journalItem span {
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+.journalItem strong {
+  color: var(--text-1);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.journalItem em {
+  color: var(--text-2);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.journalItem small {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.journalDelete {
+  justify-self: end;
+  border: none;
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+
+.journalDelete:hover {
+  color: var(--rush);
+}
+
+.journalEmpty {
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 14px;
+  background: var(--surface2);
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+
+  .journalItem {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
+
+@media (max-width: 560px) {
+
+  .journalItem {
+    padding: 12px;
+  }
+}

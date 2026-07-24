@@ -1,0 +1,438 @@
+/* DashboardMobile 전용 스타일 — Dashboard.module.css에서 분리 */
+
+.mobileDashboard {
+  display: none;
+}
+
+@media (max-width: 720px) {
+
+  .mobileDashboard {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .mobileSignalCard,
+  .mobileActionPanel,
+  .mobileAssetSummary {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background:
+      radial-gradient(circle at 72% 18%, rgba(59, 130, 246, 0.13), transparent 28%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+      var(--surface);
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
+  }
+
+  :global(body.light) .mobileSignalCard,
+  :global(body.light) .mobileActionPanel,
+  :global(body.light) .mobileAssetSummary {
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.09);
+  }
+
+  .mobileSignalCard {
+    background:
+      radial-gradient(circle at 72% 34%, rgba(251, 146, 60, 0.12), transparent 24%),
+      radial-gradient(circle at 30% 32%, rgba(59, 130, 246, 0.13), transparent 30%),
+      linear-gradient(180deg, rgba(32, 42, 56, 0.94), rgba(18, 25, 36, 0.98)),
+      var(--surface);
+  }
+
+  :global(body.light) .mobileSignalCard {
+    background:
+      radial-gradient(circle at 72% 34%, rgba(251, 146, 60, 0.10), transparent 24%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(239, 246, 255, 0.92)),
+      var(--surface);
+  }
+
+  .mobileSignalTop,
+  .mobileSectionHead,
+  .mobileAssetTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mobileSignalTop {
+    padding: 18px 18px 0;
+  }
+
+  .mobileKicker {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-3);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .mobileSignalTitle,
+  .mobileSectionHead strong,
+  .mobileAssetTop strong {
+    color: var(--text-1);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .mobileSignalUpdate {
+    flex: 0 0 auto;
+    color: var(--text-3);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .mobileSignalMain {
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr);
+    min-height: 204px;
+    padding: 10px 14px 8px 18px;
+  }
+
+  .mobileSignalScore {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    z-index: 1;
+  }
+
+  .mobileSignalScore strong {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 68px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 0.86;
+  }
+
+  .mobileSignalScore span {
+    margin-top: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .mobileSignalScore em {
+    margin-top: 6px;
+    color: var(--text-3);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .mobileSignalFlow {
+    position: relative;
+    min-width: 0;
+    min-height: 188px;
+    border-left: 1px solid var(--border);
+  }
+
+  .mobileSpectrum {
+    position: absolute;
+    left: 16px;
+    right: 8px;
+    bottom: 8px;
+    z-index: 2;
+  }
+
+  .mobileSignalStats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    border-top: 1px solid var(--border);
+    background: var(--border);
+  }
+
+  .mobileSignalStats div {
+    min-width: 0;
+    padding: 13px 14px;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  :global(body.light) .mobileSignalStats div {
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .mobileSignalStats span,
+  .mobileAssetGrid span {
+    display: block;
+    color: var(--text-3);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .mobileSignalStats strong {
+    display: block;
+    margin-top: 5px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .mobileSignalStats em {
+    display: block;
+    overflow: hidden;
+    margin-top: 2px;
+    color: var(--text-3);
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobileActionPanel,
+  .mobileAssetSummary {
+    padding: 16px;
+  }
+
+  .mobileSectionHead button {
+    flex: 0 0 auto;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--border2);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .mobileActionList {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .mobileActionItem {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 78px;
+    padding: 13px 14px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.028);
+    color: var(--text-1);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+  }
+
+  .mobileActionBuy {
+    background:
+      linear-gradient(90deg, rgba(59, 130, 246, 0.16), rgba(255, 255, 255, 0.018) 52%),
+      rgba(255, 255, 255, 0.028);
+  }
+
+  .mobileActionHold {
+    background:
+      linear-gradient(90deg, rgba(148, 163, 184, 0.12), rgba(255, 255, 255, 0.018) 52%),
+      rgba(255, 255, 255, 0.028);
+  }
+
+  .mobileActionSell {
+    background:
+      linear-gradient(90deg, rgba(239, 68, 68, 0.14), rgba(251, 146, 60, 0.07) 42%, rgba(255, 255, 255, 0.018) 62%),
+      rgba(255, 255, 255, 0.028);
+  }
+
+  :global(body.light) .mobileActionItem {
+    background-color: rgba(248, 250, 252, 0.86);
+  }
+
+  .mobileActionCode {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .mobileActionBody {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .mobileActionBody strong {
+    color: var(--text-1);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .mobileActionBody span,
+  .mobileActionBody em,
+  .mobileActionMeta em {
+    overflow: hidden;
+    color: var(--text-3);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobileActionBody em {
+    color: var(--text-2);
+  }
+
+  .mobileActionMeta {
+    display: grid;
+    justify-items: end;
+    gap: 4px;
+    min-width: 58px;
+  }
+
+  .mobileActionMeta span {
+    color: var(--text-1);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .mobileActionEmpty {
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    color: var(--text-3);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .mobileAssetTop {
+    align-items: center;
+  }
+
+  .mobileAssetTop strong {
+    display: block;
+    font-size: 27px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .mobileAssetTop em {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 800;
+  }
+
+  .mobileAssetGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .mobileAssetGrid div {
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .mobileAssetGrid strong {
+    display: block;
+    overflow: hidden;
+    margin-top: 6px;
+    color: var(--text-1);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobileAssetButton {
+    width: 100%;
+    min-height: 42px;
+    margin-top: 12px;
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    background: rgba(59, 130, 246, 0.08);
+    color: var(--text-1);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+  }
+}
+
+@media (max-width: 420px) {
+  .mobileSignalMain {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 0;
+    min-height: 188px;
+    padding: 8px 12px 8px 16px;
+  }
+
+  .mobileSignalFlow {
+    min-height: 172px;
+    border-top: 0;
+    border-left: 1px solid var(--border);
+  }
+
+  .mobileSignalScore strong {
+    font-size: 62px;
+  }
+
+  .mobileSignalScore span {
+    font-size: 14px;
+  }
+
+  .mobileSignalScore em {
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .mobileSignalStats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mobileSignalStats div {
+    padding: 10px 11px;
+  }
+
+  .mobileSignalStats strong {
+    font-size: 17px;
+  }
+
+  .mobileSignalStats em {
+    font-size: 9px;
+  }
+
+  .mobileAssetTop {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mobileAssetGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mobileActionItem {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mobileActionMeta {
+    justify-items: start;
+  }
+}

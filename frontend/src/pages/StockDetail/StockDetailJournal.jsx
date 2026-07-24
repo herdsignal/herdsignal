@@ -6,7 +6,10 @@ import {
   formatJournalQuantity,
   formatJournalTime,
 } from '../../utils/signalJournal'
-import styles from './StockDetail.module.css'
+import sharedStyles from './StockDetail.module.css'
+import componentStyles from './StockDetailJournal.module.css'
+
+const styles = { ...sharedStyles, ...componentStyles }
 
 export default function StockDetailJournal({ summary, logs, onCreate, onDelete }) {
   return (

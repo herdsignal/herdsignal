@@ -1,6 +1,7 @@
 /* StockDetail.module.css — wireframe-detail.html 기반 */
 
 /* ── 브레드크럼 ── */
+
 .breadcrumb {
   font-size: 12px;
   color: var(--text-3);
@@ -14,12 +15,15 @@
   cursor: pointer;
   transition: color 0.1s;
 }
+
 .breadcrumbLink:hover { color: var(--text-2); }
 
 .breadcrumbSep    { color: var(--text-3); }
+
 .breadcrumbCurrent { color: var(--text-2); }
 
 /* ── 종목 헤더 ── */
+
 .stockHeader {
   display: flex;
   align-items: flex-start;
@@ -66,7 +70,9 @@
   transition: border-color 0.15s, color 0.15s;
   white-space: nowrap;
 }
+
 .btnWatchlist:hover:not(:disabled) { border-color: var(--text-3); color: var(--text-1); }
+
 .btnWatchlist:disabled { opacity: 0.7; cursor: default; }
 
 .btnPrimary {
@@ -82,10 +88,13 @@
   transition: opacity 0.15s;
   white-space: nowrap;
 }
+
 .btnPrimary:hover:not(:disabled) { opacity: 0.8; }
+
 .btnPrimary:disabled { opacity: 0.6; cursor: default; }
 
 /* ── 핵심 컨텐츠 ── */
+
 .contentGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -97,6 +106,7 @@
 .colMain { min-width: 0; }
 
 /* ── 공통 카드 ── */
+
 .card {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
@@ -141,6 +151,7 @@
 /* ────────────────────────────
    HERD 카드 (2컬럼 그리드)
    ──────────────────────────── */
+
 .herdCard {
   background:
     linear-gradient(135deg, rgba(59, 130, 246, 0.075), rgba(255, 255, 255, 0) 36%),
@@ -157,6 +168,7 @@
 }
 
 /* 좌: 점수 블록 */
+
 .herdScoreSide {
   padding: 30px 32px;
   border-right: 1px solid var(--border);
@@ -168,6 +180,7 @@
 }
 
 /* 배경 글로우 */
+
 .herdScoreSide::before {
   content: '';
   position: absolute;
@@ -203,6 +216,7 @@
 }
 
 /* Timing Signal 배지 */
+
 .timingSignal {
   display: inline-flex;
   align-items: center;
@@ -238,6 +252,7 @@
 }
 
 /* 우: 애니메이션 블록 */
+
 .herdAnimSide {
   position: relative;
   background:
@@ -247,6 +262,7 @@
 }
 
 /* 하단 고정 오버레이: SpectrumBar + 5단계 라벨 */
+
 .herdAnimBottom {
   position: absolute;
   bottom: 0;
@@ -257,6 +273,7 @@
 }
 
 /* SpectrumBar 아래 5단계 라벨 */
+
 .spectrumLabels {
   display: flex;
   justify-content: space-between;
@@ -277,6 +294,7 @@
 /* ────────────────────────────
    장기투자 판단 카드
    ──────────────────────────── */
+
 .decisionHero {
   display: flex;
   align-items: flex-start;
@@ -399,6 +417,7 @@
  * 4컬럼: 지표명(120px) | 가중치(38px) | 바(1fr) | 수치(60px)
  * 가중치 컬럼은 항상 우측 정렬로 "24%" 형태로 표시
  */
+
 .indicatorRow {
   display: grid;
   grid-template-columns: 120px 38px 1fr 60px;
@@ -407,6 +426,7 @@
   padding: 12px 0;
   border-bottom: 1px solid var(--border);
 }
+
 .indicatorRow:last-child { border-bottom: none; }
 
 .indicatorLabel {
@@ -416,6 +436,7 @@
 }
 
 /* 가중치 퍼센트 — 오른쪽 정렬, 회색 소형 텍스트 */
+
 .indicatorWeight {
   font-size: 11px;
   font-weight: 500;
@@ -426,6 +447,7 @@
 }
 
 /* 미니 바 트랙 */
+
 .indicatorTrack {
   width: 100%;
   height: 4px;
@@ -435,6 +457,7 @@
 }
 
 /* 채움 바 — 너비/색상은 인라인 style로 주입 */
+
 .indicatorFill {
   height: 100%;
   border-radius: 99px;
@@ -496,6 +519,7 @@
    ──────────────────────────── */
 
 /* 탭 버튼 묶음 (카드 헤더 우측) */
+
 .historyTabs {
   display: flex;
   gap: 4px;
@@ -513,6 +537,7 @@
   font-family: 'Inter', sans-serif;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
+
 .historyTab:hover { color: var(--text-1); border-color: var(--text-3); }
 
 .historyTabActive {
@@ -520,9 +545,11 @@
   color: var(--bg);
   border-color: var(--text-1);
 }
+
 .historyTabActive:hover { color: var(--bg); }
 
 /* 빈 상태 / 로딩 */
+
 .chartEmpty {
   height: 120px;
   display: flex;
@@ -552,6 +579,7 @@
 /* ────────────────────────────
    HERD 신호 신뢰도 카드
    ──────────────────────────── */
+
 .reliabilityBadge {
   display: inline-flex;
   align-items: center;
@@ -725,6 +753,7 @@
 /* ────────────────────────────
    신호 근거 카드
    ──────────────────────────── */
+
 .evidenceGrid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -774,12 +803,6 @@
 /* ────────────────────────────
    내 판단 기록 카드
    ──────────────────────────── */
-.journalActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
-}
 
 .journalSummaryGrid {
   display: grid;
@@ -792,166 +815,9 @@
   background: var(--border);
 }
 
-.journalSummaryItem {
-  min-width: 0;
-  padding: 13px 14px;
-  background: var(--surface2);
-}
-
-.journalSummaryItem span,
-.journalSummaryItem strong,
-.journalSummaryItem em {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.journalSummaryItem span {
-  margin-bottom: 6px;
-  color: var(--text-3);
-  font-size: 11px;
-}
-
-.journalSummaryItem strong {
-  margin-bottom: 3px;
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0;
-}
-
-.journalSummaryItem em {
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 600;
-}
-
-.journalBtn {
-  border: 1px solid var(--border2);
-  border-radius: var(--card-radius);
-  background: var(--surface2);
-  color: var(--text-2);
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 8px 12px;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-
-.journalBtn:hover {
-  border-color: var(--flee);
-  color: var(--text-1);
-  background: rgba(59, 130, 246, 0.08);
-}
-
-.journalList {
-  display: grid;
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--border);
-}
-
-.journalItem {
-  display: grid;
-  grid-template-columns: 120px 100px minmax(0, 1fr) minmax(0, 160px) 44px;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 11px 13px;
-  background: var(--surface2);
-}
-
-.journalItem span,
-.journalItem strong,
-.journalItem em,
-.journalItem small {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.journalItem span {
-  color: var(--text-3);
-  font-size: 11px;
-}
-
-.journalItem strong {
-  color: var(--text-1);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.journalItem em {
-  color: var(--text-2);
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 600;
-}
-
-.journalItem small {
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.journalDelete {
-  justify-self: end;
-  border: none;
-  background: none;
-  color: var(--text-3);
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 0;
-  transition: color 0.15s;
-}
-
-.journalDelete:hover {
-  color: var(--rush);
-}
-
-.journalEmpty {
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  padding: 14px;
-  background: var(--surface2);
-  color: var(--text-3);
-  font-size: 12px;
-}
-
 /* ────────────────────────────
    Fundamental Guard 카드
    ──────────────────────────── */
-.fundamentalBadge {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid;
-  border-radius: 999px;
-  padding: 5px 10px;
-  background: rgba(255, 255, 255, 0.03);
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.fundamentalSummary {
-  margin-bottom: 12px;
-  padding: 13px 16px;
-  border: 1px solid rgba(163, 170, 184, 0.18);
-  border-radius: var(--card-radius);
-  background: rgba(255, 255, 255, 0.03);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--text-2);
-}
 
 .fundamentalGrid {
   display: grid;
@@ -961,53 +827,6 @@
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   background: var(--border);
-}
-
-.fundamentalItem {
-  min-width: 0;
-  background: var(--surface2);
-  padding: 13px 14px;
-}
-
-.fundamentalItem span {
-  display: block;
-  overflow: hidden;
-  margin-bottom: 6px;
-  color: var(--text-3);
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.fundamentalItem strong {
-  display: block;
-  overflow: hidden;
-  color: var(--text-1);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.fundamentalReasons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.fundamentalReasons span {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 10px;
-  border: 1px solid rgba(249, 115, 22, 0.22);
-  border-radius: 999px;
-  background: rgba(249, 115, 22, 0.08);
-  color: var(--drift);
-  font-size: 11px;
-  font-weight: 700;
 }
 
 @media (max-width: 900px) {
@@ -1043,11 +862,6 @@
   .fundamentalGrid,
   .journalSummaryGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .journalItem {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 4px;
   }
 
   .decisionHero,
@@ -1138,29 +952,17 @@
   .journalSummaryGrid {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .fundamentalItem {
-    padding: 12px 14px;
-  }
-
-  .journalItem {
-    padding: 12px;
-  }
-
-  .fundamentalReasons span {
-    width: 100%;
-    justify-content: center;
-    border-radius: var(--card-radius);
-  }
 }
 
 /* ── 로딩 / 에러 ── */
+
 .loadingState {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 60px 0;
 }
+
 .loadingText {
   font-size: 14px;
   color: var(--text-3);
@@ -1173,17 +975,20 @@
   padding: 60px 0;
   gap: 10px;
 }
+
 .errorTitle {
   font-size: 15px;
   font-weight: 500;
   color: var(--text-2);
   text-align: center;
 }
+
 .errorSub {
   font-size: 13px;
   color: var(--text-3);
   text-align: center;
 }
+
 .retryBtn {
   margin-top: 8px;
   background: none;
@@ -1196,7 +1001,9 @@
   font-family: 'Inter', sans-serif;
   transition: border-color 0.15s;
 }
+
 .retryBtn:hover { border-color: var(--text-3); }
+
 .actionError {
   margin: 0 0 16px;
   padding: 10px 14px;
@@ -1206,6 +1013,7 @@
   background: rgba(239, 68, 68, 0.08);
   font-size: 13px;
 }
+
 .detailDisclosure {
   overflow: hidden;
   border-top: 1px solid var(--border);
@@ -1222,12 +1030,20 @@
 }
 
 .detailDisclosure > summary::-webkit-details-marker { display: none; }
+
 .detailDisclosure > summary div { display: flex; align-items: baseline; gap: 10px; }
+
 .detailDisclosure > summary span { color: var(--text-3); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+
 .detailDisclosure > summary strong { color: var(--text-1); font-size: 13px; }
+
 .detailDisclosure > summary em { color: var(--text-3); font-size: 10px; font-style: normal; }
+
 .detailDisclosure[open] > summary em { font-size: 0; }
+
 .detailDisclosure[open] > summary em::after { content: '접기'; font-size: 10px; }
+
 .detailDisclosureBody { display: grid; gap: 16px; padding-bottom: 18px; }
+
 .detailDisclosureBody > .card,
 .detailDisclosureBody > section { margin-bottom: 0; }
