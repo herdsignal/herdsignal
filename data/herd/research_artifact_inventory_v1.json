@@ -1227,12 +1227,20 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/reports/sec_13f_amendment_audit_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/reports/sec_13f_bulk_v1.json",
       "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/sec_13f_crowding_protocol_v1.json",
       "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/sec_13f_pit_holdings_v1.json",
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/sec_13f_security_intervals_v1.csv",

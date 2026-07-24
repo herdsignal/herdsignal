@@ -1,7 +1,7 @@
 # HERD Point-in-time 데이터 계약
 
 상태: `SOURCE_VALIDATION`  
-최신화: 2026-07-23
+최신화: 2026-07-25
 
 ## 목적
 
@@ -176,6 +176,27 @@ SEC EDGAR `submissions`의 접수 시각과 `companyfacts`의 `filed`, `accn`,
 이전 값을 덮어쓰지 않고 별도 버전으로 보존한다. 특정 날짜의 값은
 accession number가 일치하고 `acceptanceDateTime <= as_of`인 레코드만
 선택한다.
+
+### SEC 13F 공개시점 보유 원장
+
+`sec_13f_pit_holdings_v1.py`는 SEC 공식 13F 구조화 원본의 보유를
+manager CIK·report period·accession·대표 보통주 CUSIP 단위로 보존한다.
+manager CIK는 issuer CIK가 아니며, 종목 연결은 검증된 CUSIP 원장만
+사용한다.
+
+- bulk 원본에 acceptance datetime이 없으므로 filing date 다음 실제
+  미국 주식시장 세션을 보수적 availability date로 사용한다.
+- 원본 filing은 최초 상태, `RESTATEMENT`는 공개시점부터 전체 대체,
+  `NEW HOLDINGS`는 공개시점부터 새 항목 추가로 적용한다.
+- amendment type이 비거나 알려지지 않으면 자동 제외한다.
+- 13F의 source-reported value는 기간에 따라 단위 해석이 달라질 수 있어
+  별도 정규화 전에는 시계열 비교에 사용하지 않는다.
+- 가격 결과, 방향 가설, Blind holdout은 원장 생성 과정에서 열지 않는다.
+
+전체 원장은 로컬 SQLite로만 보존하고 Git에는 생성 코드, SHA-256,
+집계 보고서와 amendment 감사를 저장한다. 정확한 acceptance datetime과
+수정 의미는 독립 SEC 원문 표본 검수를 통과하기 전까지 확정 사실로
+승격하지 않는다.
 
 `sec_point_in_time_fundamentals.py`는 다음을 강제한다.
 

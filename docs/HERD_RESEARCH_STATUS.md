@@ -1,6 +1,6 @@
 # HERD 연구 현황
 
-기준일: 2026-07-24
+기준일: 2026-07-25
 판정: `STATE_OBSERVATION_MVP_READY` / `NO_ADOPTABLE_ACTION_CANDIDATE`
 
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
@@ -58,6 +58,27 @@ vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 �
 - 가격·수익률·방향 가설·Blind holdout은 열지 않았고 행동 비율은 0%다.
   다음 단계는 관련 filing의 보수적 공개시점과 amendment 의미를 정규화하는
   것이다.
+
+### 13F PIT 보유 원장
+
+- 53개 공식 구조화 원본에서 269,600개 filing과 연구 대상 보통주
+  22,870,933개 manager×security 보유 행을 정규화했다. 438개 ticker,
+  11,633개 manager CIK, 98개 report period를 포함하며 공개 가능 기간은
+  2013-05-21~2026-06-01이다.
+- 구조화 bulk에는 정확한 acceptance datetime이 없으므로 filing date
+  당일 사용을 금지하고 다음 실제 미국 주식시장 세션부터만 사용한다.
+  2018-12-05와 2025-01-09 임시 전면 휴장도 반영했다. 분기 말은 공개일로
+  사용하지 않는다.
+- 원본 258,512건, `RESTATEMENT` 9,023건, `NEW HOLDINGS` 2,017건을
+  시간순으로 적용해 22,993,808개 유효 상태 행을 만들었다. 의미가 불명확한
+  amendment 48건은 자동 제외했다.
+- 초기 원본 없이 amendment부터 관측된 611건과 기존 상태에 겹치는
+  `NEW HOLDINGS` 103,860행은 억지 보정하지 않았다. 중첩 행은 기존 상태를
+  유지하고 5단계 SEC 원문 표본 검수 대상으로 남겼다.
+- DB `quick_check`, 원시·유효 기본키 중복, 공개시점 역전, 분기말 공개일
+  오인 검사는 모두 통과했다. 정확한 접수시각과 amendment 의미의 표본
+  정확성을 아직 검수하지 않았으므로 상태는
+  `CONSERVATIVE_PIT_HOLDINGS_LEDGER_GATE_PASSED`이며 행동 권한은 0%다.
 
 ## HERD vNext 모델 헌장
 

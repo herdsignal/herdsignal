@@ -1,0 +1,62 @@
+{
+  "report_version": "SEC_13F_PIT_HOLDINGS_V1",
+  "status": "CONSERVATIVE_PIT_HOLDINGS_LEDGER_GATE_PASSED",
+  "database": {
+    "path": "data/reference/sec/sec-13f-bulk-2013q2-2026m05-v1/derived/sec-13f-pit-holdings-v1.sqlite",
+    "sha256": "8fc00ef91738a032b43cdb9d6d1e583d0779c8f3ea2e4f292a1c84b1adf70096",
+    "bytes": 9545543680,
+    "filings": 269600,
+    "holdings": 22870933,
+    "effective_holdings": 22993808
+  },
+  "amendment_audit": {
+    "path": "data/reports/sec_13f_amendment_audit_v1.csv",
+    "sha256": "3c7dc7edc5bb94a63b79d72bca114a3de8a7819b4ca7173c0f40af39c7e583ba",
+    "unknown_amendment_filings_excluded": 48
+  },
+  "coverage": {
+    "distinct_tickers": 438,
+    "distinct_manager_ciks": 11633,
+    "distinct_report_periods": 98,
+    "first_availability_date": "2013-05-21",
+    "last_availability_date": "2026-06-01",
+    "history_years": 13.0294
+  },
+  "availability_contract": {
+    "bulk_has_exact_acceptance_datetime": false,
+    "effective_availability": "NEXT_US_SECURITIES_MARKET_SESSION_AFTER_FILING_DATE",
+    "same_day_use_allowed": false,
+    "quarter_end_as_publication_allowed": false,
+    "exact_acceptance_enrichment_required_for_source_review": true
+  },
+  "amendment_contract": {
+    "RESTATEMENT": "REPLACE_SNAPSHOT_FROM_AVAILABILITY",
+    "NEW HOLDINGS": "ADD_NEW_HOLDINGS_FROM_AVAILABILITY",
+    "UNKNOWN": "EXCLUDE_UNKNOWN_AMENDMENT_SEMANTICS",
+    "NEW_HOLDINGS_OVERLAP": "KEEP_PRIOR_POSITION_AND_IGNORE_OVERLAPPING_AMENDMENT_ROW"
+  },
+  "effective_state_materialization": {
+    "usable_events": 269552,
+    "initial_events": 258512,
+    "restatement_events": 9023,
+    "new_holdings_events": 2017,
+    "new_holdings_overlap_rows_ignored": 103860,
+    "events_without_initial_snapshot": 611
+  },
+  "reported_value_contract": "SOURCE_REPORTED_VALUE_ONLY; UNIT_NORMALIZATION_REQUIRED_BEFORE_CROSS_PERIOD_COMPARISON",
+  "gate_results": {
+    "minimum_history_years": true,
+    "minimum_distinct_quarters": true,
+    "minimum_mapped_research_tickers": true,
+    "maximum_duplicate_raw_holding_keys": true,
+    "maximum_duplicate_effective_holding_keys": true,
+    "maximum_future_available_rows": true,
+    "maximum_quarter_end_as_availability_rows": true,
+    "unknown_amendments_excluded": true
+  },
+  "price_outcomes_opened": false,
+  "direction_hypothesis_executed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "next_step": "BUILD_STRATIFIED_13F_SOURCE_REVIEW"
+}
