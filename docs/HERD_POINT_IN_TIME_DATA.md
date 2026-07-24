@@ -195,8 +195,19 @@ manager CIK는 issuer CIK가 아니며, 종목 연결은 검증된 CUSIP 원장�
 
 전체 원장은 로컬 SQLite로만 보존하고 Git에는 생성 코드, SHA-256,
 집계 보고서와 amendment 감사를 저장한다. 정확한 acceptance datetime과
-수정 의미는 독립 SEC 원문 표본 검수를 통과하기 전까지 확정 사실로
-승격하지 않는다.
+수정 의미는 독립 SEC 원문 층화 표본으로 검증한다.
+
+`sec_13f_source_review_v1.py`는 결과를 보지 않고 잠근 224건을 SEC complete
+submission 원문과 직접 대조한다. 2013~2026년의 4개 시대, initial,
+restatement, new holdings, 의미 불명 amendment와 최초 amendment 사건을
+모두 포함한다. manager CIK·기간·접수시각·수정 의미·CUSIP별 수량·
+투자재량·의결권 224건이 모두 일치했고 Wilson 95% 하한은 98.31%다.
+원문 파일과 index는 SHA-256으로 고정하며 Git 밖 로컬 corpus에 보존한다.
+
+이 검수로 `CONSERVATIVE_PIT_HOLDINGS_LEDGER_GATE_PASSED` 입력의 원문
+정확성은 승인했다. 다만 13F는 최대 45일 늦는 분기 공시이므로 단독
+방향 신호가 아니다. 기관 breadth·concentration·change를 느린 맥락으로
+만든 뒤 기존 Rush 전환 사건에 독립 OOS 증분이 있는지를 별도 검증해야 한다.
 
 `sec_point_in_time_fundamentals.py`는 다음을 강제한다.
 

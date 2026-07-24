@@ -1,0 +1,43 @@
+{
+  "report_version": "SEC_13F_SOURCE_REVIEW_V1",
+  "status": "STRATIFIED_SEC_SOURCE_REVIEW_GATE_PASSED",
+  "sample": {
+    "path": "data/reports/sec_13f_source_review_sample_v1.csv",
+    "sha256": "57abc9d73c2edd881975f3b6702e0c3e2c7670c0058eb6271363bcd7f9cb6097",
+    "rows": 224,
+    "distinct_managers": 190,
+    "distinct_securities": 167,
+    "first_event_amendments": 21
+  },
+  "review": {
+    "path": "data/reports/sec_13f_source_review_v1.csv",
+    "sha256": "e0d76d5aa470d63c9af49807658d32b69f711a8bd5241bd57ebb3de09dc99445",
+    "valid": 224,
+    "invalid": 0,
+    "wilson_95_lower_bound": 0.9831397725393022,
+    "exact_acceptance_rows": 224
+  },
+  "corpus": {
+    "path": "data/reference/sec/sec-13f-source-review-v1",
+    "manifest_sha256": "a568c629c83d83d6a8fabdcf9876ac5a196fa3dd2c1c67a64519686b9bc4facc",
+    "documents": 224,
+    "bytes": 41912887,
+    "hash_mismatches": 0
+  },
+  "gate_results": {
+    "minimum_locked_rows": true,
+    "minimum_distinct_managers": true,
+    "minimum_distinct_securities": true,
+    "minimum_distinct_eras": true,
+    "minimum_first_event_amendments": true,
+    "minimum_exact_acceptance_fraction": true,
+    "minimum_wilson_95_lower_bound": true,
+    "maximum_source_hash_mismatches": true,
+    "maximum_future_available_rows": true
+  },
+  "price_outcomes_opened": false,
+  "direction_hypothesis_executed": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "next_step": "BUILD_13F_SLOW_CONTEXT_FEATURES"
+}

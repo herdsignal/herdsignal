@@ -1,0 +1,67 @@
+{
+  "protocol_version": "SEC_13F_SOURCE_REVIEW_V1",
+  "status": "LOCKED_BEFORE_SEC_SOURCE_DOWNLOAD",
+  "locked_at": "2026-07-25",
+  "objective": "Verify the normalized 13F PIT ledger against immutable SEC EDGAR submissions without opening price outcomes.",
+  "input_report": {
+    "path": "data/reports/sec_13f_pit_holdings_v1.json",
+    "required_status": "CONSERVATIVE_PIT_HOLDINGS_LEDGER_GATE_PASSED"
+  },
+  "sampling": {
+    "seed": "HERDSIGNAL_SEC_13F_SOURCE_REVIEW_V1",
+    "eras": {
+      "E1_2013_2016": [2013, 2016],
+      "E2_2017_2020": [2017, 2020],
+      "E3_2021_2022": [2021, 2022],
+      "E4_2023_2026": [2023, 2026]
+    },
+    "per_era_targets": {
+      "INITIAL_SNAPSHOT": 24,
+      "REPLACE_SNAPSHOT_FROM_AVAILABILITY": 12,
+      "ADD_NEW_HOLDINGS_FROM_AVAILABILITY": 8
+    },
+    "include_all_operations": [
+      "EXCLUDE_UNKNOWN_AMENDMENT_SEMANTICS"
+    ],
+    "minimum_first_event_amendments": 16,
+    "representative_security_selection": "MIN_SHA256_SEED_ACCESSION_CUSIP",
+    "price_or_return_used_for_selection": false
+  },
+  "required_comparisons": [
+    "accession_number",
+    "filing_manager_cik",
+    "report_period",
+    "acceptance_datetime",
+    "amendment_semantics",
+    "cusip",
+    "issuer_name",
+    "title_of_class",
+    "reported_value",
+    "reported_shares",
+    "shares_or_principal_type",
+    "investment_discretion",
+    "voting_authority"
+  ],
+  "gates": {
+    "minimum_locked_rows": 100,
+    "minimum_distinct_managers": 20,
+    "minimum_distinct_securities": 20,
+    "minimum_distinct_eras": 4,
+    "minimum_first_event_amendments": 16,
+    "minimum_exact_acceptance_fraction": 1.0,
+    "minimum_wilson_95_lower_bound": 0.95,
+    "maximum_source_hash_mismatches": 0,
+    "maximum_future_available_rows": 0
+  },
+  "failure_policy": {
+    "network_or_parse_failure": "FAIL_CLOSED",
+    "ambiguous_amendment": "KEEP_EXCLUDED",
+    "gate_failure": "STOP_BEFORE_13F_FEATURES"
+  },
+  "research_firewall": {
+    "price_outcomes_opened": false,
+    "direction_hypothesis_executed": false,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false
+  }
+}

@@ -78,9 +78,11 @@ SEC 13F는 공식 bulk 53개와 대표 보통주 식별 원장을 거쳐 PIT 보
 원장으로 정규화했다. 로컬 SQLite에는 269,600개 filing, 원시 보유
 22,870,933행, amendment 적용 후 유효 상태 22,993,808행이 있다.
 Git에는 DB를 넣지 않고 `sec_13f_pit_holdings_v1.json`과
-`sec_13f_amendment_audit_v1.csv`만 고정한다. 정확한 acceptance datetime과
-amendment 의미의 원문 표본 검수가 남아 있으므로 13F는 계속
-`DATA_PIPELINE`이며 행동 증거가 아니다.
+`sec_13f_amendment_audit_v1.csv`만 고정한다. 이어서 결과 비사용 층화
+표본 224건을 SEC complete submission 원문과 대조해 224건 모두
+일치했고 Wilson 95% 하한 98.31%, 원문 해시 불일치 0건으로 검수
+게이트를 통과했다. 13F는 검증된 `DATA_PIPELINE` 입력이지만 아직
+행동 증거가 아니다.
 
 삭제는 import·문서 참조, 고정 hash 입력, 실험 재현 필요성을 모두 확인하고
 회귀 테스트를 통과한 파일에만 허용한다. 분류되지 않은 새 파일은 자동 삭제

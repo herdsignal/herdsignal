@@ -1,6 +1,6 @@
 {
   "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V2",
-  "as_of": "2026-07-24",
+  "as_of": "2026-07-25",
   "current_decision": {
     "status": "STATE_OBSERVATION_MVP_READY",
     "new_model_name": "UNASSIGNED_UNTIL_PROMOTION",
@@ -71,6 +71,10 @@
       "data/reports/sec_13f_security_ledger_v1.json",
       "data/reports/sec_13f_amendment_audit_v1.csv",
       "data/reports/sec_13f_pit_holdings_v1.json",
+      "data/herd/sec_13f_source_review_v1.json",
+      "data/reports/sec_13f_source_review_sample_v1.csv",
+      "data/reports/sec_13f_source_review_v1.csv",
+      "data/reports/sec_13f_source_review_v1.json",
       "data/herd/sec_form4_research_census_v2.json",
       "data/reports/sec_form4_census_gate_v2.json",
       "data/herd/sec_guidance_atomic_census_v2.json",

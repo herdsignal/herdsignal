@@ -24,7 +24,7 @@ vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 �
   접근은 금지했다. 검증 가능한 유일한 증분 비교는
   `Rush Breaking + 기관 군중 맥락` 대 `Rush Breaking 단독`이다.
 - OOS·완결 사이클·비용 스트레스 기준을 수집 전에 잠갔다. 현재 판정은
-  `PROTOCOL_LOCKED_COLLECTION_NOT_STARTED`, 운영 행동 비율은 0%다.
+  `STRATIFIED_SEC_SOURCE_REVIEW_GATE_PASSED`, 운영 행동 비율은 0%다.
 
 ### 공식 13F 원본 해시 고정
 
@@ -76,9 +76,26 @@ vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 �
   `NEW HOLDINGS` 103,860행은 억지 보정하지 않았다. 중첩 행은 기존 상태를
   유지하고 5단계 SEC 원문 표본 검수 대상으로 남겼다.
 - DB `quick_check`, 원시·유효 기본키 중복, 공개시점 역전, 분기말 공개일
-  오인 검사는 모두 통과했다. 정확한 접수시각과 amendment 의미의 표본
-  정확성을 아직 검수하지 않았으므로 상태는
+  오인 검사는 모두 통과했다. 원장 자체 상태는
   `CONSERVATIVE_PIT_HOLDINGS_LEDGER_GATE_PASSED`이며 행동 권한은 0%다.
+
+### 13F SEC 원문 층화 검수
+
+- 가격 결과를 열기 전에 4개 시대와 initial·restatement·new holdings를
+  층화한 224건의 표본을 해시로 잠갔다. 불명확 amendment 48건은 전부
+  포함했고, 최초 관측이 amendment인 사건 21건도 포함했다.
+- SEC complete submission 원문 41,912,887바이트를 직접 수집해 accession,
+  manager CIK, report period, 정확한 acceptance datetime, amendment 의미와
+  대표 CUSIP의 보유 수치·재량·의결권을 대조했다.
+- 224/224건이 일치했고 관리자 190곳·증권 167개를 포함한다. Wilson 95%
+  하한은 98.31%, 원문 SHA-256 불일치와 미래정보 조기 사용은 모두 0건이다.
+- bulk filing date 다음 세션을 사용한 기존 가용일은 실제 acceptance
+  datetime 다음 세션보다 같거나 늦었다. 정확한 시각을 소급해 성과를
+  개선하지 않고 기존 보수적 가용일을 유지한다.
+- 판정은 `STRATIFIED_SEC_SOURCE_REVIEW_GATE_PASSED`다. 이는 13F 입력의
+  원문 정확성을 승인한 것이지 매수·익절 방향성을 승인한 것이 아니다.
+  다음 단계는 manager별 보유를 기관 breadth·concentration·change의
+  느린 군중 맥락으로 변환하는 것이다.
 
 ## HERD vNext 모델 헌장
 
