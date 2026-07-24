@@ -22,6 +22,8 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+playwright-report/
+test-results/
 
 # ── 빌드 산출물 ───────────────────────────────
 dist/
