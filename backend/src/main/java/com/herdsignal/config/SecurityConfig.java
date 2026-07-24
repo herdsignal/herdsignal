@@ -78,6 +78,7 @@ public class SecurityConfig {
                             .requestMatchers("/oauth2/**", "/login/**", "/error", "/actuator/health/**").permitAll()
                             .requestMatchers("/api/auth/**", "/api/model/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/stocks/SPY/herd").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/observations/SPY").permitAll()
                             .anyRequest().authenticated())
                     .oauth2Login(login -> login
                             .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcAppUserService))

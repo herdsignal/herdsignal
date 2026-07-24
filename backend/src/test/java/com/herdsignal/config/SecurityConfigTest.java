@@ -43,6 +43,14 @@ class SecurityConfigTest {
 
         mockMvc.perform(get("/api/stocks/NVDA/herd"))
                 .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/observations/SPY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.availabilityStatus")
+                        .value("UNAVAILABLE"));
+
+        mockMvc.perform(get("/api/observations/NVDA"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
