@@ -3,11 +3,13 @@
  * Layout 컴포넌트 안에 모든 페이지를 중첩 라우트로 구성한다.
  */
 
-import { Component, lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout     from './components/Layout/Layout'
+import RouteErrorBoundary from './components/RouteErrorBoundary/RouteErrorBoundary'
 import { AuthProvider } from './auth/AuthContext'
 import ProtectedRoute from './auth/ProtectedRoute'
+import { ROUTER_FUTURE } from './routerConfig'
 
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'))
 const PublicHome = lazy(() => import('./pages/PublicHome/PublicHome'))
@@ -28,32 +30,9 @@ function RouteFallback() {
   )
 }
 
-class RouteErrorBoundary extends Component {
-  state = { failed: false, message: '' }
-
-  static getDerivedStateFromError(error) {
-    return { failed: true, message: error?.message ?? '' }
-  }
-
-  componentDidCatch(error) {
-    console.error('페이지 렌더링 오류', error)
-  }
-
-  render() {
-    if (!this.state.failed) return this.props.children
-    return (
-      <div role="alert" style={{ padding: '32px', color: 'var(--text-1)' }}>
-        <p>화면을 표시하는 중 오류가 발생했습니다.</p>
-        {this.state.message && <p style={{ color: 'var(--text-3)' }}>{this.state.message}</p>}
-        <button type="button" onClick={() => window.location.reload()}>새로고침</button>
-      </div>
-    )
-  }
-}
-
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={ROUTER_FUTURE}>
       <AuthProvider>
       <RouteErrorBoundary>
         <Suspense fallback={<RouteFallback />}>

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { ROUTER_FUTURE } from '../../routerConfig'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import StockDetail from './StockDetail'
 import * as api from '../../api/herdApi'
@@ -48,7 +49,7 @@ beforeEach(() => {
 describe('StockDetail route', () => {
   it('renders the stock page after loading', async () => {
     render(
-      <MemoryRouter initialEntries={['/stock/NVDA']}>
+      <MemoryRouter initialEntries={['/stock/NVDA']} future={ROUTER_FUTURE}>
         <Routes>
           <Route path="/stock/:ticker" element={<StockDetail />} />
         </Routes>
