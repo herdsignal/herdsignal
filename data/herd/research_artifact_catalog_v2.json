@@ -118,7 +118,9 @@
     "DIAGNOSTIC": [
       "data/herd/research_artifact_catalog.json",
       "data/herd/indicator_inventory_v2.json",
+      "data/herd/sec_13f_phase_review_v1.json",
       "data/reports/failed_price_information_audit_v1.json",
+      "data/reports/sec_13f_phase_review_v1.json",
       "data/reports/sec_guidance_structure_v10_final.json",
       "data/reports/overnight_pit_shadow_completion_v1.json"
     ]

@@ -1,0 +1,40 @@
+{
+  "report_version": "SEC_13F_PHASE_REVIEW_V1",
+  "status": "SEC_13F_PHASE_REVIEW_PASSED_WITH_DIRECTION_REJECTED",
+  "stage_checks": {
+    "data/reports/sec_13f_bulk_v1.json": true,
+    "data/reports/sec_13f_security_ledger_v1.json": true,
+    "data/reports/sec_13f_pit_holdings_v1.json": true,
+    "data/reports/sec_13f_source_review_v1.json": true,
+    "data/reports/sec_13f_slow_context_v1.json": true,
+    "data/reports/sec_13f_crowding_incremental_oos_v1.json": true,
+    "data/reports/sec_13f_completed_cycle_gate_v1.json": true
+  },
+  "research_firewall_checks": {
+    "all_action_ratios_zero": true,
+    "all_blind_holdouts_closed": true,
+    "direction_kept_as_context_only": true,
+    "completed_cycle_not_executed": true,
+    "unexecuted_economics_not_reported_as_zero": true
+  },
+  "direction_evidence": {
+    "status": "SEC_13F_DIRECTION_HYPOTHESIS_REJECTED",
+    "decision": "KEEP_13F_AS_NON_DIRECTIONAL_CONTEXT_ONLY",
+    "failed_gates": [
+      "maximum_candidate_minus_baseline_log_loss",
+      "minimum_incremental_roc_auc",
+      "minimum_positive_direction_folds",
+      "minimum_ticker_cluster_bootstrap_probability_positive_auc_edge"
+    ],
+    "incremental_roc_auc": 0.011248554959063739,
+    "candidate_minus_baseline_log_loss": 0.0014347726650358883
+  },
+  "final_scope": {
+    "thirteen_f_role": "NON_DIRECTIONAL_SLOW_CROWDING_CONTEXT_ONLY",
+    "completed_cycle_allowed": false,
+    "herd_weight_change_allowed": false,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false
+  },
+  "next_step": "PRESERVE_13F_PIPELINE_AND_TEST_A_DIFFERENT_ECONOMIC_INFORMATION_FAMILY"
+}

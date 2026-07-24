@@ -1,0 +1,50 @@
+{
+  "protocol_version": "SEC_13F_PHASE_REVIEW_V1",
+  "status": "LOCKED_REPRODUCIBILITY_AND_PROMOTION_REVIEW",
+  "as_of": "2026-07-25",
+  "objective": "Verify the complete 13F research chain without converting a valid data pipeline into unproven trading authority.",
+  "pinned_inputs": [
+    {
+      "path": "data/reports/sec_13f_bulk_v1.json",
+      "sha256": "38c2c45db5ed92dbe7f97ebb167f9ce7dbb6ad0e3c7c13aa9fc04bb4504e4ad9",
+      "required_status": "OFFICIAL_13F_RAW_CORPUS_HASH_LOCKED"
+    },
+    {
+      "path": "data/reports/sec_13f_security_ledger_v1.json",
+      "sha256": "38bf6342a0980e3de35753a20890af3be66d4f5963e63e36d49cd8add52929ae",
+      "required_status": "SECURITY_IDENTIFIER_LEDGER_GATE_PASSED"
+    },
+    {
+      "path": "data/reports/sec_13f_pit_holdings_v1.json",
+      "sha256": "93ebf83131a929b623d3192bee1493fa05c7c919322b1a4426477199a2a572ae",
+      "required_status": "CONSERVATIVE_PIT_HOLDINGS_LEDGER_GATE_PASSED"
+    },
+    {
+      "path": "data/reports/sec_13f_source_review_v1.json",
+      "sha256": "e9c7858222b7a0d916d1dfdf8618739bcf284f778c97e231f50c8785500993e2",
+      "required_status": "STRATIFIED_SEC_SOURCE_REVIEW_GATE_PASSED"
+    },
+    {
+      "path": "data/reports/sec_13f_slow_context_v1.json",
+      "sha256": "01dde777b171307fa9904251f806016e4e4ad95415907ba026a440b3aea78be1",
+      "required_status": "SEC_13F_SLOW_CONTEXT_GATE_PASSED"
+    },
+    {
+      "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json",
+      "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f",
+      "required_status": "SEC_13F_DIRECTION_HYPOTHESIS_REJECTED"
+    },
+    {
+      "path": "data/reports/sec_13f_completed_cycle_gate_v1.json",
+      "sha256": "b23934784967e93a922c7751212bf3b7ff97b3e5883d33d853e8d76b54bb2b0a",
+      "required_status": "SEC_13F_COMPLETED_CYCLE_BLOCKED_UPSTREAM"
+    }
+  ],
+  "required_firewall": {
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "direction_decision": "KEEP_13F_AS_NON_DIRECTIONAL_CONTEXT_ONLY",
+    "cycle_executed": false,
+    "economic_metrics": null
+  }
+}

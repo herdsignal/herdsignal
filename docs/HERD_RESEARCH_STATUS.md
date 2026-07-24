@@ -23,8 +23,9 @@ vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 �
 - 13F 단독 매수·익절, HERD 가중치 변경, 가격 결과 열람, Blind holdout
   접근은 금지했다. 검증 가능한 유일한 증분 비교는
   `Rush Breaking + 기관 군중 맥락` 대 `Rush Breaking 단독`이다.
-- OOS·완결 사이클·비용 스트레스 기준을 수집 전에 잠갔다. 현재 판정은
-  `STRATIFIED_SEC_SOURCE_REVIEW_GATE_PASSED`, 운영 행동 비율은 0%다.
+- OOS·완결 사이클·비용 스트레스 기준을 수집 전에 잠갔다. 최종 판정은
+  `SEC_13F_PHASE_REVIEW_PASSED_WITH_DIRECTION_REJECTED`, 운영 행동
+  비율은 0%다.
 
 ### 공식 13F 원본 해시 고정
 
@@ -146,6 +147,30 @@ vNext·Rush·Form 4·가이던스 방향 가설을 활성 연구 체인에서 �
 - `economic_metrics=null`은 경제 수익이 0이라는 뜻이 아니라 검증 자격이
   없어 계산하지 않았다는 뜻이다. 상태는
   `SEC_13F_COMPLETED_CYCLE_BLOCKED_UPSTREAM`이다.
+
+### 13F 1~9단계 최종 리뷰
+
+- 공식 원본, 종목 식별, PIT 보유, SEC 원문 검수, 느린 군중 맥락,
+  독립 OOS, 완결 사이클 차단까지 7개 고정 산출물의 SHA-256과 상태를
+  하나의 최종 리뷰 계약으로 다시 검증했다.
+- 데이터 파이프라인은 유효하다. 224건 SEC 원문 검수는 224건 모두
+  일치했고, 12.75년·435개 평가 가능 종목의 느린 군중 맥락을 재현할 수
+  있다.
+- 방향 가설은 탈락했다. 증분 ROC AUC는 +0.0112로 +0.02 기준에
+  미달했고, log loss는 0.00143 악화했으며 양의 fold와 cluster bootstrap
+  기준도 통과하지 못했다.
+- 따라서 13F는 `NON_DIRECTIONAL_SLOW_CROWDING_CONTEXT_ONLY`로 보존한다.
+  5% 익절·재진입, HERD 가중치 변경, 운영 행동, Blind holdout은 모두
+  차단한다. 실패한 임계값을 같은 표본에서 다시 맞추지 않는다.
+- 13F 재생성 경로에서 9GB PIT DB 해시 검사를 건너뛰던 개발용 CLI를
+  제거했다. `--verify-only`는 생성된 CSV·JSON 해시만 검증하며, 원자료로
+  다시 생성할 때는 DB 전체 해시를 항상 확인한다.
+- 최종 회귀는 Python 924개, 프론트엔드 Vitest 51개와 lint·production
+  build, 백엔드 Gradle test를 모두 통과했다. Python 테스트는 저장소
+  루트에서 실행해 연구 계약의 루트 상대경로를 보장한다.
+- 로컬 `data/reference` 약 30GB는 SEC·FINRA 원문과 파생 DB이며 Git에는
+  포함되지 않는다. 빈 임시 디렉터리 외에는 재현성 검토 없이 삭제하지
+  않는다.
 
 ## HERD vNext 모델 헌장
 

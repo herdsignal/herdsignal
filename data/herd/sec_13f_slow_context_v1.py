@@ -494,7 +494,6 @@ def generate(
     features_path: Path = FEATURES,
     coverage_path: Path = COVERAGE,
     report_path: Path = REPORT,
-    verify_database_hash: bool = True,
 ) -> dict[str, Any]:
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
     pinned = _verify_pinned_inputs(contract)
@@ -502,7 +501,7 @@ def generate(
     _verify_database(
         database_path,
         pit_report,
-        verify_hash=verify_database_hash,
+        verify_hash=True,
     )
     security_report = pinned[
         "data/reports/sec_13f_security_ledger_v1.json"
@@ -560,17 +559,8 @@ def verify_outputs(report_path: Path = REPORT) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verify-only", action="store_true")
-    parser.add_argument(
-        "--skip-database-hash",
-        action="store_true",
-        help="Only for local reruns after an earlier full hash verification.",
-    )
     args = parser.parse_args()
-    report = (
-        verify_outputs()
-        if args.verify_only
-        else generate(verify_database_hash=not args.skip_database_hash)
-    )
+    report = verify_outputs() if args.verify_only else generate()
     print(json.dumps(report, ensure_ascii=False))
     return 0 if report["status"].endswith("PASSED") else 1
 

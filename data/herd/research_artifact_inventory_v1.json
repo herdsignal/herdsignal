@@ -347,6 +347,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/sec_13f_phase_review_v1.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
       "path": "data/herd/sec_13f_slow_context_v1.json",
       "status": "DATA_PIPELINE"
     },
@@ -1269,6 +1273,10 @@
     {
       "path": "data/reports/sec_13f_crowding_protocol_v1.json",
       "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/sec_13f_phase_review_v1.json",
+      "status": "DIAGNOSTIC"
     },
     {
       "path": "data/reports/sec_13f_pit_holdings_v1.json",
