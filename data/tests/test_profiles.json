@@ -1,0 +1,55 @@
+{
+  "version": "HERD_TEST_PROFILES_V1",
+  "profiles": {
+    "repository": {
+      "description": "Git에 추적된 파일만 필요한 재현 가능한 테스트",
+      "excluded_modules": {
+        "test_sec_guidance_structure_parser_v6.py": "테스트 수집 시 로컬 SEC 원문 index를 여는 통합 검증"
+      },
+      "excluded_tests": {
+        "test_finra_short_interest_incremental_v2.py::test_before_publication_window_does_not_download_new_candidate": "로컬 FINRA 원문 corpus 필요",
+        "test_finra_short_interest_incremental_v2.py::test_due_new_file_failure_is_blocking": "로컬 FINRA 원문 corpus 필요",
+        "test_finra_short_interest_lifecycle_coverage_v5.py::test_lifecycle_coverage_gate_passes_all_required_cohorts": "로컬 FINRA 원문 corpus 필요",
+        "test_herd_state_s1.py::test_contract_is_outcome_blind_and_reference_only": "로컬 가격 snapshot 필요",
+        "test_oos_fold_protocol.py::test_current_snapshot_allows_price_lane_but_blocks_long_business_lane": "로컬 가격 snapshot 필요",
+        "test_oos_fold_protocol.py::test_long_v2_snapshot_unlocks_four_non_overlapping_business_folds": "로컬 가격 snapshot 필요",
+        "test_profit_giveback_economic_v1.py::test_contract_locks_zero_authority_and_completed_cycle": "로컬 가격 snapshot 필요",
+        "test_profit_giveback_policy_v1.py::test_contract_keeps_sparse_action_and_zero_authority": "로컬 가격 snapshot 필요",
+        "test_profit_giveback_policy_v1.py::test_service_policy_requires_recent_rush_and_breaking": "로컬 가격 snapshot 필요",
+        "test_public_leading_data_feasibility_v1.py::test_no_public_source_is_falsely_promoted_to_primary": "로컬 SEC·FINRA 원문 corpus 필요",
+        "test_public_leading_data_feasibility_v1.py::test_finra_is_recent_lane_and_13f_is_slow_context": "로컬 SEC·FINRA 원문 corpus 필요",
+        "test_public_leading_data_feasibility_v1.py::test_paid_surface_and_free_volume_proxy_are_blocked": "로컬 SEC·FINRA 원문 corpus 필요",
+        "test_research_input_contract.py::test_committed_research_inputs_are_pinned_and_fail_closed": "로컬 가격·SEC 입력 manifest 필요",
+        "test_research_input_contract.py::test_contract_rejects_survivorship_safe_claim": "로컬 가격·SEC 입력 manifest 필요",
+        "test_research_input_contract.py::test_contract_rejects_filing_date_instead_of_acceptance_time": "로컬 가격·SEC 입력 manifest 필요",
+        "test_research_input_manifest_v2.py::test_long_public_research_inputs_are_pinned": "로컬 가격·SEC 입력 manifest 필요",
+        "test_research_input_manifest_v2.py::test_manifest_rejects_weaker_fold_requirement": "로컬 가격·SEC 입력 manifest 필요",
+        "test_sec_guidance_atomic_census_v2.py::test_atomic_census_locks_only_source_available_pending_candidates": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_atomic_census_v2.py::test_atomic_census_has_enough_price_blind_pair_potential": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_atomic_census_v2_review.py::test_atomic_census_source_review_is_complete_and_price_blind": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_atomic_census_v2_review.py::test_atomic_census_source_review_passes_locked_precision_gate": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_expansion_corpus_v3.py::test_expansion_universe_is_disjoint_from_original_tickers": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_expansion_corpus_v3.py::test_selection_uses_only_filing_coverage": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_expansion_corpus_v3.py::test_collected_expansion_corpus_is_complete": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_lower_oos_v2.py::test_live_oos_keeps_action_authority_blocked": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_lower_oos_v2_protocol.py::test_all_locked_input_hashes_match": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v10_final_collection.py::test_v10_final_collection_is_outcome_blind_and_bounded": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v10_final_expansion.py::test_v10_final_expansion_is_unseen_and_deterministic": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v10_final_expansion.py::test_v10_final_expansion_uses_plain_exchange_tickers": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v10_final_validation.py::test_v10_final_sample_is_fresh_locked_and_outcome_blind": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v4_issuer_expansion.py::test_expansion_selection_is_issuer_independent": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v4_issuer_expansion.py::test_collected_v4_expansion_corpus_is_complete": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v5_issuer_expansion.py::test_v5_expansion_exhausts_unseen_local_pool_without_outcome_selection": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v6_issuer_expansion.py::test_v6_expansion_is_new_issuer_accession_and_outcome_blind": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v6_issuer_expansion.py::test_supplement_uses_only_remaining_locked_metadata_issuers": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v6_second_third_wave.py::test_second_wave_is_outcome_blind_and_unreviewed": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v7_independent_universe.py::test_v7_filing_selection_is_capped_and_outcome_blind": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v8_independent_validation.py::test_v8_second_wave_filings_do_not_overlap_v7": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v8_independent_validation.py::test_v8_completion_exhausts_remaining_population_without_labels": "로컬 SEC 원문 corpus 필요",
+        "test_sec_guidance_v9_historical_filing_selection.py::test_v9_historical_selection_is_time_disjoint_and_outcome_blind": "로컬 SEC 원문 corpus 필요",
+        "test_sec_identifier_gap_queue_v1.py::test_gap_queue_is_deterministic_and_hash_locked": "로컬 SEC 식별자 원장 필요",
+        "test_unified_pit_shadow_panel_v1.py::test_panel_is_deterministic": "로컬 SEC·FINRA 원문 corpus 필요"
+      }
+    }
+  }
+}

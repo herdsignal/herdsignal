@@ -27,6 +27,6 @@ fi
 "$PYTHON" "$ROOT_DIR/data/herd/research_artifact_catalog.py"
 
 echo "[6/6] Python data-engine tests"
-(cd "$ROOT_DIR" && "$PYTHON" -m pytest -q)
+(cd "$ROOT_DIR" && HERD_TEST_PROFILE="${HERD_TEST_PROFILE:-full}" "$PYTHON" -m pytest -q)
 
 echo "All verification checks passed."

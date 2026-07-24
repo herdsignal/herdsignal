@@ -244,6 +244,19 @@ data/.venv/bin/python -m pytest -q
 ./scripts/audit-storage.sh
 ```
 
+Python 테스트는 기본적으로 로컬 불변 SEC·FINRA 원문과 가격 스냅샷까지 검사하는
+`full` 프로필입니다. GitHub Actions와 같은 깨끗한 체크아웃에서는 Git에 추적된
+파일만 사용하는 프로필을 실행합니다.
+
+```bash
+HERD_TEST_PROFILE=repository data/.venv/bin/python -m pytest -q
+```
+
+제외되는 테스트 모듈과 이유는
+[`data/tests/test_profiles.json`](data/tests/test_profiles.json)에 명시합니다.
+로컬 원문이 있는 개발 환경에서는 `./scripts/verify.sh`가 계속 전체 프로필을
+검증합니다.
+
 ## 주요 API
 
 | Method | URL                                     | 설명                       |
