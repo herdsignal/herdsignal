@@ -6,6 +6,7 @@ import com.herdsignal.dto.WatchlistAddRequest;
 import com.herdsignal.dto.WatchlistHerdResponse;
 import com.herdsignal.service.WatchlistService;
 import com.herdsignal.service.CurrentUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +54,7 @@ public class WatchlistController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> addStock(
-            @RequestBody WatchlistAddRequest request) {
+            @Valid @RequestBody WatchlistAddRequest request) {
         watchlistService.addStock(currentUserService.requireUserId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null));
     }

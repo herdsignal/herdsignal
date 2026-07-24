@@ -14,6 +14,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -27,6 +33,9 @@ public class SecurityConfig {
         @Value("${herdsignal.auth.frontend-url:http://localhost:5173}")
         private String frontendUrl;
 
+        @Value("${herdsignal.auth.allowed-origins:http://localhost:5173}")
+        private String allowedOrigins;
+
         @Bean
         @Order(1)
         SecurityFilterChain oauthFilterChain(HttpSecurity http) throws Exception {
@@ -35,6 +44,7 @@ public class SecurityConfig {
             csrfHandler.setCsrfRequestAttributeName(null);
 
             http
+                    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .csrf(csrf -> csrf
                             .csrfTokenRepository(csrfRepository)
                             .csrfTokenRequestHandler(csrfHandler))
@@ -63,6 +73,27 @@ public class SecurityConfig {
                             .authenticationEntryPoint((request, response, exception) ->
                                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED)));
             return http.build();
+        }
+
+        private CorsConfigurationSource corsConfigurationSource() {
+            List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                    .map(String::trim)
+                    .filter(origin -> !origin.isBlank())
+                    .toList();
+            if (origins.isEmpty() || origins.contains("*")) {
+                throw new IllegalStateException(
+                        "인증 쿠키를 사용하는 CORS origin은 명시적인 주소여야 합니다.");
+            }
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOrigins(origins);
+            configuration.setAllowedMethods(List.of(
+                    "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+            configuration.setAllowedHeaders(List.of("*"));
+            configuration.setAllowCredentials(true);
+            configuration.setMaxAge(3600L);
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/api/**", configuration);
+            return source;
         }
     }
 

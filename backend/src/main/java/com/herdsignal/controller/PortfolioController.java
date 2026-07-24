@@ -5,6 +5,7 @@ import com.herdsignal.dto.*;
 import com.herdsignal.service.PortfolioService;
 import com.herdsignal.service.CurrentUserService;
 import com.herdsignal.service.InvestorProfileService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class PortfolioController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> addStock(
-            @RequestBody PortfolioAddRequest request) {
+            @Valid @RequestBody PortfolioAddRequest request) {
         portfolioService.addStock(currentUserService.requireUserId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null));
     }
@@ -101,7 +102,7 @@ public class PortfolioController {
      */
     @PutMapping("/cash")
     public ResponseEntity<ApiResponse<CashBalanceResponse>> updateCashBalance(
-            @RequestBody CashBalanceRequest request) {
+            @Valid @RequestBody CashBalanceRequest request) {
         CashBalanceResponse response =
                 portfolioService.updateCashBalance(currentUserService.requireUserId(), request);
         return ResponseEntity.ok(ApiResponse.success(response));
@@ -115,7 +116,7 @@ public class PortfolioController {
     @PatchMapping("/{ticker}/avg-price")
     public ResponseEntity<ApiResponse<Void>> updateAvgPrice(
             @PathVariable String ticker,
-            @RequestBody AvgPriceUpdateRequest request) {
+            @Valid @RequestBody AvgPriceUpdateRequest request) {
         portfolioService.updateAvgPrice(currentUserService.requireUserId(), ticker, request);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -123,7 +124,7 @@ public class PortfolioController {
     @PatchMapping("/{ticker}/target-weight")
     public ResponseEntity<ApiResponse<Void>> updateTargetWeight(
             @PathVariable String ticker,
-            @RequestBody TargetWeightRequest request) {
+            @Valid @RequestBody TargetWeightRequest request) {
         portfolioService.updateTargetWeight(
                 currentUserService.requireUserId(), ticker, request);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -138,7 +139,7 @@ public class PortfolioController {
 
     @PutMapping("/rebalance-settings")
     public ResponseEntity<ApiResponse<RebalanceSettingsResponse>> updateRebalanceSettings(
-            @RequestBody RebalanceSettingsRequest request) {
+            @Valid @RequestBody RebalanceSettingsRequest request) {
         return ResponseEntity.ok(ApiResponse.success(
                 investorProfileService.updateRebalanceSettings(
                         currentUserService.requireUserId(), request)));

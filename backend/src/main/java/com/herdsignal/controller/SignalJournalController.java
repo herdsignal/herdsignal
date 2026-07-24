@@ -5,6 +5,7 @@ import com.herdsignal.dto.SignalJournalRequest;
 import com.herdsignal.dto.SignalJournalResponse;
 import com.herdsignal.service.SignalJournalService;
 import com.herdsignal.service.CurrentUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class SignalJournalController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<SignalJournalResponse>> createJournal(
-            @RequestBody SignalJournalRequest request) {
+            @Valid @RequestBody SignalJournalRequest request) {
         SignalJournalResponse response =
                 signalJournalService.createJournal(currentUserService.requireUserId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));

@@ -5,6 +5,7 @@ import com.herdsignal.dto.InvestorProfileRequest;
 import com.herdsignal.dto.InvestorProfileResponse;
 import com.herdsignal.service.InvestorProfileService;
 import com.herdsignal.service.CurrentUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ public class InvestorProfileController {
 
     @PutMapping
     public ResponseEntity<ApiResponse<InvestorProfileResponse>> updateProfile(
-            @RequestBody InvestorProfileRequest request) {
+            @Valid @RequestBody InvestorProfileRequest request) {
         return ResponseEntity.ok(ApiResponse.success(service.update(currentUserService.requireUserId(), request)));
     }
 }

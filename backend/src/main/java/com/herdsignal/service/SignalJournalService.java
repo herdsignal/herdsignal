@@ -108,7 +108,10 @@ public class SignalJournalService {
         if (value == null) return null;
         String trimmed = value.trim();
         if (trimmed.isEmpty()) return null;
-        return trimmed.length() > maxLength ? trimmed.substring(0, maxLength) : trimmed;
+        if (trimmed.length() > maxLength) {
+            throw new IllegalArgumentException("텍스트는 " + maxLength + "자 이하여야 합니다.");
+        }
+        return trimmed;
     }
 
     private BigDecimal latestClose(String ticker) {
