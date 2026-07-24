@@ -15,6 +15,19 @@ class SchedulerComponentsTest(unittest.TestCase):
         self.assertEqual(success, ["AAPL", "NVDA"])
         self.assertEqual(failed, ["BAD"])
 
+    def test_ticker_execution_exposes_only_successfully_saved_frames(self):
+        collected = []
+        success, failed = execute_tickers(
+            ["AAPL", "BAD"],
+            collect=lambda ticker: f"frame:{ticker}",
+            calculate=lambda ticker, frame: {"score": 50, "stage": "Calm"},
+            save=lambda ticker, result, frame: ticker != "BAD",
+            on_success=lambda ticker, frame: collected.append((ticker, frame)),
+        )
+        self.assertEqual(success, ["AAPL"])
+        self.assertEqual(failed, ["BAD"])
+        self.assertEqual(collected, [("AAPL", "frame:AAPL")])
+
     def test_run_recorder_truncates_error_and_serializes_failures(self):
         row = SimpleNamespace()
         session = MagicMock()

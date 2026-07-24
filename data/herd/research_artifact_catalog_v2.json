@@ -60,6 +60,7 @@
       "data/herd/personal_mvp_promotion_v1.json",
       "data/reports/personal_mvp_promotion_v1.json",
       "data/herd/vnext_prospective_shadow_protocol_v1.json",
+      "docs/HERD_S1_PRODUCTIZATION_PLAN.md",
       "docs/HERD_RESEARCH_STATUS.md",
       "docs/HERD_REPRODUCIBLE_RESEARCH.md"
     ],

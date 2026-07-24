@@ -1,0 +1,42 @@
+{
+  "contract_version": "HERD_OBSERVATION_S1_SERVICE_V1",
+  "status": "LOCKED_STATE_ONLY_SERVICE_CONTRACT",
+  "state_contract": {
+    "path": "data/herd/herd_state_s1.json",
+    "sha256": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489",
+    "required_version": "HERD_STATE_S1"
+  },
+  "transition_contract": {
+    "path": "data/herd/herd_transition_s1.json",
+    "sha256": "cfcb7f805bb04f084f891cc54d95112aa36d5f0609c6922e244b0a8da4e09d9b",
+    "required_version": "HERD_TRANSITION_S1"
+  },
+  "reference_universe": {
+    "independent_universe_path": "data/reports/independent_universe_v1.csv",
+    "independent_universe_sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8",
+    "include_only_independent_eligible": true,
+    "include_primary_validation_equities": true,
+    "expected_equities": 439,
+    "minimum_total_coverage_fraction": 0.9,
+    "minimum_sector_peer_count": 3
+  },
+  "market_observation": {
+    "public_ticker": "SPY",
+    "label": "S&P 500 군중 상태",
+    "source": "FAMILY_MEDIAN_ACROSS_FIXED_REFERENCE_EQUITIES",
+    "aggregation": "MEDIAN_WITHIN_FAMILY_THEN_EQUAL_WEIGHT_MEAN",
+    "minimum_weekly_coverage_fraction": 0.9,
+    "claim": "CROWD_STATE_NOT_SPY_PRICE_SCORE"
+  },
+  "runtime_output": "data/runtime/herd_observation_s1_latest.json",
+  "claim_boundary": {
+    "state_display": true,
+    "transition_display": true,
+    "direction_prediction": false,
+    "buy_or_profit_take_authority": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

@@ -19,6 +19,13 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                 side_effect=lambda ticker, *_: ticker == "AAPL",
             ),
             patch.object(herd_scheduler, "calculate_portfolio_value", return_value={"stocks": []}),
+            patch.object(
+                herd_scheduler,
+                "_build_and_write_observation",
+                return_value={
+                    "records": {"SPY": {"asOfDate": "2026-07-24"}}
+                },
+            ),
             patch.object(herd_scheduler, "_finish_scheduler_run") as finish,
             patch.object(herd_scheduler, "_notify_scheduler_result") as notify,
         ):
@@ -29,6 +36,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             "total": 2,
             "success": ["AAPL"],
             "failed": ["SNDK"],
+            "observation": "SUCCESS",
         })
         finish.assert_called_once_with(
             7,

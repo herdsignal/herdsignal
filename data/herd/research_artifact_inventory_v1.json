@@ -2253,6 +2253,10 @@
     {
       "path": "docs/HERD_RUSH_TURNING_POINT_STUDY.md",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_S1_PRODUCTIZATION_PLAN.md",
+      "status": "ACTIVE"
     }
   ]
 }

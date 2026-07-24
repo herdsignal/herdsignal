@@ -13,6 +13,7 @@ def execute_tickers(
     collect: Callable,
     calculate: Callable,
     save: Callable,
+    on_success: Callable | None = None,
 ) -> tuple[list[str], list[str]]:
     success: list[str] = []
     failed: list[str] = []
@@ -24,6 +25,8 @@ def execute_tickers(
             result = calculate(ticker, frame)
             if save(ticker, result, frame):
                 success.append(ticker)
+                if on_success is not None:
+                    on_success(ticker, frame)
                 logger.info(
                     "[Tier1][%s] 완료 score=%.2f stage=%s",
                     ticker, result["score"], result["stage"],

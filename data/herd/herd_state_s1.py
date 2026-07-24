@@ -242,8 +242,13 @@ def build_state_panel(
     mapping: dict[str, str],
     contract: dict[str, Any],
     universe_role: str,
+    *,
+    peer_mapping: dict[str, str] | None = None,
 ) -> pd.DataFrame:
-    breadth = _peer_breadth(frames, mapping)
+    # 운영 화면에서 포트폴리오 종목이 추가·삭제될 때 참여도 기준까지
+    # 흔들리지 않도록 출력 대상과 고정 peer universe를 분리할 수 있다.
+    # 연구 재현 경로는 인자를 생략하므로 기존 결과가 그대로 유지된다.
+    breadth = _peer_breadth(frames, peer_mapping or mapping)
     parts: list[pd.DataFrame] = []
     for ticker, sector in sorted(mapping.items()):
         scored = _component_scores(

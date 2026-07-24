@@ -50,10 +50,17 @@ from scheduler.on_demand import (                                             # 
 from scheduler.run_history import SchedulerRunRecorder                          # noqa: E402
 from scheduler.ticker_job import execute_tickers                                # noqa: E402
 from scheduler.realtime_portfolio import calculate_current_portfolio as value_portfolio  # noqa: E402
+from scheduler.observation_s1 import (                                      # noqa: E402
+    build_observation_bundle,
+    required_collection_tickers,
+    sector_etf_for_name,
+    write_observation_bundle,
+)
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
 from init_db import (                                                   # noqa: E402
+    Stock,
     UserPortfolio,
     UserWatchlist,
 )
@@ -122,6 +129,10 @@ def _fetch_tier1_tickers() -> list[str]:
 
     # SPY는 spy_benchmark로 이미 포함되지만 명시적으로 보장
     all_tickers = portfolio_tickers | watchlist_tickers | {"SPY"}
+    # State S1의 참여도는 사용자 보유 종목 수가 아니라 고정 시장 peer
+    # universe로 계산해야 하므로, 관찰 계약의 기준 종목과 섹터 ETF를
+    # 매일 동일하게 수집한다.
+    all_tickers |= required_collection_tickers()
     tickers = sorted(all_tickers)
 
     logger.info(
@@ -147,6 +158,29 @@ def _finish_scheduler_run(
     SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).finish(
         run_id, status, total_count, success_count, failed_tickers, error_message,
     )
+
+
+def _fetch_sector_overrides() -> dict[str, str]:
+    """고정 연구 universe 밖의 보유 종목을 명시적인 섹터 ETF에 연결한다."""
+    with _get_session_factory()() as session:
+        return {
+            row.ticker: sector
+            for row in session.query(Stock).all()
+            if (sector := sector_etf_for_name(row.sector)) is not None
+        }
+
+
+def _build_and_write_observation(
+    observation_frames: dict,
+    success_list: list[str],
+) -> dict:
+    bundle = build_observation_bundle(
+        observation_frames,
+        target_tickers=set(success_list),
+        sector_overrides=_fetch_sector_overrides(),
+    )
+    write_observation_bundle(bundle)
+    return bundle
 
 
 def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
@@ -182,9 +216,37 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
 
     # ── 2. 종목별 순차 처리 ────────────────────
     total = len(tickers)
-    success_list, failed_list = execute_tickers(tickers, collect, run, save_herd_result)
+    observation_frames: dict = {}
+    success_list, failed_list = execute_tickers(
+        tickers,
+        collect,
+        run,
+        save_herd_result,
+        on_success=lambda ticker, frame: observation_frames.__setitem__(
+            ticker, frame
+        ),
+    )
 
-    # ── 3. 전체 결과 요약 ─────────────────────
+    # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────
+    observation_error: str | None = None
+    try:
+        bundle = _build_and_write_observation(
+            observation_frames, success_list
+        )
+        logger.info(
+            "[Tier1] State S1 관찰 번들 생성 완료 — %s종목, 기준 %s",
+            len(bundle["records"]),
+            bundle["records"]["SPY"]["asOfDate"],
+        )
+    except Exception as exc:
+        observation_error = str(exc)
+        logger.error(
+            "[Tier1] State S1 관찰 번들 생성 실패: %s",
+            exc,
+            exc_info=True,
+        )
+
+    # ── 4. 전체 결과 요약 ─────────────────────
     logger.info("━" * 60)
     logger.info(
         f"[Tier1] 잡 완료 | 전체 {total}개 | "
@@ -196,7 +258,7 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         logger.error(f"[Tier1]   ❌ 실패: {failed_list}")
     logger.info("━" * 60)
 
-    # ── 4. 포트폴리오 스냅샷 저장 (local 사용자) ───────────────────
+    # ── 5. 포트폴리오 스냅샷 저장 (local 사용자) ───────────────────
     # HERD 잡 완료 후 오늘의 포트폴리오 평가금액을 portfolio_history에 기록
     snapshot_error: str | None = None
     try:
@@ -215,7 +277,12 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         logger.error(f"[Tier1] 포트폴리오 스냅샷 저장 실패: {e}", exc_info=True)
         snapshot_error = str(e)
 
-    if failed_list or snapshot_error:
+    combined_error = "; ".join(
+        item
+        for item in (observation_error, snapshot_error)
+        if item
+    ) or None
+    if failed_list or combined_error:
         status = "FAILED" if total > 0 and not success_list else "PARTIAL_FAILURE"
     else:
         status = "SUCCESS"
@@ -225,13 +292,16 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         total_count=total,
         success_count=len(success_list),
         failed_tickers=failed_list,
-        error_message=snapshot_error,
+        error_message=combined_error,
     )
     result = {
         "status": status,
         "total": total,
         "success": success_list,
         "failed": failed_list,
+        "observation": (
+            "FAILED" if observation_error else "SUCCESS"
+        ),
     }
     _notify_scheduler_result(result)
     return result
