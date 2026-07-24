@@ -15,7 +15,8 @@ import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class DataFreshnessService {
             HerdScoreRepository herdScoreRepository,
             ObjectMapper objectMapper) {
         this(schedulerRunRepository, dailyPriceRepository, herdScoreRepository, objectMapper,
-                Clock.system(ZoneId.of("Asia/Seoul")));
+                Clock.systemUTC());
     }
 
     DataFreshnessService(
@@ -64,7 +65,18 @@ public class DataFreshnessService {
 
         Integer priceAge = businessDaysBetween(latestPriceDate, today);
         Integer scoreAge = businessDaysBetween(latestScoreDate, today);
-        String status = determineStatus(latestRun, priceAge, scoreAge);
+        int expectedTickerCount = latestRun != null ? valueOrZero(latestRun.getTotalCount()) : 0;
+        int freshPriceTickerCount = countPriceTickers(latestPriceDate);
+        int freshScoreTickerCount = countScoreTickers(latestScoreDate);
+        int missingPriceTickerCount = missingCount(expectedTickerCount, freshPriceTickerCount);
+        int missingScoreTickerCount = missingCount(expectedTickerCount, freshScoreTickerCount);
+        String status = determineStatus(
+                latestRun,
+                priceAge,
+                scoreAge,
+                missingPriceTickerCount,
+                missingScoreTickerCount
+        );
 
         return new DataFreshnessResponse(
                 status,
@@ -73,20 +85,40 @@ public class DataFreshnessService {
                 latestScoreDate,
                 priceAge,
                 scoreAge,
+                expectedTickerCount,
+                freshPriceTickerCount,
+                freshScoreTickerCount,
+                missingPriceTickerCount,
+                missingScoreTickerCount,
                 toSummary(latestRun)
         );
     }
 
-    private String determineStatus(SchedulerRun run, Integer priceAge, Integer scoreAge) {
+    private String determineStatus(
+            SchedulerRun run,
+            Integer priceAge,
+            Integer scoreAge,
+            int missingPriceTickerCount,
+            int missingScoreTickerCount
+    ) {
         if (run != null && "RUNNING".equals(run.getStatus())) {
-            LocalDateTime staleBoundary = LocalDateTime.now(clock).minusHours(MAX_RUNNING_HOURS);
+            LocalDateTime staleBoundary = LocalDateTime.ofInstant(
+                    clock.instant().minusSeconds(MAX_RUNNING_HOURS * 3600L),
+                    ZoneOffset.UTC
+            );
             return run.getStartedAt().isBefore(staleBoundary) ? "FAILED" : "RUNNING";
         }
         if (run != null && "FAILED".equals(run.getStatus())) return "FAILED";
         if (priceAge == null || scoreAge == null) return "NO_DATA";
         int maxAge = Math.max(priceAge, scoreAge);
         if (maxAge > 2) return "STALE";
-        if (maxAge > 1 || run == null || !"SUCCESS".equals(run.getStatus())) return "WARNING";
+        if (maxAge > 1
+                || missingPriceTickerCount > 0
+                || missingScoreTickerCount > 0
+                || run == null
+                || !"SUCCESS".equals(run.getStatus())) {
+            return "WARNING";
+        }
         return "FRESH";
     }
 
@@ -106,8 +138,8 @@ public class DataFreshnessService {
         return new DataFreshnessResponse.SchedulerRunSummary(
                 run.getStatus(),
                 run.getTriggerType(),
-                run.getStartedAt(),
-                run.getFinishedAt(),
+                asUtc(run.getStartedAt()),
+                asUtc(run.getFinishedAt()),
                 valueOrZero(run.getTotalCount()),
                 valueOrZero(run.getSuccessCount()),
                 valueOrZero(run.getFailedCount()),
@@ -127,6 +159,26 @@ public class DataFreshnessService {
 
     private int valueOrZero(Integer value) {
         return value == null ? 0 : value;
+    }
+
+    private int countPriceTickers(LocalDate latestPriceDate) {
+        return latestPriceDate == null
+                ? 0
+                : Math.toIntExact(dailyPriceRepository.countDistinctTickersByPriceDate(latestPriceDate));
+    }
+
+    private int countScoreTickers(LocalDate latestScoreDate) {
+        return latestScoreDate == null
+                ? 0
+                : Math.toIntExact(herdScoreRepository.countDistinctTickersByScoreDate(latestScoreDate));
+    }
+
+    private int missingCount(int expected, int actual) {
+        return Math.max(0, expected - actual);
+    }
+
+    private OffsetDateTime asUtc(LocalDateTime value) {
+        return value == null ? null : value.atOffset(ZoneOffset.UTC);
     }
 
     static Integer businessDaysBetween(LocalDate dataDate, LocalDate today) {

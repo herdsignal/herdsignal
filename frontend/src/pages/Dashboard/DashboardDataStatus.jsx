@@ -14,7 +14,8 @@ const STATUS_LABEL = {
 
 function formatRunTime(value) {
   if (!value) return null
-  const date = new Date(`${value}Z`)
+  const hasOffset = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value)
+  const date = new Date(hasOffset ? value : `${value}Z`)
   if (Number.isNaN(date.getTime())) return null
   return date.toLocaleString('ko-KR', {
     month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit',
@@ -35,6 +36,10 @@ export default function DashboardDataStatus({ status, failed }) {
   const tone = styles[`dataStatus${status.status}`] ?? styles.dataStatusUnknown
   const run = status.latestRun
   const runTime = formatRunTime(run?.finishedAt ?? run?.startedAt)
+  const missingCount = Math.max(
+    Number(status.missingPriceTickerCount ?? 0),
+    Number(status.missingScoreTickerCount ?? 0),
+  )
 
   return (
     <div className={`${styles.dataStatusBar} ${tone}`} role="status">
@@ -48,6 +53,7 @@ export default function DashboardDataStatus({ status, failed }) {
         <em>
           {run.successCount}/{run.totalCount} 성공
           {run.failedCount > 0 && ` · 실패 ${run.failedCount}개`}
+          {missingCount > 0 && ` · 최신 기준 누락 ${missingCount}개`}
           {run.failedTickers?.length > 0 && ` (${run.failedTickers.join(', ')})`}
         </em>
       )}

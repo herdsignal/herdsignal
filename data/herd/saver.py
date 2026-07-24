@@ -259,7 +259,10 @@ def save_herd_result(ticker: str, herd_result: dict, df: pd.DataFrame) -> bool:
     Returns:
         저장 성공 여부 (True / False)
     """
-    score_date = date.today()
+    # 계산 실행일이 아니라 실제 계산에 사용한 마지막 유효 미국 거래일을 쓴다.
+    # 미국 장 마감 후 KST에서 실행하면 달력상 다음 날이므로 date.today()는
+    # 가격과 HERD의 기준일을 하루 어긋나게 만든다.
+    _, score_date = _latest_valid_price(df)
     logger.info(f"[{ticker}] ── DB 저장 시작  날짜={score_date} ──")
     indicators = dict(herd_result["indicators"])
     indicators["herd_base"] = herd_result.get("herd_base", herd_result["score"])

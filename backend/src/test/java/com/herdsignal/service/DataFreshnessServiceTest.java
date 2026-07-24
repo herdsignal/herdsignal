@@ -13,7 +13,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +31,7 @@ class DataFreshnessServiceTest {
         schedulerRunRepository = mock(SchedulerRunRepository.class);
         dailyPriceRepository = mock(DailyPriceRepository.class);
         herdScoreRepository = mock(HerdScoreRepository.class);
-        Clock clock = Clock.fixed(Instant.parse("2026-07-15T03:00:00Z"), ZoneId.of("Asia/Seoul"));
+        Clock clock = Clock.fixed(Instant.parse("2026-07-15T03:00:00Z"), ZoneOffset.UTC);
         service = new DataFreshnessService(
                 schedulerRunRepository,
                 dailyPriceRepository,
@@ -46,6 +46,7 @@ class DataFreshnessServiceTest {
         SchedulerRun successfulRun = run("SUCCESS");
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
         when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(successfulRun));
 
@@ -61,6 +62,7 @@ class DataFreshnessServiceTest {
         SchedulerRun partialRun = run("PARTIAL_FAILURE");
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
         when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(partialRun));
 
@@ -80,6 +82,7 @@ class DataFreshnessServiceTest {
         SchedulerRun successfulRun = run("SUCCESS");
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 9)));
         when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 9)));
+        mockCoverage(LocalDate.of(2026, 7, 9), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(successfulRun));
 
@@ -89,9 +92,10 @@ class DataFreshnessServiceTest {
     @Test
     void returnsFailedWhenSchedulerRunIsStuck() {
         SchedulerRun running = run("RUNNING");
-        when(running.getStartedAt()).thenReturn(LocalDateTime.of(2026, 7, 15, 9, 0));
+        when(running.getStartedAt()).thenReturn(LocalDateTime.of(2026, 7, 15, 0, 0));
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
         when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(running));
 
@@ -103,10 +107,49 @@ class DataFreshnessServiceTest {
         SchedulerRun failed = run("FAILED");
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
         when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(failed));
 
         assertThat(service.getStatus().status()).isEqualTo("FAILED");
+    }
+
+    @Test
+    void returnsWarningWhenOnlySomeTickersAreFresh() {
+        SchedulerRun successfulRun = run("SUCCESS");
+        LocalDate latestDate = LocalDate.of(2026, 7, 14);
+        when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(latestDate));
+        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(latestDate));
+        mockCoverage(latestDate, 9);
+        when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
+                .thenReturn(Optional.of(successfulRun));
+
+        DataFreshnessResponse response = service.getStatus();
+
+        assertThat(response.status()).isEqualTo("WARNING");
+        assertThat(response.missingPriceTickerCount()).isEqualTo(3);
+        assertThat(response.missingScoreTickerCount()).isEqualTo(3);
+    }
+
+    @Test
+    void treatsStoredSchedulerTimesAsUtc() {
+        SchedulerRun running = run("RUNNING");
+        when(running.getStartedAt()).thenReturn(LocalDateTime.of(2026, 7, 15, 2, 30));
+        when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockCoverage(LocalDate.of(2026, 7, 14), 12);
+        when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
+                .thenReturn(Optional.of(running));
+
+        DataFreshnessResponse response = service.getStatus();
+
+        assertThat(response.status()).isEqualTo("RUNNING");
+        assertThat(response.latestRun().startedAt().getOffset()).isEqualTo(ZoneOffset.UTC);
+    }
+
+    private void mockCoverage(LocalDate date, long count) {
+        when(dailyPriceRepository.countDistinctTickersByPriceDate(date)).thenReturn(count);
+        when(herdScoreRepository.countDistinctTickersByScoreDate(date)).thenReturn(count);
     }
 
     private SchedulerRun run(String status) {

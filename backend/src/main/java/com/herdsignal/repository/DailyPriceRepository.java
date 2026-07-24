@@ -18,6 +18,9 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
     @Query("SELECT MAX(d.priceDate) FROM DailyPrice d")
     Optional<LocalDate> findLatestPriceDate();
 
+    @Query("SELECT COUNT(DISTINCT d.ticker) FROM DailyPrice d WHERE d.priceDate = :priceDate")
+    long countDistinctTickersByPriceDate(@Param("priceDate") LocalDate priceDate);
+
     /**
      * 특정 종목의 최신 2일치 종가 조회 (오늘 + 전일).
      * 현재가 + 일일 등락률 계산에 사용.

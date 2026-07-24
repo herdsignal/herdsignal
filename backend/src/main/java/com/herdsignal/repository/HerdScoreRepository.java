@@ -18,6 +18,9 @@ public interface HerdScoreRepository extends JpaRepository<HerdScore, Long> {
     @Query("SELECT MAX(h.scoreDate) FROM HerdScore h")
     Optional<LocalDate> findLatestScoreDate();
 
+    @Query("SELECT COUNT(DISTINCT h.ticker) FROM HerdScore h WHERE h.scoreDate = :scoreDate")
+    long countDistinctTickersByScoreDate(@Param("scoreDate") LocalDate scoreDate);
+
     /** 티커의 가장 최신 날짜 HERD 점수 1건 조회 */
     Optional<HerdScore> findTopByTickerOrderByScoreDateDesc(String ticker);
 
