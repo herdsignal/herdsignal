@@ -5,11 +5,8 @@ import {
   getPortfolioRealtime,
   getPortfolioHerd,
   getStockHerd,
-  getPortfolioHistory,
   getCashBalance,
   updateCashBalance,
-  getSignalJournal,
-  getDataStatus,
   removeFromPortfolio,
   updateTargetWeight,
 } from '../../api/herdApi'
@@ -20,7 +17,6 @@ import {
   portfolioRiskWarnings,
   targetWeightsFromPortfolio,
 } from '../../utils/portfolioTools'
-import { summarizeSignalJournal } from '../../utils/signalJournal'
 import { useAuth } from '../../auth/AuthContext'
 import {
   API_HOST,
@@ -29,7 +25,6 @@ import {
   CACHE_KEY_HERD_TIME,
   CACHE_KEY_TIME,
   CACHE_KEY_PORTFOLIO_SORT,
-  ASSET_HISTORY_PERIODS,
   readUserCache,
   writeUserCache,
   userCacheKey,
@@ -42,12 +37,10 @@ import {
   queuePriority,
   sortPortfolioItems,
   refreshResultText,
-  fmtAxisDate,
-  normalizeHistoryPoint,
-  currentAssetPoint,
-  mergeCurrentAssetPoint,
 } from './dashboardModel'
 import { useDashboardMarketData } from './useDashboardMarketData'
+import { useDashboardAssetHistory } from './useDashboardAssetHistory'
+import { useDashboardSupportingData } from './useDashboardSupportingData'
 
 export function useDashboardData() {
 
@@ -84,19 +77,37 @@ export function useDashboardData() {
   const [cashBalance,    setCashBalance]    = useState(0)
   const [cashDraft,      setCashDraft]      = useState('')
   const [cashSaving,     setCashSaving]     = useState(false)
-  const [assetPanelOpen, setAssetPanelOpen] = useState(false)
-  const [assetHistoryPeriod, setAssetHistoryPeriod] = useState('year')
-  const [assetHistory,   setAssetHistory]   = useState([])
-  const [assetHistoryLoading, setAssetHistoryLoading] = useState(false)
-  const [assetHistoryError, setAssetHistoryError] = useState(null)
-  const [signalLogs,     setSignalLogs]     = useState([])
-  const [dataStatus,     setDataStatus]     = useState(null)
-  const [dataStatusError, setDataStatusError] = useState(false)
   const refreshNoticeTimer = useRef(null)
   const targetWeightTimers = useRef({})
-  const assetHistoryRequest = useRef(0)
   const summaryRequest = useRef(0)
   const lastSummaryValidation = useRef(0)
+  const {
+    dataStatus,
+    dataStatusError,
+    fetchDataStatus,
+    signalJournalSummary,
+    recentSignalLogs,
+  } = useDashboardSupportingData()
+  const assetHistoryState = useDashboardAssetHistory(summary, cashBalance)
+  const {
+    assetPanelOpen,
+    setAssetPanelOpen,
+    assetHistoryPeriod,
+    setAssetHistoryPeriod,
+    assetHistoryLoading,
+    assetHistoryError,
+    fetchAssetHistory,
+    assetChartHistory,
+    assetLatest,
+    assetFirst,
+    assetStartValue,
+    totalFlowPct,
+    investedChangePct,
+    assetDrawdownPct,
+    assetYDomain,
+    assetPeriodLabel,
+    assetStartLabel,
+  } = assetHistoryState
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -121,16 +132,6 @@ export function useDashboardData() {
       return false
     }
   }, [userId])
-
-  const fetchDataStatus = useCallback(async () => {
-    try {
-      const response = await getDataStatus()
-      setDataStatus(response.data?.data ?? null)
-      setDataStatusError(false)
-    } catch {
-      setDataStatusError(true)
-    }
-  }, [])
 
   /* ── 포트폴리오 데이터 로딩 (캐시 우선) ── */
   const fetchData = useCallback(async () => {
@@ -212,29 +213,7 @@ export function useDashboardData() {
     }
   }, [userId, revalidatePortfolioSummary])
 
-  const fetchAssetHistory = useCallback(async () => {
-    const requestId = ++assetHistoryRequest.current
-    setAssetHistoryLoading(true)
-    setAssetHistoryError(null)
-    try {
-      const res = await getPortfolioHistory(assetHistoryPeriod)
-      const points = (res.data?.data?.points ?? []).map(normalizeHistoryPoint)
-      if (requestId === assetHistoryRequest.current) setAssetHistory(points)
-    } catch {
-      if (requestId === assetHistoryRequest.current) {
-        setAssetHistoryError('자산 히스토리를 불러올 수 없습니다.')
-      }
-    } finally {
-      if (requestId === assetHistoryRequest.current) setAssetHistoryLoading(false)
-    }
-  }, [assetHistoryPeriod])
-
-  useEffect(() => {
-    if (assetPanelOpen) fetchAssetHistory()
-  }, [assetPanelOpen, fetchAssetHistory])
-
   useEffect(() => { fetchData() }, [fetchData])
-  useEffect(() => { fetchDataStatus() }, [fetchDataStatus])
 
   useEffect(() => {
     const revalidateOnReturn = () => {
@@ -250,19 +229,6 @@ export function useDashboardData() {
       document.removeEventListener('visibilitychange', revalidateOnReturn)
     }
   }, [revalidatePortfolioSummary, fetchDataStatus])
-
-  useEffect(() => {
-    const syncSignalLogs = () => {
-      getSignalJournal()
-        .then((res) => setSignalLogs(res.data?.data ?? []))
-        .catch(() => setSignalLogs([]))
-    }
-    syncSignalLogs()
-    window.addEventListener('focus', syncSignalLogs)
-    return () => {
-      window.removeEventListener('focus', syncSignalLogs)
-    }
-  }, [])
 
   useEffect(() => () => {
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
@@ -427,16 +393,6 @@ export function useDashboardData() {
   }
 
 
-  const signalJournalSummary = useMemo(
-    () => summarizeSignalJournal(signalLogs),
-    [signalLogs]
-  )
-
-  const recentSignalLogs = useMemo(
-    () => signalLogs.slice(0, 3),
-    [signalLogs]
-  )
-
   /*
    * 모달 저장 완료 → 로컬 상태 즉시 업데이트 + localStorage 캐시 갱신.
    * summary는 항상 USD 단위로 저장. displayAmount/displayPnl이 통화 변환 담당.
@@ -538,41 +494,6 @@ export function useDashboardData() {
       })
       .slice(0, 3)
   }, [sortedPortfolio, rows, herdMap, priceMap])
-  const assetHistoryWithCurrent = useMemo(
-    () => mergeCurrentAssetPoint(assetHistory, currentAssetPoint(summary, cashBalance)),
-    [assetHistory, summary, cashBalance]
-  )
-  const assetChartHistory = assetHistoryWithCurrent
-  const assetLatest = assetChartHistory.length > 0 ? assetChartHistory[assetChartHistory.length - 1] : null
-  const assetFirst = assetChartHistory.length > 0 ? assetChartHistory[0] : null
-  const assetStartValue = assetFirst?.totalAssetValue ?? null
-  const investedStartValue = assetFirst?.investedValue ?? null
-  const assetPeak = assetChartHistory.length > 0
-    ? assetChartHistory.reduce((best, point) =>
-        Number(point.totalAssetValue) > Number(best.totalAssetValue) ? point : best
-      , assetChartHistory[0])
-    : null
-  const totalFlowPct = assetStartValue && assetLatest?.totalAssetValue
-    ? (assetLatest.totalAssetValue / assetStartValue - 1) * 100
-    : null
-  const investedChangePct = investedStartValue && assetLatest?.investedValue
-    ? (assetLatest.investedValue / investedStartValue - 1) * 100
-    : null
-  const assetDrawdownPct = assetPeak?.totalAssetValue && assetLatest?.totalAssetValue
-    ? (assetLatest.totalAssetValue / assetPeak.totalAssetValue - 1) * 100
-    : null
-  const assetValues = assetChartHistory.flatMap((p) => [
-    Number(p.totalAssetValue),
-    Number(p.investedValue),
-  ]).filter(Number.isFinite)
-  if (assetStartValue) assetValues.push(assetStartValue)
-  const assetMin = assetValues.length > 0 ? Math.min(...assetValues) : 0
-  const assetMax = assetValues.length > 0 ? Math.max(...assetValues) : 1000
-  const assetPadding = (assetMax - assetMin) * 0.08 || 100
-  const assetYDomain = [Math.max(0, assetMin - assetPadding), assetMax + assetPadding]
-  const assetPeriodLabel = ASSET_HISTORY_PERIODS.find((p) => p.value === assetHistoryPeriod)?.label ?? '선택 기간'
-  const assetStartLabel = assetFirst?.date ? fmtAxisDate(assetFirst.date) : '—'
-
   function handleTargetWeightChange(ticker, value) {
     const next = { ...targetWeights }
     if (value === '') {

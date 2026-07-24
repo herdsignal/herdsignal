@@ -10,6 +10,13 @@ export function actionIntensityLabel(data) {
   return data?.actionIntensityLabel ?? actionIntensity(data?.actionRatio).label
 }
 
+export function formatActionScore(value) {
+  if (value == null) return null
+  const number = Number(value)
+  if (!Number.isFinite(number)) return null
+  return `강도 ${Math.round(number)}`
+}
+
 export function actionBasisLabel(data) {
   const intensity = actionIntensityLabel(data)
   if (intensity === '관찰') return '현재 비중 유지'

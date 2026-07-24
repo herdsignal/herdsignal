@@ -9,6 +9,7 @@ import com.herdsignal.repository.PortfolioHistoryRepository;
 import com.herdsignal.repository.UserCashBalanceRepository;
 import com.herdsignal.repository.UserCashHistoryRepository;
 import com.herdsignal.repository.UserPortfolioRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,13 +38,26 @@ class PortfolioServiceTest {
         historyRepository = mock(PortfolioHistoryRepository.class);
         dailyPriceRepository = mock(DailyPriceRepository.class);
         cashBalanceRepository = mock(UserCashBalanceRepository.class);
-        portfolioService = new PortfolioService(
+        UserCashHistoryRepository cashHistoryRepository = mock(UserCashHistoryRepository.class);
+        UsMarketSessionClock marketSessionClock = new UsMarketSessionClock();
+        PortfolioCashService cashService = new PortfolioCashService(
+                cashBalanceRepository,
+                cashHistoryRepository,
+                marketSessionClock
+        );
+        PortfolioQueryService queryService = new PortfolioQueryService(
                 portfolioRepository,
                 historyRepository,
-                dailyPriceRepository,
+                new PortfolioHoldingValuationService(dailyPriceRepository),
+                cashService,
+                marketSessionClock
+        );
+        portfolioService = new PortfolioService(
+                portfolioRepository,
                 mock(TickerReadinessService.class),
-                cashBalanceRepository,
-                mock(UserCashHistoryRepository.class)
+                queryService,
+                cashService,
+                new PortfolioRealtimeRunner(new ObjectMapper())
         );
 
         when(historyRepository.findTopByUserIdOrderBySnapshotDateDesc(anyString()))

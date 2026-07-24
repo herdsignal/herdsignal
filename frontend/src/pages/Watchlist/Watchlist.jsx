@@ -31,21 +31,18 @@ import {
   stageLabelFromScore,
 } from '../../utils/herdStage'
 import { formatSignalAgeLabel, formatSignalDuration } from '../../utils/signalDuration'
-import { actionBasisLabel, actionIntensityLabel } from '../../utils/actionIntensity'
+import {
+  actionBasisLabel,
+  actionIntensityLabel,
+  formatActionScore,
+} from '../../utils/actionIntensity'
 import { opportunityRows } from '../../utils/portfolioTools'
 import { signalStyle } from '../../utils/signalStyle'
+import { API_HOST } from '../../utils/apiConfig'
+import { HERD_HISTORY_PERIODS } from '../../utils/historyPeriods'
 import styles    from './Watchlist.module.css'
 
-/* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
-const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
-  .replace(/^https?:\/\//, '')
-
-const HISTORY_PERIODS = [
-  { value: '1m', label: '1M' },
-  { value: '3m', label: '3M' },
-  { value: '1y', label: '1Y' },
-  { value: '3y', label: '3Y' },
-]
+const HISTORY_PERIODS = HERD_HISTORY_PERIODS
 
 const REFRESH_SCOPE_TITLE = '관심종목 HERD DB 조회와 SPY 최신 점수만 갱신합니다. 히스토리는 Timeline 탭에서 별도 조회됩니다.'
 
@@ -53,13 +50,6 @@ const REFRESH_SCOPE_TITLE = '관심종목 HERD DB 조회와 SPY 최신 점수만
 
 const stageDesc = stageDescription
 const badgeStyle = stageBadgeStyle
-
-function formatActionScore(value) {
-  if (value == null) return null
-  const n = Number(value)
-  if (!Number.isFinite(n)) return null
-  return `강도 ${Math.round(n)}`
-}
 
 function formatActionText(item) {
   const action = item?.actionLabel ?? decisionSignalDesc(item?.signal)

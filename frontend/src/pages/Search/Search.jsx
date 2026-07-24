@@ -21,158 +21,20 @@ import {
   addToWatchlist,
 } from '../../api/herdApi'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
-import StockAvatar from '../../components/StockAvatar/StockAvatar'
-import { qualityReasonText, shouldShowQuality } from '../../utils/dataQuality'
-import { normalizeStage, stageBadgeStyle, stageColor } from '../../utils/herdStage'
 import { useAuth } from '../../auth/AuthContext'
 import { clearPortfolioCaches } from '../Dashboard/dashboardModel'
+import SearchResultContent from './SearchResultContent'
+import {
+  STOCK_CANDIDATES,
+  TICKER_NAMES,
+  candidateForTicker,
+  candidateMatches,
+  isTickerLike,
+  loadRecentSearches,
+  saveRecentSearch,
+  toSearchCandidate,
+} from './searchModel'
 import styles from './Search.module.css'
-
-/* ── 상수 ─────────────────────────────── */
-
-const STOCK_CANDIDATES = [
-  { ticker: 'NVDA', name: 'NVIDIA Corporation', sector: 'Semiconductors' },
-  { ticker: 'AAPL', name: 'Apple Inc.', sector: 'Consumer Technology' },
-  { ticker: 'MSFT', name: 'Microsoft Corporation', sector: 'Software' },
-  { ticker: 'META', name: 'Meta Platforms', sector: 'Communication Services' },
-  { ticker: 'TSLA', name: 'Tesla, Inc.', sector: 'EV / Auto' },
-  { ticker: 'GOOGL', name: 'Alphabet Inc.', sector: 'Communication Services' },
-  { ticker: 'AMZN', name: 'Amazon.com, Inc.', sector: 'Consumer Discretionary' },
-  { ticker: 'PLTR', name: 'Palantir Technologies', sector: 'Software' },
-  { ticker: 'IONQ', name: 'IonQ, Inc.', sector: 'Quantum Computing' },
-  { ticker: 'SNDK', name: 'Sandisk Corporation', sector: 'Semiconductors / Storage' },
-  { ticker: 'BITX', name: '2x Bitcoin Strategy ETF', sector: 'Crypto ETF' },
-  { ticker: 'SPY', name: 'S&P 500 ETF', sector: 'Benchmark ETF' },
-  { ticker: 'QQQ', name: 'Nasdaq 100 ETF', sector: 'Benchmark ETF' },
-]
-
-const TICKER_META = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticker, item]))
-const TICKER_NAMES = Object.fromEntries(STOCK_CANDIDATES.map(item => [item.ticker, item.name]))
-
-/* localStorage 키 */
-const RECENT_KEY = 'hs_recent_searches'
-
-/* ── 유틸 ─────────────────────────────── */
-
-function isTickerLike(value) {
-  return /^[A-Z0-9.-]{1,10}$/.test(value)
-}
-
-function toSearchCandidate(item) {
-  return {
-    ticker: item.ticker,
-    name: item.name ?? item.ticker,
-    sector: item.type ?? '미국 주식',
-  }
-}
-
-function candidateForTicker(ticker, matches = []) {
-  return matches.find((item) => item.ticker === ticker) ?? TICKER_META[ticker] ?? {
-    ticker,
-    name: ticker,
-    sector: '미국 주식',
-  }
-}
-
-function candidateMatches(item, normalized) {
-  return (
-    item.ticker.includes(normalized) ||
-    item.name.toUpperCase().includes(normalized)
-  )
-}
-
-const badgeColors = (stage) => {
-  const { bg, color } = stageBadgeStyle(stage)
-  return { background: bg, color }
-}
-
-/** stage 표시 문자열: "Herd Scatter" 형태 보장 */
-function stageDisplay(stage) {
-  if (!stage) return 'Herd Calm'
-  return stage.startsWith('Herd ') ? stage : `Herd ${stage}`
-}
-
-function herdReadiness(data) {
-  if (!data) {
-    return {
-      label: '계산 필요',
-      tone: 'Pending',
-      desc: 'HERD 계산 대기',
-    }
-  }
-  if (shouldShowQuality(data)) {
-    return {
-      label: '데이터 부족',
-      tone: 'Limited',
-      desc: qualityReasonText(data),
-    }
-  }
-  return {
-    label: 'HERD 준비됨',
-    tone: 'Ready',
-    desc: data.scoreDate ?? '최신 점수',
-  }
-}
-
-function inclusionDecision(data) {
-  if (!data) {
-    return {
-      label: '계산 대기',
-      desc: 'HERD 계산 후 편입 가능',
-      tone: 'Pending',
-    }
-  }
-
-  const readiness = herdReadiness(data)
-  if (readiness.tone === 'Limited') {
-    return {
-      label: '보류',
-      desc: '데이터 품질 확인 필요',
-      tone: 'Limited',
-    }
-  }
-
-  switch (normalizeStage(data.herdStage)) {
-    case 'flee':
-    case 'scatter':
-      return {
-        label: '이탈 관찰',
-        desc: '기업 상태와 추세 확인 필요',
-        tone: 'Ready',
-      }
-    case 'drift':
-    case 'rush':
-      return {
-        label: '밀집 관찰',
-        desc: '상태 변화 확인 필요',
-        tone: 'Limited',
-      }
-    default:
-      return {
-        label: '관찰',
-        desc: '보유/대기 판단 가능',
-        tone: 'Neutral',
-      }
-  }
-}
-
-/* 최근 검색 localStorage 조작 */
-function loadRecent() {
-  try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]') } catch { return [] }
-}
-function saveToRecent(ticker) {
-  const list = loadRecent().filter(t => t !== ticker)
-  list.unshift(ticker)
-  localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 5)))
-}
-
-/** 추가 버튼 레이블 */
-function addBtnLabel(status, idleLabel) {
-  if (status === 'loading') return '…'
-  if (status === 'added')   return '추가됨 ✓'
-  if (status === 'exists')  return '이미 추가됨'
-  return idleLabel
-}
 
 /* ── 컴포넌트 ─────────────────────────── */
 
@@ -199,7 +61,7 @@ export default function Search() {
   const [addError, setAddError] = useState('')
 
   /* 최근 검색 (localStorage에서 초기값 로드) */
-  const [recentSearches, setRecentSearches] = useState(loadRecent)
+  const [recentSearches, setRecentSearches] = useState(loadRecentSearches)
   const [portfolioTickers, setPortfolioTickers] = useState(new Set())
   const [watchlistTickers, setWatchlistTickers] = useState(new Set())
   const [modalTicker, setModalTicker] = useState(null)
@@ -270,8 +132,8 @@ export default function Search() {
           if (data) {
             setSearchResult({ status: 'found', data, matches: candidates })
             /* 결과 있을 때만 최근 검색에 저장 */
-            saveToRecent(ticker)
-            setRecentSearches(loadRecent())
+            saveRecentSearch(ticker)
+            setRecentSearches(loadRecentSearches())
           } else {
             setSearchResult({
               status: 'symbol_found',
@@ -362,146 +224,6 @@ export default function Search() {
     return STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized)).slice(0, 5)
   }, [query, searchResult?.matches])
 
-  /* ── 드롭다운 콘텐츠 렌더 헬퍼 ── */
-  function renderDropdownContent() {
-    if (searchResult.status === 'loading') {
-      return (
-        <div className={styles.dropdownPlaceholder}>
-          검색 중…
-        </div>
-      )
-    }
-
-    if (searchResult.status === 'not_found') {
-      return (
-        <div className={styles.dropdownPlaceholder}>
-          검색 결과가 없습니다. 티커를 직접 입력해보세요.
-        </div>
-      )
-    }
-
-    if (searchResult.status === 'symbol_found') {
-      const d = searchResult.candidate
-      const readiness = herdReadiness(null)
-      const decision = inclusionDecision(null)
-      return (
-        <div className={styles.searchResultItem}>
-          <div className={styles.resultLeft}>
-            <StockAvatar ticker={d.ticker} />
-            <div>
-              <div className={styles.resultTicker}>{d.ticker}</div>
-              <div className={styles.resultName}>
-                {d.name} · {d.sector}
-              </div>
-              <div className={styles.resultNote}>
-                심볼은 찾았지만 HERD 데이터는 아직 없습니다. 상장 기간이 짧거나 계산 대기 중일 수 있어요.
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.resultRight} onClick={e => e.stopPropagation()}>
-            <div className={styles.resultHerd}>
-              <div className={styles.resultHerdScore}>—</div>
-              <div className={`${styles.readinessPill} ${styles.readinessPending}`}>
-                {readiness.label}
-              </div>
-              <div className={styles.resultHerdDesc}>{readiness.desc}</div>
-            </div>
-            <div className={styles.resultDecision}>
-              <span>편입 판단</span>
-              <strong>{decision.label}</strong>
-              <em>{decision.desc}</em>
-            </div>
-            <button
-              className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`}
-              disabled
-            >
-              HERD 필요
-            </button>
-            <button
-              className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`}
-              disabled
-            >
-              HERD 필요
-            </button>
-          </div>
-        </div>
-      )
-    }
-
-    /* status === 'found' */
-    const d     = searchResult.data
-    const color = stageColor(d.herdStage)
-    const badge = badgeColors(d.herdStage)
-    const meta  = searchResult.matches?.find((item) => item.ticker === d.ticker) ?? TICKER_META[d.ticker]
-    const readiness = herdReadiness(d)
-    const decision = inclusionDecision(d)
-
-    return (
-      <div
-        className={styles.searchResultItem}
-        onClick={() => navigate(`/stock/${d.ticker}`)}
-      >
-        {/* 좌: 배지 + 티커/종목명 */}
-        <div className={styles.resultLeft}>
-          <StockAvatar ticker={d.ticker} logoUrl={d.logoUrl} tone={badge} />
-          <div>
-            <div className={styles.resultTicker}>{d.ticker}</div>
-            <div className={styles.resultName}>
-              {meta ? `${meta.name} · ${meta.sector}` : '미국 주식'}
-            </div>
-          </div>
-        </div>
-
-        {/* 우: HERD 점수 + 추가 버튼 (이벤트 버블링 차단하여 상세 이동 방지) */}
-        <div className={styles.resultRight} onClick={e => e.stopPropagation()}>
-          <div className={styles.resultHerd}>
-            <div className={styles.resultHerdScore} style={{ color }}>
-              {Math.round(d.herdV4 ?? d.herdScore)}
-            </div>
-            <div className={`${styles.readinessPill} ${styles[`readiness${readiness.tone}`]}`}>
-              {readiness.label}
-            </div>
-            <div className={styles.resultHerdDesc}>
-              {stageDisplay(d.herdStage)} · {readiness.desc}
-            </div>
-          </div>
-
-          <div className={`${styles.resultDecision} ${styles[`decision${decision.tone}`]}`}>
-            <span>편입 판단</span>
-            <strong>{decision.label}</strong>
-            <em>{decision.desc}</em>
-          </div>
-
-          {/* + 포트폴리오 */}
-          <button
-            className={`${styles.resultAddBtn} ${
-              portfolioStatus === 'added' || portfolioStatus === 'exists'
-                ? styles.resultAddBtnDone : ''
-            }`}
-            onClick={() => handleAddPortfolio(d.ticker)}
-            disabled={portfolioStatus === 'loading'}
-          >
-            {addBtnLabel(portfolioStatus, '+ 포트폴리오')}
-          </button>
-
-          {/* + 관심종목 */}
-          <button
-            className={`${styles.resultAddBtn} ${
-              watchlistStatus === 'added' || watchlistStatus === 'exists'
-                ? styles.resultAddBtnDone : ''
-            }`}
-            onClick={() => handleAddWatchlist(d.ticker)}
-            disabled={watchlistStatus === 'loading'}
-          >
-            {addBtnLabel(watchlistStatus, '+ 관심종목')}
-          </button>
-          {addError && <div className={styles.resultError}>{addError}</div>}
-        </div>
-      </div>
-    )
-  }
-
   /* ── JSX ── */
   return (
     <div>
@@ -574,7 +296,15 @@ export default function Search() {
       {showDropdown && (
         <div className={styles.searchDropdown}>
           <div className={styles.dropdownHeader}>검색 결과</div>
-          {renderDropdownContent()}
+          <SearchResultContent
+            result={searchResult}
+            portfolioStatus={portfolioStatus}
+            watchlistStatus={watchlistStatus}
+            addError={addError}
+            onAddPortfolio={handleAddPortfolio}
+            onAddWatchlist={handleAddWatchlist}
+            onOpen={(ticker) => navigate(`/stock/${ticker}`)}
+          />
         </div>
       )}
 

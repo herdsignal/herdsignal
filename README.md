@@ -66,6 +66,7 @@ OOS 게이트에서 탈락했습니다. Blind holdout은 열지 않았고 행동
 - [채택 정책](docs/HERD_ADOPTION_POLICY.md)
 - [최신 연구 현황](docs/HERD_RESEARCH_STATUS.md)
 - [데이터 스냅샷·Walk-forward 계약](docs/HERD_REPRODUCIBLE_RESEARCH.md)
+- [코드 구조와 변경 원칙](docs/ARCHITECTURE.md)
 
 ## 기술 스택
 

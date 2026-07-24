@@ -1,9 +1,18 @@
-import { actionBasisLabel, actionIntensity } from '../../utils/actionIntensity'
+import {
+  actionBasisLabel,
+  actionIntensity,
+  formatActionScore,
+} from '../../utils/actionIntensity'
 import { signalStyle as sharedSignalStyle } from '../../utils/signalStyle'
+import { API_HOST } from '../../utils/apiConfig'
+import { HERD_HISTORY_PERIODS } from '../../utils/historyPeriods'
+import {
+  normalizeStage,
+  stageBadgeStyle,
+  stageColor,
+} from '../../utils/herdStage'
 
-/* 환경변수에서 API 호스트 추출 — 에러 메시지 표시용 */
-export const API_HOST = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
-  .replace(/^https?:\/\//, '')
+export { API_HOST, normalizeStage, stageColor }
 
 /*
  * ── HERD v3 지표 정의 (가중치 순) ─────────────
@@ -19,31 +28,9 @@ export const INDICATORS = [
   { key: 'ma200Deviation', label: 'MA200 이격도',   weight: 18, min: -50, max: 50,  unit: '%', signed: true  },
 ]
 
-export const HISTORY_PERIODS = [
-  { value: '1m', label: '1M' },
-  { value: '3m', label: '3M' },
-  { value: '1y', label: '1Y' },
-  { value: '3y', label: '3Y' },
-]
+export const HISTORY_PERIODS = HERD_HISTORY_PERIODS
 
 /* ── 유틸 ─────────────────────────────────── */
-
-/** herdStage 정규화: "Herd Scatter" → "scatter" */
-export function normalizeStage(stage) {
-  const s = (stage || '').toLowerCase()
-  return s.startsWith('herd ') ? s.slice(5) : s
-}
-
-/** 단계 → CSS 변수 색상 */
-export function stageColor(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return 'var(--rush)'
-    case 'drift':   return 'var(--drift)'
-    case 'scatter': return 'var(--scatter)'
-    case 'flee':    return 'var(--flee)'
-    default:        return 'var(--calm)'
-  }
-}
 
 /** signal → 배지 배경/텍스트 색 */
 export function signalStyle(signal) {
@@ -52,13 +39,8 @@ export function signalStyle(signal) {
 
 /** stage → 티커 배지 배경/텍스트 색 */
 export function badgeColors(stage) {
-  switch (normalizeStage(stage)) {
-    case 'rush':    return { background: 'rgba(239,68,68,0.12)',   color: 'var(--rush)' }
-    case 'drift':   return { background: 'rgba(249,115,22,0.12)',  color: 'var(--drift)' }
-    case 'scatter': return { background: 'rgba(96,165,250,0.12)',  color: 'var(--scatter)' }
-    case 'flee':    return { background: 'rgba(59,130,246,0.12)',  color: 'var(--flee)' }
-    default:        return { background: 'rgba(113,113,122,0.12)', color: 'var(--calm)' }
-  }
+  const badge = stageBadgeStyle(stage)
+  return { background: badge.bg, color: badge.color }
 }
 
 /** score → Timing Signal 텍스트 */
@@ -106,12 +88,7 @@ export function sectorMultiplierDesc(value) {
   return '중립'
 }
 
-export function formatActionScore(value) {
-  if (value == null) return null
-  const n = Number(value)
-  if (!Number.isFinite(n)) return null
-  return `강도 ${Math.round(n)}`
-}
+export { formatActionScore }
 
 export function formatActionRatio(value) {
   return actionIntensity(value).label

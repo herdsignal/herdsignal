@@ -49,13 +49,18 @@ from config.settings import (                                           # noqa: 
 from scheduler.incident_alerts import IncidentAlertConfig, send_scheduler_alert  # noqa: E402
 from scheduler.run_history import SchedulerRunRecorder                          # noqa: E402
 from scheduler.ticker_job import execute_tickers                                # noqa: E402
+from scheduler.realtime_portfolio import (                                      # noqa: E402
+    empty_portfolio,
+    load_holdings,
+    upsert_snapshot,
+    value_holdings,
+)
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
 from init_db import (                                                   # noqa: E402
     HerdIndicator,
     HerdScore,
-    PortfolioHistory,
     UserPortfolio,
     UserWatchlist,
 )
@@ -412,38 +417,12 @@ def calculate_current_portfolio(user_id: str) -> dict:
         }
     """
     today = date.today()
-
-    # ── 1. 보유 종목 조회 (avg_price·quantity 모두 있는 것만) ──────────────
-    with _get_session_factory()() as session:
-        holdings = (
-            session.query(UserPortfolio)
-            .filter(
-                UserPortfolio.user_id    == user_id,
-                UserPortfolio.avg_price.isnot(None),
-                UserPortfolio.quantity.isnot(None),
-            )
-            .order_by(UserPortfolio.ticker)
-            .all()
-        )
-        # 세션 종료 전 필요한 값 추출 (lazy loading 방지)
-        holdings_data = [
-            {
-                "ticker":    h.ticker,
-                "avg_price": float(h.avg_price),
-                "quantity":  float(h.quantity),
-            }
-            for h in holdings
-        ]
+    session_factory = _get_session_factory()
+    holdings_data = load_holdings(user_id, session_factory)
 
     if not holdings_data:
         logger.warning(f"[Tier3][{user_id}] avg_price·quantity가 있는 보유 종목 없음")
-        return {
-            "total_value":      0.0,
-            "total_cost":       0.0,
-            "total_return_pct": 0.0,
-            "daily_change_pct": 0.0,
-            "stocks":           [],
-        }
+        return empty_portfolio()
 
     tickers = [h["ticker"] for h in holdings_data]
     logger.info(f"[Tier3][{user_id}] 실시간 조회 대상: {tickers}")
@@ -452,83 +431,31 @@ def calculate_current_portfolio(user_id: str) -> dict:
     prices = get_current_prices(tickers)
 
     # ── 3. 종목별 계산 ────────────────────────────────────────────────────
-    stocks:         list  = []
-    total_value:    float = 0.0
-    total_cost:     float = 0.0
-    prev_total:     float = 0.0   # 전일 총액 (포트폴리오 일일 등락 계산용)
-    curr_for_daily: float = 0.0   # 현재 총액 (전일 데이터 있는 종목만)
-
-    for h in holdings_data:
-        ticker    = h["ticker"]
-        avg_price = h["avg_price"]
-        quantity  = h["quantity"]
-        price_data = prices.get(ticker)
-
-        if price_data is None:
-            logger.warning(f"[Tier3][{ticker}] 현재가 조회 실패 — 계산 제외")
-            continue
-
-        current_price    = price_data["price"]
-        prev_close       = price_data["prev_close"]
-        daily_change_pct = price_data["change_pct"]
-
-        market_value = current_price * quantity
-        cost         = avg_price * quantity
-        return_pct   = (current_price - avg_price) / avg_price * 100
-
-        total_value    += market_value
-        total_cost     += cost
-        prev_total     += prev_close * quantity
-        curr_for_daily += current_price * quantity
-
-        stocks.append({
-            "ticker":           ticker,
-            "avg_price":        avg_price,
-            "quantity":         quantity,
-            "current_price":    round(current_price,    4),
-            "price_date":       price_data["price_date"],
-            "market_value":     round(market_value,     2),
-            "return_pct":       round(return_pct,       4),
-            "daily_change_pct": round(daily_change_pct, 4),
-        })
+    stocks, totals = value_holdings(holdings_data, prices)
 
     if not stocks:
         logger.warning(f"[Tier3][{user_id}] 유효한 현재가가 있는 종목 없음")
-        return {
-            "total_value":      0.0,
-            "total_cost":       0.0,
-            "total_return_pct": 0.0,
-            "daily_change_pct": 0.0,
-            "stocks":           [],
-        }
+        return empty_portfolio()
 
     # ── 4. 전체 합산 지표 산출 ────────────────────────────────────────────
+    total_value = totals["total_value"]
+    total_cost = totals["total_cost"]
     total_return_pct = (total_value - total_cost) / total_cost * 100 if total_cost > 0 else 0.0
     portfolio_daily  = (
-        (curr_for_daily - prev_total) / prev_total * 100
-        if prev_total > 0 else 0.0
+        (totals["daily_current_value"] - totals["previous_value"])
+        / totals["previous_value"] * 100
+        if totals["previous_value"] > 0 else 0.0
     )
 
     # ── 5. portfolio_history UPSERT (오늘 날짜) ───────────────────────────
-    with _get_session_factory()() as session:
-        existing = (
-            session.query(PortfolioHistory)
-            .filter_by(user_id=user_id, snapshot_date=today)
-            .first()
-        )
-        if existing:
-            existing.total_value      = round(total_value, 2)
-            existing.total_cost       = round(total_cost,  2)
-            existing.total_return_pct = round(total_return_pct, 4)
-        else:
-            session.add(PortfolioHistory(
-                user_id          = user_id,
-                snapshot_date    = today,
-                total_value      = round(total_value, 2),
-                total_cost       = round(total_cost,  2),
-                total_return_pct = round(total_return_pct, 4),
-            ))
-        session.commit()
+    upsert_snapshot(
+        user_id,
+        today,
+        total_value,
+        total_cost,
+        total_return_pct,
+        session_factory,
+    )
 
     logger.info(
         f"[Tier3][{user_id}] 실시간 계산 완료 — "
