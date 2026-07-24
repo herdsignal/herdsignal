@@ -1,0 +1,125 @@
+{
+  "protocol_version": "SEC_13F_CROWDING_INCREMENTAL_OOS_V1",
+  "status": "LOCKED_BEFORE_13F_DIRECTION_OUTCOMES",
+  "locked_at": "2026-07-25",
+  "objective": "Test one economic hypothesis: whether a publicly observable institutional breadth unwind combined with rising holder concentration adds adverse-path information after an already observed HERD BREAKING transition.",
+  "pinned_inputs": [
+    {
+      "path": "data/reports/sec_13f_slow_context_v1.json",
+      "sha256": "01dde777b171307fa9904251f806016e4e4ad95415907ba026a440b3aea78be1",
+      "required_status": "SEC_13F_SLOW_CONTEXT_GATE_PASSED"
+    },
+    {
+      "path": "data/reports/herd_transition_s1.json",
+      "sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248",
+      "required_status": "TRANSITION_DISPLAY_READY"
+    },
+    {
+      "path": "data/herd/vnext_competing_path_economic_label_v1.json",
+      "sha256": "9d78a297852379be5b5058616047893d67f5385acebaa1b9a7c99a46bc279f8e",
+      "required_status": "LOCKED_BEFORE_VNEXT_JOINT_HYPOTHESIS_RESULTS"
+    }
+  ],
+  "population": {
+    "role": "INDEPENDENT_CURRENT_CONSTITUENTS",
+    "transition": "BREAKING",
+    "transition_event_only": true,
+    "ticker_overlap_with_original_51": false,
+    "cooldown_weeks": 26,
+    "selection_uses_future_outcome": false,
+    "survivorship_safe": false,
+    "historical_role": "PRE_HOLDOUT_ONLY"
+  },
+  "context_join": {
+    "source": "data/reports/sec_13f_slow_context_v1.csv",
+    "coverage_source": "data/reports/sec_13f_slow_context_coverage_v1.csv",
+    "asof_rule": "LATEST_FEATURE_USABLE_CONTEXT_AVAILABLE_DATE_LE_SIGNAL_DATE",
+    "maximum_context_age_days": 140,
+    "missing_or_ineligible": "EXCLUDE_AND_COUNT"
+  },
+  "single_hypothesis": {
+    "id": "BREADTH_UNWIND_AND_TOP5_CONCENTRATION_RISE",
+    "breadth_component": "cross-sectional percentile of negative breadth_change_fraction_1q",
+    "concentration_component": "cross-sectional percentile of top5_concentration_change_1q",
+    "conjunction": "score is zero unless breadth_change_fraction_1q is below zero and top5_concentration_change_1q is above zero",
+    "score": "minimum of the two directional cross-sectional percentiles",
+    "hhi_used": false,
+    "reported_value_used": false,
+    "split_unadjusted_share_change_used": false,
+    "tested_context_count": 1
+  },
+  "target": {
+    "horizon_sessions": 126,
+    "positive": ["LARGE_PULLBACK", "STRUCTURAL_BREAK"],
+    "negative": ["CONTINUATION", "TRADABLE_PULLBACK"],
+    "excluded_but_reported": ["UNRESOLVED", "RIGHT_CENSORED"]
+  },
+  "model": {
+    "baseline": "EXPANDING_TRAIN_PREVALENCE",
+    "candidate": "RIDGE_LOGISTIC_SINGLE_CONTEXT_SCORE",
+    "l2_penalty": 1.0,
+    "maximum_iterations": 100,
+    "convergence_tolerance": 1e-10,
+    "hyperparameter_or_threshold_search": false,
+    "probability_cutoff_authorizes_action": false
+  },
+  "folds": [
+    {
+      "id": "F1",
+      "train_end": "2017-12-31",
+      "test_start": "2018-01-01",
+      "test_end": "2019-12-31"
+    },
+    {
+      "id": "F2",
+      "train_end": "2019-12-31",
+      "test_start": "2020-01-01",
+      "test_end": "2021-12-31"
+    },
+    {
+      "id": "F3",
+      "train_end": "2021-12-31",
+      "test_start": "2022-01-01",
+      "test_end": "2023-12-31"
+    },
+    {
+      "id": "F4",
+      "train_end": "2023-12-31",
+      "test_start": "2024-01-01",
+      "test_end": "2025-12-31"
+    }
+  ],
+  "purging": {
+    "train_outcome_must_end_before_test_start": true,
+    "test_folds_non_overlapping": true
+  },
+  "gates": {
+    "minimum_evaluable_events": 200,
+    "minimum_distinct_tickers": 50,
+    "minimum_non_overlapping_folds": 4,
+    "minimum_positive_direction_folds": 3,
+    "maximum_median_events_per_ticker_year": 2.0,
+    "minimum_incremental_roc_auc": 0.02,
+    "maximum_candidate_minus_baseline_log_loss": -0.005,
+    "minimum_ticker_cluster_bootstrap_probability_positive_auc_edge": 0.95,
+    "bootstrap_samples": 2000,
+    "bootstrap_seed": 130025
+  },
+  "failure_policy": {
+    "gate_failure": "REJECT_13F_DIRECTION_HYPOTHESIS",
+    "retune_same_sample": false,
+    "13f_data_pipeline_remains_valid": true,
+    "completed_cycle_allowed_only_if_passed": true
+  },
+  "research_firewall": {
+    "standalone_13f_action_allowed": false,
+    "herd_weight_change_allowed": false,
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false
+  },
+  "research_basis": [
+    "https://www.sec.gov/rules-regulations/staff-guidance/division-investment-management-frequently-asked-questions/frequently-asked-questions-about-form-13f",
+    "https://www.nber.org/papers/w3846",
+    "https://www.nber.org/papers/w11439"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "report_version": "SEC_13F_CROWDING_INCREMENTAL_OOS_V1",
+  "status": "SEC_13F_DIRECTION_HYPOTHESIS_REJECTED",
+  "decision": "KEEP_13F_AS_NON_DIRECTIONAL_CONTEXT_ONLY",
+  "panel": {
+    "path": "data/reports/sec_13f_crowding_incremental_panel_v1.csv",
+    "sha256": "4b18e504e3f3025bbc0cec469ee0d636c15e7cfb02c07d6118c8a805d216a104",
+    "candidate_events": 2868,
+    "context_eligible_events": 2798,
+    "path_counts": {
+      "CONTINUATION": 992,
+      "LARGE_PULLBACK": 826,
+      "UNRESOLVED": 657,
+      "RIGHT_CENSORED": 148,
+      "TRADABLE_PULLBACK": 125,
+      "STRUCTURAL_BREAK": 120
+    }
+  },
+  "folds": {
+    "path": "data/reports/sec_13f_crowding_incremental_folds_v1.csv",
+    "sha256": "00d1d8f3ba2f79e897448d8a9f39f21fa68258c06d3b277cc64bc883a3c75488",
+    "test_rows": 1423,
+    "test_tickers": 377,
+    "positive_direction_folds": 2,
+    "median_events_per_ticker_year": 1.0
+  },
+  "aggregate_metrics": {
+    "candidate": {
+      "roc_auc": 0.4951472358148447,
+      "brier": 0.2706744709893888,
+      "log_loss": 0.7365368977858958
+    },
+    "baseline": {
+      "roc_auc": 0.48389868085578097,
+      "brier": 0.27015368512223037,
+      "log_loss": 0.7351021251208599
+    },
+    "incremental_roc_auc": 0.011248554959063739,
+    "candidate_minus_baseline_log_loss": 0.0014347726650358883
+  },
+  "ticker_cluster_bootstrap": {
+    "samples_requested": 2000,
+    "samples_valid": 2000,
+    "probability_positive_auc_edge": 0.9445,
+    "median_auc_edge": 0.010841232633713754,
+    "percentile_2_5": -0.0024459559389206492,
+    "percentile_97_5": 0.02406144468112613
+  },
+  "gate_results": {
+    "minimum_evaluable_events": true,
+    "minimum_distinct_tickers": true,
+    "minimum_non_overlapping_folds": true,
+    "minimum_positive_direction_folds": false,
+    "maximum_median_events_per_ticker_year": true,
+    "minimum_incremental_roc_auc": false,
+    "maximum_candidate_minus_baseline_log_loss": false,
+    "minimum_ticker_cluster_bootstrap_probability_positive_auc_edge": false
+  },
+  "tested_context_count": 1,
+  "hyperparameter_search": false,
+  "historical_role": "PRE_HOLDOUT_ONLY",
+  "survivorship_safe": false,
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "next_step": "STOP_13F_DIRECTION_RESEARCH_WITHOUT_RETUNING"
+}

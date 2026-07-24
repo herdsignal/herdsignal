@@ -90,6 +90,12 @@ reporting-manager breadth·신규·이탈·집중도·HHI만 허용하며 분할
 없는 총 주식 수 변화는 차단한다. 이 산출물도 `DATA_PIPELINE`이고,
 가격 결과를 사용한 방향성 증거는 다음 독립 OOS 단계에서만 판정한다.
 
+13F 방향 가설은 별도 `REJECTED` chain에 둔다. 독립 388종목의 BREAKING
+사건에서 breadth 감소와 top-5 concentration 증가의 단일 결합만
+검증했으나, 4개 OOS fold의 증분 AUC·log loss·방향 일관성·ticker
+bootstrap 게이트를 통과하지 못했다. 원문·PIT·느린 맥락의
+`DATA_PIPELINE` 판정은 유지하되 방향 가설과 완결 사이클 권한은 분리한다.
+
 삭제는 import·문서 참조, 고정 hash 입력, 실험 재현 필요성을 모두 확인하고
 회귀 테스트를 통과한 파일에만 허용한다. 분류되지 않은 새 파일은 자동 삭제
 대상이 아니라 `REVIEW_REQUIRED`다.

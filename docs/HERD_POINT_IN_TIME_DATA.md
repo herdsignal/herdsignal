@@ -221,6 +221,13 @@ APA·LIN·VTRS는 ticker·기업 승계 구간 공백 때문에 제외한다. ma
 breadth와 concentration은 `reporting-manager context`로만 부른다.
 분할 보정 없는 총 주식 수 변화는 생성하지 않는다.
 
+이 맥락을 독립 388종목의 HERD BREAKING 사건에 연결한 방향성 OOS는
+사전 기준에서 탈락했다. 증분 ROC AUC +0.0112, log loss +0.00143,
+양의 fold 2/4, ticker bootstrap 양의 edge 확률 94.45%였다. 따라서
+PIT 데이터 품질 통과와 예측력 통과를 구분한다. 13F corpus와 맥락 원장은
+재현 가능한 데이터 파이프라인으로 유지하지만 HERD 점수나 행동 비율에는
+반영하지 않는다.
+
 `sec_point_in_time_fundamentals.py`는 다음을 강제한다.
 
 - 기본 submissions와 과거 filings 조각의 accession–접수 시각 색인
