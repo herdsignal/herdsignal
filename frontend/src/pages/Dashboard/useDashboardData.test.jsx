@@ -17,8 +17,8 @@ vi.mock('../../api/herdApi', () => ({
   getPortfolioSummary: vi.fn(),
   getPortfolioRealtime: vi.fn(),
   getPortfolioHerd: vi.fn(),
-  getStockHerd: vi.fn(),
-  getSpyHerdHistory: vi.fn(),
+  getHerdObservation: vi.fn(),
+  getHerdObservationHistory: vi.fn(),
   getPortfolioHistory: vi.fn(),
   getCashBalance: vi.fn(),
   updateCashBalance: vi.fn(),
@@ -44,8 +44,12 @@ beforeEach(() => {
   api.getPortfolio.mockReturnValue(response([]))
   api.getPortfolioSummary.mockReturnValue(response({ totalValue: 100 }))
   api.getPortfolioHerd.mockReturnValue(response({ stocks: [{ ticker: 'AAPL', herdScore: 40 }] }))
-  api.getStockHerd.mockReturnValue(response({ ticker: 'SPY', herdScore: 50 }))
-  api.getSpyHerdHistory.mockReturnValue(response({ points: [] }))
+  api.getHerdObservation.mockReturnValue(response({
+    ticker: 'SPY',
+    availabilityStatus: 'AVAILABLE',
+    stateScore: 50,
+  }))
+  api.getHerdObservationHistory.mockReturnValue(response({ points: [] }))
   api.getCashBalance.mockReturnValue(response({ cashAmount: 0 }))
   api.getSignalJournal.mockReturnValue(response([]))
   api.getDataStatus.mockReturnValue(response({ status: 'FRESH' }))

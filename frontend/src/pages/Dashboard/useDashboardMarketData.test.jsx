@@ -5,8 +5,8 @@ import { CACHE_KEY_SPY } from './dashboardModel'
 import * as api from '../../api/herdApi'
 
 vi.mock('../../api/herdApi', () => ({
-  getStockHerd: vi.fn(),
-  getSpyHerdHistory: vi.fn(),
+  getHerdObservation: vi.fn(),
+  getHerdObservationHistory: vi.fn(),
 }))
 
 vi.mock('../../utils/currency', () => ({
@@ -14,22 +14,45 @@ vi.mock('../../utils/currency', () => ({
 }))
 
 beforeEach(() => {
-  api.getStockHerd.mockResolvedValue({
-    data: { data: { ticker: 'SPY', herdScore: 31, scoreDate: '2026-07-10' } },
+  api.getHerdObservation.mockResolvedValue({
+    data: { data: {
+      ticker: 'SPY',
+      availabilityStatus: 'AVAILABLE',
+      stateScore: 31,
+      lastObservedSession: '2026-07-10',
+    } },
   })
-  api.getSpyHerdHistory.mockResolvedValue({ data: { data: { points: [] } } })
+  api.getHerdObservationHistory.mockResolvedValue({
+    data: { data: { points: [] } },
+  })
 })
 
 describe('shared SPY market data', () => {
   it('shows cache immediately but replaces it with the backend latest value', async () => {
     localStorage.setItem(CACHE_KEY_SPY, JSON.stringify({
-      ticker: 'SPY', herdScore: 55, scoreDate: '2026-07-01',
+      ticker: 'SPY',
+      availabilityStatus: 'AVAILABLE',
+      stateScore: 55,
+      lastObservedSession: '2026-07-01',
     }))
 
     const { result } = renderHook(() => useDashboardMarketData())
 
     expect(result.current.spyScore).toBe(55)
     await waitFor(() => expect(result.current.spyScore).toBe(31))
-    expect(api.getStockHerd).toHaveBeenCalledWith('SPY')
+    expect(api.getHerdObservation).toHaveBeenCalledWith('SPY')
+  })
+
+  it('does not substitute a v4-like neutral score when S1 is unavailable', async () => {
+    api.getHerdObservation.mockResolvedValue({
+      data: { data: {
+        ticker: 'SPY',
+        availabilityStatus: 'UNAVAILABLE',
+        stateScore: null,
+      } },
+    })
+    const { result } = renderHook(() => useDashboardMarketData())
+    await waitFor(() => expect(result.current.spyData).not.toBeNull())
+    expect(result.current.spyScore).toBeNull()
   })
 })

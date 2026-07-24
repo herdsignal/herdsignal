@@ -5,6 +5,11 @@ import { clearPortfolioCaches } from '../../features/portfolio/portfolioCache'
 import { qualityColor } from '../../utils/dataQuality'
 import { buildDecision } from '../../utils/decision'
 import { getHerdMomentum } from '../../utils/herdMomentum'
+import {
+  isObservationAvailable,
+  observationScore,
+  observationStage,
+} from '../../utils/herdObservation'
 import { summarizeSignalJournal } from '../../utils/signalJournal'
 import { evaluateFundamentalGuard } from './stockFundamentalModel'
 import {
@@ -30,6 +35,7 @@ export function useStockDetail(ticker) {
   const journal = useStockSignalJournal(normalizedTicker)
   const {
     herdData,
+    observation,
     loading,
     error,
     herdHistory,
@@ -85,9 +91,10 @@ export function useStockDetail(ticker) {
     }
   }
 
-  const herdScore = herdData?.herdV4 ?? herdData?.herdScore ?? 50
-  const herdStage = herdData?.herdStage ?? 'Calm'
-  const stageDisp = herdStage.startsWith('Herd ') ? herdStage : `Herd ${herdStage}`
+  const observationAvailable = isObservationAvailable(observation)
+  const herdScore = observationScore(observation)
+  const herdStage = observationStage(observation)
+  const stageDisp = herdStage ? `Herd ${herdStage}` : null
   const color = stageColor(herdStage)
   const sigStyle = signalStyle(herdData?.signal)
   const qualityToneColor = qualityColor(herdData?.qualityLevel)
@@ -120,9 +127,9 @@ export function useStockDetail(ticker) {
   )
   const historyPoints = useMemo(() => {
     if (herdHistory.length > 0) return herdHistory
-    if (!herdData?.scoreDate) return []
-    return [{ date: herdData.scoreDate, score: herdScore }]
-  }, [herdData, herdHistory, herdScore])
+    if (!observationAvailable || !observation?.observationDate) return []
+    return [{ date: observation.observationDate, score: herdScore }]
+  }, [herdHistory, herdScore, observation, observationAvailable])
   const herdMomentum = useMemo(
     () => getHerdMomentum(historyPoints, herdScore, herdStage),
     [herdScore, herdStage, historyPoints],
@@ -133,14 +140,14 @@ export function useStockDetail(ticker) {
       ticker: normalizedTicker,
       actionType,
       actionLabel: journalActionLabel(actionType),
-      scoreDate: herdData.scoreDate,
+      scoreDate: observation?.observationDate,
       herdScore: Math.round(herdScore),
       herdStage: stageDisp,
-      signal: herdData.signal,
-      signalLabel: herdData.actionLabel ?? decision.title,
-      actionRatio: herdData.actionRatio,
-      signalDurationDays: herdData.signalDurationDays,
-      stageDurationDays: herdData.stageDurationDays,
+      signal: herdData?.signal,
+      signalLabel: herdData?.actionLabel ?? decision.title,
+      actionRatio: 0,
+      signalDurationDays: herdData?.signalDurationDays,
+      stageDurationDays: herdData?.stageDurationDays,
       price: details.price,
       quantity: details.quantity,
       amount: details.amount,
@@ -151,6 +158,8 @@ export function useStockDetail(ticker) {
 
   return {
     herdData,
+    observation,
+    observationAvailable,
     loading,
     error,
     portfolioStatus,

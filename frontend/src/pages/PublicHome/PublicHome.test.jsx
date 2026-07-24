@@ -5,7 +5,11 @@ import { describe, expect, it, vi } from 'vitest'
 import PublicHome from './PublicHome'
 
 vi.mock('../../api/herdApi', () => ({
-  getStockHerd: vi.fn(() => Promise.resolve({ data: { data: { herdScore: 68, herdStage: 'Drift' } } })),
+  getHerdObservation: vi.fn(() => Promise.resolve({ data: { data: {
+    availabilityStatus: 'AVAILABLE',
+    stateScore: 68,
+    stage: 'DRIFT',
+  } } })),
 }))
 
 describe('PublicHome', () => {

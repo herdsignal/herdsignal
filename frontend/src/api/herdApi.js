@@ -124,6 +124,16 @@ export const deleteSignalJournal = (id) => api.delete(`/api/journal/${id}`)
 
 /* ── 개별 종목 ──────────────────────────────── */
 
+/** State S1 최신 관찰값 조회. v4 HERD 응답과 의미를 공유하지 않는다. */
+export const getHerdObservation = (ticker) =>
+  api.get(`/api/observations/${tickerPath(ticker)}`)
+
+/** State S1 관찰 이력 조회 (최신순, 최대 260개). */
+export const getHerdObservationHistory = (ticker, limit = 52) =>
+  api.get(`/api/observations/${tickerPath(ticker)}/history`, {
+    params: { limit },
+  })
+
 /** 회사명/티커 기반 종목 검색 */
 export const searchStocks = (query) =>
   api.get('/api/stocks/search', { params: { q: query } })

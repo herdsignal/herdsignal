@@ -63,6 +63,7 @@ export default function DashboardCommandCenter({
   onToggleAssetPanel,
   onOpenModelReport,
 }) {
+  const hasSpyObservation = spyScore != null
   return (
     <div className={styles.commandFrame}>
       <div className={styles.commandFrameTop}>
@@ -83,14 +84,16 @@ export default function DashboardCommandCenter({
 
       <div className={styles.marketBanner}>
         <div className={styles.bannerScoreBlock}>
-          <div className={styles.bannerEyebrow}>SPY · S&amp;P 500 · 운영 HERD v4</div>
+          <div className={styles.bannerEyebrow}>S&amp;P 500 군중 상태 · HERD State S1</div>
           <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
-            {spyData ? Math.round(spyScore) : '—'}
+            {hasSpyObservation ? Math.round(spyScore) : '—'}
           </div>
           <div className={styles.bannerStage} style={{ color: stageColor(spyStage) }}>
-            {spyStage.startsWith('Herd ') ? spyStage : `Herd ${spyStage}`}
+            {hasSpyObservation ? `Herd ${spyStage}` : '관찰값 준비 중'}
           </div>
-          <div className={styles.bannerDesc}>{stageDesc(spyStage)}</div>
+          <div className={styles.bannerDesc}>
+            {hasSpyObservation ? stageDesc(spyStage) : 'v4 점수로 대체하지 않습니다.'}
+          </div>
         </div>
 
         <div className={styles.bannerRight}>
@@ -105,13 +108,13 @@ export default function DashboardCommandCenter({
             >Timeline</button>
           </div>
 
-          {spyTab === 'overview' && (
+          {spyTab === 'overview' && hasSpyObservation && (
             <div className={styles.bannerOverview}>
               <div className={styles.bannerAnimBlock}>
                 <HerdDots
                   score={spyScore}
                   momentum={spyMomentum.delta ?? (spyScore - 50) / 3}
-                  actionRatio={spyData?.actionRatio ?? 0}
+                  actionRatio={0}
                   enhanced
                   fill
                   dotCount={84}
@@ -138,11 +141,17 @@ export default function DashboardCommandCenter({
                 <div className={styles.bannerStatItem}>
                   <div className={styles.bannerStatLabel}>업데이트</div>
                   <div className={styles.bannerStatUpdate}>
-                    {spyData ? fmtScoreDate(spyData.scoreDate, lastUpdated) : '—'}
+                    {fmtScoreDate(spyData.lastObservedSession, lastUpdated)}
+                  </div>
+                  <div className={styles.bannerStatDesc}>
+                    {spyData.freshnessStatus === 'STALE' ? '업데이트 필요' : 'S1 관찰'}
                   </div>
                 </div>
               </div>
             </div>
+          )}
+          {spyTab === 'overview' && !hasSpyObservation && (
+            <div className={styles.bannerTimelineEmpty}>S1 관찰값 준비 중</div>
           )}
 
           {spyTab === 'timeline' && (

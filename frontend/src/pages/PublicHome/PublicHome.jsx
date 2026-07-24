@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getStockHerd } from '../../api/herdApi'
+import { getHerdObservation } from '../../api/herdApi'
 import HerdDots from '../../components/HerdDots/HerdDots'
 import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
 import herdSignalLogo from '../../assets/brand/herdsignal-logo.svg'
-import { stageColor, stageLabelFromScore } from '../../utils/herdStage'
+import {
+  isObservationAvailable,
+  observationScore,
+  observationStage,
+} from '../../utils/herdObservation'
+import { stageColor } from '../../utils/herdStage'
 import styles from './PublicHome.module.css'
 
 const STAGES = [
@@ -22,14 +27,15 @@ export default function PublicHome() {
 
   useEffect(() => {
     let active = true
-    getStockHerd('SPY')
+    getHerdObservation('SPY')
       .then((response) => { if (active) setSpy(response.data?.data ?? null) })
       .catch(() => {})
     return () => { active = false }
   }, [])
 
-  const spyScore = Number(spy?.herdV4 ?? spy?.herdScore ?? 68)
-  const spyStage = spy?.herdStage ?? stageLabelFromScore(spyScore)
+  const hasSpyObservation = isObservationAvailable(spy)
+  const spyScore = observationScore(spy)
+  const spyStage = observationStage(spy)
   function submitTicker(event) {
     event.preventDefault()
     const normalized = ticker.trim().toUpperCase()
@@ -70,22 +76,31 @@ export default function PublicHome() {
             <Link to="/app" className={styles.primaryCta}>내 포트폴리오 보기</Link>
           </div>
 
-          <div className={styles.marketPanel} aria-label={`SPY HERD ${spyScore}`}>
+          <div className={styles.marketPanel} aria-label="S&P 500 군중 상태">
             <div className={styles.panelTop}>
-              <div><span>MARKET PULSE</span><strong>SPY · S&amp;P 500</strong></div>
-              <em>HERD v4</em>
+              <div><span>MARKET STATE</span><strong>S&amp;P 500 군중 상태</strong></div>
+              <em>STATE S1</em>
             </div>
             <div className={styles.flowCanvas}>
-              <HerdDots score={spyScore} momentum={8} enhanced fill dotCount={96} />
+              {hasSpyObservation && (
+                <HerdDots score={spyScore} momentum={spy?.delta4w ?? 0} enhanced fill dotCount={96} />
+              )}
               <div className={styles.flowLabel}>
                 <span>HERD INDEX</span>
-                <strong style={{ color: stageColor(spyStage) }}>{Math.round(spyScore)}</strong>
-                <em style={{ color: stageColor(spyStage) }}>{spyStage}</em>
+                <strong style={{ color: stageColor(spyStage) }}>
+                  {hasSpyObservation ? Math.round(spyScore) : '—'}
+                </strong>
+                <em style={{ color: stageColor(spyStage) }}>
+                  {hasSpyObservation ? spyStage : '관찰값 준비 중'}
+                </em>
               </div>
             </div>
-            <SpectrumBar score={spyScore} height={4} />
+            {hasSpyObservation && <SpectrumBar score={spyScore} height={4} />}
             <div className={styles.marketReadout}>
-              <div><span>현재 상태</span><strong>{spyStage}</strong></div>
+              <div>
+                <span>현재 상태</span>
+                <strong>{hasSpyObservation ? spyStage : '—'}</strong>
+              </div>
               <p>HERD 점수는 매수·매도를 확정하는 신호가 아니라 현재 시장 상태를 확인하는 기준입니다.</p>
             </div>
           </div>

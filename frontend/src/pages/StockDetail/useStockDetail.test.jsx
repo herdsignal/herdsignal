@@ -5,10 +5,11 @@ import * as api from '../../api/herdApi'
 
 vi.mock('../../api/herdApi', () => ({
   getStockHerd: vi.fn(),
+  getHerdObservation: vi.fn(),
+  getHerdObservationHistory: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
   getStockFinancials: vi.fn(),
-  getStockHerdHistory: vi.fn(),
   getStockHerdReliability: vi.fn(),
   getPortfolio: vi.fn(),
   getPortfolioSummary: vi.fn(),
@@ -31,11 +32,33 @@ function deferred() {
   return { promise, resolve }
 }
 
+function observation(ticker, score = 50) {
+  return {
+    ticker,
+    availabilityStatus: 'AVAILABLE',
+    freshnessStatus: 'FRESH',
+    stateScore: score,
+    stage: 'CALM',
+    observationDate: '2026-07-24',
+    lastObservedSession: '2026-07-24',
+    transition: 'NEUTRAL',
+    families: {
+      priceExtension: score,
+      trendPosition: score,
+      relativePosition: score,
+      participation: score,
+    },
+    downsideRiskContext: 50,
+  }
+}
+
 beforeEach(() => {
   api.getPortfolio.mockReturnValue(response([]))
   api.getPortfolioSummary.mockReturnValue(response(null))
   api.getSignalJournal.mockReturnValue(response([]))
-  api.getStockHerdHistory.mockReturnValue(response({ points: [] }))
+  api.getHerdObservation.mockImplementation((ticker) =>
+    response(observation(ticker)))
+  api.getHerdObservationHistory.mockReturnValue(response({ points: [] }))
   api.getStockHerdReliability.mockReturnValue(response(null))
   api.getStockFinancials.mockReturnValue(response(null))
 })
@@ -58,6 +81,7 @@ describe('useStockDetail', () => {
       nvda.resolve({ data: { data: { ticker: 'NVDA', herdScore: 60 } } })
     })
     await waitFor(() => expect(result.current.herdData?.ticker).toBe('NVDA'))
+    expect(result.current.herdScore).toBe(50)
 
     await act(async () => {
       aapl.resolve({ data: { data: { ticker: 'AAPL', herdScore: 20 } } })

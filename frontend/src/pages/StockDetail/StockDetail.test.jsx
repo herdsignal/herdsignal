@@ -7,10 +7,11 @@ import * as api from '../../api/herdApi'
 
 vi.mock('../../api/herdApi', () => ({
   getStockHerd: vi.fn(),
+  getHerdObservation: vi.fn(),
+  getHerdObservationHistory: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
   getStockFinancials: vi.fn(),
-  getStockHerdHistory: vi.fn(),
   getStockHerdReliability: vi.fn(),
   getPortfolio: vi.fn(),
   getPortfolioSummary: vi.fn(),
@@ -31,10 +32,27 @@ beforeEach(() => {
     herdStage: 'Herd Scatter', signal: 'ADD', scoreDate: '2026-07-10',
     qualityLevel: 'HIGH', actionGrade: 'WATCH', actionLabel: '관찰 우선',
   }))
+  api.getHerdObservation.mockReturnValue(response({
+    ticker: 'NVDA',
+    availabilityStatus: 'AVAILABLE',
+    freshnessStatus: 'FRESH',
+    stateScore: 63,
+    stage: 'DRIFT',
+    observationDate: '2026-07-24',
+    lastObservedSession: '2026-07-24',
+    transition: 'NEUTRAL',
+    families: {
+      priceExtension: 70,
+      trendPosition: 65,
+      relativePosition: 60,
+      participation: 57,
+    },
+    downsideRiskContext: 35,
+  }))
   api.getPortfolio.mockReturnValue(response([]))
   api.getPortfolioSummary.mockReturnValue(response(null))
   api.getSignalJournal.mockReturnValue(response([]))
-  api.getStockHerdHistory.mockReturnValue(response({ points: [] }))
+  api.getHerdObservationHistory.mockReturnValue(response({ points: [] }))
   api.getStockHerdReliability.mockReturnValue(response({
     fitScore: 70, reliabilityGrade: 'GOOD', reliabilityLabel: '신뢰 가능',
     fleeHitRate: 60, rushHitRate: 55, buySignalEdge: 4, sellSignalEdge: 3,
@@ -57,5 +75,6 @@ describe('StockDetail route', () => {
     )
 
     expect(await screen.findByText('NVIDIA Corp')).toBeInTheDocument()
+    expect(screen.getByText('HERD State S1')).toBeInTheDocument()
   })
 })

@@ -5,11 +5,14 @@ import {
   history,
   journal,
   nvda,
+  nvdaObservation,
+  observationHistory,
   portfolio,
   portfolioHerd,
   portfolioSummary,
   reliability,
   spy,
+  spyObservation,
   user,
   watchlist,
 } from './visualFixtures'
@@ -79,6 +82,24 @@ function responseFor(pathname) {
     return { stocks: watchlist, averageScore: 49.5, totalCount: watchlist.length }
   }
   if (pathname === '/api/journal') return journal
+  if (pathname === '/api/observations/SPY') return spyObservation
+  if (pathname === '/api/observations/SPY/history') {
+    return {
+      availabilityStatus: 'AVAILABLE',
+      ticker: 'SPY',
+      stateModelVersion: 'HERD_STATE_S1',
+      points: observationHistory,
+    }
+  }
+  if (pathname === '/api/observations/NVDA') return nvdaObservation
+  if (pathname === '/api/observations/NVDA/history') {
+    return {
+      availabilityStatus: 'AVAILABLE',
+      ticker: 'NVDA',
+      stateModelVersion: 'HERD_STATE_S1',
+      points: observationHistory,
+    }
+  }
   if (pathname === '/api/stocks/SPY/herd') return spy
   if (pathname === '/api/stocks/SPY/herd/history') return { points: history }
   if (pathname === '/api/stocks/NVDA/herd') return nvda

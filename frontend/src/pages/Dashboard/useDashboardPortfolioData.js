@@ -5,7 +5,7 @@ import {
   getPortfolioHerd,
   getPortfolioRealtime,
   getPortfolioSummary,
-  getStockHerd,
+  getHerdObservation,
 } from '../../api/herdApi'
 import { targetWeightsFromPortfolio } from '../../utils/portfolioTools'
 import {
@@ -168,7 +168,7 @@ export function useDashboardPortfolioData({
       const [priceResult, herdResult, spyResult] = await Promise.allSettled([
         getPortfolioRealtime(),
         getPortfolioHerd(),
-        getStockHerd('SPY'),
+        getHerdObservation('SPY'),
       ])
 
       if (priceResult.status === 'fulfilled') {

@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { getSpyHerdHistory, getStockHerd } from '../../api/herdApi'
+import {
+  getHerdObservation,
+  getHerdObservationHistory,
+} from '../../api/herdApi'
 import { fetchExchangeRate } from '../../utils/currency'
 import { getHerdMomentum } from '../../utils/herdMomentum'
+import {
+  normalizeObservationHistory,
+  observationHistoryLimit,
+  observationScore,
+  observationStage,
+} from '../../utils/herdObservation'
 import {
   CACHE_KEY_SPY,
   averageScoreForLastDays,
@@ -44,7 +53,7 @@ export function useDashboardMarketData() {
       if (spyHistoryPeriod === '3y') setSpyStatsHistory(historyCached)
     }
     // 캐시는 즉시 표시용일 뿐, 화면 진입 시 백엔드 최신값으로 항상 재검증한다.
-    getStockHerd('SPY')
+    getHerdObservation('SPY')
       .then((res) => {
         if (requestId !== requestSequence.current) return
         const data = res.data?.data ?? null
@@ -57,10 +66,15 @@ export function useDashboardMarketData() {
     if (!historyCached) {
       setSpyHistoryLoading(true)
       setSpyHistory([])
-      getSpyHerdHistory(spyHistoryPeriod)
+      getHerdObservationHistory(
+        'SPY',
+        observationHistoryLimit(spyHistoryPeriod),
+      )
         .then((res) => {
           if (requestId !== requestSequence.current) return
-          const points = res.data?.data?.points ?? []
+          const points = normalizeObservationHistory(
+            res.data?.data?.points,
+          )
           spyHistoryCache.current[spyHistoryPeriod] = points
           setSpyHistory(points)
           writeCache(historyKey, points)
@@ -83,8 +97,8 @@ export function useDashboardMarketData() {
     writeCache(CACHE_KEY_SPY, data)
   }, [])
 
-  const spyScore = spyData?.herdV4 ?? spyData?.herdScore ?? 50
-  const spyStage = spyData?.herdStage ?? 'Calm'
+  const spyScore = observationScore(spyData)
+  const spyStage = observationStage(spyData)
   const d1AvgPoint = useMemo(
     () => averageScoreForLastDays(spyStatsHistory, 1, spyScore),
     [spyStatsHistory, spyScore],

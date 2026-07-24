@@ -28,12 +28,12 @@ export {
   writeCache,
   writeUserCache,
 }
-export const CACHE_KEY_SPY = 'hs_spy_herd'
-export const CACHE_KEY_SPY_HISTORY = 'hs_spy_history'
-export const CACHE_KEY_SPY_HISTORY_VERSION = 'v2'
+export const CACHE_KEY_SPY = 'hs_spy_observation_s1'
+export const CACHE_KEY_SPY_HISTORY = 'hs_spy_observation_history'
+export const CACHE_KEY_SPY_HISTORY_VERSION = 's1-v1'
 export const CACHE_KEY_VERSION = 'hs_dashboard_cache_version'
 export const CACHE_KEY_PORTFOLIO_SORT = 'hs_dashboard_sort'
-export const DASHBOARD_CACHE_VERSION = 'v4-user-scoped-prices'
+export const DASHBOARD_CACHE_VERSION = 's1-market-observation'
 export const DASHBOARD_CACHE_TTL_MS = 30 * 60 * 1000
 
 export const HISTORY_PERIODS = HERD_HISTORY_PERIODS

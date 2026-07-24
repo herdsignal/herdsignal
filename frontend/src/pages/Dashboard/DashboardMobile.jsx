@@ -45,21 +45,26 @@ export default function DashboardMobile({
 
 function MobileMarketSignal({ spyData, spyScore, spyStage, spyMomentum, lastUpdated, points }) {
   const labels = ['1일 평균', '1달 평균', '1년 평균']
+  const hasSpyObservation = spyScore != null
   return (
     <article className={styles.mobileSignalCard}>
       <div className={styles.mobileSignalTop}>
-        <div><span className={styles.mobileKicker}>Market Signal</span><strong className={styles.mobileSignalTitle}>S&amp;P 500 HERD</strong></div>
-        <div className={styles.mobileSignalUpdate}>{spyData ? fmtScoreDate(spyData.scoreDate, lastUpdated) : '대기'}</div>
+        <div><span className={styles.mobileKicker}>Market State</span><strong className={styles.mobileSignalTitle}>S&amp;P 500 군중 상태</strong></div>
+        <div className={styles.mobileSignalUpdate}>{hasSpyObservation ? fmtScoreDate(spyData.lastObservedSession, lastUpdated) : '준비 중'}</div>
       </div>
       <div className={styles.mobileSignalMain}>
         <div className={styles.mobileSignalScore}>
-          <strong style={{ color: stageColor(spyStage) }}>{spyData ? Math.round(spyScore) : '—'}</strong>
-          <span style={{ color: stageColor(spyStage) }}>{spyStage.startsWith('Herd ') ? spyStage : `Herd ${spyStage}`}</span>
-          <em>{stageDesc(spyStage)}</em>
+          <strong style={{ color: stageColor(spyStage) }}>{hasSpyObservation ? Math.round(spyScore) : '—'}</strong>
+          <span style={{ color: stageColor(spyStage) }}>{hasSpyObservation ? `Herd ${spyStage}` : '관찰값 준비 중'}</span>
+          <em>{hasSpyObservation ? stageDesc(spyStage) : 'v4 대체 없음'}</em>
         </div>
         <div className={styles.mobileSignalFlow}>
-          <HerdDots score={spyScore} momentum={spyMomentum.delta ?? (spyScore - 50) / 3} actionRatio={spyData?.actionRatio ?? 0} enhanced fill dotCount={52} />
-          <div className={styles.mobileSpectrum}><SpectrumBar score={spyScore} height={3} /></div>
+          {hasSpyObservation && (
+            <>
+              <HerdDots score={spyScore} momentum={spyMomentum.delta ?? (spyScore - 50) / 3} actionRatio={0} enhanced fill dotCount={52} />
+              <div className={styles.mobileSpectrum}><SpectrumBar score={spyScore} height={3} /></div>
+            </>
+          )}
         </div>
       </div>
       <div className={styles.mobileSignalStats}>

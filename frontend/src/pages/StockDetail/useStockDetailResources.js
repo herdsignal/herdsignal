@@ -2,15 +2,21 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   getPortfolio,
   getPortfolioSummary,
+  getHerdObservation,
+  getHerdObservationHistory,
   getStockFinancials,
   getStockHerd,
-  getStockHerdHistory,
   getStockHerdReliability,
 } from '../../api/herdApi'
+import {
+  normalizeObservationHistory,
+  observationHistoryLimit,
+} from '../../utils/herdObservation'
 import { API_HOST } from './stockDetailModel'
 
 export function useStockDetailResources(normalizedTicker, displayTicker) {
   const [herdData, setHerdData] = useState(null)
+  const [observation, setObservation] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [herdHistory, setHerdHistory] = useState([])
@@ -26,6 +32,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
 
   useEffect(() => {
     setHerdData(null)
+    setObservation(null)
     setError(null)
   }, [normalizedTicker])
 
@@ -34,14 +41,22 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     setLoading(true)
     setError(null)
     try {
-      const response = await getStockHerd(normalizedTicker)
-      const data = response.data?.data
+      const [legacyResult, observationResult] = await Promise.allSettled([
+        getStockHerd(normalizedTicker),
+        getHerdObservation(normalizedTicker),
+      ])
       if (requestId !== herdRequest.current) return
-      if (data) {
-        setHerdData(data)
-      } else {
+      const legacyData = legacyResult.status === 'fulfilled'
+        ? legacyResult.value.data?.data ?? null
+        : null
+      const observationData = observationResult.status === 'fulfilled'
+        ? observationResult.value.data?.data ?? null
+        : null
+      setHerdData(legacyData)
+      setObservation(observationData)
+      if (observationResult.status === 'rejected') {
         setError(
-          `${displayTicker} 종목의 HERD 데이터가 없습니다.\nPython 스케줄러를 먼저 실행해주세요.`,
+          `${displayTicker} 종목의 S1 관찰 API를 확인할 수 없습니다.\n기존 v4 점수로 대체하지 않습니다.`,
         )
       }
     } catch {
@@ -79,9 +94,16 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     let active = true
     setHistoryLoading(true)
     setHerdHistory([])
-    getStockHerdHistory(normalizedTicker, historyPeriod)
+    getHerdObservationHistory(
+      normalizedTicker,
+      observationHistoryLimit(historyPeriod),
+    )
       .then((response) => {
-        if (active) setHerdHistory(response.data?.data?.points ?? [])
+        if (active) {
+          setHerdHistory(normalizeObservationHistory(
+            response.data?.data?.points,
+          ))
+        }
       })
       .catch(() => {
         if (active) setHerdHistory([])
@@ -134,6 +156,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
 
   return {
     herdData,
+    observation,
     loading,
     error,
     herdHistory,

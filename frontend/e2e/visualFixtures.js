@@ -18,6 +18,13 @@ export const spy = herdStock('SPY', {
   actionScore: 51,
 })
 
+export const spyObservation = observation('SPY', 64, {
+  scope: 'MARKET_AGGREGATE',
+  label: 'S&P 500 군중 상태',
+  claimCode: 'CROWD_STATE_NOT_SPY_PRICE_SCORE',
+  referenceCoverageFraction: 0.982,
+})
+
 export const portfolio = [
   { ticker: 'NVDA', companyName: 'NVIDIA', avgPrice: 118, quantity: 32, targetWeight: 0.38 },
   { ticker: 'TSLA', companyName: 'Tesla', avgPrice: 284, quantity: 18, targetWeight: 0.26 },
@@ -78,10 +85,25 @@ export const nvda = herdStock('NVDA', {
   oosValidationSummary: '가격 상태 관찰용 · 행동 증거 미채택',
 })
 
+export const nvdaObservation = observation('NVDA', 78, {
+  scope: 'EQUITY',
+  sectorEtf: 'XLK',
+  transition: 'EXTENDING',
+})
+
 export const history = Array.from({ length: 18 }, (_, index) => ({
   date: `2026-${String(index < 6 ? 5 : index < 14 ? 6 : 7).padStart(2, '0')}-${String((index * 3) % 27 + 1).padStart(2, '0')}`,
   score: 48 + Math.round(index * 1.65),
 }))
+
+export const observationHistory = history.map((point) => ({
+  observationDate: point.date,
+  lastObservedSession: point.date,
+  stateScore: point.score,
+  stage: point.score >= 75 ? 'RUSH' : point.score >= 60 ? 'DRIFT' : 'CALM',
+  transition: 'NEUTRAL',
+  transitionEvent: false,
+})).reverse()
 
 export const journal = [
   {
@@ -163,6 +185,42 @@ function herdStock(ticker, overrides = {}) {
     epsMultiplier: 1,
     ...overrides,
     herdV4: overrides.herdScore ?? overrides.herdV4 ?? 50,
+  }
+}
+
+function observation(ticker, stateScore, overrides = {}) {
+  return {
+    availabilityStatus: 'AVAILABLE',
+    freshnessStatus: 'FRESH',
+    businessSessionsOld: 0,
+    ticker,
+    scope: 'EQUITY',
+    schemaVersion: 'HERD_OBSERVATION_S1_SERVICE_V1',
+    stateModelVersion: 'HERD_STATE_S1',
+    transitionModelVersion: 'HERD_TRANSITION_S1',
+    observationDate: scoreDate,
+    lastObservedSession: scoreDate,
+    generatedAt: '2026-07-24T00:52:00Z',
+    stateScore,
+    stage: stateScore >= 75 ? 'RUSH' : stateScore >= 60 ? 'DRIFT' : 'CALM',
+    transition: 'NEUTRAL',
+    rawTransition: 'NEUTRAL',
+    transitionEvent: false,
+    delta4w: 4.3,
+    delta13w: 8.1,
+    families: {
+      priceExtension: Math.min(100, stateScore + 8),
+      trendPosition: Math.min(100, stateScore + 4),
+      relativePosition: Math.max(0, stateScore - 2),
+      participation: Math.max(0, stateScore - 10),
+    },
+    downsideRiskContext: 32,
+    sectorEtf: 'SPY',
+    directionPrediction: false,
+    operationalAction: 'HOLD',
+    operationalActionRatio: 0,
+    survivorshipSafe: false,
+    ...overrides,
   }
 }
 

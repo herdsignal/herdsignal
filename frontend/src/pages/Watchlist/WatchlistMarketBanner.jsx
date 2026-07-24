@@ -28,17 +28,20 @@ export default function WatchlistMarketBanner({
   y1AvgPoint,
   spyMomentum,
 }) {
+  const hasSpyObservation = spyScore != null
   return (
     <div className={styles.marketBanner}>
       <div className={styles.bannerScoreBlock}>
-        <div className={styles.bannerEyebrow}>S&amp;P 500 HERD Index</div>
+        <div className={styles.bannerEyebrow}>S&amp;P 500 군중 상태 · State S1</div>
         <div className={styles.bannerScore} style={{ color: stageColor(spyStage) }}>
-          {spyData ? Math.round(spyScore) : '—'}
+          {hasSpyObservation ? Math.round(spyScore) : '—'}
         </div>
         <div className={styles.bannerStage} style={{ color: stageColor(spyStage) }}>
-          {spyStage.startsWith('Herd ') ? spyStage : `Herd ${spyStage}`}
+          {hasSpyObservation ? `Herd ${spyStage}` : '관찰값 준비 중'}
         </div>
-        <div className={styles.bannerDesc}>{stageDescription(spyStage)}</div>
+        <div className={styles.bannerDesc}>
+          {hasSpyObservation ? stageDescription(spyStage) : 'v4 대체 없음'}
+        </div>
       </div>
 
       <div className={styles.bannerRight}>
@@ -57,13 +60,13 @@ export default function WatchlistMarketBanner({
           </button>
         </div>
 
-        {spyTab === 'overview' ? (
+        {spyTab === 'overview' && hasSpyObservation ? (
           <div className={styles.bannerOverview}>
             <div className={styles.bannerAnimBlock}>
               <HerdDots
                 score={spyScore}
                 momentum={spyMomentum.delta ?? (spyScore - 50) / 3}
-                actionRatio={spyData?.actionRatio ?? 0}
+                actionRatio={0}
                 enhanced
                 fill
                 dotCount={84}
@@ -84,11 +87,13 @@ export default function WatchlistMarketBanner({
               <div className={styles.bannerStatItem}>
                 <div className={styles.bannerStatLabel}>업데이트</div>
                 <div className={styles.bannerStatUpdate}>
-                  {spyData ? formatScoreDate(spyData.scoreDate) : '—'}
+                  {formatScoreDate(spyData.lastObservedSession)}
                 </div>
               </div>
             </div>
           </div>
+        ) : spyTab === 'overview' ? (
+          <div className={styles.bannerTimelineEmpty}>S1 관찰값 준비 중</div>
         ) : (
           <div className={styles.bannerTimeline}>
             <div className={styles.bannerPeriodTabs}>

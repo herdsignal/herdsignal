@@ -13,8 +13,8 @@ export default function StockDetailHistory({
     <div className={styles.card}>
       <div className={styles.cardHeader}>
         <div>
-          <div className={styles.cardTitle}>HERD Index History</div>
-          <div className={styles.cardMeta}>1M · 3M · 1Y · 3Y</div>
+          <div className={styles.cardTitle}>HERD State S1 History</div>
+          <div className={styles.cardMeta}>주간 관찰 · 1M · 3M · 1Y · 3Y</div>
         </div>
         <div className={styles.historyTabs}>
           {HISTORY_PERIODS.map((item) => (

@@ -13,6 +13,7 @@ import {
 
 export default function StockDetailHero({
   herdData,
+  observation,
   herdScore,
   stageDisp,
   color,
@@ -26,7 +27,7 @@ export default function StockDetailHero({
     <>
       <div className={styles.herdCard}>
         <div className={styles.herdScoreSide}>
-          <div className={styles.herdEyebrow}>HERD Index</div>
+          <div className={styles.herdEyebrow}>HERD State S1</div>
           <div className={styles.herdBigScore} style={{ color }}>{Math.round(herdScore)}</div>
           <div className={styles.herdBigStage} style={{ color }}>{stageDisp}</div>
           <div
@@ -34,6 +35,9 @@ export default function StockDetailHero({
             style={{ background: sigStyle.bg, color: sigStyle.color }}
           >
             {getTimingSignal(herdScore)}
+          </div>
+          <div className={styles.qualityReason}>
+            {observation.transition} · {observation.freshnessStatus === 'STALE' ? '업데이트 필요' : observation.lastObservedSession}
           </div>
           {shouldShowQuality(herdData) && (
             <>
@@ -53,7 +57,7 @@ export default function StockDetailHero({
           <HerdDots
             score={herdScore}
             momentum={herdMomentum.delta ?? (herdScore - 50) / 3}
-            actionRatio={herdData.actionRatio ?? 0}
+            actionRatio={0}
             enhanced
             fill
             dotCount={55}

@@ -19,6 +19,8 @@ export default function StockDetail() {
   const detail = useStockDetail(ticker)
   const {
     herdData,
+    observation,
+    observationAvailable,
     loading,
     error,
     portfolioStatus,
@@ -73,7 +75,7 @@ export default function StockDetail() {
             ticker={normalizedTicker}
             logoUrl={herdData?.logoUrl}
             size="lg"
-            tone={herdData ? badgeColors(herdStage) : undefined}
+            tone={observationAvailable ? badgeColors(herdStage) : undefined}
           />
           <div>
             <div className={styles.stockTicker}>{normalizedTicker}</div>
@@ -119,11 +121,22 @@ export default function StockDetail() {
         </div>
       )}
 
-      {!loading && !error && herdData && (
+      {!loading && !error && !observationAvailable && (
+        <div className={styles.errorState}>
+          <p className={styles.errorTitle}>HERD State S1 관찰값 준비 중</p>
+          <p className={styles.errorSub}>
+            기존 v4 점수로 대체하지 않습니다. 다음 스케줄러 완료 후 다시 확인해주세요.
+          </p>
+          <button className={styles.retryBtn} onClick={fetchData}>다시 확인</button>
+        </div>
+      )}
+
+      {!loading && !error && observationAvailable && (
         <div className={styles.contentGrid}>
           <div className={styles.colMain}>
             <StockDetailHero
-              herdData={herdData}
+              herdData={herdData ?? {}}
+              observation={observation}
               herdScore={herdScore}
               stageDisp={stageDisp}
               color={color}
@@ -135,6 +148,7 @@ export default function StockDetail() {
             />
             <StockDetailAnalysis
               herdData={herdData}
+              observation={observation}
               color={color}
               signalEvidence={signalEvidence}
               reliability={reliability}
@@ -162,7 +176,7 @@ export default function StockDetail() {
         </div>
       )}
 
-      {journalAction && (
+      {journalAction && observationAvailable && (
         <SignalJournalModal
           ticker={normalizedTicker}
           actionType={journalAction}

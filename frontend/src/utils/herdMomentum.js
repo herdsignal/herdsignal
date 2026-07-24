@@ -14,7 +14,7 @@ export function getHerdMomentum(points, currentScore = null, currentStage = null
     ? points.filter((point) => scoreOf(point) != null)
     : []
 
-  const latestScore = Number.isFinite(Number(currentScore))
+  const latestScore = currentScore != null && Number.isFinite(Number(currentScore))
     ? Number(currentScore)
     : scoreOf(valid[valid.length - 1])
 
