@@ -386,7 +386,7 @@ HERD 판단 기록은 localStorage가 아니라 DB `signal_journal`과 backend `
 - Python과 Spring Boot는 DB 중심으로 통신하지만, on-demand 계산과 실시간 포트폴리오 평가에서는 Spring Boot가 ProcessBuilder로 Python을 실행한다.
 - 리밸런싱 플랜은 보류/내부 접근 기능이며 아직 투자 성과를 검증하는 백테스트 엔진과 연결되어 있지 않다.
 - backend 공개 API는 현재 MVP에서 쓰는 HERD/검색/재무/포트폴리오/관심종목 중심으로 정리했다.
-- Dashboard.jsx, StockDetail.jsx, HerdService.java는 기능이 누적되어 큰 파일이 되었다. 동작 안정화 이후 화면 섹션/서비스 책임 단위로 분리 검토한다.
+- Dashboard와 StockDetail은 화면 섹션 컴포넌트로 분리했다. 남은 큰 경계는 `useDashboardData`, `useStockDetail`의 비동기 상태 조합과 `HerdScoreResponse` 응답 필드다.
 - HERD_v7 후보는 Rush/Flee 내부 강도와 피크아웃/바닥 확인 로직이다. 구현 전 백테스트로 수익률 보존, MDD 개선, 연간 행동 횟수를 먼저 검증한다.
 
 ---

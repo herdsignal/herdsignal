@@ -42,6 +42,9 @@ HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이�
 - `useDashboardAssetHistory`: 자산 히스토리 요청과 차트 파생값
 - `useDashboardSupportingData`: 데이터 상태와 판단 기록
 - `useDashboardData`: 위 기능을 조합하는 페이지 유스케이스
+- `DashboardHeader`: 페이지 상태와 갱신 명령
+- `DashboardCommandCenter`: SPY 시장 무대와 포트폴리오 요약
+- `DashboardPortfolioEditor`: 현금 입력 경계
 - `Dashboard.module.css`: 페이지 프레임과 여러 자식이 공유하는 스타일
 - `Dashboard{Component}.module.css`: 해당 자식 컴포넌트만 사용하는 스타일
 
@@ -50,7 +53,10 @@ HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이�
 
 ### StockDetail·Watchlist
 
-- `StockDetailFundamentals`, `StockDetailJournal`: 재무·판단 기록과 전용 스타일
+- `StockDetailHero`: HERD 상태와 연구 Action Layer
+- `StockDetailAnalysis`: 신호 근거·지표·신뢰도 상세
+- `StockDetailHistory`: 기간별 HERD 차트
+- `StockDetailRecords`: 재무 가드와 판단 기록 조합
 - `WatchlistMarketBanner`: SPY 시장 상태와 타임라인
 - `WatchlistQueue`: 요약, 매수 후보, 관찰 종목 목록
 - `Watchlist`: 조회·삭제 상태와 페이지 조합
@@ -80,7 +86,9 @@ npm run test:visual
 
 `data/scheduler`는 운영 경로이고 `data/herd`는 연구 경로다.
 
-- `scheduler/herd_scheduler.py`: Tier 1/2/3 작업 오케스트레이션
+- `scheduler/herd_scheduler.py`: 기존 외부 import를 보존하는 운영 파사드와 Tier 1 잡
+- `scheduler/on_demand.py`: 요청 기반 HERD 캐시·계산
+- `scheduler/daemon.py`: APScheduler 데몬 구성
 - `scheduler/realtime_portfolio.py`: 실시간 포트폴리오 조회·평가·스냅샷 저장
 - `herd/*_vN.py`와 고정 계약/리포트: 연구 재현 산출물
 
@@ -96,6 +104,6 @@ npm run test:visual
 4. 줄 수만 줄이는 래퍼, 한 번만 쓰는 추상화, 이름만 다른 중복 계층은 만들지 않는다.
 5. 백엔드 전체 테스트, 프론트 테스트·lint·build, 관련 Python 테스트가 모두 통과해야 한다.
 
-현재 남은 큰 경계는 `StockDetail` 본문의 신호·신뢰도 섹션과 `HerdScoreResponse` DTO의
-과도한 필드 수다. 이들은 화면 회귀 기준과 API 호환 테스트를 유지하면서 작은 변경 단위로
-처리한다.
+현재 남은 큰 경계는 `useDashboardData`, `useStockDetail`의 비동기 상태 조합과
+`HerdScoreResponse` DTO의 과도한 필드 수다. 화면 회귀 기준과 API 호환 테스트를
+유지하면서 작은 변경 단위로 처리한다.

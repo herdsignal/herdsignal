@@ -1,6 +1,6 @@
 # frontend/ — React 대시보드
 
-최종 업데이트: 2026-07-10
+최종 업데이트: 2026-07-24
 
 ## 이 폴더의 역할
 Spring Boot API를 호출해서 HERD Index 데이터를 시각화.
@@ -19,8 +19,8 @@ src/
 │   ├── AvgPriceModal/ 평균 매수가·수량 수정 모달
 │   └── SignalJournalModal/ HERD 판단 기록 입력 모달
 ├── pages/          화면 단위
-│   ├── Dashboard/  포트폴리오 대시보드 (화면/Dashboard.jsx, 포트폴리오 상태/useDashboardData.js, 시장 상태/useDashboardMarketData.js, 계산/dashboardModel.js)
-│   ├── StockDetail/ 종목 상세 (화면/StockDetail.jsx, 상태/useStockDetail.js, 계산/stockDetailModel.js)
+│   ├── Dashboard/  조합/Dashboard.jsx, 시장/DashboardCommandCenter.jsx, 상태/useDashboardData.js
+│   ├── StockDetail/ 조합/StockDetail.jsx, Hero·Analysis·History·Records 섹션, 상태/useStockDetail.js
 │   ├── Search/     종목 검색 & 추가
 │   ├── Watchlist/  관심 종목
 │   ├── HerdLab/    HERD 검증과 방법론

@@ -225,7 +225,7 @@ cd ..
 
 ```bash
 # Python
-PYTHONPATH=data data/.venv/bin/pytest -q data/tests
+data/.venv/bin/python -m pytest -q
 
 # Backend
 (cd backend && ./gradlew test)
@@ -234,6 +234,14 @@ PYTHONPATH=data data/.venv/bin/pytest -q data/tests
 (cd frontend && npm run lint)
 (cd frontend && npm test -- --run)
 (cd frontend && npm run build)
+(cd frontend && npm run test:visual)
+```
+
+로컬 연구 원문·보고서·생성 캐시의 사용량은 파일을 삭제하지 않는 읽기 전용 감사로
+확인할 수 있습니다.
+
+```bash
+./scripts/audit-storage.sh
 ```
 
 ## 주요 API

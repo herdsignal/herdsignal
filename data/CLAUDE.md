@@ -1,6 +1,6 @@
 # data/ — Python 데이터 엔진
 
-최종 업데이트: 2026-07-10
+최종 업데이트: 2026-07-24
 
 ## 이 폴더의 역할
 yfinance로 주가 데이터 수집 + HERD Index 계산 + MariaDB 저장.
@@ -40,7 +40,10 @@ data/
 │   ├── backtest_weight.py  가중치 탐색 백테스트
 │   └── grid_search.py      가중치 그리드 서치
 ├── scheduler/
-│   └── herd_scheduler.py   3-Tier 스케줄러 + on-demand 캐시
+│   ├── herd_scheduler.py   기존 import 호환 파사드 + Tier 1 잡
+│   ├── on_demand.py        Tier 2 캐시·계산
+│   ├── realtime_portfolio.py Tier 3 평가·스냅샷
+│   └── daemon.py           APScheduler 구성
 ├── config/
 │   ├── settings.py         설정값 (가중치, 임계값, 스케줄 등)
 │   └── database.py         DB 엔진·세션 팩토리
@@ -50,7 +53,8 @@ data/
 ├── setup_sp500_tickers.py  S&P 500 티커 등록 스크립트
 ├── compare_v1_v2.py        지표 버전 비교 스크립트
 ├── diagnose_xom.py         XOM 진단 스크립트
-└── requirements.txt
+├── requirements.txt        업그레이드 가능한 직접 의존성 범위
+└── requirements.lock       Python 3.12 검증 버전
 ../.env                         루트 단일 환경변수 파일
 ```
 
@@ -143,7 +147,7 @@ DB URL은 `settings.py`에서 DB 사용자명/비밀번호를 URL 인코딩해 �
 `signal_journal`은 HERD 판단 기록 장기 보관용 테이블이며, backend `/api/journal`이 직접 저장/조회한다. Python 계산 엔진은 판단 기록을 생성하지 않는다.
 기존 종목의 회사명·섹터·로고가 비어 있으면 `backfill_stock_profiles.py`로 포트폴리오/관심종목/SPY 우선 보강한다. 전체 stocks 보강은 Finnhub 호출량이 커서 `--all-stocks`를 명시한 경우에만 수행한다.
 
-## 3-Tier 스케줄러 구조 (herd_scheduler.py)
+## 3-Tier 스케줄러 구조
 
 **Tier 1 — 매일 자동 업데이트 (`run_herd_job`)**
 - 실행 시각: 매일 16:30 ET (APScheduler BlockingScheduler)

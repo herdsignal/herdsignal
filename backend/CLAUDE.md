@@ -129,10 +129,10 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - HERD 신뢰도 응답은 DB 스키마 변경 없이 `HerdService`가 계산한다. `qualityScore`, `qualityLevel`, `qualityLabel`, `qualitySummary`, `qualityFlags`, `qualityReasons`를 포함한다.
 - HERD 신뢰도는 `daily_prices` 기간이 아니라 저장된 HERD 산출 결과의 완성도(핵심 지표, 200주 MA, v4 보정 승수, 최신성)를 기준으로 계산한다.
 - HERD 신호 성능 신뢰도는 `HerdReliabilityService`가 Python을 호출해 계산한다. `qualityScore`와 달리 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 모델 적합도, 표본 품질, 매수/익절 edge를 기준으로 한다.
-- HERD_v6 Progressive Action Layer 응답은 DB 스키마 변경 없이 `ActionDecisionService`가 계산한다. HERD_v4 점수, 지표 품질, 데이터 품질, 저장된 HERD 히스토리의 최근 변화율, 현재 신호 지속 기간을 함께 사용하며 `actionModelVersion`, `actionModelName`, `baseModelVersion`, `actionModelStatus`, `actionScore`, `actionGrade`, `actionLabel`, `actionRatio`, `actionRegime`, `actionRegimeLabel`, `actionReasons`, `actionWarnings`를 포함한다.
+- HERD_v6.1 Progressive Action Layer는 레거시 연구 참고값이다. `ActionDecisionService`가 연구 비율을 계산하더라도 승격 승인·holdout 게이트를 통과하지 않으면 운영 `actionRatio`는 항상 0%다.
 - HERD 응답은 저장된 `herd_scores` 히스토리 기준 현재 `signal`/`herdStage`가 언제부터 이어졌는지 계산해 `signalStartedAt`, `signalDurationDays`, `stageStartedAt`, `stageDurationDays`를 포함한다.
 - 포트폴리오 종목별 `dailyChangePct`는 KST 22:30 미국장 시작을 하루 경계로 본다. 22:30 전에는 직전 미국장 세션을 오늘로 유지한다.
-- 로그인/인증/멀티유저 API는 없음. 현재는 `local` 사용자 고정.
+- Google OAuth 로그인과 사용자별 포트폴리오·관심종목·판단 기록을 지원한다. 인증 비활성 로컬 개발에서만 `local` 사용자를 사용한다.
 - HERD 판단 기록은 `signal_journal` 테이블에 저장한다. 과거 localStorage 기반 기록장은 제거했고, frontend는 `/api/journal`을 기준으로 조회/저장한다.
 - 증권사 API 추상화는 구현되어 있지 않다.
 - Action Layer와 `settings.py`는 Rush 75 / Flee 15 행동 신호 기준을 사용한다. Python `calculator.py`와 frontend `utils/herdStage.js`도 같은 기준을 따른다.
