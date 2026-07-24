@@ -2068,7 +2068,25 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
   future flag 경고 2종은 기능 오류가 아니며 라우터 업그레이드 작업에서
   처리한다.
 
-최종 회귀는 Python 874개, backend 77개, frontend 16개 파일·34개 테스트,
-frontend lint와 production build가 모두 통과했다. 관찰용 연구 MVP와
-사용자 화면 연결은 아직 별도 작업이며, 현재 화면의 v4 점수를 State S1로
-바꿨다고 주장하지 않는다.
+해당 시점의 최종 회귀는 Python 874개, backend 77개, frontend 16개
+파일·34개 테스트, frontend lint와 production build가 모두 통과했다.
+
+## State S1 제품 연결
+
+- 고정 439종목의 주간 State S1·Transition S1 번들을 Python 스케줄러가
+  원자적으로 만들고, 별도 `herd_observations` 테이블에 버전형
+  스냅샷으로 저장한다.
+- SPY는 SPY 가격 점수가 아니라 고정 종목군의 가족별 중앙값을 집계한
+  `S&P 500 군중 상태`다. 개별 종목과 시장 집계 scope를 API에서 분리한다.
+- `/api/observations` 최신·일괄·히스토리 API를 v4와 별도로 추가했다.
+  홈, 대시보드, 포트폴리오, 관찰 대기열, 검색과 종목 상세의 기본 상태는
+  S1을 사용하며 S1 부재 시 v4로 대체하지 않는다.
+- v4와 v6.1은 HERD Lab의
+  `LEGACY_STATE_BASELINE`·`LEGACY_RESEARCH_ACTION_BASELINE`으로
+  격리했다. 계산·DB·호환 API는 과거 재현을 위해 보존한다.
+- `UserActionBoundary`가 기본 응답, 과거·신규 판단 저널과 프론트 캐시를
+  `HOLD·0%`로 닫는다. 사용자가 직접 기록한 BUY/HOLD/SELL 판단 자체는
+  보존한다.
+- 향후 행동 모델은 별도 승격 포트에서 모델·산출물 SHA-256, 방향 OOS,
+  완결 사이클, survivorship-safe, 단일 Blind holdout, 사람 승인과 감사
+  저장을 모두 통과해야 한다. 현재 포트에 연결된 후보는 0개다.

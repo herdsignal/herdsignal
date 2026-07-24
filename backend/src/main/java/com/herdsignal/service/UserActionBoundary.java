@@ -21,6 +21,13 @@ public class UserActionBoundary {
         return new Output("HOLD", ZERO_RATIO, false, false);
     }
 
+    public Output fromApproved(GrantedOperationalAction grant) {
+        if (grant == null) {
+            return locked();
+        }
+        return new Output(grant.action(), grant.ratio(), true, true);
+    }
+
     public record Output(
             String action,
             BigDecimal ratio,

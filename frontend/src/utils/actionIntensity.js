@@ -7,7 +7,9 @@ export function actionIntensity(value) {
 }
 
 export function actionIntensityLabel(data) {
-  return data?.actionIntensityLabel ?? actionIntensity(data?.actionRatio).label
+  if (data?.actionAuthorized !== true) return '관찰'
+  return data?.actionIntensityLabel
+    ?? actionIntensity(data?.operationalActionRatio ?? data?.actionRatio).label
 }
 
 export function formatActionScore(value) {
@@ -20,7 +22,8 @@ export function formatActionScore(value) {
 export function actionBasisLabel(data) {
   const intensity = actionIntensityLabel(data)
   if (intensity === '관찰') return '현재 비중 유지'
-  if (data?.signal === 'BUY' || data?.signal === 'ADD') return `${intensity} 강도로 분할매수 검토`
-  if (data?.signal === 'SELL' || data?.signal === 'REDUCE') return `${intensity} 강도로 비중 축소 검토`
+  const action = data?.operationalAction
+  if (action === 'BUY' || action === 'ADD') return `${intensity} 강도로 분할매수 검토`
+  if (action === 'SELL' || action === 'REDUCE') return `${intensity} 강도로 비중 축소 검토`
   return '현재 비중 유지'
 }

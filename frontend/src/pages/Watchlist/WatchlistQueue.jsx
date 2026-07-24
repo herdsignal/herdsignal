@@ -145,8 +145,9 @@ function QueueRow({ item, deletingTicker, onDelete, onOpenStock }) {
 
 function formatActionText(item) {
   const signal = operationalSignal(item)
-  const action = item?.actionLabel ?? signalDesc(signal)
-  return [formatActionScore(item?.actionScore), actionIntensityLabel(item), action]
+  const authorized = item?.actionAuthorized === true && signal !== 'HOLD'
+  const action = authorized ? (item?.actionLabel ?? signalDesc(signal)) : signalDesc('HOLD')
+  return [authorized ? formatActionScore(item?.actionScore) : null, actionIntensityLabel(item), action]
     .filter(Boolean)
     .join(' · ')
 }

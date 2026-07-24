@@ -30,12 +30,18 @@ class PromotionApprovalServiceTest {
                 {
                   "policyVersion": "2026.07-v3",
                   "candidateId": "B9",
+                  "modelVersion": "HERD_ACTION_S2",
+                  "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                   "finalGate": {
                     "status": "PROMOTION_CANDIDATE",
                     "eligibleForHumanReview": true,
-                    "automaticProductionPromotion": false
+                    "automaticProductionPromotion": false,
+                    "directionEvidencePassed": true,
+                    "completedCyclePassed": true,
+                    "survivorshipSafe": true
                   },
                   "blindHoldout": {
+                    "id": "BLIND_2027_H1",
                     "status": "COMPLETE",
                     "evaluationCount": 1,
                     "passed": true
@@ -53,6 +59,11 @@ class PromotionApprovalServiceTest {
 
         assertThat(service.isApproved("B9")).isTrue();
         assertThat(service.isApproved("B8")).isFalse();
+        PromotionEvidence evidence = service.approvalEvidence("B9").orElseThrow();
+        assertThat(evidence.modelVersion()).isEqualTo("HERD_ACTION_S2");
+        assertThat(evidence.artifactSha256()).hasSize(64);
+        assertThat(evidence.approvalFileSha256()).hasSize(64);
+        assertThat(evidence.holdoutId()).isEqualTo("BLIND_2027_H1");
     }
 
     @Test
@@ -62,12 +73,18 @@ class PromotionApprovalServiceTest {
                 {
                   "policyVersion": "2026.07-v3",
                   "candidateId": "B9",
+                  "modelVersion": "HERD_ACTION_S2",
+                  "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                   "finalGate": {
                     "status": "PROMOTION_CANDIDATE",
                     "eligibleForHumanReview": true,
-                    "automaticProductionPromotion": false
+                    "automaticProductionPromotion": false,
+                    "directionEvidencePassed": true,
+                    "completedCyclePassed": true,
+                    "survivorshipSafe": true
                   },
                   "blindHoldout": {
+                    "id": "REUSED_HOLDOUT",
                     "status": "COMPLETE",
                     "evaluationCount": 2,
                     "passed": true

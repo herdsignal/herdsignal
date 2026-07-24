@@ -71,6 +71,25 @@
 종목을 임의로 제외해 coverage를 높이지 않는다. 전체 평균만 좋아도 중앙값,
 종목 통과율, MDD, 비용 스트레스 중 하나가 실패하면 채택하지 않는다.
 
+## 운영 승격 파일과 감사 원장
+
+운영 행동은 환경변수나 레거시 `ActionDecision`으로 열 수 없다. 내부
+`OperationalActionPromotionPort`가 다음 조건을 모두 검증하고
+`model_promotion_audits` 저장에 성공한 경우만 권한 객체를 발급한다.
+
+- 정책 버전 `2026.07-v3`
+- 정확한 candidate ID와 model version
+- 64자리 연구 산출물 SHA-256과 승인 파일 SHA-256
+- 방향성 독립 OOS 통과
+- 5% 익절→재진입 완결 사이클 통과
+- `survivorship_safe=true`
+- 이름이 고정된 Blind holdout을 정확히 한 번 평가하고 통과
+- 자동 승격 금지와 사람 reviewer·승인시각 기록
+
+승격 후에도 허용되는 행동은 `ADD` 또는 `REDUCE`, 1회 최대 5%다.
+`BUY`·`SELL`, 전량 행동, 레버리지는 포트에서 거절한다. 승인 근거와
+요청 해시가 다르거나 감사 DB를 쓸 수 없으면 fail-closed 한다.
+
 ## 행동 효율 필수 공개
 
 다음 값은 후보마다 OOS 구간에서 반드시 산출한다.

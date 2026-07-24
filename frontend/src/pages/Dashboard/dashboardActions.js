@@ -35,8 +35,12 @@ export function badgeStyle(stage) {
 export { formatActionScore }
 
 export function formatActionText(herd) {
-  const action = herd?.actionLabel ?? decisionSignalDesc(herd?.signal)
-  const strength = formatActionScore(herd?.actionScore)
+  const signal = operationalSignal(herd)
+  const authorized = herd?.actionAuthorized === true && signal !== 'HOLD'
+  const action = authorized
+    ? (herd?.actionLabel ?? decisionSignalDesc(signal))
+    : decisionSignalDesc('HOLD')
+  const strength = authorized ? formatActionScore(herd?.actionScore) : null
   return [strength, action].filter(Boolean).join(' · ')
 }
 
@@ -149,7 +153,8 @@ export function sortPortfolioItems(list, rows, herdMap, sortMode) {
     }
 
     const priorityDifference =
-      actionPriority(leftHerd?.signal) - actionPriority(rightHerd?.signal)
+      actionPriority(operationalSignal(leftHerd))
+      - actionPriority(operationalSignal(rightHerd))
     if (priorityDifference !== 0) return priorityDifference
     const actionDifference =
       Number(rightHerd?.actionScore ?? 0) - Number(leftHerd?.actionScore ?? 0)

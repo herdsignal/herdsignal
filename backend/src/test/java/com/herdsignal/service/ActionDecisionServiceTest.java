@@ -19,13 +19,9 @@ class ActionDecisionServiceTest {
     private final ActionDecisionService service = new ActionDecisionService(true);
 
     @Test
-    void liveFlagAloneCannotEnableAnOperationalRatio() {
+    void productionServiceNeverPublishesTheLegacyResearchRatio() {
         ActionDecisionService gated = new ActionDecisionService(
-                new PersonalActionTranslator(),
-                true,
-                false,
-                "CANDIDATE_WITHOUT_HOLDOUT",
-                ignored -> true
+                new PersonalActionTranslator()
         );
         HerdScore latest = score(LocalDate.of(2026, 7, 10), 8, "Flee", "BUY");
 

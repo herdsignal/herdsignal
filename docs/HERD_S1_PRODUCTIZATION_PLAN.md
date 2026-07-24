@@ -16,7 +16,7 @@ HerdSignal의 기본 관찰 모델로 연결하는 것이다. 이 작업은 매�
 | 4. SPY 홈과 종목 상세 | 완료 | v4 fallback 제거·S1 이력·화면 회귀 |
 | 5. 레거시 모델 격리 | 완료 | 기본 화면 S1 일괄 조회·Lab 비교군 이동 |
 | 6. 행동 경계 통일 | 완료 | 사용자 출력·저널·캐시를 HOLD·0%로 fail-closed |
-| 7. 승격 포트와 최종 회귀 | 예정 | 6단계 회귀 통과 후 진행 |
+| 7. 승격 포트와 최종 회귀 | 완료 | 해시·holdout·사람 승인·감사 저장 포트 |
 
 ## 1. 정기 관찰 번들
 
@@ -156,3 +156,29 @@ HerdSignal의 기본 관찰 모델로 연결하는 것이다. 이 작업은 매�
 - 전체 회귀 통과
 - Git 작업 트리 정리
 - 운영 범위와 남은 한계를 최종 리뷰에 기록
+
+구현 결과:
+
+- `OperationalActionPromotionPort`와 sealed
+  `GrantedOperationalAction`을 추가했다. 일반 서비스는 승인 권한 객체를
+  직접 만들 수 없다.
+- 승인 파일은 candidate ID뿐 아니라 model version, 연구 산출물 SHA-256,
+  방향 증거, 완결 사이클, survivorship-safe, 단일 Blind holdout과 사람
+  승인까지 검증한다.
+- 승인·거절 요청은 `model_promotion_audits`에 모델·산출물·승인 파일
+  해시와 사유를 저장한다. 감사 저장 실패 시에도 권한을 발급하지 않는다.
+- 허용 행동은 `ADD`·`REDUCE`, 1회 최대 5%로 제한했다. 레거시
+  `ActionDecisionService`의 운영 환경변수 경로는 제거하고 연구 재현
+  전용으로 고정했다.
+- 현재 S1 API와 기본 화면은 승격 포트를 호출하지 않는다. 실제 사용자
+  출력은 계속 `HOLD·0%`다.
+
+최종 검증:
+
+- Python 전체 `933 passed`
+- Backend Gradle `117 tests` 및 Flyway V1~V6
+- Frontend Vitest `56 passed`, lint, production build
+- Playwright 데스크톱·모바일 화면 회귀 `6 passed`
+- 로컬 연구 원문은 `data/reference` 29.6GiB로 Git 비추적 상태다.
+  재현성 입력이므로 파일 수만 보고 삭제하지 않으며 스토리지 감사는
+  `REVIEW` 상태를 유지한다.

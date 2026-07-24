@@ -5,7 +5,6 @@ import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.InvestorProfile;
 import com.herdsignal.dto.ActionDecision;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,15 +35,16 @@ public class ActionDecisionService {
     private final ActionStrengthCalculator strengthCalculator;
     private final ActionRatioAdjustmentPolicy ratioAdjustmentPolicy;
     private final ActionAuthorityPolicy authorityPolicy;
-    private final boolean liveActionsEnabled;
+    private final boolean exposeResearchRatio;
 
     @Autowired
-    public ActionDecisionService(
+    public ActionDecisionService(PersonalActionTranslator personalActionTranslator) {
+        this(personalActionTranslator, false);
+    }
+
+    private ActionDecisionService(
             PersonalActionTranslator personalActionTranslator,
-            @Value("${herdsignal.action.live-enabled:false}") boolean liveActionsEnabled,
-            @Value("${herdsignal.shadow.holdout-passed:false}") boolean holdoutPassed,
-            @Value("${herdsignal.shadow.candidate-id:}") String candidateId,
-            OperationalPromotionGate promotionGate
+            boolean exposeResearchRatio
     ) {
         this.personalActionTranslator = personalActionTranslator;
         this.trendCalculator = new HerdTrendQualityCalculator();
@@ -57,23 +57,16 @@ public class ActionDecisionService {
         this.strengthCalculator = new ActionStrengthCalculator();
         this.ratioAdjustmentPolicy = new ActionRatioAdjustmentPolicy();
         this.authorityPolicy = new ActionAuthorityPolicy();
-        this.liveActionsEnabled = liveActionsEnabled
-                && holdoutPassed
-                && promotionGate.isApproved(candidateId);
+        this.exposeResearchRatio = exposeResearchRatio;
     }
 
     ActionDecisionService() {
-        this(new PersonalActionTranslator(), false, false, "", ignored -> false);
+        this(new PersonalActionTranslator(), false);
     }
 
-    ActionDecisionService(boolean liveActionsEnabled) {
-        this(
-                new PersonalActionTranslator(),
-                liveActionsEnabled,
-                liveActionsEnabled,
-                "TEST_CANDIDATE",
-                ignored -> liveActionsEnabled
-        );
+    /** 레거시 계산식 회귀 테스트에서 연구 비율을 관측하기 위한 전용 생성자. */
+    ActionDecisionService(boolean exposeResearchRatio) {
+        this(new PersonalActionTranslator(), exposeResearchRatio);
     }
 
     public ActionDecision decide(HerdScore score, HerdIndicator indicator, Integer qualityScore) {
@@ -164,7 +157,7 @@ public class ActionDecisionService {
                 herdScore, dataQuality, trend.score(), momentum.score(), adjustedRegime);
         actionScore = Math.max(0, Math.min(100, actionScore + lifecycle.scoreAdjustment()));
         RegimeDecision researchRegime = adjustedRegime;
-        adjustedRegime = applyOperationalGate(adjustedRegime);
+        adjustedRegime = applyResearchVisibilityGate(adjustedRegime);
 
         List<String> reasons = new ArrayList<>();
         reasons.add("HERD " + displayStage(score.getHerdStage()) + " 구간");
@@ -227,8 +220,8 @@ public class ActionDecisionService {
                 .build();
     }
 
-    private RegimeDecision applyOperationalGate(RegimeDecision regime) {
-        if (liveActionsEnabled || regime.ratio() == 0.0) {
+    private RegimeDecision applyResearchVisibilityGate(RegimeDecision regime) {
+        if (exposeResearchRatio || regime.ratio() == 0.0) {
             return regime;
         }
         return new RegimeDecision(

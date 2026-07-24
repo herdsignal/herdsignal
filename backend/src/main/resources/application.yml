@@ -75,9 +75,6 @@ herdsignal:
     promotion-report-path: ${HERD_VNEXT_PROMOTION_REPORT_PATH:../data/reports/personal_mvp_promotion_v1.json}
   promotion:
     approval-path: ${HERD_PROMOTION_APPROVAL_PATH:}
-  action:
-    # true여도 shadow.holdout-passed가 false면 운영 행동 비율은 항상 0%다.
-    live-enabled: ${HERD_LIVE_ACTIONS_ENABLED:false}
   shadow:
     enabled: ${HERD_SHADOW_ENABLED:false}
     candidate-id: ${HERD_SHADOW_CANDIDATE_ID:}

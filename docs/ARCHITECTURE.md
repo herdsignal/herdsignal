@@ -27,6 +27,10 @@
 - `ActionDecisionService`: 레거시 v6.1 연구 행동 재현
 - `UserActionBoundary`: 기본 사용자 응답·저널의 행동을 HOLD·0%로 잠그는
   단일 fail-closed 정책
+- `OperationalActionPromotionPort`: 향후 통과 모델이 들어오는 유일한 포트
+- `AuditedOperationalActionPromotionPort`: 모델·산출물 해시·holdout·사람
+  승인을 대조하고 감사 저장 성공 후 최대 5% 부분 행동만 발급
+- `model_promotion_audits`: 승격 요청의 승인·거절 사유와 승인 파일 해시
 
 HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이다. 한 계산식으로 합치지 않는다.
 연구용 `ActionDecision`을 사용자 응답에 직접 매핑하지 않는다.
