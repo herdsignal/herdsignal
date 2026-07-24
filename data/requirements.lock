@@ -1,0 +1,15 @@
+# HerdSignal 검증 환경의 직접 의존성 잠금
+# Python 3.12에서 검증. 업그레이드는 requirements.txt 변경 후 전체 회귀 테스트와 함께 수행한다.
+APScheduler==3.11.2
+exchange_calendars==4.13.2
+lxml==6.1.1
+numpy==2.2.6
+pandas==3.0.3
+PyMySQL==1.2.0
+pypdf==6.14.2
+pytest==8.4.2
+python-dotenv==1.2.2
+requests==2.34.2
+scipy==1.18.0
+SQLAlchemy==2.0.51
+yfinance==1.4.1

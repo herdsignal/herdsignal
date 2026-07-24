@@ -163,7 +163,7 @@ GRANT ALL PRIVILEGES ON herdsignal.* TO 'herdsignal'@'localhost';
 ```bash
 cd data
 python3.12 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/pip install -r requirements.lock
 cd ..
 
 ./scripts/run-data.sh setup_default_tickers.py
