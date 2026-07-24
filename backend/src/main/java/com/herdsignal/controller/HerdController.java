@@ -92,7 +92,7 @@ public class HerdController {
     /**
      * GET /api/stocks/{ticker}/financials
      * 종목 재무정보 조회 (시가총액·PER·EPS·영업이익률·매출·배당수익률).
-     * yfinance .info 기반 on-demand 조회 (Python ProcessBuilder).
+     * yfinance .info 기반 on-demand 조회 (공통 Python 실행 게이트웨이).
      */
     @GetMapping("/stocks/{ticker}/financials")
     public ResponseEntity<ApiResponse<StockFinancialsResponse>> getStockFinancials(

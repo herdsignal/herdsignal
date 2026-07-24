@@ -3,28 +3,24 @@ package com.herdsignal.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.dto.StockSearchItem;
 import com.herdsignal.dto.StockSearchResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Finnhub 심볼 검색 서비스.
- * ProcessBuilder로 Python finnhub_collector.search_symbols를 실행한다.
- * FinancialsService와 동일한 ProcessBuilder 패턴 사용.
+ * 공통 Python 실행 게이트웨이로 finnhub_collector.search_symbols를 실행한다.
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FinnhubService {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+    private final PythonProcessGateway processGateway;
 
     /**
      * 회사명 또는 티커 기반 종목 검색.
@@ -33,7 +29,7 @@ public class FinnhubService {
     public StockSearchResponse searchStocks(String query) {
         String normalized = validateSearchQuery(query);
         try {
-            String queryLiteral = MAPPER.writeValueAsString(normalized);
+            String queryLiteral = objectMapper.writeValueAsString(normalized);
             String script = String.join("\n",
                 "import sys, json",
                 "sys.path.insert(0, 'data')",
@@ -41,9 +37,13 @@ public class FinnhubService {
                 "query = " + queryLiteral,
                 "print(json.dumps(search_symbols(query)))"
             );
-            String json = runPython(normalized, "search", script);
+            String json = processGateway.executeInline(
+                    "[finnhub/search][" + normalized + "]",
+                    script,
+                    Duration.ofSeconds(30)
+            ).stdout();
             @SuppressWarnings("unchecked")
-            List<Map<String, Object>> raw = MAPPER.readValue(json, List.class);
+            List<Map<String, Object>> raw = objectMapper.readValue(json, List.class);
             List<StockSearchItem> items = raw.stream()
                     .map(m -> StockSearchItem.builder()
                             .ticker((String) m.get("ticker"))
@@ -77,55 +77,4 @@ public class FinnhubService {
         return normalized;
     }
 
-    /**
-     * Python 스크립트를 ProcessBuilder로 실행하고 stdout 반환.
-     * FinancialsService와 동일한 패턴 (stdout/stderr 분리 스레드, 타임아웃 30초).
-     *
-     * @param ticker  로그용 티커 심볼
-     * @param context 로그용 컨텍스트
-     * @param script  실행할 Python 코드 문자열
-     * @return Python stdout (trim 처리)
-     * @throws Exception 타임아웃, 비정상 종료, 출력 없음 시
-     */
-    private String runPython(String ticker, String context, String script) throws Exception {
-        Path projectRoot = Paths.get(System.getProperty("user.dir")).getParent();
-        Path pythonExe   = projectRoot.resolve("data/.venv/bin/python3.12");
-
-        ProcessBuilder pb = new ProcessBuilder(pythonExe.toString(), "-c", script);
-        pb.directory(projectRoot.toFile());
-
-        Process process = pb.start();
-
-        StringBuilder output = new StringBuilder();
-        Thread stdoutReader = new Thread(() -> {
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()))) {
-                String line;
-                while ((line = reader.readLine()) != null) output.append(line).append("\n");
-            } catch (IOException ignored) {}
-        });
-        Thread stderrReader = new Thread(() -> {
-            try { process.getErrorStream().readAllBytes(); } catch (IOException ignored) {}
-        });
-        stdoutReader.start();
-        stderrReader.start();
-
-        boolean finished = process.waitFor(30, TimeUnit.SECONDS);
-        stdoutReader.join(5_000);
-        stderrReader.join(1_000);
-
-        if (!finished) {
-            process.destroyForcibly();
-            throw new RuntimeException("[" + ticker + "][" + context + "] 타임아웃 (30초)");
-        }
-        if (process.exitValue() != 0) {
-            throw new RuntimeException("[" + ticker + "][" + context + "] exit=" + process.exitValue());
-        }
-
-        String result = output.toString().trim();
-        if (result.isEmpty()) {
-            throw new RuntimeException("[" + ticker + "][" + context + "] Python 출력 없음");
-        }
-        return result;
-    }
 }

@@ -57,7 +57,10 @@ class PortfolioServiceTest {
                 mock(TickerReadinessService.class),
                 queryService,
                 cashService,
-                new PortfolioRealtimeRunner(new ObjectMapper())
+                new PortfolioRealtimeRunner(
+                        new ObjectMapper(),
+                        new PythonProcessGateway("")
+                )
         );
 
         when(historyRepository.findTopByUserIdOrderBySnapshotDateDesc(anyString()))

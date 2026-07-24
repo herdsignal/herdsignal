@@ -1,17 +1,15 @@
 package com.herdsignal.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.herdsignal.dto.HerdReliabilityResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.Duration;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * HERD 신호 신뢰도 조회 서비스.
@@ -19,7 +17,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class HerdReliabilityService {
+    private final ObjectMapper objectMapper;
+    private final PythonProcessGateway processGateway;
 
     /**
      * 특정 종목의 HERD 신호 신뢰도를 조회한다.
@@ -36,57 +37,14 @@ public class HerdReliabilityService {
             throw new IllegalArgumentException("분석 기간은 1~10년만 허용합니다.");
         }
 
-        Path projectRoot = Paths.get(System.getProperty("user.dir")).getParent();
-        Path pythonExe   = projectRoot.resolve("data/.venv/bin/python3.12");
-
-        ProcessBuilder pb = new ProcessBuilder(
-                pythonExe.toString(),
-                "data/herd/signal_reliability.py",
-                ticker,
-                "--years",
-                String.valueOf(years)
-        );
-        pb.directory(projectRoot.toFile());
-
         try {
-            Process process = pb.start();
-
-            StringBuilder output = new StringBuilder();
-            StringBuilder stderr = new StringBuilder();
-
-            Thread stdoutReader = new Thread(() -> readStream(process, output, ticker, "stdout"));
-            Thread stderrReader = new Thread(() -> readStream(process, stderr, ticker, "stderr"));
-
-            stdoutReader.start();
-            stderrReader.start();
-
-            boolean finished = process.waitFor(60, TimeUnit.SECONDS);
-            stdoutReader.join(5_000);
-            stderrReader.join(5_000);
-
-            if (!finished) {
-                process.destroyForcibly();
-                throw new RuntimeException("[" + ticker + "] HERD 신뢰도 조회 타임아웃 (60초)");
-            }
-
-            int exitCode = process.exitValue();
-            String stderrStr = stderr.toString().trim();
-            if (exitCode != 0) {
-                log.error("[herd-reliability][{}] Python 실패 (exit={}):\n{}", ticker, exitCode, stderrStr);
-                throw new RuntimeException("[" + ticker + "] HERD 신뢰도 조회 실패 (exit=" + exitCode + ")");
-            }
-            if (!stderrStr.isEmpty()) {
-                log.debug("[herd-reliability][{}] Python 로그:\n{}", ticker, stderrStr);
-            }
-
-            String outputStr = output.toString().trim();
-            if (outputStr.isEmpty()) {
-                throw new RuntimeException("[" + ticker + "] Python 출력 없음");
-            }
-
-            ObjectMapper mapper = new ObjectMapper();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> raw = mapper.readValue(outputStr, Map.class);
+            String output = processGateway.executeScript(
+                    "[herd-reliability][" + ticker + "]",
+                    "data/herd/signal_reliability.py",
+                    List.of(ticker, "--years", String.valueOf(years)),
+                    Duration.ofSeconds(60)
+            ).stdout();
+            Map<String, Object> raw = objectMapper.readValue(output, new TypeReference<>() {});
 
             return HerdReliabilityResponse.builder()
                     .ticker(toStringValue(raw.get("ticker")))
@@ -121,25 +79,9 @@ public class HerdReliabilityService {
                     .lastUpdated(toStringValue(raw.get("last_updated")))
                     .build();
 
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
             log.error("[herd-reliability][{}] 조회 실패: {}", ticker, e.getMessage(), e);
             throw new RuntimeException("[" + ticker + "] HERD 신뢰도 조회 실패: " + e.getMessage());
-        }
-    }
-
-    private void readStream(Process process, StringBuilder target, String ticker, String streamName) {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader("stdout".equals(streamName)
-                        ? process.getInputStream()
-                        : process.getErrorStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                target.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            log.warn("[herd-reliability][{}] {} 읽기 오류: {}", ticker, streamName, e.getMessage());
         }
     }
 
