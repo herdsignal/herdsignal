@@ -69,7 +69,7 @@ public class PortfolioQueryService {
     }
 
     public PortfolioHistoryResponse getHistory(String userId, String period) {
-        LocalDate end = LocalDate.now();
+        LocalDate end = marketSessionClock.currentSessionDate();
         LocalDate start = startDate(period, end);
         List<PortfolioHistory> histories =
                 historyRepository.findByUserIdAndSnapshotDateBetweenOrderBySnapshotDateAsc(
