@@ -70,7 +70,7 @@ export default function DashboardCommandCenter({
         <div>
           <span>Signal Command Center</span>
           <strong>현재 시장 신호</strong>
-          <em>S&amp;P 500 흐름과 보유 종목 행동 대기열을 함께 확인합니다.</em>
+          <em>S&amp;P 500 흐름과 보유 종목 관찰 상태를 함께 확인합니다.</em>
         </div>
         <div className={styles.commandFrameMeta}>
           <span>

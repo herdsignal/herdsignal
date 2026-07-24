@@ -24,6 +24,7 @@ public class SignalJournalService {
 
     private final SignalJournalRepository signalJournalRepository;
     private final DailyPriceRepository dailyPriceRepository;
+    private final UserActionBoundary actionBoundary;
 
     @Transactional(readOnly = true)
     public List<SignalJournalResponse> getJournals(String userId, String ticker) {
@@ -33,7 +34,7 @@ public class SignalJournalService {
                 : signalJournalRepository.findByUserIdAndTickerOrderByRecordedAtDesc(userId, normalizedTicker);
 
         return rows.stream()
-                .map((journal) -> SignalJournalResponse.from(journal, latestClose(journal.getTicker())))
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -41,6 +42,7 @@ public class SignalJournalService {
     public SignalJournalResponse createJournal(String userId, SignalJournalRequest request) {
         String ticker = normalizeTicker(request.getTicker());
         String actionType = normalizeActionType(request.getActionType());
+        UserActionBoundary.Output modelAction = actionBoundary.locked();
         LocalDateTime now = LocalDateTime.now();
 
         SignalJournal journal = SignalJournal.builder()
@@ -51,10 +53,10 @@ public class SignalJournalService {
                 .scoreDate(request.getScoreDate())
                 .herdScore(request.getHerdScore())
                 .herdStage(cleanText(request.getHerdStage(), 20))
-                .signal(cleanText(request.getSignal(), 20))
-                .signalLabel(cleanText(request.getSignalLabel(), 100))
-                .actionRatio(request.getActionRatio())
-                .signalDurationDays(request.getSignalDurationDays())
+                .signal(modelAction.action())
+                .signalLabel("State S1 관찰")
+                .actionRatio(modelAction.ratio())
+                .signalDurationDays(null)
                 .stageDurationDays(request.getStageDurationDays())
                 .price(request.getPrice())
                 .quantity(request.getQuantity())
@@ -67,7 +69,7 @@ public class SignalJournalService {
                 .build();
 
         SignalJournal saved = signalJournalRepository.save(journal);
-        return SignalJournalResponse.from(saved, latestClose(saved.getTicker()));
+        return toResponse(saved);
     }
 
     @Transactional
@@ -121,5 +123,15 @@ public class SignalJournalService {
                 .findFirst()
                 .map((price) -> price.getClosePrice())
                 .orElse(null);
+    }
+
+    private SignalJournalResponse toResponse(SignalJournal journal) {
+        UserActionBoundary.Output modelAction = actionBoundary.locked();
+        return SignalJournalResponse.from(
+                journal,
+                latestClose(journal.getTicker()),
+                modelAction.action(),
+                modelAction.ratio()
+        );
     }
 }

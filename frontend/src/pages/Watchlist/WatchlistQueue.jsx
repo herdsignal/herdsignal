@@ -17,7 +17,7 @@ const styles = { ...sharedStyles, ...componentStyles }
 export default function WatchlistQueue({
   watchlist,
   scoredWatchlist,
-  opportunityQueue,
+  observationQueue,
   deletingTicker,
   onDelete,
   onOpenStock,
@@ -37,10 +37,10 @@ export default function WatchlistQueue({
       </div>
 
       <div className={styles.opportunityPanel}>
-        <SectionHeader title="매수 대기열" hint="준비도·신호일수 기준" />
-        {opportunityQueue.length > 0 ? (
+        <SectionHeader title="우선 관찰" hint="상태 변화·밀집도 기준" />
+        {observationQueue.length > 0 ? (
           <div className={styles.opportunityList}>
-            {opportunityQueue.map((item, index) => (
+            {observationQueue.map((item, index) => (
               <button
                 key={item.ticker}
                 className={styles.opportunityItem}
@@ -56,14 +56,14 @@ export default function WatchlistQueue({
               </button>
             ))}
           </div>
-        ) : <div className={styles.opportunityEmpty}>지금은 추가매수 후보가 없습니다.</div>}
+        ) : <div className={styles.opportunityEmpty}>관찰할 종목이 없습니다.</div>}
       </div>
 
       <SectionHeader title={`관찰 종목 · ${watchlist.length}`} hint="준비도 높은 순" />
 
       <div className={styles.queueTable}>
         <div className={styles.queueHead}>
-          <span>종목</span><span>HERD</span><span>액션</span><span>준비도</span><span>업데이트</span>
+          <span>종목</span><span>HERD</span><span>행동</span><span>관찰 상태</span><span>업데이트</span>
         </div>
         {scoredWatchlist.map((item) => (
           <QueueRow

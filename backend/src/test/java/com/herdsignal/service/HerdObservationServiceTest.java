@@ -41,7 +41,8 @@ class HerdObservationServiceTest {
         service = new HerdObservationService(
                 repository,
                 stockRepository,
-                new UsMarketSessionClock(clock)
+                new UsMarketSessionClock(clock),
+                new UserActionBoundary()
         );
     }
 

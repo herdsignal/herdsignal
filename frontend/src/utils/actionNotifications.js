@@ -14,7 +14,7 @@ export function mergeTrackedStocks(portfolio = [], watchlist = []) {
   const merged = new Map()
   portfolio.forEach((item) => merged.set(item.ticker, { ...item, source: '포트폴리오' }))
   watchlist.forEach((item) => {
-    if (!merged.has(item.ticker)) merged.set(item.ticker, { ...item, source: '매수 대기열' })
+    if (!merged.has(item.ticker)) merged.set(item.ticker, { ...item, source: '관찰 대기열' })
   })
   return [...merged.values()].filter((item) => item.ticker)
 }

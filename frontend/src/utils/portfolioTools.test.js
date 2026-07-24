@@ -24,8 +24,30 @@ describe('portfolioTools operational boundary', () => {
     expect(opportunityRows([item])[0].stateSignal).toBe('BUY')
   })
 
-  it('uses a signal only after an operational action ratio is present', () => {
-    expect(operationalSignal({ signal: 'ADD', actionRatio: 0.05 })).toBe('ADD')
+  it('requires explicit authorization and a positive operational ratio', () => {
+    expect(operationalSignal({
+      signal: 'ADD',
+      operationalAction: 'ADD',
+      operationalActionRatio: 0.05,
+      actionAuthorized: true,
+    })).toBe('ADD')
+    expect(operationalSignal({
+      signal: 'ADD',
+      operationalAction: 'ADD',
+      actionRatio: 0.05,
+    })).toBe('HOLD')
+  })
+
+  it('fails closed for stale cache values and invalid action codes', () => {
+    expect(operationalSignal({
+      operationalAction: 'SELL',
+      actionRatio: 0.15,
+    })).toBe('HOLD')
+    expect(operationalSignal({
+      operationalAction: 'STRONG_BUY',
+      operationalActionRatio: 0.15,
+      actionAuthorized: true,
+    })).toBe('HOLD')
   })
 
   it('keeps portfolio rebalance math independent from an unapproved action signal', () => {

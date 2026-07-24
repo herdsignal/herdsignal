@@ -18,7 +18,7 @@ export default function DashboardHeader({
       <div>
         <div className={styles.pageDate}>{today}</div>
         <h1 className={styles.pageTitle}>내 포트폴리오</h1>
-        <p className={styles.pageSubtitle}>시장 흐름과 보유 종목의 행동 대기열을 먼저 확인합니다.</p>
+        <p className={styles.pageSubtitle}>시장 흐름과 보유 종목의 군중 상태를 먼저 확인합니다.</p>
       </div>
       <div className={styles.headerActions}>
         {lastUpdated && (

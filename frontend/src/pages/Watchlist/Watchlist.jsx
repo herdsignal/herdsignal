@@ -102,10 +102,8 @@ export default function Watchlist() {
   }
 
   const scoredWatchlist = useMemo(() => opportunityRows(watchlist), [watchlist])
-  const opportunityQueue = useMemo(
-    () => scoredWatchlist
-      .filter((item) => item.signal === 'BUY' || item.signal === 'ADD')
-      .slice(0, 5),
+  const observationQueue = useMemo(
+    () => scoredWatchlist.slice(0, 5),
     [scoredWatchlist]
   )
 
@@ -114,8 +112,8 @@ export default function Watchlist() {
       <div className={styles.pageHeader}>
         <div>
           <div className={styles.pageDate}>{today}</div>
-          <h1 className={styles.pageTitle}>매수 대기열</h1>
-          <p className={styles.pageDesc}>관심종목 중 HERD가 매수권에 가까운 종목부터 확인합니다.</p>
+          <h1 className={styles.pageTitle}>관찰 대기열</h1>
+          <p className={styles.pageDesc}>관심종목의 군중 상태와 변화 시점을 확인합니다.</p>
         </div>
         <div className={styles.headerActions}>
           {refreshNotice && <span className={styles.refreshNotice}>{refreshNotice}</span>}
@@ -152,7 +150,7 @@ export default function Watchlist() {
         <WatchlistQueue
           watchlist={watchlist}
           scoredWatchlist={scoredWatchlist}
-          opportunityQueue={opportunityQueue}
+          observationQueue={observationQueue}
           deletingTicker={deletingTicker}
           onDelete={handleDelete}
           onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}

@@ -18,6 +18,29 @@ class ActionDecisionServiceTest {
 
     private final ActionDecisionService service = new ActionDecisionService(true);
 
+    @Test
+    void liveFlagAloneCannotEnableAnOperationalRatio() {
+        ActionDecisionService gated = new ActionDecisionService(
+                new PersonalActionTranslator(),
+                true,
+                false,
+                "CANDIDATE_WITHOUT_HOLDOUT",
+                ignored -> true
+        );
+        HerdScore latest = score(LocalDate.of(2026, 7, 10), 8, "Flee", "BUY");
+
+        ActionDecision decision = gated.decide(
+                latest,
+                null,
+                90,
+                historyUntil(latest.getScoreDate(), 25, 18, "Flee", "BUY")
+        );
+
+        assertThat(decision.getActionRatio()).isZero();
+        assertThat(decision.getActionRegime()).endsWith("_RESEARCH_ONLY");
+        assertThat(decision.getResearchActionRatio()).isPositive();
+    }
+
     @ParameterizedTest
     @CsvSource({
             "10,DEEP_FLEE_FRESH",

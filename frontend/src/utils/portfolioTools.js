@@ -36,12 +36,14 @@ function equalTargetWeight(count) {
 
 /**
  * 연구용 signal은 화면에 전달되더라도 운영 행동으로 승격하지 않는다.
- * actionRatio가 0보다 큰 경우만 사용자가 실행할 수 있는 신호로 본다.
+ * 서버가 명시적으로 승인하고 승인 비율이 0보다 큰 경우만 행동 신호로 본다.
+ * 오래된 캐시처럼 operationalAction만 남은 데이터는 항상 HOLD로 닫는다.
  */
 export function operationalSignal(item) {
-  if (item?.actionAuthorized === false) return 'HOLD'
-  if (item?.operationalAction) return item.operationalAction
-  return num(item?.actionRatio) > 0 ? (item?.signal ?? 'HOLD') : 'HOLD'
+  const ratio = num(item?.operationalActionRatio ?? item?.actionRatio)
+  if (item?.actionAuthorized !== true || ratio <= 0) return 'HOLD'
+  const action = String(item?.operationalAction ?? '').toUpperCase()
+  return ['BUY', 'ADD', 'REDUCE', 'SELL'].includes(action) ? action : 'HOLD'
 }
 
 /** 과거 모델의 구간 파생값. 상태 진단 외의 행동 계산에는 사용하지 않는다. */
@@ -224,7 +226,7 @@ export function opportunityRows(watchlist) {
           : queueState === 'WATCH'
             ? '관찰 유지'
             : queueState === 'AVOID'
-              ? '매수 제외'
+              ? '고밀집 관찰'
               : '대기',
         queueDetail: signalDays > 45
           ? '오래된 신호라 추격 금지'
@@ -233,12 +235,12 @@ export function opportunityRows(watchlist) {
             : qualityScore < 65
               ? '데이터 품질 확인 필요'
               : signal === 'BUY' || signal === 'ADD'
-                ? '운영 행동 확인'
+                ? '승인 행동 확인'
                 : '연구 상태 관찰',
         opportunityRank: signal === 'BUY' ? 3 : signal === 'ADD' ? 2 : signal === 'HOLD' ? 1 : 0,
         originalIndex: index,
         reason: signal !== 'HOLD'
-          ? '승격된 운영 행동'
+          ? '승인된 운영 행동'
           : `${stateSignal} 연구 상태`,
       }
     })

@@ -84,7 +84,7 @@ export default function Search() {
         <div className={styles.pageDate}>{today}</div>
         <h1 className={styles.pageTitle}>종목 검색</h1>
         <p className={styles.pageDesc}>
-          HERD 계산 가능한 종목을 찾아 포트폴리오나 매수 대기열에 추가하세요
+          HERD 관찰 가능한 종목을 찾아 포트폴리오나 관찰 대기열에 추가하세요
         </p>
       </div>
 

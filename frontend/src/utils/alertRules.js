@@ -53,7 +53,7 @@ export function buildPortfolioAlerts(rows, riskWarnings = []) {
         ticker: row.ticker,
         title: `${row.ticker} 목표비중 부족`,
         value: `${Math.abs(drift).toFixed(1)}%p`,
-        detail: `HERD ${Math.round(score)} · 분할매수 후보`,
+        detail: `HERD ${Math.round(score)} · 낮은 군중 밀집 구간`,
         priority: 90 + strength,
       })
     }

@@ -24,9 +24,12 @@
 - `HerdResponseAssembler`: 미리 조회한 데이터의 응답 DTO 조립
 - `HerdQualityEvaluator`: 산출물 완성도·최신성 평가
 - `HerdSignalDurationCalculator`: 신호·단계 연속 기간 계산
-- `ActionDecisionService`: 개인 행동 번역 오케스트레이션
+- `ActionDecisionService`: 레거시 v6.1 연구 행동 재현
+- `UserActionBoundary`: 기본 사용자 응답·저널의 행동을 HOLD·0%로 잠그는
+  단일 fail-closed 정책
 
 HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이다. 한 계산식으로 합치지 않는다.
+연구용 `ActionDecision`을 사용자 응답에 직접 매핑하지 않는다.
 
 ## 프론트엔드
 
@@ -58,7 +61,7 @@ HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이�
 - `StockDetailHistory`: 기간별 HERD 차트
 - `StockDetailRecords`: 재무 가드와 판단 기록 조합
 - `WatchlistMarketBanner`: SPY 시장 상태와 타임라인
-- `WatchlistQueue`: 요약, 매수 후보, 관찰 종목 목록
+- `WatchlistQueue`: 요약, 우선 관찰, 전체 관찰 종목 목록
 - `Watchlist`: 조회·삭제 상태와 페이지 조합
 
 ### Search

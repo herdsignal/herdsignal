@@ -31,21 +31,22 @@ public class HerdObservationService {
     static final int MAX_BATCH_SIZE = 100;
     private static final int STALE_AFTER_BUSINESS_SESSIONS = 2;
     private static final String TICKER_PATTERN = "^[A-Z][A-Z0-9.-]{0,9}$";
-    private static final BigDecimal ZERO_RATIO = new BigDecimal("0.0000");
-
     private final HerdObservationRepository repository;
     private final StockRepository stockRepository;
     private final UsMarketSessionClock marketSessionClock;
+    private final UserActionBoundary actionBoundary;
 
     @Autowired
     public HerdObservationService(
             HerdObservationRepository repository,
             StockRepository stockRepository,
-            UsMarketSessionClock marketSessionClock
+            UsMarketSessionClock marketSessionClock,
+            UserActionBoundary actionBoundary
     ) {
         this.repository = repository;
         this.stockRepository = stockRepository;
         this.marketSessionClock = marketSessionClock;
+        this.actionBoundary = actionBoundary;
     }
 
     @Transactional(readOnly = true)
@@ -135,6 +136,7 @@ public class HerdObservationService {
             HerdObservation row,
             Stock stock
     ) {
+        UserActionBoundary.Output action = actionBoundary.locked();
         int age = businessDaysBetween(
                 row.getLastObservedSession(),
                 marketSessionClock.currentSessionDate()
@@ -175,14 +177,15 @@ public class HerdObservationService {
                 row.getDownsideRiskContext(),
                 row.getSectorEtf(),
                 row.getReferenceCoverageFraction(),
-                false,
-                "HOLD",
-                ZERO_RATIO,
+                action.directionPrediction(),
+                action.action(),
+                action.ratio(),
                 false
         );
     }
 
     private HerdObservationResponse unavailable(String ticker, Stock stock) {
+        UserActionBoundary.Output action = actionBoundary.locked();
         String label = "SPY".equals(ticker) ? "S&P 500 군중 상태" : null;
         return new HerdObservationResponse(
                 "UNAVAILABLE",
@@ -212,9 +215,9 @@ public class HerdObservationService {
                 null,
                 null,
                 null,
-                false,
-                "HOLD",
-                ZERO_RATIO,
+                action.directionPrediction(),
+                action.action(),
+                action.ratio(),
                 false
         );
     }

@@ -42,11 +42,12 @@ public class SignalJournalResponse {
     private LocalDateTime recordedAt;
     private LocalDateTime createdAt;
 
-    public static SignalJournalResponse from(SignalJournal journal) {
-        return from(journal, null);
-    }
-
-    public static SignalJournalResponse from(SignalJournal journal, BigDecimal currentPrice) {
+    public static SignalJournalResponse from(
+            SignalJournal journal,
+            BigDecimal currentPrice,
+            String operationalAction,
+            BigDecimal operationalActionRatio
+    ) {
         Outcome outcome = calculateOutcome(journal, currentPrice);
         return SignalJournalResponse.builder()
                 .id(journal.getId())
@@ -56,10 +57,10 @@ public class SignalJournalResponse {
                 .scoreDate(journal.getScoreDate())
                 .herdScore(journal.getHerdScore())
                 .herdStage(journal.getHerdStage())
-                .signal(journal.getSignal())
-                .signalLabel(journal.getSignalLabel())
-                .actionRatio(journal.getActionRatio())
-                .signalDurationDays(journal.getSignalDurationDays())
+                .signal(operationalAction)
+                .signalLabel("State S1 관찰")
+                .actionRatio(operationalActionRatio)
+                .signalDurationDays(null)
                 .stageDurationDays(journal.getStageDurationDays())
                 .price(journal.getPrice())
                 .quantity(journal.getQuantity())
