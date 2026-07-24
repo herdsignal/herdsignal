@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getStockHerd, searchStocks } from '../../api/herdApi'
+import { getHerdObservation, searchStocks } from '../../api/herdApi'
+import { observationToTrackedItem } from '../../utils/herdObservation'
 import {
   STOCK_CANDIDATES,
   candidateForTicker,
@@ -55,17 +56,18 @@ export function useStockSearch(query) {
       }
 
       try {
-        const response = await getStockHerd(ticker)
+        const response = await getHerdObservation(ticker)
         if (cancelled) return
-        const data = response.data?.data
-        if (data) {
+        const observation = response.data?.data
+        if (observation?.availabilityStatus === 'AVAILABLE') {
+          const data = observationToTrackedItem(observation)
           setSearchResult({ status: 'found', data, matches: candidates })
           saveRecentSearch(ticker)
           setRecentSearches(loadRecentSearches())
           return
         }
       } catch {
-        // 종목은 존재하지만 HERD가 아직 계산되지 않은 상태로 표시한다.
+        // 종목은 존재하지만 S1 관찰값이 아직 계산되지 않은 상태로 표시한다.
       }
 
       if (!cancelled) {

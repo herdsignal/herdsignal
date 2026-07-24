@@ -12,8 +12,8 @@
  *   - getPortfolio()          → 종목 목록 + avgPrice/quantity (항상 최신 호출)
  *   - getPortfolioSummary()   → DB 기준 포트폴리오 요약 (캐시 선표시 후 재검증)
  *   - getPortfolioRealtime()  → 새로고침 시 yfinance 현재가 기반 평가
- *   - getPortfolioHerd()      → HERD 점수 (캐시 우선)
- *   - getStockHerd('SPY')     → SPY 배너용 HERD (캐시 우선)
+ *   - getHerdObservations()   → 보유 종목 State S1 (캐시 우선)
+ *   - getHerdObservation('SPY') → 시장 군중 State S1 (캐시 우선)
  *
  * 캐시 정책:
  *   최초 진입 → 사용자별 localStorage 가격 캐시를 먼저 표시하고 DB 최신값 재검증

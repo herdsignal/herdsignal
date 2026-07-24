@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getWatchlistHerd, removeFromWatchlist } from '../../api/herdApi'
+import {
+  getHerdObservations,
+  getWatchlist,
+  removeFromWatchlist,
+} from '../../api/herdApi'
 import { API_HOST } from '../../utils/apiConfig'
+import {
+  observationBatchToMap,
+  observationToTrackedItem,
+} from '../../utils/herdObservation'
 import { opportunityRows } from '../../utils/portfolioTools'
 import { useDashboardMarketData } from '../Dashboard/useDashboardMarketData'
 import styles from './Watchlist.module.css'
@@ -36,17 +44,37 @@ export default function Watchlist() {
     setError(null)
 
     try {
-      const response = await getWatchlistHerd().catch(() => null)
-      if (!response) {
+      const listResponse = await getWatchlist().catch(() => null)
+      if (!listResponse) {
         setWatchlist([])
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
         if (silent) setRefreshNotice('관심종목 HERD 조회 실패')
         return
       }
 
-      const data = response.data?.data
-      setWatchlist(data?.stocks ?? (Array.isArray(data) ? data : []))
+      const rawItems = Array.isArray(listResponse.data?.data)
+        ? listResponse.data.data
+        : []
+      const extras = Object.fromEntries(
+        rawItems.map((item) => [item.ticker, item]),
+      )
+      const tickers = rawItems.map((item) => item.ticker)
+      const batchResponse = tickers.length > 0
+        ? await getHerdObservations(tickers)
+        : null
+      const observationMap = observationBatchToMap(
+        batchResponse?.data?.data,
+        extras,
+      )
+      setWatchlist(rawItems.map((item) => (
+        observationMap[item.ticker]
+        ?? observationToTrackedItem(null, item)
+      )))
       if (silent) setRefreshNotice('관심종목 HERD 갱신')
+    } catch {
+      setWatchlist([])
+      setError('관심종목의 State S1 관찰값을 불러오지 못했습니다.')
+      if (silent) setRefreshNotice('관심종목 State S1 조회 실패')
     } finally {
       setLoading(false)
       setRefreshing(false)

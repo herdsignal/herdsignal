@@ -1,4 +1,3 @@
-import { qualityReasonText, shouldShowQuality } from '../../utils/dataQuality'
 import { normalizeStage } from '../../utils/herdStage'
 
 export const STOCK_CANDIDATES = [
@@ -56,19 +55,14 @@ export function stageDisplay(stage) {
 
 export function herdReadiness(data) {
   if (!data) {
-    return { label: '계산 필요', tone: 'Pending', desc: 'HERD 계산 대기' }
-  }
-  if (shouldShowQuality(data)) {
-    return {
-      label: '데이터 부족',
-      tone: 'Limited',
-      desc: qualityReasonText(data),
-    }
+    return { label: '관찰 준비 중', tone: 'Pending', desc: 'State S1 대기' }
   }
   return {
-    label: 'HERD 준비됨',
+    label: 'State S1',
     tone: 'Ready',
-    desc: data.scoreDate ?? '최신 점수',
+    desc: data.freshnessStatus === 'STALE'
+      ? '업데이트 필요'
+      : data.scoreDate ?? '최신 관찰',
   }
 }
 
@@ -76,18 +70,15 @@ export function inclusionDecision(data) {
   if (!data) {
     return { label: '계산 대기', desc: 'HERD 계산 후 편입 가능', tone: 'Pending' }
   }
-  if (herdReadiness(data).tone === 'Limited') {
-    return { label: '보류', desc: '데이터 품질 확인 필요', tone: 'Limited' }
-  }
   switch (normalizeStage(data.herdStage)) {
     case 'flee':
     case 'scatter':
-      return { label: '이탈 관찰', desc: '기업 상태와 추세 확인 필요', tone: 'Ready' }
+      return { label: '이탈 관찰', desc: '행동 근거 아님', tone: 'Ready' }
     case 'drift':
     case 'rush':
-      return { label: '밀집 관찰', desc: '상태 변화 확인 필요', tone: 'Limited' }
+      return { label: '밀집 관찰', desc: '행동 근거 아님', tone: 'Limited' }
     default:
-      return { label: '관찰', desc: '보유/대기 판단 가능', tone: 'Neutral' }
+      return { label: '균형 관찰', desc: '행동 근거 아님', tone: 'Neutral' }
   }
 }
 

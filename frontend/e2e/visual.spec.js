@@ -9,6 +9,7 @@ import {
   observationHistory,
   portfolio,
   portfolioHerd,
+  trackedObservations,
   portfolioSummary,
   reliability,
   spy,
@@ -75,11 +76,21 @@ function responseFor(pathname) {
   if (pathname === '/api/portfolio') return portfolio
   if (pathname === '/api/portfolio/summary') return portfolioSummary
   if (pathname === '/api/portfolio/cash') return { cashAmount: portfolioSummary.cash_balance }
+  if (pathname === '/api/observations') {
+    return {
+      requestedCount: trackedObservations.length,
+      availableCount: trackedObservations.length,
+      observations: trackedObservations,
+    }
+  }
   if (pathname === '/api/portfolio/herd') {
     return { stocks: portfolioHerd, averageScore: 54, totalCount: portfolioHerd.length }
   }
   if (pathname === '/api/watchlist/herd') {
     return { stocks: watchlist, averageScore: 49.5, totalCount: watchlist.length }
+  }
+  if (pathname === '/api/watchlist') {
+    return watchlist.map(({ ticker }) => ({ ticker, memo: null }))
   }
   if (pathname === '/api/journal') return journal
   if (pathname === '/api/observations/SPY') return spyObservation

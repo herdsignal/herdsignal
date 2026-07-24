@@ -1,5 +1,6 @@
 package com.herdsignal.controller;
 
+import com.herdsignal.dto.HerdObservationBatchResponse;
 import com.herdsignal.dto.HerdObservationResponse;
 import com.herdsignal.exception.GlobalExceptionHandler;
 import com.herdsignal.service.HerdObservationService;
@@ -9,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,13 +55,37 @@ class HerdObservationControllerTest {
                 .andExpect(jsonPath("$.message").value("limit 오류"));
     }
 
+    @Test
+    void batchEndpointReturnsRequestedObservations() throws Exception {
+        when(service.getLatestBatch(List.of("NVDA", "AAPL")))
+                .thenReturn(new HerdObservationBatchResponse(
+                        2,
+                        0,
+                        List.of(unavailable("NVDA"), unavailable("AAPL"))
+                ));
+
+        mockMvc.perform(get("/api/observations?tickers=NVDA,AAPL"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.requestedCount").value(2))
+                .andExpect(jsonPath("$.data.availableCount").value(0))
+                .andExpect(jsonPath("$.data.observations[0].ticker")
+                        .value("NVDA"));
+    }
+
     private HerdObservationResponse unavailable() {
+        return unavailable("SPY");
+    }
+
+    private HerdObservationResponse unavailable(String ticker) {
         return new HerdObservationResponse(
                 "UNAVAILABLE",
                 "UNAVAILABLE",
                 null,
-                "SPY",
-                "S&P 500 군중 상태",
+                ticker,
+                "SPY".equals(ticker) ? "S&P 500 군중 상태" : null,
+                null,
+                null,
+                null,
                 null,
                 null,
                 null,

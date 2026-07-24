@@ -49,3 +49,47 @@ export function observationFreshnessLabel(observation) {
   if (observation.freshnessStatus === 'STALE') return '업데이트 필요'
   return '최신 관찰'
 }
+
+/**
+ * 기본 사용자 화면의 기존 카드들이 S1 필드명을 직접 추측하지 않도록 한다.
+ * 레거시 signal/action 필드는 어떤 입력에서도 HOLD·0%로 닫는다.
+ */
+export function observationToTrackedItem(observation, extra = {}) {
+  const available = isObservationAvailable(observation)
+  const score = observationScore(observation)
+  const stage = observationStage(observation)
+  return {
+    ...extra,
+    ticker: observation?.ticker ?? extra.ticker,
+    companyName: observation?.companyName ?? extra.companyName ?? null,
+    sector: observation?.sector ?? extra.sector ?? null,
+    logoUrl: observation?.logoUrl ?? extra.logoUrl ?? null,
+    availabilityStatus: observation?.availabilityStatus ?? 'UNAVAILABLE',
+    freshnessStatus: observation?.freshnessStatus ?? 'UNAVAILABLE',
+    herdScore: available ? score : null,
+    herdStage: available && stage ? `Herd ${stage}` : null,
+    scoreDate: observation?.observationDate ?? null,
+    transition: observation?.transition ?? null,
+    transitionEvent: observation?.transitionEvent === true,
+    families: observation?.families ?? null,
+    downsideRiskContext: observation?.downsideRiskContext ?? null,
+    stateModelVersion: observation?.stateModelVersion ?? OBSERVATION_MODEL_VERSION,
+    signal: 'HOLD',
+    operationalAction: 'HOLD',
+    operationalActionRatio: 0,
+    actionRatio: 0,
+    actionAuthorized: false,
+  }
+}
+
+export function observationBatchToMap(batch, extrasByTicker = {}) {
+  const observations = batch?.observations
+  if (!Array.isArray(observations)) return {}
+  return Object.fromEntries(observations.map((observation) => {
+    const ticker = observation?.ticker
+    return [
+      ticker,
+      observationToTrackedItem(observation, extrasByTicker[ticker]),
+    ]
+  }).filter(([ticker]) => ticker))
+}

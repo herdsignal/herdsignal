@@ -18,7 +18,6 @@ export default function StockDetail() {
   const navigate = useNavigate()
   const detail = useStockDetail(ticker)
   const {
-    herdData,
     observation,
     observationAvailable,
     loading,
@@ -28,8 +27,6 @@ export default function StockDetail() {
     historyPeriod,
     setHistoryPeriod,
     historyLoading,
-    reliability,
-    reliabilityLoading,
     financials,
     financialsLoading,
     signalLogs,
@@ -44,14 +41,7 @@ export default function StockDetail() {
     herdStage,
     stageDisp,
     color,
-    sigStyle,
-    qualityToneColor,
-    actionColor,
-    decision,
-    currentReliability,
-    reliabilityEvidence,
     fundamentalGuard,
-    signalEvidence,
     journalSummary,
     historyPoints,
     herdMomentum,
@@ -73,14 +63,14 @@ export default function StockDetail() {
         <div className={styles.stockHeaderLeft}>
           <StockAvatar
             ticker={normalizedTicker}
-            logoUrl={herdData?.logoUrl}
+            logoUrl={observation?.logoUrl}
             size="lg"
             tone={observationAvailable ? badgeColors(herdStage) : undefined}
           />
           <div>
             <div className={styles.stockTicker}>{normalizedTicker}</div>
             <div className={styles.stockFullname}>
-              {[herdData?.companyName, herdData?.sector].filter(Boolean).join(' · ') || '미국 주식'}
+              {[observation?.companyName, observation?.sector].filter(Boolean).join(' · ') || '미국 주식'}
             </div>
           </div>
         </div>
@@ -135,26 +125,15 @@ export default function StockDetail() {
         <div className={styles.contentGrid}>
           <div className={styles.colMain}>
             <StockDetailHero
-              herdData={herdData ?? {}}
               observation={observation}
               herdScore={herdScore}
               stageDisp={stageDisp}
               color={color}
-              sigStyle={sigStyle}
-              qualityToneColor={qualityToneColor}
-              actionColor={actionColor}
-              decision={decision}
               herdMomentum={herdMomentum}
             />
             <StockDetailAnalysis
-              herdData={herdData}
               observation={observation}
               color={color}
-              signalEvidence={signalEvidence}
-              reliability={reliability}
-              reliabilityLoading={reliabilityLoading}
-              currentReliability={currentReliability}
-              reliabilityEvidence={reliabilityEvidence}
             />
             <StockDetailHistory
               period={historyPeriod}
@@ -183,7 +162,7 @@ export default function StockDetail() {
           herdSnapshot={{
             score: Math.round(herdScore),
             stage: stageDisp,
-            signalLabel: herdData?.actionLabel ?? decision.title,
+            signalLabel: 'State S1 관찰',
           }}
           onClose={() => setJournalAction(null)}
           onSave={(details) => handleJournalAction(journalAction, details)}

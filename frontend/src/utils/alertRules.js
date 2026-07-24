@@ -40,7 +40,7 @@ export function buildPortfolioAlerts(rows, riskWarnings = []) {
 
   rows.forEach((row) => {
     const signal = row.signal
-    const score = num(row.herd?.herdV4 ?? row.herd?.herdScore, 50)
+    const score = num(row.herd?.herdScore, 50)
     const drift = num(row.drift)
     const strength = actionScore(row)
     const days = signalDays(row)

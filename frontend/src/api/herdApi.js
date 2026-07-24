@@ -128,6 +128,15 @@ export const deleteSignalJournal = (id) => api.delete(`/api/journal/${id}`)
 export const getHerdObservation = (ticker) =>
   api.get(`/api/observations/${tickerPath(ticker)}`)
 
+/** State S1 최신 관찰값 일괄 조회 (최대 100종목). */
+export const getHerdObservations = (tickers) => api.get('/api/observations', {
+  params: {
+    tickers: [...new Set((tickers ?? []).map(tickerPath))]
+      .filter(Boolean)
+      .join(','),
+  },
+})
+
 /** State S1 관찰 이력 조회 (최신순, 최대 260개). */
 export const getHerdObservationHistory = (ticker, limit = 52) =>
   api.get(`/api/observations/${tickerPath(ticker)}/history`, {

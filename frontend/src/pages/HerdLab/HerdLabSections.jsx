@@ -3,6 +3,21 @@ import styles from './HerdLab.module.css'
 
 const { stages: STAGES, weights: WEIGHTS } = herdModelReport
 
+const LEGACY_BASELINES = [
+  {
+    code: 'LEGACY_STATE_BASELINE',
+    version: 'HERD v4',
+    status: '기본 화면 제외',
+    reason: 'State S1의 고정 관찰 계약으로 교체',
+  },
+  {
+    code: 'LEGACY_RESEARCH_ACTION_BASELINE',
+    version: 'HERD v6.1',
+    status: '연구 비교 전용',
+    reason: '운영 방향 증거·blind holdout 미통과',
+  },
+]
+
 function barWidth(value, scale = 1) {
   const parsed = Number(String(value).replace(/[+%,/년p]/g, ''))
   return Number.isFinite(parsed) ? Math.max(0, Math.min(100, parsed * scale)) : 0
@@ -60,6 +75,28 @@ export function ActionOutcomesPanel({ outcomes }) {
   )
 }
 
+export function LegacyBaselinesPanel() {
+  return (
+    <section className={styles.panel}>
+      <SectionHead
+        eyebrow="레거시 비교군"
+        title="운영 기본 화면에서 분리"
+        meta="계산·DB·기록 재현은 유지"
+      />
+      <div className={styles.legacyGrid}>
+        {LEGACY_BASELINES.map((baseline) => (
+          <article key={baseline.code}>
+            <span>{baseline.code}</span>
+            <strong>{baseline.version}</strong>
+            <em>{baseline.status}</em>
+            <p>{baseline.reason}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function Bar({ className, width }) {
   return <i className={className}><b style={{ width: `${width}%` }} /></i>
 }
@@ -72,7 +109,7 @@ export function MethodologyPanel({ modelNotes }) {
         <div><h3>구간별 기본 행동</h3><div className={styles.stageGrid}>{STAGES.map((item) => (
           <div key={item.stage}><i className={styles[item.tone]} /><strong>{item.stage}</strong><span>{item.range}</span><em>{item.action}</em><b>{item.ratio}</b></div>
         ))}</div></div>
-        <div><h3>HERD_v4 점수 구성</h3><div className={styles.weightList}>{WEIGHTS.map((weight) => (
+        <div><h3>LEGACY_STATE_BASELINE · v4</h3><div className={styles.weightList}>{WEIGHTS.map((weight) => (
           <div key={weight.label}><span>{weight.label}</span><i><b style={{ width: `${weight.value * 3}%` }} /></i><strong>{weight.value}%</strong></div>
         ))}</div></div>
       </div>

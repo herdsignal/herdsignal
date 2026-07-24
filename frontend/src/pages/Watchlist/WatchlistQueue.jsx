@@ -4,7 +4,6 @@ import {
   actionIntensityLabel,
   formatActionScore,
 } from '../../utils/actionIntensity'
-import { qualityColor, qualityReasonText, qualityWarningText, shouldShowQuality } from '../../utils/dataQuality'
 import { signalDesc } from '../../utils/decision'
 import { stageBadgeStyle, stageColor } from '../../utils/herdStage'
 import { formatSignalAgeLabel, formatSignalDuration } from '../../utils/signalDuration'
@@ -51,7 +50,7 @@ export default function WatchlistQueue({
                 <strong>{item.ticker}</strong>
                 <em>{formatActionCode(item)}</em>
                 <small style={{ color: signalStyle(item.signal).color }}>
-                  {item.queueLabel} · {actionBasisLabel(item)} · HERD {Math.round(item.herdV4 ?? item.herdScore)}
+                  {item.queueLabel} · {actionBasisLabel(item)} · HERD {Math.round(item.herdScore)}
                   {formatSignalDuration(item) ? ` · ${formatSignalAgeLabel(item)}` : ''}
                 </small>
               </button>
@@ -92,9 +91,12 @@ function QueueRow({ item, deletingTicker, onDelete, onOpenStock }) {
   const color = stageColor(item.herdStage)
   const action = operationalSignal(item)
   const signal = signalStyle(action)
-  const stageName = item.herdStage.startsWith('Herd ')
+  const stageName = item.herdStage?.startsWith('Herd ')
     ? item.herdStage.slice(5)
-    : item.herdStage
+    : item.herdStage ?? '관찰 준비 중'
+  const score = Number.isFinite(Number(item.herdScore))
+    ? Math.round(Number(item.herdScore))
+    : null
   const isDeleting = deletingTicker === item.ticker
 
   return (
@@ -108,16 +110,13 @@ function QueueRow({ item, deletingTicker, onDelete, onOpenStock }) {
         <StockAvatar ticker={item.ticker} logoUrl={item.logoUrl} tone={stageBadgeStyle(item.herdStage)} />
         <div>
           <strong>{item.ticker}</strong>
-          <em style={{ color }}>{stageName} · 매수 우선도 {Math.round(item.opportunityScore)}</em>
-          {shouldShowQuality(item) && (
-            <small style={{ color: qualityColor(item.qualityLevel) }} title={qualityReasonText(item)}>
-              {qualityWarningText(item)}
-            </small>
-          )}
+          <em style={{ color }}>
+            {stageName}{score == null ? '' : ` · 상태 위치 ${score}`}
+          </em>
         </div>
       </div>
       <div className={styles.queueHerd}>
-        <strong style={{ color }}>{Math.round(item.herdV4 ?? item.herdScore)}</strong>
+        <strong style={{ color }}>{score ?? '—'}</strong>
         <span>{stageName}</span>
       </div>
       <div className={styles.queueAction}>
@@ -130,7 +129,7 @@ function QueueRow({ item, deletingTicker, onDelete, onOpenStock }) {
       </div>
       <div className={styles.queueMeta}>
         <strong>{formatDate(item.scoreDate)}</strong>
-        <span>DB 최신 HERD</span>
+        <span>State S1</span>
       </div>
       <button
         className={styles.queueDeleteBtn}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   getCashBalance,
   getPortfolio,
-  getPortfolioHerd,
+  getHerdObservations,
   getPortfolioRealtime,
   getPortfolioSummary,
   getHerdObservation,
@@ -23,9 +23,25 @@ import {
   userCacheKey,
   writeUserCache,
 } from './dashboardModel'
+import { observationBatchToMap } from '../../utils/herdObservation'
 
 function herdStocksToMap(stocks = []) {
   return Object.fromEntries(stocks.map((item) => [item.ticker, item]))
+}
+
+function observationResponseToCacheData(response) {
+  const batch = response?.data?.data
+  return {
+    stocks: Object.values(observationBatchToMap(batch)),
+    stateModelVersion: 'HERD_STATE_S1',
+  }
+}
+
+function getPortfolioObservations(portfolio) {
+  const tickers = (portfolio ?? []).map((item) => item.ticker).filter(Boolean)
+  return tickers.length > 0
+    ? getHerdObservations(tickers)
+    : Promise.resolve({ data: { data: { observations: [] } } })
 }
 
 function withCash(summary, cashBalance) {
@@ -109,11 +125,13 @@ export function useDashboardPortfolioData({
 
       const [, herdResult] = await Promise.allSettled([
         revalidatePortfolioSummary({ force: true }),
-        hasFreshHerdCache ? Promise.resolve(null) : getPortfolioHerd(),
+        hasFreshHerdCache
+          ? Promise.resolve(null)
+          : getPortfolioObservations(nextPortfolio),
       ])
       if (!hasFreshHerdCache) {
         const herdData = herdResult.status === 'fulfilled'
-          ? herdResult.value?.data?.data ?? null
+          ? observationResponseToCacheData(herdResult.value)
           : null
         setHerdMap(herdStocksToMap(herdData?.stocks))
         if (herdData) {
@@ -167,7 +185,7 @@ export function useDashboardPortfolioData({
     try {
       const [priceResult, herdResult, spyResult] = await Promise.allSettled([
         getPortfolioRealtime(),
-        getPortfolioHerd(),
+        getPortfolioObservations(portfolio),
         getHerdObservation('SPY'),
       ])
 
@@ -184,7 +202,7 @@ export function useDashboardPortfolioData({
       }
 
       if (herdResult.status === 'fulfilled') {
-        const herdData = herdResult.value?.data?.data ?? null
+        const herdData = observationResponseToCacheData(herdResult.value)
         setHerdMap(herdStocksToMap(herdData?.stocks))
         writeUserCache(CACHE_KEY_HERD, userId, herdData)
         saveCacheTime(userId, CACHE_KEY_HERD_TIME)
@@ -199,7 +217,7 @@ export function useDashboardPortfolioData({
     } finally {
       setRefreshing(false)
     }
-  }, [cashBalance, updateSpyData, userId])
+  }, [cashBalance, portfolio, updateSpyData, userId])
 
   return {
     portfolio,

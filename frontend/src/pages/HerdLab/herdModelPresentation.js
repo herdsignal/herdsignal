@@ -108,7 +108,7 @@ export function presentValidationReport(report) {
       { label: '생존편향', value: report.survivorshipStatus === 'SURVIVORSHIP_BIAS_REMAINS' ? '남아있음' : '완화', sub: '해석 시 주의' },
     ],
     modelNotes: [
-      `HERD v4는 운영 상태 점수이고 ${report.modelVersion} Action Layer는 아직 연구 검증 중입니다.`,
+      `HERD v4는 LEGACY_STATE_BASELINE, ${report.modelVersion}은 LEGACY_RESEARCH_ACTION_BASELINE으로만 보존됩니다.`,
       `Walk-forward OOS ${walk?.samples ?? 0}구간의 수익 개선 비율은 ${formatPercent(walk?.improvementRate)}, MDD 개선 중앙값은 ${formatPercent(walk?.mddImprovementMedian, '%p')}입니다.`,
       stability?.singleParameterSpike
         ? '특정 파라미터에서 성과가 튀어 고정 파라미터 사용이 권고됩니다.'

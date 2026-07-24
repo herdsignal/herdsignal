@@ -103,7 +103,7 @@ export function portfolioRiskWarnings(rows, summary) {
   const top = sortedByWeight[0]
   const top3Weight = sortedByWeight.slice(0, 3).reduce((sum, item) => sum + item.currentWeight, 0)
   const heatedWeight = items
-    .filter((item) => item.signal === 'SELL' || item.signal === 'REDUCE' || num(item.herd?.herdV4 ?? item.herd?.herdScore, 50) >= 60)
+    .filter((item) => item.signal === 'SELL' || item.signal === 'REDUCE' || num(item.herd?.herdScore, 50) >= 60)
     .reduce((sum, item) => sum + item.currentWeight, 0)
   const buyCandidateCount = items.filter((item) => item.signal === 'BUY' || item.signal === 'ADD').length
   const lossCluster = items
@@ -188,7 +188,7 @@ export function rebalanceIdeas(rows) {
 export function opportunityRows(watchlist) {
   return [...watchlist]
     .map((item, index) => {
-      const score = num(item.herdV4 ?? item.herdScore, 50)
+      const score = num(item.herdScore, 50)
       const stateSignal = legacySignal(item)
       const signal = operationalSignal(item)
       const actionScore = num(item.actionScore)

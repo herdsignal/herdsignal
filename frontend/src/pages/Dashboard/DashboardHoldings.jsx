@@ -90,7 +90,9 @@ function HoldingRow({
   const stage = herd?.herdStage ?? 'Calm'
   const color = stageColor(stage)
   const stageName = stage.startsWith('Herd ') ? stage.slice(5) : stage
-  const herdScore = herd ? Math.round(herd.herdV4 ?? herd.herdScore) : null
+  const herdScore = Number.isFinite(Number(herd?.herdScore))
+    ? Math.round(Number(herd.herdScore))
+    : null
   const positionAction = herd ? buildPositionAction(herd, row) : null
   const signal = signalStyle(herd?.signal)
   const actionColor = positionAction?.muted ? 'var(--calm)' : signal.color

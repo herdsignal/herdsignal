@@ -57,7 +57,7 @@ function portfolioWeight(holding, summary, summaryStock) {
 }
 
 export function buildDecision({ herdData, holding, summary }) {
-  const score = toNumber(herdData?.herdV4 ?? herdData?.herdScore) ?? 50
+  const score = toNumber(herdData?.herdScore) ?? 50
   const signal = operationalSignal(herdData)
   const stage = herdData?.herdStage ?? 'Herd Calm'
   const ticker = herdData?.ticker ?? holding?.ticker ?? ''

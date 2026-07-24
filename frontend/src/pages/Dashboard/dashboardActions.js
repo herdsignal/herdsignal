@@ -138,8 +138,8 @@ export function sortPortfolioItems(list, rows, herdMap, sortMode) {
   return [...list].sort((left, right) => {
     const leftHerd = herdMap[left.ticker]
     const rightHerd = herdMap[right.ticker]
-    const leftScore = Number(leftHerd?.herdV4 ?? leftHerd?.herdScore ?? 50)
-    const rightScore = Number(rightHerd?.herdV4 ?? rightHerd?.herdScore ?? 50)
+    const leftScore = Number(leftHerd?.herdScore ?? 50)
+    const rightScore = Number(rightHerd?.herdScore ?? 50)
 
     if (sortMode === 'herdLow') return leftScore - rightScore
     if (sortMode === 'herdHigh') return rightScore - leftScore

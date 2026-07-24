@@ -3,6 +3,8 @@ package com.herdsignal.repository;
 import com.herdsignal.domain.HerdObservation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,5 +24,22 @@ public interface HerdObservationRepository
             String ticker,
             String stateModelVersion,
             Pageable pageable
+    );
+
+    @Query("""
+            select observation
+            from HerdObservation observation
+            where observation.stateModelVersion = :stateModelVersion
+              and observation.ticker in :tickers
+              and observation.observationDate = (
+                  select max(candidate.observationDate)
+                  from HerdObservation candidate
+                  where candidate.ticker = observation.ticker
+                    and candidate.stateModelVersion = :stateModelVersion
+              )
+            """)
+    List<HerdObservation> findLatestByTickersAndStateModelVersion(
+            @Param("tickers") List<String> tickers,
+            @Param("stateModelVersion") String stateModelVersion
     );
 }

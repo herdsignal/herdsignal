@@ -1,10 +1,10 @@
 import { act, cleanup, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { getStockHerd, searchStocks } from '../../api/herdApi'
+import { getHerdObservation, searchStocks } from '../../api/herdApi'
 import { useStockSearch } from './useStockSearch'
 
 vi.mock('../../api/herdApi', () => ({
-  getStockHerd: vi.fn(),
+  getHerdObservation: vi.fn(),
   searchStocks: vi.fn(),
 }))
 
@@ -12,8 +12,13 @@ beforeEach(() => {
   vi.useFakeTimers()
   localStorage.clear()
   searchStocks.mockResolvedValue({ data: { data: { results: [] } } })
-  getStockHerd.mockResolvedValue({
-    data: { data: { ticker: 'NVDA', herdScore: 50 } },
+  getHerdObservation.mockResolvedValue({
+    data: { data: {
+      ticker: 'NVDA',
+      availabilityStatus: 'AVAILABLE',
+      stateScore: 50,
+      stage: 'CALM',
+    } },
   })
 })
 
@@ -44,7 +49,7 @@ describe('useStockSearch', () => {
 
     expect(result.current.searchResult?.status).toBe('found')
     expect(searchStocks).toHaveBeenCalledWith('NVDA')
-    expect(getStockHerd).toHaveBeenCalledWith('NVDA')
+    expect(getHerdObservation).toHaveBeenCalledWith('NVDA')
     expect(result.current.recentSearches[0]).toBe('NVDA')
   })
 })

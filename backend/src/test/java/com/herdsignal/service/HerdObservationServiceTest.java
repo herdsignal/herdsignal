@@ -1,9 +1,12 @@
 package com.herdsignal.service;
 
 import com.herdsignal.domain.HerdObservation;
+import com.herdsignal.domain.Stock;
+import com.herdsignal.dto.HerdObservationBatchResponse;
 import com.herdsignal.dto.HerdObservationHistoryResponse;
 import com.herdsignal.dto.HerdObservationResponse;
 import com.herdsignal.repository.HerdObservationRepository;
+import com.herdsignal.repository.StockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,17 +27,20 @@ import static org.mockito.Mockito.*;
 
 class HerdObservationServiceTest {
     private HerdObservationRepository repository;
+    private StockRepository stockRepository;
     private HerdObservationService service;
 
     @BeforeEach
     void setUp() {
         repository = mock(HerdObservationRepository.class);
+        stockRepository = mock(StockRepository.class);
         Clock clock = Clock.fixed(
                 Instant.parse("2026-07-27T12:00:00Z"),
                 ZoneOffset.UTC
         );
         service = new HerdObservationService(
                 repository,
+                stockRepository,
                 new UsMarketSessionClock(clock)
         );
     }
@@ -52,6 +58,8 @@ class HerdObservationServiceTest {
                         "HERD_STATE_S1"
                 ))
                 .thenReturn(Optional.of(row));
+        when(stockRepository.findByTicker("SPY"))
+                .thenReturn(Optional.of(stock("SPY", "SPDR S&P 500 ETF")));
 
         HerdObservationResponse response = service.getLatest(" spy ");
 
@@ -59,6 +67,7 @@ class HerdObservationServiceTest {
         assertThat(response.freshnessStatus()).isEqualTo("FRESH");
         assertThat(response.businessSessionsOld()).isZero();
         assertThat(response.scope()).isEqualTo("MARKET_AGGREGATE");
+        assertThat(response.companyName()).isEqualTo("SPDR S&P 500 ETF");
         assertThat(response.operationalAction()).isEqualTo("HOLD");
         assertThat(response.operationalActionRatio()).isEqualByComparingTo("0");
         assertThat(response.directionPrediction()).isFalse();
@@ -162,13 +171,46 @@ class HerdObservationServiceTest {
     }
 
     @Test
+    void batchPreservesRequestOrderAndIncludesUnavailableStocks() {
+        when(repository.findLatestByTickersAndStateModelVersion(
+                List.of("NVDA", "AAPL"),
+                "HERD_STATE_S1"
+        )).thenReturn(List.of(
+                observation("AAPL", LocalDate.of(2026, 7, 24), "EQUITY")
+        ));
+        when(stockRepository.findByTickerIn(List.of("NVDA", "AAPL")))
+                .thenReturn(List.of(
+                        stock("NVDA", "NVIDIA Corporation"),
+                        stock("AAPL", "Apple Inc.")
+                ));
+
+        HerdObservationBatchResponse response = service.getLatestBatch(
+                List.of(" nvda ", "AAPL", "NVDA")
+        );
+
+        assertThat(response.requestedCount()).isEqualTo(2);
+        assertThat(response.availableCount()).isEqualTo(1);
+        assertThat(response.observations())
+                .extracting(HerdObservationResponse::ticker)
+                .containsExactly("NVDA", "AAPL");
+        assertThat(response.observations().get(0).availabilityStatus())
+                .isEqualTo("UNAVAILABLE");
+        assertThat(response.observations().get(0).companyName())
+                .isEqualTo("NVIDIA Corporation");
+        assertThat(response.observations().get(0).operationalAction())
+                .isEqualTo("HOLD");
+    }
+
+    @Test
     void rejectsInvalidTickerAndUnboundedHistory() {
         assertThatThrownBy(() -> service.getLatest("../SPY"))
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> service.getHistory("SPY", 261))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("260");
-        verifyNoInteractions(repository);
+        assertThatThrownBy(() -> service.getLatestBatch(List.of()))
+                .isInstanceOf(IllegalArgumentException.class);
+        verifyNoInteractions(repository, stockRepository);
     }
 
     private HerdObservation observation(
@@ -218,6 +260,15 @@ class HerdObservationServiceTest {
                 .survivorshipSafe(false)
                 .createdAt(LocalDateTime.of(2026, 7, 25, 0, 0))
                 .updatedAt(LocalDateTime.of(2026, 7, 25, 0, 0))
+                .build();
+    }
+
+    private Stock stock(String ticker, String name) {
+        return Stock.builder()
+                .ticker(ticker)
+                .name(name)
+                .sector("Technology")
+                .logoUrl("https://example.com/" + ticker + ".png")
                 .build();
     }
 }

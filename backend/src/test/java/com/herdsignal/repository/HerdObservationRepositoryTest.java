@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,10 +42,40 @@ class HerdObservationRepositoryTest {
                 .containsExactly(LocalDate.of(2026, 7, 24));
     }
 
+    @Test
+    void batchQueryReturnsOnlyLatestRowPerTicker() {
+        repository.save(observation("AAPL", LocalDate.of(2026, 7, 17)));
+        repository.save(observation("AAPL", LocalDate.of(2026, 7, 24)));
+        repository.save(observation("NVDA", LocalDate.of(2026, 7, 23)));
+
+        assertThat(repository.findLatestByTickersAndStateModelVersion(
+                List.of("AAPL", "NVDA"),
+                "HERD_STATE_S1"
+        ))
+                .extracting(
+                        HerdObservation::getTicker,
+                        HerdObservation::getObservationDate
+                )
+                .containsExactlyInAnyOrder(
+                        org.assertj.core.groups.Tuple.tuple(
+                                "AAPL",
+                                LocalDate.of(2026, 7, 24)
+                        ),
+                        org.assertj.core.groups.Tuple.tuple(
+                                "NVDA",
+                                LocalDate.of(2026, 7, 23)
+                        )
+                );
+    }
+
     private HerdObservation observation(LocalDate date) {
+        return observation("AAPL", date);
+    }
+
+    private HerdObservation observation(String ticker, LocalDate date) {
         LocalDateTime now = LocalDateTime.of(2026, 7, 25, 0, 0);
         return HerdObservation.builder()
-                .ticker("AAPL")
+                .ticker(ticker)
                 .schemaVersion("HERD_OBSERVATION_S1_SERVICE_V1")
                 .stateModelVersion("HERD_STATE_S1")
                 .transitionModelVersion("HERD_TRANSITION_S1")

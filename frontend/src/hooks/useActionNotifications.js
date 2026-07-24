@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { getPortfolioHerd, getWatchlistHerd } from '../api/herdApi'
+import {
+  getHerdObservations,
+  getPortfolio,
+  getWatchlist,
+} from '../api/herdApi'
 import { useAuth } from '../auth/AuthContext'
+import { observationBatchToMap } from '../utils/herdObservation'
 import {
   buildActionNotificationState,
   mergeTrackedStocks,
@@ -31,16 +36,30 @@ export function useActionNotifications() {
     let active = true
     const key = storageKey(user?.id)
 
-    Promise.allSettled([getPortfolioHerd(), getWatchlistHerd()])
-      .then(([portfolioResult, watchlistResult]) => {
+    Promise.allSettled([getPortfolio(), getWatchlist()])
+      .then(async ([portfolioResult, watchlistResult]) => {
         if (!active) return
         const portfolio = portfolioResult.status === 'fulfilled'
-          ? portfolioResult.value.data?.data?.stocks ?? []
+          ? portfolioResult.value.data?.data ?? []
           : []
         const watchlist = watchlistResult.status === 'fulfilled'
-          ? watchlistResult.value.data?.data?.stocks ?? []
+          ? watchlistResult.value.data?.data ?? []
           : []
-        const items = mergeTrackedStocks(portfolio, watchlist)
+        const tracked = mergeTrackedStocks(portfolio, watchlist)
+        const extras = Object.fromEntries(
+          tracked.map((item) => [item.ticker, item]),
+        )
+        const response = tracked.length > 0
+          ? await getHerdObservations(tracked.map((item) => item.ticker))
+          : null
+        if (!active) return
+        const observationMap = observationBatchToMap(
+          response?.data?.data,
+          extras,
+        )
+        const items = tracked.map((item) => (
+          observationMap[item.ticker] ?? item
+        ))
         const next = buildActionNotificationState(items, readSnapshot(key))
         setChanges(next.changes)
         setSummary(next.summary)
@@ -50,6 +69,12 @@ export function useActionNotifications() {
           localStorage.setItem(key, JSON.stringify(next.snapshot))
           setPendingSnapshot(null)
         }
+      })
+      .catch(() => {
+        if (!active) return
+        setChanges([])
+        setSummary(EMPTY_SUMMARY)
+        setPendingSnapshot(null)
       })
       .finally(() => {
         if (active) setLoading(false)

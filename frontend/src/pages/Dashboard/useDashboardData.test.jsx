@@ -16,7 +16,7 @@ vi.mock('../../api/herdApi', () => ({
   getPortfolio: vi.fn(),
   getPortfolioSummary: vi.fn(),
   getPortfolioRealtime: vi.fn(),
-  getPortfolioHerd: vi.fn(),
+  getHerdObservations: vi.fn(),
   getHerdObservation: vi.fn(),
   getHerdObservationHistory: vi.fn(),
   getPortfolioHistory: vi.fn(),
@@ -41,9 +41,16 @@ function response(data) {
 }
 
 beforeEach(() => {
-  api.getPortfolio.mockReturnValue(response([]))
+  api.getPortfolio.mockReturnValue(response([{ ticker: 'AAPL' }]))
   api.getPortfolioSummary.mockReturnValue(response({ totalValue: 100 }))
-  api.getPortfolioHerd.mockReturnValue(response({ stocks: [{ ticker: 'AAPL', herdScore: 40 }] }))
+  api.getHerdObservations.mockReturnValue(response({
+    observations: [{
+      ticker: 'AAPL',
+      availabilityStatus: 'AVAILABLE',
+      stateScore: 40,
+      stage: 'CALM',
+    }],
+  }))
   api.getHerdObservation.mockReturnValue(response({
     ticker: 'SPY',
     availabilityStatus: 'AVAILABLE',
@@ -67,7 +74,7 @@ describe('useDashboardData cache recovery', () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false))
     expect(api.getPortfolioSummary).toHaveBeenCalledTimes(1)
-    expect(api.getPortfolioHerd).toHaveBeenCalledTimes(1)
+    expect(api.getHerdObservations).toHaveBeenCalledTimes(1)
     expect(result.current.herdMap.AAPL?.herdScore).toBe(40)
     expect(result.current).toHaveProperty('assetStartValue', 100)
     expect(result.current.dataStatus?.status).toBe('FRESH')

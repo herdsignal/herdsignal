@@ -1,10 +1,13 @@
 package com.herdsignal.service;
 
 import com.herdsignal.domain.HerdObservation;
+import com.herdsignal.domain.Stock;
+import com.herdsignal.dto.HerdObservationBatchResponse;
 import com.herdsignal.dto.HerdObservationHistoryPoint;
 import com.herdsignal.dto.HerdObservationHistoryResponse;
 import com.herdsignal.dto.HerdObservationResponse;
 import com.herdsignal.repository.HerdObservationRepository;
+import com.herdsignal.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -16,25 +19,32 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class HerdObservationService {
     static final String STATE_MODEL_VERSION = "HERD_STATE_S1";
     static final int DEFAULT_HISTORY_LIMIT = 52;
     static final int MAX_HISTORY_LIMIT = 260;
+    static final int MAX_BATCH_SIZE = 100;
     private static final int STALE_AFTER_BUSINESS_SESSIONS = 2;
     private static final String TICKER_PATTERN = "^[A-Z][A-Z0-9.-]{0,9}$";
     private static final BigDecimal ZERO_RATIO = new BigDecimal("0.0000");
 
     private final HerdObservationRepository repository;
+    private final StockRepository stockRepository;
     private final UsMarketSessionClock marketSessionClock;
 
     @Autowired
     public HerdObservationService(
             HerdObservationRepository repository,
+            StockRepository stockRepository,
             UsMarketSessionClock marketSessionClock
     ) {
         this.repository = repository;
+        this.stockRepository = stockRepository;
         this.marketSessionClock = marketSessionClock;
     }
 
@@ -46,8 +56,48 @@ public class HerdObservationService {
                         ticker,
                         STATE_MODEL_VERSION
                 )
-                .map(this::toResponse)
-                .orElseGet(() -> unavailable(ticker));
+                .map(row -> toResponse(row, stockRepository.findByTicker(ticker).orElse(null)))
+                .orElseGet(() -> unavailable(
+                        ticker,
+                        stockRepository.findByTicker(ticker).orElse(null)
+                ));
+    }
+
+    @Transactional(readOnly = true)
+    public HerdObservationBatchResponse getLatestBatch(List<String> rawTickers) {
+        List<String> tickers = normalizeBatch(rawTickers);
+        Map<String, HerdObservation> observations = repository
+                .findLatestByTickersAndStateModelVersion(
+                        tickers,
+                        STATE_MODEL_VERSION
+                )
+                .stream()
+                .collect(Collectors.toMap(
+                        HerdObservation::getTicker,
+                        Function.identity()
+                ));
+        Map<String, Stock> stocks = stockRepository.findByTickerIn(tickers)
+                .stream()
+                .collect(Collectors.toMap(Stock::getTicker, Function.identity()));
+        List<HerdObservationResponse> responses = tickers.stream()
+                .map(ticker -> {
+                    HerdObservation observation = observations.get(ticker);
+                    Stock stock = stocks.get(ticker);
+                    return observation == null
+                            ? unavailable(ticker, stock)
+                            : toResponse(observation, stock);
+                })
+                .toList();
+        int availableCount = (int) responses.stream()
+                .filter(response -> "AVAILABLE".equals(
+                        response.availabilityStatus()
+                ))
+                .count();
+        return new HerdObservationBatchResponse(
+                tickers.size(),
+                availableCount,
+                responses
+        );
     }
 
     @Transactional(readOnly = true)
@@ -81,7 +131,10 @@ public class HerdObservationService {
         );
     }
 
-    private HerdObservationResponse toResponse(HerdObservation row) {
+    private HerdObservationResponse toResponse(
+            HerdObservation row,
+            Stock stock
+    ) {
         int age = businessDaysBetween(
                 row.getLastObservedSession(),
                 marketSessionClock.currentSessionDate()
@@ -95,6 +148,9 @@ public class HerdObservationService {
                 age,
                 row.getTicker(),
                 row.getDisplayLabel(),
+                stock == null ? null : stock.getName(),
+                stock == null ? null : stock.getSector(),
+                stock == null ? null : stock.getLogoUrl(),
                 row.getSourceScope(),
                 row.getClaimCode(),
                 row.getSchemaVersion(),
@@ -126,7 +182,7 @@ public class HerdObservationService {
         );
     }
 
-    private HerdObservationResponse unavailable(String ticker) {
+    private HerdObservationResponse unavailable(String ticker, Stock stock) {
         String label = "SPY".equals(ticker) ? "S&P 500 군중 상태" : null;
         return new HerdObservationResponse(
                 "UNAVAILABLE",
@@ -134,6 +190,9 @@ public class HerdObservationService {
                 null,
                 ticker,
                 label,
+                stock == null ? null : stock.getName(),
+                stock == null ? null : stock.getSector(),
+                stock == null ? null : stock.getLogoUrl(),
                 null,
                 null,
                 null,
@@ -179,6 +238,22 @@ public class HerdObservationService {
             throw new IllegalArgumentException("올바른 미국 주식 티커 형식이 아닙니다.");
         }
         return ticker;
+    }
+
+    private List<String> normalizeBatch(List<String> rawTickers) {
+        if (rawTickers == null || rawTickers.isEmpty()) {
+            throw new IllegalArgumentException("조회할 티커를 입력해주세요.");
+        }
+        List<String> tickers = rawTickers.stream()
+                .map(this::normalizeTicker)
+                .distinct()
+                .toList();
+        if (tickers.size() > MAX_BATCH_SIZE) {
+            throw new IllegalArgumentException(
+                    "한 번에 최대 " + MAX_BATCH_SIZE + "종목까지 조회할 수 있습니다."
+            );
+        }
+        return tickers;
     }
 
     static int businessDaysBetween(LocalDate dataDate, LocalDate today) {

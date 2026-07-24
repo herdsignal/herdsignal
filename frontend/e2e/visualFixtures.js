@@ -46,6 +46,14 @@ export const watchlist = [
   herdStock('AVGO', { companyName: 'Broadcom', herdScore: 81, herdStage: 'Herd Rush', signal: 'REDUCE', actionLabel: '과열 관찰', actionScore: 73 }),
 ]
 
+export const trackedObservations = [...portfolioHerd, ...watchlist].map((item) => (
+  observation(item.ticker, item.herdScore, {
+    companyName: item.companyName,
+    sector: item.sector,
+    logoUrl: item.logoUrl,
+  })
+))
+
 export const portfolioSummary = {
   invested_value: 22_880,
   cash_balance: 2_120,
@@ -86,6 +94,8 @@ export const nvda = herdStock('NVDA', {
 })
 
 export const nvdaObservation = observation('NVDA', 78, {
+  companyName: 'NVIDIA',
+  sector: 'Technology',
   scope: 'EQUITY',
   sectorEtf: 'XLK',
   transition: 'EXTENDING',

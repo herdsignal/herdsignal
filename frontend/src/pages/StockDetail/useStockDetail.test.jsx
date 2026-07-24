@@ -4,15 +4,11 @@ import { useStockDetail } from './useStockDetail'
 import * as api from '../../api/herdApi'
 
 vi.mock('../../api/herdApi', () => ({
-  getStockHerd: vi.fn(),
   getHerdObservation: vi.fn(),
   getHerdObservationHistory: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
   getStockFinancials: vi.fn(),
-  getStockHerdReliability: vi.fn(),
-  getPortfolio: vi.fn(),
-  getPortfolioSummary: vi.fn(),
   getSignalJournal: vi.fn(),
   createSignalJournal: vi.fn(),
   deleteSignalJournal: vi.fn(),
@@ -53,13 +49,10 @@ function observation(ticker, score = 50) {
 }
 
 beforeEach(() => {
-  api.getPortfolio.mockReturnValue(response([]))
-  api.getPortfolioSummary.mockReturnValue(response(null))
   api.getSignalJournal.mockReturnValue(response([]))
   api.getHerdObservation.mockImplementation((ticker) =>
     response(observation(ticker)))
   api.getHerdObservationHistory.mockReturnValue(response({ points: [] }))
-  api.getStockHerdReliability.mockReturnValue(response(null))
   api.getStockFinancials.mockReturnValue(response(null))
 })
 
@@ -67,7 +60,7 @@ describe('useStockDetail', () => {
   it('ignores a slower response from the previous ticker', async () => {
     const aapl = deferred()
     const nvda = deferred()
-    api.getStockHerd
+    api.getHerdObservation
       .mockReturnValueOnce(aapl.promise)
       .mockReturnValueOnce(nvda.promise)
 
@@ -78,19 +71,18 @@ describe('useStockDetail', () => {
 
     rerender({ ticker: 'nvda' })
     await act(async () => {
-      nvda.resolve({ data: { data: { ticker: 'NVDA', herdScore: 60 } } })
+      nvda.resolve({ data: { data: observation('NVDA', 60) } })
     })
-    await waitFor(() => expect(result.current.herdData?.ticker).toBe('NVDA'))
-    expect(result.current.herdScore).toBe(50)
+    await waitFor(() => expect(result.current.observation?.ticker).toBe('NVDA'))
+    expect(result.current.herdScore).toBe(60)
 
     await act(async () => {
-      aapl.resolve({ data: { data: { ticker: 'AAPL', herdScore: 20 } } })
+      aapl.resolve({ data: { data: observation('AAPL', 20) } })
     })
-    expect(result.current.herdData?.ticker).toBe('NVDA')
+    expect(result.current.observation?.ticker).toBe('NVDA')
   })
 
   it('resets action status when the ticker changes', async () => {
-    api.getStockHerd.mockImplementation((ticker) => response({ ticker, herdScore: 50 }))
     api.addToPortfolio.mockResolvedValue({})
 
     const { result, rerender } = renderHook(

@@ -19,7 +19,7 @@ export default function DecisionFlow({ herd, currentWeight, targetWeight, compac
   const action = herd?.actionLabel ?? herd?.signal ?? '관찰'
   const actionClass = styles[signalTone(herd?.signal)]
   const steps = [
-    ['HERD', `${stage} ${Math.round(herd?.herdV4 ?? herd?.herdScore ?? 50)}`],
+    ['HERD', `${stage} ${Math.round(herd?.herdScore ?? 50)}`],
     ['추세', trendLabel(herd)],
     ['비중', weightLabel(currentWeight, targetWeight)],
     ['행동', action],

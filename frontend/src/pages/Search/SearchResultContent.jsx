@@ -56,7 +56,7 @@ export default function SearchResultContent({
             className={styles.resultHerdScore}
             style={{ color: stageColor(data.herdStage) }}
           >
-            {Math.round(data.herdV4 ?? data.herdScore)}
+            {Math.round(data.herdScore)}
           </div>
           <div className={`${styles.readinessPill} ${styles[`readiness${readiness.tone}`]}`}>
             {readiness.label}
@@ -122,7 +122,7 @@ function PendingSearchResult({ candidate }) {
 function Decision({ decision }) {
   return (
     <div className={`${styles.resultDecision} ${styles[`decision${decision.tone}`]}`}>
-      <span>편입 판단</span>
+      <span>현재 상태</span>
       <strong>{decision.label}</strong>
       <em>{decision.desc}</em>
     </div>

@@ -47,7 +47,7 @@ export function usePortfolioViewModel({
           herd,
           row,
           action,
-          score: Math.round(herd.herdV4 ?? herd.herdScore ?? 0),
+          score: Math.round(herd.herdScore ?? 0),
           stage: herd.herdStage?.startsWith('Herd ')
             ? herd.herdStage.slice(5)
             : herd.herdStage ?? 'Calm',

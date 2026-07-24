@@ -2,8 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { addToPortfolio, addToWatchlist } from '../../api/herdApi'
 import { useAuth } from '../../auth/AuthContext'
 import { clearPortfolioCaches } from '../../features/portfolio/portfolioCache'
-import { qualityColor } from '../../utils/dataQuality'
-import { buildDecision } from '../../utils/decision'
 import { getHerdMomentum } from '../../utils/herdMomentum'
 import {
   isObservationAvailable,
@@ -12,17 +10,7 @@ import {
 } from '../../utils/herdObservation'
 import { summarizeSignalJournal } from '../../utils/signalJournal'
 import { evaluateFundamentalGuard } from './stockFundamentalModel'
-import {
-  buildSignalEvidence,
-  journalActionLabel,
-  signalStyle,
-  stageColor,
-} from './stockDetailModel'
-import {
-  actionTone,
-  currentSignalReliability,
-  reliabilityEvidenceItems,
-} from './stockReliabilityModel'
+import { journalActionLabel, stageColor } from './stockDetailModel'
 import { useStockDetailResources } from './useStockDetailResources'
 import { useStockSignalJournal } from './useStockSignalJournal'
 
@@ -34,7 +22,6 @@ export function useStockDetail(ticker) {
   const resources = useStockDetailResources(normalizedTicker, ticker)
   const journal = useStockSignalJournal(normalizedTicker)
   const {
-    herdData,
     observation,
     loading,
     error,
@@ -42,12 +29,8 @@ export function useStockDetail(ticker) {
     historyPeriod,
     setHistoryPeriod,
     historyLoading,
-    reliability,
-    reliabilityLoading,
     financials,
     financialsLoading,
-    portfolio,
-    portfolioSummary,
     fetchData,
   } = resources
 
@@ -96,30 +79,9 @@ export function useStockDetail(ticker) {
   const herdStage = observationStage(observation)
   const stageDisp = herdStage ? `Herd ${herdStage}` : null
   const color = stageColor(herdStage)
-  const sigStyle = signalStyle(herdData?.signal)
-  const qualityToneColor = qualityColor(herdData?.qualityLevel)
-  const actionColor = actionTone(herdData?.actionGrade, herdData?.signal)
-  const holding = portfolio.find((item) => item.ticker === normalizedTicker) ?? null
-  const decision = useMemo(() => buildDecision({
-    herdData: { ...herdData, ticker: normalizedTicker },
-    holding,
-    summary: portfolioSummary,
-  }), [herdData, holding, normalizedTicker, portfolioSummary])
-  const currentReliability = useMemo(
-    () => currentSignalReliability(herdData, reliability),
-    [herdData, reliability],
-  )
-  const reliabilityEvidence = useMemo(
-    () => reliabilityEvidenceItems(reliability),
-    [reliability],
-  )
   const fundamentalGuard = useMemo(
-    () => evaluateFundamentalGuard(financials, herdData),
-    [financials, herdData],
-  )
-  const signalEvidence = useMemo(
-    () => buildSignalEvidence(herdData),
-    [herdData],
+    () => evaluateFundamentalGuard(financials, null),
+    [financials],
   )
   const journalSummary = useMemo(
     () => summarizeSignalJournal(journal.signalLogs),
@@ -143,11 +105,11 @@ export function useStockDetail(ticker) {
       scoreDate: observation?.observationDate,
       herdScore: Math.round(herdScore),
       herdStage: stageDisp,
-      signal: herdData?.signal,
-      signalLabel: herdData?.actionLabel ?? decision.title,
+      signal: 'HOLD',
+      signalLabel: 'State S1 관찰',
       actionRatio: 0,
-      signalDurationDays: herdData?.signalDurationDays,
-      stageDurationDays: herdData?.stageDurationDays,
+      signalDurationDays: null,
+      stageDurationDays: null,
       price: details.price,
       quantity: details.quantity,
       amount: details.amount,
@@ -157,7 +119,6 @@ export function useStockDetail(ticker) {
   }
 
   return {
-    herdData,
     observation,
     observationAvailable,
     loading,
@@ -167,8 +128,6 @@ export function useStockDetail(ticker) {
     historyPeriod,
     setHistoryPeriod,
     historyLoading,
-    reliability,
-    reliabilityLoading,
     financials,
     financialsLoading,
     signalLogs: journal.signalLogs,
@@ -183,14 +142,7 @@ export function useStockDetail(ticker) {
     herdStage,
     stageDisp,
     color,
-    sigStyle,
-    qualityToneColor,
-    actionColor,
-    decision,
-    currentReliability,
-    reliabilityEvidence,
     fundamentalGuard,
-    signalEvidence,
     journalSummary,
     historyPoints,
     herdMomentum,

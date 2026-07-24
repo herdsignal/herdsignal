@@ -8,7 +8,12 @@ import herdModelReport from '../../data/herdModelReport'
 import styles from './HerdLab.module.css'
 import { presentValidationReport } from './herdModelPresentation'
 import { presentShadowStatus } from './shadowModelPresentation'
-import { ActionOutcomesPanel, MethodologyPanel, ValidationPanel } from './HerdLabSections'
+import {
+  ActionOutcomesPanel,
+  LegacyBaselinesPanel,
+  MethodologyPanel,
+  ValidationPanel,
+} from './HerdLabSections'
 
 const { model: MODEL_BASE } = herdModelReport
 
@@ -50,7 +55,7 @@ export default function HerdLab() {
     <div className={styles.page}>
       <section className={styles.overview}>
         <header>
-          <span>HERD LAB · {model.status}</span>
+          <span>HERD LAB · LEGACY_RESEARCH_ACTION_BASELINE</span>
           <h1>{model.version}</h1>
           <p>{MODEL_BASE.name} · {model.generatedAt} 갱신</p>
           <div className={`${styles.shadowStatus} ${styles[shadow.tone]}`}>
@@ -75,6 +80,7 @@ export default function HerdLab() {
         </div>
       </section>
 
+      <LegacyBaselinesPanel />
       <ActionOutcomesPanel outcomes={actionOutcomes} />
       <ValidationPanel sectors={featuredSectors} rows={rows} />
       <MethodologyPanel modelNotes={modelNotes} />

@@ -33,7 +33,7 @@ export const CACHE_KEY_SPY_HISTORY = 'hs_spy_observation_history'
 export const CACHE_KEY_SPY_HISTORY_VERSION = 's1-v1'
 export const CACHE_KEY_VERSION = 'hs_dashboard_cache_version'
 export const CACHE_KEY_PORTFOLIO_SORT = 'hs_dashboard_sort'
-export const DASHBOARD_CACHE_VERSION = 's1-market-observation'
+export const DASHBOARD_CACHE_VERSION = 's1-only-observations'
 export const DASHBOARD_CACHE_TTL_MS = 30 * 60 * 1000
 
 export const HISTORY_PERIODS = HERD_HISTORY_PERIODS
@@ -51,7 +51,7 @@ export const PORTFOLIO_SORT_OPTIONS = [
   { value: 'weight', label: '비중순' },
 ]
 
-export const REFRESH_SCOPE_TITLE = 'yfinance 현재가, HERD DB 조회, SPY 최신 점수만 갱신합니다. 히스토리와 신뢰도는 각 화면에서 별도 조회됩니다.'
+export const REFRESH_SCOPE_TITLE = '현재가와 State S1 관찰값을 갱신합니다. 이력은 각 종목 화면에서 별도 조회됩니다.'
 
 export function formatInputDate(value) {
   const date = value ? new Date(value) : new Date()
