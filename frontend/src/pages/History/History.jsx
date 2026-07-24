@@ -7,140 +7,26 @@
  *   - getPortfolioHistory(period) 연동
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine,
-} from 'recharts'
-import { getPortfolioHistory, getPortfolioSummary } from '../../api/herdApi'
+import { useMemo, useState } from 'react'
+import HistoryChart from './HistoryChart'
+import { buildHistoryView, fmtPct, fmtUSD, pctColor } from './historyModel'
+import { usePortfolioHistory } from './usePortfolioHistory'
 import styles from './History.module.css'
-
-/* ── 유틸 ─────────────────────────────────── */
-
-/** 날짜 포맷: 2026-06-30 → 6/30 */
-function fmtAxisDate(dateStr) {
-  const d = new Date(dateStr)
-  return `${d.getMonth() + 1}/${d.getDate()}`
-}
-
-/** USD 포맷 */
-function fmtUSD(value) {
-  if (value == null) return '—'
-  return `$${Number(value).toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`
-}
-
-/** 퍼센트 포맷 */
-function fmtPct(value) {
-  if (value == null) return '—'
-  const n = Number(value)
-  return `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`
-}
-
-/** 수익률 색상 */
-function pctColor(value) {
-  if (value == null) return 'var(--text-3)'
-  const n = Number(value)
-  if (n > 0) return '#22C55E'
-  if (n < 0) return 'var(--rush)'
-  return 'var(--text-3)'
-}
-
-/* ── 커스텀 툴팁 ── */
-function CustomTooltip({ active, payload, label }) {
-  if (!active || !payload?.length) return null
-  const d = new Date(label)
-  const dateStr = d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
-  const totalValue    = payload.find((p) => p.dataKey === 'totalValue')?.value
-  const totalReturnPct = payload.find((p) => p.dataKey === 'totalReturnPct')?.value
-
-  return (
-    <div className={styles.tooltip}>
-      <div className={styles.tooltipDate}>{dateStr}</div>
-      <div className={styles.tooltipRow}>
-        <span className={styles.tooltipLabel}>평가금액</span>
-        <span className={styles.tooltipValue}>{fmtUSD(totalValue)}</span>
-      </div>
-      {totalReturnPct != null && (
-        <div className={styles.tooltipRow}>
-          <span className={styles.tooltipLabel}>총 수익률</span>
-          <span style={{ color: pctColor(totalReturnPct) }}>
-            {fmtPct(totalReturnPct)}
-          </span>
-        </div>
-      )}
-    </div>
-  )
-}
 
 /* ── 컴포넌트 ─────────────────────────────── */
 
 export default function History() {
   const [period,  setPeriod]  = useState('month')
-  const [points,  setPoints]  = useState([])
-  const [summary, setSummary] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState(null)
+  const { points, summary, loading, error, fetchData } = usePortfolioHistory(period)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   })
 
-  const fetchData = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const [histRes, sumRes] = await Promise.allSettled([
-        getPortfolioHistory(period),
-        getPortfolioSummary(),
-      ])
-
-      if (histRes.status === 'fulfilled') {
-        setPoints(histRes.value.data?.data?.points ?? [])
-      } else {
-        setError('히스토리 데이터를 불러올 수 없습니다.')
-      }
-
-      if (sumRes.status === 'fulfilled') {
-        setSummary(sumRes.value.data?.data ?? null)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }, [period])
-
-  useEffect(() => { fetchData() }, [fetchData])
-
-  /* 최신 포인트 */
-  const latest  = points.length > 0 ? points[points.length - 1] : null
-  /* Y축 도메인 — 데이터 최소/최대에 여유 5% 추가 */
-  const values  = points.map((p) => p.totalValue)
-  const minVal  = values.length > 0 ? Math.min(...values) : 0
-  const maxVal  = values.length > 0 ? Math.max(...values) : 1000
-  const padding = (maxVal - minVal) * 0.08 || 100
-  const yDomain = [Math.max(0, minVal - padding), maxVal + padding]
-  const historyInsight = (() => {
-    if (points.length < 2) return null
-    const first = points[0]
-    const peak = points.reduce((best, point) =>
-      Number(point.totalValue) > Number(best.totalValue) ? point : best
-    , points[0])
-    const drawdown = latest?.totalValue && peak?.totalValue
-      ? (latest.totalValue / peak.totalValue - 1) * 100
-      : null
-    const fromStart = first?.totalValue && latest?.totalValue
-      ? (latest.totalValue / first.totalValue - 1) * 100
-      : null
-    return { first, peak, drawdown, fromStart }
-  })()
+  const { latest, insight: historyInsight, yDomain } = useMemo(
+    () => buildHistoryView(points),
+    [points]
+  )
 
   return (
     <div className={styles.page}>
@@ -219,9 +105,9 @@ export default function History() {
             <strong>
               {historyInsight.drawdown != null && historyInsight.drawdown < -8
                 ? '리밸런싱 확인'
-                : '비중 유지 가능'}
+                : '큰 낙폭 없음'}
             </strong>
-            <em>HERD 신호와 함께 확인</em>
+            <em>HERD 상태와 함께 확인</em>
           </div>
         </div>
       )}
@@ -254,65 +140,11 @@ export default function History() {
         )}
 
         {!loading && !error && points.length > 0 && (
-          <ResponsiveContainer width="100%" height={320}>
-            <LineChart
-              data={points}
-              margin={{ top: 10, right: 16, left: 0, bottom: 4 }}
-            >
-              <CartesianGrid
-                strokeDasharray="4 6"
-                stroke="var(--border)"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="date"
-                tickFormatter={fmtAxisDate}
-                tick={{ fontSize: 11, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                axisLine={false}
-                tickLine={false}
-                tickMargin={8}
-              />
-              <YAxis
-                domain={yDomain}
-                tickFormatter={(v) =>
-                  v >= 1000
-                    ? `$${(v / 1000).toFixed(0)}k`
-                    : `$${v}`
-                }
-                tick={{ fontSize: 11, fill: 'var(--text-3)', fontFamily: 'Inter' }}
-                axisLine={false}
-                tickLine={false}
-                width={56}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              {/* 매입원가 기준선 */}
-              {summary?.totalCost != null && (
-                <ReferenceLine
-                  y={summary.totalCost}
-                  stroke="rgba(163, 170, 184, 0.5)"
-                  strokeDasharray="4 4"
-                  label={{
-                    value: '매입원가',
-                    position: 'insideTopRight',
-                    fontSize: 10,
-                    fill: 'var(--text-3)',
-                    fontFamily: 'Inter',
-                  }}
-                />
-              )}
-              <Line
-                type="monotone"
-                dataKey="totalValue"
-                stroke="var(--flee)"
-                strokeWidth={2.5}
-                dot={points.length === 1
-                  ? { r: 5, fill: 'var(--flee)', strokeWidth: 0 }
-                  : { r: 3, fill: 'var(--flee)', strokeWidth: 0 }
-                }
-                activeDot={{ r: 5, strokeWidth: 0 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <HistoryChart
+            points={points}
+            totalCost={summary?.totalCost}
+            yDomain={yDomain}
+          />
         )}
       </div>
 
