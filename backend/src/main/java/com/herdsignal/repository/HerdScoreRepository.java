@@ -27,8 +27,44 @@ public interface HerdScoreRepository extends JpaRepository<HerdScore, Long> {
     /** 티커의 전체 HERD 점수 히스토리 조회 (최신순) */
     List<HerdScore> findByTickerOrderByScoreDateDesc(String ticker);
 
-    /** 여러 티커의 전체 히스토리를 한 번에 조회 (티커별 최신순). */
-    List<HerdScore> findByTickerInOrderByTickerAscScoreDateDesc(List<String> tickers);
+    /**
+     * 여러 티커의 계산 컨텍스트를 한 번에 조회한다.
+     * 최근 구간 밖에 있는 종목도 최신 점수 한 건은 보존한다.
+     */
+    @Query("""
+            SELECT h FROM HerdScore h
+            WHERE h.ticker IN :tickers
+              AND (
+                h.scoreDate >= :cutoff
+                OR h.scoreDate = (
+                  SELECT MAX(latest.scoreDate)
+                  FROM HerdScore latest
+                  WHERE latest.ticker = h.ticker
+                )
+              )
+            ORDER BY h.ticker ASC, h.scoreDate DESC
+            """)
+    List<HerdScore> findContextByTickers(
+            @Param("tickers") List<String> tickers,
+            @Param("cutoff") LocalDate cutoff);
+
+    /** 단일 티커도 최근 계산 구간과 최신 점수만 조회한다. */
+    @Query("""
+            SELECT h FROM HerdScore h
+            WHERE h.ticker = :ticker
+              AND (
+                h.scoreDate >= :cutoff
+                OR h.scoreDate = (
+                  SELECT MAX(latest.scoreDate)
+                  FROM HerdScore latest
+                  WHERE latest.ticker = h.ticker
+                )
+              )
+            ORDER BY h.scoreDate DESC
+            """)
+    List<HerdScore> findContextByTicker(
+            @Param("ticker") String ticker,
+            @Param("cutoff") LocalDate cutoff);
 
     /** 티커의 특정 날짜 이후 HERD 점수 히스토리 조회 (날짜 오름차순) */
     @Query("SELECT h FROM HerdScore h WHERE h.ticker = :ticker AND h.scoreDate >= :cutoff ORDER BY h.scoreDate ASC")

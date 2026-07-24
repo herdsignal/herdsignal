@@ -29,7 +29,8 @@ class HerdServiceReadBoundaryTest {
                 mock(ActionCooldownService.class),
                 mock(PortfolioActionContextService.class),
                 mock(InvestorProfileService.class),
-                runner
+                runner,
+                new UsMarketSessionClock()
         );
         when(scoreRepository.findTopByTickerOrderByScoreDateDesc("NVDA"))
                 .thenReturn(Optional.empty());

@@ -1,6 +1,5 @@
 package com.herdsignal.controller;
 
-import com.herdsignal.domain.UserPortfolio;
 import com.herdsignal.dto.*;
 import com.herdsignal.service.PortfolioService;
 import com.herdsignal.service.CurrentUserService;
@@ -32,8 +31,9 @@ public class PortfolioController {
      * 보유 종목 전체 목록 조회.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserPortfolio>>> getPortfolio() {
-        List<UserPortfolio> portfolio = portfolioService.getPortfolio(currentUserService.requireUserId());
+    public ResponseEntity<ApiResponse<List<PortfolioHoldingResponse>>> getPortfolio() {
+        List<PortfolioHoldingResponse> portfolio =
+                portfolioService.getPortfolio(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(portfolio));
     }
 

@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class HerdService {
 
+    private static final int ACTION_CONTEXT_MONTHS = 13;
     private final UserPortfolioRepository portfolioRepository;
     private final HerdScoreRepository herdScoreRepository;
     private final HerdIndicatorRepository herdIndicatorRepository;
@@ -50,6 +51,7 @@ public class HerdService {
     private final PortfolioActionContextService portfolioActionContextService;
     private final InvestorProfileService investorProfileService;
     private final HerdOnDemandRunner onDemandRunner;
+    private final UsMarketSessionClock marketSessionClock;
 
     /**
      * 포트폴리오 전체 HERD 조회.
@@ -169,7 +171,9 @@ public class HerdService {
         }
 
         Map<String, List<HerdScore>> historyByTicker = herdScoreRepository
-                .findByTickerInOrderByTickerAscScoreDateDesc(normalizedTickers)
+                .findContextByTickers(
+                        normalizedTickers,
+                        marketSessionClock.currentSessionDate().minusMonths(ACTION_CONTEXT_MONTHS))
                 .stream()
                 .collect(Collectors.groupingBy(
                         HerdScore::getTicker,
@@ -225,7 +229,9 @@ public class HerdService {
      * @param period "3y" / "1y" / "6m" 등 — 미지원 형식은 기본값 3y 적용
      */
     public HerdHistoryResponse getHerdHistory(String ticker, String period) {
-        LocalDate cutoff = parsePeriod(period);
+        LocalDate cutoff = HerdHistoryPeriod.cutoff(
+                period,
+                marketSessionClock.currentSessionDate());
         List<HerdScore> scores = herdScoreRepository.findHistoryByTickerSince(ticker, cutoff);
         List<HerdHistoryPoint> points = scores.stream()
                 .map(s -> HerdHistoryPoint.builder()
@@ -236,23 +242,11 @@ public class HerdService {
         return HerdHistoryResponse.builder().points(points).build();
     }
 
-    /** "3y" → today-3년, "1y" → today-1년, "6m" → today-6개월, 그 외 기본 3년 */
-    private LocalDate parsePeriod(String period) {
-        if (period == null || period.isBlank()) return LocalDate.now().minusYears(3);
-        try {
-            if (period.endsWith("y")) {
-                return LocalDate.now().minusYears(Long.parseLong(period.replace("y", "")));
-            }
-            if (period.endsWith("m")) {
-                return LocalDate.now().minusMonths(Long.parseLong(period.replace("m", "")));
-            }
-        } catch (NumberFormatException ignored) { }
-        return LocalDate.now().minusYears(3);
-    }
-
     /** HERD 점수 응답에 데이터 신뢰도 레이어를 붙인다. */
     private HerdScoreResponse buildResponse(HerdScore score, HerdIndicator indicator, String userId) {
-        List<HerdScore> history = herdScoreRepository.findByTickerOrderByScoreDateDesc(score.getTicker());
+        List<HerdScore> history = herdScoreRepository.findContextByTicker(
+                score.getTicker(),
+                marketSessionClock.currentSessionDate().minusMonths(ACTION_CONTEXT_MONTHS));
         Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
         InvestorProfile profile = userId == null ? null : investorProfileService.forDecision(userId);
         boolean currentlyHeld = userId != null && portfolioRepository.existsByUserIdAndTicker(

@@ -6,6 +6,7 @@ import com.herdsignal.dto.CashBalanceRequest;
 import com.herdsignal.dto.CashBalanceResponse;
 import com.herdsignal.dto.PortfolioAddRequest;
 import com.herdsignal.dto.PortfolioHistoryResponse;
+import com.herdsignal.dto.PortfolioHoldingResponse;
 import com.herdsignal.dto.PortfolioSummaryResponse;
 import com.herdsignal.dto.TargetWeightRequest;
 import com.herdsignal.exception.DuplicateResourceException;
@@ -63,8 +64,10 @@ public class PortfolioService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserPortfolio> getPortfolio(String userId) {
-        return portfolioRepository.findByUserId(userId);
+    public List<PortfolioHoldingResponse> getPortfolio(String userId) {
+        return portfolioRepository.findByUserId(userId).stream()
+                .map(PortfolioHoldingResponse::from)
+                .toList();
     }
 
     public PortfolioSummaryResponse getPortfolioSummary(String userId) {

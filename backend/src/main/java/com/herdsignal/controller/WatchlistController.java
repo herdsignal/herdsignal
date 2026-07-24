@@ -1,9 +1,9 @@
 package com.herdsignal.controller;
 
-import com.herdsignal.domain.UserWatchlist;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.WatchlistAddRequest;
 import com.herdsignal.dto.WatchlistHerdResponse;
+import com.herdsignal.dto.WatchlistItemResponse;
 import com.herdsignal.service.WatchlistService;
 import com.herdsignal.service.CurrentUserService;
 import jakarta.validation.Valid;
@@ -31,8 +31,9 @@ public class WatchlistController {
      * 관심 종목 전체 목록 조회.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserWatchlist>>> getWatchlist() {
-        List<UserWatchlist> watchlist = watchlistService.getWatchlist(currentUserService.requireUserId());
+    public ResponseEntity<ApiResponse<List<WatchlistItemResponse>>> getWatchlist() {
+        List<WatchlistItemResponse> watchlist =
+                watchlistService.getWatchlist(currentUserService.requireUserId());
         return ResponseEntity.ok(ApiResponse.success(watchlist));
     }
 

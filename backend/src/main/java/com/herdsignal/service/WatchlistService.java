@@ -4,6 +4,7 @@ import com.herdsignal.domain.UserWatchlist;
 import com.herdsignal.dto.HerdScoreResponse;
 import com.herdsignal.dto.WatchlistAddRequest;
 import com.herdsignal.dto.WatchlistHerdResponse;
+import com.herdsignal.dto.WatchlistItemResponse;
 import com.herdsignal.exception.DuplicateResourceException;
 import com.herdsignal.exception.ResourceNotFoundException;
 import com.herdsignal.repository.UserWatchlistRepository;
@@ -77,8 +78,10 @@ public class WatchlistService {
      * @param userId 인증 사용자의 내부 ID
      */
     @Transactional(readOnly = true)
-    public List<UserWatchlist> getWatchlist(String userId) {
-        return watchlistRepository.findByUserId(userId);
+    public List<WatchlistItemResponse> getWatchlist(String userId) {
+        return watchlistRepository.findByUserId(userId).stream()
+                .map(WatchlistItemResponse::from)
+                .toList();
     }
 
     /**
