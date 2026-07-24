@@ -12,10 +12,10 @@ HerdSignal 서비스에 필요한 테이블을 생성한다.
 import argparse
 import logging
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import (
-    BigInteger, Boolean, Column, DateTime, Date, Integer,
+    BigInteger, Boolean, CheckConstraint, Column, DateTime, Date, Integer,
     Index, String, Text, UniqueConstraint, text,
 )
 from sqlalchemy import Numeric as Decimal
@@ -23,6 +23,11 @@ from sqlalchemy import Numeric as Decimal
 from config.database import Base, create_db_engine
 
 logger = logging.getLogger(__name__)
+
+
+def _utc_now_naive() -> datetime:
+    """DB DATETIME 컬럼에 저장할 UTC 기준 naive 시각."""
+    return datetime.now(UTC).replace(tzinfo=None)
 
 
 # ──────────────────────────────────────────────
@@ -134,6 +139,79 @@ class DailyPrice(Base):
     close_price = Column(Decimal(12, 4), nullable=True,                         comment="종가 (수정 종가)")
     volume      = Column(BigInteger,     nullable=True,                         comment="거래량")
     created_at  = Column(DateTime,       nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
+
+
+class HerdObservation(Base):
+    """검증된 State S1·Transition S1의 버전형 최신 관찰 스냅샷."""
+    __tablename__ = "herd_observations"
+    __table_args__ = (
+        UniqueConstraint(
+            "ticker",
+            "state_model_version",
+            "observation_date",
+            name="uq_herd_observations_model_date",
+        ),
+        Index(
+            "ix_herd_observations_ticker_latest",
+            "ticker",
+            "state_model_version",
+            "observation_date",
+        ),
+        Index("ix_herd_observations_generated_at", "generated_at"),
+        CheckConstraint(
+            "state_score >= 0 AND state_score <= 100",
+            name="ck_herd_observations_state_score",
+        ),
+        CheckConstraint(
+            "direction_prediction = 0 "
+            "AND operational_action = 'HOLD' "
+            "AND operational_action_ratio = 0 "
+            "AND survivorship_safe = 0",
+            name="ck_herd_observations_state_only",
+        ),
+        {"comment": "행동 권한이 없는 HERD S1 버전형 관찰 스냅샷"},
+    )
+
+    id                          = Column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        primary_key=True,
+        autoincrement=True,
+    )
+    ticker                      = Column(String(10), nullable=False)
+    schema_version              = Column(String(60), nullable=False)
+    state_model_version         = Column(String(40), nullable=False)
+    transition_model_version    = Column(String(40), nullable=False)
+    observation_date            = Column(Date, nullable=False)
+    last_observed_session       = Column(Date, nullable=False)
+    generated_at                = Column(DateTime, nullable=False)
+    source_scope                = Column(String(30), nullable=False)
+    display_label               = Column(String(100), nullable=True)
+    claim_code                  = Column(String(60), nullable=True)
+    state_score                 = Column(Decimal(7, 4), nullable=False)
+    herd_stage                  = Column(String(20), nullable=False)
+    transition_code             = Column(String(30), nullable=False)
+    raw_transition_code         = Column(String(30), nullable=False)
+    transition_event            = Column(Boolean, nullable=False, default=False)
+    delta_4w                    = Column(Decimal(8, 4), nullable=False)
+    delta_13w                   = Column(Decimal(8, 4), nullable=False)
+    price_extension             = Column(Decimal(7, 4), nullable=False)
+    trend_position              = Column(Decimal(7, 4), nullable=False)
+    relative_position           = Column(Decimal(7, 4), nullable=False)
+    participation               = Column(Decimal(7, 4), nullable=False)
+    downside_risk_context       = Column(Decimal(7, 4), nullable=False)
+    sector_etf                  = Column(String(10), nullable=False)
+    reference_coverage_fraction = Column(Decimal(7, 6), nullable=True)
+    direction_prediction        = Column(Boolean, nullable=False, default=False)
+    operational_action          = Column(String(10), nullable=False, default="HOLD")
+    operational_action_ratio    = Column(Decimal(6, 4), nullable=False, default=0)
+    survivorship_safe           = Column(Boolean, nullable=False, default=False)
+    created_at                  = Column(DateTime, nullable=False, default=_utc_now_naive)
+    updated_at                  = Column(
+        DateTime,
+        nullable=False,
+        default=_utc_now_naive,
+        onupdate=_utc_now_naive,
+    )
 
 
 class SchedulerRun(Base):
@@ -321,7 +399,7 @@ class SignalJournal(Base):
 SQLITE_PATH = "herdsignal_test.db"
 
 MODELS = [
-    AppUser, Stock, HerdScore, HerdIndicator, DailyPrice,
+    AppUser, Stock, HerdScore, HerdIndicator, DailyPrice, HerdObservation,
     UserPortfolio, InvestorProfile, UserWatchlist, UserCashBalance, UserCashHistory, PortfolioHistory,
     SignalJournal,
 ]

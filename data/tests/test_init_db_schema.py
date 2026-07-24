@@ -1,6 +1,6 @@
 import unittest
 
-from init_db import InvestorProfile, SchedulerRun
+from init_db import HerdObservation, InvestorProfile, SchedulerRun
 
 
 class InitDbSchemaTest(unittest.TestCase):
@@ -12,3 +12,10 @@ class InitDbSchemaTest(unittest.TestCase):
         self.assertEqual(SchedulerRun.__tablename__, "scheduler_runs")
         self.assertIn("status", SchedulerRun.__table__.columns)
         self.assertIn("failed_tickers", SchedulerRun.__table__.columns)
+
+    def test_observation_schema_is_versioned_and_state_only(self) -> None:
+        self.assertEqual(HerdObservation.__tablename__, "herd_observations")
+        columns = HerdObservation.__table__.columns
+        self.assertIn("state_model_version", columns)
+        self.assertIn("source_scope", columns)
+        self.assertIn("operational_action_ratio", columns)

@@ -56,6 +56,7 @@ from scheduler.observation_s1 import (                                      # no
     sector_etf_for_name,
     write_observation_bundle,
 )
+from scheduler.observation_store import save_observation_bundle             # noqa: E402
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
@@ -180,6 +181,12 @@ def _build_and_write_observation(
         sector_overrides=_fetch_sector_overrides(),
     )
     write_observation_bundle(bundle)
+    save_result = save_observation_bundle(bundle, _get_session_factory())
+    logger.info(
+        "[Tier1] State S1 관찰 DB 저장 — 신규 %s, 갱신 %s",
+        save_result["inserted"],
+        save_result["updated"],
+    )
     return bundle
 
 
