@@ -30,10 +30,6 @@ import {
   badgeColors,
   epsMultiplierDesc,
   evidenceTone,
-  fmtAnnualActions,
-  fmtReliabilityPct,
-  fmtReliabilityPlainPct,
-  fmtReliabilityScore,
   formatActionBasis,
   formatActionMeta,
   formatActionRatio,
@@ -41,11 +37,17 @@ import {
   formatMultiplier,
   getTimingSignal,
   normalizeBar,
+  sectorMultiplierDesc,
+} from './stockDetailModel'
+import {
+  fmtAnnualActions,
+  fmtReliabilityPct,
+  fmtReliabilityPlainPct,
+  fmtReliabilityScore,
   reliabilityTone,
   sampleQualityLabel,
-  sectorMultiplierDesc,
   signalEdgeLabel,
-} from './stockDetailModel'
+} from './stockReliabilityModel'
 /* ── 컴포넌트 ─────────────────────────────── */
 
 export default function StockDetail() {

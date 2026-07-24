@@ -13,15 +13,17 @@ import { getHerdMomentum } from '../../utils/herdMomentum'
 import { summarizeSignalJournal } from '../../utils/signalJournal'
 import {
   API_HOST,
-  actionTone,
   buildSignalEvidence,
-  currentSignalReliability,
-  evaluateFundamentalGuard,
   journalActionLabel,
-  reliabilityEvidenceItems,
   signalStyle,
   stageColor,
 } from './stockDetailModel'
+import { evaluateFundamentalGuard } from './stockFundamentalModel'
+import {
+  actionTone,
+  currentSignalReliability,
+  reliabilityEvidenceItems,
+} from './stockReliabilityModel'
 
 export function useStockDetail(ticker) {
 

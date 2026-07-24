@@ -3,7 +3,7 @@ import {
   fmtFinancePct,
   fmtNumber,
   fundamentalTone,
-} from './stockDetailModel'
+} from './stockFundamentalModel'
 import sharedStyles from './StockDetail.module.css'
 import componentStyles from './StockDetailFundamentals.module.css'
 
