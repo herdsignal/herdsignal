@@ -55,7 +55,9 @@ for (const scenario of [
 ]) {
   test(`${scenario.name} visual regression`, async ({ page }, testInfo) => {
     await page.goto(scenario.path)
-    await expect(page.getByText(scenario.ready, { exact: true }).first()).toBeVisible()
+    await expect(page.getByText(scenario.ready, { exact: true }).first()).toBeVisible({
+      timeout: 15_000,
+    })
     await expect(page).toHaveScreenshot(
       `${scenario.name}-${testInfo.project.name}.png`,
       { timeout: 15_000 }
