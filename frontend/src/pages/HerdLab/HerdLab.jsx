@@ -55,9 +55,9 @@ export default function HerdLab() {
     <div className={styles.page}>
       <section className={styles.overview}>
         <header>
-          <span>HERD LAB · LEGACY_RESEARCH_ACTION_BASELINE</span>
-          <h1>{model.version}</h1>
-          <p>{MODEL_BASE.name} · {model.generatedAt} 갱신</p>
+          <span>RESEARCH ARCHIVE · OPERATIONS DISABLED</span>
+          <h1>HERD 연구실</h1>
+          <p>{model.version} · {MODEL_BASE.name} · {model.generatedAt} 갱신</p>
           <div className={`${styles.shadowStatus} ${styles[shadow.tone]}`}>
             <i />
             <span>{shadow.label}</span>

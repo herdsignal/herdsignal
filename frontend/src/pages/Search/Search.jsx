@@ -1,15 +1,3 @@
-/**
- * Search.jsx — 종목 검색 페이지 (/search)
- *
- * 구성:
- *   1) 페이지 헤더
- *   2) 검색 바 (디바운스 300ms, 2글자 이상 → State S1 조회)
- *   3) 검색 결과 드롭다운 (HERD 점수 + 포트폴리오/관심종목 추가 버튼)
- *   4) 최근 검색 목록 (localStorage, 최대 5개)
- *
- * 래퍼런스: wireframes/wireframe-search.html
- */
-
 import { useState, useMemo, useRef } from 'react'
 import { useNavigate }                  from 'react-router-dom'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
@@ -52,17 +40,11 @@ export default function Search() {
     onPortfolioAdded: setModalTicker,
   })
 
-  const today = new Date().toLocaleDateString('ko-KR', {
-    year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
-  })
-
-  /* 최근 검색 클릭 → 검색창에 자동 입력 */
   function handleRecentClick(ticker) {
     setQuery(ticker)
     inputRef.current?.focus()
   }
 
-  /* 드롭다운 표시 여부 */
   const showDropdown = query.trim().length >= 2 && searchResult !== null
 
   const suggestionMatches = useMemo(() => {
@@ -75,29 +57,20 @@ export default function Search() {
     return STOCK_CANDIDATES.filter((item) => candidateMatches(item, normalized)).slice(0, 5)
   }, [query, searchResult?.matches])
 
-  /* ── JSX ── */
   return (
-    <div>
-
-      {/* 페이지 헤더 */}
-      <div className={styles.pageHeader}>
-        <div className={styles.pageDate}>{today}</div>
-        <h1 className={styles.pageTitle}>종목 검색</h1>
-        <p className={styles.pageDesc}>
-          HERD 관찰 가능한 종목을 찾아 포트폴리오나 관찰 대기열에 추가하세요
-        </p>
-      </div>
+    <main className={styles.page}>
+      <header className={styles.pageHeader}>
+        <span>STOCK FINDER</span>
+        <h1>종목 찾기</h1>
+        <p>티커나 기업명으로 State S1 관찰값을 찾습니다.</p>
+      </header>
 
       <section className={styles.searchPanel}>
         <div className={styles.searchPanelHead}>
-          <div>
-            <span>Inclusion Check</span>
-            <strong>포트폴리오 편입 판단</strong>
-          </div>
-          <em>{portfolioTickers.size}개 보유 · {watchlistTickers.size}개 대기</em>
+          <strong>미국 종목 검색</strong>
+          <span>{portfolioTickers.size} 보유 · {watchlistTickers.size} 관심</span>
         </div>
 
-        {/* 검색 바 */}
         <div className={styles.searchWrap}>
           <input
             ref={inputRef}
@@ -109,22 +82,7 @@ export default function Search() {
             autoComplete="off"
             spellCheck={false}
           />
-          <span className={styles.searchIcon}>⌕</span>
-        </div>
-
-        <div className={styles.searchGuide}>
-          <div>
-            <span>Ready</span>
-            <strong>편입 가능</strong>
-          </div>
-          <div>
-            <span>Pending</span>
-            <strong>계산 대기</strong>
-          </div>
-          <div>
-            <span>Limited</span>
-            <strong>보류 우선</strong>
-          </div>
+          <span className={styles.searchIcon} aria-hidden="true">⌕</span>
         </div>
       </section>
 
@@ -143,7 +101,6 @@ export default function Search() {
         </div>
       )}
 
-      {/* 검색 결과 드롭다운 */}
       {showDropdown && (
         <div className={styles.searchDropdown}>
           <div className={styles.dropdownHeader}>검색 결과</div>
@@ -159,7 +116,6 @@ export default function Search() {
         </div>
       )}
 
-      {/* 최근 검색 */}
       {recentSearches.length > 0 && (
         <>
           <div className={styles.sectionLabel}>최근 검색</div>
@@ -197,6 +153,6 @@ export default function Search() {
           }}
         />
       )}
-    </div>
+    </main>
   )
 }

@@ -1,11 +1,9 @@
+import HerdLens from '../../components/HerdLens/HerdLens'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
-import { stageBadgeStyle, stageColor } from '../../utils/herdStage'
+import { stageBadgeStyle } from '../../utils/herdStage'
 import {
   TICKER_META,
   addButtonLabel,
-  herdReadiness,
-  inclusionDecision,
-  stageDisplay,
 } from './searchModel'
 import styles from './Search.module.css'
 
@@ -36,8 +34,6 @@ export default function SearchResultContent({
   const badge = stageBadgeStyle(data.herdStage)
   const meta = result.matches?.find((item) => item.ticker === data.ticker) ??
     TICKER_META[data.ticker]
-  const readiness = herdReadiness(data)
-  const decision = inclusionDecision(data)
   return (
     <div className={styles.searchResultItem} onClick={() => onOpen(data.ticker)}>
       <div className={styles.resultLeft}>
@@ -51,21 +47,16 @@ export default function SearchResultContent({
       </div>
 
       <div className={styles.resultRight} onClick={(event) => event.stopPropagation()}>
-        <div className={styles.resultHerd}>
-          <div
-            className={styles.resultHerdScore}
-            style={{ color: stageColor(data.herdStage) }}
-          >
-            {Math.round(data.herdScore)}
-          </div>
-          <div className={`${styles.readinessPill} ${styles[`readiness${readiness.tone}`]}`}>
-            {readiness.label}
-          </div>
-          <div className={styles.resultHerdDesc}>
-            {stageDisplay(data.herdStage)} · {readiness.desc}
-          </div>
-        </div>
-        <Decision decision={decision} />
+        <HerdLens
+          compact
+          score={data.herdScore}
+          stage={data.herdStage}
+          delta={data.delta4w}
+        />
+        <span className={styles.observationMeta}>
+          <strong>{formatDelta(data.delta4w)}</strong>
+          <small>{data.freshnessStatus === 'STALE' ? '갱신 필요' : data.scoreDate ?? 'State S1'}</small>
+        </span>
         <AddButton
           status={portfolioStatus}
           idleLabel="+ 포트폴리오"
@@ -83,8 +74,6 @@ export default function SearchResultContent({
 }
 
 function PendingSearchResult({ candidate }) {
-  const readiness = herdReadiness(null)
-  const decision = inclusionDecision(null)
   return (
     <div className={styles.searchResultItem}>
       <div className={styles.resultLeft}>
@@ -95,38 +84,28 @@ function PendingSearchResult({ candidate }) {
             {candidate.name} · {candidate.sector}
           </div>
           <div className={styles.resultNote}>
-            심볼은 찾았지만 HERD 데이터는 아직 없습니다. 상장 기간이 짧거나 계산 대기 중일 수 있어요.
+            State S1 관찰값 없음
           </div>
         </div>
       </div>
       <div className={styles.resultRight}>
-        <div className={styles.resultHerd}>
-          <div className={styles.resultHerdScore}>—</div>
-          <div className={`${styles.readinessPill} ${styles.readinessPending}`}>
-            {readiness.label}
-          </div>
-          <div className={styles.resultHerdDesc}>{readiness.desc}</div>
-        </div>
-        <Decision decision={decision} />
+        <HerdLens compact score={null} />
         <button className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`} disabled>
-          HERD 필요
+          관찰값 필요
         </button>
         <button className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`} disabled>
-          HERD 필요
+          관찰값 필요
         </button>
       </div>
     </div>
   )
 }
 
-function Decision({ decision }) {
-  return (
-    <div className={`${styles.resultDecision} ${styles[`decision${decision.tone}`]}`}>
-      <span>현재 상태</span>
-      <strong>{decision.label}</strong>
-      <em>{decision.desc}</em>
-    </div>
-  )
+function formatDelta(value) {
+  const numeric = Number(value)
+  if (!Number.isFinite(numeric)) return '4주 —'
+  const rounded = Math.round(numeric)
+  return `4주 ${rounded > 0 ? '+' : ''}${rounded}`
 }
 
 function AddButton({ status, idleLabel, onClick }) {

@@ -60,7 +60,7 @@ export function ValidationPanel({ sectors, rows }) {
 export function ActionOutcomesPanel({ outcomes }) {
   return (
     <section className={styles.panel}>
-      <SectionHead eyebrow="행동 사후 평가" title="행동 후 실제 결과" meta="완료된 관측만 집계" />
+      <SectionHead eyebrow="레거시 사후 평가" title="과거 행동 규칙의 결과" meta="연구 비교 전용 · 운영 비활성" />
       <div className={styles.outcomeGrid}>
         {outcomes.map((outcome) => (
           <article key={outcome.horizon}>
@@ -104,9 +104,9 @@ function Bar({ className, width }) {
 export function MethodologyPanel({ modelNotes }) {
   return (
     <details className={`${styles.panel} ${styles.methodology}`}>
-      <summary><div><span>모델 상세</span><strong>행동 비율·점수 구성·검증 주의사항</strong></div><em>자세히 보기</em></summary>
+      <summary><div><span>레거시 상세</span><strong>과거 계산식과 검증 주의사항</strong></div><em>자세히 보기</em></summary>
       <div className={styles.methodGrid}>
-        <div><h3>구간별 기본 행동</h3><div className={styles.stageGrid}>{STAGES.map((item) => (
+        <div><h3>v6.1 구간별 행동 규칙</h3><div className={styles.stageGrid}>{STAGES.map((item) => (
           <div key={item.stage}><i className={styles[item.tone]} /><strong>{item.stage}</strong><span>{item.range}</span><em>{item.action}</em><b>{item.ratio}</b></div>
         ))}</div></div>
         <div><h3>LEGACY_STATE_BASELINE · v4</h3><div className={styles.weightList}>{WEIGHTS.map((weight) => (

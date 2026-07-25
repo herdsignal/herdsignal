@@ -1,224 +1,231 @@
-/* Watchlist.module.css — Dashboard.module.css 기반, 재무 섹션 없는 단순 카드 */
+.page {
+  width: min(var(--hs-content-max), 100%);
+  min-height: calc(100vh - var(--hs-header-height));
+  margin: 0 auto;
+  padding: 44px var(--hs-page-gutter) 76px;
+  color: var(--hs-text);
+}
 
-/* ── 페이지 헤더 ── */
+.pageHeader,
+.headerActions,
+.listHeader,
+.listHeader > div {
+  display: flex;
+  align-items: center;
+}
 
 .pageHeader {
-  display: flex;
-  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 28px;
-  padding: 20px 0 24px;
-  border-bottom: 1px solid var(--border);
+  gap: 30px;
+  padding-bottom: 34px;
 }
 
-.pageDate {
-  font-size: 12px;
-  color: var(--text-3);
-  margin-bottom: 6px;
-  letter-spacing: 0;
+.pageHeader > div:first-child > span {
+  color: var(--hs-text-muted);
+  font-size: 8px;
+  font-weight: 730;
+  letter-spacing: .17em;
 }
 
-.pageTitle {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1;
+.pageHeader h1 {
+  margin: 7px 0 0;
+  font-size: 18px;
+  font-weight: 680;
+  letter-spacing: -.04em;
 }
 
-.pageDesc {
-  margin-top: 10px;
-  color: var(--text-3);
-  font-size: 12px;
-  font-weight: 600;
+.pageHeader p {
+  margin: 8px 0 0;
+  color: var(--hs-text-muted);
+  font-size: 9px;
 }
-
-.btnPrimary {
-  background: var(--text-1);
-  color: var(--bg);
-  border: none;
-  border-radius: var(--card-radius);
-  padding: 9px 20px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  letter-spacing: 0;
-  transition: opacity 0.15s;
-}
-
-.btnPrimary:hover { opacity: 0.8; }
 
 .headerActions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.refreshNotice {
-  max-width: 260px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text-2);
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1;
-  padding: 7px 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.btnRefresh {
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--text-2);
-  border: 1px solid var(--border2);
-  border-radius: var(--card-radius);
-  padding: 9px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: border-color 0.15s, color 0.15s, opacity 0.15s;
-}
-
-.btnRefresh:hover:not(:disabled) {
-  border-color: var(--text-3);
-  color: var(--text-1);
-}
-
-.btnRefresh:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-/* ────────────────────────────
-   S&P500 HERD 배너 (Dashboard와 동일)
-   ──────────────────────────── */
-
-/* ── 섹션 헤더 ── */
-
-/* ────────────────────────────
-   관심 종목 Action Queue
-   ──────────────────────────── */
-
-/* ────────────────────────────
-   로딩 / 에러 / 빈 상태
-   ──────────────────────────── */
-
-.loadingState {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 0;
-}
-
-.loadingText {
-  font-size: 14px;
-  color: var(--text-3);
-}
-
-.errorState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60px 0;
-  gap: 16px;
-}
-
-.errorText {
-  font-size: 14px;
-  color: var(--text-2);
-  text-align: center;
-  line-height: 1.6;
-}
-
-.retryBtn {
-  background: none;
-  border: 1px solid var(--border2);
-  border-radius: var(--card-radius);
-  padding: 8px 20px;
-  font-size: 13px;
-  color: var(--text-1);
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: border-color 0.15s;
-}
-
-.retryBtn:hover { border-color: var(--text-3); }
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 0;
+  justify-content: flex-end;
   gap: 8px;
 }
 
-.emptyTitle {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--text-2);
-  margin-bottom: 4px;
+.headerActions > span {
+  color: var(--hs-text-muted);
+  font-size: 8px;
 }
 
-.emptyDesc {
-  font-size: 13px;
-  color: var(--text-3);
-  margin-bottom: 16px;
+.headerActions button,
+.statePanel button,
+.emptyState button {
+  padding: 9px 12px;
+  border: 1px solid var(--hs-line-strong);
+  border-radius: var(--hs-radius-sm);
+  background: transparent;
+  color: var(--hs-text-subtle);
+  font-size: 9px;
+  font-weight: 680;
+  cursor: pointer;
 }
 
-@media (max-width: 1100px) {
+.headerActions button:last-child,
+.emptyState button {
+  border-color: var(--hs-text);
+  background: var(--hs-text);
+  color: var(--hs-bg);
+}
+
+.headerActions button:disabled {
+  cursor: default;
+  opacity: .45;
+}
+
+.page button:focus-visible {
+  outline: 0;
+  box-shadow: var(--hs-focus-ring);
+}
+
+.stageSummary {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.stageSummary > div {
+  display: grid;
+  grid-template-columns: 5px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 66px;
+  padding: 0 18px;
+}
+
+.stageSummary > div + div {
+  border-left: 1px solid var(--hs-line);
+}
+
+.stageSummary i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.stageSummary span {
+  color: var(--hs-text-muted);
+  font-size: 8px;
+  font-weight: 650;
+}
+
+.stageSummary strong {
+  color: var(--hs-text);
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.listHeader {
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 78px;
+}
+
+.listHeader > span {
+  color: var(--hs-text-subtle);
+  font-size: 10px;
+  font-weight: 670;
+}
+
+.listHeader > div {
+  gap: 2px;
+}
+
+.listHeader button {
+  padding: 6px 9px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--hs-text-muted);
+  font-size: 8px;
+  font-weight: 670;
+  cursor: pointer;
+}
+
+.listHeader .activeSort {
+  background: var(--hs-text);
+  color: var(--hs-bg);
+}
+
+.statePanel,
+.emptyState {
+  display: grid;
+  min-height: 380px;
+  color: var(--hs-text-muted);
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  font-size: 10px;
+  text-align: center;
+}
+
+.statePanel p {
+  margin: 0;
+}
+
+.emptyState > span {
+  font-size: 8px;
+  font-weight: 720;
+  letter-spacing: .16em;
+}
+
+.emptyState h2 {
+  margin: 0;
+  color: var(--hs-text);
+  font-size: 20px;
+  font-weight: 560;
+  letter-spacing: -.04em;
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding-top: 24px;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
   .pageHeader {
-    flex-direction: column;
     align-items: flex-start;
-    gap: 18px;
+    flex-direction: column;
+    gap: 20px;
   }
 
   .headerActions {
     width: 100%;
     flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 720px) {
-  .pageHeader {
-    margin-bottom: 18px;
-    padding: 4px 0 18px;
+    justify-content: flex-start;
   }
 
-  .pageTitle {
-    font-size: 26px;
-  }
-
-  .pageDesc {
-    max-width: 280px;
-    line-height: 1.45;
-  }
-
-  .headerActions {
+  .headerActions > span {
     width: 100%;
-    align-items: stretch;
   }
 
-  .btnRefresh,
-  .btnPrimary {
-    min-height: 42px;
-    flex: 1 1 0;
+  .stageSummary {
+    grid-template-columns: repeat(5, minmax(58px, 1fr));
+    overflow-x: auto;
   }
 
-  .refreshNotice {
-    order: 5;
-    width: 100%;
-    max-width: none;
+  .stageSummary > div {
+    grid-template-columns: 5px 1fr;
+    min-height: 58px;
+    padding: 0 10px;
   }
-}
 
-@media (max-width: 520px) {
-  .pageTitle {
-    font-size: 24px;
+  .stageSummary strong {
+    grid-column: 2;
+    font-size: 11px;
+  }
+
+  .listHeader {
+    align-items: flex-start;
+    min-height: 94px;
+    padding-top: 22px;
+  }
+
+  .listHeader > div {
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 }

@@ -35,9 +35,9 @@ export default function InvestorProfilePanel({ profile, status, onChange, onSubm
       <details className={styles.disclosure}>
         <summary>
           <div>
-            <span>내 투자 기준</span>
+            <span>저장된 투자 프로필</span>
             <strong>{profile
-              ? `${STRATEGY_LABELS[profile.strategy]} · ${RISK_LABELS[profile.riskTolerance]} · 1회 최대 ${Math.round(Number(profile.maxActionRatio) * 100)}%`
+              ? `${STRATEGY_LABELS[profile.strategy]} · ${RISK_LABELS[profile.riskTolerance]} · 승인 시 상한 ${Math.round(Number(profile.maxActionRatio) * 100)}%`
               : '불러오는 중'}</strong>
           </div>
           <em>설정 변경</em>
@@ -63,7 +63,7 @@ export default function InvestorProfilePanel({ profile, status, onChange, onSubm
             </label>
             <NumberField label="투자 기간" unit="년" min="1" max="50" value={profile.timeHorizonYears} onChange={(value) => onChange('timeHorizonYears', value)} />
             <NumberField label="비상자금" unit="개월" min="0" max="60" value={profile.liquidityBufferMonths} onChange={(value) => onChange('liquidityBufferMonths', value)} />
-            <NumberField label="1회 최대 행동" unit="%" min="1" max="30" value={Math.round(Number(profile.maxActionRatio) * 100)} onChange={(value) => onChange('maxActionRatio', Number(value) / 100)} />
+            <NumberField label="향후 승인 시 1회 상한" unit="%" min="1" max="30" value={Math.round(Number(profile.maxActionRatio) * 100)} onChange={(value) => onChange('maxActionRatio', Number(value) / 100)} />
             <NumberField label="목표 주식 비중" unit="%" min="10" max="100" value={Math.round(Number(profile.targetEquityRatio) * 100)} onChange={(value) => onChange('targetEquityRatio', Number(value) / 100)} />
             <div className={styles.formActions}>
               <button type="submit">저장</button>

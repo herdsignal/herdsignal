@@ -1,5 +1,3 @@
-import { normalizeStage } from '../../utils/herdStage'
-
 export const STOCK_CANDIDATES = [
   { ticker: 'NVDA', name: 'NVIDIA Corporation', sector: 'Semiconductors' },
   { ticker: 'AAPL', name: 'Apple Inc.', sector: 'Consumer Technology' },
@@ -46,40 +44,6 @@ export function candidateForTicker(ticker, matches = []) {
 export function candidateMatches(item, normalized) {
   return item.ticker.includes(normalized) ||
     item.name.toUpperCase().includes(normalized)
-}
-
-export function stageDisplay(stage) {
-  if (!stage) return 'Herd Calm'
-  return stage.startsWith('Herd ') ? stage : `Herd ${stage}`
-}
-
-export function herdReadiness(data) {
-  if (!data) {
-    return { label: '관찰 준비 중', tone: 'Pending', desc: 'State S1 대기' }
-  }
-  return {
-    label: 'State S1',
-    tone: 'Ready',
-    desc: data.freshnessStatus === 'STALE'
-      ? '업데이트 필요'
-      : data.scoreDate ?? '최신 관찰',
-  }
-}
-
-export function inclusionDecision(data) {
-  if (!data) {
-    return { label: '계산 대기', desc: 'HERD 계산 후 편입 가능', tone: 'Pending' }
-  }
-  switch (normalizeStage(data.herdStage)) {
-    case 'flee':
-    case 'scatter':
-      return { label: '이탈 관찰', desc: '행동 근거 아님', tone: 'Ready' }
-    case 'drift':
-    case 'rush':
-      return { label: '밀집 관찰', desc: '행동 근거 아님', tone: 'Limited' }
-    default:
-      return { label: '균형 관찰', desc: '행동 근거 아님', tone: 'Neutral' }
-  }
 }
 
 export function loadRecentSearches() {

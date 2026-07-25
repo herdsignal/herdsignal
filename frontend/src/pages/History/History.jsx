@@ -101,13 +101,9 @@ export default function History() {
             <em>고점 {fmtUSD(historyInsight.peak.totalValue)}</em>
           </div>
           <div className={styles.insightCard}>
-            <span>점검 포인트</span>
-            <strong>
-              {historyInsight.drawdown != null && historyInsight.drawdown < -8
-                ? '리밸런싱 확인'
-                : '큰 낙폭 없음'}
-            </strong>
-            <em>HERD 상태와 함께 확인</em>
+            <span>기록 기간</span>
+            <strong>{points.length}회</strong>
+            <em>{historyInsight.first.date} — {latest?.date}</em>
           </div>
         </div>
       )}

@@ -10,18 +10,18 @@ import {
   observationBatchToMap,
   observationToTrackedItem,
 } from '../../utils/herdObservation'
-import { opportunityRows } from '../../utils/portfolioTools'
-import { useDashboardMarketData } from '../Dashboard/useDashboardMarketData'
 import styles from './Watchlist.module.css'
-import WatchlistMarketBanner from './WatchlistMarketBanner'
 import WatchlistQueue from './WatchlistQueue'
-
-const REFRESH_SCOPE_TITLE = '관심종목 HERD DB 조회와 SPY 최신 점수만 갱신합니다. 히스토리는 Timeline 탭에서 별도 조회됩니다.'
+import {
+  WATCHLIST_SORTS,
+  sortWatchlistObservations,
+  summarizeWatchlistStages,
+} from './watchlistModel'
 
 export default function Watchlist() {
   const navigate = useNavigate()
-  const market = useDashboardMarketData()
   const [watchlist, setWatchlist] = useState([])
+  const [sortBy, setSortBy] = useState('recent')
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [refreshNotice, setRefreshNotice] = useState(null)
@@ -29,15 +29,11 @@ export default function Watchlist() {
   const [deletingTicker, setDeletingTicker] = useState(null)
   const refreshNoticeTimer = useRef(null)
 
-  const today = new Date().toLocaleDateString('ko-KR', {
-    year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
-  })
-
   const fetchData = useCallback(async (silent = false) => {
     if (silent) {
       setRefreshing(true)
       clearTimeout(refreshNoticeTimer.current)
-      setRefreshNotice('관심종목 HERD 조회 중')
+      setRefreshNotice('State S1 조회 중')
     } else {
       setLoading(true)
     }
@@ -48,10 +44,8 @@ export default function Watchlist() {
       if (!listResponse) {
         setWatchlist([])
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
-        if (silent) setRefreshNotice('관심종목 HERD 조회 실패')
         return
       }
-
       const rawItems = Array.isArray(listResponse.data?.data)
         ? listResponse.data.data
         : []
@@ -70,11 +64,10 @@ export default function Watchlist() {
         observationMap[item.ticker]
         ?? observationToTrackedItem(null, item)
       )))
-      if (silent) setRefreshNotice('관심종목 HERD 갱신')
+      if (silent) setRefreshNotice('State S1 갱신 완료')
     } catch {
-      setWatchlist([])
       setError('관심종목의 State S1 관찰값을 불러오지 못했습니다.')
-      if (silent) setRefreshNotice('관심종목 State S1 조회 실패')
+      if (silent) setRefreshNotice('State S1 조회 실패')
     } finally {
       setLoading(false)
       setRefreshing(false)
@@ -94,78 +87,90 @@ export default function Watchlist() {
     try {
       await removeFromWatchlist(ticker)
       setWatchlist((current) => current.filter((item) => item.ticker !== ticker))
-    } catch {
-      // 삭제 실패 시 현재 목록을 유지한다.
     } finally {
       setDeletingTicker(null)
     }
   }
 
-  const scoredWatchlist = useMemo(() => opportunityRows(watchlist), [watchlist])
-  const observationQueue = useMemo(
-    () => scoredWatchlist.slice(0, 5),
-    [scoredWatchlist]
+  const sortedWatchlist = useMemo(
+    () => sortWatchlistObservations(watchlist, sortBy),
+    [sortBy, watchlist],
+  )
+  const stageSummary = useMemo(
+    () => summarizeWatchlistStages(watchlist),
+    [watchlist],
   )
 
   return (
-    <div>
-      <div className={styles.pageHeader}>
+    <main className={styles.page}>
+      <header className={styles.pageHeader}>
         <div>
-          <div className={styles.pageDate}>{today}</div>
-          <h1 className={styles.pageTitle}>관찰 대기열</h1>
-          <p className={styles.pageDesc}>관심종목의 군중 상태와 변화 시점을 확인합니다.</p>
+          <span>WATCH FIELD</span>
+          <h1>관심종목</h1>
+          <p>저장한 종목의 HERD 위치와 4주 변화를 봅니다.</p>
         </div>
         <div className={styles.headerActions}>
-          {refreshNotice && <span className={styles.refreshNotice}>{refreshNotice}</span>}
+          {refreshNotice && <span role="status">{refreshNotice}</span>}
           <button
-            className={styles.btnRefresh}
+            type="button"
             onClick={() => fetchData(true)}
             disabled={refreshing || loading}
-            title={REFRESH_SCOPE_TITLE}
           >
-            {refreshing ? '새로고침 중…' : '↻ 새로고침'}
+            {refreshing ? '갱신 중…' : '새로고침'}
           </button>
-          <button className={styles.btnPrimary} onClick={() => navigate('/search')}>
-            종목 추가
-          </button>
+          <button type="button" onClick={() => navigate('/search')}>종목 추가</button>
         </div>
-      </div>
+      </header>
 
-      <WatchlistMarketBanner {...market} />
-
-      {loading && (
-        <div className={styles.loadingState}>
-          <span className={styles.loadingText}>로딩 중…</span>
-        </div>
-      )}
-
+      {loading && <div className={styles.statePanel} role="status">관심종목 불러오는 중…</div>}
       {!loading && error && (
-        <div className={styles.errorState}>
-          <p className={styles.errorText}>{error}</p>
-          <button className={styles.retryBtn} onClick={fetchData}>다시 시도</button>
+        <div className={styles.statePanel} role="alert">
+          <p>{error}</p>
+          <button type="button" onClick={fetchData}>다시 시도</button>
         </div>
       )}
-
-      {!loading && !error && watchlist.length > 0 && (
-        <WatchlistQueue
-          watchlist={watchlist}
-          scoredWatchlist={scoredWatchlist}
-          observationQueue={observationQueue}
-          deletingTicker={deletingTicker}
-          onDelete={handleDelete}
-          onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
-        />
-      )}
-
       {!loading && !error && watchlist.length === 0 && (
         <div className={styles.emptyState}>
-          <p className={styles.emptyTitle}>관심 종목이 없습니다.</p>
-          <p className={styles.emptyDesc}>종목을 검색해 추가해보세요.</p>
-          <button className={styles.btnPrimary} onClick={() => navigate('/search')}>
-            종목 검색
-          </button>
+          <span>EMPTY WATCH FIELD</span>
+          <h2>관찰할 종목을 추가해보세요.</h2>
+          <button type="button" onClick={() => navigate('/search')}>종목 찾기</button>
         </div>
       )}
-    </div>
+      {!loading && !error && watchlist.length > 0 && (
+        <>
+          <section className={styles.stageSummary} aria-label="관심종목 HERD 분포">
+            {stageSummary.map((item) => (
+              <div key={item.stage}>
+                <i style={{ background: item.color }} />
+                <span>{item.stage}</span>
+                <strong>{item.count}</strong>
+              </div>
+            ))}
+          </section>
+          <div className={styles.listHeader}>
+            <span>{watchlist.length}개 종목</span>
+            <div aria-label="관심종목 정렬">
+              {WATCHLIST_SORTS.map((item) => (
+                <button
+                  type="button"
+                  key={item.value}
+                  aria-pressed={sortBy === item.value}
+                  className={sortBy === item.value ? styles.activeSort : ''}
+                  onClick={() => setSortBy(item.value)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <WatchlistQueue
+            watchlist={sortedWatchlist}
+            deletingTicker={deletingTicker}
+            onDelete={handleDelete}
+            onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
+          />
+        </>
+      )}
+    </main>
   )
 }

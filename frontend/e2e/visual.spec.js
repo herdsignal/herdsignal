@@ -53,9 +53,9 @@ test.beforeEach(async ({ page }) => {
 })
 
 for (const scenario of [
-  { name: 'dashboard', path: '/app', ready: '내 포트폴리오' },
+  { name: 'dashboard', path: '/app', ready: 'SPY' },
   { name: 'stock-detail', path: '/stock/NVDA', ready: 'NVDA' },
-  { name: 'watchlist', path: '/watchlist', ready: '관찰 대기열' },
+  { name: 'watchlist', path: '/watchlist', ready: '관심종목' },
 ]) {
   test(`${scenario.name} visual regression`, async ({ page }, testInfo) => {
     await page.goto(scenario.path)

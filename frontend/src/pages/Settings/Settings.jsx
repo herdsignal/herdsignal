@@ -33,7 +33,7 @@ export default function Settings() {
       }
       const { data } = await updateInvestorProfile(payload)
       setProfile(data.data)
-      setStatus('저장했습니다. 다음 HERD 조회부터 적용됩니다.')
+      setStatus('저장했습니다. 현재 State S1 관찰값에는 영향을 주지 않습니다.')
     } catch (requestError) {
       setStatus(requestError.response?.data?.message || '투자 설정을 저장하지 못했습니다.')
     }
@@ -42,9 +42,9 @@ export default function Settings() {
   return (
     <div className={styles.page}>
       <header>
-        <span>PERSONAL SETTINGS</span>
-        <h1>나의 투자 기준</h1>
-        <p>행동 모델 승인 후 적용할 개인별 한도를 설정합니다.</p>
+        <span>INVESTOR PROFILE</span>
+        <h1>투자 프로필</h1>
+        <p>투자 방식과 한도를 기록합니다. 현재 State S1 계산에는 사용하지 않습니다.</p>
       </header>
       <InvestorProfilePanel
         profile={profile}
