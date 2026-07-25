@@ -215,6 +215,7 @@ cd ..
 
 ```bash
 ./scripts/check-health.sh
+./scripts/smoke-local.sh
 ./scripts/audit-scheduler-run.sh
 ./scripts/backup-db.sh
 ./scripts/verify-backup.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz
