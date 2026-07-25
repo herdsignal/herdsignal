@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>HerdSignal — Market Field V2</title>
+  <style>
+    :root {
+      --bg: #070b11;
+      --panel: rgba(14, 20, 30, .82);
+      --panel-solid: #0e151f;
+      --line: rgba(160, 177, 199, .15);
+      --line-strong: rgba(190, 203, 220, .27);
+      --text: #f2f5f8;
+      --subtle: #a1adbd;
+      --muted: #667386;
+      --flee: #3b82f6;
+      --scatter: #67a6f8;
+      --calm: #a1aab8;
+      --drift: #f2782c;
+      --rush: #f0444f;
+      --state: var(--drift);
+      --state-rgb: 242, 120, 44;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-width: 320px;
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-feature-settings: "tnum" 1, "ss01" 1;
+    }
+
+    button, a { font: inherit; }
+    button { color: inherit; }
+
+    .shell {
+      position: relative;
+      min-height: 100svh;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 68% 45%, rgba(var(--state-rgb), .055), transparent 29%),
+        linear-gradient(145deg, rgba(23, 33, 47, .18), transparent 39%),
+        var(--bg);
+      transition: background .6s ease;
+    }
+
+    .shell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(7, 11, 17, .98) 0, rgba(7, 11, 17, .84) 27%, rgba(7, 11, 17, .12) 57%, rgba(7, 11, 17, .42) 100%),
+        linear-gradient(180deg, rgba(7, 11, 17, .45), transparent 18%, transparent 75%, rgba(7, 11, 17, .92));
+    }
+
+    #herd-field {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 76px;
+      padding: 0 clamp(22px, 4.4vw, 68px);
+      border-bottom: 1px solid rgba(255, 255, 255, .055);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      justify-self: start;
+      gap: 11px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.035em;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+    }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .018);
+    }
+
+    .nav-item {
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 650;
+      cursor: default;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .055);
+      color: #dfe6ee;
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      gap: 14px;
+    }
+
+    .concept-badge {
+      color: #566274;
+      font-size: 9px;
+      font-weight: 720;
+      letter-spacing: .14em;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #121b27;
+      color: #93a0b1;
+      font-size: 10px;
+      font-weight: 720;
+    }
+
+    .market {
+      position: relative;
+      z-index: 2;
+      min-height: calc(100svh - 76px);
+      padding: clamp(48px, 8vh, 92px) clamp(24px, 6vw, 92px) 136px;
+    }
+
+    .instrument {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      width: fit-content;
+    }
+
+    .ticker {
+      margin: 0;
+      font-size: clamp(22px, 2.2vw, 30px);
+      font-weight: 670;
+      letter-spacing: -.04em;
+    }
+
+    .company {
+      color: var(--subtle);
+      font-size: 12px;
+      font-weight: 540;
+    }
+
+    .live {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-left: 5px;
+      color: #78869a;
+      font-size: 9px;
+      font-weight: 680;
+      letter-spacing: .08em;
+    }
+
+    .live::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #4fb38b;
+      box-shadow: 0 0 12px rgba(79, 179, 139, .65);
+    }
+
+    .index {
+      position: absolute;
+      left: clamp(24px, 6vw, 92px);
+      top: 50%;
+      width: min(420px, 42vw);
+      transform: translateY(-48%);
+    }
+
+    .index-kicker {
+      margin: 0 0 17px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 740;
+      letter-spacing: .18em;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 18px;
+    }
+
+    .score {
+      margin: 0;
+      font-size: clamp(104px, 13vw, 186px);
+      font-weight: 240;
+      line-height: .78;
+      letter-spacing: -.085em;
+      text-shadow: 0 0 82px rgba(var(--state-rgb), .12);
+    }
+
+    .score-meta {
+      padding-bottom: 7px;
+    }
+
+    .stage {
+      display: block;
+      color: var(--state);
+      font-size: clamp(20px, 2vw, 28px);
+      font-weight: 680;
+      line-height: 1;
+      letter-spacing: .1em;
+      transition: color .45s ease;
+    }
+
+    .stage-ko {
+      display: block;
+      margin-top: 10px;
+      color: #8c98a8;
+      font-size: 11px;
+      font-weight: 560;
+      letter-spacing: .045em;
+    }
+
+    .change {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 30px;
+      color: #748195;
+      font-size: 10px;
+    }
+
+    .change strong {
+      color: #b7c0cc;
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .composition-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 38px;
+      padding: 10px 0;
+      border: 0;
+      border-bottom: 1px solid var(--line-strong);
+      background: transparent;
+      color: #9ba7b6;
+      font-size: 10px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: color .2s ease, border-color .2s ease;
+    }
+
+    .composition-trigger:hover {
+      color: var(--text);
+      border-color: var(--state);
+    }
+
+    .composition-trigger svg {
+      width: 13px;
+      height: 13px;
+      transition: transform .25s ease;
+    }
+
+    .composition-trigger[aria-expanded="true"] svg {
+      transform: rotate(45deg);
+    }
+
+    .field-coordinate {
+      position: absolute;
+      top: clamp(118px, 17vh, 180px);
+      right: clamp(24px, 6vw, 92px);
+      display: grid;
+      justify-items: end;
+      gap: 7px;
+      color: #465164;
+      font-size: 8px;
+      font-weight: 710;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .field-coordinate strong {
+      color: #738094;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .spectrum-panel {
+      position: absolute;
+      right: clamp(24px, 6vw, 92px);
+      bottom: 46px;
+      left: clamp(24px, 6vw, 92px);
+      z-index: 4;
+    }
+
+    .spectrum-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .spectrum-head span:first-child {
+      color: #748195;
+      font-size: 9px;
+      font-weight: 720;
+      letter-spacing: .15em;
+    }
+
+    .asof {
+      color: #586476;
+      font-size: 9px;
+      font-weight: 620;
+    }
+
+    .spectrum-labels {
+      display: grid;
+      grid-template-columns: 15fr 25fr 20fr 15fr 25fr;
+      margin-bottom: 10px;
+      color: #596578;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .11em;
+    }
+
+    .spectrum-labels span:nth-child(n+2):nth-child(-n+4) { text-align: center; }
+    .spectrum-labels span:last-child { text-align: right; }
+
+    .spectrum {
+      position: relative;
+      height: 2px;
+      background: linear-gradient(90deg,
+        var(--flee) 0 15%,
+        var(--scatter) 15% 40%,
+        var(--calm) 40% 60%,
+        var(--drift) 60% 75%,
+        var(--rush) 75% 100%);
+    }
+
+    .spectrum::after {
+      content: "";
+      position: absolute;
+      inset: -8px 0;
+      background: linear-gradient(90deg,
+        rgba(59, 130, 246, .08),
+        transparent 46%,
+        rgba(242, 120, 44, .05) 72%,
+        rgba(240, 68, 79, .08));
+      filter: blur(10px);
+    }
+
+    .marker {
+      position: absolute;
+      top: 50%;
+      left: 64%;
+      z-index: 2;
+      width: 13px;
+      height: 13px;
+      border: 2px solid var(--state);
+      border-radius: 50%;
+      background: var(--bg);
+      box-shadow: 0 0 18px rgba(var(--state-rgb), .36);
+      transform: translate(-50%, -50%);
+      transition: left .65s cubic-bezier(.2, .76, .24, 1), border-color .45s ease;
+    }
+
+    .drawer-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 9;
+      visibility: hidden;
+      background: rgba(0, 0, 0, .22);
+      opacity: 0;
+      transition: opacity .25s ease, visibility .25s;
+    }
+
+    .drawer-scrim.open {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .composition {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      width: min(430px, 92vw);
+      padding: 28px 30px 34px;
+      border-left: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: -40px 0 90px rgba(0, 0, 0, .24);
+      backdrop-filter: blur(28px);
+      transform: translateX(102%);
+      transition: transform .34s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .composition.open { transform: translateX(0); }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-title {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 680;
+      letter-spacing: -.01em;
+    }
+
+    .drawer-close {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .02);
+      color: #7d899a;
+      cursor: pointer;
+    }
+
+    .drawer-summary {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 29px 0 30px;
+    }
+
+    .drawer-summary span {
+      color: #758195;
+      font-size: 9px;
+      font-weight: 710;
+      letter-spacing: .12em;
+    }
+
+    .drawer-summary strong {
+      color: var(--state);
+      font-size: 34px;
+      font-weight: 350;
+      line-height: 1;
+      transition: color .45s ease;
+    }
+
+    .evidence-list {
+      display: grid;
+      gap: 2px;
+    }
+
+    .evidence {
+      padding: 16px 0 17px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .evidence-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .evidence-name {
+      color: #a9b3c0;
+      font-size: 10px;
+      font-weight: 610;
+    }
+
+    .evidence-value {
+      color: #dbe1e8;
+      font-size: 11px;
+      font-weight: 680;
+    }
+
+    .evidence-track {
+      height: 2px;
+      overflow: hidden;
+      background: #222c39;
+    }
+
+    .evidence-track i {
+      display: block;
+      width: var(--value);
+      height: 100%;
+      background: linear-gradient(90deg, #64748b, var(--state));
+      opacity: .82;
+      transition: width .5s ease, background .45s ease;
+    }
+
+    .context {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 28px;
+      padding: 15px 0;
+      border-top: 1px solid var(--line-strong);
+      border-bottom: 1px solid var(--line-strong);
+    }
+
+    .context span {
+      color: #778498;
+      font-size: 9px;
+      font-weight: 680;
+      letter-spacing: .08em;
+    }
+
+    .context strong {
+      color: #c3cbd5;
+      font-size: 11px;
+      font-weight: 660;
+    }
+
+    .boundary {
+      position: absolute;
+      right: 30px;
+      bottom: 31px;
+      left: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #525e70;
+      font-size: 8px;
+      font-weight: 690;
+      letter-spacing: .1em;
+    }
+
+    .boundary strong {
+      color: #6e7a8c;
+      font-weight: 700;
+    }
+
+    .prototype {
+      position: fixed;
+      left: 18px;
+      top: 88px;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(7, 11, 17, .82);
+      backdrop-filter: blur(16px);
+    }
+
+    .prototype-label {
+      padding: 0 8px 0 6px;
+      color: #596577;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .1em;
+    }
+
+    .prototype button {
+      width: 32px;
+      height: 28px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #647084;
+      font-size: 8px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .prototype button.active {
+      background: rgba(255, 255, 255, .06);
+      color: var(--state);
+    }
+
+    @media (max-width: 820px) {
+      .topbar {
+        grid-template-columns: 1fr auto;
+        height: 68px;
+        padding-inline: 20px;
+      }
+
+      .primary-nav { display: none; }
+      .concept-badge { display: none; }
+      .market {
+        min-height: calc(100svh - 68px);
+        padding: 38px 22px 136px;
+      }
+      .company { font-size: 11px; }
+      .live { display: none; }
+      .index {
+        top: 47%;
+        left: 22px;
+        width: calc(100vw - 44px);
+        text-align: center;
+        transform: translateY(-50%);
+      }
+      .score-row { justify-content: center; }
+      .change { justify-content: center; }
+      .composition-trigger { margin-top: 30px; }
+      .field-coordinate {
+        top: 104px;
+        right: 22px;
+      }
+      .spectrum-panel {
+        right: 22px;
+        bottom: 50px;
+        left: 22px;
+      }
+      .spectrum-labels { font-size: 7px; }
+      .prototype {
+        top: 76px;
+        right: 14px;
+        bottom: auto;
+        left: auto;
+      }
+      .prototype-label { display: none; }
+    }
+
+    @media (max-height: 650px) and (min-width: 821px) {
+      .market { padding-top: 34px; }
+      .index { top: 47%; }
+      .composition-trigger { margin-top: 22px; }
+      .spectrum-panel { bottom: 28px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+      #herd-field { opacity: .7; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <canvas id="herd-field" aria-hidden="true"></canvas>
+
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="HerdSignal">
+        <svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#111827"/>
+          <rect x=".5" y=".5" width="63" height="63" rx="15.5" stroke="#334155"/>
+          <g fill="#e5edf8">
+            <circle cx="18" cy="17" r="2.7"/><circle cx="16" cy="27" r="2.4"/>
+            <circle cx="19" cy="38" r="2.6"/><circle cx="17" cy="49" r="2.3"/>
+            <circle cx="27" cy="31" r="2.5"/><circle cx="36" cy="31" r="2.5"/>
+            <circle cx="47" cy="17" r="3.2"/><circle cx="47" cy="27" r="3.2"/>
+            <circle cx="47" cy="37" r="3.2"/><circle cx="47" cy="47" r="3.2"/>
+          </g>
+          <g fill="#3b82f6">
+            <circle cx="11" cy="21" r="1.7"/><circle cx="10" cy="43" r="1.5"/>
+          </g>
+          <g fill="#fb923c">
+            <circle cx="53" cy="23" r="1.5"/><circle cx="54" cy="35" r="1.4"/>
+          </g>
+          <path d="M25 31C28.5 27.5 32.5 34.5 36 31" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>HerdSignal</span>
+      </a>
+
+      <nav class="primary-nav" aria-label="주요 메뉴">
+        <button class="nav-item active" type="button">시장</button>
+        <button class="nav-item" type="button">포트폴리오</button>
+        <button class="nav-item" type="button">종목</button>
+        <button class="nav-item" type="button">연구</button>
+      </nav>
+
+      <div class="account">
+        <span class="concept-badge">CONCEPT · STATIC DATA</span>
+        <span class="avatar" aria-hidden="true">민</span>
+      </div>
+    </header>
+
+    <section class="market" aria-labelledby="herd-score">
+      <div class="instrument">
+        <h1 class="ticker">SPY</h1>
+        <span class="company">S&amp;P 500</span>
+        <span class="live">DATA READY</span>
+      </div>
+
+      <div class="index">
+        <p class="index-kicker">MARKET HERD</p>
+        <div class="score-row">
+          <strong class="score" id="herd-score">64</strong>
+          <div class="score-meta">
+            <span class="stage">DRIFT</span>
+            <span class="stage-ko">밀집 시작</span>
+          </div>
+        </div>
+        <div class="change">
+          <span>4주 변화</span>
+          <strong class="delta">−3</strong>
+          <span class="direction">DRIFT 유지</span>
+        </div>
+        <button class="composition-trigger" type="button" aria-expanded="false" aria-controls="composition">
+          <span>구성값</span>
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="field-coordinate" aria-hidden="true">
+        <span>CROWD FIELD</span>
+        <strong class="coordinate-stage">DRIFT / 64</strong>
+      </div>
+
+      <div class="spectrum-panel">
+        <div class="spectrum-head">
+          <span>FLEE — RUSH</span>
+          <span class="asof">2026.07.24 · CLOSE</span>
+        </div>
+        <div class="spectrum-labels" aria-hidden="true">
+          <span>FLEE</span>
+          <span>SCATTER</span>
+          <span>CALM</span>
+          <span>DRIFT</span>
+          <span>RUSH</span>
+        </div>
+        <div class="spectrum" role="img" aria-label="HERD 64, Drift 구간">
+          <i class="marker"></i>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="drawer-scrim" aria-hidden="true"></div>
+  <aside class="composition" id="composition" aria-hidden="true">
+    <header class="drawer-head">
+      <h2 class="drawer-title">SPY · 구성값</h2>
+      <button class="drawer-close" type="button" aria-label="구성값 닫기">×</button>
+    </header>
+
+    <div class="drawer-summary">
+      <span>HERD STATE S1</span>
+      <strong class="drawer-score">64</strong>
+    </div>
+
+    <div class="evidence-list">
+      <div class="evidence" data-key="extension">
+        <div class="evidence-head">
+          <span class="evidence-name">가격 확장</span>
+          <strong class="evidence-value">71</strong>
+        </div>
+        <div class="evidence-track"><i style="--value:71%"></i></div>
+      </div>
+      <div class="evidence" data-key="trend">
+        <div class="evidence-head">
+          <span class="evidence-name">추세 위치</span>
+          <strong class="evidence-value">67</strong>
+        </div>
+        <div class="evidence-track"><i style="--value:67%"></i></div>
+      </div>
+      <div class="evidence" data-key="relative">
+        <div class="evidence-head">
+          <span class="evidence-name">상대 위치</span>
+          <strong class="evidence-value">59</strong>
+        </div>
+        <div class="evidence-track"><i style="--value:59%"></i></div>
+      </div>
+      <div class="evidence" data-key="participation">
+        <div class="evidence-head">
+          <span class="evidence-name">참여도</span>
+          <strong class="evidence-value">63</strong>
+        </div>
+        <div class="evidence-track"><i style="--value:63%"></i></div>
+      </div>
+    </div>
+
+    <div class="context">
+      <span>하방 위험</span>
+      <strong class="risk-value">46</strong>
+    </div>
+
+    <div class="boundary">
+      <span>STATE S1</span>
+      <strong>관찰 전용 · HOLD 0%</strong>
+    </div>
+  </aside>
+
+  <div class="prototype" aria-label="시안 상태 미리보기">
+    <span class="prototype-label">STATE PREVIEW</span>
+    <button type="button" data-score="8" title="Flee">F</button>
+    <button type="button" data-score="28" title="Scatter">S</button>
+    <button type="button" data-score="50" title="Calm">C</button>
+    <button class="active" type="button" data-score="64" title="Drift">D</button>
+    <button type="button" data-score="88" title="Rush">R</button>
+  </div>
+
+  <script>
+    (() => {
+      const states = [
+        {
+          max: 15, name: 'FLEE', ko: '군중 이탈', color: '#3b82f6', rgb: '59, 130, 246',
+          delta: '−8', direction: 'FLEE 유지', spread: 1.05, pull: .0012, speed: 1.42, density: .42,
+          values: [18, 24, 16, 22], risk: 78
+        },
+        {
+          max: 40, name: 'SCATTER', ko: '분산', color: '#67a6f8', rgb: '103, 166, 248',
+          delta: '−4', direction: 'SCATTER 유지', spread: .82, pull: .0018, speed: 1.05, density: .62,
+          values: [34, 31, 27, 29], risk: 64
+        },
+        {
+          max: 59, name: 'CALM', ko: '균형', color: '#a1aab8', rgb: '161, 170, 184',
+          delta: '+1', direction: 'CALM 유지', spread: .62, pull: .0025, speed: .78, density: .76,
+          values: [52, 54, 47, 49], risk: 50
+        },
+        {
+          max: 74, name: 'DRIFT', ko: '밀집 시작', color: '#f2782c', rgb: '242, 120, 44',
+          delta: '−3', direction: 'DRIFT 유지', spread: .4, pull: .004, speed: .68, density: .9,
+          values: [71, 67, 59, 63], risk: 46
+        },
+        {
+          max: 100, name: 'RUSH', ko: '군중 밀집', color: '#f0444f', rgb: '240, 68, 79',
+          delta: '+7', direction: 'RUSH 유지', spread: .2, pull: .007, speed: .55, density: 1,
+          values: [91, 86, 82, 88], risk: 72
+        }
+      ]
+
+      const canvas = document.getElementById('herd-field')
+      const context = canvas.getContext('2d')
+      const shell = document.querySelector('.shell')
+      const scoreNode = document.querySelector('.score')
+      const stageNode = document.querySelector('.stage')
+      const stageKoNode = document.querySelector('.stage-ko')
+      const deltaNode = document.querySelector('.delta')
+      const directionNode = document.querySelector('.direction')
+      const coordinateNode = document.querySelector('.coordinate-stage')
+      const spectrum = document.querySelector('.spectrum')
+      const marker = document.querySelector('.marker')
+      const drawerScore = document.querySelector('.drawer-score')
+      const riskValue = document.querySelector('.risk-value')
+      const evidence = [...document.querySelectorAll('.evidence')]
+      const buttons = [...document.querySelectorAll('.prototype button')]
+      const trigger = document.querySelector('.composition-trigger')
+      const drawer = document.querySelector('.composition')
+      const scrim = document.querySelector('.drawer-scrim')
+      const close = document.querySelector('.drawer-close')
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      let width = 0
+      let height = 0
+      let ratio = 1
+      let state = states[3]
+      let score = 64
+      let particles = []
+      let frame = 0
+
+      const stageFor = value => states.find(item => value <= item.max) || states[4]
+
+      function resize() {
+        ratio = Math.min(window.devicePixelRatio || 1, 2)
+        width = window.innerWidth
+        height = window.innerHeight
+        canvas.width = Math.floor(width * ratio)
+        canvas.height = Math.floor(height * ratio)
+        canvas.style.width = `${width}px`
+        canvas.style.height = `${height}px`
+        context.setTransform(ratio, 0, 0, ratio, 0, 0)
+        createParticles()
+      }
+
+      function createParticles() {
+        const count = width < 700 ? 142 : 226
+        particles = Array.from({ length: count }, (_, index) => {
+          const seed = index / Math.max(1, count - 1)
+          return {
+            x: width * (.48 + Math.random() * .5),
+            y: height * (.18 + Math.random() * .64),
+            vx: (Math.random() - .5) * .4,
+            vy: (Math.random() - .5) * .4,
+            radius: .7 + Math.random() * 1.8,
+            phase: Math.random() * Math.PI * 2,
+            seed,
+            lane: index % 3,
+            visibility: Math.random()
+          }
+        })
+      }
+
+      function targetFor(particle, time) {
+        const centerX = width < 820 ? width * .54 : width * .72
+        const centerY = height * .49
+        const angle = particle.phase + time * .00008 * state.speed
+        const horizontal = Math.max(width * .08, width * .25 * state.spread)
+        const vertical = Math.max(height * .09, height * .31 * state.spread)
+
+        if (state.name === 'FLEE') {
+          const escapeAngle = particle.phase + time * .000045
+          const radius = Math.min(width, height) * (.2 + particle.seed * .34)
+          return {
+            x: centerX + Math.cos(escapeAngle) * radius,
+            y: centerY + Math.sin(escapeAngle) * radius * .72
+          }
+        }
+
+        if (state.name === 'SCATTER') {
+          const centers = width < 820
+            ? [[.34, .36], [.69, .43], [.5, .7]]
+            : [[.62, .34], [.78, .46], [.68, .68]]
+          const cluster = centers[particle.lane]
+          const clusterRadius = Math.min(width, height) * (.055 + particle.seed * .035)
+          return {
+            x: width * cluster[0] + Math.cos(angle * 1.3) * clusterRadius,
+            y: height * cluster[1] + Math.sin(angle * 1.2) * clusterRadius
+          }
+        }
+
+        if (state.name === 'RUSH') {
+          const bridge = particle.seed >= .4 && particle.seed <= .6
+          const leftColumn = particle.seed < .4
+          const columnProgress = leftColumn
+            ? particle.seed / .4
+            : (particle.seed - .6) / .4
+          const bridgeProgress = (particle.seed - .4) / .2
+          return {
+            x: centerX + (
+              bridge
+                ? (bridgeProgress - .5) * 108
+                : (leftColumn ? -54 : 54)
+            ) + Math.cos(angle) * 9,
+            y: centerY + (
+              bridge
+                ? 0
+                : (columnProgress - .5) * Math.min(250, height * .29)
+            ) + Math.sin(angle) * 7
+          }
+        }
+
+        return {
+          x: centerX + Math.cos(particle.phase * 2.1) * horizontal * (.25 + particle.seed * .75),
+          y: centerY + Math.sin(particle.phase * 1.7) * vertical * (.28 + (1 - particle.seed) * .72)
+        }
+      }
+
+      function drawFlowLines(time) {
+        const alpha = state.name === 'CALM' ? .055 : .08
+        const centerX = width < 820 ? width * .54 : width * .72
+        const centerY = height * .49
+        context.save()
+        context.strokeStyle = `rgba(${state.rgb}, ${alpha})`
+        context.lineWidth = 1
+        context.setLineDash([2, 12])
+        for (let lane = -2; lane <= 2; lane += 1) {
+          const drift = Math.sin(time * .0002 + lane) * 12
+          context.beginPath()
+          context.moveTo(width * .42, centerY + lane * 58 + drift)
+          context.bezierCurveTo(
+            width * .54, centerY + lane * 28,
+            centerX - width * .08, centerY + lane * 17,
+            centerX + width * .09, centerY + lane * 24
+          )
+          context.stroke()
+        }
+        context.restore()
+      }
+
+      function render(time = 0) {
+        context.clearRect(0, 0, width, height)
+        drawFlowLines(time)
+
+        for (const particle of particles) {
+          if (particle.visibility > state.density) continue
+          const target = targetFor(particle, time)
+          const noise = reducedMotion ? 0 : Math.sin(time * .00045 + particle.phase) * .018
+          particle.vx += (target.x - particle.x) * state.pull + noise
+          particle.vy += (target.y - particle.y) * state.pull + Math.cos(time * .00038 + particle.phase) * .012
+          particle.vx *= .94
+          particle.vy *= .94
+          particle.x += particle.vx * state.speed
+          particle.y += particle.vy * state.speed
+
+          const distance = Math.hypot(particle.x - target.x, particle.y - target.y)
+          const opacity = Math.max(.15, .8 - distance / 420)
+          if (state.name === 'FLEE') {
+            context.beginPath()
+            context.moveTo(particle.x, particle.y)
+            context.lineTo(
+              particle.x - particle.vx * 7,
+              particle.y - particle.vy * 7
+            )
+            context.strokeStyle = `rgba(${state.rgb}, .14)`
+            context.lineWidth = Math.max(.5, particle.radius * .45)
+            context.stroke()
+          }
+          context.beginPath()
+          context.arc(
+            particle.x,
+            particle.y,
+            particle.radius * (state.name === 'RUSH' ? 1.12 : 1),
+            0,
+            Math.PI * 2
+          )
+          context.fillStyle = `rgba(${state.rgb}, ${opacity})`
+          context.fill()
+
+          if (particle.radius > 1.9) {
+            context.beginPath()
+            context.arc(particle.x, particle.y, particle.radius * 4.3, 0, Math.PI * 2)
+            context.fillStyle = `rgba(${state.rgb}, .035)`
+            context.fill()
+          }
+        }
+        frame = window.requestAnimationFrame(render)
+      }
+
+      function setState(nextScore) {
+        score = Number(nextScore)
+        state = stageFor(score)
+        shell.style.setProperty('--state', state.color)
+        shell.style.setProperty('--state-rgb', state.rgb)
+        scoreNode.textContent = score
+        stageNode.textContent = state.name
+        stageKoNode.textContent = state.ko
+        deltaNode.textContent = state.delta
+        directionNode.textContent = state.direction
+        coordinateNode.textContent = `${state.name} / ${score}`
+        drawerScore.textContent = score
+        riskValue.textContent = state.risk
+        marker.style.left = `${score}%`
+        spectrum.setAttribute('aria-label', `HERD ${score}, ${state.name} 구간`)
+        state.values.forEach((value, index) => {
+          evidence[index].querySelector('.evidence-value').textContent = value
+          evidence[index].querySelector('.evidence-track i').style.setProperty('--value', `${value}%`)
+        })
+        buttons.forEach(button => {
+          button.classList.toggle('active', Number(button.dataset.score) === score)
+        })
+      }
+
+      function toggleDrawer(force) {
+        const open = typeof force === 'boolean' ? force : !drawer.classList.contains('open')
+        drawer.classList.toggle('open', open)
+        scrim.classList.toggle('open', open)
+        drawer.setAttribute('aria-hidden', String(!open))
+        trigger.setAttribute('aria-expanded', String(open))
+        if (open) close.focus()
+        if (!open && document.activeElement === close) trigger.focus()
+      }
+
+      buttons.forEach(button => {
+        button.addEventListener('click', () => setState(button.dataset.score))
+      })
+      trigger.addEventListener('click', () => toggleDrawer())
+      close.addEventListener('click', () => toggleDrawer(false))
+      scrim.addEventListener('click', () => toggleDrawer(false))
+      window.addEventListener('keydown', event => {
+        if (event.key === 'Escape') toggleDrawer(false)
+      })
+      window.addEventListener('resize', resize)
+      window.addEventListener('beforeunload', () => window.cancelAnimationFrame(frame))
+
+      resize()
+      setState(64)
+      render()
+    })()
+  </script>
+</body>
+</html>

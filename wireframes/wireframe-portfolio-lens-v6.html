@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>HerdSignal — Portfolio Lens V6</title>
+  <style>
+    :root {
+      --bg: #0a0a09;
+      --surface: #11110f;
+      --line: rgba(188, 182, 168, .12);
+      --line-strong: rgba(206, 199, 184, .22);
+      --text: #eceae4;
+      --subtle: #aaa69d;
+      --muted: #6e6b64;
+      --blue: #718fb6;
+      --flee: #4e7fc7;
+      --scatter: #6e98d4;
+      --calm: #989991;
+      --drift: #d77738;
+      --rush: #dc515a;
+      --gain: #57a77f;
+      --loss: #d96a70;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-width: 320px;
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-feature-settings: "tnum" 1, "ss01" 1;
+    }
+
+    button, select, a { font: inherit; }
+    button, select { color: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 68px;
+      padding: 0 clamp(20px, 4.5vw, 68px);
+      border-bottom: 1px solid rgba(255, 255, 255, .055);
+      background: rgba(10, 10, 9, .91);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      justify-self: start;
+      gap: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 720;
+      letter-spacing: -.035em;
+    }
+
+    .brand-mark {
+      width: 29px;
+      height: 29px;
+      border-radius: 8px;
+    }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-item {
+      padding: 8px 11px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: #637084;
+      font-size: 11px;
+      font-weight: 660;
+      cursor: pointer;
+    }
+
+    .nav-item.active { color: #e1e7ed; }
+
+    .account {
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      gap: 12px;
+    }
+
+    .updated {
+      color: #566376;
+      font-size: 9px;
+      font-weight: 650;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #151512;
+      color: #8e9bad;
+      font-size: 10px;
+      font-weight: 720;
+    }
+
+    .page {
+      width: min(1380px, 100%);
+      margin: 0 auto;
+      padding: 46px clamp(20px, 5vw, 72px) 72px;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .page-head h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 690;
+      letter-spacing: -.025em;
+    }
+
+    .currency-toggle {
+      display: flex;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #10100e;
+    }
+
+    .currency-toggle button {
+      min-width: 42px;
+      padding: 6px 9px;
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      color: #5f6c7e;
+      font-size: 9px;
+      font-weight: 720;
+      cursor: pointer;
+    }
+
+    .currency-toggle button.active {
+      background: #e7e3da;
+      color: #181815;
+    }
+
+    .account-summary {
+      display: grid;
+      grid-template-columns: minmax(290px, 1fr) auto;
+      align-items: end;
+      gap: 44px;
+      padding: 30px 0 34px;
+    }
+
+    .total-label {
+      color: #657286;
+      font-size: 9px;
+      font-weight: 650;
+    }
+
+    .total-value {
+      margin: 9px 0 0;
+      font-size: clamp(44px, 5.7vw, 72px);
+      font-weight: 430;
+      line-height: .94;
+      letter-spacing: -.068em;
+    }
+
+    .today-return {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 15px;
+      color: #6a7789;
+      font-size: 10px;
+      font-weight: 630;
+    }
+
+    .today-return strong {
+      color: var(--loss);
+      font-weight: 720;
+    }
+
+    .balance-breakdown {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(140px, 1fr));
+      min-width: 360px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .balance-item {
+      padding: 18px 0;
+    }
+
+    .balance-item + .balance-item {
+      padding-left: 28px;
+      border-left: 1px solid var(--line);
+    }
+
+    .balance-item span {
+      display: block;
+      color: #687588;
+      font-size: 9px;
+      font-weight: 640;
+    }
+
+    .balance-item strong {
+      display: block;
+      margin-top: 9px;
+      color: #d6dde6;
+      font-size: 15px;
+      font-weight: 620;
+    }
+
+    .history {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      min-height: 64px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      gap: 11px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 710;
+      letter-spacing: -.01em;
+    }
+
+    .section-title span {
+      color: #5e6b7e;
+      font-size: 8px;
+      font-weight: 650;
+    }
+
+    .range-tabs {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .range-tabs button {
+      min-width: 35px;
+      padding: 6px 7px;
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      color: #586578;
+      font-size: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .range-tabs button.active {
+      background: rgba(255, 255, 255, .055);
+      color: #ccd4de;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 285px;
+      overflow: hidden;
+    }
+
+    .chart {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .chart-grid line {
+      stroke: rgba(188, 182, 168, .065);
+      stroke-width: 1;
+    }
+
+    .chart-area { fill: url(#historyArea); }
+
+    .chart-line {
+      fill: none;
+      stroke: #8e9cad;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+      transition: d .35s ease;
+    }
+
+    .chart-dot {
+      fill: #d2cec5;
+      stroke: var(--bg);
+      stroke-width: 3;
+    }
+
+    .state-mark line {
+      stroke: var(--mark-color);
+      stroke-width: 1;
+      stroke-dasharray: 2 6;
+      opacity: .22;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .state-mark circle {
+      fill: var(--mark-color);
+      stroke: var(--bg);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .chart-axis {
+      position: absolute;
+      right: 0;
+      bottom: 14px;
+      left: 0;
+      display: flex;
+      justify-content: space-between;
+      color: #4f5c6e;
+      font-size: 7px;
+      font-weight: 650;
+    }
+
+    .chart-summary {
+      position: absolute;
+      top: 12px;
+      left: 4px;
+    }
+
+    .chart-summary span {
+      display: block;
+      color: #5e6b7e;
+      font-size: 8px;
+      font-weight: 650;
+    }
+
+    .chart-summary strong {
+      display: block;
+      margin-top: 7px;
+      color: #b8c2ce;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .holdings { padding-top: 20px; }
+
+    .holdings-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sort-select {
+      min-width: 92px;
+      padding: 7px 25px 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      outline: 0;
+      background: #10100e;
+      color: #778497;
+      font-size: 8px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table-head,
+    .holding-main {
+      display: grid;
+      grid-template-columns:
+        minmax(145px, 1.05fr)
+        minmax(125px, .82fr)
+        minmax(120px, .75fr)
+        minmax(120px, .75fr)
+        minmax(205px, 1.35fr)
+        28px;
+      align-items: center;
+      column-gap: 24px;
+    }
+
+    .table-head {
+      min-height: 43px;
+      border-bottom: 1px solid var(--line);
+      color: #536074;
+      font-size: 8px;
+      font-weight: 680;
+    }
+
+    .table-head span:not(:first-child) { text-align: right; }
+    .table-head span:nth-child(5) { text-align: left; }
+
+    .holding {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .holding-main {
+      width: 100%;
+      min-height: 90px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background .16s ease;
+    }
+
+    .holding-main:hover,
+    .holding-main:focus-visible {
+      background: rgba(255, 255, 255, .018);
+      outline: none;
+    }
+
+    .holding-id {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .ticker-mark {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #141411;
+      color: #8996a8;
+      font-size: 8px;
+      font-weight: 750;
+    }
+
+    .holding-id strong,
+    .cell strong {
+      display: block;
+      color: #dbe2ea;
+      font-size: 11px;
+      font-weight: 680;
+    }
+
+    .holding-id small,
+    .cell small {
+      display: block;
+      margin-top: 5px;
+      color: #5a687b;
+      font-size: 8px;
+      font-weight: 610;
+    }
+
+    .cell { text-align: right; }
+    .cell strong.gain { color: var(--gain); }
+    .cell strong.loss { color: var(--loss); }
+
+    .herd-cell {
+      display: grid;
+      grid-template-columns: minmax(96px, 1fr) 46px;
+      grid-template-areas:
+        "lens reading"
+        "motion reading";
+      align-items: center;
+      gap: 7px 13px;
+    }
+
+    .herd-lens {
+      grid-area: lens;
+      position: relative;
+      display: block;
+      min-width: 96px;
+      height: 14px;
+      color: var(--state-color);
+    }
+
+    .lens-dot {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--size, 3px);
+      height: var(--size, 3px);
+      border-radius: 50%;
+      background: currentColor;
+      opacity: var(--opacity, .72);
+      transform: translate(-50%, -50%);
+    }
+
+    .herd-reading {
+      grid-area: reading;
+      display: block;
+      text-align: right;
+    }
+
+    .herd-reading b {
+      display: block;
+      color: #d7d3ca;
+      font-size: 19px;
+      font-weight: 480;
+      line-height: .9;
+      letter-spacing: -.04em;
+    }
+
+    .herd-reading small {
+      display: block;
+      margin-top: 6px;
+      color: var(--state-color);
+      font-size: 7px;
+      font-style: normal;
+      font-weight: 720;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .herd-motion {
+      grid-area: motion;
+      position: relative;
+      display: block;
+      height: 8px;
+    }
+
+    .herd-motion::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 0;
+      left: 0;
+      height: 1px;
+      background: rgba(188, 182, 168, .15);
+      transform: translateY(-50%);
+    }
+
+    .motion-previous,
+    .motion-current {
+      position: absolute;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .motion-previous {
+      left: var(--previous);
+      border: 1px solid var(--state-color);
+      background: var(--bg);
+      opacity: .42;
+    }
+
+    .motion-current {
+      left: var(--current);
+      background: var(--state-color);
+    }
+
+    .expand-icon {
+      justify-self: end;
+      color: #566376;
+      font-size: 15px;
+      transform: rotate(0);
+      transition: transform .18s ease;
+    }
+
+    .holding.open .expand-icon { transform: rotate(45deg); }
+
+    .holding-detail {
+      display: grid;
+      grid-template-rows: 0fr;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .009);
+      transition: grid-template-rows .22s ease;
+    }
+
+    .holding.open .holding-detail { grid-template-rows: 1fr; }
+
+    .holding-detail-inner {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .detail-content {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(100px, 1fr));
+      padding: 20px 42px 22px;
+      border-top: 1px solid rgba(159, 177, 201, .08);
+    }
+
+    .detail-item {
+      padding-left: 20px;
+      border-left: 1px solid var(--line);
+    }
+
+    .detail-item:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .detail-item span {
+      display: block;
+      color: #59677a;
+      font-size: 8px;
+      font-weight: 620;
+    }
+
+    .detail-item strong {
+      display: block;
+      margin-top: 8px;
+      color: #b7c1cd;
+      font-size: 10px;
+      font-weight: 650;
+    }
+
+    .mobile-label { display: none; }
+
+    @media (max-width: 880px) {
+      .topbar {
+        grid-template-columns: 1fr auto;
+        padding-inline: 20px;
+      }
+      .primary-nav, .updated { display: none; }
+      .page { padding: 32px 20px 56px; }
+      .account-summary {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .balance-breakdown {
+        min-width: 0;
+        width: 100%;
+      }
+      .chart-wrap { height: 240px; }
+      .table-head { display: none; }
+      .holding-main {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "id today"
+          "value return"
+          "herd herd";
+        min-height: 166px;
+        padding: 18px 0;
+        row-gap: 18px;
+      }
+      .holding-id { grid-area: id; }
+      .value-cell { grid-area: value; text-align: left; }
+      .return-cell { grid-area: return; }
+      .today-cell { grid-area: today; }
+      .herd-cell {
+        grid-area: herd;
+        grid-template-columns: minmax(0, 1fr) 48px;
+      }
+      .expand-icon {
+        position: absolute;
+        right: 0;
+        bottom: 27px;
+      }
+      .holding { position: relative; }
+      .mobile-label {
+        display: inline;
+        margin-right: 5px;
+        color: #4f5c6e;
+      }
+      .detail-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 0;
+        padding: 20px 0 24px;
+      }
+      .detail-item:nth-child(odd) {
+        padding-left: 0;
+        border-left: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page { padding-inline: 16px; }
+      .account-summary { padding-top: 26px; }
+      .total-value { font-size: 44px; }
+      .balance-item + .balance-item { padding-left: 19px; }
+      .balance-item strong { font-size: 13px; }
+      .section-head { align-items: flex-end; }
+      .range-tabs {
+        width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .history .section-head {
+        display: grid;
+        gap: 14px;
+        padding: 17px 0 10px;
+      }
+      .range-tabs button { flex: 1 0 36px; }
+      .chart-wrap { height: 205px; }
+      .chart-summary { top: 4px; }
+      .holdings .section-head { min-height: 70px; }
+      .sort-select { min-width: 88px; }
+      .ticker-mark {
+        width: 29px;
+        height: 29px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="HerdSignal">
+      <svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="16" fill="#111827"/>
+        <rect x=".5" y=".5" width="63" height="63" rx="15.5" stroke="#334155"/>
+        <g fill="#e5edf8">
+          <circle cx="18" cy="17" r="2.7"/><circle cx="16" cy="27" r="2.4"/>
+          <circle cx="19" cy="38" r="2.6"/><circle cx="17" cy="49" r="2.3"/>
+          <circle cx="27" cy="31" r="2.5"/><circle cx="36" cy="31" r="2.5"/>
+          <circle cx="47" cy="17" r="3.2"/><circle cx="47" cy="27" r="3.2"/>
+          <circle cx="47" cy="37" r="3.2"/><circle cx="47" cy="47" r="3.2"/>
+        </g>
+        <g fill="#3b82f6"><circle cx="11" cy="21" r="1.7"/><circle cx="10" cy="43" r="1.5"/></g>
+        <g fill="#fb923c"><circle cx="53" cy="23" r="1.5"/><circle cx="54" cy="35" r="1.4"/></g>
+        <path d="M25 31C28.5 27.5 32.5 34.5 36 31" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>HerdSignal</span>
+    </a>
+
+    <nav class="primary-nav" aria-label="주요 메뉴">
+      <button class="nav-item" type="button">시장</button>
+      <button class="nav-item active" type="button">포트폴리오</button>
+      <button class="nav-item" type="button">종목</button>
+      <button class="nav-item" type="button">연구</button>
+    </nav>
+
+    <div class="account">
+      <span class="updated">7월 24일 · 06:10 업데이트</span>
+      <span class="avatar" aria-hidden="true">민</span>
+    </div>
+  </header>
+
+  <main class="page">
+    <header class="page-head">
+      <h1>내 포트폴리오</h1>
+      <div class="currency-toggle" aria-label="표시 통화">
+        <button class="active" type="button" data-currency="KRW">KRW</button>
+        <button type="button" data-currency="USD">USD</button>
+      </div>
+    </header>
+
+    <section class="account-summary" aria-label="포트폴리오 요약">
+      <div>
+        <span class="total-label">계좌 전체</span>
+        <p class="total-value" data-money="20760248">20,760,248원</p>
+        <div class="today-return">
+          <span>오늘</span>
+          <strong data-money="-413240" data-signed="true">−413,240원</strong>
+          <strong>−1.95%</strong>
+        </div>
+      </div>
+
+      <div class="balance-breakdown">
+        <div class="balance-item">
+          <span>주식 평가액</span>
+          <strong data-money="19566512">19,566,512원</strong>
+        </div>
+        <div class="balance-item">
+          <span>현금</span>
+          <strong data-money="1193736">1,193,736원</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="history" aria-labelledby="history-title">
+      <header class="section-head">
+        <div class="section-title">
+          <h2 id="history-title">자산 히스토리</h2>
+          <span>입출금 포함</span>
+        </div>
+        <div class="range-tabs" aria-label="자산 히스토리 기간">
+          <button type="button" data-range="1D">1D</button>
+          <button type="button" data-range="1W">1W</button>
+          <button type="button" data-range="1M">1M</button>
+          <button type="button" data-range="3M">3M</button>
+          <button type="button" data-range="YTD">YTD</button>
+          <button class="active" type="button" data-range="1Y">1Y</button>
+          <button type="button" data-range="ALL">ALL</button>
+        </div>
+      </header>
+
+      <div class="chart-wrap">
+        <div class="chart-summary">
+          <span data-chart-label>지난 1년</span>
+          <strong class="gain" data-chart-return>+4.95%</strong>
+        </div>
+        <svg class="chart" viewBox="0 0 1200 260" preserveAspectRatio="none" role="img" aria-label="포트폴리오 자산 히스토리">
+          <defs>
+            <linearGradient id="historyArea" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#8e9cad" stop-opacity=".13"/>
+              <stop offset="1" stop-color="#8e9cad" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g class="chart-grid">
+            <line x1="0" y1="54" x2="1200" y2="54"/>
+            <line x1="0" y1="108" x2="1200" y2="108"/>
+            <line x1="0" y1="162" x2="1200" y2="162"/>
+            <line x1="0" y1="216" x2="1200" y2="216"/>
+          </g>
+          <path class="chart-area" data-chart-area></path>
+          <g data-state-marks></g>
+          <path class="chart-line" data-chart-line></path>
+          <circle class="chart-dot" data-chart-dot r="4"></circle>
+        </svg>
+        <div class="chart-axis">
+          <span data-axis="0">8월</span><span data-axis="1">11월</span>
+          <span data-axis="2">2월</span><span data-axis="3">5월</span><span data-axis="4">7월</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="holdings" aria-labelledby="holdings-title">
+      <header class="section-head">
+        <div class="section-title">
+          <h2 id="holdings-title">보유 종목</h2>
+          <span data-holding-count>5 종목</span>
+        </div>
+        <div class="holdings-tools">
+          <select class="sort-select" aria-label="보유 종목 정렬">
+            <option value="weight">비중순</option>
+            <option value="today">오늘 등락순</option>
+            <option value="return">수익률순</option>
+            <option value="herd">HERD 높은순</option>
+          </select>
+        </div>
+      </header>
+
+      <div class="table-head" aria-hidden="true">
+        <span>종목</span><span>평가액 · 비중</span><span>총수익</span>
+        <span>오늘</span><span>HERD</span><span></span>
+      </div>
+      <div class="holding-list"></div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const FX = 1392
+      const holdings = [
+        {
+          ticker:'NVDA', name:'NVIDIA', value:6140000, weight:29.6,
+          totalValue:967000, totalPct:18.7, todayValue:-147600, todayPct:-2.35,
+          score:68, stage:'DRIFT', color:'#d77738', average:182400,
+          shares:28.36, cost:5173000, herdDelta:-4
+        },
+        {
+          ticker:'TSLA', name:'Tesla', value:4850000, weight:23.4,
+          totalValue:878000, totalPct:22.1, todayValue:68400, todayPct:1.43,
+          score:83, stage:'RUSH', color:'#dc515a', average:421500,
+          shares:9.42, cost:3972000, herdDelta:9
+        },
+        {
+          ticker:'IONQ', name:'IonQ', value:3540000, weight:17.0,
+          totalValue:391000, totalPct:12.4, todayValue:-155800, todayPct:-4.22,
+          score:32, stage:'SCATTER', color:'#6e98d4', average:48700,
+          shares:64.72, cost:3149000, herdDelta:-11
+        },
+        {
+          ticker:'RKLB', name:'Rocket Lab', value:2780000, weight:13.4,
+          totalValue:-202000, totalPct:-6.8, todayValue:28400, todayPct:1.03,
+          score:57, stage:'CALM', color:'#989991', average:83100,
+          shares:35.92, cost:2982000, herdDelta:3
+        },
+        {
+          ticker:'PLTR', name:'Palantir', value:2256512, weight:10.9,
+          totalValue:190512, totalPct:9.2, todayValue:-206640, todayPct:-8.39,
+          score:72, stage:'DRIFT', color:'#d77738', average:186300,
+          shares:11.09, cost:2066000, herdDelta:6
+        }
+      ]
+
+      const chartSeries = {
+        '1D':  { label:'오늘', value:'−1.95%', points:[42,43,44,42,48,46,54,58,62,59,64,70], axis:['10:00','11:30','13:00','14:30','16:00'], marks:[] },
+        '1W':  { label:'지난 1주', value:'−2.71%', points:[38,34,41,44,40,49,54,52,61,66,72,70], axis:['월','화','수','목','금'], marks:[] },
+        '1M':  { label:'지난 1개월', value:'−5.38%', points:[48,43,39,44,52,57,61,66,63,69,74,70], axis:['6.24','7.01','7.08','7.15','7.24'], marks:[{index:6, state:'Drift', color:'#d77738'}] },
+        '3M':  { label:'지난 3개월', value:'+17.82%', points:[77,72,69,62,56,49,44,47,53,60,65,70], axis:['5월','5월 말','6월','6월 말','7월'], marks:[{index:4, state:'Scatter', color:'#6e98d4'},{index:9, state:'Drift', color:'#d77738'}] },
+        'YTD': { label:'올해', value:'−1.24%', points:[46,38,31,43,54,68,78,71,62,58,64,70], axis:['1월','3월','5월','6월','7월'], marks:[{index:2, state:'Flee', color:'#4e7fc7'},{index:6, state:'Rush', color:'#dc515a'},{index:9, state:'Calm', color:'#989991'}] },
+        '1Y':  { label:'지난 1년', value:'+4.95%', points:[82,75,65,48,57,71,91,103,88,78,68,70], axis:['8월','11월','2월','5월','7월'], marks:[{index:3, state:'Scatter', color:'#6e98d4'},{index:7, state:'Rush', color:'#dc515a'},{index:10, state:'Drift', color:'#d77738'}] },
+        'ALL': { label:'전체', value:'+31.64%', points:[105,98,88,79,65,72,92,109,96,82,74,70], axis:['2024','2025 상반기','2025 하반기','2026 상반기','현재'], marks:[{index:4, state:'Scatter', color:'#6e98d4'},{index:7, state:'Rush', color:'#dc515a'},{index:10, state:'Drift', color:'#d77738'}] }
+      }
+
+      let currency = 'KRW'
+      const list = document.querySelector('.holding-list')
+      const sortSelect = document.querySelector('.sort-select')
+
+      const lensPositions = [-.5, -.41, -.32, -.23, -.14, -.05, .05, .14, .23, .32, .41, .5]
+      const lensRows = [35, 64, 43, 58, 31, 68, 47, 56, 34, 65, 44, 54]
+
+      function signed(value, digits = 0) {
+        const absolute = Math.abs(value).toLocaleString('ko-KR', {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits
+        })
+        return `${value > 0 ? '+' : value < 0 ? '−' : ''}${absolute}`
+      }
+
+      function money(value, forceSign = false) {
+        const converted = currency === 'KRW' ? value : value / FX
+        const digits = currency === 'KRW' ? 0 : 2
+        const suffix = currency === 'KRW' ? '원' : ' USD'
+        const formatted = Math.abs(converted).toLocaleString('ko-KR', {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits
+        })
+        const sign = forceSign ? (converted > 0 ? '+' : converted < 0 ? '−' : '') : (converted < 0 ? '−' : '')
+        return `${sign}${formatted}${suffix}`
+      }
+
+      function lensMarkup(holding) {
+        const spread = Math.max(24, 104 - holding.score * .82)
+        return lensPositions.map((position, index) => `
+          <i class="lens-dot" style="--x:${50 + position * spread}%;--y:${lensRows[index]}%;--size:${index % 5 === 0 ? 4 : 3}px;--opacity:${.42 + (index % 4) * .13}"></i>
+        `).join('')
+      }
+
+      function holdingMarkup(holding) {
+        return `
+          <article class="holding" data-ticker="${holding.ticker}">
+            <button class="holding-main" type="button" aria-expanded="false">
+              <span class="holding-id">
+                <i class="ticker-mark">${holding.ticker.slice(0, 2)}</i>
+                <span><strong>${holding.ticker}</strong><small>${holding.name}</small></span>
+              </span>
+              <span class="cell value-cell">
+                <strong>${money(holding.value)}</strong>
+                <small>${holding.weight}%</small>
+              </span>
+              <span class="cell return-cell">
+                <strong class="${holding.totalPct >= 0 ? 'gain' : 'loss'}">${money(holding.totalValue, true)}</strong>
+                <small>${signed(holding.totalPct, 1)}%</small>
+              </span>
+              <span class="cell today-cell">
+                <strong class="${holding.todayPct >= 0 ? 'gain' : 'loss'}">${signed(holding.todayPct, 2)}%</strong>
+                <small>${money(holding.todayValue, true)}</small>
+              </span>
+              <span class="herd-cell" style="--state-color:${holding.color}">
+                <i class="herd-lens" aria-hidden="true">${lensMarkup(holding)}</i>
+                <span class="herd-reading"><b>${holding.score}</b><small>${holding.stage}</small></span>
+                <i class="herd-motion" style="--previous:${Math.max(0, Math.min(100, holding.score - holding.herdDelta))}%;--current:${holding.score}%" aria-label="4주 전 ${holding.score - holding.herdDelta}, 현재 ${holding.score}">
+                  <i class="motion-previous"></i>
+                  <i class="motion-current"></i>
+                </i>
+              </span>
+              <span class="expand-icon" aria-hidden="true">＋</span>
+            </button>
+            <div class="holding-detail">
+              <div class="holding-detail-inner">
+                <div class="detail-content">
+                  <div class="detail-item"><span>평균 단가</span><strong>${money(holding.average)}</strong></div>
+                  <div class="detail-item"><span>보유 수량</span><strong>${holding.shares.toLocaleString('ko-KR')}주</strong></div>
+                  <div class="detail-item"><span>매입 금액</span><strong>${money(holding.cost)}</strong></div>
+                  <div class="detail-item"><span>4주 HERD 변화</span><strong>${signed(holding.herdDelta)}</strong></div>
+                  <div class="detail-item"><span>현재 상태</span><strong style="color:${holding.color}">${holding.stage} ${holding.score}</strong></div>
+                </div>
+              </div>
+            </div>
+          </article>
+        `
+      }
+
+      function sortedHoldings() {
+        const result = [...holdings]
+        const sort = sortSelect.value
+        if (sort === 'today') return result.sort((a, b) => Math.abs(b.todayPct) - Math.abs(a.todayPct))
+        if (sort === 'return') return result.sort((a, b) => b.totalPct - a.totalPct)
+        if (sort === 'herd') return result.sort((a, b) => b.score - a.score)
+        return result.sort((a, b) => b.weight - a.weight)
+      }
+
+      function renderHoldings() {
+        list.innerHTML = sortedHoldings().map(holdingMarkup).join('')
+      }
+
+      function renderMoney() {
+        document.querySelectorAll('[data-money]').forEach(node => {
+          node.textContent = money(Number(node.dataset.money), node.dataset.signed === 'true')
+        })
+        renderHoldings()
+      }
+
+      function selectCurrency(nextCurrency) {
+        currency = nextCurrency
+        document.querySelectorAll('[data-currency]').forEach(button => {
+          button.classList.toggle('active', button.dataset.currency === currency)
+        })
+        renderMoney()
+      }
+
+      function chartPath(values) {
+        const min = Math.min(...values)
+        const max = Math.max(...values)
+        const range = Math.max(1, max - min)
+        const points = values.map((value, index) => {
+          const x = index / (values.length - 1) * 1200
+          const y = 226 - ((value - min) / range) * 170
+          return [x, y]
+        })
+        const line = points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point[0].toFixed(1)} ${point[1].toFixed(1)}`).join(' ')
+        const area = `${line} L 1200 242 L 0 242 Z`
+        return { line, area, last: points.at(-1), points }
+      }
+
+      function selectRange(range) {
+        const series = chartSeries[range]
+        const path = chartPath(series.points)
+        document.querySelector('[data-chart-line]').setAttribute('d', path.line)
+        document.querySelector('[data-chart-area]').setAttribute('d', path.area)
+        document.querySelector('[data-chart-dot]').setAttribute('cx', path.last[0])
+        document.querySelector('[data-chart-dot]').setAttribute('cy', path.last[1])
+        document.querySelector('[data-state-marks]').innerHTML = series.marks.map(mark => {
+          const [x, y] = path.points[mark.index]
+          return `
+            <g class="state-mark" style="--mark-color:${mark.color}">
+              <title>${mark.state} 전환</title>
+              <line x1="${x}" y1="${y + 8}" x2="${x}" y2="226"></line>
+              <circle cx="${x}" cy="${y}" r="3"></circle>
+            </g>
+          `
+        }).join('')
+        document.querySelector('[data-chart-label]').textContent = series.label
+        const returnNode = document.querySelector('[data-chart-return]')
+        returnNode.textContent = series.value
+        returnNode.style.color = series.value.startsWith('+') ? 'var(--gain)' : 'var(--loss)'
+        series.axis.forEach((label, index) => {
+          document.querySelector(`[data-axis="${index}"]`).textContent = label
+        })
+        document.querySelectorAll('[data-range]').forEach(button => {
+          button.classList.toggle('active', button.dataset.range === range)
+        })
+      }
+
+      document.querySelector('.currency-toggle').addEventListener('click', event => {
+        const button = event.target.closest('[data-currency]')
+        if (button) selectCurrency(button.dataset.currency)
+      })
+
+      document.querySelector('.range-tabs').addEventListener('click', event => {
+        const button = event.target.closest('[data-range]')
+        if (button) selectRange(button.dataset.range)
+      })
+
+      list.addEventListener('click', event => {
+        const button = event.target.closest('.holding-main')
+        if (!button) return
+        const holding = button.closest('.holding')
+        const isOpen = holding.classList.toggle('open')
+        button.setAttribute('aria-expanded', String(isOpen))
+      })
+
+      sortSelect.addEventListener('change', renderHoldings)
+
+      renderHoldings()
+      selectRange('1Y')
+    })()
+  </script>
+</body>
+</html>

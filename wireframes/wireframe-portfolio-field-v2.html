@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>HerdSignal — Portfolio Field V2</title>
+  <style>
+    :root {
+      --bg: #070b11;
+      --surface: #0d141e;
+      --surface-soft: rgba(16, 23, 34, .74);
+      --line: rgba(160, 177, 199, .14);
+      --line-strong: rgba(183, 198, 218, .25);
+      --text: #f2f5f8;
+      --subtle: #a2adbc;
+      --muted: #667386;
+      --flee: #3b82f6;
+      --scatter: #67a6f8;
+      --calm: #a1aab8;
+      --drift: #f2782c;
+      --rush: #f0444f;
+      --positive: #43b889;
+      --negative: #f05a66;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-width: 320px;
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at 60% 27%, rgba(52, 69, 92, .08), transparent 34%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-feature-settings: "tnum" 1, "ss01" 1;
+    }
+
+    button, a { font: inherit; }
+    button { color: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 76px;
+      padding: 0 clamp(22px, 4.4vw, 68px);
+      border-bottom: 1px solid rgba(255, 255, 255, .055);
+      background: rgba(7, 11, 17, .88);
+      backdrop-filter: blur(20px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      justify-self: start;
+      gap: 11px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.035em;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+    }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .018);
+    }
+
+    .nav-item {
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .055);
+      color: #dfe6ee;
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      gap: 14px;
+    }
+
+    .concept {
+      color: #566274;
+      font-size: 9px;
+      font-weight: 720;
+      letter-spacing: .14em;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #121b27;
+      color: #93a0b1;
+      font-size: 10px;
+      font-weight: 720;
+    }
+
+    .page {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      padding: 48px clamp(22px, 5vw, 76px) 64px;
+    }
+
+    .portfolio-head {
+      display: grid;
+      grid-template-columns: minmax(320px, 1fr) auto;
+      align-items: end;
+      gap: 40px;
+      padding-bottom: 38px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: #667386;
+      font-size: 9px;
+      font-weight: 730;
+      letter-spacing: .17em;
+    }
+
+    .value-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 18px;
+    }
+
+    .portfolio-value {
+      margin: 0;
+      font-size: clamp(42px, 5.4vw, 76px);
+      font-weight: 330;
+      line-height: .9;
+      letter-spacing: -.065em;
+    }
+
+    .currency {
+      padding-bottom: 6px;
+      color: #697588;
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .return-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 21px;
+      color: #748195;
+      font-size: 10px;
+    }
+
+    .return-line strong {
+      color: var(--positive);
+      font-size: 11px;
+      font-weight: 680;
+    }
+
+    .head-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(105px, auto));
+      align-items: end;
+      gap: 0;
+    }
+
+    .head-stat {
+      min-height: 52px;
+      padding: 0 24px;
+      border-left: 1px solid var(--line);
+    }
+
+    .head-stat span {
+      display: block;
+      margin-bottom: 10px;
+      color: #627085;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+
+    .head-stat strong {
+      display: block;
+      color: #c8d0da;
+      font-size: 13px;
+      font-weight: 620;
+    }
+
+    .workspace {
+      padding-top: 30px;
+    }
+
+    .workspace-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 21px;
+    }
+
+    .workspace-title {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .workspace-title h2 {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 720;
+      letter-spacing: .08em;
+    }
+
+    .workspace-title span {
+      color: #5f6c7e;
+      font-size: 9px;
+      font-weight: 640;
+    }
+
+    .view-switch {
+      display: flex;
+      gap: 3px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, .015);
+    }
+
+    .view-switch button {
+      min-width: 56px;
+      padding: 7px 10px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #667386;
+      font-size: 9px;
+      font-weight: 680;
+      cursor: pointer;
+    }
+
+    .view-switch button.active {
+      background: rgba(255, 255, 255, .06);
+      color: #dce3eb;
+    }
+
+    .field-view {
+      position: relative;
+      min-height: 560px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(255, 255, 255, .018), transparent 42%),
+        rgba(9, 14, 22, .52);
+    }
+
+    .field-view[hidden],
+    .list-view[hidden] { display: none; }
+
+    .field-grid {
+      position: absolute;
+      inset: 0 0 54px;
+      background-image:
+        linear-gradient(90deg,
+          transparent calc(15% - .5px),
+          rgba(255, 255, 255, .07) 15%,
+          transparent calc(15% + .5px),
+          transparent calc(40% - .5px),
+          rgba(255, 255, 255, .07) 40%,
+          transparent calc(40% + .5px),
+          transparent calc(60% - .5px),
+          rgba(255, 255, 255, .07) 60%,
+          transparent calc(60% + .5px),
+          transparent calc(75% - .5px),
+          rgba(255, 255, 255, .07) 75%,
+          transparent calc(75% + .5px));
+      mask-image: linear-gradient(180deg, transparent, #000 12%, #000 86%, transparent);
+    }
+
+    .field-grid::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .16;
+      background-image: radial-gradient(circle, #5e6b7c .7px, transparent .8px);
+      background-size: 26px 26px;
+    }
+
+    .field-legend {
+      position: absolute;
+      top: 21px;
+      left: 24px;
+      z-index: 2;
+      display: flex;
+      gap: 18px;
+      color: #596679;
+      font-size: 8px;
+      font-weight: 680;
+      letter-spacing: .08em;
+    }
+
+    .field-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .field-legend i {
+      display: inline-block;
+      width: 12px;
+      height: 1px;
+      background: #778498;
+    }
+
+    .field-legend span:last-child i {
+      width: 8px;
+      height: 8px;
+      border: 1px solid #778498;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .holding-node {
+      position: absolute;
+      top: var(--y);
+      left: var(--x);
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      width: var(--size);
+      height: var(--size);
+      padding: 0;
+      border: 1px solid color-mix(in srgb, var(--node-color) 58%, transparent);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 40% 36%, color-mix(in srgb, var(--node-color) 18%, transparent), transparent 58%),
+        rgba(10, 16, 25, .88);
+      box-shadow:
+        0 0 0 7px color-mix(in srgb, var(--node-color) 3%, transparent),
+        0 0 40px color-mix(in srgb, var(--node-color) 8%, transparent);
+      color: var(--text);
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .holding-node::before,
+    .holding-node::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .holding-node::before {
+      inset: 8px;
+      border: 1px solid color-mix(in srgb, var(--node-color) 16%, transparent);
+    }
+
+    .holding-node::after {
+      top: 11%;
+      right: 14%;
+      width: 4px;
+      height: 4px;
+      background: var(--node-color);
+      box-shadow: 0 0 13px var(--node-color);
+    }
+
+    .holding-node:hover,
+    .holding-node:focus-visible {
+      z-index: 5;
+      border-color: var(--node-color);
+      box-shadow:
+        0 0 0 9px color-mix(in srgb, var(--node-color) 5%, transparent),
+        0 0 52px color-mix(in srgb, var(--node-color) 17%, transparent);
+      outline: none;
+      transform: translate(-50%, -50%) scale(1.045);
+    }
+
+    .node-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .node-ticker {
+      display: block;
+      font-size: clamp(11px, 1.15vw, 15px);
+      font-weight: 720;
+      letter-spacing: -.025em;
+    }
+
+    .node-weight {
+      display: block;
+      margin-top: 5px;
+      color: #8995a6;
+      font-size: 8px;
+      font-weight: 650;
+    }
+
+    .node-state {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      width: max-content;
+      color: var(--node-color);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      transform: translateX(-50%);
+    }
+
+    .spectrum {
+      position: absolute;
+      right: 24px;
+      bottom: 23px;
+      left: 24px;
+    }
+
+    .spectrum-labels {
+      display: grid;
+      grid-template-columns: 15fr 25fr 20fr 15fr 25fr;
+      margin-bottom: 11px;
+      color: #596679;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .11em;
+    }
+
+    .spectrum-labels span:nth-child(n+2):nth-child(-n+4) { text-align: center; }
+    .spectrum-labels span:last-child { text-align: right; }
+
+    .spectrum-line {
+      height: 2px;
+      background: linear-gradient(90deg,
+        var(--flee) 0 15%,
+        var(--scatter) 15% 40%,
+        var(--calm) 40% 60%,
+        var(--drift) 60% 75%,
+        var(--rush) 75% 100%);
+    }
+
+    .list-view {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(9, 14, 22, .56);
+    }
+
+    .holdings-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .holdings-table th,
+    .holdings-table td {
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .holdings-table th {
+      color: #5f6c7e;
+      font-size: 8px;
+      font-weight: 710;
+      letter-spacing: .1em;
+    }
+
+    .holdings-table td {
+      color: #aeb8c5;
+      font-size: 10px;
+      font-weight: 580;
+    }
+
+    .holdings-table th:first-child,
+    .holdings-table td:first-child { text-align: left; }
+
+    .holdings-table tbody tr {
+      cursor: pointer;
+      transition: background .16s ease;
+    }
+
+    .holdings-table tbody tr:hover {
+      background: rgba(255, 255, 255, .025);
+    }
+
+    .table-ticker {
+      color: #e3e8ee;
+      font-size: 11px;
+      font-weight: 690;
+    }
+
+    .table-name {
+      margin-left: 9px;
+      color: #647185;
+      font-size: 9px;
+    }
+
+    .state-cell {
+      color: var(--row-color) !important;
+      font-weight: 680 !important;
+    }
+
+    .positive { color: var(--positive) !important; }
+    .negative { color: var(--negative) !important; }
+
+    .drawer-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 19;
+      visibility: hidden;
+      background: rgba(0, 0, 0, .24);
+      opacity: 0;
+      transition: opacity .24s ease, visibility .24s;
+    }
+
+    .drawer-scrim.open {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .holding-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      width: min(430px, 92vw);
+      padding: 28px 30px 34px;
+      border-left: 1px solid var(--line);
+      background: rgba(14, 20, 30, .88);
+      box-shadow: -40px 0 90px rgba(0, 0, 0, .26);
+      backdrop-filter: blur(28px);
+      transform: translateX(102%);
+      transition: transform .34s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .holding-drawer.open { transform: translateX(0); }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 23px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-symbol {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.035em;
+    }
+
+    .drawer-company {
+      display: block;
+      margin-top: 5px;
+      color: #697588;
+      font-size: 9px;
+      font-weight: 580;
+    }
+
+    .drawer-close {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .02);
+      color: #7d899a;
+      cursor: pointer;
+    }
+
+    .drawer-state {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 20px;
+      padding: 30px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-state-label {
+      color: #667386;
+      font-size: 8px;
+      font-weight: 710;
+      letter-spacing: .12em;
+    }
+
+    .drawer-stage {
+      display: block;
+      margin-top: 11px;
+      color: var(--drawer-color);
+      font-size: 19px;
+      font-weight: 680;
+      letter-spacing: .05em;
+    }
+
+    .drawer-score {
+      color: var(--drawer-color);
+      font-size: 48px;
+      font-weight: 340;
+      line-height: .85;
+      letter-spacing: -.055em;
+    }
+
+    .drawer-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 12px;
+    }
+
+    .drawer-metric {
+      padding: 17px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-metric:nth-child(even) {
+      padding-left: 20px;
+      border-left: 1px solid var(--line);
+    }
+
+    .drawer-metric span {
+      display: block;
+      margin-bottom: 8px;
+      color: #627085;
+      font-size: 8px;
+      font-weight: 680;
+      letter-spacing: .08em;
+    }
+
+    .drawer-metric strong {
+      color: #c7cfd9;
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .drawer-boundary {
+      position: absolute;
+      right: 30px;
+      bottom: 31px;
+      left: 30px;
+      display: flex;
+      justify-content: space-between;
+      color: #525e70;
+      font-size: 8px;
+      font-weight: 690;
+      letter-spacing: .09em;
+    }
+
+    .drawer-boundary strong {
+      color: #6e7a8c;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .topbar {
+        grid-template-columns: 1fr auto;
+        height: 68px;
+        padding-inline: 20px;
+      }
+      .primary-nav { display: none; }
+      .concept { display: none; }
+      .page { padding: 32px 20px 44px; }
+      .portfolio-head {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .head-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .head-stat:first-child {
+        padding-left: 0;
+        border-left: 0;
+      }
+      .field-view { min-height: 540px; }
+      .holding-node { transform: translate(-50%, -50%) scale(.86); }
+      .holding-node:hover,
+      .holding-node:focus-visible { transform: translate(-50%, -50%) scale(.9); }
+      .list-view { overflow-x: auto; }
+      .holdings-table { min-width: 720px; }
+    }
+
+    @media (max-width: 560px) {
+      .value-row { gap: 10px; }
+      .portfolio-value { font-size: 43px; }
+      .head-stats { gap: 18px; }
+      .head-stat {
+        min-height: auto;
+        padding: 0;
+        border-left: 0;
+      }
+      .workspace-head { align-items: flex-end; }
+      .workspace-title {
+        display: grid;
+        gap: 6px;
+      }
+      .field-view { min-height: 510px; }
+      .field-legend { gap: 11px; }
+      .holding-node { transform: translate(-50%, -50%) scale(.72); }
+      .holding-node:hover,
+      .holding-node:focus-visible { transform: translate(-50%, -50%) scale(.77); }
+      .node-state { top: calc(100% + 5px); }
+      .spectrum { right: 15px; left: 15px; }
+      .spectrum-labels { font-size: 6px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="HerdSignal">
+      <svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="16" fill="#111827"/>
+        <rect x=".5" y=".5" width="63" height="63" rx="15.5" stroke="#334155"/>
+        <g fill="#e5edf8">
+          <circle cx="18" cy="17" r="2.7"/><circle cx="16" cy="27" r="2.4"/>
+          <circle cx="19" cy="38" r="2.6"/><circle cx="17" cy="49" r="2.3"/>
+          <circle cx="27" cy="31" r="2.5"/><circle cx="36" cy="31" r="2.5"/>
+          <circle cx="47" cy="17" r="3.2"/><circle cx="47" cy="27" r="3.2"/>
+          <circle cx="47" cy="37" r="3.2"/><circle cx="47" cy="47" r="3.2"/>
+        </g>
+        <g fill="#3b82f6">
+          <circle cx="11" cy="21" r="1.7"/><circle cx="10" cy="43" r="1.5"/>
+        </g>
+        <g fill="#fb923c">
+          <circle cx="53" cy="23" r="1.5"/><circle cx="54" cy="35" r="1.4"/>
+        </g>
+        <path d="M25 31C28.5 27.5 32.5 34.5 36 31" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>HerdSignal</span>
+    </a>
+
+    <nav class="primary-nav" aria-label="주요 메뉴">
+      <button class="nav-item" type="button">시장</button>
+      <button class="nav-item active" type="button">포트폴리오</button>
+      <button class="nav-item" type="button">종목</button>
+      <button class="nav-item" type="button">연구</button>
+    </nav>
+
+    <div class="account">
+      <span class="concept">CONCEPT · STATIC DATA</span>
+      <span class="avatar" aria-hidden="true">민</span>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="portfolio-head" aria-labelledby="portfolio-value">
+      <div>
+        <p class="eyebrow">MY PORTFOLIO</p>
+        <div class="value-row">
+          <h1 class="portfolio-value" id="portfolio-value">20,760,248</h1>
+          <span class="currency">KRW</span>
+        </div>
+        <div class="return-line">
+          <span>총 수익</span>
+          <strong>+923,489 · +4.95%</strong>
+          <span>2026.07.24</span>
+        </div>
+      </div>
+
+      <div class="head-stats">
+        <div class="head-stat">
+          <span>주식</span>
+          <strong>19,566,512</strong>
+        </div>
+        <div class="head-stat">
+          <span>현금</span>
+          <strong>1,193,736</strong>
+        </div>
+        <div class="head-stat">
+          <span>보유</span>
+          <strong>5 종목</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace" aria-labelledby="position-field-title">
+      <header class="workspace-head">
+        <div class="workspace-title">
+          <h2 id="position-field-title">POSITION FIELD</h2>
+          <span>위치 HERD · 크기 비중</span>
+        </div>
+        <div class="view-switch" aria-label="포트폴리오 보기 방식">
+          <button class="active" type="button" data-view="field">FIELD</button>
+          <button type="button" data-view="list">LIST</button>
+        </div>
+      </header>
+
+      <div class="field-view" data-panel="field">
+        <div class="field-grid" aria-hidden="true"></div>
+        <div class="field-legend" aria-hidden="true">
+          <span><i></i>가로 위치 · HERD</span>
+          <span><i></i>원 크기 · 비중</span>
+        </div>
+        <div class="nodes"></div>
+        <div class="spectrum">
+          <div class="spectrum-labels" aria-hidden="true">
+            <span>FLEE</span>
+            <span>SCATTER</span>
+            <span>CALM</span>
+            <span>DRIFT</span>
+            <span>RUSH</span>
+          </div>
+          <div class="spectrum-line"></div>
+        </div>
+      </div>
+
+      <div class="list-view" data-panel="list" hidden>
+        <table class="holdings-table">
+          <thead>
+            <tr>
+              <th>종목</th>
+              <th>평가금액</th>
+              <th>비중</th>
+              <th>총 수익률</th>
+              <th>HERD</th>
+              <th>4주 변화</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="drawer-scrim" aria-hidden="true"></div>
+  <aside class="holding-drawer" aria-hidden="true">
+    <header class="drawer-head">
+      <div>
+        <h2 class="drawer-symbol">NVDA</h2>
+        <span class="drawer-company">NVIDIA</span>
+      </div>
+      <button class="drawer-close" type="button" aria-label="종목 상세 닫기">×</button>
+    </header>
+    <div class="drawer-state">
+      <div>
+        <span class="drawer-state-label">HERD STATE S1</span>
+        <strong class="drawer-stage">DRIFT</strong>
+      </div>
+      <strong class="drawer-score">68</strong>
+    </div>
+    <div class="drawer-metrics">
+      <div class="drawer-metric"><span>평가금액</span><strong data-metric="value">6,140,000원</strong></div>
+      <div class="drawer-metric"><span>포트폴리오 비중</span><strong data-metric="weight">31.4%</strong></div>
+      <div class="drawer-metric"><span>총 수익률</span><strong data-metric="return">+18.7%</strong></div>
+      <div class="drawer-metric"><span>4주 변화</span><strong data-metric="delta">−4</strong></div>
+      <div class="drawer-metric"><span>평균 단가</span><strong data-metric="average">182,400원</strong></div>
+      <div class="drawer-metric"><span>현재가</span><strong data-metric="price">216,500원</strong></div>
+    </div>
+    <div class="drawer-boundary">
+      <span>STATE S1</span>
+      <strong>관찰 전용 · HOLD 0%</strong>
+    </div>
+  </aside>
+
+  <script>
+    (() => {
+      const holdings = [
+        {
+          ticker: 'NVDA', name: 'NVIDIA', value: 6140000, weight: 31.4,
+          returnPct: 18.7, score: 68, stage: 'DRIFT', delta: -4,
+          average: 182400, price: 216500, x: 68, y: 51, size: 120, color: '#f2782c'
+        },
+        {
+          ticker: 'TSLA', name: 'Tesla', value: 4850000, weight: 24.8,
+          returnPct: 22.1, score: 83, stage: 'RUSH', delta: 9,
+          average: 421500, price: 514700, x: 83, y: 27, size: 105, color: '#f0444f'
+        },
+        {
+          ticker: 'IONQ', name: 'IonQ', value: 3540000, weight: 18.1,
+          returnPct: 12.4, score: 32, stage: 'SCATTER', delta: -11,
+          average: 48700, price: 54700, x: 32, y: 30, size: 90, color: '#67a6f8'
+        },
+        {
+          ticker: 'RKLB', name: 'Rocket Lab', value: 2780000, weight: 14.2,
+          returnPct: -6.8, score: 57, stage: 'CALM', delta: 3,
+          average: 83100, price: 77400, x: 57, y: 76, size: 78, color: '#a1aab8'
+        },
+        {
+          ticker: 'PLTR', name: 'Palantir', value: 2256512, weight: 11.5,
+          returnPct: 9.2, score: 72, stage: 'DRIFT', delta: 6,
+          average: 186300, price: 203400, x: 72, y: 79, size: 70, color: '#f2782c'
+        }
+      ]
+
+      const nodes = document.querySelector('.nodes')
+      const tbody = document.querySelector('tbody')
+      const viewButtons = [...document.querySelectorAll('[data-view]')]
+      const panels = [...document.querySelectorAll('[data-panel]')]
+      const drawer = document.querySelector('.holding-drawer')
+      const scrim = document.querySelector('.drawer-scrim')
+      const close = document.querySelector('.drawer-close')
+      let lastTrigger = null
+
+      const won = value => `${Math.round(value).toLocaleString('ko-KR')}원`
+      const signed = value => `${value > 0 ? '+' : value < 0 ? '−' : ''}${Math.abs(value)}`
+
+      function render() {
+        nodes.innerHTML = holdings.map(holding => `
+          <button
+            class="holding-node"
+            type="button"
+            data-ticker="${holding.ticker}"
+            aria-label="${holding.ticker}, HERD ${holding.score}, 비중 ${holding.weight}%"
+            style="
+              --x:${holding.x}%;
+              --y:${holding.y}%;
+              --size:${holding.size}px;
+              --node-color:${holding.color};
+            "
+          >
+            <span class="node-content">
+              <strong class="node-ticker">${holding.ticker}</strong>
+              <span class="node-weight">${holding.weight}%</span>
+            </span>
+            <span class="node-state">${holding.stage} ${holding.score}</span>
+          </button>
+        `).join('')
+
+        tbody.innerHTML = holdings.map(holding => `
+          <tr data-ticker="${holding.ticker}" tabindex="0">
+            <td><strong class="table-ticker">${holding.ticker}</strong><span class="table-name">${holding.name}</span></td>
+            <td>${won(holding.value)}</td>
+            <td>${holding.weight}%</td>
+            <td class="${holding.returnPct >= 0 ? 'positive' : 'negative'}">${signed(holding.returnPct)}%</td>
+            <td class="state-cell" style="--row-color:${holding.color}">${holding.stage} · ${holding.score}</td>
+            <td>${signed(holding.delta)}</td>
+          </tr>
+        `).join('')
+      }
+
+      function openDrawer(ticker, trigger) {
+        const holding = holdings.find(item => item.ticker === ticker)
+        if (!holding) return
+        lastTrigger = trigger
+        drawer.style.setProperty('--drawer-color', holding.color)
+        drawer.querySelector('.drawer-symbol').textContent = holding.ticker
+        drawer.querySelector('.drawer-company').textContent = holding.name
+        drawer.querySelector('.drawer-stage').textContent = holding.stage
+        drawer.querySelector('.drawer-score').textContent = holding.score
+        drawer.querySelector('[data-metric="value"]').textContent = won(holding.value)
+        drawer.querySelector('[data-metric="weight"]').textContent = `${holding.weight}%`
+        const returnNode = drawer.querySelector('[data-metric="return"]')
+        returnNode.textContent = `${signed(holding.returnPct)}%`
+        returnNode.className = holding.returnPct >= 0 ? 'positive' : 'negative'
+        drawer.querySelector('[data-metric="delta"]').textContent = signed(holding.delta)
+        drawer.querySelector('[data-metric="average"]').textContent = won(holding.average)
+        drawer.querySelector('[data-metric="price"]').textContent = won(holding.price)
+        drawer.classList.add('open')
+        scrim.classList.add('open')
+        drawer.setAttribute('aria-hidden', 'false')
+        close.focus()
+      }
+
+      function closeDrawer() {
+        const wasOpen = drawer.classList.contains('open')
+        drawer.classList.remove('open')
+        scrim.classList.remove('open')
+        drawer.setAttribute('aria-hidden', 'true')
+        if (wasOpen && lastTrigger) lastTrigger.focus()
+      }
+
+      function setView(view) {
+        viewButtons.forEach(button => {
+          button.classList.toggle('active', button.dataset.view === view)
+        })
+        panels.forEach(panel => {
+          panel.hidden = panel.dataset.panel !== view
+        })
+      }
+
+      render()
+      viewButtons.forEach(button => {
+        button.addEventListener('click', () => setView(button.dataset.view))
+      })
+      nodes.addEventListener('click', event => {
+        const node = event.target.closest('[data-ticker]')
+        if (node) openDrawer(node.dataset.ticker, node)
+      })
+      tbody.addEventListener('click', event => {
+        const row = event.target.closest('[data-ticker]')
+        if (row) openDrawer(row.dataset.ticker, row)
+      })
+      tbody.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return
+        const row = event.target.closest('[data-ticker]')
+        if (row) {
+          event.preventDefault()
+          openDrawer(row.dataset.ticker, row)
+        }
+      })
+      close.addEventListener('click', closeDrawer)
+      scrim.addEventListener('click', closeDrawer)
+      window.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeDrawer()
+      })
+    })()
+  </script>
+</body>
+</html>

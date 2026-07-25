@@ -50,6 +50,32 @@ src/
 - 숫자 + 짧은 판단 문장을 함께 보여준다. 긴 설명문보다 행동 판단이 먼저 보여야 한다.
 - 모바일에서는 데스크톱 사이드바를 하단 탭 내비게이션으로 전환하고, Dashboard/Watchlist/Search/HerdLab 핵심 흐름을 먼저 보여준다.
 
+## UI V6 전환 계약
+
+기준 시안은 `wireframes/wireframe-portfolio-lens-v6.html`이다. 계좌 정보
+구조를 유지하면서 HERD를 같은 수의 점이 점수에 따라 모이거나 흩어지는
+정적 `HERD Lens`로 표현한다. 반복 애니메이션과 장식용 글로우는 사용하지
+않는다.
+
+전환은 아래 경계를 지킨다.
+
+- `/app`: S&P 500 `MARKET_AGGREGATE` State S1만 보여주는 시장 홈
+- `/portfolio`: 계좌 전체·주식 평가액·현금·오늘 등락·자산 히스토리·보유 종목
+- `/stock/:ticker`: 개별 종목 State S1과 Transition S1 관찰
+- `/search`, `/watchlist`, `/history`, `/journal`, `/herd-lab`, `/settings`:
+  각 기능을 유지하되 새 탐색 구조와 시각 토큰을 공유
+- 사용자 기본 출력은 항상 운영 승격 경계를 거친 값만 사용한다. 현재는
+  `HOLD`, `0%`이며 v4·v6.1 연구값을 매수·익절 권고처럼 표시하지 않는다.
+- SPY 집계와 개별 종목 상태를 같은 점수처럼 섞지 않는다.
+- loading, empty, partial error, unavailable, stale 상태를 정상 화면 상태로
+  설계한다.
+- 새 화면이 기능 동등성·반응형·시각 회귀를 통과하기 전 기존 화면을
+  삭제하지 않는다.
+
+전환 전 기준선은 backend 117 tests, frontend 25 files·56 tests, Python
+945 tests 통과다. 기존 기능 대응이 끝난 뒤에만 Dashboard·StockDetail의
+레거시 스타일과 컴포넌트를 제거한다.
+
 ## 대형 페이지 구조 원칙
 - 페이지 JSX는 화면 조립과 이벤트 연결만 담당한다.
 - API 호출, 캐시, 로딩 상태, 파생 상태는 페이지별 `use*Data.js` 훅에서 관리한다.
