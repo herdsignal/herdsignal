@@ -11,8 +11,12 @@ import {
 /**
  * 자산 히스토리 패널의 요청 상태와 차트 파생값을 캡슐화한다.
  */
-export function useDashboardAssetHistory(summary, cashBalance) {
-  const [assetPanelOpen, setAssetPanelOpen] = useState(false)
+export function useDashboardAssetHistory(
+  summary,
+  cashBalance,
+  { initiallyOpen = false } = {},
+) {
+  const [assetPanelOpen, setAssetPanelOpen] = useState(initiallyOpen)
   const [assetHistoryPeriod, setAssetHistoryPeriod] = useState('year')
   const [assetHistory, setAssetHistory] = useState([])
   const [assetHistoryLoading, setAssetHistoryLoading] = useState(false)

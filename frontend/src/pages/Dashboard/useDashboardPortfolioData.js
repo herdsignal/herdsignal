@@ -61,6 +61,7 @@ export function useDashboardPortfolioData({
   setTargetWeights,
   updateSpyData,
   fetchDataStatus,
+  includeMarketObservation = true,
 }) {
   const [portfolio, setPortfolio] = useState([])
   const [summary, setSummary] = useState(null)
@@ -161,7 +162,7 @@ export function useDashboardPortfolioData({
     const revalidateOnReturn = () => {
       if (document.visibilityState !== 'visible') return
       revalidatePortfolioSummary()
-      fetchDataStatus()
+      fetchDataStatus?.()
     }
     window.addEventListener('focus', revalidateOnReturn)
     document.addEventListener('visibilitychange', revalidateOnReturn)
@@ -186,7 +187,9 @@ export function useDashboardPortfolioData({
       const [priceResult, herdResult, spyResult] = await Promise.allSettled([
         getPortfolioRealtime(),
         getPortfolioObservations(portfolio),
-        getHerdObservation('SPY'),
+        includeMarketObservation
+          ? getHerdObservation('SPY')
+          : Promise.resolve(null),
       ])
 
       if (priceResult.status === 'fulfilled') {
@@ -208,16 +211,26 @@ export function useDashboardPortfolioData({
         saveCacheTime(userId, CACHE_KEY_HERD_TIME)
       }
 
-      if (spyResult.status === 'fulfilled') {
+      if (includeMarketObservation && spyResult.status === 'fulfilled') {
         updateSpyData(spyResult.value.data?.data ?? null)
       }
 
-      setRefreshNotice(refreshResultText(priceResult, herdResult, spyResult))
+      setRefreshNotice(refreshResultText(
+        priceResult,
+        herdResult,
+        includeMarketObservation ? spyResult : null,
+      ))
       refreshNoticeTimer.current = setTimeout(() => setRefreshNotice(null), 3200)
     } finally {
       setRefreshing(false)
     }
-  }, [cashBalance, portfolio, updateSpyData, userId])
+  }, [
+    cashBalance,
+    includeMarketObservation,
+    portfolio,
+    updateSpyData,
+    userId,
+  ])
 
   return {
     portfolio,

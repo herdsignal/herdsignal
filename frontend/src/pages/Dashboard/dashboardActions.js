@@ -171,8 +171,8 @@ export function refreshResultText(priceResult, herdResult, spyResult) {
   else failed.push('가격')
   if (herdResult.status === 'fulfilled') done.push('HERD 조회')
   else failed.push('HERD')
-  if (spyResult.status === 'fulfilled') done.push('SPY 갱신')
-  else failed.push('SPY')
+  if (spyResult?.status === 'fulfilled') done.push('SPY 갱신')
+  else if (spyResult) failed.push('SPY')
   if (done.length === 0) return '새로고침 실패'
   if (failed.length > 0) return `${done.join(' · ')} · ${failed.join('/')} 실패`
   return done.join(' · ')

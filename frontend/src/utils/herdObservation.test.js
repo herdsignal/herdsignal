@@ -38,6 +38,8 @@ describe('S1 tracked item boundary', () => {
       availabilityStatus: 'AVAILABLE',
       stateScore: 78,
       stage: 'RUSH',
+      delta4w: 8.5,
+      lastObservedSession: '2026-07-24',
       operationalAction: 'SELL',
       operationalActionRatio: 0.15,
     })
@@ -47,6 +49,8 @@ describe('S1 tracked item boundary', () => {
     expect(item.signal).toBe('HOLD')
     expect(item.actionRatio).toBe(0)
     expect(item.actionAuthorized).toBe(false)
+    expect(item.delta4w).toBe(8.5)
+    expect(item.lastObservedSession).toBe('2026-07-24')
   })
 
   it('preserves batch order metadata as a ticker map', () => {

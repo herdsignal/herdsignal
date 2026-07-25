@@ -69,6 +69,10 @@ export function observationToTrackedItem(observation, extra = {}) {
     herdScore: available ? score : null,
     herdStage: available && stage ? `Herd ${stage}` : null,
     scoreDate: observation?.observationDate ?? null,
+    lastObservedSession: observation?.lastObservedSession ?? null,
+    delta4w: Number.isFinite(Number(observation?.delta4w))
+      ? Number(observation.delta4w)
+      : null,
     transition: observation?.transition ?? null,
     transitionEvent: observation?.transitionEvent === true,
     families: observation?.families ?? null,
