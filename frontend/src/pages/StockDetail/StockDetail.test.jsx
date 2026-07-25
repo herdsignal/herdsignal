@@ -29,6 +29,7 @@ beforeEach(() => {
     availabilityStatus: 'AVAILABLE',
     freshnessStatus: 'FRESH',
     stateScore: 63,
+    delta4w: 6,
     stage: 'DRIFT',
     observationDate: '2026-07-24',
     lastObservedSession: '2026-07-24',
@@ -61,5 +62,8 @@ describe('StockDetail route', () => {
 
     expect(await screen.findByText('NVIDIA Corp')).toBeInTheDocument()
     expect(screen.getByText('HERD State S1')).toBeInTheDocument()
+    expect(screen.getByText('현재 군중 상태')).toBeInTheDocument()
+    expect(screen.getByText('HERD 구성')).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/익절 근거|매수 근거|추천/)
   })
 })

@@ -7,73 +7,46 @@ const S1_FAMILIES = [
   ['participation', '시장 참여'],
 ]
 
-function safeRounded(value) {
-  const number = Number(value)
-  return Number.isFinite(number) ? Math.round(number) : '—'
-}
-
-function ObservationCard({ observation, color }) {
-  return (
-    <div className={styles.card}>
-      <div className={styles.cardHeader}>
-        <div>
-          <div className={styles.cardTitle}>State S1 관측값</div>
-          <div className={styles.cardMeta}>고정된 네 관찰 가족 · 동일 비중</div>
-        </div>
-        <div className={styles.cardMeta}>
-          {observation.lastObservedSession} 기준
-        </div>
-      </div>
-      <div className={styles.cardBody}>
-        {S1_FAMILIES.map(([key, label]) => {
-          const value = Number(observation.families?.[key])
-          const available = Number.isFinite(value)
-          return (
-            <div key={key} className={styles.indicatorRow}>
-              <div className={styles.indicatorLabel}>{label}</div>
-              <div className={styles.indicatorWeight}>25%</div>
-              <div className={styles.indicatorTrack}>
-                {available && (
-                  <div
-                    className={styles.indicatorFill}
-                    style={{
-                      width: `${Math.max(0, Math.min(100, value))}%`,
-                      background: color,
-                    }}
-                  />
-                )}
-              </div>
-              <div className={styles.indicatorValue}>
-                {available ? Math.round(value) : '—'}
-              </div>
-            </div>
-          )
-        })}
-        <div className={styles.adjustmentBox}>
-          <div className={styles.adjustmentRow}>
-            <span>상태 전환</span>
-            <strong>{observation.transition ?? 'NEUTRAL'}</strong>
-          </div>
-          <div className={styles.adjustmentRow}>
-            <span>하방 위험 맥락</span>
-            <strong>{safeRounded(observation.downsideRiskContext)}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+function bounded(value) {
+  const numeric = Number(value)
+  return Number.isFinite(numeric) ? Math.max(0, Math.min(100, numeric)) : null
 }
 
 export default function StockDetailAnalysis({ observation, color }) {
+  const risk = bounded(observation.downsideRiskContext)
+
   return (
-    <details className={styles.detailDisclosure}>
-      <summary>
-        <div><span>상세 관찰</span><strong>State S1 구성값</strong></div>
-        <em>펼쳐보기</em>
-      </summary>
-      <div className={styles.detailDisclosureBody}>
-        <ObservationCard observation={observation} color={color} />
+    <section className={styles.evidenceSection} aria-labelledby="stock-evidence-title">
+      <div className={styles.sectionHeader}>
+        <div>
+          <h2 id="stock-evidence-title">HERD 구성</h2>
+          <span>State S1 · 각 25%</span>
+        </div>
+        <span>{observation.lastObservedSession ?? '—'} 기준</span>
       </div>
-    </details>
+      <div className={styles.evidenceGrid}>
+        {S1_FAMILIES.map(([key, label]) => {
+          const value = bounded(observation.families?.[key])
+          return (
+            <div className={styles.evidenceItem} key={key}>
+              <span>{label}</span>
+              <strong>{value == null ? '—' : Math.round(value)}</strong>
+              <i aria-hidden="true">
+                {value != null && (
+                  <b style={{ width: `${value}%`, background: color }} />
+                )}
+              </i>
+            </div>
+          )
+        })}
+      </div>
+      <div className={styles.riskContext}>
+        <span>하방 위험 맥락</span>
+        <i aria-hidden="true">
+          {risk != null && <b style={{ width: `${risk}%` }} />}
+        </i>
+        <strong>{risk == null ? '—' : Math.round(risk)}</strong>
+      </div>
+    </section>
   )
 }

@@ -22,14 +22,14 @@ export function fmtFinancePct(value) {
 
 export function fundamentalTone(level) {
   switch (level) {
-    case 'CLEAR': return 'var(--scatter)'
-    case 'CAUTION': return 'var(--drift)'
-    case 'RISK': return 'var(--rush)'
-    default: return 'var(--text-3)'
+    case 'CLEAR': return 'var(--hs-scatter)'
+    case 'CAUTION': return 'var(--hs-drift)'
+    case 'RISK': return 'var(--hs-rush)'
+    default: return 'var(--hs-text-muted)'
   }
 }
 
-export function evaluateFundamentalGuard(financials, herdData) {
+export function evaluateFundamentalGuard(financials) {
   if (!financials) {
     return {
       level: 'LIMITED',
@@ -44,9 +44,6 @@ export function evaluateFundamentalGuard(financials, herdData) {
   const margin = Number(financials.operatingMargin)
   const revenue = Number(financials.totalRevenue)
   const marketCap = Number(financials.marketCap)
-  const signal = herdData?.signal
-  const isBuySignal = signal === 'BUY' || signal === 'ADD'
-  const isSellSignal = signal === 'SELL' || signal === 'REDUCE'
   const risks = []
   const cautions = []
 
@@ -65,22 +62,16 @@ export function evaluateFundamentalGuard(financials, herdData) {
   if ((!Number.isFinite(revenue) || revenue <= 0) && Number.isFinite(eps) && eps < 0) {
     risks.push('매출 공백과 EPS 적자 동시 확인')
   }
-  if (isSellSignal && Number.isFinite(pe) && pe >= 100) {
-    risks.push('고PER 구간의 Rush/Drift 신호')
-  }
-
   const level = risks.length ? 'RISK' : cautions.length ? 'CAUTION' : 'CLEAR'
   const label = level === 'RISK'
     ? '재무 리스크 큼'
     : level === 'CAUTION' ? '재무 확인 필요' : '확인된 주요 경고 없음'
 
-  let summary = '제한된 주요 재무 지표에서 큰 경고는 확인되지 않습니다.'
-  if (isBuySignal && level === 'CLEAR') summary = '매수 신호를 재무 데이터가 크게 방해하지 않습니다.'
-  else if (isBuySignal && level === 'CAUTION') summary = '매수 신호지만 포지션 크기를 줄여 접근해야 합니다.'
-  else if (isBuySignal && level === 'RISK') summary = '저점 신호만으로 매수 판단하지 마세요.'
-  else if (isSellSignal && level !== 'CLEAR') summary = '익절 신호를 더 보수적으로 볼 구간입니다.'
-  else if (level === 'CAUTION') summary = 'HERD 상태와 별도로 재무 지표 확인이 필요합니다.'
-  else if (level === 'RISK') summary = 'HERD 상태보다 재무 리스크 확인을 우선해야 합니다.'
+  const summary = level === 'RISK'
+    ? '적자·영업손실 등 핵심 위험 항목이 확인됐습니다.'
+    : level === 'CAUTION'
+      ? '확인되지 않았거나 주의가 필요한 항목이 있습니다.'
+      : '조회된 주요 재무 지표에 경고가 없습니다.'
 
   return { level, label, summary, reasons: [...risks, ...cautions].slice(0, 3) }
 }

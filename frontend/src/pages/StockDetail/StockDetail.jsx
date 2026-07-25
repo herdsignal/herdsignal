@@ -44,20 +44,19 @@ export default function StockDetail() {
     fundamentalGuard,
     journalSummary,
     historyPoints,
-    herdMomentum,
     handleJournalAction,
     handleJournalDelete,
   } = detail
 
   return (
-    <div>
-      <div className={styles.breadcrumb}>
-        <span className={styles.breadcrumbLink} onClick={() => navigate('/app')}>
-          포트폴리오
-        </span>
+    <main className={styles.page}>
+      <nav className={styles.breadcrumb} aria-label="현재 위치">
+        <button type="button" className={styles.breadcrumbLink} onClick={() => navigate('/search')}>
+          종목
+        </button>
         <span className={styles.breadcrumbSep}>/</span>
         <span className={styles.breadcrumbCurrent}>{normalizedTicker}</span>
-      </div>
+      </nav>
 
       <div className={styles.stockHeader}>
         <div className={styles.stockHeaderLeft}>
@@ -127,9 +126,7 @@ export default function StockDetail() {
             <StockDetailHero
               observation={observation}
               herdScore={herdScore}
-              stageDisp={stageDisp}
-              color={color}
-              herdMomentum={herdMomentum}
+              herdStage={herdStage}
             />
             <StockDetailAnalysis
               observation={observation}
@@ -168,6 +165,6 @@ export default function StockDetail() {
           onSave={(details) => handleJournalAction(journalAction, details)}
         />
       )}
-    </div>
+    </main>
   )
 }

@@ -13,7 +13,7 @@ export default function StockDetailFundamentals({ loading, financials, guard }) 
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
-        <div><div className={styles.cardTitle}>재무 가드</div><div className={styles.cardMeta}>HERD 신호 보조 필터</div></div>
+        <div><div className={styles.cardTitle}>기업 정보</div><div className={styles.cardMeta}>현재 조회 가능한 재무 스냅샷</div></div>
         {!loading && <div className={styles.fundamentalBadge} style={{ color: fundamentalTone(guard.level), borderColor: fundamentalTone(guard.level) }}>{guard.label}</div>}
       </div>
       <div className={styles.cardBodySmall}>

@@ -18,7 +18,7 @@ describe('stock detail domain models', () => {
       operatingMargin: -5,
       totalRevenue: 100,
       marketCap: 1_000,
-    }, { signal: 'HOLD' })
+    })
 
     expect(guard.level).toBe('RISK')
     expect(guard.reasons).toContain('적자와 영업손실 동시 확인')

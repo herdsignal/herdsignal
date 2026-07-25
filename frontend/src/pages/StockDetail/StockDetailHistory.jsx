@@ -10,11 +10,11 @@ export default function StockDetailHistory({
   currentScore,
 }) {
   return (
-    <div className={styles.card}>
-      <div className={styles.cardHeader}>
+    <section className={styles.historySection} aria-labelledby="stock-history-title">
+      <div className={styles.sectionHeader}>
         <div>
-          <div className={styles.cardTitle}>HERD State S1 History</div>
-          <div className={styles.cardMeta}>주간 관찰 · 1M · 3M · 1Y · 3Y</div>
+          <h2 id="stock-history-title">HERD 이력</h2>
+          <span>주간 관찰</span>
         </div>
         <div className={styles.historyTabs}>
           {HISTORY_PERIODS.map((item) => (
@@ -28,13 +28,13 @@ export default function StockDetailHistory({
           ))}
         </div>
       </div>
-      <div className={styles.cardBody}>
+      <div className={styles.historyBody}>
         {loading ? (
           <div className={styles.chartEmpty}>로딩 중…</div>
         ) : (
           <HerdHistoryChart points={points} currentScore={currentScore} height={230} />
         )}
       </div>
-    </div>
+    </section>
   )
 }

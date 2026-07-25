@@ -29,7 +29,7 @@ const STAGES = [
   { label: 'Rush', at: 87.5 },
 ]
 
-export default function MarketField({ score, stage }) {
+export default function MarketField({ score, stage, compact = false }) {
   const normalizedScore = clampHerdScore(score)
   const resolvedStage = normalizeStage(stage)
     || stageFromScore(normalizedScore)
@@ -40,7 +40,11 @@ export default function MarketField({ score, stage }) {
 
   return (
     <section
-      className={`${styles.field} ${unavailable ? styles.unavailable : ''}`}
+      className={[
+        styles.field,
+        compact ? styles.compact : '',
+        unavailable ? styles.unavailable : '',
+      ].filter(Boolean).join(' ')}
       style={{
         '--field-color': FIELD_COLORS[resolvedStage] || FIELD_COLORS.calm,
         '--field-score': `${currentPosition}%`,
@@ -84,4 +88,3 @@ export default function MarketField({ score, stage }) {
     </section>
   )
 }
-

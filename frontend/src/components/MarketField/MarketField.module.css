@@ -106,9 +106,29 @@
   opacity: 0.35;
 }
 
+.compact {
+  min-height: clamp(350px, 46vh, 470px);
+}
+
+.compact .reading strong {
+  font-size: clamp(76px, 9vw, 124px);
+}
+
+.compact .dots {
+  inset-block: 2% 18%;
+}
+
+.compact .spectrum {
+  bottom: 30px;
+}
+
 @media (max-width: 760px) {
   .field {
     min-height: clamp(410px, 66vh, 570px);
+  }
+
+  .compact {
+    min-height: 390px;
   }
 
   .dots {
@@ -131,4 +151,3 @@
     transition: none !important;
   }
 }
-

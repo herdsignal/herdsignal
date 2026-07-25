@@ -1,1049 +1,541 @@
-/* StockDetail.module.css — wireframe-detail.html 기반 */
+.page {
+  width: min(var(--hs-content-max), 100%);
+  min-height: calc(100vh - var(--hs-header-height));
+  margin: 0 auto;
+  padding: 30px var(--hs-page-gutter) 76px;
+  color: var(--hs-text);
+}
 
-/* ── 브레드크럼 ── */
+.page button {
+  font: inherit;
+}
+
+.page button:focus-visible,
+.detailDisclosure summary:focus-visible {
+  outline: 0;
+  box-shadow: var(--hs-focus-ring);
+}
 
 .breadcrumb {
-  font-size: 12px;
-  color: var(--text-3);
-  margin-bottom: 18px;
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 30px;
+  color: var(--hs-text-muted);
+  font-size: 9px;
 }
 
 .breadcrumbLink {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
   cursor: pointer;
-  transition: color 0.1s;
 }
 
-.breadcrumbLink:hover { color: var(--text-2); }
+.breadcrumbLink:hover {
+  color: var(--hs-text);
+}
 
-.breadcrumbSep    { color: var(--text-3); }
+.breadcrumbSep {
+  opacity: .5;
+}
 
-.breadcrumbCurrent { color: var(--text-2); }
-
-/* ── 종목 헤더 ── */
+.breadcrumbCurrent {
+  color: var(--hs-text-subtle);
+}
 
 .stockHeader {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 28px;
-  padding: 20px 0 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.stockHeaderLeft {
-  display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 24px 0 30px;
 }
 
-.stockTicker {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0;
-  margin-bottom: 2px;
-}
-
-.stockFullname {
-  font-size: 13px;
-  color: var(--text-2);
-}
-
+.stockHeaderLeft,
 .stockHeaderRight {
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
-.btnWatchlist {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border2);
-  border-radius: var(--card-radius);
-  padding: 8px 16px;
-  font-size: 13px;
-  color: var(--text-2);
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: border-color 0.15s, color 0.15s;
+.stockHeaderLeft {
+  gap: 14px;
+  min-width: 0;
+}
+
+.stockHeaderRight {
+  gap: 8px;
+}
+
+.stockTicker {
+  color: var(--hs-text);
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -.04em;
+}
+
+.stockFullname {
+  margin-top: 5px;
+  overflow: hidden;
+  color: var(--hs-text-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.btnWatchlist:hover:not(:disabled) { border-color: var(--text-3); color: var(--text-1); }
-
-.btnWatchlist:disabled { opacity: 0.7; cursor: default; }
+.btnWatchlist,
+.btnPrimary,
+.retryBtn {
+  padding: 9px 12px;
+  border: 1px solid var(--hs-line-strong);
+  border-radius: var(--hs-radius-sm);
+  background: transparent;
+  color: var(--hs-text-subtle);
+  font-size: 9px;
+  font-weight: 680;
+  cursor: pointer;
+}
 
 .btnPrimary {
-  background: var(--text-1);
-  color: var(--bg);
-  border: none;
-  border-radius: var(--card-radius);
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: opacity 0.15s;
-  white-space: nowrap;
+  border-color: var(--hs-text);
+  background: var(--hs-text);
+  color: var(--hs-bg);
 }
 
-.btnPrimary:hover:not(:disabled) { opacity: 0.8; }
-
-.btnPrimary:disabled { opacity: 0.6; cursor: default; }
-
-/* ── 핵심 컨텐츠 ── */
-
-.contentGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  max-width: 1080px;
-  gap: 0;
-  align-items: start;
+.btnWatchlist:disabled,
+.btnPrimary:disabled {
+  cursor: default;
+  opacity: .55;
 }
 
-.colMain { min-width: 0; }
-
-/* ── 공통 카드 ── */
-
-.card {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
-    var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  overflow: hidden;
+.actionError {
   margin-bottom: 16px;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.18);
-}
-
-.cardHeader {
-  min-height: 56px;
-  padding: 16px 22px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.cardTitle {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.cardMeta {
-  font-size: 11px;
-  color: var(--text-3);
-}
-
-.cardBody {
-  padding: 18px 22px 22px;
-}
-
-.cardBodySmall {
-  padding: 14px 22px 20px;
-}
-
-/* ────────────────────────────
-   HERD 카드 (2컬럼 그리드)
-   ──────────────────────────── */
-
-.herdCard {
-  background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.075), rgba(255, 255, 255, 0) 36%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)),
-    var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  margin-bottom: 16px;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  min-height: 230px;
-  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.22);
-}
-
-/* 좌: 점수 블록 */
-
-.herdScoreSide {
-  padding: 30px 32px;
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 배경 글로우 */
-
-.herdScoreSide::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 0% 50%, rgba(59, 130, 246, 0.11) 0%, transparent 68%);
-  pointer-events: none;
-}
-
-.herdEyebrow {
+  padding: 11px 13px;
+  border: 1px solid color-mix(in srgb, var(--hs-loss) 35%, transparent);
+  border-radius: var(--hs-radius-sm);
+  color: var(--hs-loss);
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 12px;
 }
 
-.herdBigScore {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 76px;
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 0.9;
-  margin-bottom: 10px;
+.loadingState,
+.errorState {
+  display: grid;
+  min-height: 420px;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  color: var(--hs-text-muted);
+  text-align: center;
 }
 
-.herdBigStage {
-  font-family: 'Space Grotesk', sans-serif;
+.loadingText,
+.errorSub {
+  font-size: 10px;
+}
+
+.errorState p {
+  margin: 0;
+}
+
+.errorTitle {
+  color: var(--hs-text);
   font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0;
-  margin-bottom: 10px;
+  font-weight: 640;
 }
 
-/* Timing Signal 배지 */
-
-.timingSignal {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--card-radius);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.4;
-}
-
-.qualityPill {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  margin-top: 10px;
-  padding: 5px 10px;
-  border: 1px solid;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.qualityReason {
-  max-width: 220px;
-  margin-top: 6px;
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 650;
-  line-height: 1.35;
-}
-
-/* 우: 애니메이션 블록 */
-
-.herdAnimSide {
-  position: relative;
-  background:
-    linear-gradient(180deg, rgba(32, 42, 56, 0.84), rgba(21, 27, 37, 0.9)),
-    var(--surface2);
-  /* overflow 없음 — thumb 클리핑 방지 */
-}
-
-/* 하단 고정 오버레이: SpectrumBar + 5단계 라벨 */
-
-.herdAnimBottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 0 16px 0;
-  z-index: 1;
-}
-
-/* SpectrumBar 아래 5단계 라벨 */
-
-.spectrumLabels {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0 10px;
-  gap: 6px;
-  font-size: 8px;
-  color: var(--text-3);
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-.spectrumLabels span {
+.contentGrid,
+.colMain {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* ────────────────────────────
-   장기투자 판단 카드
-   ──────────────────────────── */
-
-.decisionHero {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--border);
+.stateSection,
+.evidenceSection,
+.historySection {
+  border-top: 1px solid var(--hs-line);
 }
 
-.decisionLabel {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 8px;
-}
-
-.decisionTitle {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: var(--text-1);
-  margin-bottom: 8px;
-}
-
-.decisionSubtitle {
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--text-2);
-}
-
-.decisionBasis {
-  margin-top: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-3);
-}
-
-.decisionMomentum {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: rgba(255, 255, 255, 0.025);
-  color: var(--text-2);
-  font-size: 12px;
-  font-weight: 750;
-}
-
-.decisionMomentum span,
-.decisionMomentum strong {
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-.decisionMomentum strong {
-  font-family: 'Space Grotesk', sans-serif;
-  color: var(--text-3);
-}
-
-.decisionMomentum_positive {
-  color: var(--positive);
-  border-color: color-mix(in srgb, var(--status-success) 28%, transparent);
-}
-
-.decisionMomentum_warning {
-  color: var(--drift);
-  border-color: rgba(251, 146, 60, 0.3);
-}
-
-.decisionMomentum_neutral {
-  color: var(--text-2);
-}
-
-.decisionPill {
-  flex-shrink: 0;
-  border: 1px solid;
-  border-radius: 999px;
-  padding: 7px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.decisionList {
-  display: grid;
-  gap: 8px;
-  padding-top: 16px;
-}
-
-.decisionItem {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-2);
-  padding-left: 12px;
-  position: relative;
-}
-
-.decisionItem::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--text-3);
-}
-
-/* ────────────────────────────
-   지표 분해 카드
-   ──────────────────────────── */
-
-/*
- * 4컬럼: 지표명(120px) | 가중치(38px) | 바(1fr) | 수치(60px)
- * 가중치 컬럼은 항상 우측 정렬로 "24%" 형태로 표시
- */
-
-.indicatorRow {
-  display: grid;
-  grid-template-columns: 120px 38px 1fr 60px;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.indicatorRow:last-child { border-bottom: none; }
-
-.indicatorLabel {
-  font-size: 13px;
-  color: var(--text-2);
-  white-space: nowrap;
-}
-
-/* 가중치 퍼센트 — 오른쪽 정렬, 회색 소형 텍스트 */
-
-.indicatorWeight {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-3);
-  text-align: right;
-  white-space: nowrap;
-  letter-spacing: 0;
-}
-
-/* 미니 바 트랙 */
-
-.indicatorTrack {
-  width: 100%;
-  height: 4px;
-  background: var(--surface2);
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-/* 채움 바 — 너비/색상은 인라인 style로 주입 */
-
-.indicatorFill {
-  height: 100%;
-  border-radius: 99px;
-  transition: width 0.6s ease;
-}
-
-.indicatorValue {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-align: right;
-  color: var(--text-1);
-}
-
-.adjustmentBox {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  display: grid;
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--border);
-}
-
-.adjustmentRow {
+.stateHeader,
+.sectionHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 12px 14px;
-  background: var(--surface2);
+  gap: 24px;
+  min-height: 66px;
+}
+
+.stateHeader > div > span,
+.sectionHeader span,
+.stateMeta dt {
+  color: var(--hs-text-muted);
+  font-size: 8px;
+  font-weight: 660;
+}
+
+.stateHeader h2,
+.sectionHeader h2 {
+  margin: 5px 0 0;
+  color: var(--hs-text);
   font-size: 12px;
-  color: var(--text-3);
-}
-
-.adjustmentRow strong {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-1);
-}
-
-.adjustmentRow em {
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 500;
-  color: var(--text-3);
-}
-
-/* ────────────────────────────
-   HERD 히스토리 카드
-   ──────────────────────────── */
-
-/* 탭 버튼 묶음 (카드 헤더 우측) */
-
-.historyTabs {
-  display: flex;
-  gap: 4px;
-}
-
-.historyTab {
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border2);
-  background: none;
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
-}
-
-.historyTab:hover { color: var(--text-1); border-color: var(--text-3); }
-
-.historyTabActive {
-  background: var(--text-1);
-  color: var(--bg);
-  border-color: var(--text-1);
-}
-
-.historyTabActive:hover { color: var(--bg); }
-
-/* 빈 상태 / 로딩 */
-
-.chartEmpty {
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  color: var(--text-3);
-}
-
-.actionWarningList {
-  display: grid;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.actionWarningList span {
-  display: block;
-  padding: 9px 11px;
-  border: 1px solid rgba(249, 115, 22, 0.24);
-  border-radius: var(--card-radius);
-  background: rgba(249, 115, 22, 0.08);
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--drift);
-}
-
-/* ────────────────────────────
-   HERD 신호 신뢰도 카드
-   ──────────────────────────── */
-
-.reliabilityBadge {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid;
-  border-radius: 999px;
-  padding: 5px 10px;
-  background: rgba(255, 255, 255, 0.03);
-  font-size: 11px;
   font-weight: 700;
-  white-space: nowrap;
+  letter-spacing: -.02em;
 }
 
-.reliabilityGrid {
+.stateMeta {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--border);
+  grid-template-columns: repeat(4, minmax(76px, auto));
+  gap: 0;
+  margin: 0;
 }
 
-.currentReliability {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 12px;
-  padding: 14px 16px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: var(--card-radius);
-  background: rgba(59, 130, 246, 0.08);
+.stateMeta > div {
+  padding: 2px 18px;
+  border-left: 1px solid var(--hs-line);
 }
 
-.currentReliability div {
+.stateMeta dd {
+  margin: 6px 0 0;
+  color: var(--hs-text-subtle);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.evidenceSection {
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.sectionHeader > div:first-child {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  min-width: 0;
 }
 
-.currentReliability span {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--text-3);
+.sectionHeader h2 {
+  margin: 0;
 }
-
-.currentReliability strong {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: var(--flee);
-}
-
-.currentReliability em {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--text-2);
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.reliabilityItem {
-  min-width: 0;
-  background: var(--surface2);
-  padding: 13px 14px;
-}
-
-.reliabilityItem span,
-.reliabilityItem em {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.reliabilityItem span {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 6px;
-}
-
-.reliabilityItem strong {
-  display: block;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: var(--text-1);
-  margin-bottom: 3px;
-}
-
-.reliabilityItem em {
-  font-size: 10px;
-  font-style: normal;
-  color: var(--text-3);
-}
-
-.reliabilityEvidenceGrid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.reliabilityEvidenceItem {
-  min-width: 0;
-  padding: 12px 13px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: rgba(255, 255, 255, 0.025);
-}
-
-.reliabilityEvidenceItem span,
-.reliabilityEvidenceItem strong,
-.reliabilityEvidenceItem em {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.reliabilityEvidenceItem span {
-  margin-bottom: 6px;
-  color: var(--text-3);
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.reliabilityEvidenceItem strong {
-  margin-bottom: 3px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0;
-  color: var(--text-1);
-}
-
-.reliabilityEvidenceItem em {
-  color: var(--text-3);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 600;
-}
-
-.reliabilityEvidence_buy strong {
-  color: var(--positive);
-}
-
-.reliabilityEvidence_sell strong {
-  color: var(--negative);
-}
-
-.reliabilityEvidence_neutral strong {
-  color: var(--text-2);
-}
-
-.reliabilitySummary {
-  margin-top: 12px;
-  font-size: 12px;
-  color: var(--text-2);
-  line-height: 1.5;
-}
-
-/* ────────────────────────────
-   신호 근거 카드
-   ──────────────────────────── */
 
 .evidenceGrid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--border);
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
 }
 
 .evidenceItem {
   min-width: 0;
-  background: var(--surface2);
-  padding: 13px 14px;
+  padding: 18px 18px 16px 0;
+}
+
+.evidenceItem + .evidenceItem {
+  padding-left: 18px;
+  border-left: 1px solid var(--hs-line);
 }
 
 .evidenceItem span,
-.evidenceItem em {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.evidenceItem span {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-bottom: 6px;
+.riskContext > span {
+  color: var(--hs-text-muted);
+  font-size: 8px;
+  font-weight: 650;
 }
 
 .evidenceItem strong {
   display: block;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: var(--text-1);
-  margin-bottom: 3px;
+  margin-top: 9px;
+  color: var(--hs-text);
+  font-size: 20px;
+  font-weight: 520;
 }
 
-.evidenceItem em {
+.evidenceItem i,
+.riskContext i {
+  position: relative;
+  display: block;
+  height: 1px;
+  margin-top: 12px;
+  overflow: hidden;
+  background: var(--hs-line);
+}
+
+.evidenceItem i b,
+.riskContext i b {
+  position: absolute;
+  inset: 0 auto 0 0;
+}
+
+.riskContext {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 18px;
+  padding-top: 20px;
+}
+
+.riskContext i {
+  margin: 0;
+}
+
+.riskContext i b {
+  background: var(--hs-loss);
+  opacity: .72;
+}
+
+.riskContext strong {
+  color: var(--hs-text-subtle);
   font-size: 10px;
-  font-style: normal;
-  color: var(--text-3);
+  text-align: right;
 }
 
-/* ────────────────────────────
-   내 판단 기록 카드
-   ──────────────────────────── */
-
-.journalSummaryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  overflow: hidden;
-  margin-bottom: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--border);
+.historySection {
+  margin-top: 50px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--hs-line);
 }
 
-/* ────────────────────────────
-   Fundamental Guard 카드
-   ──────────────────────────── */
-
-.fundamentalGrid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  background: var(--border);
-}
-
-@media (max-width: 900px) {
-  .stockHeader {
-    flex-direction: column;
-    gap: 18px;
-  }
-
-  .stockHeaderRight {
-    width: 100%;
-  }
-
-  .btnWatchlist,
-  .btnPrimary {
-    flex: 1;
-  }
-
-  .herdCard {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .herdScoreSide {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .herdAnimSide {
-    min-height: 220px;
-  }
-
-  .evidenceGrid,
-  .reliabilityGrid,
-  .fundamentalGrid,
-  .journalSummaryGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .decisionHero,
-  .currentReliability {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 560px) {
-  .breadcrumb {
-    margin-bottom: 14px;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .stockHeader {
-    margin-bottom: 18px;
-    padding: 4px 0 18px;
-  }
-
-  .stockHeaderLeft {
-    gap: 14px;
-  }
-
-  .stockTicker {
-    font-size: 24px;
-  }
-
-  .stockHeaderRight {
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .btnWatchlist,
-  .btnPrimary {
-    min-height: 42px;
-    padding: 10px 12px;
-  }
-
-  .card {
-    margin-left: -4px;
-    margin-right: -4px;
-  }
-
-  .cardHeader {
-    min-height: auto;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 7px;
-    padding: 16px 16px 0;
-  }
-
-  .cardBody,
-  .cardBodySmall {
-    padding: 16px;
-  }
-
-  .herdCard {
-    margin-left: -4px;
-    margin-right: -4px;
-  }
-
-  .herdScoreSide {
-    min-height: 188px;
-    padding: 28px 24px 22px;
-  }
-
-  .herdBigScore {
-    font-size: 72px;
-  }
-
-  .herdAnimSide {
-    min-height: 214px;
-  }
-
-  .herdAnimBottom {
-    padding: 0 12px;
-  }
-
-  .spectrumLabels {
-    font-size: 7px;
-  }
-
-  .evidenceGrid,
-  .reliabilityGrid,
-  .fundamentalGrid,
-  .journalSummaryGrid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* ── 로딩 / 에러 ── */
-
-.loadingState {
+.historyTabs {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 60px 0;
+  gap: 2px;
 }
 
-.loadingText {
-  font-size: 14px;
-  color: var(--text-3);
-}
-
-.errorState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60px 0;
-  gap: 10px;
-}
-
-.errorTitle {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-2);
-  text-align: center;
-}
-
-.errorSub {
-  font-size: 13px;
-  color: var(--text-3);
-  text-align: center;
-}
-
-.retryBtn {
-  margin-top: 8px;
-  background: none;
-  border: 1px solid var(--border2);
-  border-radius: var(--card-radius);
-  padding: 8px 20px;
-  font-size: 13px;
-  color: var(--text-1);
+.historyTab {
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--hs-text-muted);
+  font-size: 9px;
+  font-weight: 690;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: border-color 0.15s;
 }
 
-.retryBtn:hover { border-color: var(--text-3); }
+.historyTabActive {
+  background: var(--hs-text);
+  color: var(--hs-bg);
+}
 
-.actionError {
-  margin: 0 0 16px;
-  padding: 10px 14px;
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  border-radius: 10px;
-  color: var(--rush);
-  background: rgba(239, 68, 68, 0.08);
-  font-size: 13px;
+.historyBody {
+  min-height: 250px;
+  padding-top: 8px;
+}
+
+.chartEmpty {
+  display: grid;
+  min-height: 210px;
+  color: var(--hs-text-muted);
+  font-size: 10px;
+  place-items: center;
 }
 
 .detailDisclosure {
-  overflow: hidden;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  margin-top: 28px;
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
 }
 
 .detailDisclosure > summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 17px 4px;
-  cursor: pointer;
+  min-height: 66px;
   list-style: none;
+  cursor: pointer;
 }
 
-.detailDisclosure > summary::-webkit-details-marker { display: none; }
+.detailDisclosure > summary::-webkit-details-marker {
+  display: none;
+}
 
-.detailDisclosure > summary div { display: flex; align-items: baseline; gap: 10px; }
+.detailDisclosure > summary div {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
 
-.detailDisclosure > summary span { color: var(--text-3); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.detailDisclosure > summary span,
+.detailDisclosure > summary em {
+  color: var(--hs-text-muted);
+  font-size: 8px;
+  font-style: normal;
+}
 
-.detailDisclosure > summary strong { color: var(--text-1); font-size: 13px; }
+.detailDisclosure > summary strong {
+  color: var(--hs-text);
+  font-size: 11px;
+  font-weight: 670;
+}
 
-.detailDisclosure > summary em { color: var(--text-3); font-size: 10px; font-style: normal; }
+.detailDisclosure > summary em::after {
+  content: " +";
+}
 
-.detailDisclosure[open] > summary em { font-size: 0; }
+.detailDisclosure[open] > summary em::after {
+  content: " −";
+}
 
-.detailDisclosure[open] > summary em::after { content: '접기'; font-size: 10px; }
+.detailDisclosureBody {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 24px;
+}
 
-.detailDisclosureBody { display: grid; gap: 16px; padding-bottom: 18px; }
+.card {
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-md);
+  background: var(--hs-surface);
+}
 
-.detailDisclosureBody > .card,
-.detailDisclosureBody > section { margin-bottom: 0; }
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 60px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.cardTitle {
+  color: var(--hs-text);
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.cardMeta {
+  margin-top: 4px;
+  color: var(--hs-text-muted);
+  font-size: 8px;
+}
+
+.cardBody,
+.cardBodySmall {
+  padding: 18px;
+}
+
+.fundamentalGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-sm);
+  background: var(--hs-line);
+}
+
+.journalSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-sm);
+  background: var(--hs-line);
+}
+
+@media (max-width: 820px) {
+  .stateHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px 0;
+  }
+
+  .stateMeta {
+    width: 100%;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stateMeta > div {
+    padding-inline: 12px;
+  }
+
+  .stateMeta > div:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .fundamentalGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding-top: 16px;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  .stockHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-top: 18px;
+  }
+
+  .stockHeaderRight {
+    width: 100%;
+  }
+
+  .stockHeaderRight button {
+    flex: 1;
+  }
+
+  .stateMeta {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 16px;
+  }
+
+  .stateMeta > div:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .evidenceGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .evidenceItem:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--hs-line);
+  }
+
+  .evidenceItem:nth-child(4) {
+    border-top: 1px solid var(--hs-line);
+  }
+
+  .riskContext {
+    grid-template-columns: 100px minmax(0, 1fr) 28px;
+    gap: 10px;
+  }
+
+  .sectionHeader {
+    align-items: flex-start;
+    min-height: 76px;
+    padding-top: 18px;
+  }
+
+  .historyTabs {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .detailDisclosure > summary div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .fundamentalGrid,
+  .journalSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { addToPortfolio, addToWatchlist } from '../../api/herdApi'
 import { useAuth } from '../../auth/AuthContext'
 import { clearPortfolioCaches } from '../../features/portfolio/portfolioCache'
-import { getHerdMomentum } from '../../utils/herdMomentum'
 import {
   isObservationAvailable,
   observationScore,
@@ -80,7 +79,7 @@ export function useStockDetail(ticker) {
   const stageDisp = herdStage ? `Herd ${herdStage}` : null
   const color = stageColor(herdStage)
   const fundamentalGuard = useMemo(
-    () => evaluateFundamentalGuard(financials, null),
+    () => evaluateFundamentalGuard(financials),
     [financials],
   )
   const journalSummary = useMemo(
@@ -92,10 +91,6 @@ export function useStockDetail(ticker) {
     if (!observationAvailable || !observation?.observationDate) return []
     return [{ date: observation.observationDate, score: herdScore }]
   }, [herdHistory, herdScore, observation, observationAvailable])
-  const herdMomentum = useMemo(
-    () => getHerdMomentum(historyPoints, herdScore, herdStage),
-    [herdScore, herdStage, historyPoints],
-  )
 
   async function handleJournalAction(actionType, details = {}) {
     await journal.saveSignalLog({
@@ -145,7 +140,6 @@ export function useStockDetail(ticker) {
     fundamentalGuard,
     journalSummary,
     historyPoints,
-    herdMomentum,
     handleJournalAction,
     handleJournalDelete: journal.removeSignalLog,
   }

@@ -14,7 +14,7 @@ export default function StockDetailRecords({
   return (
     <details className={styles.detailDisclosure}>
       <summary>
-        <div><span>투자 기록</span><strong>재무 가드·나의 판단 기록</strong></div>
+        <div><span>개인 기록</span><strong>기업 정보 · 판단 로그</strong></div>
         <em>펼쳐보기</em>
       </summary>
       <div className={styles.detailDisclosureBody}>

@@ -15,7 +15,7 @@ export default function StockDetailJournal({ summary, logs, onCreate, onDelete }
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
-        <div><div className={styles.cardTitle}>내 판단 기록</div><div className={styles.cardMeta}>HERD 신호를 보고 남긴 실사용 로그</div></div>
+        <div><div className={styles.cardTitle}>내 판단 기록</div><div className={styles.cardMeta}>HERD 상태와 함께 남긴 개인 로그</div></div>
         <div className={styles.cardMeta}>{formatJournalCount(summary.totalCount)}</div>
       </div>
       <div className={styles.cardBodySmall}>

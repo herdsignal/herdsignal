@@ -14,14 +14,6 @@ export function badgeColors(stage) {
   return { background: badge.bg, color: badge.color }
 }
 
-export function getTimingSignal(score) {
-  if (score >= 75) return '군중 밀집 · 익절 근거 미채택'
-  if (score >= 60) return '군중 쏠림 · 행동 근거 검증 중'
-  if (score >= 40) return '군중 균형'
-  if (score >= 15) return '군중 분산 · 매수 근거 미채택'
-  return '군중 이탈 · 매수 근거 미채택'
-}
-
 export function journalActionLabel(type) {
   switch (type) {
     case 'BUY': return '매수 기록'

@@ -1,55 +1,39 @@
-import HerdDots from '../../components/HerdDots/HerdDots'
-import SpectrumBar from '../../components/SpectrumBar/SpectrumBar'
+import MarketField from '../../components/MarketField/MarketField'
+import { resolvePreviousScore } from '../../components/HerdLens/herdLensModel'
 import styles from './StockDetail.module.css'
-import { getTimingSignal } from './stockDetailModel'
+
+function signed(value) {
+  const numeric = Number(value)
+  if (!Number.isFinite(numeric)) return '—'
+  const rounded = Math.round(numeric)
+  return `${rounded > 0 ? '+' : ''}${rounded}`
+}
 
 export default function StockDetailHero({
   observation,
   herdScore,
-  stageDisp,
-  color,
-  herdMomentum,
+  herdStage,
 }) {
+  const previous = resolvePreviousScore(herdScore, null, observation.delta4w)
+
   return (
-    <>
-      <div className={styles.herdCard}>
-        <div className={styles.herdScoreSide}>
-          <div className={styles.herdEyebrow}>HERD State S1</div>
-          <div className={styles.herdBigScore} style={{ color }}>{Math.round(herdScore)}</div>
-          <div className={styles.herdBigStage} style={{ color }}>{stageDisp}</div>
-          <div
-            className={styles.timingSignal}
-            style={{ color }}
-          >
-            {getTimingSignal(herdScore)}
-          </div>
-          <div className={styles.qualityReason}>
-            {observation.transition} · {observation.freshnessStatus === 'STALE' ? '업데이트 필요' : observation.lastObservedSession}
-          </div>
+    <section className={styles.stateSection} aria-labelledby="stock-state-title">
+      <div className={styles.stateHeader}>
+        <div>
+          <span>HERD State S1</span>
+          <h2 id="stock-state-title">현재 군중 상태</h2>
         </div>
-
-        <div className={styles.herdAnimSide}>
-          <HerdDots
-            score={herdScore}
-            momentum={herdMomentum.delta ?? (herdScore - 50) / 3}
-            actionRatio={0}
-            enhanced
-            fill
-            dotCount={55}
-          />
-          <div className={styles.herdAnimBottom}>
-            <SpectrumBar score={herdScore} height={3} />
-            <div className={styles.spectrumLabels}>
-              <span>Flee 군중 이탈</span>
-              <span>Scatter 군중 흩어짐</span>
-              <span>Calm 군중 균형</span>
-              <span>Drift 군중 쏠림</span>
-              <span>Rush 군중 밀집</span>
-            </div>
+        <dl className={styles.stateMeta}>
+          <div><dt>4주 전</dt><dd>{previous == null ? '—' : Math.round(previous)}</dd></div>
+          <div><dt>4주 변화</dt><dd>{signed(observation.delta4w)}</dd></div>
+          <div><dt>전환</dt><dd>{observation.transition ?? '—'}</dd></div>
+          <div>
+            <dt>관찰일</dt>
+            <dd>{observation.lastObservedSession ?? observation.observationDate ?? '—'}</dd>
           </div>
-        </div>
+        </dl>
       </div>
-
-    </>
+      <MarketField compact score={herdScore} stage={herdStage} />
+    </section>
   )
 }
