@@ -1,0 +1,134 @@
+.field {
+  --field-color: var(--hs-calm);
+
+  position: relative;
+  min-height: clamp(430px, 62vh, 680px);
+  overflow: hidden;
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+  color: var(--field-color);
+}
+
+.dots {
+  position: absolute;
+  inset: 4% 2% 16%;
+}
+
+.dots i {
+  position: absolute;
+  top: var(--dot-y);
+  left: var(--dot-x);
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  background: currentColor;
+  opacity: var(--dot-opacity);
+  transform: translate(-50%, -50%);
+}
+
+.reading {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  transform: translate(-50%, -50%);
+}
+
+.reading strong {
+  color: var(--hs-text);
+  font-size: clamp(84px, 12vw, 172px);
+  font-weight: 360;
+  line-height: 0.78;
+  letter-spacing: -0.075em;
+}
+
+.reading span {
+  margin-top: 28px;
+  color: currentColor;
+  font-size: 12px;
+  font-weight: 720;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.spectrum {
+  position: absolute;
+  right: 0;
+  bottom: 40px;
+  left: 0;
+  height: 28px;
+  border-top: 1px solid var(--hs-line-strong);
+}
+
+.spectrum::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--hs-flee),
+    var(--hs-scatter) 28%,
+    var(--hs-calm) 50%,
+    var(--hs-drift) 72%,
+    var(--hs-rush)
+  );
+  opacity: 0.62;
+}
+
+.current {
+  position: absolute;
+  top: 0;
+  left: var(--field-score);
+  width: 8px;
+  height: 8px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: var(--hs-bg);
+  transform: translate(-50%, -50%);
+}
+
+.spectrum span {
+  position: absolute;
+  top: 12px;
+  left: var(--stage-position);
+  color: var(--hs-text-muted);
+  font-size: 7px;
+  font-weight: 650;
+  transform: translateX(-50%);
+}
+
+.unavailable .dots,
+.unavailable .spectrum {
+  opacity: 0.35;
+}
+
+@media (max-width: 760px) {
+  .field {
+    min-height: clamp(410px, 66vh, 570px);
+  }
+
+  .dots {
+    inset-inline: -14%;
+  }
+
+  .reading strong {
+    font-size: clamp(88px, 30vw, 124px);
+  }
+
+  .spectrum {
+    bottom: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field,
+  .field * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+

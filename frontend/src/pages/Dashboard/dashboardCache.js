@@ -13,6 +13,12 @@ import {
   writeCache,
   writeUserCache,
 } from '../../features/portfolio/portfolioCache'
+import {
+  CACHE_KEY_SPY,
+  CACHE_KEY_SPY_HISTORY,
+  CACHE_KEY_SPY_HISTORY_VERSION,
+  spyHistoryCacheKey,
+} from '../../features/market/marketCache'
 
 export { API_HOST }
 
@@ -28,9 +34,11 @@ export {
   writeCache,
   writeUserCache,
 }
-export const CACHE_KEY_SPY = 'hs_spy_observation_s1'
-export const CACHE_KEY_SPY_HISTORY = 'hs_spy_observation_history'
-export const CACHE_KEY_SPY_HISTORY_VERSION = 's1-v1'
+export {
+  CACHE_KEY_SPY,
+  CACHE_KEY_SPY_HISTORY,
+  CACHE_KEY_SPY_HISTORY_VERSION,
+}
 export const CACHE_KEY_VERSION = 'hs_dashboard_cache_version'
 export const CACHE_KEY_PORTFOLIO_SORT = 'hs_dashboard_sort'
 export const DASHBOARD_CACHE_VERSION = 's1-only-observations'
@@ -60,9 +68,7 @@ export function formatInputDate(value) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
 }
 
-export function spyHistoryCacheKey(period) {
-  return `${CACHE_KEY_SPY_HISTORY}_${period}_${CACHE_KEY_SPY_HISTORY_VERSION}`
-}
+export { spyHistoryCacheKey }
 
 export function ensureDashboardCacheVersion() {
   try {

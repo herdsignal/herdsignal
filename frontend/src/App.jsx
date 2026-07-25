@@ -12,6 +12,7 @@ import ProtectedRoute from './auth/ProtectedRoute'
 import { ROUTER_FUTURE } from './routerConfig'
 
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'))
+const MarketHome = lazy(() => import('./pages/MarketHome/MarketHome'))
 const PublicHome = lazy(() => import('./pages/PublicHome/PublicHome'))
 const Login = lazy(() => import('./pages/Login/Login'))
 const StockDetail = lazy(() => import('./pages/StockDetail/StockDetail'))
@@ -42,7 +43,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
           {/* Layout이 공통 탐색 + <Outlet>으로 모든 보호 페이지를 감싼다 */}
           <Route element={<Layout />}>
-            <Route path="/app"           element={<Dashboard />} />
+            <Route path="/app"           element={<MarketHome />} />
             <Route path="/portfolio"     element={<Dashboard />} />
             <Route path="/stock/:ticker" element={<StockDetail />} />
             <Route path="/search"        element={<Search />} />
