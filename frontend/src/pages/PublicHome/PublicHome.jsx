@@ -73,7 +73,7 @@ export default function PublicHome() {
                 <button type="submit">HERD 확인</button>
               </div>
             </form>
-            <Link to="/app" className={styles.primaryCta}>내 포트폴리오 보기</Link>
+            <Link to="/portfolio" className={styles.primaryCta}>내 포트폴리오 보기</Link>
           </div>
 
           <div className={styles.marketPanel} aria-label="S&P 500 군중 상태">

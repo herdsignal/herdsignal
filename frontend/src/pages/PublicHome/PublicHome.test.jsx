@@ -19,6 +19,7 @@ describe('PublicHome', () => {
     expect(screen.getByRole('heading', { name: /시장에 사람이/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'HERD 확인' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '내 대시보드' })).toHaveAttribute('href', '/app')
+    expect(screen.getByRole('link', { name: '내 포트폴리오 보기' })).toHaveAttribute('href', '/portfolio')
     expect((await screen.findAllByText('Drift')).length).toBeGreaterThan(0)
   })
 })

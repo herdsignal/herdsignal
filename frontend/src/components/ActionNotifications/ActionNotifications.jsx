@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useActionNotifications } from '../../hooks/useActionNotifications'
 import styles from './ActionNotifications.module.css'
 
-export default function ActionNotifications() {
+export default function ActionNotifications({ placement = 'default' }) {
   const [open, setOpen] = useState(false)
   const [acknowledged, setAcknowledged] = useState(false)
   const panelRef = useRef(null)
@@ -30,7 +30,10 @@ export default function ActionNotifications() {
   }
 
   return (
-    <div className={styles.root} ref={panelRef}>
+    <div
+      className={`${styles.root} ${placement === 'menu' ? styles.menuPlacement : ''}`}
+      ref={panelRef}
+    >
       <button
         type="button"
         className={styles.trigger}

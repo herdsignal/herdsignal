@@ -1,19 +1,47 @@
-/**
- * Layout.jsx — 사이드바 + 메인 영역 래퍼
- * wireframes/wireframe-home-v4.html 사이드바 구조 기준으로 구현.
- * 다크/라이트 모드 토글은 body 클래스 방식으로 관리.
- */
-
-import { useState, useEffect } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import herdSignalMark from '../../assets/brand/herdsignal-mark.svg'
 import { useAuth } from '../../auth/AuthContext'
 import ActionNotifications from '../ActionNotifications/ActionNotifications'
 import styles from './Layout.module.css'
 
+const PRIMARY_NAVIGATION = [
+  { to: '/app', label: '시장', end: true },
+  { to: '/portfolio', label: '포트폴리오' },
+  { to: '/search', label: '종목' },
+  { to: '/herd-lab', label: '연구' },
+]
+
+const SECONDARY_NAVIGATION = [
+  { to: '/watchlist', label: '관찰 종목' },
+  { to: '/history', label: '자산 히스토리' },
+  { to: '/journal', label: '판단 기록' },
+  { to: '/settings', label: '설정' },
+]
+
+function Navigation({ className, label }) {
+  return (
+    <nav className={className} aria-label={label}>
+      {PRIMARY_NAVIGATION.map((item) => (
+        <NavLink
+          key={item.to}
+          to={item.to}
+          end={item.end}
+          className={({ isActive }) =>
+            `${styles.navItem} ${isActive ? styles.active : ''}`
+          }
+        >
+          {item.label}
+        </NavLink>
+      ))}
+    </nav>
+  )
+}
 export default function Layout() {
   const { user, signOut } = useAuth()
-  /* body.light 클래스로 라이트모드 전환 */
+  const location = useLocation()
+  const accountRef = useRef(null)
+  const [accountOpen, setAccountOpen] = useState(false)
   const [isDark, setIsDark] = useState(() => {
     return localStorage.getItem('herdsignal_theme') !== 'light'
   })
@@ -23,91 +51,94 @@ export default function Layout() {
     localStorage.setItem('herdsignal_theme', isDark ? 'dark' : 'light')
   }, [isDark])
 
+  useEffect(() => {
+    setAccountOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!accountOpen) return undefined
+
+    const closeOutside = (event) => {
+      if (!accountRef.current?.contains(event.target)) setAccountOpen(false)
+    }
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setAccountOpen(false)
+    }
+
+    document.addEventListener('pointerdown', closeOutside)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [accountOpen])
+
+  const userInitial = (user?.displayName || user?.email || 'U').slice(0, 1)
+
   return (
     <div className={styles.wrapper}>
-      {/* ── 사이드바 ── */}
-      <aside className={styles.sidebar}>
-        <div className={styles.logo}>
-          <img src={herdSignalMark} alt="" className={styles.logoMark} aria-hidden="true" />
-          <span className={styles.logoText}>
-            Herd<em>Signal</em>
-          </span>
-        </div>
+      <header className={styles.topbar}>
+        <NavLink className={styles.brand} to="/app" aria-label="HerdSignal 시장 홈">
+          <img src={herdSignalMark} alt="" aria-hidden="true" />
+          <span>HerdSignal</span>
+        </NavLink>
 
-        {/* 포트폴리오 섹션 */}
-        <nav className={styles.navGroup}>
-          <div className={styles.navLabel}>포트폴리오</div>
-          <NavLink
-            to="/app"
-            end
-            className={({ isActive }) =>
-              `${styles.navItem} ${isActive ? styles.active : ''}`
-            }
-          >
-            <span className={styles.navIcon}>⌂</span><span>대시보드</span>
-          </NavLink>
-          <NavLink
-            to="/watchlist"
-            className={({ isActive }) =>
-              `${styles.navItem} ${isActive ? styles.active : ''}`
-            }
-          >
-            <span className={styles.navIcon}>◎</span><span>대기열</span>
-          </NavLink>
-        </nav>
+        <Navigation className={styles.desktopNav} label="주요 메뉴" />
 
-        {/* 분석 섹션 */}
-        <nav className={styles.navGroup}>
-          <div className={styles.navLabel}>분석</div>
-          <NavLink
-            to="/search"
-            className={({ isActive }) =>
-              `${styles.navItem} ${isActive ? styles.active : ''}`
-            }
-          >
-            <span className={styles.navIcon}>⌕</span><span>검색</span>
+        <div className={styles.account} ref={accountRef}>
+          <NavLink className={styles.watchlistLink} to="/watchlist">
+            관찰
           </NavLink>
-          <NavLink
-            to="/herd-lab"
-            className={({ isActive }) =>
-              `${styles.navItem} ${isActive ? styles.active : ''}`
-            }
-          >
-            <span className={styles.navIcon}>◇</span><span>HERD Lab</span>
-          </NavLink>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              `${styles.navItem} ${isActive ? styles.active : ''}`
-            }
-          >
-            <span className={styles.navIcon}>⚙</span><span>설정</span>
-          </NavLink>
-        </nav>
-
-        {/* 하단 — 테마 토글 */}
-        <div className={styles.sidebarBottom}>
-          <ActionNotifications />
-          <div className={styles.userSummary}>
-            {user?.profileImageUrl
-              ? <img src={user.profileImageUrl} alt="" referrerPolicy="no-referrer" />
-              : <span>{(user?.displayName || 'U').slice(0, 1)}</span>}
-            <div><strong>{user?.displayName}</strong><em>{user?.developmentMode ? '개발 모드' : user?.email}</em></div>
-          </div>
-          {!user?.developmentMode && <button className={styles.logoutBtn} onClick={signOut}>로그아웃</button>}
           <button
-            className={styles.themeBtn}
-            onClick={() => setIsDark((d) => !d)}
+            type="button"
+            className={styles.accountTrigger}
+            aria-label="계정 메뉴"
+            aria-expanded={accountOpen}
+            onClick={() => setAccountOpen((open) => !open)}
           >
-            {isDark ? '라이트 모드' : '다크 모드'}
+            {user?.profileImageUrl
+              ? (
+                <img
+                  src={user.profileImageUrl}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                />
+                )
+              : <span>{userInitial}</span>}
           </button>
-        </div>
-      </aside>
 
-      {/* ── 메인 영역 — 페이지가 여기 렌더 ── */}
+          {accountOpen && (
+            <section className={styles.accountPanel} aria-label="계정 메뉴">
+              <div className={styles.userSummary}>
+                <strong>{user?.displayName || 'HerdSignal 사용자'}</strong>
+                <span>{user?.developmentMode ? '개발 모드' : user?.email}</span>
+              </div>
+              <ActionNotifications placement="menu" />
+              <nav className={styles.secondaryNav} aria-label="보조 메뉴">
+                {SECONDARY_NAVIGATION.map((item) => (
+                  <NavLink key={item.to} to={item.to}>
+                    {item.label}
+                  </NavLink>
+                ))}
+              </nav>
+              <div className={styles.panelActions}>
+                <button type="button" onClick={() => setIsDark((dark) => !dark)}>
+                  {isDark ? '라이트 모드' : '다크 모드'}
+                </button>
+                {!user?.developmentMode && (
+                  <button type="button" onClick={signOut}>로그아웃</button>
+                )}
+              </div>
+            </section>
+          )}
+        </div>
+      </header>
+
       <main className={styles.main}>
         <Outlet />
       </main>
+
+      <Navigation className={styles.mobileNav} label="모바일 주요 메뉴" />
     </div>
   )
 }

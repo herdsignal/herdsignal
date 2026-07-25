@@ -40,9 +40,10 @@ export default function App() {
           <Route path="/" element={<PublicHome />} />
           <Route path="/login" element={<Login />} />
           <Route element={<ProtectedRoute />}>
-          {/* Layout이 사이드바 + <Outlet>으로 모든 페이지를 감싼다 */}
+          {/* Layout이 공통 탐색 + <Outlet>으로 모든 보호 페이지를 감싼다 */}
           <Route element={<Layout />}>
             <Route path="/app"           element={<Dashboard />} />
+            <Route path="/portfolio"     element={<Dashboard />} />
             <Route path="/stock/:ticker" element={<StockDetail />} />
             <Route path="/search"        element={<Search />} />
             <Route path="/watchlist"     element={<Watchlist />} />
