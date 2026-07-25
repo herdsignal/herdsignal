@@ -19,6 +19,23 @@ const SECONDARY_NAVIGATION = [
   { to: '/settings', label: '설정' },
 ]
 
+const PAGE_TITLES = {
+  '/app': '시장',
+  '/portfolio': '포트폴리오',
+  '/search': '종목 찾기',
+  '/watchlist': '관심종목',
+  '/history': '자산 히스토리',
+  '/journal': '판단 기록',
+  '/herd-lab': 'HERD 연구실',
+  '/settings': '투자 프로필',
+}
+
+export function titleForPath(pathname) {
+  if (pathname.startsWith('/stock/')) return '종목 상세 · HerdSignal'
+  const title = PAGE_TITLES[pathname]
+  return title ? `${title} · HerdSignal` : 'HerdSignal'
+}
+
 function Navigation({ className, label }) {
   return (
     <nav className={className} aria-label={label}>
@@ -41,6 +58,8 @@ export default function Layout() {
   const { user, signOut } = useAuth()
   const location = useLocation()
   const accountRef = useRef(null)
+  const accountTriggerRef = useRef(null)
+  const mainRef = useRef(null)
   const [accountOpen, setAccountOpen] = useState(false)
   const [isDark, setIsDark] = useState(() => {
     return localStorage.getItem('herdsignal_theme') !== 'light'
@@ -56,13 +75,21 @@ export default function Layout() {
   }, [location.pathname])
 
   useEffect(() => {
+    document.title = titleForPath(location.pathname)
+    mainRef.current?.focus({ preventScroll: true })
+  }, [location.pathname])
+
+  useEffect(() => {
     if (!accountOpen) return undefined
 
     const closeOutside = (event) => {
       if (!accountRef.current?.contains(event.target)) setAccountOpen(false)
     }
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setAccountOpen(false)
+      if (event.key === 'Escape') {
+        setAccountOpen(false)
+        accountTriggerRef.current?.focus()
+      }
     }
 
     document.addEventListener('pointerdown', closeOutside)
@@ -77,6 +104,7 @@ export default function Layout() {
 
   return (
     <div className={styles.wrapper}>
+      <a className={styles.skipLink} href="#main-content">본문으로 건너뛰기</a>
       <header className={styles.topbar}>
         <NavLink className={styles.brand} to="/app" aria-label="HerdSignal 시장 홈">
           <img src={herdSignalMark} alt="" aria-hidden="true" />
@@ -90,10 +118,13 @@ export default function Layout() {
             관찰
           </NavLink>
           <button
+            ref={accountTriggerRef}
             type="button"
             className={styles.accountTrigger}
-            aria-label="계정 메뉴"
+            aria-label={accountOpen ? '계정 메뉴 닫기' : '계정 메뉴 열기'}
             aria-expanded={accountOpen}
+            aria-controls="account-panel"
+            aria-haspopup="true"
             onClick={() => setAccountOpen((open) => !open)}
           >
             {user?.profileImageUrl
@@ -108,7 +139,7 @@ export default function Layout() {
           </button>
 
           {accountOpen && (
-            <section className={styles.accountPanel} aria-label="계정 메뉴">
+            <aside id="account-panel" className={styles.accountPanel} aria-label="계정 메뉴">
               <div className={styles.userSummary}>
                 <strong>{user?.displayName || 'HerdSignal 사용자'}</strong>
                 <span>{user?.developmentMode ? '개발 모드' : user?.email}</span>
@@ -129,12 +160,17 @@ export default function Layout() {
                   <button type="button" onClick={signOut}>로그아웃</button>
                 )}
               </div>
-            </section>
+            </aside>
           )}
         </div>
       </header>
 
-      <main className={styles.main}>
+      <main
+        id="main-content"
+        ref={mainRef}
+        className={styles.main}
+        tabIndex="-1"
+      >
         <Outlet />
       </main>
 

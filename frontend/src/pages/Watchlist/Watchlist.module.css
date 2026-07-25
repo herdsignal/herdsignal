@@ -50,6 +50,12 @@
   font-size: 8px;
 }
 
+.inlineError {
+  margin: 0 0 16px;
+  color: var(--hs-loss);
+  font-size: 9px;
+}
+
 .headerActions button,
 .statePanel button,
 .emptyState button {

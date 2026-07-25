@@ -47,6 +47,25 @@
   background: var(--hs-bg);
 }
 
+.skipLink {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 13px;
+  border-radius: var(--hs-radius-sm);
+  background: var(--hs-text);
+  color: var(--hs-bg);
+  font-size: 11px;
+  font-weight: 720;
+  transform: translateY(-160%);
+}
+
+.skipLink:focus {
+  box-shadow: var(--hs-focus-ring);
+  transform: translateY(0);
+}
+
 .topbar {
   position: sticky;
   top: 0;
@@ -244,6 +263,10 @@
   min-width: 0;
   margin: 0 auto;
   padding: 40px var(--hs-page-gutter) 72px;
+}
+
+.main:focus {
+  outline: none;
 }
 
 .mobileNav {

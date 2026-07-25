@@ -6,6 +6,7 @@
  */
 
 import { useMemo, useState } from 'react'
+import ModalDialog from '../ModalDialog/ModalDialog'
 import styles from './SignalJournalModal.module.css'
 
 const ACTION_META = {
@@ -83,26 +84,24 @@ export default function SignalJournalModal({
     })
   }
 
-  function handleKeyDown(e) {
-    if (e.key === 'Escape') onClose()
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSave()
-  }
-
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div
-        className={styles.modal}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={handleKeyDown}
-      >
+    <ModalDialog
+      onClose={onClose}
+      labelledBy="journal-dialog-title"
+      overlayClassName={styles.overlay}
+      dialogClassName={styles.modal}
+      onDialogKeyDown={(event) => {
+        if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) handleSave()
+      }}
+    >
         <div className={styles.header}>
           <div>
             <div className={styles.eyebrow}>HERD 판단 기록</div>
-            <div className={styles.title}>
+            <div id="journal-dialog-title" className={styles.title}>
               <span>{ticker}</span> {meta.title}
             </div>
           </div>
-          <button className={styles.closeBtn} onClick={onClose} aria-label="모달 닫기">
+          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="모달 닫기">
             ×
           </button>
         </div>
@@ -125,8 +124,9 @@ export default function SignalJournalModal({
         <div className={styles.body}>
           <div className={styles.fieldGrid}>
             <div className={styles.field}>
-              <label className={styles.fieldLabel}>{meta.priceLabel}</label>
+              <label className={styles.fieldLabel} htmlFor="journal-price">{meta.priceLabel}</label>
               <input
+                id="journal-price"
                 className={styles.input}
                 type="number"
                 value={price}
@@ -134,12 +134,13 @@ export default function SignalJournalModal({
                 placeholder="예: 185.50"
                 step="0.01"
                 min="0"
-                autoFocus
+                data-modal-autofocus
               />
             </div>
             <div className={styles.field}>
-              <label className={styles.fieldLabel}>{meta.quantityLabel}</label>
+              <label className={styles.fieldLabel} htmlFor="journal-quantity">{meta.quantityLabel}</label>
               <input
+                id="journal-quantity"
                 className={styles.input}
                 type="number"
                 value={quantity}
@@ -153,8 +154,9 @@ export default function SignalJournalModal({
 
           {actionType === 'SELL' && (
             <div className={styles.field}>
-              <label className={styles.fieldLabel}>실현 수익률 (%)</label>
+              <label className={styles.fieldLabel} htmlFor="journal-profit">실현 수익률 (%)</label>
               <input
+                id="journal-profit"
                 className={styles.input}
                 type="number"
                 value={profitPct}
@@ -166,8 +168,9 @@ export default function SignalJournalModal({
           )}
 
           <div className={styles.field}>
-            <label className={styles.fieldLabel}>메모</label>
+            <label className={styles.fieldLabel} htmlFor="journal-memo">메모</label>
             <textarea
+              id="journal-memo"
               className={styles.textarea}
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
@@ -181,14 +184,13 @@ export default function SignalJournalModal({
             <strong>{amount == null ? '—' : `$${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}</strong>
           </div>
 
-          {error && <p className={styles.errorMsg}>{error}</p>}
+          {error && <p className={styles.errorMsg} role="alert">{error}</p>}
         </div>
 
         <div className={styles.footer}>
-          <button className={styles.cancelBtn} onClick={onClose}>취소</button>
-          <button className={styles.saveBtn} onClick={handleSave}>기록 저장</button>
+          <button type="button" className={styles.cancelBtn} onClick={onClose}>취소</button>
+          <button type="button" className={styles.saveBtn} onClick={handleSave}>기록 저장</button>
         </div>
-      </div>
-    </div>
+    </ModalDialog>
   )
 }

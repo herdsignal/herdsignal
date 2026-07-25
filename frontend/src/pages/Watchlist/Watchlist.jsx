@@ -26,6 +26,7 @@ export default function Watchlist() {
   const [refreshing, setRefreshing] = useState(false)
   const [refreshNotice, setRefreshNotice] = useState(null)
   const [error, setError] = useState(null)
+  const [deleteError, setDeleteError] = useState(null)
   const [deletingTicker, setDeletingTicker] = useState(null)
   const refreshNoticeTimer = useRef(null)
 
@@ -83,10 +84,13 @@ export default function Watchlist() {
   async function handleDelete(event, ticker) {
     event.stopPropagation()
     if (deletingTicker) return
+    setDeleteError(null)
     setDeletingTicker(ticker)
     try {
       await removeFromWatchlist(ticker)
       setWatchlist((current) => current.filter((item) => item.ticker !== ticker))
+    } catch {
+      setDeleteError(`${ticker} 관심종목을 삭제하지 못했습니다.`)
     } finally {
       setDeletingTicker(null)
     }
@@ -102,7 +106,7 @@ export default function Watchlist() {
   )
 
   return (
-    <main className={styles.page}>
+    <div className={styles.page} aria-busy={loading || refreshing}>
       <header className={styles.pageHeader}>
         <div>
           <span>WATCH FIELD</span>
@@ -122,6 +126,7 @@ export default function Watchlist() {
         </div>
       </header>
 
+      {deleteError && <p className={styles.inlineError} role="alert">{deleteError}</p>}
       {loading && <div className={styles.statePanel} role="status">관심종목 불러오는 중…</div>}
       {!loading && error && (
         <div className={styles.statePanel} role="alert">
@@ -171,6 +176,6 @@ export default function Watchlist() {
           />
         </>
       )}
-    </main>
+    </div>
   )
 }

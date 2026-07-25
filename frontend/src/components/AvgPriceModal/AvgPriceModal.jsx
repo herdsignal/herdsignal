@@ -11,6 +11,7 @@
 
 import { useState } from 'react'
 import { updateAvgPrice } from '../../api/herdApi'
+import ModalDialog from '../ModalDialog/ModalDialog'
 import styles from './AvgPriceModal.module.css'
 
 export default function AvgPriceModal({
@@ -50,28 +51,25 @@ export default function AvgPriceModal({
     }
   }
 
-  /* Enter 키로 저장 */
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSave()
-    if (e.key === 'Escape') onClose()
-  }
-
   return (
-    /* 오버레이 클릭 → 닫기 */
-    <div className={styles.overlay} onClick={onClose}>
-      <div
-        className={styles.modal}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={handleKeyDown}
-      >
+    <ModalDialog
+      onClose={onClose}
+      labelledBy="avg-price-dialog-title"
+      overlayClassName={styles.overlay}
+      dialogClassName={styles.modal}
+      onDialogKeyDown={(event) => {
+        if (event.key === 'Enter' && event.target.tagName !== 'BUTTON') handleSave()
+      }}
+    >
         {/* 헤더 */}
         <div className={styles.header}>
-          <span className={styles.title}>
+          <span id="avg-price-dialog-title" className={styles.title}>
             <span className={styles.ticker}>{ticker}</span>
             {/* 기존 평단가 여부에 따라 제목 구분 */}
             {currentAvgPrice != null ? ' 평단가 수정' : ' 평단가 입력'}
           </span>
           <button
+            type="button"
             className={styles.closeBtn}
             onClick={onClose}
             aria-label="모달 닫기"
@@ -83,8 +81,9 @@ export default function AvgPriceModal({
         {/* 입력 필드 */}
         <div className={styles.body}>
           <div className={styles.field}>
-            <label className={styles.fieldLabel}>평균 매수가 (USD)</label>
+            <label className={styles.fieldLabel} htmlFor="avg-price-input">평균 매수가 (USD)</label>
             <input
+              id="avg-price-input"
               className={styles.input}
               type="number"
               value={avgPrice}
@@ -92,12 +91,13 @@ export default function AvgPriceModal({
               placeholder="예: 150.00"
               step="0.01"
               min="0"
-              autoFocus
+              data-modal-autofocus
             />
           </div>
           <div className={styles.field}>
-            <label className={styles.fieldLabel}>보유 수량 (주)</label>
+            <label className={styles.fieldLabel} htmlFor="quantity-input">보유 수량 (주)</label>
             <input
+              id="quantity-input"
               className={styles.input}
               type="number"
               value={quantity}
@@ -107,15 +107,16 @@ export default function AvgPriceModal({
               min="0"
             />
           </div>
-          {error && <p className={styles.errorMsg}>{error}</p>}
+          {error && <p className={styles.errorMsg} role="alert">{error}</p>}
         </div>
 
         {/* 버튼 */}
         <div className={styles.footer}>
-          <button className={styles.cancelBtn} onClick={onClose} disabled={saving}>
+          <button type="button" className={styles.cancelBtn} onClick={onClose} disabled={saving}>
             취소
           </button>
           <button
+            type="button"
             className={styles.saveBtn}
             onClick={handleSave}
             disabled={saving}
@@ -123,7 +124,6 @@ export default function AvgPriceModal({
             {saving ? '저장 중…' : '저장'}
           </button>
         </div>
-      </div>
-    </div>
+    </ModalDialog>
   )
 }

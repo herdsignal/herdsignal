@@ -58,7 +58,7 @@ export default function Search() {
   }, [query, searchResult?.matches])
 
   return (
-    <main className={styles.page}>
+    <div className={styles.page}>
       <header className={styles.pageHeader}>
         <span>STOCK FINDER</span>
         <h1>종목 찾기</h1>
@@ -76,6 +76,7 @@ export default function Search() {
             ref={inputRef}
             className={styles.searchInput}
             type="text"
+            aria-label="티커 또는 종목명 검색"
             placeholder="티커 또는 종목명 입력 (예: AAPL, TSLA)"
             value={query}
             onChange={e => setQuery(e.target.value.toUpperCase())}
@@ -121,7 +122,8 @@ export default function Search() {
           <div className={styles.sectionLabel}>최근 검색</div>
           <div className={styles.recentList}>
             {recentSearches.map(ticker => (
-              <div
+              <button
+                type="button"
                 key={ticker}
                 className={styles.recentItem}
                 onClick={() => handleRecentClick(ticker)}
@@ -135,7 +137,7 @@ export default function Search() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </>
@@ -153,6 +155,6 @@ export default function Search() {
           }}
         />
       )}
-    </main>
+    </div>
   )
 }

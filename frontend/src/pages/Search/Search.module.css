@@ -156,11 +156,21 @@
   justify-content: space-between;
   gap: 24px;
   padding: 18px 20px;
-  cursor: pointer;
 }
 
 .searchResultItem:hover {
   background: color-mix(in srgb, var(--text-1) 2.5%, transparent);
+}
+
+.resultOpen {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .resultLeft,
@@ -187,6 +197,7 @@
 }
 
 .resultTicker {
+  display: block;
   font-size: 18px;
 }
 
@@ -195,6 +206,10 @@
 .resultNote {
   color: var(--text-3);
   font-size: 11px;
+}
+
+.resultName {
+  display: block;
 }
 
 .resultNote {
@@ -259,8 +274,16 @@
 }
 
 .recentItem {
+  display: block;
+  width: 100%;
   padding: 13px 16px;
   border-bottom: 1px solid var(--border);
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
   cursor: pointer;
 }
 

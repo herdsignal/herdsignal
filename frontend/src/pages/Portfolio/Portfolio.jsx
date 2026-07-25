@@ -58,7 +58,7 @@ export default function Portfolio() {
   const invested = summary?.invested_value
 
   return (
-    <main className={styles.page}>
+    <div className={styles.page} aria-busy={loading || refreshing}>
       <header className={styles.pageHeader}>
         <div>
           <span className={styles.eyebrow}>PORTFOLIO LENS</span>
@@ -82,6 +82,7 @@ export default function Portfolio() {
             type="button"
             className={styles.controlButton}
             aria-expanded={manageOpen}
+            aria-controls="portfolio-manage-panel"
             onClick={() => setManageOpen((open) => !open)}
           >
             관리
@@ -100,7 +101,7 @@ export default function Portfolio() {
       {refreshNotice && <p className={styles.notice} role="status">{refreshNotice}</p>}
 
       {manageOpen && (
-        <section className={styles.managePanel} aria-label="포트폴리오 관리">
+        <section id="portfolio-manage-panel" className={styles.managePanel} aria-label="포트폴리오 관리">
           <label htmlFor="portfolio-cash">현금 보유액 (USD)</label>
           <div>
             <input
@@ -208,6 +209,6 @@ export default function Portfolio() {
           onSaved={handleModalSaved}
         />
       )}
-    </main>
+    </div>
   )
 }

@@ -49,7 +49,7 @@ export default function StockDetail() {
   } = detail
 
   return (
-    <main className={styles.page}>
+    <div className={styles.page} aria-busy={loading}>
       <nav className={styles.breadcrumb} aria-label="현재 위치">
         <button type="button" className={styles.breadcrumbLink} onClick={() => navigate('/search')}>
           종목
@@ -75,6 +75,7 @@ export default function StockDetail() {
         </div>
         <div className={styles.stockHeaderRight}>
           <button
+            type="button"
             className={styles.btnWatchlist}
             onClick={handleAddWatchlist}
             disabled={watchlistStatus === 'loading'}
@@ -82,6 +83,7 @@ export default function StockDetail() {
             {BTN_LABELS.watchlist[watchlistStatus]}
           </button>
           <button
+            type="button"
             className={styles.btnPrimary}
             onClick={handleAddPortfolio}
             disabled={portfolioStatus === 'loading'}
@@ -95,28 +97,28 @@ export default function StockDetail() {
         <div className={styles.actionError} role="alert">{actionError}</div>
       )}
       {loading && (
-        <div className={styles.loadingState}>
+        <div className={styles.loadingState} role="status">
           <span className={styles.loadingText}>로딩 중…</span>
         </div>
       )}
       {!loading && error && (
-        <div className={styles.errorState}>
+        <div className={styles.errorState} role="alert">
           {error.split('\n').map((line, index) => (
             <p key={`${index}-${line}`} className={index === 0 ? styles.errorTitle : styles.errorSub}>
               {line}
             </p>
           ))}
-          <button className={styles.retryBtn} onClick={fetchData}>다시 시도</button>
+          <button type="button" className={styles.retryBtn} onClick={fetchData}>다시 시도</button>
         </div>
       )}
 
       {!loading && !error && !observationAvailable && (
-        <div className={styles.errorState}>
+        <div className={styles.errorState} role="status">
           <p className={styles.errorTitle}>HERD State S1 관찰값 준비 중</p>
           <p className={styles.errorSub}>
             기존 v4 점수로 대체하지 않습니다. 다음 스케줄러 완료 후 다시 확인해주세요.
           </p>
-          <button className={styles.retryBtn} onClick={fetchData}>다시 확인</button>
+          <button type="button" className={styles.retryBtn} onClick={fetchData}>다시 확인</button>
         </div>
       )}
 
@@ -165,6 +167,6 @@ export default function StockDetail() {
           onSave={(details) => handleJournalAction(journalAction, details)}
         />
       )}
-    </main>
+    </div>
   )
 }

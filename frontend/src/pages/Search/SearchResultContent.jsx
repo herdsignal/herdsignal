@@ -17,11 +17,11 @@ export default function SearchResultContent({
   onOpen,
 }) {
   if (result.status === 'loading') {
-    return <div className={styles.dropdownPlaceholder}>검색 중…</div>
+    return <div className={styles.dropdownPlaceholder} role="status">검색 중…</div>
   }
   if (result.status === 'not_found') {
     return (
-      <div className={styles.dropdownPlaceholder}>
+      <div className={styles.dropdownPlaceholder} role="status">
         검색 결과가 없습니다. 티커를 직접 입력해보세요.
       </div>
     )
@@ -35,18 +35,25 @@ export default function SearchResultContent({
   const meta = result.matches?.find((item) => item.ticker === data.ticker) ??
     TICKER_META[data.ticker]
   return (
-    <div className={styles.searchResultItem} onClick={() => onOpen(data.ticker)}>
-      <div className={styles.resultLeft}>
-        <StockAvatar ticker={data.ticker} logoUrl={data.logoUrl} tone={badge} />
-        <div>
-          <div className={styles.resultTicker}>{data.ticker}</div>
-          <div className={styles.resultName}>
-            {meta ? `${meta.name} · ${meta.sector}` : '미국 주식'}
-          </div>
-        </div>
-      </div>
+    <article className={styles.searchResultItem}>
+      <button
+        type="button"
+        className={styles.resultOpen}
+        onClick={() => onOpen(data.ticker)}
+        aria-label={`${data.ticker} 종목 상세 열기`}
+      >
+        <span className={styles.resultLeft}>
+          <StockAvatar ticker={data.ticker} logoUrl={data.logoUrl} tone={badge} />
+          <span>
+            <strong className={styles.resultTicker}>{data.ticker}</strong>
+            <span className={styles.resultName}>
+              {meta ? `${meta.name} · ${meta.sector}` : '미국 주식'}
+            </span>
+          </span>
+        </span>
+      </button>
 
-      <div className={styles.resultRight} onClick={(event) => event.stopPropagation()}>
+      <div className={styles.resultRight}>
         <HerdLens
           compact
           score={data.herdScore}
@@ -67,15 +74,15 @@ export default function SearchResultContent({
           idleLabel="+ 관심종목"
           onClick={() => onAddWatchlist(data.ticker)}
         />
-        {addError && <div className={styles.resultError}>{addError}</div>}
+        {addError && <div className={styles.resultError} role="alert">{addError}</div>}
       </div>
-    </div>
+    </article>
   )
 }
 
 function PendingSearchResult({ candidate }) {
   return (
-    <div className={styles.searchResultItem}>
+    <article className={styles.searchResultItem}>
       <div className={styles.resultLeft}>
         <StockAvatar ticker={candidate.ticker} />
         <div>
@@ -90,18 +97,19 @@ function PendingSearchResult({ candidate }) {
       </div>
       <div className={styles.resultRight}>
         <HerdLens compact score={null} />
-        <button className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`} disabled>
-          관찰값 필요
+        <button type="button" className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`} disabled>
+          포트폴리오 관찰값 필요
         </button>
-        <button className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`} disabled>
-          관찰값 필요
+        <button type="button" className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`} disabled>
+          관심종목 관찰값 필요
         </button>
       </div>
-    </div>
+    </article>
   )
 }
 
 function formatDelta(value) {
+  if (value == null || value === '') return '4주 —'
   const numeric = Number(value)
   if (!Number.isFinite(numeric)) return '4주 —'
   const rounded = Math.round(numeric)
@@ -112,6 +120,7 @@ function AddButton({ status, idleLabel, onClick }) {
   const complete = status === 'added' || status === 'exists'
   return (
     <button
+      type="button"
       className={`${styles.resultAddBtn} ${complete ? styles.resultAddBtnDone : ''}`}
       onClick={onClick}
       disabled={status === 'loading'}
