@@ -71,6 +71,15 @@ export const portfolioSummary = {
   ],
 }
 
+export const portfolioHistory = [
+  assetPoint('2026-01-31', 18_400, 17_600, 800),
+  assetPoint('2026-02-28', 19_250, 18_300, 950),
+  assetPoint('2026-03-31', 17_900, 16_850, 1_050),
+  assetPoint('2026-04-30', 20_300, 19_100, 1_200),
+  assetPoint('2026-05-31', 22_100, 20_800, 1_300),
+  assetPoint('2026-06-30', 23_750, 21_900, 1_850),
+]
+
 export const nvda = herdStock('NVDA', {
   companyName: 'NVIDIA',
   sector: 'Technology',
@@ -241,5 +250,15 @@ function priceRow(ticker, currentPrice, marketValue, returnPct, dailyChangePct) 
     market_value: marketValue,
     return_pct: returnPct,
     daily_change_pct: dailyChangePct,
+  }
+}
+
+function assetPoint(date, totalAssetValue, investedValue, cashBalance) {
+  return {
+    date,
+    totalAssetValue,
+    investedValue,
+    cashBalance,
+    totalValue: totalAssetValue,
   }
 }

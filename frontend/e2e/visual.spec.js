@@ -9,6 +9,7 @@ import {
   observationHistory,
   portfolio,
   portfolioHerd,
+  portfolioHistory,
   trackedObservations,
   portfolioSummary,
   reliability,
@@ -52,16 +53,32 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-for (const scenario of [
+const visualScenarios = [
   { name: 'dashboard', path: '/app', ready: 'SPY' },
+  { name: 'portfolio', path: '/portfolio', ready: '내 포트폴리오' },
   { name: 'stock-detail', path: '/stock/NVDA', ready: 'NVDA' },
   { name: 'watchlist', path: '/watchlist', ready: '관심종목' },
-]) {
+  {
+    name: 'search',
+    path: '/search',
+    ready: 'NVDA 종목 상세 열기',
+    prepare: async (page) => {
+      await page.getByRole('textbox', { name: '티커 또는 종목명 검색' }).fill('NVDA')
+    },
+  },
+]
+
+for (const scenario of visualScenarios) {
   test(`${scenario.name} visual regression`, async ({ page }, testInfo) => {
     await page.goto(scenario.path)
-    await expect(page.getByText(scenario.ready, { exact: true }).first()).toBeVisible({
-      timeout: 15_000,
-    })
+    await scenario.prepare?.(page)
+    const readyTarget = scenario.name === 'search'
+      ? page.getByRole('button', { name: scenario.ready })
+      : page.getByText(scenario.ready, { exact: true }).first()
+    await expect(readyTarget).toBeVisible({ timeout: 15_000 })
+    expect(await page.evaluate(() => (
+      document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+    ))).toBe(false)
     await expect(page).toHaveScreenshot(
       `${scenario.name}-${testInfo.project.name}.png`,
       { timeout: 15_000 }
@@ -69,12 +86,37 @@ for (const scenario of [
   })
 }
 
+test('protected shell and search remain keyboard operable', async ({ page }) => {
+  await page.goto('/search')
+  await expect(page.getByRole('heading', { name: '종목 찾기' })).toBeVisible()
+  await expect(page.locator('#main-content')).toBeFocused()
+  await expect(page.getByRole('link', { name: '본문으로 건너뛰기' })).toHaveAttribute(
+    'href',
+    '#main-content',
+  )
+
+  const accountTrigger = page.getByRole('button', { name: '계정 메뉴 열기' })
+  await accountTrigger.click()
+  await expect(page.getByRole('complementary', { name: '계정 메뉴' })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(accountTrigger).toBeFocused()
+
+  await page.getByRole('textbox', { name: '티커 또는 종목명 검색' }).fill('NVDA')
+  const openStock = page.getByRole('button', { name: 'NVDA 종목 상세 열기' })
+  await expect(openStock).toBeVisible()
+  await openStock.focus()
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/\/stock\/NVDA$/)
+  await expect(page.locator('#main-content')).toBeFocused()
+})
+
 function responseFor(pathname) {
   if (pathname === '/api/auth/csrf') return { token: 'visual-token' }
   if (pathname === '/api/auth/me') return user
   if (pathname === '/api/system/data-status') return dataStatus
   if (pathname === '/api/portfolio') return portfolio
   if (pathname === '/api/portfolio/summary') return portfolioSummary
+  if (pathname === '/api/portfolio/history') return { points: portfolioHistory }
   if (pathname === '/api/portfolio/cash') return { cashAmount: portfolioSummary.cash_balance }
   if (pathname === '/api/observations') {
     return {
@@ -93,6 +135,13 @@ function responseFor(pathname) {
     return watchlist.map(({ ticker }) => ({ ticker, memo: null }))
   }
   if (pathname === '/api/journal') return journal
+  if (pathname === '/api/stocks/search') {
+    return {
+      results: [
+        { ticker: 'NVDA', name: 'NVIDIA Corporation', type: 'Semiconductors' },
+      ],
+    }
+  }
   if (pathname === '/api/observations/SPY') return spyObservation
   if (pathname === '/api/observations/SPY/history') {
     return {
