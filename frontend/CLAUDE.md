@@ -1,259 +1,100 @@
-# frontend/ — React 대시보드
+# frontend/ — React UI
 
-최종 업데이트: 2026-07-24
+최종 업데이트: 2026-07-26
 
-## 이 폴더의 역할
-Spring Boot API를 호출해서 HERD Index 데이터를 시각화.
-프론트엔드 개발 전용 문서이며, data/backend 구현 판단은 루트 CLAUDE.md를 우선한다.
-데이터 엔진 계산은 하지 않지만, 화면 표시를 위한 localStorage 캐시·통화 변환·요약값 갱신은 프론트에서 처리한다.
+## 역할
 
-## 폴더 구조
-```
+Spring Boot API의 State S1 관찰값과 사용자 포트폴리오를 보여준다. 프론트에서
+HERD 점수나 행동 비율을 계산하지 않는다. 현재 운영 행동 모델은 승인되지 않았으므로
+모든 기본 화면은 상태·전환·근거·사용자 기록만 다룬다.
+
+## 화면 구조
+
+```text
 src/
-├── components/     재사용 컴포넌트
-│   ├── HerdDots/   Herd Flow 점 애니메이션
-│   ├── HerdHistoryChart/ HERD Index 히스토리 차트
-│   ├── SpectrumBar/ Flee~Rush 스펙트럼 바
-│   ├── StockAvatar/ 회사 로고 + 티커 fallback 아바타
-│   ├── Layout/     사이드바 + Outlet 레이아웃
-│   ├── AvgPriceModal/ 평균 매수가·수량 수정 모달
-│   └── SignalJournalModal/ HERD 판단 기록 입력 모달
-├── pages/          화면 단위
-│   ├── Dashboard/  조합/Dashboard.jsx, 시장/DashboardCommandCenter.jsx, 상태/useDashboardData.js
-│   ├── StockDetail/ 조합/StockDetail.jsx, Hero·Analysis·History·Records 섹션, 상태/useStockDetail.js
-│   ├── Search/     종목 검색 & 추가
-│   ├── Watchlist/  관심 종목
-│   ├── HerdLab/    HERD 검증과 방법론
-│   ├── Journal/    전체 HERD 판단 기록
-│   ├── AiRebalance/ 리밸런싱 플랜
-│   ├── HerdFlowPreview/ Herd Flow 확인용
-│   └── History/    자산 기록
-├── styles/         전역 CSS 변수
-├── assets/brand/   HerdSignal 로고/심볼 SVG 자산
-├── utils/          통화/환율 유틸
-│   ├── currency.js 통화 변환
-│   ├── dataQuality.js HERD 데이터 품질 표시 문구/색상 공통 유틸
-│   ├── decision.js HERD 점수 + 보유/포트폴리오 컨텍스트 기반 행동 문장
-│   ├── herdMomentum.js HERD 히스토리 기반 최근 강도 변화 해석
-│   ├── portfolioTools.js 목표비중·리밸런싱·매수 대기열 계산
-│   └── alertRules.js 포트폴리오 알림 조건 생성
-└── api/            Spring Boot API 호출
-    └── herdApi.js
+├── api/                 API 호출 경계
+├── auth/                로그인·보호 라우트
+├── components/
+│   ├── HerdLens/        고정된 점 개수로 표현하는 HERD 상태 시각화
+│   ├── MarketField/     SPY 집계 전용 시장 필드
+│   ├── Layout/          상단·모바일 공통 탐색
+│   ├── ModalDialog/     포커스 트랩·복귀를 포함한 공통 모달
+│   └── StockAvatar/     회사 로고와 티커 fallback
+├── pages/
+│   ├── MarketHome/      SPY MARKET_AGGREGATE State S1
+│   ├── Portfolio/       계좌 요약·자산 이력·보유 종목
+│   ├── StockDetail/     개별 종목 State/Transition S1
+│   ├── Search/          종목 검색과 목록 추가
+│   ├── Watchlist/       관찰 종목 상태 목록
+│   ├── History/         장기 자산 기록
+│   ├── Journal/         사용자가 직접 남긴 판단 기록
+│   ├── HerdLab/         레거시·차세대 연구 상태
+│   └── Settings/        계정·투자 프로필
+├── features/portfolio/  사용자별 포트폴리오 캐시
+├── styles/              전역 토큰
+└── utils/               통화·단계·관찰값 정규화
 ```
 
-## 디자인 원칙
-- Simply Wall St처럼 이해하기 쉬운 종목 분석 + Koyfin/TIKR처럼 차분한 금융 SaaS 톤을 지향한다.
-- 순수 블랙보다 차콜/블루블랙 기반 배경을 사용하고, HERD 단계색만 강한 신호색으로 쓴다.
-- 장식성 파랑/글로우는 최소화하고, 강한 색은 HERD 단계·액션·상승/하락 의미가 있을 때만 사용한다.
-- 카드 radius, border, padding, 배지, 숫자 크기를 페이지별로 흩어지지 않게 통일한다.
-- 현재 UI 문구는 한국어 중심
-- 숫자 + 짧은 판단 문장을 함께 보여준다. 긴 설명문보다 행동 판단이 먼저 보여야 한다.
-- 모바일에서는 데스크톱 사이드바를 하단 탭 내비게이션으로 전환하고, Dashboard/Watchlist/Search/HerdLab 핵심 흐름을 먼저 보여준다.
+## 라우트 계약
 
-## UI V6 전환 계약
+- `/`: 공개 홈
+- `/app`: SPY 시장 집계만 보여주는 로그인 후 첫 화면
+- `/portfolio`: 총자산, 주식 평가액, 현금, 오늘 등락, 통화 전환, 자산 이력,
+  보유 비중·평가액·수익률·HERD
+- `/stock/:ticker`: 개별 종목 State S1, Transition S1, 네 증거군, 과거 흐름
+- `/search`: 검색, State S1 준비 상태, 포트폴리오·관찰 목록 추가
+- `/watchlist`: 낮은 HERD부터 높은 HERD까지 상태 관찰
+- `/history`, `/journal`, `/herd-lab`, `/settings`: 보조 화면
 
-기준 시안은 `wireframes/wireframe-portfolio-lens-v6.html`이다. 계좌 정보
-구조를 유지하면서 HERD를 같은 수의 점이 점수에 따라 모이거나 흩어지는
-정적 `HERD Lens`로 표현한다. 반복 애니메이션과 장식용 글로우는 사용하지
-않는다.
+SPY `MARKET_AGGREGATE`와 개별 종목 점수는 같은 의미로 표현하지 않는다. v4·v6.1은
+`/herd-lab`의 레거시 연구 기록이며 기본 화면의 매수·익절 권고로 사용하지 않는다.
 
-전환은 아래 경계를 지킨다.
+## UI 원칙
 
-- `/app`: S&P 500 `MARKET_AGGREGATE` State S1만 보여주는 시장 홈
-- `/portfolio`: 계좌 전체·주식 평가액·현금·오늘 등락·자산 히스토리·보유 종목
-- `/stock/:ticker`: 개별 종목 State S1과 Transition S1 관찰
-- `/search`, `/watchlist`, `/history`, `/journal`, `/herd-lab`, `/settings`:
-  각 기능을 유지하되 새 탐색 구조와 시각 토큰을 공유
-- 사용자 기본 출력은 항상 운영 승격 경계를 거친 값만 사용한다. 현재는
-  `HOLD`, `0%`이며 v4·v6.1 연구값을 매수·익절 권고처럼 표시하지 않는다.
-- SPY 집계와 개별 종목 상태를 같은 점수처럼 섞지 않는다.
-- loading, empty, partial error, unavailable, stale 상태를 정상 화면 상태로
-  설계한다.
-- 새 화면이 기능 동등성·반응형·시각 회귀를 통과하기 전 기존 화면을
-  삭제하지 않는다.
+- 문장으로 설득하지 않고 숫자, 위치, 밀도, 변화로 먼저 보여준다.
+- Flee–Scatter–Calm–Drift–Rush 색은 의미가 있을 때만 사용한다.
+- 고정된 점 개수가 흩어지고 밀집되는 `HERD Lens`를 제품의 시각 언어로 사용한다.
+- loading, empty, partial error, unavailable, stale을 정상 화면 상태로 설계한다.
+- 페이지 JSX는 조립, `use*Data`는 I/O와 비동기 상태, `*Model`은 순수 계산을 담당한다.
+- 동일 정보를 시장 홈과 포트폴리오에 중복 배치하지 않는다.
+- 승인되지 않은 `BUY`, `SELL`, 행동 비율, 행동 우선순위는 화면에서 파생하지 않는다.
 
-전환 전 기준선은 backend 117 tests, frontend 25 files·56 tests, Python
-945 tests 통과다. 기존 기능 대응이 끝난 뒤에만 Dashboard·StockDetail의
-레거시 스타일과 컴포넌트를 제거한다.
+기준 시안은 `wireframes/wireframe-portfolio-lens-v6.html`이며 전환·삭제 기준은
+이 문서의 라우트 계약과 검증 항목으로 관리한다.
 
-## 대형 페이지 구조 원칙
-- 페이지 JSX는 화면 조립과 이벤트 연결만 담당한다.
-- API 호출, 캐시, 로딩 상태, 파생 상태는 페이지별 `use*Data.js` 훅에서 관리한다.
-- 포맷팅, 정렬, 신호 해석처럼 React와 무관한 계산은 페이지별 `*Model.js`에 둔다.
-- 새 기능을 추가할 때 이 세 책임을 다시 한 파일에 섞지 않는다.
+## 캐시
 
-## 프론트 검증
-- `npm run lint`: ESLint 정적 검사
-- `npm test`: Vitest + React Testing Library 회귀 테스트
-- `npm run build`: Vite 프로덕션 빌드
-- Dashboard 캐시 정책과 StockDetail 티커 전환/요청 경합은 테스트를 유지한다.
-
-## HERD 5단계 색상
-```
-Flee    #3B82F6  (파랑)
-Scatter #60A5FA  (연파랑)
-Calm    #A3AAB8  (회색)
-Drift   #FB923C  (오렌지)
-Rush    #EF4444  (레드)
-```
-
-## 핵심 UI 컴포넌트
-- HerdDots: Herd Flow 점 애니메이션 (Flee=전 영역 듬성듬성 분산, Scatter=작은 군집들이 깨져 흩어짐, Calm=중앙 균형, Drift=오른쪽 쏠림, Rush=좁은 군중 밀집)
-- HerdHistoryChart: HERD 점수 히스토리 공용 차트 (Flee~Rush 구간 배경, 현재 점수 기준선, 현재 위치/평균 대비/기간 평균/저점-고점 데이터 보드, 이력 부족 배지)
-- SpectrumBar: Flee~Rush 스펙트럼 바
-- StockAvatar: `logoUrl`이 있으면 회사 로고를 표시하고, 없거나 이미지 로딩 실패 시 티커 배지를 표시한다.
-- Layout: 데스크톱 공통 사이드바 + 모바일 하단 탭 + 페이지 Outlet
-- Brand assets: Particle H 심볼은 왼쪽 Flee 분산, 오른쪽 Rush 밀집을 단순화한 SVG로 관리한다.
-- AvgPriceModal: 평균 매수가·수량 수정 모달
-
-## 현재 구현된 페이지
-- 사이드바 노출 메뉴는 MVP 기준으로 Dashboard, Watchlist, Search, HerdLab만 유지한다.
-- AiRebalance(`/ai`), History(`/history`), Journal(`/journal`), HerdFlowPreview(`/herd-flow`) 라우트는 유지하지만 사이드바에는 노출하지 않는다.
-- 모바일 하단 탭도 Dashboard, Watchlist, Search, HerdLab 4개 핵심 메뉴만 노출한다.
-- Dashboard (`/`)
-  - Signal Command Center 구조: 시장 HERD 신호 → 3개 핵심 Action Queue → 포트폴리오 요약 바 → 보유 종목 테이블 순으로 표시
-  - Signal Command Center는 S&P 500 흐름과 보유 종목 행동 대기열을 함께 확인하는 화면이며, 장기투자 지표 특성상 강한 행동 신호가 없는 상태도 정상 상태로 표시한다.
-  - S&P 500 HERD 배너 (Overview=Herd Flow 시그니처 애니메이션 + 1일/1달/1년 평균 + 최근 강도 변화, Timeline=1M/3M/1Y/3Y HERD Index 히스토리 차트)
-  - 포트폴리오 요약 바 (총자산 + 주식 평가액 + 현금 보유액 + 오늘 등락)
-  - 총자산 히스토리 버튼 클릭 시 1개월/1년/전체 자산 히스토리 차트 표시. backend 히스토리 포인트에 현재 summary/cash 포인트를 합성해 현금 저장 직후에도 마지막 값이 즉시 반영된다.
-  - 자산 히스토리는 사용자가 기준일을 직접 관리하지 않고, 선택 기간의 시작값/현재값/주식 평가액 변화(현금 변동 제외)/총자산 변화(입출금 포함)/고점 대비/현금을 표시한다.
-  - 현금 보유액 표시 및 편집 모드 입력/저장
-  - HERD 판단 기록 전체 요약: `/api/journal` 기반 매수/익절 횟수·금액·평균 익절률·최근 기록 표시
-  - KRW/USD 통화 토글
-  - 목표 비중 기반 핵심 리밸런싱 체크
-  - 포트폴리오 리스크 체크와 알림 조건 패널
-  - 보유 종목 테이블
-  - 보유 종목 행에 회사 로고/티커/HERD 단계색/보유 수량/평단/목표 비중 차이 표시
-  - 보유 종목 정렬(행동순/HERD 낮은순/HERD 높은순/비중순)
-  - 편집 모드/삭제
-  - 편집 모드에서 현금 보유액과 종목별 목표 비중을 수정한다. 목표 비중은 `hs_target_weights`에 저장한다.
-  - 평단가·수량 수정 모달
-  - localStorage 캐시 우선 로딩
-  - 수동 새로고침은 `/api/portfolio/realtime`으로 yfinance 현재가를 다시 조회하고, HERD/SPY는 DB 최신값을 조회한다.
-  - 수동 새로고침 완료 후 `현재가 갱신`/`HERD 조회`/`SPY 갱신` 결과를 짧게 표시
-  - 보유 종목 행은 `ADD 10%`/`HOLD`/`SELL 30%` 같은 액션 코드를 우선 표시하고, 매수는 목표 투자금 기준·익절은 보유 평가금액 기준으로 비율 의미를 명시한다.
-  - 보유 종목 액션은 HERD 신호와 현재 비중/목표 비중 차이를 함께 본다. 예: ADD 신호여도 목표비중을 초과하면 `WAIT`, SELL/REDUCE 신호와 목표비중 초과가 겹치면 비중 축소 우선으로 표시한다.
-- StockDetail (`/stock/:ticker`)
-  - HERD v4 점수/단계/Timing Signal
-  - Action Layer 행동 점수/행동 비율/세부 국면/최근 HERD 강도 변화 표시
-  - 현재 HERD 판단을 움직인 핵심 근거 데이터 보드
-  - 지표 분해 UI + EPS/섹터 강도 보정 승수 표시
-  - 최근 3년 HERD 신호 신뢰도 데이터 보드(Flee/Rush 적중률, 신호 이후 수익/낙폭, MDD 개선, 수익률 보존)
-  - 1M/3M/1Y/3Y HERD Index 히스토리 차트
-  - Fundamental Guard: 시가총액/PER/EPS/영업이익률/매출 기반 재무 경고 필터
-  - HERD 판단 기록: 매수/보류/익절 판단 시 가격·수량·총액·수익률·메모를 DB `signal_journal`에 저장하고, 매수/익절 횟수·금액·평균 익절률을 요약 표시
-  - 상세 화면 순서는 결론 → 근거 → 검증 → 히스토리 → 재무 가드 → 판단 기록 순서로 유지한다.
-  - 낮은 HERD 데이터 품질만 배지 표시
-  - 포트폴리오 추가
-  - 관심종목 추가
-- Search (`/search`)
-  - Inclusion Check 패널에서 보유/대기 종목 수와 Ready/Pending/Limited 편입 기준을 먼저 보여준다.
-  - 300ms 디바운스 검색
-  - Finnhub 심볼 검색 API 기반 회사명/티커 검색
-  - 대표 종목 티커/종목명 로컬 매칭 fallback
-  - HERD 미리보기
-  - 검색 결과에 `편입 판단` 블록을 표시해 매수 대기열/관찰/보류 우선 여부를 바로 보여준다.
-  - 검색 결과 HERD 준비 상태 표시 (`HERD 준비됨` / `계산 필요` / `데이터 부족`)
-  - `계산 필요` 상태는 포트폴리오/관심종목 추가 버튼을 비활성화한다.
-  - 최근 검색 localStorage 저장
-  - 포트폴리오/관심종목 중복 상태 표시
-  - 포트폴리오 추가 후 평단가·수량 입력 모달 연결
-  - 관심종목 추가
-- Watchlist (`/watchlist`)
-  - Buy Queue/Observe/Overheat 요약 보드로 관심종목 상태를 먼저 구분한다.
-  - 관심 종목은 카드 그리드가 아니라 Action Queue 한 줄 리스트로 표시한다.
-  - 낮은 HERD 데이터 품질만 배지 표시
-  - 관심 종목 행은 `티커/HERD/액션/신호 지속/업데이트`를 스캔 가능한 컬럼으로 표시한다.
-  - 매수 대기열 (Flee/Scatter + BUY/ADD 신호 우선, 최대 5개)
-  - 매수 후보 우선 자동 정렬
-  - 빠른 새로고침
-  - 관심 종목 삭제
-  - S&P 500 HERD 배너 (Dashboard와 같은 1일/1달/1년 평균 표시)
-- HerdLab (`/herd-lab`)
-  - 레거시 모델과 차세대 연구 상태 검증 히어로 보드
-  - Buy & Hold 대비 수익률 보존/MDD 개선/행동 횟수 표시
-  - 모델 버전/검증 기간/수익률 보존/MDD 개선/연간 행동 수/신뢰 체크를 상단 보드에 압축 표시
-  - 종목별 백테스트 verdict 표시
-  - HERD 5단계 행동 매트릭스와 v4 가중치 표시
-  - 설명문은 최소화하고 모델 버전·검증 기간·핵심 성과 수치 중심으로 표시
-  - 표시 데이터는 `src/data/herdModelReport.js`에서 관리하며 JSX에 백테스트 숫자를 직접 하드코딩하지 않는다.
-- Journal (`/journal`)
-  - `/api/journal` 전체 기록을 종목/액션/가격/수량/총액/수익률/HERD/날짜 테이블로 표시
-  - 전체/매수/익절/보류 필터와 매수·익절 금액, 평균 익절률 요약 표시
-  - Dashboard 판단 기록 요약에서 진입하며, 사이드바에는 노출하지 않는다.
-  - 가격·수량·금액·수익률·HERD 점수·신호 지속일·메모를 장기 판단 로그로 표시한다.
-- AiRebalance (`/ai`)
-  - 목표 비중·현금 목표·리밸런싱 예산 설정
-  - 보수적/표준/공격적 리밸런싱 강도 선택
-  - 현재 비중 vs 목표 비중 비교
-  - 규칙 기반 매수/매도/보류 실행안
-  - AI 연결 전 규칙 기반 플랜 요약
-- HerdFlowPreview (`/herd-flow`)
-  - 실제 데이터와 무관한 HerdDots 5단계 애니메이션 확인용 페이지
-  - 사이드바에는 노출하지 않는다
-- History (`/history`)
-  - 월/년 기간 토글
-  - recharts 기반 총 평가금액 차트
-  - portfolio_history 시계열 표시
-
-## 부분 구현 / 미구현
-- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 제거됨. 상세 화면은 HERD와 Action Layer 중심 단일 컬럼으로 유지한다.
-- StockDetail 재무정보는 원본 재무제표 표가 아니라 Fundamental Guard로 표시한다. `확인된 주요 경고 없음`/`재무 확인 필요`/`재무 리스크 큼` 문구를 사용하며, 안전 보증처럼 표현하지 않는다.
-- 목표 비중은 Dashboard 편집 모드와 AiRebalance에서 수정하며 `hs_target_weights` localStorage에 저장한다. 아직 DB 저장 기능은 없다.
-- 리밸런싱 플랜 설정은 `hs_rebalance_settings` localStorage에 저장하며, 아직 Claude API를 호출하지 않는다.
-- Dashboard에서는 HERD 변화 요약과 portfolio_history 기반 간이 백테스트를 제거했다. 검증 데이터는 HerdLab/History에서 다룬다.
-- Dashboard 알림 조건 패널은 구현되어 있다. `src/utils/alertRules.js`가 매수 후보, 익절 후보, 오래된 신호, 포트폴리오 리스크를 화면용 알림 후보로 생성한다. 브라우저 푸시/이메일 알림은 아직 구현하지 않는다.
-- StockDetail 지표 분해는 `ma200Weekly`를 표시하고, 가중치 0%인 거래량 강도는 표시하지 않는다.
-- StockDetail HERD 카드 점수는 `herdV4`를 우선 사용하고, 구버전 응답이면 `herdScore`로 fallback한다.
-- StockDetail 상단 회사명/섹터/로고는 `GET /api/stocks/{ticker}/herd` 응답의 `companyName`/`sector`/`logoUrl`을 사용한다.
-- HERD 데이터 품질은 backend 응답의 `qualityScore`/`qualityLevel`/`qualityReasons`를 사용하되, `src/utils/dataQuality.js` 기준으로 낮은 품질만 `데이터 제한/부족`과 제한 사유를 표시한다.
-- HERD 신호 신뢰도는 `GET /api/stocks/{ticker}/herd/reliability` 응답을 사용한다. 데이터 완성도(`qualityScore`)가 아니라 과거 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 모델 적합도, 표본 품질, 매수/익절 edge를 보여준다.
-- Action Layer는 backend 응답을 그대로 표시하며 별도 행동 점수를 계산하지 않는다. v6.1은 레거시 연구 비교값이고 승격 전 운영 `actionRatio`는 0%다.
-- Dashboard/Watchlist/StockDetail은 backend 응답의 `signalDurationDays`/`stageDurationDays`를 사용해 현재 HERD 신호가 초입/진행/장기 지속 중 어디에 있는지 표시한다.
-- Search에서 포트폴리오/관심종목 추가는 HERD 데이터가 준비된 종목만 허용한다. 포트폴리오 추가 성공 시 Dashboard localStorage 캐시(`hs_portfolio_realtime`, `hs_portfolio_herd`, `hs_cache_time`)를 비우고 평단가·수량 입력 모달을 연다.
-- Dashboard 보유 종목의 `오늘` 등락률은 backend `dailyChangePct`를 그대로 표시한다. 기준일은 backend의 미국 정규장 세션 계산을 따른다.
-- Decision Layer는 frontend 표시용 해석 레이어이며, 운영 HERD 점수나 DB 저장값을 변경하지 않는다.
-- Dashboard/Watchlist의 SPY 배너는 backend의 SPY 가격 요약을 사용하며 데이터가 없을 때만 placeholder를 표시한다.
-- HERD 단계 표시 기준은 `src/utils/herdStage.js`에서 관리한다. backend Action Layer와 같은 Rush 75 / Flee 15 기준을 따른다.
-
-## API 연동
-모든 API 호출은 src/api/herdApi.js에서만 관리.
-개발 환경은 Vite proxy(`/api` → `localhost:8080`)를 사용한다.
-프로덕션 또는 명시 설정이 필요하면 루트 `.env`의 `VITE_API_BASE_URL` 환경변수를 사용한다.
-로컬 실행은 루트에서 `./scripts/run-frontend.sh`를 우선 사용한다.
-
-현재 herdApi.js에서 관리하는 호출:
-- getPortfolio / getPortfolioHerd / refreshPortfolioHerd / getPortfolioRealtime / getPortfolioSummary / getPortfolioHistory
-- getCashBalance / updateCashBalance
-- addToPortfolio / removeFromPortfolio / updateAvgPrice
-- getWatchlistHerd / addToWatchlist / removeFromWatchlist
-- getStockHerd / refreshStockHerd / getStockHerdHistory / getSpyHerdHistory
-- getStockFinancials
-- getStockHerdReliability
-- searchStocks
-
-## localStorage 사용
-- `hs_portfolio_realtime`: 포트폴리오 실시간 평가 캐시
-- `hs_portfolio_herd`: 포트폴리오 HERD 캐시
-- `hs_spy_herd`: SPY HERD 캐시
-- `hs_cache_time`: 캐시 저장 시각
+- `hs_portfolio_realtime:{userId}`: 포트폴리오 평가 요약
+- `hs_portfolio_herd:{userId}`: 보유 종목 State S1
+- `hs_portfolio_herd_time:{userId}`: 관찰값 저장 시각
+- `hs_cache_time:{userId}`: 포트폴리오 요약 저장 시각
+- `hs_portfolio_cache_version`: 포트폴리오 캐시 스키마 버전
 - `hs_recent_searches`: 최근 검색
-- `hs_target_weights`: 포트폴리오 종목별 목표 비중
-- `hs_dashboard_sort`: Dashboard 보유 종목 정렬 기준
-- `hs_rebalance_settings`: 리밸런싱 예산·현금 목표·강도 설정
-- `herdsignal_currency`: 통화 표시 모드
+- `herdsignal_currency`: KRW/USD 표시
+- `herdsignal_portfolio_lens_sort`: 포트폴리오 정렬
 
-HERD 판단 기록은 localStorage가 아니라 backend `/api/journal`과 DB `signal_journal`을 기준으로 저장한다.
+사용자가 바뀌면 포트폴리오 캐시는 섞이지 않아야 한다. 캐시 오류는 API 재조회로
+복구하며, 시장 캐시와 포트폴리오 캐시를 한 번에 지우지 않는다.
 
-## AI 작업 원칙
-- 실제 frontend 코드 기준으로 판단한다.
-- 구현되지 않은 기능은 완료 처리하지 않는다.
-- README보다 실제 코드를 우선한다.
-- 추측하지 않는다.
-- 작업 범위를 벗어난 파일은 수정하지 않는다.
-- frontend/CLAUDE.md는 frontend 개발만을 위한 문서로 유지한다.
+## 검증
 
-## 작업 시 주의
-- data/, backend/ 폴더는 읽지 말 것
-- API 호출 정의와 사용 방식은 src/api/herdApi.js 및 실제 페이지 구현을 기준으로 확인할 것
-- 포트폴리오/관심종목 데이터는 Spring Boot API + DB 기준이며, localStorage는 캐시·최근 검색·통화 모드 저장 용도
+```bash
+npm run lint
+npm test -- --run
+npm run build
+npm run test:bundle
+npm run test:visual
+```
+
+- Vitest는 상태 정규화, 캐시 격리, 요청 경합과 핵심 렌더링 계약을 검증한다.
+- Playwright는 시장·포트폴리오·종목·관찰 목록·검색을 데스크톱과 모바일에서
+  캡처하고 키보드 탐색·가로 넘침을 검사한다.
+- 의도적인 화면 변경 때만 `npm run test:visual:update`를 실행한다.
+- 번들 예산은 `frontend/scripts/checkBundleBudget.mjs`에서 관리한다.
+
+## 작업 원칙
+
+- API 호출은 `src/api/herdApi.js`에 모은다.
+- 실제 구현을 문서보다 우선하고, 구현 변경과 함께 이 문서를 갱신한다.
+- 연구 결과 재현을 위한 backend/data 파일은 프론트 정리 범위로 삭제하지 않는다.
+- 새 행동 모델은 backend의 승격 경계를 통과한 뒤 별도 제품 설계로 연결한다.

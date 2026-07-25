@@ -5,7 +5,6 @@ import {
   getHerdObservations,
   getPortfolioRealtime,
   getPortfolioSummary,
-  getHerdObservation,
 } from '../../api/herdApi'
 import { targetWeightsFromPortfolio } from '../../utils/portfolioTools'
 import {
@@ -14,15 +13,15 @@ import {
   CACHE_KEY_HERD_TIME,
   CACHE_KEY_REALTIME,
   CACHE_KEY_TIME,
-  ensureDashboardCacheVersion,
-  isDashboardCacheFresh,
+  ensurePortfolioCacheVersion,
+  isPortfolioCacheFresh,
   normalizePortfolioSummary,
+  portfolioRefreshResultText,
   readUserCache,
-  refreshResultText,
-  saveCacheTime,
+  savePortfolioCacheTime,
   userCacheKey,
   writeUserCache,
-} from './dashboardModel'
+} from './portfolioDataModel'
 import { observationBatchToMap } from '../../utils/herdObservation'
 
 function herdStocksToMap(stocks = []) {
@@ -56,12 +55,9 @@ function withCash(summary, cashBalance) {
   }
 }
 
-export function useDashboardPortfolioData({
+export function usePortfolioData({
   userId,
   setTargetWeights,
-  updateSpyData,
-  fetchDataStatus,
-  includeMarketObservation = true,
 }) {
   const [portfolio, setPortfolio] = useState([])
   const [summary, setSummary] = useState(null)
@@ -92,7 +88,7 @@ export function useDashboardPortfolioData({
       const data = normalizePortfolioSummary(response.data?.data ?? null)
       setSummary(data)
       writeUserCache(CACHE_KEY_REALTIME, userId, data)
-      setLastUpdated(saveCacheTime(userId))
+      setLastUpdated(savePortfolioCacheTime(userId))
       return true
     } catch {
       return false
@@ -102,7 +98,7 @@ export function useDashboardPortfolioData({
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
-    if (ensureDashboardCacheVersion()) setLastUpdated(null)
+    if (ensurePortfolioCacheVersion()) setLastUpdated(null)
 
     try {
       const portfolioResponse = await getPortfolio().catch(() => null)
@@ -119,7 +115,7 @@ export function useDashboardPortfolioData({
 
       const cachedSummary = readUserCache(CACHE_KEY_REALTIME, userId)
       const cachedHerd = readUserCache(CACHE_KEY_HERD, userId)
-      const hasFreshHerdCache = Boolean(cachedHerd && isDashboardCacheFresh(userId))
+      const hasFreshHerdCache = Boolean(cachedHerd && isPortfolioCacheFresh(userId))
 
       if (cachedSummary) setSummary(cachedSummary)
       if (hasFreshHerdCache) setHerdMap(herdStocksToMap(cachedHerd.stocks))
@@ -137,7 +133,7 @@ export function useDashboardPortfolioData({
         setHerdMap(herdStocksToMap(herdData?.stocks))
         if (herdData) {
           writeUserCache(CACHE_KEY_HERD, userId, herdData)
-          saveCacheTime(userId, CACHE_KEY_HERD_TIME)
+          savePortfolioCacheTime(userId, CACHE_KEY_HERD_TIME)
         }
       }
 
@@ -162,7 +158,6 @@ export function useDashboardPortfolioData({
     const revalidateOnReturn = () => {
       if (document.visibilityState !== 'visible') return
       revalidatePortfolioSummary()
-      fetchDataStatus?.()
     }
     window.addEventListener('focus', revalidateOnReturn)
     document.addEventListener('visibilitychange', revalidateOnReturn)
@@ -170,7 +165,7 @@ export function useDashboardPortfolioData({
       window.removeEventListener('focus', revalidateOnReturn)
       document.removeEventListener('visibilitychange', revalidateOnReturn)
     }
-  }, [fetchDataStatus, revalidatePortfolioSummary])
+  }, [revalidatePortfolioSummary])
 
   useEffect(() => () => {
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
@@ -181,15 +176,12 @@ export function useDashboardPortfolioData({
     lastSummaryValidation.current = Date.now()
     setRefreshing(true)
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
-    setRefreshNotice('현재가 조회 · HERD DB 조회 · SPY 확인 중')
+    setRefreshNotice('현재가 조회 · State S1 관찰값 조회 중')
 
     try {
-      const [priceResult, herdResult, spyResult] = await Promise.allSettled([
+      const [priceResult, herdResult] = await Promise.allSettled([
         getPortfolioRealtime(),
         getPortfolioObservations(portfolio),
-        includeMarketObservation
-          ? getHerdObservation('SPY')
-          : Promise.resolve(null),
       ])
 
       if (priceResult.status === 'fulfilled') {
@@ -200,7 +192,7 @@ export function useDashboardPortfolioData({
         if (priceRequestId === summaryRequest.current) {
           setSummary(data)
           writeUserCache(CACHE_KEY_REALTIME, userId, data)
-          setLastUpdated(saveCacheTime(userId))
+          setLastUpdated(savePortfolioCacheTime(userId))
         }
       }
 
@@ -208,17 +200,12 @@ export function useDashboardPortfolioData({
         const herdData = observationResponseToCacheData(herdResult.value)
         setHerdMap(herdStocksToMap(herdData?.stocks))
         writeUserCache(CACHE_KEY_HERD, userId, herdData)
-        saveCacheTime(userId, CACHE_KEY_HERD_TIME)
+        savePortfolioCacheTime(userId, CACHE_KEY_HERD_TIME)
       }
 
-      if (includeMarketObservation && spyResult.status === 'fulfilled') {
-        updateSpyData(spyResult.value.data?.data ?? null)
-      }
-
-      setRefreshNotice(refreshResultText(
+      setRefreshNotice(portfolioRefreshResultText(
         priceResult,
         herdResult,
-        includeMarketObservation ? spyResult : null,
       ))
       refreshNoticeTimer.current = setTimeout(() => setRefreshNotice(null), 3200)
     } finally {
@@ -226,9 +213,7 @@ export function useDashboardPortfolioData({
     }
   }, [
     cashBalance,
-    includeMarketObservation,
     portfolio,
-    updateSpyData,
     userId,
   ])
 

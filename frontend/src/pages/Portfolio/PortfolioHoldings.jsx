@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import HerdLens from '../../components/HerdLens/HerdLens'
 import StockAvatar from '../../components/StockAvatar/StockAvatar'
-import { fmtPct, fmtShares } from '../Dashboard/dashboardPresentation'
+import { fmtPct, fmtShares } from './portfolioPresentation'
 import { PORTFOLIO_SORTS } from './portfolioModel'
 import styles from './Portfolio.module.css'
 

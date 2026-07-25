@@ -14,10 +14,6 @@ vi.mock('../../auth/AuthContext', () => ({
   }),
 }))
 
-vi.mock('../ActionNotifications/ActionNotifications', () => ({
-  default: () => <div>알림 요약</div>,
-}))
-
 afterEach(cleanup)
 
 describe('Layout', () => {

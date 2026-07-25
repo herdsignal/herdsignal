@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildAssetHistoryMetrics } from './useDashboardAssetHistory'
+import { buildAssetHistoryMetrics } from './usePortfolioAssetHistory'
 
 describe('buildAssetHistoryMetrics', () => {
   it('derives flow, drawdown, and chart bounds without mutating history', () => {

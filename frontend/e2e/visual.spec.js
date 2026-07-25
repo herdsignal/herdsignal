@@ -54,7 +54,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 const visualScenarios = [
-  { name: 'dashboard', path: '/app', ready: 'SPY' },
+  { name: 'market-home', path: '/app', ready: 'SPY' },
   { name: 'portfolio', path: '/portfolio', ready: '내 포트폴리오' },
   { name: 'stock-detail', path: '/stock/NVDA', ready: 'NVDA' },
   { name: 'watchlist', path: '/watchlist', ready: '관심종목' },

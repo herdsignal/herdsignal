@@ -7,9 +7,9 @@ import {
   CACHE_KEY_REALTIME,
   clearPortfolioCaches,
   writeUserCache,
-} from './dashboardModel'
+} from '../../features/portfolio/portfolioCache'
 
-export function useDashboardPortfolioMutations({
+export function usePortfolioMutations({
   userId,
   portfolio,
   setPortfolio,

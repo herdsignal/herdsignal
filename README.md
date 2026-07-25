@@ -13,7 +13,8 @@ HerdSignal은 보유하거나 관심 있는 종목에서 군중이 흩어지고 
 
 ## 주요 기능
 
-- **Dashboard**: 포트폴리오 현황과 S&P 500 군중 상태 확인
+- **Market Home**: S&P 500 군중 상태를 첫 화면에서 관찰
+- **Portfolio**: 계좌 전체·주식 평가액·현금·오늘 등락과 보유 종목 확인
 - **Watchlist**: 관심 종목의 상태 변화와 밀집도 관찰
 - **Stock Detail**: State S1 점수, 전환, 가족 점수와 과거 흐름 확인
 - **Search**: 티커와 회사명 검색, 포트폴리오·관심 종목 추가
@@ -101,7 +102,7 @@ React Web App
 
 - Python은 주가 수집, HERD 계산과 정기 작업을 담당합니다.
 - Spring Boot는 저장된 데이터와 포트폴리오 기능을 REST API로 제공합니다.
-- React는 Dashboard, Watchlist와 종목 상세 화면을 구성합니다.
+- React는 SPY 시장 홈, 포트폴리오, 관찰 목록과 종목 상세 화면을 구성합니다.
 
 ## 로컬 실행
 
@@ -209,7 +210,7 @@ cd ..
 
 스케줄러는 기본적으로 미국 동부시간 장 마감 후 실행됩니다. 맥이 종료되거나 절전 상태이면
 예약 작업도 멈추므로, 필요한 날 직접 갱신하려면 `./scripts/run-scheduler-once.sh`를 실행합니다.
-대시보드에서는 최신 가격일, HERD 기준일, 마지막 실행 결과와 실패 종목을 확인할 수 있습니다.
+시장 홈과 연구 화면에서는 최신 관찰 기준일과 모델 상태를 확인할 수 있습니다.
 
 운영 상태와 DB 백업은 아래 명령으로 확인합니다.
 
@@ -253,6 +254,7 @@ data/.venv/bin/python -m pytest -q
 (cd frontend && npm run lint)
 (cd frontend && npm test -- --run)
 (cd frontend && npm run build)
+(cd frontend && npm run test:bundle)
 (cd frontend && npm run test:visual)
 ```
 

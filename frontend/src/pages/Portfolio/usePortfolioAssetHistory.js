@@ -6,12 +6,12 @@ import {
   fmtAxisDate,
   mergeCurrentAssetPoint,
   normalizeHistoryPoint,
-} from './dashboardModel'
+} from './portfolioHistoryModel'
 
 /**
  * 자산 히스토리 패널의 요청 상태와 차트 파생값을 캡슐화한다.
  */
-export function useDashboardAssetHistory(
+export function usePortfolioAssetHistory(
   summary,
   cashBalance,
   { initiallyOpen = false } = {},

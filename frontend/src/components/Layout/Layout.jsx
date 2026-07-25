@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import herdSignalMark from '../../assets/brand/herdsignal-mark.svg'
 import { useAuth } from '../../auth/AuthContext'
-import ActionNotifications from '../ActionNotifications/ActionNotifications'
 import styles from './Layout.module.css'
 
 const PRIMARY_NAVIGATION = [
@@ -144,7 +143,6 @@ export default function Layout() {
                 <strong>{user?.displayName || 'HerdSignal 사용자'}</strong>
                 <span>{user?.developmentMode ? '개발 모드' : user?.email}</span>
               </div>
-              <ActionNotifications placement="menu" />
               <nav className={styles.secondaryNav} aria-label="보조 메뉴">
                 {SECONDARY_NAVIGATION.map((item) => (
                   <NavLink key={item.to} to={item.to}>

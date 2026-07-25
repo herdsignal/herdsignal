@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../../auth/AuthContext'
 import { fetchExchangeRate, formatKRW } from '../../utils/currency'
 import { targetWeightsFromPortfolio } from '../../utils/portfolioTools'
-import { fmtUSD } from '../Dashboard/dashboardPresentation'
-import { useDashboardAssetHistory } from '../Dashboard/useDashboardAssetHistory'
-import { useDashboardPortfolioData } from '../Dashboard/useDashboardPortfolioData'
-import { useDashboardPortfolioMutations } from '../Dashboard/useDashboardPortfolioMutations'
+import { fmtUSD } from './portfolioPresentation'
+import { usePortfolioAssetHistory } from './usePortfolioAssetHistory'
+import { usePortfolioData } from './usePortfolioData'
+import { usePortfolioMutations } from './usePortfolioMutations'
 import {
   buildPortfolioRows,
   portfolioTodayChange,
@@ -28,18 +28,17 @@ export function usePortfolioPageData() {
   )
   const [exchangeRate, setExchangeRate] = useState(null)
 
-  const data = useDashboardPortfolioData({
+  const data = usePortfolioData({
     userId,
     setTargetWeights,
-    includeMarketObservation: false,
   })
-  const history = useDashboardAssetHistory(data.summary, data.cashBalance, {
+  const history = usePortfolioAssetHistory(data.summary, data.cashBalance, {
     initiallyOpen: true,
   })
   const priceMap = useMemo(() => Object.fromEntries(
     (data.summary?.stocks ?? []).map((stock) => [stock.ticker, stock]),
   ), [data.summary])
-  const mutations = useDashboardPortfolioMutations({
+  const mutations = usePortfolioMutations({
     userId,
     portfolio: data.portfolio,
     setPortfolio: data.setPortfolio,
@@ -68,7 +67,7 @@ export function usePortfolioPageData() {
 
   useEffect(() => {
     setTargetWeights(targetWeightsFromPortfolio(data.portfolio))
-  }, [data.portfolio])
+  }, [data.portfolio, setTargetWeights])
 
   const rows = useMemo(
     () => buildPortfolioRows(data.portfolio, data.summary, data.herdMap),
