@@ -232,6 +232,8 @@ class SchedulerRun(Base):
     success_count  = Column(Integer, nullable=False, default=0)
     failed_count   = Column(Integer, nullable=False, default=0)
     failed_tickers = Column(Text, nullable=True)
+    skipped_count  = Column(Integer, nullable=False, default=0)
+    skipped_tickers = Column(Text, nullable=True)
     error_message  = Column(Text, nullable=True)
 
 

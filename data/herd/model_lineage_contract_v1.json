@@ -18,7 +18,25 @@
       "output": "research_action_label_and_ratio",
       "inputs": ["HERD_V4_STATE", "score_stability", "trend_quality", "herd_score_momentum", "signal_lifecycle", "data_quality", "investor_profile", "portfolio_context", "cooldown"],
       "source": "backend/src/main/java/com/herdsignal/service/ActionDecisionService.java",
-      "source_symbols": ["ACTION_MODEL_VERSION", "decide", "applyOperationalGate"],
+      "source_symbols": ["ACTION_MODEL_VERSION", "decide", "applyResearchVisibilityGate"],
+      "operational": false
+    },
+    {
+      "id": "USER_ACTION_BOUNDARY",
+      "role": "FAIL_CLOSED_PRODUCT_BOUNDARY",
+      "output": "hold_zero_or_explicit_grant",
+      "inputs": ["APPROVED_OPERATIONAL_GRANT"],
+      "source": "backend/src/main/java/com/herdsignal/service/UserActionBoundary.java",
+      "source_symbols": ["ZERO_RATIO", "locked", "fromApproved"],
+      "operational": true
+    },
+    {
+      "id": "OPERATIONAL_PROMOTION_GATE",
+      "role": "AUDITED_ACTION_AUTHORIZATION",
+      "output": "maximum_five_percent_add_or_reduce_grant",
+      "inputs": ["candidate_id", "model_version", "artifact_sha256", "direction_oos", "completed_cycle", "survivorship_safe", "blind_holdout", "human_approval"],
+      "source": "backend/src/main/java/com/herdsignal/service/AuditedOperationalActionPromotionPort.java",
+      "source_symbols": ["MAX_RATIO", "request", "saveAudit"],
       "operational": false
     },
     {

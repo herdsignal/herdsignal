@@ -9,6 +9,7 @@ import pandas as pd
 from scipy.stats import percentileofscore
 
 from indicators.wilder_rsi import wilder_rsi
+from indicators.errors import InsufficientIndicatorHistoryError
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +79,7 @@ def calc_weekly_rsi(df: pd.DataFrame, period: int = RSI_PERIOD) -> float:
         weekly = _resample_to_ohlcv(df, freq="W")
 
         if len(weekly) < MIN_CANDLES:
-            raise ValueError(
+            raise InsufficientIndicatorHistoryError(
                 f"주봉 데이터 부족 — RSI 계산에 최소 {MIN_CANDLES}주 필요, 현재 {len(weekly)}주"
             )
 
@@ -125,7 +126,7 @@ def calc_monthly_rsi(df: pd.DataFrame, period: int = RSI_PERIOD) -> float:
         monthly = _resample_to_ohlcv(df, freq="ME")
 
         if len(monthly) < MIN_CANDLES:
-            raise ValueError(
+            raise InsufficientIndicatorHistoryError(
                 f"월봉 데이터 부족 — RSI 계산에 최소 {MIN_CANDLES}개월 필요, 현재 {len(monthly)}개월"
             )
 

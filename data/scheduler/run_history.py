@@ -41,12 +41,14 @@ class SchedulerRunRecorder:
         total_count: int = 0,
         success_count: int = 0,
         failed_tickers: list[str] | None = None,
+        skipped_tickers: list[str] | None = None,
         error_message: str | None = None,
     ) -> None:
         """실행 결과를 저장하되 기록 장애를 본 작업 실패로 전파하지 않는다."""
         if run_id is None:
             return
         failed = failed_tickers or []
+        skipped = skipped_tickers or []
         try:
             with self._session_factory() as session:
                 row = session.get(SchedulerRun, run_id)
@@ -59,6 +61,8 @@ class SchedulerRunRecorder:
                 row.success_count = success_count
                 row.failed_count = len(failed)
                 row.failed_tickers = json.dumps(failed) if failed else None
+                row.skipped_count = len(skipped)
+                row.skipped_tickers = json.dumps(skipped) if skipped else None
                 row.error_message = error_message[:2000] if error_message else None
                 session.commit()
         except Exception as exc:

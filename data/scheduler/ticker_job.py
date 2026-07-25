@@ -5,6 +5,8 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 
+from herd.errors import InsufficientModelHistoryError
+
 logger = logging.getLogger(__name__)
 
 
@@ -14,9 +16,10 @@ def execute_tickers(
     calculate: Callable,
     save: Callable,
     on_success: Callable | None = None,
-) -> tuple[list[str], list[str]]:
+) -> tuple[list[str], list[str], list[str]]:
     success: list[str] = []
     failed: list[str] = []
+    skipped: list[str] = []
     total = len(tickers)
     for index, ticker in enumerate(tickers, start=1):
         logger.info("[Tier1][%s] 처리 시작 (%s/%s)", ticker, index, total)
@@ -34,7 +37,14 @@ def execute_tickers(
             else:
                 failed.append(ticker)
                 logger.error("[Tier1][%s] DB 저장 실패", ticker)
+        except InsufficientModelHistoryError as exc:
+            skipped.append(ticker)
+            logger.warning(
+                "[Tier1][%s] 모델 입력 적격성 제외: %s",
+                ticker,
+                exc,
+            )
         except Exception as exc:
             failed.append(ticker)
             logger.error("[Tier1][%s] 처리 중 예외: %s", ticker, exc, exc_info=True)
-    return success, failed
+    return success, failed, skipped

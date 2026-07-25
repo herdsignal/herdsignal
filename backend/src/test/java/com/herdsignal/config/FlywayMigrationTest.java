@@ -17,7 +17,7 @@ class FlywayMigrationTest {
                 .locations("classpath:db/migration")
                 .load();
 
-        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(6);
+        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(7);
 
         try (var connection = DriverManager.getConnection(url, "sa", "");
              var tables = connection.getMetaData().getTables(null, "PUBLIC", "%", new String[]{"TABLE"})) {
@@ -32,6 +32,15 @@ class FlywayMigrationTest {
                     "model_promotion_audits",
                     "flyway_schema_history"
             );
+        }
+
+        try (var connection = DriverManager.getConnection(url, "sa", "");
+             var columns = connection.getMetaData().getColumns(
+                     null, "PUBLIC", "SCHEDULER_RUNS", "%")) {
+            Set<String> names = new java.util.HashSet<>();
+            while (columns.next()) names.add(columns.getString("COLUMN_NAME").toLowerCase());
+
+            assertThat(names).contains("skipped_count", "skipped_tickers");
         }
     }
 }

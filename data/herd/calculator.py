@@ -17,6 +17,8 @@ from indicators.rsi import calc_weekly_rsi, calc_monthly_rsi
 from indicators.price_position import calc_52w_position, calc_ma200_deviation
 from indicators.volume import calc_volume_strength
 from indicators.ma200_weekly import calc_ma200_weekly
+from indicators.errors import InsufficientIndicatorHistoryError
+from herd.errors import InsufficientModelHistoryError
 
 logger = logging.getLogger(__name__)
 
@@ -182,6 +184,8 @@ def run(ticker: str, df: pd.DataFrame | None = None) -> HerdResult:
 
     values: dict[str, float] = {}
     failed: list[str] = []
+    failure_details: list[str] = []
+    insufficient_history: list[str] = []
 
     for name, func in indicator_funcs.items():
         try:
@@ -189,9 +193,18 @@ def run(ticker: str, df: pd.DataFrame | None = None) -> HerdResult:
         except Exception as e:
             logger.error(f"[{ticker}] 지표 계산 실패 — {name}: {e}")
             failed.append(name)
+            failure_details.append(str(e))
+            if isinstance(e, InsufficientIndicatorHistoryError):
+                insufficient_history.append(name)
 
     # 하나라도 실패하면 전체 실패 처리
     if failed:
+        if len(insufficient_history) == len(failed):
+            raise InsufficientModelHistoryError(
+                ticker,
+                insufficient_history,
+                failure_details,
+            )
         raise RuntimeError(
             f"[{ticker}] 지표 계산 실패 ({', '.join(failed)}) — HERD Index 산출 불가"
         )

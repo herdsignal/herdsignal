@@ -154,10 +154,17 @@ def _finish_scheduler_run(
     total_count: int = 0,
     success_count: int = 0,
     failed_tickers: list[str] | None = None,
+    skipped_tickers: list[str] | None = None,
     error_message: str | None = None,
 ) -> None:
     SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).finish(
-        run_id, status, total_count, success_count, failed_tickers, error_message,
+        run_id,
+        status,
+        total_count,
+        success_count,
+        failed_tickers,
+        skipped_tickers,
+        error_message,
     )
 
 
@@ -224,7 +231,7 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
     # ── 2. 종목별 순차 처리 ────────────────────
     total = len(tickers)
     observation_frames: dict = {}
-    success_list, failed_list = execute_tickers(
+    success_list, failed_list, skipped_list = execute_tickers(
         tickers,
         collect,
         run,
@@ -263,6 +270,8 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         logger.info(f"[Tier1]   ✅ 성공: {success_list}")
     if failed_list:
         logger.error(f"[Tier1]   ❌ 실패: {failed_list}")
+    if skipped_list:
+        logger.warning(f"[Tier1]   ⏭️ 최소 이력 미달 제외: {skipped_list}")
     logger.info("━" * 60)
 
     # ── 5. 포트폴리오 스냅샷 저장 (local 사용자) ───────────────────
@@ -299,6 +308,7 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         total_count=total,
         success_count=len(success_list),
         failed_tickers=failed_list,
+        skipped_tickers=skipped_list,
         error_message=combined_error,
     )
     result = {
@@ -306,6 +316,7 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         "total": total,
         "success": success_list,
         "failed": failed_list,
+        "skipped": skipped_list,
         "observation": (
             "FAILED" if observation_error else "SUCCESS"
         ),

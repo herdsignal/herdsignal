@@ -36,6 +36,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             "total": 2,
             "success": ["AAPL"],
             "failed": ["SNDK"],
+            "skipped": [],
             "observation": "SUCCESS",
         })
         finish.assert_called_once_with(
@@ -44,6 +45,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             total_count=2,
             success_count=1,
             failed_tickers=["SNDK"],
+            skipped_tickers=[],
             error_message=None,
         )
         notify.assert_called_once_with(result)

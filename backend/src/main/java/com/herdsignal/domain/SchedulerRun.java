@@ -42,6 +42,12 @@ public class SchedulerRun {
     @Column(name = "failed_tickers", columnDefinition = "TEXT")
     private String failedTickers;
 
+    @Column(name = "skipped_count", nullable = false)
+    private Integer skippedCount;
+
+    @Column(name = "skipped_tickers", columnDefinition = "TEXT")
+    private String skippedTickers;
+
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 }
