@@ -21,6 +21,7 @@ Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
 """
 
 import argparse
+import hashlib
 import logging
 import sys
 from pathlib import Path
@@ -48,6 +49,7 @@ from scheduler.on_demand import (                                             # 
     calculate_on_demand as calculate_cached,
 )
 from scheduler.run_history import SchedulerRunRecorder                          # noqa: E402
+from scheduler.run_lock import SchedulerRunLock                                # noqa: E402
 from scheduler.ticker_job import execute_tickers                                # noqa: E402
 from scheduler.realtime_portfolio import calculate_current_portfolio as value_portfolio  # noqa: E402
 from scheduler.observation_s1 import (                                      # noqa: E402
@@ -81,6 +83,7 @@ def _get_session_factory():
 # on-demand 캐시를 식별하는 user_id
 _CACHE_USER_ID = "cache"
 _TIER1_JOB_NAME = "HERD_TIER1_DAILY"
+_RUN_LOCK_PATH = _DATA_DIR / "runtime" / "herd-tier1.lock"
 _ALERT_CONFIG = IncidentAlertConfig(
     webhook_url=ALERT_WEBHOOK_URL,
     notify_success=ALERT_NOTIFY_SUCCESS,
@@ -148,6 +151,12 @@ def _start_scheduler_run(trigger_type: str) -> int | None:
     return SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).start(trigger_type)
 
 
+def _record_scheduler_universe(run_id: int | None, universe_sha256: str) -> None:
+    SchedulerRunRecorder(
+        _get_session_factory(), _TIER1_JOB_NAME
+    ).record_universe(run_id, universe_sha256)
+
+
 def _finish_scheduler_run(
     run_id: int | None,
     status: str,
@@ -155,6 +164,7 @@ def _finish_scheduler_run(
     success_count: int = 0,
     failed_tickers: list[str] | None = None,
     skipped_tickers: list[str] | None = None,
+    publish_status: str | None = None,
     error_message: str | None = None,
 ) -> None:
     SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).finish(
@@ -164,6 +174,7 @@ def _finish_scheduler_run(
         success_count,
         failed_tickers,
         skipped_tickers,
+        publish_status,
         error_message,
     )
 
@@ -197,7 +208,7 @@ def _build_and_write_observation(
     return bundle
 
 
-def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
+def _run_herd_job_unlocked(trigger_type: str) -> dict:
     """
     Tier 1 전체 HERD 계산·저장 잡.
     collect → calculator.run → saver.save_herd_result 순서로 티커별 실행.
@@ -228,6 +239,11 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         _notify_scheduler_result(result)
         return result
 
+    universe_sha256 = hashlib.sha256(
+        ("\n".join(tickers) + "\n").encode("utf-8")
+    ).hexdigest()
+    _record_scheduler_universe(run_id, universe_sha256)
+
     # ── 2. 종목별 순차 처리 ────────────────────
     total = len(tickers)
     observation_frames: dict = {}
@@ -243,22 +259,30 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
 
     # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────
     observation_error: str | None = None
-    try:
-        bundle = _build_and_write_observation(
-            observation_frames, success_list
-        )
-        logger.info(
-            "[Tier1] State S1 관찰 번들 생성 완료 — %s종목, 기준 %s",
-            len(bundle["records"]),
-            bundle["records"]["SPY"]["asOfDate"],
-        )
-    except Exception as exc:
-        observation_error = str(exc)
+    publish_status = "SKIPPED_INCOMPLETE_INPUT" if failed_list else "SUCCESS"
+    if failed_list:
         logger.error(
-            "[Tier1] State S1 관찰 번들 생성 실패: %s",
-            exc,
-            exc_info=True,
+            "[Tier1] 실패 종목이 있어 새 State S1 발행을 차단합니다: %s",
+            failed_list,
         )
+    else:
+        try:
+            bundle = _build_and_write_observation(
+                observation_frames, success_list
+            )
+            logger.info(
+                "[Tier1] State S1 관찰 번들 생성 완료 — %s종목, 기준 %s",
+                len(bundle["records"]),
+                bundle["records"]["SPY"]["asOfDate"],
+            )
+        except Exception as exc:
+            observation_error = str(exc)
+            publish_status = "FAILED"
+            logger.error(
+                "[Tier1] State S1 관찰 번들 생성 실패: %s",
+                exc,
+                exc_info=True,
+            )
 
     # ── 4. 전체 결과 요약 ─────────────────────
     logger.info("━" * 60)
@@ -309,6 +333,7 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         success_count=len(success_list),
         failed_tickers=failed_list,
         skipped_tickers=skipped_list,
+        publish_status=publish_status,
         error_message=combined_error,
     )
     result = {
@@ -318,11 +343,30 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         "failed": failed_list,
         "skipped": skipped_list,
         "observation": (
-            "FAILED" if observation_error else "SUCCESS"
+            publish_status
         ),
+        "universeSha256": universe_sha256,
     }
     _notify_scheduler_result(result)
     return result
+
+
+def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
+    lock = SchedulerRunLock.try_acquire(_RUN_LOCK_PATH)
+    if lock is None:
+        logger.warning("[Tier1] 이미 실행 중인 작업이 있어 중복 실행을 건너뜁니다.")
+        return {
+            "status": "DUPLICATE_SKIPPED",
+            "total": 0,
+            "success": [],
+            "failed": [],
+            "skipped": [],
+            "observation": "NOT_ATTEMPTED",
+        }
+    try:
+        return _run_herd_job_unlocked(trigger_type)
+    finally:
+        lock.release()
 
 
 # ══════════════════════════════════════════════
@@ -394,6 +438,7 @@ if __name__ == "__main__":
 사용 예:
   python scheduler/herd_scheduler.py             Tier1 스케줄러 데몬으로 실행
   python scheduler/herd_scheduler.py --run-now   Tier1 즉시 1회 실행 후 종료
+  python scheduler/herd_scheduler.py --retry-now 실패 후 전체 원자 재시도
 """,
     )
     parser.add_argument(
@@ -401,10 +446,15 @@ if __name__ == "__main__":
         action="store_true",
         help="스케줄 대기 없이 즉시 Tier1 전체 실행 후 종료",
     )
+    parser.add_argument(
+        "--retry-now",
+        action="store_true",
+        help="부분 프레임을 재사용하지 않고 Tier1 전체를 다시 실행",
+    )
     args = parser.parse_args()
 
-    if args.run_now:
+    if args.run_now or args.retry_now:
         logger.info("[--run-now] Tier1 즉시 실행 모드")
-        run_herd_job(trigger_type="MANUAL")
+        run_herd_job(trigger_type="RETRY" if args.retry_now else "MANUAL")
     else:
         run_scheduler()

@@ -42,6 +42,7 @@ class SchedulerRunRecorder:
         success_count: int = 0,
         failed_tickers: list[str] | None = None,
         skipped_tickers: list[str] | None = None,
+        publish_status: str | None = None,
         error_message: str | None = None,
     ) -> None:
         """실행 결과를 저장하되 기록 장애를 본 작업 실패로 전파하지 않는다."""
@@ -63,7 +64,21 @@ class SchedulerRunRecorder:
                 row.failed_tickers = json.dumps(failed) if failed else None
                 row.skipped_count = len(skipped)
                 row.skipped_tickers = json.dumps(skipped) if skipped else None
+                row.publish_status = publish_status
                 row.error_message = error_message[:2000] if error_message else None
                 session.commit()
         except Exception as exc:
             logger.error("스케줄러 실행 완료 이력 저장 실패: %s", exc, exc_info=True)
+
+    def record_universe(self, run_id: int | None, universe_sha256: str) -> None:
+        if run_id is None:
+            return
+        try:
+            with self._session_factory() as session:
+                row = session.get(SchedulerRun, run_id)
+                if row is None:
+                    return
+                row.universe_sha256 = universe_sha256
+                session.commit()
+        except Exception as exc:
+            logger.error("스케줄러 universe 계약 저장 실패: %s", exc, exc_info=True)

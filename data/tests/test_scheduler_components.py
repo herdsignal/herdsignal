@@ -66,6 +66,7 @@ class SchedulerComponentsTest(unittest.TestCase):
             1,
             ["BAD"],
             [],
+            None,
             "x" * 2100,
         )
         self.assertEqual(row.failed_tickers, '["BAD"]')

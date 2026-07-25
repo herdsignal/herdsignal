@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface SchedulerRunRepository extends JpaRepository<SchedulerRun, Long> {
     Optional<SchedulerRun> findTopByJobNameOrderByStartedAtDesc(String jobName);
+    Optional<SchedulerRun> findTopByJobNameAndStatusOrderByFinishedAtDesc(
+            String jobName, String status);
 }

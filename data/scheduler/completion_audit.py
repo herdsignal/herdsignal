@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
@@ -21,6 +22,7 @@ from scheduler.observation_store import validate_observation_bundle
 
 
 JOB_NAME = "HERD_TIER1_DAILY"
+_SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 @dataclass(frozen=True)
@@ -77,12 +79,41 @@ def evaluate_completion(
     ).astimezone(UTC)
     started_at = _utc(run["started_at"])
     finished_at = _utc(run["finished_at"])
+    publish_status = run.get("publish_status")
+    universe_sha256 = run.get("universe_sha256")
+    publish_contract_recorded = publish_status is not None or universe_sha256 is not None
 
     checks = [
         _check(
             "run_finished_successfully",
             run["status"] == "SUCCESS" and finished_at is not None,
             f"status={run['status']}",
+        ),
+        _check(
+            "state_publish_succeeded",
+            (
+                publish_status == "SUCCESS"
+                if publish_contract_recorded
+                else run["status"] == "SUCCESS"
+            ),
+            (
+                f"publish={publish_status}"
+                if publish_contract_recorded
+                else "legacy_pre_v8=true"
+            ),
+        ),
+        _check(
+            "ticker_universe_contract_recorded",
+            (
+                bool(_SHA256_PATTERN.fullmatch(str(universe_sha256)))
+                if publish_contract_recorded
+                else True
+            ),
+            (
+                f"sha256={universe_sha256}"
+                if publish_contract_recorded
+                else "legacy_pre_v8=true"
+            ),
         ),
         _check(
             "ticker_count_arithmetic",
@@ -132,6 +163,8 @@ def evaluate_completion(
         ),
         "passed": passed,
         "runId": run["id"],
+        "publishStatus": publish_status,
+        "universeSha256": universe_sha256,
         "failedTickers": failed,
         "skippedTickers": skipped,
         "missingObservationPairs": [
@@ -168,6 +201,8 @@ def audit_latest_run() -> dict[str, Any]:
             "skipped_tickers": _ticker_list(
                 row.skipped_tickers, "skipped_tickers"
             ),
+            "publish_status": row.publish_status,
+            "universe_sha256": row.universe_sha256,
         }
     if not output_path.is_relative_to(ROOT) or not output_path.is_file():
         running = run["status"] == "RUNNING"

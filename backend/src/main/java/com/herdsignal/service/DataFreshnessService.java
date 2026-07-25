@@ -62,6 +62,10 @@ public class DataFreshnessService {
         SchedulerRun latestRun = schedulerRunRepository
                 .findTopByJobNameOrderByStartedAtDesc(JOB_NAME)
                 .orElse(null);
+        SchedulerRun latestSuccessfulRun = schedulerRunRepository
+                .findTopByJobNameAndStatusOrderByFinishedAtDesc(
+                        JOB_NAME, "SUCCESS")
+                .orElse(null);
 
         Integer priceAge = businessDaysBetween(latestPriceDate, today);
         Integer scoreAge = businessDaysBetween(latestScoreDate, today);
@@ -90,7 +94,8 @@ public class DataFreshnessService {
                 freshScoreTickerCount,
                 missingPriceTickerCount,
                 missingScoreTickerCount,
-                toSummary(latestRun)
+                toSummary(latestRun),
+                toSummary(latestSuccessfulRun)
         );
     }
 
@@ -144,6 +149,10 @@ public class DataFreshnessService {
                 valueOrZero(run.getSuccessCount()),
                 valueOrZero(run.getFailedCount()),
                 parseFailedTickers(run.getFailedTickers()),
+                valueOrZero(run.getSkippedCount()),
+                parseFailedTickers(run.getSkippedTickers()),
+                run.getUniverseSha256(),
+                run.getPublishStatus(),
                 run.getErrorMessage()
         );
     }

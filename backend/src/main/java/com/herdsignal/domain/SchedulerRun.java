@@ -48,6 +48,12 @@ public class SchedulerRun {
     @Column(name = "skipped_tickers", columnDefinition = "TEXT")
     private String skippedTickers;
 
+    @Column(name = "universe_sha256", length = 64, columnDefinition = "CHAR(64)")
+    private String universeSha256;
+
+    @Column(name = "publish_status", length = 30)
+    private String publishStatus;
+
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 }

@@ -16,7 +16,8 @@ public record DataFreshnessResponse(
         int freshScoreTickerCount,
         int missingPriceTickerCount,
         int missingScoreTickerCount,
-        SchedulerRunSummary latestRun
+        SchedulerRunSummary latestRun,
+        SchedulerRunSummary latestSuccessfulRun
 ) {
     public record SchedulerRunSummary(
             String status,
@@ -27,6 +28,10 @@ public record DataFreshnessResponse(
             int successCount,
             int failedCount,
             List<String> failedTickers,
+            int skippedCount,
+            List<String> skippedTickers,
+            String universeSha256,
+            String publishStatus,
             String errorMessage
     ) {}
 }

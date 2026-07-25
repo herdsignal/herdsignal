@@ -80,6 +80,8 @@ def _run(status: str = "SUCCESS") -> dict:
         "failed_tickers": [],
         "skipped_count": 0,
         "skipped_tickers": [],
+        "publish_status": "SUCCESS",
+        "universe_sha256": "a" * 64,
     }
 
 
@@ -147,3 +149,56 @@ def test_rejects_reference_universe_drift() -> None:
         check for check in result["checks"]
         if check["name"] == "reference_universe_locked"
     )["passed"] is False
+
+
+def test_rejects_run_when_state_publish_was_blocked() -> None:
+    run = _run()
+    run["status"] = "PARTIAL_FAILURE"
+    run["success_count"] = 457
+    run["failed_count"] = 1
+    run["failed_tickers"] = ["NVDA"]
+    run["publish_status"] = "SKIPPED_INCOMPLETE_INPUT"
+    result = evaluate_completion(
+        run=run,
+        bundle=_bundle(),
+        contract=_contract(),
+        stored_pairs={("AAPL", "2026-07-24")},
+    )
+    assert result["status"] == "FAIL"
+    assert next(
+        check for check in result["checks"]
+        if check["name"] == "state_publish_succeeded"
+    )["passed"] is False
+
+
+def test_rejects_malformed_ticker_universe_hash() -> None:
+    run = _run()
+    run["universe_sha256"] = "not-a-sha256"
+    result = evaluate_completion(
+        run=run,
+        bundle=_bundle(),
+        contract=_contract(),
+        stored_pairs={("AAPL", "2026-07-24")},
+    )
+    assert result["status"] == "FAIL"
+    assert next(
+        check for check in result["checks"]
+        if check["name"] == "ticker_universe_contract_recorded"
+    )["passed"] is False
+
+
+def test_accepts_explicit_legacy_run_without_v8_publish_contract() -> None:
+    run = _run()
+    run["publish_status"] = None
+    run["universe_sha256"] = None
+    result = evaluate_completion(
+        run=run,
+        bundle=_bundle(),
+        contract=_contract(),
+        stored_pairs={("AAPL", "2026-07-24")},
+    )
+    assert result["status"] == "PASS"
+    assert next(
+        check for check in result["checks"]
+        if check["name"] == "ticker_universe_contract_recorded"
+    )["detail"] == "legacy_pre_v8=true"

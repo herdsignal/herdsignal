@@ -1,15 +1,31 @@
 import unittest
+import hashlib
 from unittest.mock import patch
 
 from scheduler import herd_scheduler
 
 
 class SchedulerRunHistoryTest(unittest.TestCase):
+    def test_duplicate_execution_is_skipped_before_run_history_is_created(self) -> None:
+        with (
+            patch.object(
+                herd_scheduler.SchedulerRunLock,
+                "try_acquire",
+                return_value=None,
+            ),
+            patch.object(herd_scheduler, "_start_scheduler_run") as start,
+        ):
+            result = herd_scheduler.run_herd_job(trigger_type="MANUAL")
+
+        self.assertEqual(result["status"], "DUPLICATE_SKIPPED")
+        start.assert_not_called()
+
     def test_run_history_records_partial_failure(self) -> None:
         herd_result = {"score": 50.0, "stage": "Calm"}
 
         with (
             patch.object(herd_scheduler, "_start_scheduler_run", return_value=7),
+            patch.object(herd_scheduler, "_record_scheduler_universe"),
             patch.object(herd_scheduler, "_fetch_tier1_tickers", return_value=["AAPL", "SNDK"]),
             patch.object(herd_scheduler, "collect", return_value=object()),
             patch.object(herd_scheduler, "run", return_value=herd_result),
@@ -25,7 +41,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                 return_value={
                     "records": {"SPY": {"asOfDate": "2026-07-24"}}
                 },
-            ),
+            ) as build_observation,
             patch.object(herd_scheduler, "_finish_scheduler_run") as finish,
             patch.object(herd_scheduler, "_notify_scheduler_result") as notify,
         ):
@@ -37,8 +53,10 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             "success": ["AAPL"],
             "failed": ["SNDK"],
             "skipped": [],
-            "observation": "SUCCESS",
+            "observation": "SKIPPED_INCOMPLETE_INPUT",
+            "universeSha256": hashlib.sha256(b"AAPL\nSNDK\n").hexdigest(),
         })
+        build_observation.assert_not_called()
         finish.assert_called_once_with(
             7,
             "PARTIAL_FAILURE",
@@ -46,6 +64,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             success_count=1,
             failed_tickers=["SNDK"],
             skipped_tickers=[],
+            publish_status="SKIPPED_INCOMPLETE_INPUT",
             error_message=None,
         )
         notify.assert_called_once_with(result)

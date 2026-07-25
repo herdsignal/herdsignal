@@ -49,12 +49,18 @@ class DataFreshnessServiceTest {
         mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(successfulRun));
+        when(schedulerRunRepository.findTopByJobNameAndStatusOrderByFinishedAtDesc(
+                "HERD_TIER1_DAILY", "SUCCESS"))
+                .thenReturn(Optional.of(successfulRun));
 
         DataFreshnessResponse response = service.getStatus();
 
         assertThat(response.status()).isEqualTo("FRESH");
         assertThat(response.priceBusinessDaysOld()).isEqualTo(1);
         assertThat(response.latestRun().failedTickers()).isEmpty();
+        assertThat(response.latestSuccessfulRun().status()).isEqualTo("SUCCESS");
+        assertThat(response.latestSuccessfulRun().publishStatus()).isEqualTo("SUCCESS");
+        assertThat(response.latestSuccessfulRun().universeSha256()).hasSize(64);
     }
 
     @Test
@@ -160,6 +166,10 @@ class DataFreshnessServiceTest {
         when(run.getTotalCount()).thenReturn(12);
         when(run.getSuccessCount()).thenReturn(status.equals("SUCCESS") ? 12 : 11);
         when(run.getFailedCount()).thenReturn(status.equals("SUCCESS") ? 0 : 1);
+        when(run.getSkippedTickers()).thenReturn("[]");
+        when(run.getUniverseSha256()).thenReturn("a".repeat(64));
+        when(run.getPublishStatus()).thenReturn(
+                status.equals("SUCCESS") ? "SUCCESS" : "SKIPPED_INCOMPLETE_INPUT");
         return run;
     }
 }

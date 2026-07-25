@@ -217,6 +217,7 @@ cd ..
 ./scripts/check-health.sh
 ./scripts/smoke-local.sh
 ./scripts/audit-scheduler-run.sh
+./scripts/retry-scheduler-run.sh
 ./scripts/backup-db.sh
 ./scripts/verify-backup.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz
 ```
@@ -226,6 +227,12 @@ State S1 번들 생성 시각과 DB 저장 완결성을 함께 검사합니다. 
 `RUNNING`, 모든 조건을 통과한 완료 실행만 `PASS`를 반환합니다. 모델의 최소
 가격 이력을 채우지 못한 신규 상장 종목은 임계값을 완화하지 않고 `skipped`로
 분리하며, 실제 수집·저장 오류와 혼동하지 않습니다.
+
+Tier1은 단일 호스트 파일 잠금으로 중복 실행을 차단합니다. 실행 대상 전체는
+SHA-256으로 기록하며, 실제 실패 종목이 하나라도 있으면 새 State S1 번들을
+발행하지 않고 직전 정상 번들을 유지합니다. 재시도는 일부 결과를 이어 붙이지
+않고 `retry-scheduler-run.sh`로 전체 대상을 다시 계산합니다. 데이터 상태 API는
+가장 최근 실행과 가장 최근 성공 실행을 따로 제공합니다.
 
 백업은 압축 후 체크섬을 함께 만들며 기본 14일 보관합니다. 보관 기간과 경로는 `.env`의
 `BACKUP_RETENTION_DAYS`, `BACKUP_DIR`로 바꿀 수 있습니다.
