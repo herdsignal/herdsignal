@@ -4,6 +4,8 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,6 +43,21 @@ class FlywayMigrationTest {
             while (columns.next()) names.add(columns.getString("COLUMN_NAME").toLowerCase());
 
             assertThat(names).contains("skipped_count", "skipped_tickers");
+        }
+
+        try (var connection = DriverManager.getConnection(url, "sa", "");
+             var columns = connection.getMetaData().getColumns(
+                     null, "PUBLIC", "MODEL_PROMOTION_AUDITS", "%")) {
+            Map<String, String> types = new HashMap<>();
+            while (columns.next()) {
+                types.put(
+                        columns.getString("COLUMN_NAME").toLowerCase(),
+                        columns.getString("TYPE_NAME").toUpperCase()
+                );
+            }
+
+            assertThat(types.get("artifact_sha256")).startsWith("CHAR");
+            assertThat(types.get("approval_file_sha256")).startsWith("CHAR");
         }
     }
 }

@@ -40,7 +40,7 @@ public class ModelPromotionAudit {
     @Column(name = "model_version", length = 80)
     private String modelVersion;
 
-    @Column(name = "artifact_sha256", length = 64)
+    @Column(name = "artifact_sha256", length = 64, columnDefinition = "CHAR(64)")
     private String artifactSha256;
 
     @Column(length = 10)
@@ -64,7 +64,7 @@ public class ModelPromotionAudit {
     @Column(length = 100)
     private String reviewer;
 
-    @Column(name = "approval_file_sha256", length = 64)
+    @Column(name = "approval_file_sha256", length = 64, columnDefinition = "CHAR(64)")
     private String approvalFileSha256;
 
     @Column(name = "approved_at")
