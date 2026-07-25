@@ -4,6 +4,40 @@
    ───────────────────────────────────────────── */
 
 :root {
+  /* V6 의미 토큰 — 새 화면부터 사용하고 레거시 화면은 전환 완료까지 보존 */
+  --hs-bg: #0A0A09;
+  --hs-surface: #11110F;
+  --hs-surface-raised: #161613;
+  --hs-line: rgba(188, 182, 168, 0.12);
+  --hs-line-strong: rgba(206, 199, 184, 0.22);
+  --hs-text: #ECEAE4;
+  --hs-text-subtle: #AAA69D;
+  --hs-text-muted: #6E6B64;
+  --hs-gain: #57A77F;
+  --hs-loss: #D96A70;
+  --hs-flee: #4E7FC7;
+  --hs-scatter: #6E98D4;
+  --hs-calm: #989991;
+  --hs-drift: #D77738;
+  --hs-rush: #DC515A;
+
+  --hs-content-max: 1380px;
+  --hs-page-gutter: clamp(20px, 5vw, 72px);
+  --hs-header-height: 68px;
+  --hs-radius-sm: 6px;
+  --hs-radius-md: 8px;
+  --hs-focus-ring: 0 0 0 2px var(--hs-bg), 0 0 0 4px rgba(110, 152, 212, 0.72);
+
+  --hs-space-1: 4px;
+  --hs-space-2: 8px;
+  --hs-space-3: 12px;
+  --hs-space-4: 16px;
+  --hs-space-5: 20px;
+  --hs-space-6: 24px;
+  --hs-space-8: 32px;
+  --hs-space-10: 40px;
+  --hs-space-12: 48px;
+
   /* 배경 계층 */
   --bg:       #0D121A;
   --surface:  #151B25;
@@ -58,6 +92,17 @@
 
 /* 라이트 모드 오버라이드 */
 body.light {
+  --hs-bg: #F5F3EE;
+  --hs-surface: #FFFFFF;
+  --hs-surface-raised: #EEEAE2;
+  --hs-line: rgba(61, 57, 50, 0.12);
+  --hs-line-strong: rgba(61, 57, 50, 0.22);
+  --hs-text: #191918;
+  --hs-text-subtle: #5E5B55;
+  --hs-text-muted: #8A857C;
+  --hs-gain: #267553;
+  --hs-loss: #B84450;
+
   --bg:       #F4F7FB;
   --surface:  #FFFFFF;
   --surface2: #EEF3F8;
