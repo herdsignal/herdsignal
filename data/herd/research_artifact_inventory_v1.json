@@ -451,6 +451,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/sec_form4_nonroutine_sale_rush_preregistration_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/sec_form4_research_census_v2.json",
       "status": "DATA_PIPELINE"
     },

@@ -1,0 +1,79 @@
+{
+  "protocol_version": "HERD_SEC_FORM4_NONROUTINE_SALE_RUSH_PREREGISTRATION_V1",
+  "status": "LOCKED_BEFORE_FEATURE_OUTCOME_JOIN",
+  "locked_at": "2026-07-26",
+  "research_question": "At S1 Rush entry, does a recent cluster of timing-non-routine insider sales identify a higher 63-session adverse-path risk?",
+  "economic_mechanism": "One sale is commonly driven by liquidity, tax, compensation, or diversification. Distinct eligible insiders independently selling outside their repeated calendar timing near the same Rush entry may contain incremental disagreement not present in price state alone.",
+  "inputs": [
+    {"path": "data/herd/sec_form4_nonroutine_sale_feasibility_v1.json", "sha256": "51a7638d7ac3815f3af9f3fb9f7da3a3e4d0986c50eee10896c27fa9dcb62feb"},
+    {"path": "data/reports/sec_form4_nonroutine_sale_events_v1.csv", "sha256": "95f4e4710b6e8b74cc9b5b37f0d4031d8f5068a45fd31f2cd2b5de89d3962a14"},
+    {"path": "data/herd/herd_state_s1.json", "sha256": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489"},
+    {"path": "data/reports/herd_state_s1.json", "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"},
+    {"path": "data/walk_forward/herd-state-s1/primary.csv.gz", "sha256": "0d79aa816ca8cb58569e22c8bddffc2b19987bb9b2c8fd1440f8863b442b5152"},
+    {"path": "data/walk_forward/herd-state-s1/independent_current_constituents.csv.gz", "sha256": "bb5f1f65e4329232ca8149b8ea44eed004e39e46ee5e88fb5458029c99ba072d"},
+    {"path": "data/herd/model_establishment_split_v1.json", "sha256": "2978e0380cc5fcf7855587a83ec3a8495c26c328fd1d6b08a20f54e1da1ff9e1"}
+  ],
+  "population": {
+    "state": "HERD_STATE_S1",
+    "event": "FIRST_WEEKLY_RUSH_OBSERVATION_AFTER_A_NON_RUSH_OBSERVATION",
+    "universe": "PRIMARY_AND_INDEPENDENT_CURRENT_CONSTITUENT_PREHOLDOUT_PANELS",
+    "claim_boundary": "Current-constituent preholdout OOS sensitivity; not blind and not survivorship safe."
+  },
+  "exposure": {
+    "name": "FORM4_TIMING_NONROUTINE_MULTI_OWNER_SALE_30D_AT_S1_RUSH_ENTRY",
+    "lookback_calendar_days": 30,
+    "minimum_distinct_reporting_owners": 2,
+    "availability_rule": "filingDate must be strictly earlier than the S1 Rush entry signal_date",
+    "eligible_timing_status": "TIMING_NON_ROUTINE_CANDIDATE",
+    "candidate_eligible_required": true,
+    "explicit_10b5_1_evidence_excluded": true,
+    "same_day_use_forbidden": true,
+    "transaction_amount_or_owner_role_weighting": "NONE",
+    "missing_history": "INELIGIBLE_NO_IMPUTATION"
+  },
+  "outcome": {
+    "horizon_sessions": 63,
+    "primary": "LARGE_PULLBACK_OR_STRUCTURAL_BREAK_WITHIN_63_SESSIONS",
+    "large_pullback": "MINIMUM_RETURN_LE_NEGATIVE_12_PERCENT",
+    "structural_break": "TERMINAL_RETURN_LE_NEGATIVE_15_PERCENT_OR_MINIMUM_RETURN_LE_NEGATIVE_25_PERCENT",
+    "control": "NO_LARGE_PULLBACK_OR_STRUCTURAL_BREAK",
+    "overlap": "ONE_OBSERVATION_PER_S1_RUSH_ENTRY",
+    "outcome_must_end_inside_fold": true
+  },
+  "oos_folds": [
+    {"id": "OOS_2016_2018", "start": "2016-01-01", "end": "2018-12-31"},
+    {"id": "OOS_2019_2021", "start": "2019-01-01", "end": "2021-12-31"},
+    {"id": "OOS_2022_2023", "start": "2022-01-01", "end": "2023-12-31"},
+    {"id": "OOS_2024_2026Q2", "start": "2024-01-01", "end": "2026-06-30"}
+  ],
+  "adoption_gate": {
+    "minimum_resolved_episodes": 1500,
+    "minimum_feature_positive_episodes": 50,
+    "minimum_feature_positive_tickers": 30,
+    "minimum_folds_with_at_least_10_positive_episodes": 3,
+    "minimum_direction_consistent_folds": 3,
+    "minimum_pooled_adverse_risk_difference": 0.05,
+    "minimum_pooled_relative_risk": 1.25,
+    "minimum_ticker_cluster_bootstrap_95_lower_risk_difference": 0.0,
+    "maximum_one_sided_fisher_p_value": 0.05
+  },
+  "decision_boundary": {
+    "single_hypothesis_only": true,
+    "threshold_retuning_after_results": false,
+    "combine_with_rejected_features": false,
+    "historical_pass_can_authorize_action": false,
+    "blind_holdout_access": false,
+    "survivorship_safe": false,
+    "operational_action_ratio": 0.0
+  },
+  "terminology_boundary": {
+    "allowed": "timing-non-routine public proxy",
+    "forbidden": ["informed sale", "illegal trading", "certain profit-taking signal"]
+  },
+  "evidence_basis": [
+    {"url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets", "claim": "SEC structured insider data are as-filed and filings remain authoritative."},
+    {"url": "https://www.nber.org/papers/w16454", "claim": "Trades outside repeated calendar timing were more informative than routine trades in the cited sample."},
+    {"url": "https://www.nber.org/papers/w6656", "claim": "Insider sales are generally less informative than purchases, motivating a clustered and conservative sale hypothesis."},
+    {"url": "https://www.nber.org/papers/w6913", "claim": "Historical sale portfolios did not show the same abnormal-return evidence as purchase portfolios."}
+  ]
+}
