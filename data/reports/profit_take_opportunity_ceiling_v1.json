@@ -1,0 +1,80 @@
+{
+  "report_version": "HERD_PROFIT_TAKE_OPPORTUNITY_CEILING_V1",
+  "status": "ECONOMIC_OPPORTUNITY_CEILING_PASSED",
+  "all_rush_entries": 8788,
+  "sparse_entries": 5876,
+  "tickers": 439,
+  "summaries": {
+    "INDEPENDENT_CURRENT_CONSTITUENTS": {
+      "base": {
+        "events": 5180,
+        "tickers": 388,
+        "constrained_opportunities": 2963,
+        "absolute_opportunity_rate": 0.9266409266409267,
+        "constrained_opportunity_rate": 0.572007722007722,
+        "mean_total_position_uplift": 0.00600024092095021,
+        "median_conditional_sleeve_share_delta_rate": 0.132776452045833,
+        "median_time_to_reentry_sessions": 51.0
+      },
+      "stress": {
+        "events": 5180,
+        "tickers": 388,
+        "constrained_opportunities": 2861,
+        "absolute_opportunity_rate": 0.9,
+        "constrained_opportunity_rate": 0.5523166023166023,
+        "mean_total_position_uplift": 0.0058157307616500615,
+        "median_conditional_sleeve_share_delta_rate": 0.1317602037152552,
+        "median_time_to_reentry_sessions": 52.0
+      }
+    },
+    "PRIMARY": {
+      "base": {
+        "events": 696,
+        "tickers": 51,
+        "constrained_opportunities": 369,
+        "absolute_opportunity_rate": 0.9037356321839081,
+        "constrained_opportunity_rate": 0.5301724137931034,
+        "mean_total_position_uplift": 0.004979270311037252,
+        "median_conditional_sleeve_share_delta_rate": 0.13090993732767697,
+        "median_time_to_reentry_sessions": 51.0
+      },
+      "stress": {
+        "events": 696,
+        "tickers": 51,
+        "constrained_opportunities": 349,
+        "absolute_opportunity_rate": 0.8735632183908046,
+        "constrained_opportunity_rate": 0.5014367816091954,
+        "mean_total_position_uplift": 0.004803070240579655,
+        "median_conditional_sleeve_share_delta_rate": 0.13278016629088762,
+        "median_time_to_reentry_sessions": 53.0
+      }
+    }
+  },
+  "checks": {
+    "minimum_total_sparse_events": true,
+    "minimum_primary_sparse_events": true,
+    "minimum_independent_sparse_events": true,
+    "independent_current_constituents_base_minimum_opportunity_rate": true,
+    "independent_current_constituents_base_minimum_mean_uplift": true,
+    "independent_current_constituents_base_minimum_median_sleeve_delta": true,
+    "independent_current_constituents_stress_minimum_opportunity_rate": true,
+    "independent_current_constituents_stress_minimum_mean_uplift": true,
+    "independent_current_constituents_stress_minimum_median_sleeve_delta": true,
+    "primary_base_minimum_opportunity_rate": true,
+    "primary_base_minimum_mean_uplift": true,
+    "primary_base_minimum_median_sleeve_delta": true,
+    "primary_stress_minimum_opportunity_rate": true,
+    "primary_stress_minimum_mean_uplift": true,
+    "primary_stress_minimum_median_sleeve_delta": true
+  },
+  "passed": true,
+  "interpretation": "Non-executable upper bound. Passing only permits success-label V2 design.",
+  "direction_evidence_admitted": false,
+  "trim_or_reentry_authorized": false,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "failures": {},
+  "events_path": "data/reports/profit_take_opportunity_ceiling_v1.csv",
+  "events_sha256": "714154b485b9d2e388131fda15259a9bb2365a9cf87aaaab8578b6715958f12f"
+}

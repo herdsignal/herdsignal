@@ -331,6 +331,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/profit_take_opportunity_ceiling_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/public_leading_data_feasibility_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1201,6 +1205,14 @@
     {
       "path": "data/reports/profit_take_oos_v2.json",
       "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/profit_take_opportunity_ceiling_v1.csv",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/profit_take_opportunity_ceiling_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/public_leading_data_feasibility_v1.json",

@@ -1,0 +1,69 @@
+{
+  "contract_version": "HERD_PROFIT_TAKE_OPPORTUNITY_CEILING_V1",
+  "status": "LOCKED_BEFORE_S1_CEILING_RESULTS",
+  "locked_at": "2026-07-26",
+  "objective": "Determine whether sparse State S1 Rush entries contain enough after-cost five-percent trim and lower-price reentry opportunities to justify training another predictor.",
+  "inputs": [
+    {"path": "data/herd/research_decision_v2.json", "sha256": "96606cd3cf313fbae835f4b7034134c9aaebc926a85a4d703dd0bb2f4663d1c3"},
+    {"path": "data/herd/cycle_value_protocol_v1.json", "sha256": "c841de65a2f141d702fa7e64c909a26aabdb04d4fd6c94c9217fd0f999fd45d3"},
+    {"path": "data/reports/herd_state_s1.json", "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"},
+    {"path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json", "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b"},
+    {"path": "data/snapshots/yf-independent-current-sp500-20260721/manifest.json", "sha256": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781"},
+    {"path": "data/herd/model_establishment_split_v1.json", "sha256": "2978e0380cc5fcf7855587a83ec3a8495c26c328fd1d6b08a20f54e1da1ff9e1"}
+  ],
+  "event": {
+    "model": "HERD_STATE_S1",
+    "definition": "FIRST_WEEKLY_RUSH_OBSERVATION_AFTER_AN_OBSERVED_NON_RUSH_WEEK",
+    "first_observation_already_in_rush": "EXCLUDED",
+    "maximum_events_per_ticker_calendar_year": 2,
+    "sparse_selection": "FIRST_TWO_CHRONOLOGICAL_RUSH_ENTRIES_WITHOUT_OUTCOME_SELECTION",
+    "universes_reported_separately": ["PRIMARY", "INDEPENDENT_CURRENT_CONSTITUENTS"]
+  },
+  "execution": {
+    "trim_fraction": 0.05,
+    "sale": "NEXT_SESSION_ADJUSTED_OPEN",
+    "horizon_sessions": 126,
+    "adjusted_open_formula": "OPEN_X_ADJ_CLOSE_DIV_CLOSE",
+    "base_one_way_fee_rate": 0.001,
+    "base_one_way_slippage_rate": 0.0005,
+    "stress_one_way_fee_rate": 0.002,
+    "stress_one_way_slippage_rate": 0.0015,
+    "cash_yield": 0.0
+  },
+  "ceilings": {
+    "absolute_oracle": "LOWEST_AFTER_COST_ADJUSTED_OPEN_WITHIN_HORIZON",
+    "constrained_oracle": {
+      "minimum_net_sleeve_share_delta_rate": 0.03,
+      "minimum_consecutive_qualifying_sessions": 3,
+      "maximum_advance_before_reentry": 0.10,
+      "selection": "LOWEST_QUALIFYING_WINDOW_START_AFTER_ALL_CONSTRAINTS"
+    },
+    "interpretation": "Both are non-executable feasibility ceilings. Future prices can label opportunity but can never become a feature or fill rule."
+  },
+  "feasibility_gate": {
+    "minimum_total_sparse_events": 1000,
+    "minimum_primary_sparse_events": 250,
+    "minimum_independent_sparse_events": 1000,
+    "minimum_constrained_opportunity_rate_each_universe": 0.15,
+    "minimum_mean_total_position_uplift_each_universe": 0.001,
+    "minimum_median_conditional_sleeve_share_delta_rate_each_universe": 0.03,
+    "base_and_stress_must_both_pass": true
+  },
+  "decision_boundary": {
+    "pass_only_allows_success_label_v2_design": true,
+    "pass_does_not_admit_direction_evidence": true,
+    "pass_does_not_authorize_trim_or_reentry": true,
+    "survivorship_safe": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  },
+  "forbidden": [
+    "REUSE_V61_RUSH_AS_EVENT_ELIGIBILITY",
+    "SELECT_EVENTS_BY_FUTURE_OUTCOME",
+    "USE_ORACLE_REENTRY_AS_EXECUTABLE_RULE",
+    "CHANGE_COST_DISCOUNT_RUN_OR_HORIZON_AFTER_RESULTS",
+    "DROP_CONTINUATION_OR_NO_OPPORTUNITY_EVENTS",
+    "OPEN_BLIND_HOLDOUT",
+    "ENABLE_OPERATIONAL_ACTION"
+  ]
+}
