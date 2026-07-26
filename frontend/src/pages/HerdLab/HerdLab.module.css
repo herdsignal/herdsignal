@@ -5,7 +5,7 @@
   max-width: 1480px;
 }
 
-.overview,
+.currentScope,
 .panel {
   overflow: hidden;
   border: 1px solid var(--border);
@@ -13,48 +13,53 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent), var(--surface);
 }
 
-.overview {
+.currentScope {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr);
   gap: 18px;
   padding: 22px;
 }
 
-.overview header {
+.currentScope header {
   align-self: center;
 }
 
-.overview header span,
+.currentScope header span,
+.scopeGrid span,
+.archiveOverview header span,
 .metrics span,
 .trustLine span,
 .sectionHead span,
-.methodology summary span {
+.methodology summary span,
+.archive > summary span {
   color: var(--text-3);
   font-size: var(--hs-type-label);
   font-weight: 800;
   text-transform: uppercase;
 }
 
-.overview h1 {
+.currentScope h1 {
   margin-top: 8px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 40px;
   line-height: 1;
 }
 
-.overview header p {
+.currentScope header p {
   margin-top: 9px;
   color: var(--text-3);
   font-size: var(--hs-type-body-sm);
   line-height: 1.45;
 }
 
+.scopeGrid,
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
+.scopeGrid > div,
 .metrics > div {
   min-width: 0;
   padding: 14px;
@@ -63,6 +68,7 @@
   background: rgba(255, 255, 255, 0.018);
 }
 
+.scopeGrid strong,
 .metrics strong {
   display: block;
   margin-top: 9px;
@@ -70,6 +76,7 @@
   font-size: 24px;
 }
 
+.scopeGrid em,
 .metrics em {
   display: block;
   overflow: hidden;
@@ -116,6 +123,7 @@
 .drift { background: var(--drift); }
 .rush { background: var(--rush); }
 
+.archive > summary,
 .sectionHead,
 .methodology > summary {
   display: flex;
@@ -125,18 +133,21 @@
   padding: 17px 20px;
 }
 
+.archive > summary > div,
 .sectionHead > div,
 .methodology summary > div {
   display: grid;
   gap: 5px;
 }
 
+.archive > summary strong,
 .sectionHead strong,
 .methodology summary strong {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
 }
 
+.archive > summary em,
 .sectionHead p,
 .methodology summary em {
   color: var(--text-3);
@@ -144,25 +155,82 @@
   font-style: normal;
 }
 
+.archive > summary,
 .methodology > summary,
 .tableDisclosure > summary {
   cursor: pointer;
   list-style: none;
 }
 
+.archive > summary::-webkit-details-marker,
 .methodology > summary::-webkit-details-marker,
 .tableDisclosure > summary::-webkit-details-marker {
   display: none;
 }
 
+.archive > summary::after,
 .methodology > summary::after {
   color: var(--text-3);
   content: '+';
   font-size: 18px;
 }
 
+.archive[open] > summary::after,
 .methodology[open] > summary::after {
   content: '−';
+}
+
+.archive[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.archiveBody {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+}
+
+.inlineStatus {
+  margin: 0;
+  padding: 18px 20px;
+  color: var(--text-3);
+  font-size: var(--hs-type-body-sm);
+}
+
+.archiveBody > .panel,
+.archiveOverview {
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--surface);
+}
+
+.archiveOverview {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 18px;
+  padding: 20px;
+}
+
+.archiveOverview > header {
+  align-self: center;
+}
+
+.archiveOverview header strong,
+.archiveOverview header em {
+  display: block;
+}
+
+.archiveOverview header strong {
+  margin-top: 7px;
+  color: var(--text-1);
+  font-size: var(--hs-type-body);
+}
+
+.archiveOverview header em {
+  margin-top: 6px;
+  color: var(--text-3);
+  font-size: var(--hs-type-label);
+  font-style: normal;
 }
 
 .sectorList {
@@ -391,20 +459,23 @@
 }
 
 @media (max-width: 1040px) {
-  .overview { grid-template-columns: 1fr; }
+  .currentScope,
+  .archiveOverview { grid-template-columns: 1fr; }
+  .scopeGrid,
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .trustLine { grid-column: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 760px) {
-  .overview,
+  .currentScope,
+  .archive > summary,
   .sectionHead,
   .methodology > summary {
     padding-left: 16px;
     padding-right: 16px;
   }
 
-  .overview h1 { font-size: 34px; }
+  .currentScope h1 { font-size: 34px; }
 
   .sectorList,
   .methodGrid {
@@ -439,6 +510,7 @@
 }
 
 @media (max-width: 520px) {
+  .scopeGrid,
   .metrics,
   .trustLine { grid-template-columns: 1fr; }
   .sectorList article { grid-template-columns: 1fr; }
@@ -496,7 +568,7 @@
   align-items: center;
   gap: 7px;
   margin-top: 12px;
-  color: var(--text3);
+  color: var(--text-3);
   font-size: var(--hs-type-body-sm);
   font-style: normal;
 }
@@ -509,10 +581,10 @@
 }
 
 .shadowStatus strong {
-  color: var(--text2);
+  color: var(--text-2);
   font-size: inherit;
 }
 
 .shadowStatus.active {
-  color: var(--blue);
+  color: var(--flee);
 }

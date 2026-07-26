@@ -44,7 +44,7 @@ export default function Settings() {
       <header>
         <span>INVESTOR PROFILE</span>
         <h1>투자 프로필</h1>
-        <p>투자 방식과 한도를 기록합니다. 현재 State S1 계산에는 사용하지 않습니다.</p>
+        <p>투자 방식과 목표 비중을 기록합니다. State S1 계산에는 사용하지 않습니다.</p>
       </header>
       <InvestorProfilePanel
         profile={profile}

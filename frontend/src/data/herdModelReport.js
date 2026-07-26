@@ -1,5 +1,6 @@
 /**
- * herdModelReport.js — HERD Lab 표시용 모델 검증 리포트 데이터
+ * herdModelReport.js — HERD Lab 과거 연구 보관함 전용 모델 검증 데이터.
+ * 운영 화면이나 현재 State S1 계산에는 연결하지 않는다.
  */
 
 const herdModelReport = {
