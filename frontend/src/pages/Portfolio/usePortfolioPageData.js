@@ -9,6 +9,7 @@ import { usePortfolioMutations } from './usePortfolioMutations'
 import {
   buildPortfolioRows,
   buildPortfolioExposure,
+  buildPortfolioHerdField,
   portfolioTodayChange,
   sortPortfolioRows,
 } from './portfolioModel'
@@ -89,6 +90,10 @@ export function usePortfolioPageData() {
     () => buildPortfolioExposure(rows, data.cashBalance, totalAssetValue),
     [data.cashBalance, rows, totalAssetValue],
   )
+  const herdField = useMemo(
+    () => buildPortfolioHerdField(rows),
+    [rows],
+  )
 
   const displayAmount = useCallback((usdValue) => {
     if (usdValue == null) return '—'
@@ -136,6 +141,7 @@ export function usePortfolioPageData() {
     sortedRows,
     todayChange,
     exposure,
+    herdField,
     displayAmount,
     displaySignedAmount,
     refresh,

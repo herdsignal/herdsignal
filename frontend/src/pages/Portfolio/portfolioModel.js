@@ -1,4 +1,5 @@
 import { resolvePreviousScore } from '../../components/HerdLens/herdLensModel'
+import { stageLabelFromScore } from '../../utils/herdStage'
 
 export const PORTFOLIO_SORTS = [
   { value: 'weight', label: '비중' },
@@ -135,6 +136,64 @@ export function buildPortfolioExposure(
     cashWeightPct: total > 0 ? cash / total * 100 : null,
     sectors,
     unclassifiedWeightPct: sectorMap.get('미분류') ?? 0,
+  }
+}
+
+function fieldLane(ticker, score, occupied) {
+  const lanes = [[], [], [], []]
+  occupied.forEach((item) => lanes[item.lane].push(item.score))
+  const available = lanes.findIndex((lane) => (
+    lane.every((position) => Math.abs(position - score) >= 8)
+  ))
+  if (available >= 0) return available
+  const seed = [...ticker].reduce((sum, character) => sum + character.charCodeAt(0), 0)
+  return seed % lanes.length
+}
+
+export function buildPortfolioHerdField(rows = []) {
+  const valuedRows = rows.filter((row) => (
+    Number.isFinite(row.marketValue) && row.marketValue > 0
+  ))
+  const observedRows = valuedRows.filter((row) => (
+    Number.isFinite(row.herdScore)
+  ))
+  const stockValue = valuedRows.reduce((sum, row) => sum + row.marketValue, 0)
+  const observedValue = observedRows.reduce((sum, row) => sum + row.marketValue, 0)
+  const weightedScore = observedValue > 0
+    ? observedRows.reduce(
+      (sum, row) => sum + row.herdScore * row.marketValue,
+      0,
+    ) / observedValue
+    : null
+  const occupied = []
+  const points = [...observedRows]
+    .sort((left, right) => left.herdScore - right.herdScore)
+    .map((row) => {
+      const score = Math.max(0, Math.min(100, row.herdScore))
+      const lane = fieldLane(row.ticker, score, occupied)
+      occupied.push({ score, lane })
+      return {
+        ticker: row.ticker,
+        score,
+        stage: stageLabelFromScore(score),
+        lane,
+        portfolioWeightPct: row.weightPct,
+        observedWeightPct: observedValue > 0
+          ? row.marketValue / observedValue * 100
+          : null,
+      }
+    })
+  return {
+    weightedScore,
+    weightedStage: weightedScore == null
+      ? null
+      : stageLabelFromScore(weightedScore),
+    observedCount: observedRows.length,
+    totalCount: valuedRows.length,
+    observedValueCoveragePct: stockValue > 0
+      ? observedValue / stockValue * 100
+      : null,
+    points,
   }
 }
 

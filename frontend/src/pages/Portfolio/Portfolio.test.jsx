@@ -72,6 +72,21 @@ function pageData() {
       cashWeightPct: 20,
       sectors: [{ name: 'Technology', weightPct: 80 }],
     },
+    herdField: {
+      weightedScore: 78,
+      weightedStage: 'Rush',
+      observedCount: 1,
+      totalCount: 1,
+      observedValueCoveragePct: 100,
+      points: [{
+        ticker: 'NVDA',
+        score: 78,
+        stage: 'Rush',
+        lane: 0,
+        portfolioWeightPct: 80,
+        observedWeightPct: 100,
+      }],
+    },
     displayAmount: (value) => value == null ? '—' : `$${Number(value).toFixed(2)}`,
     displaySignedAmount: (value) => value == null
       ? '—'
@@ -107,6 +122,8 @@ describe('Portfolio Lens', () => {
     expect(screen.getByText('계좌 가치 변화')).toBeInTheDocument()
     expect(screen.getByText('투자 수익률 아님')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '비중·노출' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '보유 HERD Field' })).toBeInTheDocument()
+    expect(screen.getByText('평가액 100%')).toBeInTheDocument()
     expect(screen.getByText('ETF 내부 섹터 구성 미반영', { exact: false })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '상세 보기' })).toHaveAttribute('href', '/history')
     expect(screen.getByRole('img', { name: /HERD 78/ })).toBeInTheDocument()
@@ -125,6 +142,20 @@ describe('Portfolio Lens', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'NVDA 종목 상세 열기' }))
     expect(screen.getByText('NVDA 상세 화면')).toBeInTheDocument()
+  })
+
+  it('opens the stock detail from the HERD field', () => {
+    render(
+      <MemoryRouter initialEntries={['/portfolio']}>
+        <Routes>
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/stock/:ticker" element={<div>NVDA 필드 상세 화면</div>} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /NVDA HERD 78/ }))
+    expect(screen.getByText('NVDA 필드 상세 화면')).toBeInTheDocument()
   })
 
   it('keeps holding management separate from stock navigation', () => {

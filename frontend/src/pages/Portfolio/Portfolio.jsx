@@ -4,6 +4,7 @@ import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import PortfolioHistory from './PortfolioHistory'
 import PortfolioHoldings from './PortfolioHoldings'
 import PortfolioExposure from './PortfolioExposure'
+import PortfolioHerdField from './PortfolioHerdField'
 import { usePortfolioPageData } from './usePortfolioPageData'
 import styles from './Portfolio.module.css'
 
@@ -43,6 +44,7 @@ export default function Portfolio() {
     selectSort,
     todayChange,
     exposure,
+    herdField,
     displayAmount,
     displaySignedAmount,
     refresh,
@@ -175,6 +177,11 @@ export default function Portfolio() {
             error={assetHistoryError}
             displayAmount={displayAmount}
             onPeriodChange={setAssetHistoryPeriod}
+          />
+
+          <PortfolioHerdField
+            field={herdField}
+            onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
           />
 
           <PortfolioExposure exposure={exposure} />

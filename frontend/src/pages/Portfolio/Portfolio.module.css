@@ -267,6 +267,7 @@
 }
 
 .historySection,
+.herdFieldSection,
 .exposureSection,
 .holdingsSection {
   border-top: 1px solid var(--hs-line);
@@ -357,9 +358,141 @@
   margin-top: 54px;
 }
 
+.herdFieldSection,
 .exposureSection {
   margin-top: 54px;
   border-bottom: 1px solid var(--hs-line);
+}
+
+.fieldCoverage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fieldCoverage strong {
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-label);
+  font-weight: 650;
+}
+
+.fieldBody {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  min-height: 196px;
+  border-top: 1px solid var(--hs-line);
+}
+
+.fieldAggregate {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--hs-line);
+}
+
+.fieldAggregate span,
+.fieldAggregate small,
+.fieldStageLabel,
+.fieldNote,
+.fieldEmpty {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.fieldAggregate strong {
+  margin: 8px 0 4px;
+  font-size: 38px;
+  font-weight: 470;
+  letter-spacing: -.055em;
+}
+
+.fieldAggregate small {
+  font-weight: 690;
+  text-transform: uppercase;
+}
+
+.portfolioField {
+  position: relative;
+  min-width: 0;
+  margin: 24px 12px 30px 34px;
+}
+
+.fieldTrack {
+  position: absolute;
+  right: 0;
+  bottom: 24px;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--flee),
+    var(--scatter) 26%,
+    var(--calm) 50%,
+    var(--drift) 74%,
+    var(--rush)
+  );
+  opacity: .72;
+}
+
+.fieldStageLabel {
+  position: absolute;
+  bottom: 0;
+  left: var(--field-x);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.fieldPoint {
+  position: absolute;
+  top: var(--field-y);
+  left: var(--field-x);
+  display: grid;
+  min-width: 38px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--hs-text-subtle);
+  cursor: pointer;
+  place-items: center;
+  transform: translate(-50%, -50%);
+}
+
+.fieldPoint i {
+  display: block;
+  width: var(--field-size);
+  height: var(--field-size);
+  border: 1px solid var(--hs-bg);
+  border-radius: 50%;
+  background: var(--hs-text);
+  box-shadow: 0 0 0 1px var(--hs-line-strong);
+  opacity: .78;
+}
+
+.fieldPoint span {
+  margin-top: 5px;
+  font-size: 9px;
+  font-weight: 680;
+  letter-spacing: .04em;
+}
+
+.fieldPoint:hover i,
+.fieldPoint:focus-visible i {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--hs-text-subtle);
+}
+
+.fieldNote {
+  margin: 0;
+  padding: 14px 0 16px;
+  border-top: 1px solid var(--hs-line);
+}
+
+.fieldEmpty {
+  min-height: 150px;
+  margin: 0;
+  border-top: 1px solid var(--hs-line);
+  display: grid;
+  place-items: center;
 }
 
 .exposureSummary {
@@ -763,6 +896,10 @@
     margin-top: 40px;
   }
 
+  .herdFieldSection {
+    margin-top: 40px;
+  }
+
   .sectionHeader {
     align-items: flex-start;
     min-height: 76px;
@@ -812,6 +949,30 @@
   .sectorExposure > div {
     grid-template-columns: 90px minmax(60px, 1fr) 44px;
     gap: 9px;
+  }
+
+  .fieldBody {
+    grid-template-columns: 1fr;
+  }
+
+  .fieldAggregate {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    justify-content: start;
+    gap: 8px;
+    padding: 18px 0 0;
+    border-right: 0;
+  }
+
+  .fieldAggregate strong {
+    margin: 0;
+    font-size: 26px;
+  }
+
+  .portfolioField {
+    min-height: 150px;
+    margin-left: 0;
   }
 
   .rowActions {
