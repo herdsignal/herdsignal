@@ -4,7 +4,7 @@ set -euo pipefail
 DOMAIN="gui/$(id -u)"
 failed=false
 
-for label in com.herdsignal.backend com.herdsignal.scheduler; do
+for label in com.herdsignal.backend com.herdsignal.scheduler com.herdsignal.backup; do
   if launchctl print "$DOMAIN/$label" >/dev/null 2>&1; then
     state="$(launchctl print "$DOMAIN/$label" | awk '/state =/{print $3; exit}')"
     pid="$(launchctl print "$DOMAIN/$label" | awk '/pid =/{print $3; exit}')"

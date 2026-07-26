@@ -39,6 +39,8 @@ fi
 TIMESTAMP="$(date '+%Y%m%d-%H%M%S')"
 BACKUP_PATH="$BACKUP_DIR/herdsignal-$TIMESTAMP.sql.gz"
 CHECKSUM_PATH="$BACKUP_PATH.sha256"
+TEMP_PATH="$BACKUP_PATH.tmp"
+trap 'rm -f "$TEMP_PATH"' EXIT
 
 MYSQL_PWD="$DB_PASSWORD" "${DUMP_COMMAND[@]}" \
   --host="$DB_HOST" \
@@ -48,9 +50,10 @@ MYSQL_PWD="$DB_PASSWORD" "${DUMP_COMMAND[@]}" \
   --routines \
   --triggers \
   --default-character-set=utf8mb4 \
-  "$DB_NAME" | gzip -9 > "$BACKUP_PATH"
+  "$DB_NAME" | gzip -9 > "$TEMP_PATH"
 
-gzip -t "$BACKUP_PATH"
+gzip -t "$TEMP_PATH"
+mv "$TEMP_PATH" "$BACKUP_PATH"
 if command -v shasum >/dev/null 2>&1; then
   (cd "$BACKUP_DIR" && shasum -a 256 "$(basename "$BACKUP_PATH")" > "$(basename "$CHECKSUM_PATH")")
 else
@@ -60,4 +63,5 @@ fi
 find "$BACKUP_DIR" -type f \( -name 'herdsignal-*.sql.gz' -o -name 'herdsignal-*.sql.gz.sha256' \) \
   -mtime "+$BACKUP_RETENTION_DAYS" -delete
 
+trap - EXIT
 echo "백업 완료: $BACKUP_PATH"

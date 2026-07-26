@@ -233,6 +233,7 @@ cd ..
 ./scripts/retry-scheduler-run.sh
 ./scripts/backup-db.sh
 ./scripts/verify-backup.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz
+./scripts/restore-db.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz --confirm-database herdsignal
 ```
 
 `audit-scheduler-run.sh`는 최신 실행의 성공·실패 수, 고정 reference universe,
@@ -247,7 +248,10 @@ SHA-256으로 기록하며, 실제 실패 종목이 하나라도 있으면 새 S
 않고 `retry-scheduler-run.sh`로 전체 대상을 다시 계산합니다. 데이터 상태 API는
 가장 최근 실행과 가장 최근 성공 실행을 따로 제공합니다.
 
-백업은 압축 후 체크섬을 함께 만들며 기본 14일 보관합니다. 보관 기간과 경로는 `.env`의
+백업은 임시 파일에 완전히 기록하고 무결성을 통과한 뒤에만 확정하며, 압축본과 체크섬을
+기본 14일 보관합니다. `install-launchd.sh` 등록 시 매일 23시 30분에도 자동 실행됩니다.
+복원 명령은 대상 DB 이름을 명시적으로 확인하고 복원 직전 안전 백업을 하나 더 만듭니다.
+보관 기간과 경로는 `.env`의
 `BACKUP_RETENTION_DAYS`, `BACKUP_DIR`로 바꿀 수 있습니다.
 
 `ALERT_WEBHOOK_URL`을 설정하면 스케줄러 실패·부분 실패를 Slack 또는 Discord 웹훅으로

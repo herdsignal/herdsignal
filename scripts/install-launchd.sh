@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LAUNCH_AGENTS="$HOME/Library/LaunchAgents"
 DOMAIN="gui/$(id -u)"
-LABELS=(com.herdsignal.backend com.herdsignal.scheduler)
+LABELS=(com.herdsignal.backend com.herdsignal.scheduler com.herdsignal.backup)
 installed_labels=()
 
 cleanup_partial_install() {
@@ -20,6 +20,10 @@ if [[ ! -f "$ROOT_DIR/.env" ]]; then
 fi
 if [[ ! -x "$ROOT_DIR/data/.venv/bin/python" ]]; then
   echo "data/.venv가 준비되지 않았습니다." >&2
+  exit 1
+fi
+if ! command -v mariadb-dump >/dev/null 2>&1 && ! command -v mysqldump >/dev/null 2>&1; then
+  echo "자동 백업에 mariadb-dump 또는 mysqldump가 필요합니다." >&2
   exit 1
 fi
 
