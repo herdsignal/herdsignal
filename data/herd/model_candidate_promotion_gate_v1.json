@@ -1,0 +1,38 @@
+{
+  "gate_version": "HERD_MODEL_DOWNSTREAM_GATE_V1",
+  "stage_id": 8,
+  "stage_name": "HERD_CANDIDATE",
+  "status": "BLOCKED_UPSTREAM_FAIL_CLOSED",
+  "dependencies": [
+    {
+      "path": "data/herd/model_completed_cycle_gate_v1.json",
+      "sha256": "caed1c1b1e8d85869385fb49fb8ac6c5fe7f4cfcacdab1a8993eb7ca3aa3a1e5"
+    }
+  ],
+  "blocker": {
+    "field": "completed_cycle_passed",
+    "required_value": true,
+    "actual_value": false,
+    "reason": "A HERD action candidate cannot be assembled before a complete cycle beats fixed baselines."
+  },
+  "execution": {
+    "attempted": false,
+    "trades_simulated": false,
+    "parameters_selected": false,
+    "required_if_unblocked": [
+      "B0_TO_B5_ABLATION",
+      "ANCHORED_WALK_FORWARD",
+      "BASE_AND_STRESS_COSTS",
+      "PARAMETER_STABILITY",
+      "PBO",
+      "DEFLATED_SHARPE",
+      "SECTOR_AND_ERA_GENERALIZATION",
+      "SURVIVORSHIP_SAFE_UNIVERSE"
+    ]
+  },
+  "authority": {
+    "candidate_promoted": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
