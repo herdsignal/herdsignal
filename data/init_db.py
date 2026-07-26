@@ -262,6 +262,39 @@ class UserPortfolio(Base):
                          onupdate=datetime.utcnow,                              comment="마지막 수정 시각 (UTC)")
 
 
+class PortfolioLedgerEntry(Base):
+    """거래·현금흐름의 원본 사건 원장. 보유 스냅샷과 분리한다."""
+    __tablename__ = "portfolio_ledger_entries"
+    __table_args__ = (
+        Index(
+            "ix_portfolio_ledger_user_date",
+            "user_id",
+            "occurred_on",
+            "id",
+        ),
+        Index(
+            "ix_portfolio_ledger_user_ticker_date",
+            "user_id",
+            "ticker",
+            "occurred_on",
+        ),
+    )
+
+    id           = Column(BigInteger, primary_key=True, autoincrement=True)
+    user_id      = Column(String(50), nullable=False)
+    entry_type   = Column(String(20), nullable=False)
+    ticker       = Column(String(10), nullable=True)
+    occurred_on  = Column(Date, nullable=False)
+    quantity     = Column(Decimal(18, 6), nullable=True)
+    unit_price   = Column(Decimal(16, 6), nullable=True)
+    gross_amount = Column(Decimal(18, 2), nullable=False)
+    fee_amount   = Column(Decimal(16, 2), nullable=False, default=0)
+    currency     = Column(String(3), nullable=False, default="USD")
+    source       = Column(String(20), nullable=False, default="MANUAL")
+    note         = Column(String(200), nullable=True)
+    created_at   = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
 class InvestorProfile(Base):
     """로그인 도입 전 local 사용자에게 적용할 행동 보조 설정."""
     __tablename__ = "investor_profiles"
@@ -429,7 +462,8 @@ SQLITE_PATH = "herdsignal_test.db"
 
 MODELS = [
     AppUser, Stock, HerdScore, HerdIndicator, DailyPrice, HerdObservation,
-    UserPortfolio, InvestorProfile, UserWatchlist, UserObservationReceipt,
+    UserPortfolio, PortfolioLedgerEntry, InvestorProfile,
+    UserWatchlist, UserObservationReceipt,
     UserCashBalance, UserCashHistory, PortfolioHistory,
     SignalJournal,
 ]

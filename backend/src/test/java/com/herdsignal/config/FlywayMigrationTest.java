@@ -19,7 +19,7 @@ class FlywayMigrationTest {
                 .locations("classpath:db/migration")
                 .load();
 
-        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(9);
+        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(10);
 
         try (var connection = DriverManager.getConnection(url, "sa", "");
              var tables = connection.getMetaData().getTables(null, "PUBLIC", "%", new String[]{"TABLE"})) {
@@ -33,6 +33,7 @@ class FlywayMigrationTest {
                     "spring_session", "spring_session_attributes", "herd_observations",
                     "model_promotion_audits",
                     "user_observation_receipts",
+                    "portfolio_ledger_entries",
                     "flyway_schema_history"
             );
         }

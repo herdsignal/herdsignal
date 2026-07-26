@@ -17,7 +17,7 @@ public class LocalUserDataClaimService {
     private static final List<String> USER_TABLES = List.of(
             "user_portfolio", "user_watchlist", "user_cash_balance", "user_cash_history",
             "portfolio_history", "signal_journal", "investor_profiles",
-            "user_observation_receipts"
+            "user_observation_receipts", "portfolio_ledger_entries"
     );
 
     private final JdbcTemplate jdbcTemplate;

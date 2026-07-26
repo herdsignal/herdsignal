@@ -1,6 +1,11 @@
 import unittest
 
-from init_db import HerdObservation, InvestorProfile, SchedulerRun
+from init_db import (
+    HerdObservation,
+    InvestorProfile,
+    PortfolioLedgerEntry,
+    SchedulerRun,
+)
 
 
 class InitDbSchemaTest(unittest.TestCase):
@@ -22,3 +27,14 @@ class InitDbSchemaTest(unittest.TestCase):
         self.assertIn("state_model_version", columns)
         self.assertIn("source_scope", columns)
         self.assertIn("operational_action_ratio", columns)
+
+    def test_portfolio_ledger_preserves_source_events(self) -> None:
+        self.assertEqual(
+            PortfolioLedgerEntry.__tablename__,
+            "portfolio_ledger_entries",
+        )
+        columns = PortfolioLedgerEntry.__table__.columns
+        self.assertIn("entry_type", columns)
+        self.assertIn("occurred_on", columns)
+        self.assertIn("gross_amount", columns)
+        self.assertIn("fee_amount", columns)
