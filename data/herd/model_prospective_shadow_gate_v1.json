@@ -1,0 +1,31 @@
+{
+  "gate_version": "HERD_MODEL_DOWNSTREAM_GATE_V1",
+  "stage_id": 9,
+  "stage_name": "PROSPECTIVE_SHADOW",
+  "status": "BLOCKED_UPSTREAM_FAIL_CLOSED",
+  "dependencies": [
+    {
+      "path": "data/herd/model_candidate_promotion_gate_v1.json",
+      "sha256": "e2ed96f4b7afafd9d909388f61b6a8af819e99b311ab765d8c6a21a778755118"
+    }
+  ],
+  "blocker": {
+    "field": "promoted_action_candidate_exists",
+    "required_value": true,
+    "actual_value": false,
+    "reason": "Prospective action shadowing requires a promoted pre-holdout candidate."
+  },
+  "execution": {
+    "attempted": false,
+    "trades_simulated": false,
+    "parameters_selected": false,
+    "state_observation_continues": true,
+    "action_candidate_shadow_enabled": false,
+    "historical_backfill_forbidden": true
+  },
+  "authority": {
+    "candidate_promoted": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
