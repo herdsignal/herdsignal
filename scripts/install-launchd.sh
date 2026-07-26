@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LAUNCH_AGENTS="$HOME/Library/LaunchAgents"
 DOMAIN="gui/$(id -u)"
-LABELS=(com.herdsignal.backend com.herdsignal.scheduler com.herdsignal.backup)
+LABELS=(com.herdsignal.backend com.herdsignal.scheduler com.herdsignal.backup com.herdsignal.weekly-report)
 installed_labels=()
 
 cleanup_partial_install() {

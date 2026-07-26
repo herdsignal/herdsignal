@@ -4,7 +4,7 @@ set -euo pipefail
 DOMAIN="gui/$(id -u)"
 LAUNCH_AGENTS="$HOME/Library/LaunchAgents"
 
-for label in com.herdsignal.backup com.herdsignal.scheduler com.herdsignal.backend; do
+for label in com.herdsignal.weekly-report com.herdsignal.backup com.herdsignal.scheduler com.herdsignal.backend; do
   launchctl bootout "$DOMAIN/$label" 2>/dev/null || true
   rm -f "$LAUNCH_AGENTS/$label.plist"
 done

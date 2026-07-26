@@ -234,6 +234,7 @@ cd ..
 ./scripts/backup-db.sh
 ./scripts/verify-backup.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz
 ./scripts/restore-db.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz --confirm-database herdsignal
+./scripts/weekly-operations-report.sh
 ```
 
 `audit-scheduler-run.sh`는 최신 실행의 성공·실패 수, 고정 reference universe,
@@ -249,6 +250,8 @@ SHA-256으로 기록하며, 실제 실패 종목이 하나라도 있으면 새 S
 가장 최근 실행과 가장 최근 성공 실행을 따로 제공합니다.
 각 실행 결과는 `data/runtime/operations/`에도 SHA-256이 포함된 독립 JSON 사건으로
 원자 저장되어, DB 또는 프로세스 로그와 별도로 당일 운영 결과를 확인할 수 있습니다.
+검증된 사건만 집계한 최근 7일 보고서는 `data/runtime/reports/weekly-latest.md`에서
+확인할 수 있고, launchd 등록 시 매주 일요일 20시에 자동 갱신됩니다.
 
 백업은 임시 파일에 완전히 기록하고 무결성을 통과한 뒤에만 확정하며, 압축본과 체크섬을
 기본 14일 보관합니다. `install-launchd.sh` 등록 시 매일 23시 30분에도 자동 실행됩니다.
