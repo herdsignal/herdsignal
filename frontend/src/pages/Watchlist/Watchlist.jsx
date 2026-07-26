@@ -13,6 +13,7 @@ import {
 import styles from './Watchlist.module.css'
 import WatchlistQueue from './WatchlistQueue'
 import {
+  selectUnavailableWatchlistItems,
   WATCHLIST_SORTS,
   sortWatchlistObservations,
   summarizeWatchlistStages,
@@ -104,6 +105,10 @@ export default function Watchlist() {
     () => summarizeWatchlistStages(watchlist),
     [watchlist],
   )
+  const unavailableItems = useMemo(
+    () => selectUnavailableWatchlistItems(watchlist),
+    [watchlist],
+  )
 
   return (
     <div className={styles.page} aria-busy={loading || refreshing}>
@@ -122,7 +127,7 @@ export default function Watchlist() {
           >
             {refreshing ? '갱신 중…' : '새로고침'}
           </button>
-          <button type="button" onClick={() => navigate('/search')}>종목 추가</button>
+          <button type="button" onClick={() => navigate('/app#stock-search')}>종목 추가</button>
         </div>
       </header>
 
@@ -138,7 +143,7 @@ export default function Watchlist() {
         <div className={styles.emptyState}>
           <span>EMPTY WATCH FIELD</span>
           <h2>관찰할 종목을 추가해보세요.</h2>
-          <button type="button" onClick={() => navigate('/search')}>종목 찾기</button>
+          <button type="button" onClick={() => navigate('/app#stock-search')}>종목 찾기</button>
         </div>
       )}
       {!loading && !error && watchlist.length > 0 && (
@@ -152,6 +157,17 @@ export default function Watchlist() {
               </div>
             ))}
           </section>
+          {unavailableItems.length > 0 && (
+            <section className={styles.pendingPanel} aria-label="State S1 관찰 준비 중인 종목">
+              <div>
+                <span>관찰 준비 중</span>
+                <strong>{unavailableItems.map((item) => item.ticker).join(' · ')}</strong>
+              </div>
+              <p>
+                저장은 유지됩니다. 충분한 가격 이력과 자산별 비교 기준이 확인되면 State S1에 포함됩니다.
+              </p>
+            </section>
+          )}
           <div className={styles.listHeader}>
             <span>{watchlist.length}개 종목</span>
             <div aria-label="관심종목 정렬">

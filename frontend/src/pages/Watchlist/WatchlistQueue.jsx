@@ -63,7 +63,13 @@ export default function WatchlistQueue({
               </span>
               <span className={styles.date}>
                 <strong>{formatDate(item.lastObservedSession ?? item.scoreDate)}</strong>
-                <small>{item.freshnessStatus === 'STALE' ? '갱신 필요' : 'State S1'}</small>
+                <small>
+                  {score == null
+                    ? 'S1 준비 중'
+                    : item.freshnessStatus === 'STALE'
+                      ? '갱신 필요'
+                      : 'State S1'}
+                </small>
               </span>
             </button>
             <button

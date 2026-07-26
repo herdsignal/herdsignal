@@ -22,7 +22,7 @@ export {
 }
 
 export const CACHE_KEY_VERSION = 'hs_portfolio_cache_version'
-export const PORTFOLIO_CACHE_VERSION = 's1-portfolio-v2'
+export const PORTFOLIO_CACHE_VERSION = 's1-portfolio-v3'
 export const PORTFOLIO_CACHE_TTL_MS = 30 * 60 * 1000
 
 export function ensurePortfolioCacheVersion() {

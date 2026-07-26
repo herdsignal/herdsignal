@@ -29,6 +29,32 @@
   background: currentColor;
   opacity: var(--dot-opacity);
   transform: translate(-50%, -50%);
+  animation:
+    herd-lens-flow var(--dot-duration) ease-in-out var(--dot-delay) infinite;
+  will-change: transform;
+}
+
+.flee .dot,
+.scatter .dot {
+  animation-timing-function: cubic-bezier(.35, .05, .65, .95);
+}
+
+.rush .dot {
+  animation-duration: calc(var(--dot-duration) * .78);
+}
+
+@keyframes herd-lens-flow {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(.92);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      translate(var(--dot-drift-x), var(--dot-drift-y))
+      scale(1.12);
+  }
 }
 
 .reading {

@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildPortfolioRows,
-  buildPortfolioExposure,
-  buildPortfolioHerdField,
   historyChartGeometry,
   portfolioTodayChange,
   sortPortfolioRows,
@@ -57,66 +55,6 @@ describe('portfolio lens model', () => {
     })
     expect(rows[1].herdScore).toBeNull()
     expect(rows[0]).not.toHaveProperty('action')
-  })
-
-  it('summarizes direct holding and sector exposure without assigning risk grades', () => {
-    const rows = buildPortfolioRows(
-      [
-        { ticker: 'NVDA', targetWeight: 0.4 },
-        { ticker: 'TSLA', targetWeight: 0.3 },
-      ],
-      summary,
-      {
-        NVDA: { sector: 'Technology' },
-        TSLA: { sector: 'Consumer Cyclical' },
-      },
-    )
-    const exposure = buildPortfolioExposure(rows, 200, 1200)
-
-    expect(exposure.topHolding).toEqual({ ticker: 'NVDA', weightPct: 50 })
-    expect(exposure.topThreeWeightPct).toBeCloseTo(83.33)
-    expect(exposure.cashWeightPct).toBeCloseTo(16.67)
-    expect(exposure.largestSector.name).toBe('Technology')
-    expect(exposure).not.toHaveProperty('riskGrade')
-  })
-
-  it('maps observed holdings into a value-weighted HERD field', () => {
-    const rows = buildPortfolioRows(
-      [
-        { ticker: 'NVDA' },
-        { ticker: 'TSLA' },
-      ],
-      summary,
-      {
-        NVDA: { herdScore: 80 },
-        TSLA: { herdScore: 20 },
-      },
-    )
-    const field = buildPortfolioHerdField(rows)
-
-    expect(field.weightedScore).toBeCloseTo(56)
-    expect(field.weightedStage).toBe('Calm')
-    expect(field.observedCount).toBe(2)
-    expect(field.totalCount).toBe(2)
-    expect(field.observedValueCoveragePct).toBe(100)
-    expect(field.points.map((point) => point.ticker)).toEqual(['TSLA', 'NVDA'])
-  })
-
-  it('reports observation coverage instead of assigning a score to unsupported holdings', () => {
-    const rows = buildPortfolioRows(
-      [
-        { ticker: 'NVDA' },
-        { ticker: 'TSLA' },
-      ],
-      summary,
-      { NVDA: { herdScore: 70 } },
-    )
-    const field = buildPortfolioHerdField(rows)
-
-    expect(field.observedCount).toBe(1)
-    expect(field.totalCount).toBe(2)
-    expect(field.observedValueCoveragePct).toBe(60)
-    expect(field.points).toHaveLength(1)
   })
 
   it('sorts null observations last and computes daily account movement', () => {

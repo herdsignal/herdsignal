@@ -134,6 +134,33 @@
   font-weight: 680;
 }
 
+.privacyButton {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--hs-line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--hs-text-subtle);
+  cursor: pointer;
+  place-items: center;
+}
+
+.privacyButton[aria-pressed="true"] {
+  color: var(--hs-text-muted);
+}
+
+.privacyButton svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
 .controlButton:disabled,
 .managePanel button:disabled,
 .rowActions button:disabled {
@@ -267,8 +294,6 @@
 }
 
 .historySection,
-.herdFieldSection,
-.exposureSection,
 .holdingsSection {
   border-top: 1px solid var(--hs-line);
 }
@@ -299,52 +324,47 @@
 }
 
 .historyBody {
-  display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
-  min-height: 250px;
+  position: relative;
+  min-height: 290px;
 }
 
-.historyMetrics {
+.chartSummary {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  left: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-right: 30px;
-  border-right: 1px solid var(--hs-line);
+  align-items: baseline;
+  gap: 10px;
 }
 
-.historyMetrics strong {
-  margin-top: 10px;
+.chartSummary > span,
+.chartSummary small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+  font-weight: 650;
+}
+
+.chartSummary strong {
   color: var(--hs-text);
-  font-size: 23px;
-  font-weight: 520;
+  font-size: 18px;
+  font-weight: 600;
   letter-spacing: -.04em;
 }
 
-.historyMetrics small {
-  margin-top: 9px;
-  color: var(--hs-text-muted);
-  font-size: var(--hs-type-micro);
-  line-height: 1.6;
-}
-
-.historyMetrics em {
-  margin-top: 8px;
-  color: var(--hs-text-muted);
-  font-size: var(--hs-type-micro);
-  font-style: normal;
-}
-
 .chartFrame {
+  position: relative;
   display: grid;
   min-width: 0;
-  min-height: 220px;
-  padding: 12px 0 16px 34px;
+  min-height: 290px;
+  padding: 62px 0 20px;
   place-items: center;
+  touch-action: pan-y;
 }
 
 .chartFrame svg {
   width: 100%;
-  height: 220px;
+  height: 208px;
   overflow: visible;
 }
 
@@ -354,220 +374,57 @@
   font-size: var(--hs-type-label);
 }
 
+.chartGrid {
+  stroke: var(--hs-line);
+  stroke-width: 1;
+}
+
+.chartCursor {
+  stroke: var(--hs-line-strong);
+  stroke-dasharray: 3 5;
+  stroke-width: 1;
+}
+
+.chartPoint {
+  fill: var(--hs-bg);
+  stroke: var(--hs-scatter);
+  stroke-width: 2;
+}
+
+.chartTooltip {
+  position: absolute;
+  z-index: 3;
+  top: 54px;
+  display: grid;
+  min-width: 112px;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-sm);
+  background: color-mix(in srgb, var(--hs-bg) 92%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .16);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.chartTooltip span {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.chartTooltip strong {
+  color: var(--hs-text);
+  font-size: var(--hs-type-label);
+  font-weight: 680;
+}
+
 .holdingsSection {
   margin-top: 54px;
 }
 
-.herdFieldSection,
-.exposureSection {
-  margin-top: 54px;
-  border-bottom: 1px solid var(--hs-line);
-}
-
-.fieldCoverage {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.fieldCoverage strong {
-  color: var(--hs-text-subtle);
-  font-size: var(--hs-type-label);
-  font-weight: 650;
-}
-
-.fieldBody {
-  display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
-  min-height: 196px;
-  border-top: 1px solid var(--hs-line);
-}
-
-.fieldAggregate {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-right: 1px solid var(--hs-line);
-}
-
-.fieldAggregate span,
-.fieldAggregate small,
-.fieldStageLabel,
-.fieldNote,
-.fieldEmpty {
-  color: var(--hs-text-muted);
-  font-size: var(--hs-type-micro);
-}
-
-.fieldAggregate strong {
-  margin: 8px 0 4px;
-  font-size: 38px;
-  font-weight: 470;
-  letter-spacing: -.055em;
-}
-
-.fieldAggregate small {
-  font-weight: 690;
-  text-transform: uppercase;
-}
-
-.portfolioField {
-  position: relative;
-  min-width: 0;
-  margin: 24px 12px 30px 34px;
-}
-
-.fieldTrack {
-  position: absolute;
-  right: 0;
-  bottom: 24px;
-  left: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    var(--flee),
-    var(--scatter) 26%,
-    var(--calm) 50%,
-    var(--drift) 74%,
-    var(--rush)
-  );
-  opacity: .72;
-}
-
-.fieldStageLabel {
-  position: absolute;
-  bottom: 0;
-  left: var(--field-x);
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-
-.fieldPoint {
-  position: absolute;
-  top: var(--field-y);
-  left: var(--field-x);
-  display: grid;
-  min-width: 38px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--hs-text-subtle);
-  cursor: pointer;
-  place-items: center;
-  transform: translate(-50%, -50%);
-}
-
-.fieldPoint i {
-  display: block;
-  width: var(--field-size);
-  height: var(--field-size);
-  border: 1px solid var(--hs-bg);
-  border-radius: 50%;
-  background: var(--hs-text);
-  box-shadow: 0 0 0 1px var(--hs-line-strong);
-  opacity: .78;
-}
-
-.fieldPoint span {
-  margin-top: 5px;
-  font-size: 9px;
-  font-weight: 680;
-  letter-spacing: .04em;
-}
-
-.fieldPoint:hover i,
-.fieldPoint:focus-visible i {
-  opacity: 1;
-  box-shadow: 0 0 0 2px var(--hs-text-subtle);
-}
-
-.fieldNote {
-  margin: 0;
-  padding: 14px 0 16px;
-  border-top: 1px solid var(--hs-line);
-}
-
-.fieldEmpty {
-  min-height: 150px;
-  margin: 0;
-  border-top: 1px solid var(--hs-line);
-  display: grid;
-  place-items: center;
-}
-
-.exposureSummary {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid var(--hs-line);
-}
-
-.exposureSummary > div {
-  display: flex;
-  min-width: 0;
-  min-height: 104px;
-  flex-direction: column;
-  justify-content: center;
-  padding: 18px 20px;
-}
-
-.exposureSummary > div + div {
-  border-left: 1px solid var(--hs-line);
-}
-
-.exposureSummary span,
-.exposureSummary small,
-.sectorExposure span,
-.exposureNote,
 .targetWeightEditor label {
   color: var(--hs-text-muted);
   font-size: var(--hs-type-micro);
-}
-
-.exposureSummary strong {
-  margin: 8px 0 5px;
-  overflow: hidden;
-  color: var(--hs-text);
-  font-size: var(--hs-type-body);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sectorExposure {
-  display: grid;
-  gap: 11px;
-  padding: 22px 20px;
-  border-top: 1px solid var(--hs-line);
-}
-
-.sectorExposure > div {
-  display: grid;
-  grid-template-columns: minmax(100px, 160px) minmax(80px, 1fr) 48px;
-  align-items: center;
-  gap: 14px;
-}
-
-.sectorExposure i {
-  height: 3px;
-  overflow: hidden;
-  background: var(--hs-line);
-}
-
-.sectorExposure b {
-  display: block;
-  height: 100%;
-  background: var(--hs-text-subtle);
-}
-
-.sectorExposure strong {
-  color: var(--hs-text-subtle);
-  font-size: var(--hs-type-label);
-  font-weight: 620;
-  text-align: right;
-}
-
-.exposureNote {
-  margin: 0;
-  padding: 0 20px 18px;
 }
 
 .holdingsTable {
@@ -747,45 +604,6 @@
   color: var(--hs-loss);
 }
 
-.meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding-top: 16px;
-  color: var(--hs-text-muted);
-  font-size: var(--hs-type-micro);
-}
-
-.statePanel,
-.emptyState {
-  display: grid;
-  min-height: 360px;
-  color: var(--hs-text-muted);
-  place-items: center;
-  align-content: center;
-  gap: 12px;
-  font-size: var(--hs-type-body-sm);
-  text-align: center;
-}
-
-.statePanel p {
-  margin: 0;
-}
-
-.emptyState span {
-  font-size: var(--hs-type-micro);
-  font-weight: 720;
-  letter-spacing: .16em;
-}
-
-.emptyState h2 {
-  margin: 0;
-  color: var(--hs-text);
-  font-size: 20px;
-  font-weight: 560;
-  letter-spacing: -.04em;
-}
-
 @media (max-width: 980px) {
   .accountSummary {
     grid-template-columns: 1fr;
@@ -816,18 +634,6 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .exposureSummary {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .exposureSummary > div:nth-child(3) {
-    border-left: 0;
-    border-top: 1px solid var(--hs-line);
-  }
-
-  .exposureSummary > div:nth-child(4) {
-    border-top: 1px solid var(--hs-line);
-  }
 }
 
 @media (max-width: 680px) {
@@ -871,32 +677,28 @@
   }
 
   .historyBody {
-    grid-template-columns: 1fr;
-  }
-
-  .historyMetrics {
-    padding: 12px 0 0;
-    border-right: 0;
+    min-height: 248px;
   }
 
   .chartFrame {
-    min-height: 170px;
-    padding: 14px 0;
+    min-height: 248px;
+    padding-top: 64px;
   }
 
   .chartFrame svg {
-    height: 170px;
+    height: 174px;
+  }
+
+  .chartSummary {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .chartSummary small {
+    width: 100%;
   }
 
   .holdingsSection {
-    margin-top: 40px;
-  }
-
-  .exposureSection {
-    margin-top: 40px;
-  }
-
-  .herdFieldSection {
     margin-top: 40px;
   }
 
@@ -946,34 +748,6 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .sectorExposure > div {
-    grid-template-columns: 90px minmax(60px, 1fr) 44px;
-    gap: 9px;
-  }
-
-  .fieldBody {
-    grid-template-columns: 1fr;
-  }
-
-  .fieldAggregate {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    align-items: baseline;
-    justify-content: start;
-    gap: 8px;
-    padding: 18px 0 0;
-    border-right: 0;
-  }
-
-  .fieldAggregate strong {
-    margin: 0;
-    font-size: 26px;
-  }
-
-  .portfolioField {
-    min-height: 150px;
-    margin-left: 0;
-  }
 
   .rowActions {
     display: grid;
@@ -984,10 +758,6 @@
     grid-column: 1 / -1;
   }
 
-  .meta {
-    flex-direction: column;
-    gap: 6px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

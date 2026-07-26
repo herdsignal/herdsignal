@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  selectUnavailableWatchlistItems,
   sortWatchlistObservations,
   summarizeWatchlistStages,
 } from './watchlistModel'
@@ -23,5 +24,12 @@ describe('watch field model', () => {
     expect(summary.find((item) => item.stage === 'Rush').count).toBe(1)
     expect(summary.find((item) => item.stage === 'Flee').count).toBe(1)
     expect(summary.reduce((sum, item) => sum + item.count, 0)).toBe(2)
+  })
+
+  it('keeps unavailable saved tickers visible as a separate group', () => {
+    expect(selectUnavailableWatchlistItems([
+      ...items,
+      { ticker: 'D', herdScore: '' },
+    ]).map((item) => item.ticker)).toEqual(['C', 'D'])
   })
 })

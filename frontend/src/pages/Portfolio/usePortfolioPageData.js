@@ -8,16 +8,15 @@ import { usePortfolioData } from './usePortfolioData'
 import { usePortfolioMutations } from './usePortfolioMutations'
 import {
   buildPortfolioRows,
-  buildPortfolioExposure,
-  buildPortfolioHerdField,
   portfolioTodayChange,
   sortPortfolioRows,
 } from './portfolioModel'
 
 const CURRENCY_STORAGE_KEY = 'herdsignal_currency'
 const SORT_STORAGE_KEY = 'herdsignal_portfolio_lens_sort'
+const PRIVACY_STORAGE_KEY = 'herdsignal_portfolio_privacy'
 
-export function usePortfolioPageData() {
+export function usePortfolioPageData({ assetHistoryInitiallyOpen = true } = {}) {
   const { user } = useAuth()
   const userId = user?.id
   const [, setTargetWeights] = useState({})
@@ -28,6 +27,9 @@ export function usePortfolioPageData() {
   const [sortBy, setSortBy] = useState(
     () => localStorage.getItem(SORT_STORAGE_KEY) || 'weight',
   )
+  const [privacyMode, setPrivacyMode] = useState(
+    () => localStorage.getItem(PRIVACY_STORAGE_KEY) !== 'visible',
+  )
   const [exchangeRate, setExchangeRate] = useState(null)
 
   const data = usePortfolioData({
@@ -35,7 +37,7 @@ export function usePortfolioPageData() {
     setTargetWeights,
   })
   const history = usePortfolioAssetHistory(data.summary, data.cashBalance, {
-    initiallyOpen: true,
+    initiallyOpen: assetHistoryInitiallyOpen,
   })
   const priceMap = useMemo(() => Object.fromEntries(
     (data.summary?.stocks ?? []).map((stock) => [stock.ticker, stock]),
@@ -83,25 +85,14 @@ export function usePortfolioPageData() {
     () => portfolioTodayChange(data.summary),
     [data.summary],
   )
-  const totalAssetValue = data.summary?.total_asset_value
-    ?? data.summary?.total_value
-    ?? 0
-  const exposure = useMemo(
-    () => buildPortfolioExposure(rows, data.cashBalance, totalAssetValue),
-    [data.cashBalance, rows, totalAssetValue],
-  )
-  const herdField = useMemo(
-    () => buildPortfolioHerdField(rows),
-    [rows],
-  )
-
   const displayAmount = useCallback((usdValue) => {
     if (usdValue == null) return '—'
+    if (privacyMode) return '••••••'
     if (currencyMode === 'KRW' && exchangeRate != null) {
       return formatKRW(usdValue, exchangeRate)
     }
     return fmtUSD(usdValue)
-  }, [currencyMode, exchangeRate])
+  }, [currencyMode, exchangeRate, privacyMode])
 
   const displaySignedAmount = useCallback((usdValue) => {
     if (usdValue == null) return '—'
@@ -121,6 +112,14 @@ export function usePortfolioPageData() {
     localStorage.setItem(SORT_STORAGE_KEY, value)
   }, [])
 
+  const togglePrivacyMode = useCallback(() => {
+    setPrivacyMode((hidden) => {
+      const next = !hidden
+      localStorage.setItem(PRIVACY_STORAGE_KEY, next ? 'hidden' : 'visible')
+      return next
+    })
+  }, [])
+
   const refresh = useCallback(async () => {
     await data.handleRefresh()
     await history.fetchAssetHistory()
@@ -135,13 +134,13 @@ export function usePortfolioPageData() {
     currencyMode,
     exchangeRate,
     selectCurrency,
+    privacyMode,
+    togglePrivacyMode,
     sortBy,
     selectSort,
     rows,
     sortedRows,
     todayChange,
-    exposure,
-    herdField,
     displayAmount,
     displaySignedAmount,
     refresh,

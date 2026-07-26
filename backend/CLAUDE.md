@@ -1,159 +1,93 @@
-# backend/ — Spring Boot REST API
+# backend 개발 지침
 
-최종 업데이트: 2026-07-10
+최종 업데이트: 2026-07-27
 
-## 이 폴더의 역할
-MariaDB에 저장된 HERD Index 데이터를 React에 서빙.
-backend 개발 전용 문서이며, frontend/data 구현 판단은 루트 CLAUDE.md를 우선한다.
-HERD 공식 계산은 Python이 담당한다. backend는 DB 조회/저장, API 응답, 예외 처리, 필요 시 Python 계산 트리거를 담당한다.
+## 역할
 
-## 패키지 구조
-```
-src/main/java/com/herdsignal/
-├── controller/     REST API 엔드포인트
-├── service/        비즈니스 로직
-├── repository/     DB 접근 (JPA)
-├── domain/         엔티티 클래스
-├── dto/            요청/응답 DTO
-├── exception/      전역 예외 처리 및 커스텀 예외
-└── config/         설정 (DB, CORS 등)
-```
+Spring Boot backend는 MariaDB의 시장·HERD 데이터와 사용자 데이터를 API로
+제공한다. 공식 계산은 Python이 담당하며 backend는 조회, 사용자 격리,
+인증, 운영 안전장치와 제한된 Python 실행만 담당한다.
 
-## 주요 API 엔드포인트
-```
-GET    /api/stocks/{ticker}/herd              종목 HERD Index + 지표 분해 조회
-POST   /api/stocks/{ticker}/herd/refresh      종목 HERD Index 강제 재계산 후 조회
-GET    /api/stocks/search?q=apple             회사명/티커 기반 종목 심볼 검색 (Finnhub)
-GET    /api/stocks/{ticker}/financials        종목 재무정보 조회 (yfinance .info)
-GET    /api/stocks/{ticker}/herd/history      종목 HERD 히스토리 조회 (period=1m|3m|1y|3y)
-GET    /api/stocks/{ticker}/herd/reliability  종목 HERD 신호 신뢰도 조회 (years=3)
-GET    /api/portfolio/herd                    포트폴리오 전체 HERD 조회
-POST   /api/portfolio/herd/refresh            포트폴리오 전체 HERD 강제 재계산 후 조회
+## 구조
 
-GET    /api/portfolio                         포트폴리오 목록 조회
-POST   /api/portfolio                         포트폴리오 종목 추가
-DELETE /api/portfolio/{ticker}                포트폴리오 종목 삭제
-GET    /api/portfolio/summary                 포트폴리오 평가 요약 조회
-GET    /api/portfolio/history?period=month|year|all 포트폴리오 히스토리 조회
-GET    /api/portfolio/cash                    현재 현금 보유액 조회
-PUT    /api/portfolio/cash                    현금 보유액 수정 + 오늘 스냅샷 저장
-PATCH  /api/portfolio/{ticker}/avg-price      평균 매수가·수량 수정
-GET    /api/portfolio/realtime                yfinance 실시간 포트폴리오 계산
-
-GET    /api/journal                           전체 HERD 판단 기록 조회
-GET    /api/journal?ticker=NVDA               특정 종목 HERD 판단 기록 조회
-POST   /api/journal                           HERD 판단 기록 저장
-DELETE /api/journal/{id}                      HERD 판단 기록 삭제
-
-GET    /api/watchlist                         관심 종목 목록 조회
-GET    /api/watchlist/herd                    관심 종목 전체 HERD 조회
-POST   /api/watchlist                         관심 종목 추가
-DELETE /api/watchlist/{ticker}                관심 종목 삭제
-
+```text
+controller/   HTTP 계약과 입력 검증
+service/      조회·조합·정책·외부 프로세스 경계
+repository/   JPA 데이터 접근
+domain/       영속 엔티티
+dto/          API 요청·응답
+config/       OAuth2·세션·운영 작업 설정
+exception/    일관된 API 오류
 ```
 
-## 기술 스택
-- Spring Boot 3.5.3
-- Java 17
-- Gradle
-- Spring Data JPA
-- MariaDB
-- Lombok
+주요 서비스 경계:
 
-## 현재 구현된 서비스
-- HerdService
-  - 최신 HERD 점수와 지표 분해값 조회
-  - DB에 데이터가 없으면 Python on-demand 계산을 ProcessBuilder로 실행 후 재조회
-  - 포트폴리오/관심종목 HERD 조회용 공통 로직 제공
-  - HERD 데이터 품질과 Action Layer 응답 계산
-  - stocks 메타데이터를 조회해 companyName / sector / logoUrl을 HERD 응답에 포함
-- ActionDecisionService
-  - HERD 점수 + 지표 분해값 + 데이터 품질 + 신호 생애주기 기반 장기투자 행동 강도 계산
-  - DB 저장 없이 API 응답 시점에 actionScore/actionLabel/actionRatio/actionRegime을 산출
-- PortfolioService
-  - 포트폴리오 CRUD
-  - 현금 보유액 조회/수정
-  - 평가 요약 조회 (주식 평가액 + 현금 보유액 + 총자산)
-  - portfolio_history + user_cash_history 기반 총자산 히스토리 조회
-  - 기간 이전 최신 현금 스냅샷을 조회 시작 시점 현금으로 이월
-  - 평균 매수가·수량 수정
-  - Python 실시간 포트폴리오 계산 실행
-- WatchlistService
-  - 관심 종목 CRUD
-  - HerdService를 재사용한 관심 종목 HERD 조회
-- TickerSymbolPolicy
-  - 포트폴리오/관심종목 추가 전 티커 형식 정규화·검증
-  - HERD 관찰값이 없어도 저장하고 이후 수집 대상으로 등록
-- FinancialsService
-  - Python stock_info_collector.get_stock_financials(ticker) 호출
-  - 종목 재무정보 반환 (ProcessBuilder, 티커 정규식 검증 포함)
-- HerdReliabilityService
-  - Python signal_reliability.py 호출
-  - 저장된 HERD 히스토리와 yfinance 가격 기반 신호 성능 신뢰도, 모델 적합도, 표본 품질, 신호 이후 평균 수익/낙폭 반환
-- FinnhubService
-  - Python finnhub_collector 호출
-  - 회사명/티커 기반 심볼 검색 응답 반환
-- SignalJournalService
-  - HERD 판단 기록 CRUD
-  - 최신 종가 기준으로 저장 이후 현재 결과(outcomePct/outcomeAmount/outcomeDays)를 응답에 포함
-  - MVP 단계에서는 `local` 사용자 기준으로 저장하고, 추후 인증 도입 시 userId만 교체한다.
+- `HerdObservationService`: State S1 현재값·이력
+- `HerdService`: 레거시 HERD 호환 응답과 연구 정보
+- `HerdOnDemandRunner`, `PythonProcessGateway`: 제한된 Python 실행
+- `PortfolioQueryService`, `PortfolioCashService`,
+  `PortfolioHoldingValuationService`: 포트폴리오 조회·평가
+- `PortfolioRealtimeRunner`: 실시간 평가 프로세스 경계
+- `PortfolioLedgerService`, `PortfolioPerformanceService`: 원장·성과
+- `ObservationChangeService`: 상태 변화와 사용자 확인
+- `UserActionBoundary`: 운영 행동의 fail-closed 경계
+- `OperationalPromotionGate`, `AuditedOperationalActionPromotionPort`:
+  연구 후보 승격 검증과 감사
+- `CurrentUserService`: 인증 사용자 경계
 
-## DB/JPA 원칙
-- Python `init_db.py`가 생성한 테이블 스키마를 기준으로 한다.
-- `spring.jpa.hibernate.ddl-auto=validate`를 사용한다.
-- Spring Boot는 스키마를 생성/변경하지 않는다.
-- MVP 사용자 ID는 `AppConstants.DEFAULT_USER_ID`로 고정한다.
+## 운영 모델 경계
 
-## Python 연동
-- HERD 데이터가 없을 때 `HerdService`가 Python `calculate_on_demand(ticker)`를 실행한다.
-- 포트폴리오 HERD 강제 갱신은 `calculate_many_on_demand(tickers, force=True)`를 한 Python 프로세스에서 실행한다.
-- HERD 강제 갱신 실패는 오래된 DB 값을 조용히 반환하지 않고 API 오류로 노출한다.
-- `/api/portfolio/realtime` 호출 시 `PortfolioService`가 Python `calculate_current_portfolio('local')`를 실행한다.
-- Python 실행은 `ProcessBuilder` 기반이며 기본 타임아웃은 30초다.
-- 포트폴리오 HERD 배치 갱신 타임아웃은 120초다.
-- Python 실행 경로는 `data/.venv/bin/python3.12`를 사용한다.
-- 로컬 백엔드 실행은 루트 `.env`를 로드하는 `./scripts/run-backend.sh`를 우선 사용한다. `./gradlew bootRun`만 직접 실행하면 `DB_PASSWORD`가 주입되지 않아 DB 접속에 실패할 수 있다.
+- 기본 사용자 상태는 State S1이다.
+- v4·v6.1 응답은 호환·연구 재현용이다.
+- `ActionDecisionService`는 레거시 연구 계산기이며 운영 권한을 발급하지 않는다.
+- 승인된 증거·완결 사이클·PIT·holdout 조건이 없으면 행동은 `HOLD·0%`다.
+- 누락된 승인 값이나 감사 저장 실패는 반드시 차단한다.
 
-## 예외 처리
-- `ResourceNotFoundException` → HTTP 404
-- `DuplicateResourceException` → HTTP 409
-- `IllegalArgumentException` → HTTP 400
-- 기타 예외 → HTTP 500
-- 모든 예외 응답은 `ApiResponse` 형태로 통일한다.
+## API 기준
 
-## 부분 구현 / 미구현
-- 별도 `GET /api/stocks/{ticker}/indicators` 엔드포인트는 없음. 지표 분해값은 `/api/stocks/{ticker}/herd` 응답에 포함된다.
-- 200주 MA 위치는 `HerdScoreResponse.ma200Weekly`로 응답한다.
-- HERD v4 응답은 `herdScore`/`herdV4`에 최종 점수, `herdBase`에 v3 기본 점수, `epsMultiplier`/`sectorMultiplier`에 보정 승수를 포함한다.
-- HERD 응답은 `stocks` 테이블 기준 `companyName`, `sector`, `logoUrl`을 포함한다. 로고가 없으면 frontend가 티커 배지로 fallback한다.
-- HERD 신뢰도 응답은 DB 스키마 변경 없이 `HerdService`가 계산한다. `qualityScore`, `qualityLevel`, `qualityLabel`, `qualitySummary`, `qualityFlags`, `qualityReasons`를 포함한다.
-- HERD 신뢰도는 `daily_prices` 기간이 아니라 저장된 HERD 산출 결과의 완성도(핵심 지표, 200주 MA, v4 보정 승수, 최신성)를 기준으로 계산한다.
-- HERD 신호 성능 신뢰도는 `HerdReliabilityService`가 Python을 호출해 계산한다. `qualityScore`와 달리 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 모델 적합도, 표본 품질, 매수/익절 edge를 기준으로 한다.
-- HERD_v6.1 Progressive Action Layer는 레거시 연구 참고값이다. `ActionDecisionService`가 연구 비율을 계산하더라도 승격 승인·holdout 게이트를 통과하지 않으면 운영 `actionRatio`는 항상 0%다.
-- HERD 응답은 저장된 `herd_scores` 히스토리 기준 현재 `signal`/`herdStage`가 언제부터 이어졌는지 계산해 `signalStartedAt`, `signalDurationDays`, `stageStartedAt`, `stageDurationDays`를 포함한다.
-- 포트폴리오 종목별 `dailyChangePct`는 KST 22:30 미국장 시작을 하루 경계로 본다. 22:30 전에는 직전 미국장 세션을 오늘로 유지한다.
-- Google OAuth 로그인과 사용자별 포트폴리오·관심종목·판단 기록을 지원한다. 인증 비활성 로컬 개발에서만 `local` 사용자를 사용한다.
-- HERD 판단 기록은 `signal_journal` 테이블에 저장한다. 과거 localStorage 기반 기록장은 제거했고, frontend는 `/api/journal`을 기준으로 조회/저장한다.
-- 증권사 API 추상화는 구현되어 있지 않다.
-- Action Layer와 `settings.py`는 Rush 75 / Flee 15 행동 신호 기준을 사용한다. Python `calculator.py`와 frontend `utils/herdStage.js`도 같은 기준을 따른다.
-- 가격 히스토리, 뉴스, 애널리스트, 내부자 거래 API/DTO/서비스는 MVP 정리 과정에서 제거했다.
+공개 API 목록은 `README.md`를 단일 사용자 문서로 유지한다. Controller를
+변경하면 README API 표와 frontend 호출부를 함께 확인한다. 핵심 영역은
+다음과 같다.
+
+- `/api/observations`, `/api/observation-changes`
+- `/api/stocks/{ticker}/herd`, history, refresh, reliability
+- `/api/stocks/search`, financials
+- `/api/portfolio`, summary, realtime, history, ledger, performance
+- `/api/watchlist`, `/api/journal`
+- `/api/model/validation`, `/api/system/data-status`
+- `/api/investor-profile`, `/api/auth`
+
+## 데이터와 인증
+
+- Flyway와 현재 엔티티가 스키마의 변경 이력을 관리한다.
+- `ddl-auto=validate`로 런타임 스키마 불일치를 드러낸다.
+- Google OAuth2 로그인과 JDBC 영속 세션을 사용한다.
+- 인증 비활성 로컬 개발에서만 `local` 사용자 폴백을 허용한다.
+- 모든 포트폴리오·관찰·판단 기록 조회는 현재 사용자 범위로 제한한다.
+
+## Python 실행
+
+- 직접 `ProcessBuilder`를 흩뿌리지 않고 `PythonProcessGateway`와 전용 runner를 사용한다.
+- 실행 경로·타임아웃·출력 파싱은 중앙 경계에서 관리한다.
+- 실패 시 오래된 값을 최신값처럼 가장하지 않는다.
+- 로컬 실행은 루트 `.env`를 읽는 `./scripts/run-backend.sh`를 사용한다.
 
 ## 코드 원칙
-- Controller는 요청/응답만 처리, 비즈니스 로직은 Service로
-- Repository는 DB 접근만, 쿼리 로직은 여기서
-- DTO와 Entity 분리 필수
-- 모든 API 예외처리 포함 (@ExceptionHandler)
-- CORS 설정 config/에서 관리
 
-## AI 작업 원칙
-- 실제 backend 코드 기준으로 판단한다.
-- 구현되지 않은 기능은 완료 처리하지 않는다.
-- README보다 실제 코드를 우선한다.
-- 추측하지 않는다.
-- 작업 범위를 벗어난 파일은 수정하지 않는다.
-- backend/CLAUDE.md는 backend 개발만을 위한 문서로 유지한다.
+- Controller에 비즈니스 로직을 넣지 않는다.
+- Repository에는 DB 접근만 둔다.
+- Entity를 API 응답으로 직접 노출하지 않는다.
+- 시간·미국장 세션 판단은 `UsMarketSessionClock`을 재사용한다.
+- 티커 입력은 `TickerSymbolPolicy`를 통과시킨다.
+- 예외 응답은 `GlobalExceptionHandler`와 `ApiResponse` 계약을 따른다.
+- 모델 승격 경계를 우회하는 환경변수·임시 분기를 만들지 않는다.
 
-## 작업 시 주의
-- data/, frontend/ 폴더는 읽지 말 것
-- DB 스키마는 Python이 먼저 생성한 테이블 기준으로 맞출 것
-- Python 직접 실행은 HerdService/PortfolioService의 ProcessBuilder 경로에 한정할 것
+## 검증
+
+```bash
+cd backend
+./gradlew test
+```
+
+DB 마이그레이션이나 인증 변경은 단위 테스트 외에 실제 로컬 실행과
+`/api/auth/me`, `/api/system/data-status` smoke test를 별도로 확인한다.

@@ -39,20 +39,21 @@ HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이�
 
 페이지는 배치와 사용자 흐름을, 커스텀 훅은 비동기 상태를, 모델 모듈은 순수 계산을 담당한다.
 
-### MarketHome·Portfolio
+### Dashboard
 
-- `MarketHome`: SPY `MARKET_AGGREGATE` State S1만 조립
+- `Dashboard`: SPY 관찰·종목 검색·선택형 자산 패널·보유 종목을 조립
+- `HerdObservationPanel`: SPY 또는 선택 종목의 HERD 상태를 같은 시각 문법으로 표시
+- `TickerSearch`: 자동완성·최근 검색·키보드 제출을 담당
 - `useMarketHomeData`: SPY 관찰값과 이력 요청
 - `MarketField`: SPY 집계 전용 시각화
-- `Portfolio`: 계좌 요약·자산 이력·보유 종목 조립
 - `usePortfolioData`: 사용자별 포트폴리오·State S1 캐시와 갱신
 - `usePortfolioAssetHistory`: 자산 이력 요청과 차트 파생값
 - `usePortfolioMutations`: 현금·평단·수량·삭제 변경
 - `portfolioDataModel`: API 응답 정규화와 캐시 정책
 - `portfolioModel`: 보유 종목·오늘 등락·차트 순수 계산
 
-시장 상태와 개인 계좌를 같은 대시보드에 합치지 않는다. 계정 메뉴에서도 별도 행동
-알림을 계산하지 않는다.
+시장 상태는 대시보드의 기본 관찰값으로 유지하고 개인 자산은 사용자가 열었을 때만
+표시한다. 계정 메뉴에서도 별도 행동 알림을 계산하지 않는다.
 
 ### StockDetail·Watchlist
 
@@ -63,11 +64,11 @@ HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이�
 - `WatchlistQueue`: 낮은 HERD부터 높은 HERD까지 관찰 목록
 - `Watchlist`: 조회·삭제 상태와 페이지 조합
 
-### Search
+### 대시보드 검색
 
 - `searchModel`: 후보, 검색 매칭, 최근 검색, 편입 표시 규칙
-- `SearchResultContent`: 검색 결과 상태별 표시
-- `Search`: 검색 요청과 사용자 상호작용
+- `useStockSearch`: 검색 요청과 최근 검색 상태
+- `useTickerMembership`: 포트폴리오·관찰 목록 편입 상태
 
 단계 색상, 기간 목록, API 호스트, 관찰값 정규화는 `src/utils`의 공통 모듈을 사용한다.
 

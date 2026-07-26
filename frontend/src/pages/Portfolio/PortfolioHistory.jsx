@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { historyChartGeometry } from './portfolioModel'
 import styles from './Portfolio.module.css'
@@ -22,15 +23,27 @@ export default function PortfolioHistory({
   loading,
   error,
   displayAmount,
+  privacyMode,
   onPeriodChange,
 }) {
+  const [activeIndex, setActiveIndex] = useState(null)
   const geometry = historyChartGeometry(points)
-  const latest = points.at(-1) ?? null
-  const first = points[0] ?? null
   const change = accountValueChangePct == null ? null : Number(accountValueChangePct)
   const tone = change == null || !Number.isFinite(change)
     ? ''
     : change >= 0 ? styles.positive : styles.negative
+  const selectedIndex = activeIndex ?? Math.max(0, points.length - 1)
+  const selectedPoint = points[selectedIndex] ?? null
+  const selectedCoordinate = geometry.coordinates[selectedIndex] ?? null
+
+  function selectNearestPoint(event) {
+    if (points.length === 0) return
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const ratio = bounds.width > 0
+      ? Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width))
+      : 1
+    setActiveIndex(Math.round(ratio * (points.length - 1)))
+  }
 
   return (
     <section className={styles.historySection} aria-labelledby="asset-history-title">
@@ -60,18 +73,17 @@ export default function PortfolioHistory({
       </div>
 
       <div className={styles.historyBody}>
-        <div className={styles.historyMetrics}>
-          <span>계좌 가치 변화</span>
+        <div className={styles.chartSummary}>
+          <span>{periodLabel} 변화</span>
           <strong className={tone}>{signedPct(accountValueChangePct)}</strong>
-          <small>
-            {first && latest
-              ? `${displayAmount(first.totalAssetValue)} → ${displayAmount(latest.totalAssetValue)}`
-              : '기록이 쌓이면 변화를 표시합니다.'}
-          </small>
-          <em>투자 수익률 아님</em>
+          <small>입출금 포함 · 투자 수익률 아님</small>
         </div>
 
-        <div className={styles.chartFrame}>
+        <div
+          className={styles.chartFrame}
+          onPointerMove={selectNearestPoint}
+          onPointerLeave={() => setActiveIndex(null)}
+        >
           {loading && <p role="status">히스토리 불러오는 중…</p>}
           {!loading && error && <p role="alert">{error}</p>}
           {!loading && !error && !geometry.path && (
@@ -90,6 +102,17 @@ export default function PortfolioHistory({
                   <stop offset="100%" stopColor="var(--hs-scatter)" stopOpacity="0" />
                 </linearGradient>
               </defs>
+              {[55, 110, 165].map((y) => (
+                <line
+                  key={y}
+                  x1="0"
+                  x2="1000"
+                  y1={y}
+                  y2={y}
+                  className={styles.chartGrid}
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
               <path d={geometry.areaPath} fill="url(#portfolio-area)" />
               <path
                 d={geometry.path}
@@ -98,7 +121,39 @@ export default function PortfolioHistory({
                 strokeWidth="2"
                 vectorEffect="non-scaling-stroke"
               />
+              {selectedCoordinate && (
+                <>
+                  <line
+                    x1={selectedCoordinate[0]}
+                    x2={selectedCoordinate[0]}
+                    y1="0"
+                    y2="220"
+                    className={styles.chartCursor}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <circle
+                    cx={selectedCoordinate[0]}
+                    cy={selectedCoordinate[1]}
+                    r="4"
+                    className={styles.chartPoint}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </>
+              )}
             </svg>
+          )}
+          {!loading && !error && selectedPoint && selectedCoordinate && (
+            <div
+              className={styles.chartTooltip}
+              style={{
+                left: `${Math.max(7, Math.min(93, selectedCoordinate[0] / 10))}%`,
+              }}
+            >
+              <span>{selectedPoint.date}</span>
+              <strong>
+                {privacyMode ? '••••••' : displayAmount(selectedPoint.totalAssetValue)}
+              </strong>
+            </div>
           )}
         </div>
       </div>

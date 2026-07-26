@@ -1,7 +1,7 @@
 # HERD 모델 헌장
 
 상태: `APPROVED_BASELINE`  
-최신화: 2026-07-22
+최신화: 2026-07-27
 
 1~9 통합 모델 확립 순서와 행동·검증 경계는
 `data/herd/model_establishment_protocol_v1.json`을 최상위 기계 판독
@@ -126,7 +126,8 @@ Rush의 익절에는 Exhausted 또는 Breaking 확인이 필요하다.
 - Rush 종목 고유 하방 비대칭: 신규 59종목 OOS 탈락, 운영 권한 없음
 - 공개 비가격 선행정보: Form 4 공식 벌크 census는 통과했지만 사전등록한
   내부자 매수 지지 OOS 가설은 표본 정밀도 기준에서 탈락
-- SEC 8-K 가이던스: 구조 파서 V7 독립 원문 게이트 탈락, 수정쌍 생성 차단
+- SEC 8-K 가이던스: 원문 검수 atomic fact와 176개 수정쌍을 확보했지만,
+  경영진 가이던스 하향 가설은 독립 OOS 채택 기준에서 탈락
 - 검증된 수정쌍·방향 가설·차세대 후보: 0개
 - Blind holdout: 미배정·미개방
 - 개인 MVP: `STATE_OBSERVATION_MVP_READY`

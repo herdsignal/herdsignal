@@ -7,7 +7,6 @@ yfinance의 무료 티어는 약 15분 지연 데이터를 제공한다.
 
 import logging
 import sys
-from datetime import time
 from pathlib import Path
 
 import pandas as pd
@@ -64,14 +63,13 @@ def _latest_regular_close(daily_closes: pd.Series, current_price: float, latest_
             latest = latest.tz_convert("America/New_York")
 
         latest_date = latest.date()
-        latest_time = latest.time()
         daily_last_date = pd.Timestamp(closes.index[-1]).date()
 
-        if (
-            latest_date == daily_last_date
-            and latest_time >= time(16, 0)
-            and abs(current_price - prev_close) / prev_close < 0.001
-        ):
+        # 일봉 마지막 행이 현재 1분봉과 같은 거래일이면 그 행은 오늘
+        # 정규장 종가다. 오늘 등락률의 기준은 반드시 한 행 앞의 종가다.
+        # 가격 유사도 조건은 장후 가격 변동 시 오늘 종가를 전일가로
+        # 오인하므로 사용하지 않는다.
+        if latest_date == daily_last_date:
             return float(closes.iloc[-2])
     except Exception:
         return prev_close

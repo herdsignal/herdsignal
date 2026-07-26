@@ -4,19 +4,17 @@
  */
 
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 import Layout     from './components/Layout/Layout'
 import RouteErrorBoundary from './components/RouteErrorBoundary/RouteErrorBoundary'
 import { AuthProvider } from './auth/AuthContext'
 import ProtectedRoute from './auth/ProtectedRoute'
 import { ROUTER_FUTURE } from './routerConfig'
 
-const MarketHome = lazy(() => import('./pages/MarketHome/MarketHome'))
-const Portfolio = lazy(() => import('./pages/Portfolio/Portfolio'))
+const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'))
 const PublicHome = lazy(() => import('./pages/PublicHome/PublicHome'))
 const Login = lazy(() => import('./pages/Login/Login'))
 const StockDetail = lazy(() => import('./pages/StockDetail/StockDetail'))
-const Search = lazy(() => import('./pages/Search/Search'))
 const Watchlist = lazy(() => import('./pages/Watchlist/Watchlist'))
 const ObservationChanges = lazy(() => import('./pages/ObservationChanges/ObservationChanges'))
 const History = lazy(() => import('./pages/History/History'))
@@ -45,10 +43,10 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
           {/* Layout이 공통 탐색 + <Outlet>으로 모든 보호 페이지를 감싼다 */}
           <Route element={<Layout />}>
-            <Route path="/app"           element={<MarketHome />} />
-            <Route path="/portfolio"     element={<Portfolio />} />
+            <Route path="/app"           element={<Dashboard />} />
+            <Route path="/portfolio"     element={<Navigate to="/app" replace />} />
             <Route path="/stock/:ticker" element={<StockDetail />} />
-            <Route path="/search"        element={<Search />} />
+            <Route path="/search"        element={<Navigate to="/app" replace />} />
             <Route path="/watchlist"     element={<Watchlist />} />
             <Route path="/changes"       element={<ObservationChanges />} />
             <Route path="/history"       element={<History />} />

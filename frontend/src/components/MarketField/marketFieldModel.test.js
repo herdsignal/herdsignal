@@ -60,4 +60,13 @@ describe('marketFieldModel', () => {
       createMarketFieldDots(64, 16, 'drift', 0)[0].duration,
     )
   })
+
+  it('keeps Calm visibly in motion on a large market field', () => {
+    const calm = createMarketFieldDots(51, MARKET_FIELD_DOT_COUNT, 'calm')
+    const displacement = calm.map((dot) => Math.hypot(dot.shiftAX, dot.shiftAY))
+    const average = displacement.reduce((sum, value) => sum + value, 0) / displacement.length
+
+    expect(average).toBeGreaterThan(12)
+    expect(Math.max(...calm.map((dot) => dot.duration))).toBeLessThan(7.3)
+  })
 })

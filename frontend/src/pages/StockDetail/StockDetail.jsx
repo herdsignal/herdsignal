@@ -52,7 +52,7 @@ export default function StockDetail() {
   return (
     <div className={styles.page} aria-busy={loading}>
       <nav className={styles.breadcrumb} aria-label="현재 위치">
-        <button type="button" className={styles.breadcrumbLink} onClick={() => navigate('/search')}>
+        <button type="button" className={styles.breadcrumbLink} onClick={() => navigate('/app#stock-search')}>
           종목
         </button>
         <span className={styles.breadcrumbSep}>/</span>

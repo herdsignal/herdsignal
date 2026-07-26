@@ -1,392 +1,87 @@
-# HerdSignal — 프로젝트 공통 지침
+# HerdSignal 프로젝트 지침
 
-최종 업데이트: 2026-07-10
+최종 업데이트: 2026-07-27
 
-## 서비스 개요
+## 제품 목적
 
-미국주식 장기투자자를 위한 데이터 기반 타이밍 도구.
-개별 주식마다 HERD Index(0~100)를 산출해 고점 익절 / 저점 추가매수 타이밍을 제안.
+HerdSignal은 미국 주식을 장기 보유하는 사용자가 군중의 분산·밀집 상태와
+그 변화를 관찰하고 자신의 판단을 기록하는 개인 투자 도구다.
 
-## 문서 역할
+- 기본 모델은 `HERD State S1`과 `Transition S1`이다.
+- HERD는 0~100의 순서형 상태이며 Flee → Scatter → Calm → Drift → Rush로 표현한다.
+- 낮은 점수는 자동 매수, 높은 점수는 자동 매도를 의미하지 않는다.
+- 검증된 행동 모델이 생기기 전 사용자 출력은 `HOLD·0%`다.
+- v4와 v6.1은 레거시 비교·재현 자료이며 새 모델의 운영 근거가 아니다.
 
-- README: 사용자/포트폴리오 문서. 프로젝트 소개, 실행 방법, 외부 공개용 설명을 담당.
-- CLAUDE.md: AI 개발 문서. 실제 코드 기준 개발 상태, 작업 원칙, 구현 범위를 담당.
+제품·모델 경계는 `docs/HERD_MODEL_CHARTER.md`, 채택 조건은
+`docs/HERD_ADOPTION_POLICY.md`, 최신 연구 판정은
+`docs/HERD_RESEARCH_STATUS.md`를 따른다.
 
-## 핵심 개념
+## 저장소 구조
 
-- **HERD Index**: 개별주 군중심리 지표 (0~100)
-- **5단계**: Flee → Scatter → Calm → Drift → Rush
-- **서비스 철학**: Rush일 때 익절, Flee일 때 매수
-
-현재 단계 표시와 행동 신호 기준은 Rush 75 / Flee 15 중심으로 통일한다.
-세부 기준은 Python `HERD_THRESHOLDS`, backend Action Layer, frontend `utils/herdStage.js`를 함께 맞춘다.
-
-## 모노레포 구조
-
-```
-herdsignal/
-├── data/       Python 데이터 엔진
-├── backend/    Spring Boot REST API
-├── frontend/   React 대시보드
-└── scripts/    루트 .env 기반 실행 스크립트
+```text
+data/       Python 수집·상태 계산·연구·스케줄러
+backend/    Spring Boot API·인증·사용자 데이터·운영 경계
+frontend/   React 대시보드·관찰 목록·상세·연구 화면
+docs/       현재 계약과 재현 가능한 연구 기록
+scripts/    루트 .env를 사용하는 실행·검증 스크립트
 ```
 
-- `data/`: yfinance/Finnhub 수집, HERD 계산, MariaDB 저장, 스케줄러.
-- `backend/`: MariaDB 데이터를 읽어 React에 제공하는 REST API.
-- `frontend/`: Spring Boot API를 호출해 포트폴리오/종목/HERD 데이터와 판단 기록을 시각화.
-- `.env`: 프로젝트 루트 단일 환경변수 파일. data/backend 실행은 모두 이 파일을 기준으로 한다.
+기본 데이터 흐름은 `외부 원천 → Python → MariaDB → Spring Boot → React`다.
+Python은 계산과 저장, backend는 API와 사용자 경계, frontend는 표현을 담당한다.
+루트 `.env`가 유일한 로컬 환경변수 기준이며 비밀값은 커밋하지 않는다.
 
-## 데이터 흐름
+## 현재 제품 구조
 
-```
-yfinance → Python(HERD 계산) → MariaDB → Spring Boot API → React
-```
+- `/app`: SPY Herd Flow, 통합 종목 검색, 선택형 자산 패널, 보유 현황
+- `/watchlist`: 관심 종목과 상태 변화 관찰
+- `/stock/:ticker`: State S1·과거 흐름·근거·판단 기록
+- `/changes`: 새 상태 전환 확인
+- `/herd-lab`: 모델 상태와 검증 한계
+- `/settings`, `/history`, `/journal`: 사용자 설정과 기록
+- `/portfolio`, `/search`: 이전 주소 호환용 `/app` 리다이렉트
 
-Python은 계산 + 저장만. Spring Boot는 서빙만. 역할 분리 엄수.
+별도 시장 홈과 검색 페이지는 없다. 대시보드가 핵심 진입점이다.
 
-## 기술 스택
+## 변경 원칙
 
-- Python 3.12 / yfinance / pandas / scipy / SQLAlchemy / PyMySQL / APScheduler
-- Spring Boot 3.5.3 / Java 17 / Gradle / JPA / MariaDB
-- React 18.3 / Vite 6 / react-router-dom / axios / recharts
+1. 문서보다 실제 코드와 테스트를 먼저 확인한다.
+2. 상태 관찰과 행동 권고를 혼합하지 않는다.
+3. 연구 후보는 사전등록·OOS·채택 게이트를 통과하기 전 운영에 연결하지 않는다.
+4. 누락 데이터와 승인 실패는 통과가 아니라 차단으로 처리한다.
+5. Controller·Service·Repository, 화면·훅·모델의 역할을 분리한다.
+6. 공통 로직은 재사용하되 단순한 코드에 불필요한 추상화를 추가하지 않는다.
+7. 기존 사용자 변경과 재현용 `*_vN.py`·고정 산출물을 임의 삭제하지 않는다.
+8. 설명 주석은 이유와 경계에 집중하고 코드 내용을 반복하지 않는다.
+9. 작업 범위의 테스트, 정적 검사, 빌드와 참조 검사를 끝낸 뒤 완료로 판단한다.
 
-## AI 작업 원칙
+## 문서 권위
 
-- 실제 코드 기준으로 판단한다.
-- 구현되지 않은 기능은 완료 처리하지 않는다.
-- README보다 실제 코드를 우선한다.
-- 추측하지 않는다.
-- 작업 범위를 벗어난 파일은 수정하지 않는다.
+- 공개 실행·기능 안내: `README.md`
+- 코드 구조: `docs/ARCHITECTURE.md`
+- 문서 분류와 읽는 순서: `docs/README.md`
+- 모델 정의: `docs/HERD_MODEL_CHARTER.md`
+- 채택 기준: `docs/HERD_ADOPTION_POLICY.md`
+- 최신 연구 판정: `docs/HERD_RESEARCH_STATUS.md` 상단
+- 재현·PIT 계약: `docs/HERD_REPRODUCIBLE_RESEARCH.md`,
+  `docs/HERD_POINT_IN_TIME_DATA.md`
 
-## 공통 코드 원칙
+`HERD_RESEARCH_STATUS.md`의 날짜별 하단 항목과 버전별 연구 스크립트는
+과거 판단을 재현하기 위한 기록이다. 최신 운영 상태로 해석하지 않는다.
 
-- 함수/클래스 단위 역할 분리
-- 예외처리 필수
-- 하드코딩 금지 (설정값은 config 분리)
-- 주석 필수
-- 한 번에 하나씩 — 파일 구조 먼저 제안 후 코드 작성
+## 검증
 
-## 커밋 메시지 규칙
+전체 검증은 루트에서 다음 명령을 우선 사용한다.
 
-형식:
-
-```
-git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
-```
-
-type 종류:
-
-- `feat`: 새 기능 추가
-- `fix`: 버그 수정
-- `chore`: 설정, 패키지 등 기타 작업
-- `refactor`: 코드 구조 개선 (기능 변경 없음)
-- `docs`: 문서 수정
-
-예시:
-
-```
-git commit -m "feat: RSI 계산 함수 구현" -m "- 월봉/주봉 Wilder RSI 계산 로직 추가" -m "- 종목별 역사적 상대값 정규화 적용"
+```bash
+./scripts/verify-all.sh
 ```
 
-규칙:
+부분 작업은 해당 폴더의 `CLAUDE.md`와 테스트 명령을 따른다. 외부 API·DB가
+필요한 런타임 점검과 순수 단위·회귀 테스트는 구분해 결과를 보고한다.
 
-- 제목은 50자 이내
-- 세부사항은 실제 변경된 내용 구체적으로
-- 세부사항 2~4개 권장
+## 커밋
 
-### 언급 방식
-
-커밋 타이밍이 되면 아래 형식으로 먼저 알려줄 것.
-
-```
-✅ 커밋 타이밍입니다.
-작업 내용: (완성된 내용 한 줄 요약)
-명령어:
-git add .
-git commit -m "type: 제목" -m "- 세부사항1" -m "- 세부사항2"
-```
-
-## 토큰 절약 규칙
-
-- data/ 작업 시 backend/, frontend/ 파일 읽지 말 것
-- backend/ 작업 시 data/, frontend/ 파일 읽지 말 것
-- frontend/ 작업 시 data/, backend/ 파일 읽지 말 것
-- 각 폴더의 CLAUDE.md만 추가로 참조할 것
-
-## 현재 상태
-
-### 완료
-
-**data/**
-
-- HERD Index v4 계산 (v3 6개 지표 기본 점수 + EPS 서프라이즈/섹터 상대 강도 보정 승수)
-- MariaDB 저장 (stocks / herd_scores / herd_indicators / daily_prices — 4개 테이블 UPSERT)
-- stocks 메타데이터 캐싱 (Finnhub company profile 기반 name / sector / logo_url)
-- 3-Tier 스케줄러
-  - Tier 1: 매일 16:30 ET 자동 계산 (user_portfolio + user_watchlist + SPY)
-  - Tier 2: on-demand 계산 + 7일 캐시 (검색·상세 조회 시)
-  - Tier 3: yfinance 실시간 포트폴리오 평가 + portfolio_history UPSERT
-- HERD 히스토리 백필 (`data/herd/history_backfill.py`)
-  - StockDetail/Dashboard HERD 히스토리 차트용 과거 점수 생성
-  - 기본 대상: 포트폴리오 + 관심종목 + SPY (`--all-stocks` 명시 시 stocks 활성 종목 포함)
-  - 과거 EPS/섹터 승수는 1.0으로 저장해 미래 데이터 누수를 피함
-- HERD 신호 신뢰도 계산 (`data/herd/signal_reliability.py`)
-  - 저장된 HERD 히스토리와 yfinance 가격으로 Flee/Rush 적중률, 신호 이후 평균 수익/낙폭, MDD 개선, 수익률 보존, 연간 행동 수 계산
-  - DB 스키마 변경 없는 on-demand 분석
-- 백테스트 코드 (backtest_v3.py, backtest_v4.py 기반)
-
-**backend/**
-
-- HERD 조회 API (`GET /api/stocks/{ticker}/herd`, `GET /api/portfolio/herd`)
-- HERD 응답에 종목 메타데이터(companyName / sector / logoUrl) 포함
-- HERD 강제 갱신 API (`POST /api/stocks/{ticker}/herd/refresh`, `POST /api/portfolio/herd/refresh`)
-- 포트폴리오 전체 API (CRUD + summary + history + realtime + 평단가/수량 수정 + 현금 보유액)
-- 관심 종목 전체 API (CRUD + HERD 조회)
-- 시장 데이터 API (`GET /api/market/spy` — SPY 종가·1개월 수익률)
-- 재무정보 API (`GET /api/stocks/{ticker}/financials` — 시가총액·PER·EPS 등)
-- HERD 신호 신뢰도 API (`GET /api/stocks/{ticker}/herd/reliability` — 과거 신호 성능)
-- Python on-demand 계산 연동 (ProcessBuilder)
-- 전역 예외 처리 (404 / 409 / 500)
-
-**frontend/**
-
-- Dashboard: S&P 500 Herd Flow 배너(Overview 애니메이션 + Timeline HERD 히스토리 + HERD 강도 변화), 총자산/현금 포함 포트폴리오 평가 요약, 편집 모드 현금 입력, 1개월/1년/전체 자산 히스토리 차트(입출금 포함 총자산 흐름과 주식 평가액 변화 분리 표시), HERD 판단 기록 전체 요약, KRW/USD 통화 토글, 핵심 리밸런싱 체크, 포트폴리오 리스크 체크, 알림 조건 패널, HERD 신호와 목표비중 차이를 함께 반영한 보유 종목 액션 카드, 편집 모드, 평단가·수량 수정 모달, localStorage 캐시, 빠른 새로고침 피드백
-- StockDetail: 레거시 HERD v4 상태 점수·단계, 운영 차단된 v6.1 연구 비율, 현재 신호 근거 데이터 보드, 지표 분해·보정 승수, 현재 신호 기준 신뢰도, HERD Index 히스토리 차트, Fundamental Guard, DB 기반 HERD 판단 기록(가격·수량·총액·수익률·메모)과 기록 요약
-- StockDetail: 최근 3년 HERD 신호 신뢰도 데이터 보드(Flee/Rush 적중률, 매수 후 1/3/6개월 평균 수익률, 익절 후 1/3개월 평균 낙폭, MDD 개선, 수익률 보존, 연간 행동 수, 모델 적합도, 표본 품질, 매수/익절 edge)
-- HERD 데이터 품질: 핵심 지표 완성도·200주 MA 포함 여부·v4 보정 승수·최신성을 기반으로 qualityScore/qualityLevel/qualityReasons 응답 제공. frontend에서는 낮은 품질만 `데이터 제한/부족`과 제한 사유로 표시한다.
-- HERD 모델 구분: HERD_v4는 현재 DB에 저장되는 레거시 상태 기준이고, v6.1 Progressive Action Layer는 비교 재현용 연구 모델이다. 둘 다 새 매수·익절 모델로 승격되지 않았다.
-- HERD Action Layer: 연구 비교값은 backend 응답 시점에 계산하지만 승격 승인 전 운영 `signal`은 `HOLD`, `actionRatio`는 `0%`로 제한한다.
-- HERD 신호 지속 기간: backend가 저장된 HERD 히스토리 기준으로 현재 signal/stage 시작일과 지속 일수를 응답하고, frontend는 보유종목/관심종목/상세 화면에 `초입 신호/진행 신호/장기 지속`으로 해석해 표시한다.
-- Responsive UI: frontend는 데스크톱 사이드바와 모바일 하단 탭을 함께 지원하며, 모바일에서는 Dashboard/Watchlist/Search/HERD Lab 핵심 흐름을 우선 노출한다.
-- Search: Finnhub 심볼 검색 API, Inclusion Check 상태 패널, 디바운스 검색, HERD 미리보기, 편입 판단, HERD 준비됨/계산 필요/데이터 부족 상태 표시, 최근 검색, 포트폴리오/관심종목 추가, 포트폴리오 추가 후 평단가·수량 입력 연결
-- Watchlist: S&P 500 Herd Flow 배너, Buy Queue/Observe/Overheat 요약 보드, Flee/Scatter 우선 기회 대기열, 준비도 기반 매수 후보 우선 Action Queue 리스트, 삭제
-- StockAvatar: 회사 로고 URL이 있으면 로고 표시, 없거나 이미지 로딩 실패 시 티커 배지 fallback
-- HERD Lab: 현재 HERD 모델 버전 검증 히어로 보드, 핵심 성과 수치, 모델 신뢰 체크, 종목별 백테스트 verdict, 5단계 행동 매트릭스. 표시 데이터는 `frontend/src/data/herdModelReport.js`에서 관리한다.
-- Journal: StockDetail에서 저장한 HERD 판단 기록 전체 목록과 매수/익절 요약을 `signal_journal` DB 기반으로 표시하며, 가격·수량·금액·수익률·HERD·신호 지속일·메모를 함께 보여준다.
-- 사이드바 노출 MVP 메뉴: 대시보드, 관심 종목, 종목 검색, HERD Lab
-- 보류/내부 접근 라우트: AiRebalance(`/ai`), History(`/history`), Journal(`/journal`), HerdFlowPreview(`/herd-flow`)
-
-**문서**
-
-- data/CLAUDE.md 최신화
-- README.md 최신화
-- 루트 CLAUDE.md 최신화
-- 루트 `.env` 단일화 및 실행 스크립트 (`scripts/run-backend.sh`, `scripts/run-data.sh`, `scripts/run-frontend.sh`)
-
-### 진행 중
-
-없음
-
-### 다음 단계
-
-- 실제 사용 시나리오 테스트와 버그 정리
-
----
-
-## HERD Index 현재 버전 (운영 계산 기준)
-
-### 알고리즘
-
-- 정규화 방식: 백분위수 (scipy.stats.percentileofscore)
-- 데이터 기간: 기본 5년 (`YFINANCE_PERIOD=5y`)
-- 운영 계산: 6개 지표를 계산해 v3 기본 점수를 만들고, v4 보정 승수를 곱해 최종 점수 산출
-- 구성 지표:
-  - 월봉 RSI 24%
-  - 주봉 RSI 19%
-  - 52주 위치 19%
-  - MA200 이격도 18%
-  - 거래량 강도 0% (계산 코드는 유지, 운영 가중치 비활성)
-  - 200주 MA 위치 20%
-- HERD v4 보정:
-  - EPS 서프라이즈 최근 4분기 연속 beat/miss → `eps_multiplier`
-  - 90일 종목 수익률 - 섹터 ETF 수익률 → `sector_multiplier`
-  - 최종 점수: `herd_v4 = herd_base × eps_multiplier × sector_multiplier`
-- `herd_scores.herd_score`는 최종 v4 점수를 저장한다.
-- `herd_indicators` DB 테이블과 `HerdScoreResponse` API 응답은 200주 MA 위치(`ma200_weekly`), `herd_base`, `eps_multiplier`, `sector_multiplier`, `herd_v4`를 포함함.
-
-### 임계값
-
-- Rush ≥ 75 → 30% 익절
-- Drift 60~75 → 5% 익절
-- Calm 40~60 → 보유 유지
-- Scatter 15~40 → 10% 추가매수 (1단계 신호)
-- Flee ≤ 15 → 30% 추가매수 (2단계 신호)
-
-### 신호 규칙
-
-- 신호 중복 제거: 20일 이내 재발생 무시
-- `saver.py` 기준 신호 파생:
-  - score >= 75: SELL
-  - score >= 60: REDUCE
-  - score <= 15: BUY
-  - score <= 40: ADD
-  - 그 외: HOLD
-- `backtest_v4.py`는 현재 승수를 3년 HERD 시계열에 적용하는 sanity check이며, 과거 시점별 EPS/섹터 승수를 완전히 복원하지는 않음.
-
-### 백테스트 검증 결과
-
-- 평균 MDD 8.9%p 개선
-- 평균 수익률 59.3% 보존
-- Flee 신호 분포 6~10% (이상적)
-- Rush 신호 분포 3~9% (종목 특성에 따라 상이)
-
----
-
-## 현재 구현 완료 기능
-
-### data/
-
-- [x] yfinance 기반 가격 수집
-- [x] HERD Index 계산 (`herd/calculator.py`)
-- [x] MariaDB 저장 (`herd/saver.py`)
-- [x] 9개 테이블 생성 (`init_db.py`)
-  - stocks
-  - herd_scores
-  - herd_indicators
-  - daily_prices
-  - user_portfolio
-  - user_watchlist
-  - user_cash_balance
-  - user_cash_history
-  - portfolio_history
-- [x] Tier 1 일일 스케줄러 (`scheduler/herd_scheduler.py`)
-  - user_portfolio + user_watchlist + SPY 대상
-  - 매일 16:30 ET 실행
-- [x] Tier 2 on-demand HERD 계산
-  - 상세/검색 조회 시 DB에 최신 데이터가 없으면 Python 즉시 계산
-  - `CACHE_DAYS=7`
-  - `herd_scores` 최신 날짜 기준 캐시 판정
-- [x] Tier 3 실시간 포트폴리오 평가
-  - yfinance 현재가 기반 계산
-  - portfolio_history 오늘 스냅샷 UPSERT
-
-### backend/
-
-- [x] HERD 조회 API
-  - GET `/api/stocks/{ticker}/herd`
-  - GET `/api/portfolio/herd`
-- [x] 포트폴리오 API
-  - GET `/api/portfolio`
-  - POST `/api/portfolio`
-  - DELETE `/api/portfolio/{ticker}`
-  - GET `/api/portfolio/summary`
-  - GET `/api/portfolio/history?period=month|year|all`
-  - GET `/api/portfolio/cash`
-  - PUT `/api/portfolio/cash`
-  - PATCH `/api/portfolio/{ticker}/avg-price`
-  - GET `/api/portfolio/realtime`
-- [x] 관심 종목 API
-  - GET `/api/watchlist`
-  - GET `/api/watchlist/herd`
-  - POST `/api/watchlist`
-  - DELETE `/api/watchlist/{ticker}`
-- [x] Python on-demand 계산 연동
-  - DB에 HERD 데이터가 없으면 ProcessBuilder로 Python 계산 실행
-- [x] 전역 예외 처리
-  - 404 ResourceNotFound
-  - 409 DuplicateResource
-
-### frontend/
-
-- [x] Dashboard (`/`)
-  - S&P 500 Herd Flow 배너
-  - 현금 포함 포트폴리오 평가금액 요약
-  - 총자산 히스토리 차트
-  - KRW/USD 통화 토글
-  - 목표 비중 기반 핵심 리밸런싱 체크
-  - 보유 수량/평단/목표 비중 차이를 표시하는 보유 종목 카드
-  - 편집 모드/삭제
-  - 평단가·수량 수정 모달
-  - localStorage 캐시 우선 로딩
-  - 수동 새로고침은 DB 조회 기반 빠른 갱신
-- [x] StockDetail (`/stock/:ticker`)
-  - HERD v4 점수/단계/Timing Signal
-  - 운영 차단된 레거시 Action Layer 연구 비율
-  - 현재 신호 기준 HERD 신뢰도
-  - 지표 분해 UI + EPS/섹터 강도 보정 승수
-  - HERD Index 히스토리 차트
-  - 포트폴리오 추가
-  - 관심종목 추가
-- [x] Search (`/search`)
-  - 300ms 디바운스 검색
-  - HERD 미리보기
-  - 최근 검색 localStorage 저장
-  - 포트폴리오/관심종목 추가
-- [x] Watchlist (`/watchlist`)
-  - S&P 500 Herd Flow 배너
-  - 관심 종목 HERD 카드
-  - 매수 대기열
-  - 매수 우선도순 자동 정렬
-  - 관심 종목 삭제
-- [x] HERD Lab (`/herd-lab`)
-  - 레거시 모델과 차세대 연구 상태 검증 데이터 보드
-  - Action Layer 백테스트 요약
-  - 5단계 행동 매트릭스
-- [x] AiRebalance (`/ai`)
-  - 보류/내부 접근 라우트, 사이드바 미노출
-  - 목표 비중·현금 목표·리밸런싱 예산 설정
-  - 보수적/표준/공격적 리밸런싱 강도 선택
-  - 현재 비중 vs 목표 비중 비교
-  - 규칙 기반 매수/매도/보류 실행안
-- [x] History (`/history`)
-  - 보류/내부 접근 라우트, 사이드바 미노출
-  - 월/년 기간 토글
-  - recharts 기반 총 평가금액 차트
-  - portfolio_history 시계열 표시
-  - 시작 대비·고점 대비·점검 포인트 자산 진단
-- [x] HerdFlowPreview (`/herd-flow`)
-  - 실제 데이터와 무관한 Herd Flow 5단계 애니메이션 확인용
-  - 사이드바 미노출
-
-### frontend localStorage
-
-- `hs_portfolio_realtime`: 포트폴리오 실시간 평가 캐시
-- `hs_portfolio_herd`: 포트폴리오 HERD 캐시
-- `hs_spy_herd`: SPY HERD 캐시
-- `hs_spy_history`: SPY HERD 히스토리 캐시
-- `hs_cache_time`: 캐시 저장 시각
-- `hs_recent_searches`: 최근 검색
-- `hs_target_weights`: 포트폴리오 종목별 목표 비중
-- `hs_rebalance_settings`: 리밸런싱 예산·현금 목표·강도 설정
-- `herdsignal_currency`: 통화 표시 모드
-
-HERD 판단 기록은 localStorage가 아니라 DB `signal_journal`과 backend `/api/journal`을 기준으로 저장한다.
-
----
-
-## 미구현 또는 부분 구현
-
-- StockDetail 최근 뉴스, 애널리스트 컨센서스, 내부자 거래 섹션은 frontend에서 제거됨. 뉴스/애널리스트/내부자 거래 관련 backend API/DTO와 Python collector 함수도 제거했다.
-- StockDetail 재무정보는 원본 재무제표 섹션이 아니라 Fundamental Guard로 표시한다. 이 카드는 안전 보증이 아니라 PER/EPS/영업이익률/매출/시가총액 기반의 재무 경고 필터다.
-- 리밸런싱 플랜은 아직 Claude API를 호출하지 않는 frontend 규칙 기반 MVP다.
-- 목표 비중과 리밸런싱 설정은 localStorage 저장이며 DB 저장 기능은 없다.
-- History의 자산 진단은 portfolio_history 기반 수익률/MDD 요약이며 실제 HERD 전략 백테스트가 아니다.
-- `backtest_v5_volatility.py`는 v5 후보 검증용이며 운영 HERD 점수에는 미반영이다.
-- Google OAuth 로그인과 사용자별 포트폴리오·관심종목·판단 기록을 지원한다. 인증 비활성 로컬 개발에서만 `local` 사용자로 폴백한다.
-- SPY 배너는 저장된 SPY HERD와 시장 가격 요약을 표시하며 데이터가 없을 때만 placeholder를 사용한다.
-- Dashboard 알림 조건은 `frontend/src/utils/alertRules.js`에서 생성한다. 실제 푸시/이메일 알림은 아직 없으며, 화면에는 강한 매수/익절 후보, 목표비중 이탈, 장기 신호 지속, 포트폴리오 리스크만 저빈도 조건으로 표시한다.
-
----
-
-## README와 현재 코드의 차이
-
-- README.md는 현재 구현과 모델 검증 상태를 반영하는 한국어 단일 문서로 관리한다.
-- 공개 소개 문서에서는 Herd Flow와 객관적 상태 관찰, Dashboard/Watchlist/Search/HERD Lab 중심 MVP만 전면에 둔다. v4·v6.1을 승인된 매매 모델로 표현하지 않는다.
-- README에서 구현 완료로 보이면 안 되는 항목은 Claude API 기반 AI 리밸런싱, 증권사 연동, 배포, 승인된 매수·익절 비율이다.
-- StockDetail은 가격 차트가 아니라 HERD Index 히스토리 차트를 보여준다.
-- 뉴스/애널리스트/내부자 거래/가격 히스토리 API는 현재 backend 공개 API에서 제거했다. 필요하면 별도 기능으로 재도입한다.
-
----
-
-## 현재 한계 (인지하고 개발할 것)
-
-- 운영 HERD 계산은 여전히 기술적 지표 중심이다.
-- 거시경제 지표(VIX, DXY, 10년물 국채 수익률)는 운영 계산에 반영되어 있지 않다.
-- 옵션 Put/Call, 공매도 비율, 종목 간 상관관계는 운영 계산에 반영되어 있지 않다.
-- Python과 Spring Boot는 DB 중심으로 통신하지만, on-demand 계산과 실시간 포트폴리오 평가에서는 Spring Boot가 ProcessBuilder로 Python을 실행한다.
-- 리밸런싱 플랜은 보류/내부 접근 기능이며 아직 투자 성과를 검증하는 백테스트 엔진과 연결되어 있지 않다.
-- backend 공개 API는 현재 MVP에서 쓰는 HERD/검색/재무/포트폴리오/관심종목 중심으로 정리했다.
-- Dashboard와 StockDetail은 화면 섹션 컴포넌트로 분리했다. 남은 큰 경계는 `useDashboardData`, `useStockDetail`의 비동기 상태 조합과 `HerdScoreResponse` 응답 필드다.
-- HERD_v7 후보는 Rush/Flee 내부 강도와 피크아웃/바닥 확인 로직이다. 구현 전 백테스트로 수익률 보존, MDD 개선, 연간 행동 횟수를 먼저 검증한다.
-
----
+사용자가 커밋을 요청한 경우에만 수행한다. 기능적으로 완결된 단위마다
+`feat`, `fix`, `refactor`, `test`, `docs`, `chore` 중 하나를 사용해
+간결한 한국어 메시지를 작성한다. 푸시는 사용자의 명시적 요청 없이 하지 않는다.

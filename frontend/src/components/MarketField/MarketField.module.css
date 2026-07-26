@@ -185,6 +185,26 @@
   bottom: 30px;
 }
 
+.condensed {
+  min-height: clamp(310px, 36vh, 380px);
+}
+
+.condensed .reading strong {
+  font-size: clamp(70px, 8vw, 106px);
+}
+
+.condensed .reading span {
+  margin-top: 20px;
+}
+
+.condensed .dots {
+  inset: 0 5% 19%;
+}
+
+.condensed .spectrum {
+  bottom: 25px;
+}
+
 @media (max-width: 760px) {
   .field {
     min-height: clamp(410px, 66vh, 570px);
@@ -192,6 +212,10 @@
 
   .compact {
     min-height: 390px;
+  }
+
+  .condensed {
+    min-height: 330px;
   }
 
   .dots {

@@ -3,7 +3,7 @@
  *
  * 좌(파랑=Flee) → 우(레드=Rush) 그라데이션 바.
  * score% 위치에 흰 원형 thumb을 표시.
- * 래퍼런스: wireframes/wireframe-home-v4.html .mini-spectrum-track
+ * Flee–Rush 상태 범위를 한 축으로 표시한다.
  */
 
 import styles from './SpectrumBar.module.css'

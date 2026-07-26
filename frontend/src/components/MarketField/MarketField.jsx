@@ -34,6 +34,7 @@ export default function MarketField({
   stage,
   momentum = 0,
   compact = false,
+  condensed = false,
 }) {
   const normalizedScore = clampHerdScore(score)
   const resolvedStage = normalizeStage(stage)
@@ -54,6 +55,7 @@ export default function MarketField({
         styles.field,
         styles[resolvedStage],
         compact ? styles.compact : '',
+        condensed ? styles.condensed : '',
         unavailable ? styles.unavailable : '',
       ].filter(Boolean).join(' ')}
       style={{

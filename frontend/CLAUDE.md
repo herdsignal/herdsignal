@@ -16,15 +16,18 @@ src/
 ├── auth/                로그인·보호 라우트
 ├── components/
 │   ├── HerdLens/        고정된 점 개수로 표현하는 HERD 상태 시각화
+│   ├── HerdObservationPanel/ 시장·종목 HERD 관찰 패널
 │   ├── MarketField/     SPY 집계 전용 시장 필드
+│   ├── TickerSearch/    최근 검색과 자동완성을 포함한 검색 입력
 │   ├── Layout/          상단·모바일 공통 탐색
 │   ├── ModalDialog/     포커스 트랩·복귀를 포함한 공통 모달
 │   └── StockAvatar/     회사 로고와 티커 fallback
 ├── pages/
-│   ├── MarketHome/      SPY MARKET_AGGREGATE State S1
-│   ├── Portfolio/       계좌 요약·자산 이력·보유 종목
+│   ├── Dashboard/       시장 관찰·검색·자산·보유 종목 통합 화면
+│   ├── MarketHome/      대시보드용 SPY 데이터 모델과 조회 훅
+│   ├── Portfolio/       대시보드용 자산 이력·보유 종목 모듈
 │   ├── StockDetail/     개별 종목 State/Transition S1
-│   ├── Search/          종목 검색과 목록 추가
+│   ├── Search/          대시보드용 검색 모델과 목록 추가 훅
 │   ├── Watchlist/       관찰 종목 상태 목록
 │   ├── History/         장기 자산 기록
 │   ├── Journal/         사용자가 직접 남긴 판단 기록
@@ -38,11 +41,10 @@ src/
 ## 라우트 계약
 
 - `/`: 공개 홈
-- `/app`: SPY 시장 집계만 보여주는 로그인 후 첫 화면
-- `/portfolio`: 총자산, 주식 평가액, 현금, 오늘 등락, 통화 전환, 자산 이력,
-  보유 비중·평가액·수익률·HERD
+- `/app`: SPY 시장 집계, 종목 검색, 선택 종목 HERD, 선택형 자산 패널,
+  보유 비중·평가액·수익률·HERD를 합친 로그인 후 첫 화면
+- `/portfolio`, `/search`: 기존 주소 호환을 위해 `/app`으로 이동
 - `/stock/:ticker`: 개별 종목 State S1, Transition S1, 네 증거군, 과거 흐름
-- `/search`: 검색, State S1 준비 상태, 포트폴리오·관찰 목록 추가
 - `/watchlist`: 낮은 HERD부터 높은 HERD까지 상태 관찰
 - `/history`, `/journal`, `/herd-lab`, `/settings`: 보조 화면
 
@@ -56,11 +58,8 @@ SPY `MARKET_AGGREGATE`와 개별 종목 점수는 같은 의미로 표현하지 
 - 고정된 점 개수가 흩어지고 밀집되는 `HERD Lens`를 제품의 시각 언어로 사용한다.
 - loading, empty, partial error, unavailable, stale을 정상 화면 상태로 설계한다.
 - 페이지 JSX는 조립, `use*Data`는 I/O와 비동기 상태, `*Model`은 순수 계산을 담당한다.
-- 동일 정보를 시장 홈과 포트폴리오에 중복 배치하지 않는다.
+- 동일 정보를 별도 시장·검색·포트폴리오 화면에 중복 배치하지 않는다.
 - 승인되지 않은 `BUY`, `SELL`, 행동 비율, 행동 우선순위는 화면에서 파생하지 않는다.
-
-기준 시안은 `wireframes/wireframe-portfolio-lens-v6.html`이며 전환·삭제 기준은
-이 문서의 라우트 계약과 검증 항목으로 관리한다.
 
 ## 캐시
 
@@ -72,6 +71,7 @@ SPY `MARKET_AGGREGATE`와 개별 종목 점수는 같은 의미로 표현하지 
 - `hs_recent_searches`: 최근 검색
 - `herdsignal_currency`: KRW/USD 표시
 - `herdsignal_portfolio_lens_sort`: 포트폴리오 정렬
+- `herdsignal_portfolio_privacy`: 자산 금액 표시 여부
 
 사용자가 바뀌면 포트폴리오 캐시는 섞이지 않아야 한다. 캐시 오류는 API 재조회로
 복구하며, 시장 캐시와 포트폴리오 캐시를 한 번에 지우지 않는다.

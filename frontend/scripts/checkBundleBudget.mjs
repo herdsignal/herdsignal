@@ -6,10 +6,8 @@ const assetDirectory = resolve('dist/assets')
 const budgets = [
   { label: 'entry JavaScript', pattern: /^index-.*\.js$/, maxKb: 260 },
   { label: 'StockDetail JavaScript', pattern: /^StockDetail-.*\.js$/, maxKb: 50 },
-  { label: 'Portfolio JavaScript', pattern: /^Portfolio-.*\.js$/, maxKb: 35 },
-  { label: 'Search JavaScript', pattern: /^Search-.*\.js$/, maxKb: 20 },
+  { label: 'Dashboard JavaScript', pattern: /^Dashboard-.*\.js$/, maxKb: 50 },
   { label: 'Watchlist JavaScript', pattern: /^Watchlist-.*\.js$/, maxKb: 15 },
-  { label: 'MarketHome JavaScript', pattern: /^MarketHome-.*\.js$/, maxKb: 10 },
 ]
 
 const files = await readdir(assetDirectory)

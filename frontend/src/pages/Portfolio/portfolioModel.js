@@ -1,5 +1,4 @@
 import { resolvePreviousScore } from '../../components/HerdLens/herdLensModel'
-import { stageLabelFromScore } from '../../utils/herdStage'
 
 export const PORTFOLIO_SORTS = [
   { value: 'weight', label: '비중' },
@@ -105,98 +104,6 @@ export function sortPortfolioRows(rows, sortBy = 'weight') {
   })
 }
 
-export function buildPortfolioExposure(
-  rows = [],
-  cashBalance = 0,
-  totalAssetValue = 0,
-) {
-  const valuedRows = rows.filter((row) => Number.isFinite(row.weightPct))
-  const ranked = [...valuedRows].sort((left, right) => (
-    right.weightPct - left.weightPct
-  ))
-  const sectorMap = new Map()
-  valuedRows.forEach((row) => {
-    const sector = row.sector || '미분류'
-    sectorMap.set(sector, (sectorMap.get(sector) ?? 0) + row.weightPct)
-  })
-  const sectors = [...sectorMap.entries()]
-    .map(([name, weightPct]) => ({ name, weightPct }))
-    .sort((left, right) => right.weightPct - left.weightPct)
-  const total = numberOrNull(totalAssetValue) ?? 0
-  const cash = numberOrNull(cashBalance) ?? 0
-
-  return {
-    topHolding: ranked[0]
-      ? { ticker: ranked[0].ticker, weightPct: ranked[0].weightPct }
-      : null,
-    topThreeWeightPct: ranked
-      .slice(0, 3)
-      .reduce((sum, row) => sum + row.weightPct, 0),
-    largestSector: sectors[0] ?? null,
-    cashWeightPct: total > 0 ? cash / total * 100 : null,
-    sectors,
-    unclassifiedWeightPct: sectorMap.get('미분류') ?? 0,
-  }
-}
-
-function fieldLane(ticker, score, occupied) {
-  const lanes = [[], [], [], []]
-  occupied.forEach((item) => lanes[item.lane].push(item.score))
-  const available = lanes.findIndex((lane) => (
-    lane.every((position) => Math.abs(position - score) >= 8)
-  ))
-  if (available >= 0) return available
-  const seed = [...ticker].reduce((sum, character) => sum + character.charCodeAt(0), 0)
-  return seed % lanes.length
-}
-
-export function buildPortfolioHerdField(rows = []) {
-  const valuedRows = rows.filter((row) => (
-    Number.isFinite(row.marketValue) && row.marketValue > 0
-  ))
-  const observedRows = valuedRows.filter((row) => (
-    Number.isFinite(row.herdScore)
-  ))
-  const stockValue = valuedRows.reduce((sum, row) => sum + row.marketValue, 0)
-  const observedValue = observedRows.reduce((sum, row) => sum + row.marketValue, 0)
-  const weightedScore = observedValue > 0
-    ? observedRows.reduce(
-      (sum, row) => sum + row.herdScore * row.marketValue,
-      0,
-    ) / observedValue
-    : null
-  const occupied = []
-  const points = [...observedRows]
-    .sort((left, right) => left.herdScore - right.herdScore)
-    .map((row) => {
-      const score = Math.max(0, Math.min(100, row.herdScore))
-      const lane = fieldLane(row.ticker, score, occupied)
-      occupied.push({ score, lane })
-      return {
-        ticker: row.ticker,
-        score,
-        stage: stageLabelFromScore(score),
-        lane,
-        portfolioWeightPct: row.weightPct,
-        observedWeightPct: observedValue > 0
-          ? row.marketValue / observedValue * 100
-          : null,
-      }
-    })
-  return {
-    weightedScore,
-    weightedStage: weightedScore == null
-      ? null
-      : stageLabelFromScore(weightedScore),
-    observedCount: observedRows.length,
-    totalCount: valuedRows.length,
-    observedValueCoveragePct: stockValue > 0
-      ? observedValue / stockValue * 100
-      : null,
-    points,
-  }
-}
-
 export function portfolioTodayChange(summary) {
   const changes = (summary?.stocks ?? []).map((stock) => {
     const current = numberOrNull(stock?.market_value)
@@ -224,7 +131,15 @@ export function historyChartGeometry(points = [], width = 1000, height = 220) {
   const values = points
     .map((point) => numberOrNull(point?.totalAssetValue))
     .filter((value) => value != null)
-  if (values.length === 0) return { path: '', areaPath: '', min: null, max: null }
+  if (values.length === 0) {
+    return {
+      path: '',
+      areaPath: '',
+      coordinates: [],
+      min: null,
+      max: null,
+    }
+  }
 
   const min = Math.min(...values)
   const max = Math.max(...values)
@@ -236,15 +151,28 @@ export function historyChartGeometry(points = [], width = 1000, height = 220) {
     const y = bottom - (value - min) / range * (bottom - top)
     return [x, y]
   })
-  const path = coordinates
-    .map(([x, y], index) => `${index === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`)
-    .join(' ')
+  const path = smoothPath(coordinates)
   const [firstX] = coordinates[0]
   const [lastX] = coordinates.at(-1)
   return {
     path,
     areaPath: `${path} L${lastX.toFixed(2)},${height} L${firstX.toFixed(2)},${height} Z`,
+    coordinates,
     min,
     max,
   }
+}
+
+function smoothPath(coordinates) {
+  if (coordinates.length === 0) return ''
+  if (coordinates.length === 1) {
+    const [x, y] = coordinates[0]
+    return `M${x.toFixed(2)},${y.toFixed(2)}`
+  }
+  return coordinates.reduce((path, [x, y], index) => {
+    if (index === 0) return `M${x.toFixed(2)},${y.toFixed(2)}`
+    const [previousX, previousY] = coordinates[index - 1]
+    const midpointX = (previousX + x) / 2
+    return `${path} C${midpointX.toFixed(2)},${previousY.toFixed(2)} ${midpointX.toFixed(2)},${y.toFixed(2)} ${x.toFixed(2)},${y.toFixed(2)}`
+  }, '')
 }

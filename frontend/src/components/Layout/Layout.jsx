@@ -7,9 +7,7 @@ import ObservationChangesIndicator from '../ObservationChanges/ObservationChange
 import styles from './Layout.module.css'
 
 const PRIMARY_NAVIGATION = [
-  { to: '/app', label: '시장', end: true },
-  { to: '/portfolio', label: '포트폴리오' },
-  { to: '/search', label: '종목' },
+  { to: '/app', label: '대시보드', end: true },
   { to: '/herd-lab', label: '연구' },
 ]
 
@@ -23,9 +21,9 @@ const SECONDARY_NAVIGATION = [
 ]
 
 const PAGE_TITLES = {
-  '/app': '시장',
-  '/portfolio': '포트폴리오',
-  '/search': '종목 찾기',
+  '/app': '대시보드',
+  '/portfolio': '대시보드',
+  '/search': '대시보드',
   '/watchlist': '관심종목',
   '/changes': '관찰 변화',
   '/history': '자산 히스토리',
@@ -111,7 +109,7 @@ export default function Layout() {
     <div className={styles.wrapper}>
       <a className={styles.skipLink} href="#main-content">본문으로 건너뛰기</a>
       <header className={styles.topbar}>
-        <NavLink className={styles.brand} to="/app" aria-label="HerdSignal 시장 홈">
+        <NavLink className={styles.brand} to="/app" aria-label="HerdSignal 대시보드">
           <img src={herdSignalMark} alt="" aria-hidden="true" />
           <span>HerdSignal</span>
         </NavLink>

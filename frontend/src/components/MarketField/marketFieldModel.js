@@ -3,11 +3,11 @@ import { clampHerdScore } from '../HerdLens/herdLensModel'
 export const MARKET_FIELD_DOT_COUNT = 64
 
 const MOTION_PROFILES = {
-  flee: { radial: 18, tangent: 7, duration: 4.2 },
-  scatter: { radial: 7, tangent: 13, duration: 5.1 },
-  calm: { radial: 3, tangent: 7, duration: 6.4 },
-  drift: { radial: -8, tangent: 8, duration: 5.2 },
-  rush: { radial: -4, tangent: 5, duration: 3.8 },
+  flee: { radial: 30, tangent: 12, duration: 3.6 },
+  scatter: { radial: 14, tangent: 22, duration: 4.1 },
+  calm: { radial: 9, tangent: 18, duration: 4.8 },
+  drift: { radial: -16, tangent: 15, duration: 4.2 },
+  rush: { radial: -10, tangent: 11, duration: 3.2 },
 }
 
 export function marketFieldSpread(score) {
@@ -49,8 +49,8 @@ export function createMarketFieldDots(
     return {
       x: anchorX + Math.cos(angle) * spread.x * 0.5 * ratio,
       y: 50 + Math.sin(angle) * spread.y * 0.5 * ratio,
-      size: 2 + (index % 7 === 0 ? 2 : index % 3 === 0 ? 1 : 0),
-      opacity: 0.28 + (index % 5) * 0.11,
+      size: 2.5 + (index % 7 === 0 ? 2.5 : index % 3 === 0 ? 1.2 : 0),
+      opacity: 0.34 + (index % 5) * 0.115,
       shiftAX: radialX * radialMotion
         + tangentX * tangentMotion
         + direction * (4 + ratio * 8),

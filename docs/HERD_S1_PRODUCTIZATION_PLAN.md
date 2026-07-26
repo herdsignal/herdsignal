@@ -13,7 +13,7 @@ HerdSignal의 기본 관찰 모델로 연결하는 것이다. 이 작업은 매�
 | 1. 정기 관찰 번들 | 완료 | `6fd65b1` |
 | 2. 관찰 스냅샷 저장 | 완료 | `f9746fe` |
 | 3. S1 조회 API | 완료 | `9a66bd0` |
-| 4. SPY 홈과 종목 상세 | 완료 | v4 fallback 제거·S1 이력·화면 회귀 |
+| 4. 대시보드와 종목 상세 | 완료 | v4 fallback 제거·S1 이력·화면 회귀 |
 | 5. 레거시 모델 격리 | 완료 | 기본 화면 S1 일괄 조회·Lab 비교군 이동 |
 | 6. 행동 경계 통일 | 완료 | 사용자 출력·저널·캐시를 HOLD·0%로 fail-closed |
 | 7. 승격 포트와 최종 회귀 | 완료 | 해시·holdout·사람 승인·감사 저장 포트 |
@@ -69,7 +69,7 @@ HerdSignal의 기본 관찰 모델로 연결하는 것이다. 이 작업은 매�
 - 행동 필드가 항상 `HOLD·0%`
 - v4 API 하위 호환
 
-## 4. SPY 홈과 종목 상세
+## 4. 대시보드와 종목 상세
 
 - 메인 SPY는 `S&P 500 군중 상태`임을 화면 구조로 표시한다.
 - 종목 상세는 S1이 있으면 S1을 기본 관찰값으로 사용한다.
@@ -175,10 +175,10 @@ HerdSignal의 기본 관찰 모델로 연결하는 것이다. 이 작업은 매�
 
 최종 검증:
 
-- Python 전체 `933 passed`
-- Backend Gradle `117 tests` 및 Flyway V1~V6
-- Frontend Vitest `56 passed`, lint, production build
-- Playwright 데스크톱·모바일 화면 회귀 `6 passed`
+- Python 전체 회귀 통과
+- Backend Gradle 테스트와 Flyway 검증 통과
+- Frontend Vitest, lint, production build, bundle budget 통과
+- Playwright 와이드·데스크톱·모바일 화면 및 기능 회귀 통과
 - 로컬 연구 원문은 `data/reference` 29.6GiB로 Git 비추적 상태다.
   재현성 입력이므로 파일 수만 보고 삭제하지 않으며 스토리지 감사는
   `REVIEW` 상태를 유지한다.

@@ -49,3 +49,9 @@ export function summarizeWatchlistStages(items) {
     color: stageColor(stage),
   }))
 }
+
+export function selectUnavailableWatchlistItems(items) {
+  return items
+    .filter((item) => scoreOf(item) == null)
+    .sort((left, right) => left.ticker.localeCompare(right.ticker))
+}

@@ -56,31 +56,20 @@ test.beforeEach(async ({ page }) => {
 const visualScenarios = [
   { name: 'public-home', path: '/', ready: 'HERD 확인' },
   { name: 'login', path: '/login', ready: '내 포트폴리오 보기' },
-  { name: 'market-home', path: '/app', ready: 'SPY' },
-  { name: 'portfolio', path: '/portfolio', ready: '내 포트폴리오' },
+  { name: 'dashboard', path: '/app', ready: 'SPY' },
   { name: 'stock-detail', path: '/stock/NVDA', ready: 'NVDA' },
   { name: 'watchlist', path: '/watchlist', ready: '관심종목' },
   { name: 'history', path: '/history', ready: '자산 히스토리' },
   { name: 'herd-lab', path: '/herd-lab', ready: 'HERD 연구실' },
   { name: 'journal', path: '/journal', ready: '판단 기록' },
   { name: 'settings', path: '/settings', ready: '투자 프로필' },
-  {
-    name: 'search',
-    path: '/search',
-    ready: 'NVDA 종목 상세 열기',
-    prepare: async (page) => {
-      await page.getByRole('textbox', { name: '티커 또는 종목명 검색' }).fill('NVDA')
-    },
-  },
 ]
 
 for (const scenario of visualScenarios) {
   test(`${scenario.name} visual regression`, async ({ page }, testInfo) => {
     await page.goto(scenario.path)
     await scenario.prepare?.(page)
-    const readyTarget = scenario.name === 'search'
-      ? page.getByRole('button', { name: scenario.ready })
-      : page.getByText(scenario.ready, { exact: true }).first()
+    const readyTarget = page.getByText(scenario.ready, { exact: true }).first()
     await expect(readyTarget).toBeVisible({ timeout: 15_000 })
     expect(await page.evaluate(() => (
       document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
@@ -93,8 +82,8 @@ for (const scenario of visualScenarios) {
 }
 
 test('protected shell and search remain keyboard operable', async ({ page }) => {
-  await page.goto('/search')
-  await expect(page.getByRole('heading', { name: '종목 찾기' })).toBeVisible()
+  await page.goto('/app')
+  await expect(page.getByRole('searchbox', { name: '티커 또는 종목명 검색' })).toBeVisible()
   await expect(page.locator('#main-content')).toBeFocused()
   await expect(page.getByRole('link', { name: '본문으로 건너뛰기' })).toHaveAttribute(
     'href',
@@ -107,9 +96,13 @@ test('protected shell and search remain keyboard operable', async ({ page }) => 
   await page.keyboard.press('Escape')
   await expect(accountTrigger).toBeFocused()
 
-  await page.getByRole('textbox', { name: '티커 또는 종목명 검색' }).fill('NVDA')
-  const openStock = page.getByRole('button', { name: 'NVDA 종목 상세 열기' })
-  await expect(openStock).toBeVisible()
+  const searchbox = page.getByRole('searchbox', { name: '티커 또는 종목명 검색' })
+  await searchbox.fill('NVDA')
+  await expect(page.getByRole('button', { name: 'HERD 보기' })).toBeEnabled()
+  await searchbox.focus()
+  await page.keyboard.press('Enter')
+  const openStock = page.getByRole('link', { name: '종목 상세 보기' })
+  await expect(openStock).toHaveAttribute('href', '/stock/NVDA')
   await openStock.focus()
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(/\/stock\/NVDA$/)
@@ -132,10 +125,11 @@ test('market field moves and portfolio holdings open stock details', async ({ pa
   ))
   expect(nextTransform).not.toBe(firstTransform)
 
-  await page.goto('/portfolio')
   await page.getByRole('button', { name: 'NVDA 종목 상세 열기' }).click()
   await expect(page).toHaveURL(/\/stock\/NVDA$/)
-  await expect(page.getByRole('heading', { name: '현재 군중 상태' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '현재 군중 상태' })).toBeVisible({
+    timeout: 15_000,
+  })
   await expect(page.getByRole('heading', { name: 'HERD 구성' })).toBeVisible()
   await expect(page.getByText('가격 확장', { exact: true })).toBeVisible()
   await expect(page.getByText('하방 위험 맥락', { exact: true })).toBeVisible()

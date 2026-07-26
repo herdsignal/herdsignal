@@ -3,6 +3,10 @@
 기준일: 2026-07-26
 판정: `STATE_OBSERVATION_MVP_READY` / `NO_ADOPTABLE_ACTION_CANDIDATE`
 
+> 이 문서는 재현성을 위한 누적 연구 일지다. 현재 판정은 이 상단 요약과
+> `data/herd/research_decision_v2.json`을 기준으로 한다. 아래 날짜별
+> V1~V10 기록은 당시 판단의 이력이며 현재 운영 상태로 해석하지 않는다.
+
 ## 모델 확립 통합 파이프라인 1~9
 
 - 장기 보유 핵심 물량을 유지하면서 희소한 5% 부분 익절과 검증된

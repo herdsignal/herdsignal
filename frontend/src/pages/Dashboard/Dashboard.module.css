@@ -1,0 +1,248 @@
+.page {
+  width: 100%;
+  padding: 34px 0 90px;
+}
+
+.pageHeader,
+.portfolioSection > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pageHeader {
+  min-height: 72px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.pageHeader span,
+.portfolioSection > header span {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+  font-weight: 740;
+  letter-spacing: .15em;
+}
+
+.pageHeader h1,
+.portfolioSection h2 {
+  margin: 7px 0 0;
+  font-weight: 660;
+  line-height: 1;
+  letter-spacing: -.05em;
+}
+
+.pageHeader h1 {
+  font-size: var(--hs-type-title);
+}
+
+.pageHeader button,
+.searchState button,
+.empty button,
+.portfolioSection [role="alert"] button {
+  padding: 9px 13px;
+  border: 1px solid var(--hs-line-strong);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--hs-text);
+  font: inherit;
+  font-size: var(--hs-type-label);
+  font-weight: 680;
+  cursor: pointer;
+}
+
+.pageHeader button:hover,
+.searchState button:hover:not(:disabled) {
+  background: var(--hs-surface);
+}
+
+.assets {
+  display: grid;
+  grid-template-columns: minmax(260px, .42fr) minmax(0, 1fr);
+  gap: 44px;
+  padding: 36px 0 48px;
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.assetSummary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 42px;
+  border-right: 1px solid var(--hs-line);
+}
+
+.assetSummary > span,
+.assetSummary dt {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.assetSummary > strong {
+  margin: 14px 0 26px;
+  font-size: clamp(34px, 3.6vw, 54px);
+  font-weight: 450;
+  letter-spacing: -.06em;
+}
+
+.assetSummary dl {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.assetSummary dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.assetSummary dd {
+  margin: 0;
+  font-size: var(--hs-type-label);
+  font-weight: 650;
+}
+
+.assetControls {
+  display: flex;
+  gap: 5px;
+  margin-top: 26px;
+}
+
+.assetControls button {
+  padding: 6px 9px;
+  border: 1px solid var(--hs-line);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--hs-text-muted);
+  font: inherit;
+  font-size: var(--hs-type-micro);
+  cursor: pointer;
+}
+
+.assetControls button[aria-pressed="true"] {
+  background: var(--hs-text);
+  color: var(--hs-bg);
+}
+
+.assets > section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.finder {
+  display: grid;
+  width: min(100%, 1040px);
+  gap: 10px;
+  margin: 0 auto;
+  padding: 30px 0 18px;
+}
+
+.searchState {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 16px;
+  border: 1px solid var(--hs-line);
+  border-radius: 9px;
+}
+
+.searchState > div:first-child {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.searchState > div:first-child strong {
+  font-size: 17px;
+}
+
+.searchState > div:first-child span,
+.searchState > span,
+.searchState small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.searchState small {
+  grid-column: 1 / -1;
+}
+
+.searchState > div:nth-child(2) {
+  display: flex;
+  gap: 7px;
+}
+
+.searchState button:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+}
+
+.searchState > p {
+  color: var(--hs-loss);
+  font-size: var(--hs-type-micro);
+}
+
+.portfolioSection {
+  margin-top: 70px;
+  border-top: 1px solid var(--hs-line);
+}
+
+.portfolioSection > header {
+  min-height: 98px;
+}
+
+.portfolioSection > header small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.portfolioSection > section {
+  margin-top: 0;
+}
+
+.empty,
+.portfolioSection > p,
+.portfolioSection > [role="alert"] {
+  padding: 50px 0;
+  border-top: 1px solid var(--hs-line);
+  color: var(--hs-text-muted);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .assets {
+    grid-template-columns: 1fr;
+  }
+
+  .assetSummary {
+    padding: 0 0 32px;
+    border-right: 0;
+    border-bottom: 1px solid var(--hs-line);
+  }
+
+}
+
+@media (max-width: 620px) {
+  .page {
+    padding-bottom: 110px;
+  }
+
+  .finder {
+    padding-top: 34px;
+  }
+
+  .searchState {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 14px;
+  }
+
+  .searchState > div:nth-child(2) {
+    flex-wrap: wrap;
+  }
+}

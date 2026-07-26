@@ -52,6 +52,7 @@ export default function HerdLens({
         compact && styles.compact,
         unavailable && styles.unavailable,
         resolvedPrevious == null && styles.withoutHistory,
+        styles[resolvedStage],
         className,
       )}
       style={{
@@ -76,6 +77,10 @@ export default function HerdLens({
               '--dot-y': `${dot.y}%`,
               '--dot-size': `${dot.size}px`,
               '--dot-opacity': dot.opacity,
+              '--dot-drift-x': `${((dot.x - 50) * 0.09).toFixed(2)}px`,
+              '--dot-drift-y': `${((index % 3) - 1) * 2.2}px`,
+              '--dot-duration': `${(2.8 + (index % 5) * 0.32).toFixed(2)}s`,
+              '--dot-delay': `${(-index * 0.13).toFixed(2)}s`,
             }}
           />
         ))}
