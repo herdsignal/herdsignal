@@ -1,0 +1,24 @@
+{
+  "gate_version": "HERD_FINRA_FIVE_PERCENT_TRIM_GATE_V1",
+  "status": "BLOCKED_DIRECTION_EVIDENCE_FAILED",
+  "input": {
+    "path": "data/reports/finra_rush_divergence_oos_v1.json",
+    "sha256": "e810240ddceaf6c7d15ad45f4a85e7eb68c512e00778096f326f7fd277f3983c",
+    "required_historical_gate_passed": true
+  },
+  "candidate_action": {
+    "type": "PARTIAL_PROFIT_TAKE",
+    "maximum_position_fraction": 0.05,
+    "frequency": "SPARSE_EPISODE_ONLY"
+  },
+  "decision": {
+    "simulation_executed": false,
+    "trade_rows": 0,
+    "buy_and_hold_comparison_executed": false,
+    "cost_stress_executed": false,
+    "candidate_passed": false,
+    "next_step": "STOP_DEPENDENT_REENTRY_AND_CYCLE_RESEARCH",
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

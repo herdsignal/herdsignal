@@ -135,6 +135,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/finra_five_percent_trim_gate_v1.json",
+      "status": "REJECTED"
+    },
+    {
       "path": "data/herd/finra_rush_divergence_preregistration_v1.json",
       "status": "REJECTED"
     },

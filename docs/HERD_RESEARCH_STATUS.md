@@ -119,6 +119,16 @@
 
 평가 결과는 `data/reports/finra_rush_divergence_oos_v1.json`이다.
 
+## Part G — 5% 익절 실행 게이트
+
+- Part F 방향 증거가 탈락했으므로 5% 부분 익절 거래, Buy & Hold 비교,
+  비용 스트레스를 실행하지 않았다. 생성된 거래 행은 0건이다.
+- 경제성 시뮬레이션을 생략한 것은 미완성이 아니라 사전등록 순서를 지킨
+  결과다. 방향성이 없는 신호의 거래 성과를 보면 우연히 좋은 하위 조합을
+  선택하게 되므로 Part H·I도 이 후보에서는 진행할 수 없다.
+
+차단 계약은 `data/herd/finra_five_percent_trim_gate_v1.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.
