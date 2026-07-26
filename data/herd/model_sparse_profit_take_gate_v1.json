@@ -1,0 +1,30 @@
+{
+  "gate_version": "HERD_MODEL_DOWNSTREAM_GATE_V1",
+  "stage_id": 5,
+  "stage_name": "SPARSE_PROFIT_TAKE",
+  "status": "BLOCKED_UPSTREAM_FAIL_CLOSED",
+  "dependencies": [
+    {
+      "path": "data/herd/model_evidence_admission_v1.json",
+      "sha256": "d5bda26c4b41092542269ceca455fff5dab3ae26da4a51d0e3906c0505ea6485"
+    }
+  ],
+  "blocker": {
+    "field": "direction_evidence_admitted",
+    "required_value": 1,
+    "actual_value": 0,
+    "reason": "No independent OOS evidence separates adverse Rush paths before the decision time."
+  },
+  "execution": {
+    "attempted": false,
+    "trades_simulated": false,
+    "parameters_selected": false,
+    "initial_fraction_if_unblocked": 0.05,
+    "maximum_fraction_if_unblocked": 0.15
+  },
+  "authority": {
+    "candidate_promoted": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
