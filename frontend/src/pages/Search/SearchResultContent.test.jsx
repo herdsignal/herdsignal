@@ -1,6 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import SearchResultContent from './SearchResultContent'
+
+afterEach(cleanup)
 
 const readyResult = {
   status: 'ready',
@@ -47,7 +49,10 @@ describe('SearchResultContent', () => {
     expect(screen.queryByText(/편입|매수|매도/)).not.toBeInTheDocument()
   })
 
-  it('labels unavailable destinations independently', () => {
+  it('allows portfolio and watchlist tracking before a HERD observation exists', () => {
+    const onOpen = vi.fn()
+    const onAddPortfolio = vi.fn()
+    const onAddWatchlist = vi.fn()
     render(
       <SearchResultContent
         result={{
@@ -57,13 +62,19 @@ describe('SearchResultContent', () => {
         portfolioStatus="idle"
         watchlistStatus="idle"
         addError=""
-        onOpen={vi.fn()}
-        onAddPortfolio={vi.fn()}
-        onAddWatchlist={vi.fn()}
+        onOpen={onOpen}
+        onAddPortfolio={onAddPortfolio}
+        onAddWatchlist={onAddWatchlist}
       />,
     )
 
-    expect(screen.getByRole('button', { name: '포트폴리오 관찰값 필요' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: '관심종목 관찰값 필요' })).toBeDisabled()
+    fireEvent.click(screen.getByRole('button', { name: 'TEST 종목 상세 열기' }))
+    fireEvent.click(screen.getByRole('button', { name: '+ 포트폴리오' }))
+    fireEvent.click(screen.getByRole('button', { name: '+ 관심종목' }))
+
+    expect(onOpen).toHaveBeenCalledWith('TEST')
+    expect(onAddPortfolio).toHaveBeenCalledWith('TEST')
+    expect(onAddWatchlist).toHaveBeenCalledWith('TEST')
+    expect(screen.getByText('State S1 관찰 준비 중')).toBeInTheDocument()
   })
 })

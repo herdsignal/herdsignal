@@ -26,7 +26,7 @@ public class WatchlistService {
 
     private final UserWatchlistRepository watchlistRepository;
     private final HerdService herdService;
-    private final TickerReadinessService tickerReadinessService;
+    private final TickerSymbolPolicy tickerSymbolPolicy;
 
     /**
      * 관심 종목 추가.
@@ -38,7 +38,7 @@ public class WatchlistService {
      */
     @Transactional
     public void addStock(String userId, WatchlistAddRequest request) {
-        String ticker = tickerReadinessService.normalizeAndValidate(request.getTicker());
+        String ticker = tickerSymbolPolicy.normalize(request.getTicker());
 
         if (watchlistRepository.existsByUserIdAndTicker(userId, ticker)) {
             throw new DuplicateResourceException(ticker + " 종목이 이미 관심 종목에 있습니다.");

@@ -27,7 +27,17 @@ export default function SearchResultContent({
     )
   }
   if (result.status === 'symbol_found') {
-    return <PendingSearchResult candidate={result.candidate} />
+    return (
+      <PendingSearchResult
+        candidate={result.candidate}
+        portfolioStatus={portfolioStatus}
+        watchlistStatus={watchlistStatus}
+        addError={addError}
+        onAddPortfolio={onAddPortfolio}
+        onAddWatchlist={onAddWatchlist}
+        onOpen={onOpen}
+      />
+    )
   }
 
   const data = result.data
@@ -80,29 +90,49 @@ export default function SearchResultContent({
   )
 }
 
-function PendingSearchResult({ candidate }) {
+function PendingSearchResult({
+  candidate,
+  portfolioStatus,
+  watchlistStatus,
+  addError,
+  onAddPortfolio,
+  onAddWatchlist,
+  onOpen,
+}) {
   return (
     <article className={styles.searchResultItem}>
-      <div className={styles.resultLeft}>
-        <StockAvatar ticker={candidate.ticker} />
-        <div>
-          <div className={styles.resultTicker}>{candidate.ticker}</div>
-          <div className={styles.resultName}>
-            {candidate.name} · {candidate.sector}
-          </div>
-          <div className={styles.resultNote}>
-            State S1 관찰값 없음
-          </div>
-        </div>
-      </div>
+      <button
+        type="button"
+        className={styles.resultOpen}
+        onClick={() => onOpen(candidate.ticker)}
+        aria-label={`${candidate.ticker} 종목 상세 열기`}
+      >
+        <span className={styles.resultLeft}>
+          <StockAvatar ticker={candidate.ticker} />
+          <span>
+            <strong className={styles.resultTicker}>{candidate.ticker}</strong>
+            <span className={styles.resultName}>
+              {candidate.name} · {candidate.sector}
+            </span>
+            <span className={styles.resultNote}>
+              State S1 관찰 준비 중
+            </span>
+          </span>
+        </span>
+      </button>
       <div className={styles.resultRight}>
         <HerdLens compact score={null} />
-        <button type="button" className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`} disabled>
-          포트폴리오 관찰값 필요
-        </button>
-        <button type="button" className={`${styles.resultAddBtn} ${styles.resultAddBtnBlocked}`} disabled>
-          관심종목 관찰값 필요
-        </button>
+        <AddButton
+          status={portfolioStatus}
+          idleLabel="+ 포트폴리오"
+          onClick={() => onAddPortfolio(candidate.ticker)}
+        />
+        <AddButton
+          status={watchlistStatus}
+          idleLabel="+ 관심종목"
+          onClick={() => onAddWatchlist(candidate.ticker)}
+        />
+        {addError && <div className={styles.resultError} role="alert">{addError}</div>}
       </div>
     </article>
   )

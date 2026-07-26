@@ -81,9 +81,9 @@ DELETE /api/watchlist/{ticker}                관심 종목 삭제
 - WatchlistService
   - 관심 종목 CRUD
   - HerdService를 재사용한 관심 종목 HERD 조회
-- TickerReadinessService
-  - 포트폴리오/관심종목 추가 전 티커 형식과 HERD 데이터 준비 여부 검증
-  - HERD 점수가 없는 심볼은 저장하지 않아 백필/스케줄러 대상 오염을 방지
+- TickerSymbolPolicy
+  - 포트폴리오/관심종목 추가 전 티커 형식 정규화·검증
+  - HERD 관찰값이 없어도 저장하고 이후 수집 대상으로 등록
 - FinancialsService
   - Python stock_info_collector.get_stock_financials(ticker) 호출
   - 종목 재무정보 반환 (ProcessBuilder, 티커 정규식 검증 포함)

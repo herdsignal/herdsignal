@@ -34,14 +34,14 @@ import java.util.Map;
 public class PortfolioService {
 
     private final UserPortfolioRepository portfolioRepository;
-    private final TickerReadinessService tickerReadinessService;
+    private final TickerSymbolPolicy tickerSymbolPolicy;
     private final PortfolioQueryService queryService;
     private final PortfolioCashService cashService;
     private final PortfolioRealtimeRunner realtimeRunner;
 
     @Transactional
     public void addStock(String userId, PortfolioAddRequest request) {
-        String ticker = tickerReadinessService.normalizeAndValidate(request.getTicker());
+        String ticker = tickerSymbolPolicy.normalize(request.getTicker());
         if (portfolioRepository.existsByUserIdAndTicker(userId, ticker)) {
             throw new DuplicateResourceException(ticker + " 종목이 이미 포트폴리오에 있습니다.");
         }

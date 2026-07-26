@@ -54,7 +54,7 @@ class PortfolioServiceTest {
         );
         portfolioService = new PortfolioService(
                 portfolioRepository,
-                mock(TickerReadinessService.class),
+                new TickerSymbolPolicy(),
                 queryService,
                 cashService,
                 new PortfolioRealtimeRunner(
