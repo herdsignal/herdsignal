@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:visual": "playwright test",
-    "test:visual:update": "playwright test --update-snapshots",
+    "test:visual:update": "playwright test --update-snapshots=all",
     "test:bundle": "node scripts/checkBundleBudget.mjs",
     "lint": "eslint src"
   },

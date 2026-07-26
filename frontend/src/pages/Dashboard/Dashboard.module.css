@@ -36,7 +36,6 @@
   font-size: var(--hs-type-title);
 }
 
-.pageHeader button,
 .searchState button,
 .empty button,
 .portfolioSection [role="alert"] button {
@@ -51,17 +50,57 @@
   cursor: pointer;
 }
 
-.pageHeader button:hover,
 .searchState button:hover:not(:disabled) {
   background: var(--hs-surface);
+}
+
+.assetToggle {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 15px;
+  border: 1px solid var(--hs-line-strong);
+  border-radius: 9px;
+  background: var(--hs-surface-raised);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035);
+  color: var(--hs-text);
+  font: inherit;
+  font-size: var(--hs-type-body-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
+}
+
+.assetToggle svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: var(--hs-scatter);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.assetToggle:hover {
+  border-color: color-mix(in srgb, var(--hs-scatter) 55%, var(--hs-line-strong));
+  background: color-mix(in srgb, var(--hs-surface-raised) 88%, var(--hs-scatter) 12%);
+}
+
+.assetToggle:active {
+  transform: translateY(1px);
 }
 
 .assets {
   display: grid;
   grid-template-columns: minmax(260px, .42fr) minmax(0, 1fr);
   gap: 44px;
-  padding: 36px 0 48px;
-  border-bottom: 1px solid var(--hs-line);
+  margin-top: 20px;
+  padding: 34px;
+  border: 1px solid var(--hs-line);
+  border-radius: 12px;
+  background: var(--hs-surface);
+  box-shadow: 0 20px 64px rgba(0, 0, 0, .14);
 }
 
 .assetSummary {
@@ -148,6 +187,7 @@
   padding: 0 16px;
   border: 1px solid var(--hs-line);
   border-radius: 9px;
+  background: var(--hs-surface);
 }
 
 .searchState > div:first-child {
@@ -217,6 +257,7 @@
 @media (max-width: 900px) {
   .assets {
     grid-template-columns: 1fr;
+    padding: 26px;
   }
 
   .assetSummary {
@@ -236,6 +277,10 @@
     padding-top: 34px;
   }
 
+  .pageHeader {
+    gap: 18px;
+  }
+
   .searchState {
     align-items: stretch;
     flex-direction: column;
@@ -244,5 +289,9 @@
 
   .searchState > div:nth-child(2) {
     flex-wrap: wrap;
+  }
+
+  .assets {
+    padding: 20px;
   }
 }

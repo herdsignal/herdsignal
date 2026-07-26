@@ -26,7 +26,7 @@ vi.mock('../../auth/AuthContext', () => ({
 afterEach(cleanup)
 
 describe('Layout', () => {
-  it('통합 대시보드와 연구를 주요 경로로 제공한다', () => {
+  it('통합 대시보드와 관찰 및 연구를 주요 경로로 제공한다', () => {
     render(
       <MemoryRouter initialEntries={['/portfolio']}>
         <Routes>
@@ -38,6 +38,7 @@ describe('Layout', () => {
     )
 
     expect(screen.getAllByRole('link', { name: '대시보드' })[0]).toHaveAttribute('href', '/app')
+    expect(screen.getAllByRole('link', { name: '관찰' })[0]).toHaveAttribute('href', '/watchlist')
     expect(screen.getAllByRole('link', { name: '연구' })[0]).toHaveAttribute('href', '/herd-lab')
     expect(screen.getByRole('link', { name: '본문으로 건너뛰기' })).toHaveAttribute('href', '#main-content')
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content')

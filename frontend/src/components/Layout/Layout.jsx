@@ -8,6 +8,7 @@ import styles from './Layout.module.css'
 
 const PRIMARY_NAVIGATION = [
   { to: '/app', label: '대시보드', end: true },
+  { to: '/watchlist', label: '관찰' },
   { to: '/herd-lab', label: '연구' },
 ]
 
@@ -119,9 +120,6 @@ export default function Layout() {
         <div className={styles.account} ref={accountRef}>
           <ObservationChangesIndicator />
           <DataStatusIndicator />
-          <NavLink className={styles.watchlistLink} to="/watchlist">
-            관찰
-          </NavLink>
           <button
             ref={accountTriggerRef}
             type="button"

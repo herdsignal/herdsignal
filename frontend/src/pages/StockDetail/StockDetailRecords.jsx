@@ -12,12 +12,12 @@ export default function StockDetailRecords({
   onDeleteJournal,
 }) {
   return (
-    <details className={styles.detailDisclosure}>
-      <summary>
-        <div><span>개인 기록</span><strong>기업 정보 · 판단 로그</strong></div>
-        <em>펼쳐보기</em>
-      </summary>
-      <div className={styles.detailDisclosureBody}>
+    <section className={styles.recordsSection} aria-labelledby="stock-records-title">
+      <header className={styles.recordsHeader}>
+        <span>CONTEXT &amp; JOURNAL</span>
+        <h2 id="stock-records-title">기업 정보 · 판단 로그</h2>
+      </header>
+      <div className={styles.recordsBody}>
         <StockDetailFundamentals
           loading={financialsLoading}
           financials={financials}
@@ -30,6 +30,6 @@ export default function StockDetailRecords({
           onDelete={onDeleteJournal}
         />
       </div>
-    </details>
+    </section>
   )
 }

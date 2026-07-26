@@ -104,7 +104,7 @@ describe('Dashboard', () => {
     expect(screen.queryByText('전체 자산')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'TSLA' })).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: '자산 보기' }))
+    fireEvent.click(screen.getByRole('button', { name: '내 자산 보기' }))
 
     expect(screen.getByText('전체 자산')).toBeInTheDocument()
     expect(screen.getByText('자산 그래프')).toBeInTheDocument()

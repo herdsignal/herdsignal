@@ -83,6 +83,8 @@ for (const scenario of visualScenarios) {
 
 test('protected shell and search remain keyboard operable', async ({ page }) => {
   await page.goto('/app')
+  await expect(page.getByRole('navigation', { name: '주요 메뉴' })).toContainText('관찰')
+  await expect(page.getByRole('button', { name: '내 자산 보기' })).toBeVisible()
   await expect(page.getByRole('searchbox', { name: '티커 또는 종목명 검색' })).toBeVisible()
   await expect(page.locator('#main-content')).toBeFocused()
   await expect(page.getByRole('link', { name: '본문으로 건너뛰기' })).toHaveAttribute(
@@ -133,6 +135,8 @@ test('market field moves and portfolio holdings open stock details', async ({ pa
   await expect(page.getByRole('heading', { name: 'HERD 구성' })).toBeVisible()
   await expect(page.getByText('가격 확장', { exact: true })).toBeVisible()
   await expect(page.getByText('하방 위험 맥락', { exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '기업 정보 · 판단 로그' })).toBeVisible()
+  await expect(page.locator('details')).toHaveCount(0)
 })
 
 function responseFor(pathname) {

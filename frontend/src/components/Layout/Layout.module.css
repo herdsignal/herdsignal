@@ -141,17 +141,6 @@
   gap: 10px;
 }
 
-.watchlistLink {
-  padding: 8px 9px;
-  color: var(--hs-text-muted);
-  font-size: var(--hs-type-label);
-  font-weight: 680;
-}
-
-.watchlistLink:hover {
-  color: var(--hs-text);
-}
-
 .accountTrigger {
   display: grid;
   place-items: center;
@@ -280,8 +269,7 @@
     padding: 0 20px;
   }
 
-  .desktopNav,
-  .watchlistLink {
+  .desktopNav {
     display: none;
   }
 
@@ -296,7 +284,7 @@
     left: 0;
     z-index: 45;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     min-height: 66px;
     padding: 7px 10px calc(7px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--hs-line);

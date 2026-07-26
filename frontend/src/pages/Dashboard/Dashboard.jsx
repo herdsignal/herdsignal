@@ -105,11 +105,16 @@ export default function Dashboard() {
         </div>
         <button
           type="button"
+          className={styles.assetToggle}
           aria-expanded={assetsOpen}
           aria-controls="dashboard-assets"
           onClick={toggleAssets}
         >
-          {assetsOpen ? '자산 닫기' : '자산 보기'}
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7.5h16v11H4zM7 7.5V5.8A1.8 1.8 0 0 1 8.8 4h7.4A1.8 1.8 0 0 1 18 5.8v1.7M16 13h4" />
+            <circle cx="16" cy="13" r=".8" />
+          </svg>
+          <span>{assetsOpen ? '내 자산 닫기' : '내 자산 보기'}</span>
         </button>
       </header>
 

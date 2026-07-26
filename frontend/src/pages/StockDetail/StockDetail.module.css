@@ -9,8 +9,7 @@
   font: inherit;
 }
 
-.page button:focus-visible,
-.detailDisclosure summary:focus-visible {
+.page button:focus-visible {
   outline: 0;
   box-shadow: var(--hs-focus-ring);
 }
@@ -342,56 +341,39 @@
   place-items: center;
 }
 
-.detailDisclosure {
-  margin-top: 28px;
+.recordsSection {
+  margin-top: 44px;
+  padding-top: 8px;
   border-top: 1px solid var(--hs-line);
-  border-bottom: 1px solid var(--hs-line);
 }
 
-.detailDisclosure > summary {
+.recordsHeader {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 66px;
-  list-style: none;
-  cursor: pointer;
+  min-height: 76px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
 }
 
-.detailDisclosure > summary::-webkit-details-marker {
-  display: none;
-}
-
-.detailDisclosure > summary div {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.detailDisclosure > summary span,
-.detailDisclosure > summary em {
+.recordsHeader span {
   color: var(--hs-text-muted);
   font-size: var(--hs-type-micro);
-  font-style: normal;
+  font-weight: 700;
+  letter-spacing: .14em;
 }
 
-.detailDisclosure > summary strong {
+.recordsHeader h2 {
+  margin: 6px 0 0;
   color: var(--hs-text);
-  font-size: var(--hs-type-body-sm);
-  font-weight: 670;
+  font-size: var(--hs-type-subtitle);
+  font-weight: 700;
+  letter-spacing: -.025em;
 }
 
-.detailDisclosure > summary em::after {
-  content: " +";
-}
-
-.detailDisclosure[open] > summary em::after {
-  content: " −";
-}
-
-.detailDisclosureBody {
+.recordsBody {
   display: grid;
   gap: 18px;
-  padding-bottom: 24px;
+  padding-bottom: 32px;
 }
 
 .card {
@@ -532,12 +514,6 @@
   .historyTabs {
     flex-wrap: wrap;
     justify-content: flex-end;
-  }
-
-  .detailDisclosure > summary div {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 5px;
   }
 
   .fundamentalGrid,

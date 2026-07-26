@@ -5,21 +5,21 @@
 
 :root {
   /* V6 의미 토큰 — 새 화면부터 사용하고 레거시 화면은 전환 완료까지 보존 */
-  --hs-bg: #0A0A09;
-  --hs-surface: #11110F;
-  --hs-surface-raised: #161613;
-  --hs-line: rgba(188, 182, 168, 0.12);
-  --hs-line-strong: rgba(206, 199, 184, 0.22);
-  --hs-text: #ECEAE4;
-  --hs-text-subtle: #AAA69D;
-  --hs-text-muted: #8A867E;
+  --hs-bg: #080B10;
+  --hs-surface: #0F141C;
+  --hs-surface-raised: #171E28;
+  --hs-line: rgba(151, 170, 194, 0.14);
+  --hs-line-strong: rgba(169, 188, 212, 0.25);
+  --hs-text: #F0F1ED;
+  --hs-text-subtle: #B2B9C3;
+  --hs-text-muted: #818A98;
   --hs-gain: #57A77F;
   --hs-loss: #D96A70;
-  --hs-flee: #4E7FC7;
-  --hs-scatter: #6E98D4;
-  --hs-calm: #989991;
-  --hs-drift: #D77738;
-  --hs-rush: #DC515A;
+  --hs-flee: #4F83D1;
+  --hs-scatter: #75A2DD;
+  --hs-calm: #969EAA;
+  --hs-drift: #DC814A;
+  --hs-rush: #E15D66;
 
   --hs-content-max: 1680px;
   --hs-page-gutter: clamp(20px, 3vw, 48px);
