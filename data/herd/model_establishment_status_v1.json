@@ -1,0 +1,40 @@
+{
+  "status_version": "HERD_MODEL_ESTABLISHMENT_STATUS_V1",
+  "as_of": "2026-07-26",
+  "overall_decision": "STATE_OBSERVATION_ONLY_NO_ADOPTABLE_ACTION_CANDIDATE",
+  "stages": [
+    {"id": 1, "name": "MISSION_AND_ACTION_CONTRACT", "status": "PASSED", "path": "data/herd/model_establishment_protocol_v1.json", "sha256": "0263d1aecdcdb4105b29bea0856b22ec935ebda5444bc6b45d034a175f84cb76"},
+    {"id": 2, "name": "DEVELOPMENT_OOS_BLIND_SPLIT", "status": "PASSED_PREHOLDOUT_ONLY", "path": "data/herd/model_establishment_split_v1.json", "sha256": "2978e0380cc5fcf7855587a83ec3a8495c26c328fd1d6b08a20f54e1da1ff9e1"},
+    {"id": 3, "name": "RUSH_PATH_EPISODES", "status": "PASSED_DIAGNOSTIC_ONLY", "path": "data/herd/model_rush_episode_ledger_v1.json", "sha256": "6948d65c6ecc6affafdb69df78c9d5fa20fcb81ee50bab605a8986cb4c36a350"},
+    {"id": 4, "name": "INDEPENDENT_EVIDENCE_OOS", "status": "REJECTED_NO_DIRECTION_EVIDENCE", "path": "data/herd/model_evidence_admission_v1.json", "sha256": "d5bda26c4b41092542269ceca455fff5dab3ae26da4a51d0e3906c0505ea6485"},
+    {"id": 5, "name": "SPARSE_PROFIT_TAKE", "status": "BLOCKED_UPSTREAM", "path": "data/herd/model_sparse_profit_take_gate_v1.json", "sha256": "1379e483afddcc44685fb360116ceff5cac7226c593c31f0533e690361a66f55"},
+    {"id": 6, "name": "CONDITIONAL_REENTRY", "status": "BLOCKED_UPSTREAM", "path": "data/herd/model_conditional_reentry_gate_v1.json", "sha256": "9fb7f64a1436cb58b2263ad3ee070463b63640a1acb54e1f39c84128bb3c6dc5"},
+    {"id": 7, "name": "COMPLETED_CYCLE", "status": "BLOCKED_UPSTREAM", "path": "data/herd/model_completed_cycle_gate_v1.json", "sha256": "caed1c1b1e8d85869385fb49fb8ac6c5fe7f4cfcacdab1a8993eb7ca3aa3a1e5"},
+    {"id": 8, "name": "HERD_CANDIDATE", "status": "BLOCKED_UPSTREAM", "path": "data/herd/model_candidate_promotion_gate_v1.json", "sha256": "e2ed96f4b7afafd9d909388f61b6a8af819e99b311ab765d8c6a21a778755118"},
+    {"id": 9, "name": "PROSPECTIVE_SHADOW", "status": "STATE_ONLY_ACTION_BLOCKED", "path": "data/herd/model_prospective_shadow_gate_v1.json", "sha256": "e4109c8eb7f29e184d521ad19a339fa0367ad758e77f221b106a8e6f069a449c"}
+  ],
+  "facts": {
+    "rush_episodes": 1998,
+    "rush_episode_tickers": 381,
+    "adverse_path_fraction": 0.245746,
+    "direction_evidence_admitted": 0,
+    "risk_context_admitted": 1,
+    "blind_holdout_evaluations": 0,
+    "survivorship_safe": false,
+    "operational_action_ratio": 0.0
+  },
+  "next_research": {
+    "priority": "NEW_ECONOMICALLY_DISTINCT_DIRECTION_HYPOTHESIS",
+    "allowed": [
+      "PREREGISTER_ONE_NEW_NON_REDUNDANT_HYPOTHESIS",
+      "BUILD_NEW_INDEPENDENT_OR_PROSPECTIVE_OOS_SAMPLE",
+      "CONTINUE_OBJECTIVE_HERD_STATE_OBSERVATION"
+    ],
+    "forbidden": [
+      "RETUNE_FAILED_THRESHOLDS_ON_SAME_OOS",
+      "COMBINE_REJECTED_FEATURES",
+      "OPEN_BLIND_HOLDOUT",
+      "ENABLE_OPERATIONAL_BUY_OR_PROFIT_TAKE"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 {
   "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V2",
-  "as_of": "2026-07-25",
+  "as_of": "2026-07-26",
   "current_decision": {
     "status": "STATE_OBSERVATION_MVP_READY",
     "new_model_name": "UNASSIGNED_UNTIL_PROMOTION",
@@ -40,6 +40,8 @@
     "ACTIVE": [
       "data/herd/public_research_contract.json",
       "data/herd/herd_vnext_model_charter_v1.json",
+      "data/herd/model_establishment_protocol_v1.json",
+      "data/herd/model_establishment_status_v1.json",
       "data/herd/sec_13f_crowding_protocol_v1.json",
       "data/reports/sec_13f_crowding_protocol_v1.json",
       "data/herd/personal_cashflow_benchmark_v1.json",
@@ -89,7 +91,9 @@
       "data/herd/sec_time_valid_ticker_cik_ledger_v5.json",
       "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
       "data/herd/unified_pit_shadow_panel_v1.json",
-      "data/reports/unified_pit_shadow_panel_v1.json"
+      "data/reports/unified_pit_shadow_panel_v1.json",
+      "data/herd/model_establishment_split_v1.json",
+      "data/herd/model_rush_episode_ledger_v1.json"
     ],
     "REJECTED": [
       "data/herd/sec_13f_crowding_incremental_oos_v1.json",
@@ -108,7 +112,13 @@
       "data/reports/sec_guidance_lower_oos_v2.json",
       "data/reports/herd_candidate_oos_v2.json",
       "data/reports/profit_take_oos_v2.json",
-      "data/reports/completed_cycle_gate_v5.json"
+      "data/reports/completed_cycle_gate_v5.json",
+      "data/herd/model_evidence_admission_v1.json",
+      "data/herd/model_sparse_profit_take_gate_v1.json",
+      "data/herd/model_conditional_reentry_gate_v1.json",
+      "data/herd/model_completed_cycle_gate_v1.json",
+      "data/herd/model_candidate_promotion_gate_v1.json",
+      "data/herd/model_prospective_shadow_gate_v1.json"
     ],
     "LEGACY_REFERENCE": [
       "data/config/settings.py",

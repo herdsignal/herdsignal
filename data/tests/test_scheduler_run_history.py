@@ -1,5 +1,6 @@
-import unittest
 import hashlib
+import unittest
+from unittest.mock import MagicMock
 from unittest.mock import patch
 
 from scheduler import herd_scheduler
@@ -24,6 +25,11 @@ class SchedulerRunHistoryTest(unittest.TestCase):
         herd_result = {"score": 50.0, "stage": "Calm"}
 
         with (
+            patch.object(
+                herd_scheduler.SchedulerRunLock,
+                "try_acquire",
+                return_value=MagicMock(),
+            ),
             patch.object(herd_scheduler, "_start_scheduler_run", return_value=7),
             patch.object(herd_scheduler, "_record_scheduler_universe"),
             patch.object(herd_scheduler, "_fetch_tier1_tickers", return_value=["AAPL", "SNDK"]),
@@ -71,6 +77,11 @@ class SchedulerRunHistoryTest(unittest.TestCase):
 
     def test_run_history_records_failure_when_ticker_lookup_fails(self) -> None:
         with (
+            patch.object(
+                herd_scheduler.SchedulerRunLock,
+                "try_acquire",
+                return_value=MagicMock(),
+            ),
             patch.object(herd_scheduler, "_start_scheduler_run", return_value=9),
             patch.object(herd_scheduler, "_fetch_tier1_tickers", side_effect=RuntimeError("db unavailable")),
             patch.object(herd_scheduler, "_finish_scheduler_run") as finish,

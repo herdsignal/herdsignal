@@ -203,12 +203,52 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/model_candidate_promotion_gate_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/herd/model_completed_cycle_gate_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/herd/model_conditional_reentry_gate_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/herd/model_establishment_protocol_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/model_establishment_split_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/model_establishment_status_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/model_evidence_admission_v1.json",
+      "status": "REJECTED"
+    },
+    {
       "path": "data/herd/model_lineage_contract_v1.json",
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/model_prospective_shadow_gate_v1.json",
+      "status": "REJECTED"
+    },
+    {
       "path": "data/herd/model_release_readiness_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/model_rush_episode_ledger_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/model_sparse_profit_take_gate_v1.json",
+      "status": "REJECTED"
     },
     {
       "path": "data/herd/oos_fold_protocol.json",
