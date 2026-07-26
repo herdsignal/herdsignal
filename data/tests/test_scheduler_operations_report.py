@@ -16,6 +16,10 @@ def test_builds_weekly_metrics_from_verified_events(tmp_path: Path) -> None:
             "success": ["AAPL", "SPY"],
             "failed": [],
             "skipped": [],
+            "prospectiveEvidence": {
+                "archive": {"status": "CREATED"},
+                "maturity": {"created": 2, "pending": 7},
+            },
         },
         output_dir=tmp_path,
         now=now,
@@ -29,6 +33,12 @@ def test_builds_weekly_metrics_from_verified_events(tmp_path: Path) -> None:
     assert report["runCount"] == 1
     assert report["statusCounts"] == {"SUCCESS": 1}
     assert report["tickerExecution"]["successRate"] == 1.0
+    assert report["prospectiveEvidence"] == {
+        "recordedRuns": 1,
+        "createdObservations": 1,
+        "maturedOutcomes": 2,
+        "pendingOutcomes": 7,
+    }
 
 
 def test_rejects_tampered_operation_event(tmp_path: Path) -> None:

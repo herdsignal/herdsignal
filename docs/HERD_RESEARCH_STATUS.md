@@ -32,6 +32,31 @@
 관찰 MVP, 최신 Form 4·FINRA·13F·giveback 탈락, 행동 후보 0개와
 `survivorship_safe=false`를 한 번에 검증한다.
 
+## Prospective Evidence Ledger V1
+
+- State S1 스케줄러가 생성한 동일 번들을 관측일별 불변 JSON envelope로
+  추가 저장한다. 입력 가격은 관측시점까지만 잘라 ticker별 SHA-256과 전체
+  manifest SHA-256을 남긴다.
+- 고정 reference 종목과 SPY뿐 아니라 당시 포트폴리오·관심종목 범위를
+  개인 식별자 없이 저장한다. BITX·SOXL처럼 S1을 계산할 수 없는 레버리지
+  ETF도 누락하지 않고 `LEVERAGED_ETF`와 unavailable 이유를 보존한다.
+- 미래 결과는 관측 파일을 수정하지 않는다. 실제로 21·63·126 거래세션이
+  지난 뒤 별도 결과 원장에 다음 거래일 시가 기준 수익률, MFE, MAE만
+  기록한다. 경제 라벨은 `NOT_ASSIGNED_OBSERVATION_ONLY`로 고정한다.
+- 동일 관측일 재실행은 최초 원장을 검증한 뒤 건너뛴다. 결과 파일도
+  덮어쓰지 않으며 가격 수정으로 해시가 달라지면 fail-closed 한다.
+- 이 원장은 독립적인 시간 순서 자료를 쌓기 위한 장치다. 후보 선택,
+  방향 예측, 매수·익절 권한, Blind holdout 접근은 모두 금지되며 사용자
+  출력은 계속 `HOLD·0%`다.
+- `scripts/audit-prospective-evidence.sh`가 전체 관측·결과 해시, 원본 연결,
+  행동 차단 경계를 검사하고 운영 보고서에 신규 관측·성숙·대기 수를
+  포함한다.
+
+계약은 `data/config/prospective_evidence_v1.json`, 구현은
+`data/scheduler/prospective_evidence.py`다. 런타임 원장은
+`data/runtime/prospective-evidence/`에 저장하며 Git 연구 산출물과
+분리한다.
+
 ## State S1 익절 기회 경제적 상한선
 
 - 레거시 v6.1 Rush를 사용한 기존 상한선 결과를 현재 모델 근거로 재사용하지

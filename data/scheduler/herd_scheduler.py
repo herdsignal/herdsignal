@@ -60,6 +60,10 @@ from scheduler.observation_s1 import (                                      # no
     write_observation_bundle,
 )
 from scheduler.observation_store import save_observation_bundle             # noqa: E402
+from scheduler.prospective_evidence import (                               # noqa: E402
+    archive_observation,
+    mature_outcomes,
+)
 from scheduler.operation_log import write_operation_event                   # noqa: E402
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
@@ -243,6 +247,49 @@ def _fetch_sector_overrides() -> dict[str, str]:
         }
 
 
+def _fetch_tracking_scopes() -> dict[str, set[str]]:
+    """개인 식별자 없이 관측 당시 보유·관심 범위만 고정한다."""
+    scopes: dict[str, set[str]] = {}
+    with _get_session_factory()() as session:
+        portfolio = {
+            str(row[0]).strip().upper()
+            for row in session.query(UserPortfolio.ticker)
+            .filter(UserPortfolio.user_id != _CACHE_USER_ID)
+            .distinct()
+            .all()
+            if row[0]
+        }
+        watchlist = {
+            str(row[0]).strip().upper()
+            for row in session.query(UserWatchlist.ticker).distinct().all()
+            if row[0]
+        }
+    for ticker in portfolio:
+        scopes.setdefault(ticker, set()).add("PORTFOLIO")
+    for ticker in watchlist:
+        scopes.setdefault(ticker, set()).add("WATCHLIST")
+    return scopes
+
+
+def _record_prospective_evidence(
+    bundle: dict,
+    observation_frames: dict,
+) -> dict:
+    archive = archive_observation(
+        bundle,
+        observation_frames,
+        _fetch_tracking_scopes(),
+    )
+    maturity = mature_outcomes(observation_frames)
+    logger.info(
+        "[Tier1] prospective evidence — 관측 %s, 성숙 신규 %s, 대기 %s",
+        archive["status"],
+        maturity["created"],
+        maturity["pending"],
+    )
+    return {"archive": archive, "maturity": maturity}
+
+
 def _build_and_write_observation(
     observation_frames: dict,
     success_list: list[str],
@@ -314,7 +361,9 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
 
     # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────
     observation_error: str | None = None
+    prospective_error: str | None = None
     observation_count: int | None = None
+    prospective_result: dict | None = None
     publish_status = "SKIPPED_INCOMPLETE_INPUT" if failed_list else "SUCCESS"
     if failed_list:
         logger.error(
@@ -332,6 +381,17 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
                 len(bundle["records"]),
                 bundle["records"]["SPY"]["asOfDate"],
             )
+            try:
+                prospective_result = _record_prospective_evidence(
+                    bundle, observation_frames
+                )
+            except Exception as exc:
+                prospective_error = str(exc)
+                logger.error(
+                    "[Tier1] prospective evidence 기록 실패: %s",
+                    exc,
+                    exc_info=True,
+                )
         except Exception as exc:
             observation_error = str(exc)
             publish_status = "FAILED"
@@ -369,7 +429,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
 
     combined_error = "; ".join(
         item
-        for item in (observation_error, snapshot_error)
+        for item in (observation_error, prospective_error, snapshot_error)
         if item
     ) or None
     if failed_list or combined_error:
@@ -398,6 +458,8 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         ),
         "universeSha256": universe_sha256,
     }
+    if prospective_result is not None:
+        result["prospectiveEvidence"] = prospective_result
     _notify_scheduler_result(result)
     return result
 

@@ -67,6 +67,11 @@ def build_weekly_report(
         for event in selected
         for ticker in event["result"].get("skipped", [])
     )
+    prospective = [
+        event["result"]["prospectiveEvidence"]
+        for event in selected
+        if isinstance(event["result"].get("prospectiveEvidence"), dict)
+    ]
     return {
         "schemaVersion": "HERD_WEEKLY_OPERATIONS_V1",
         "generatedAt": end.isoformat().replace("+00:00", "Z"),
@@ -87,6 +92,21 @@ def build_weekly_report(
             "failed": dict(sorted(failed_tickers.items())),
             "skipped": dict(sorted(skipped_tickers.items())),
         },
+        "prospectiveEvidence": {
+            "recordedRuns": len(prospective),
+            "createdObservations": sum(
+                item.get("archive", {}).get("status") == "CREATED"
+                for item in prospective
+            ),
+            "maturedOutcomes": sum(
+                int(item.get("maturity", {}).get("created", 0))
+                for item in prospective
+            ),
+            "pendingOutcomes": (
+                prospective[-1].get("maturity", {}).get("pending")
+                if prospective else None
+            ),
+        },
         "latestResult": selected[-1]["result"] if selected else None,
     }
 
@@ -95,6 +115,8 @@ def render_markdown(report: dict[str, Any]) -> str:
     execution = report["tickerExecution"]
     rate = execution["successRate"]
     rate_text = "—" if rate is None else f"{rate * 100:.1f}%"
+    pending = report["prospectiveEvidence"]["pendingOutcomes"]
+    pending_text = "—" if pending is None else f"{pending}개"
     return "\n".join([
         "# HerdSignal 주간 운영 보고",
         "",
@@ -104,6 +126,12 @@ def render_markdown(report: dict[str, Any]) -> str:
         f"- 상태: {json.dumps(report['statusCounts'], ensure_ascii=False)}",
         f"- 실패 종목: {json.dumps(execution['failed'], ensure_ascii=False)}",
         f"- 적격성 제외: {json.dumps(execution['skipped'], ensure_ascii=False)}",
+        (
+            "- 전향 관측: "
+            f"{report['prospectiveEvidence']['createdObservations']}개 신규, "
+            f"{report['prospectiveEvidence']['maturedOutcomes']}개 결과 성숙, "
+            f"{pending_text} 대기"
+        ),
         "",
     ])
 

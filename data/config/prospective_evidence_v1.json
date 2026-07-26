@@ -1,0 +1,29 @@
+{
+  "schema_version": "HERD_PROSPECTIVE_EVIDENCE_V1",
+  "status": "LOCKED_OBSERVATION_ONLY",
+  "source_model": "HERD_STATE_S1",
+  "source_transition_model": "HERD_TRANSITION_S1",
+  "execution_basis": "NEXT_AVAILABLE_SESSION_OPEN",
+  "horizons_sessions": [
+    21,
+    63,
+    126
+  ],
+  "tracking_scopes": [
+    "MARKET",
+    "REFERENCE",
+    "PORTFOLIO",
+    "WATCHLIST",
+    "LEVERAGED_ETF"
+  ],
+  "claim_boundary": {
+    "descriptive_outcomes_only": true,
+    "candidate_selection": false,
+    "direction_prediction": false,
+    "buy_or_profit_take_authority": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

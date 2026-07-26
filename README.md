@@ -231,6 +231,7 @@ cd ..
 ./scripts/smoke-local.sh
 ./scripts/audit-scheduler-run.sh
 ./scripts/retry-scheduler-run.sh
+./scripts/audit-prospective-evidence.sh
 ./scripts/backup-db.sh
 ./scripts/verify-backup.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz
 ./scripts/restore-db.sh backups/herdsignal-YYYYMMDD-HHMMSS.sql.gz --confirm-database herdsignal
@@ -242,6 +243,11 @@ State S1 번들 생성 시각과 DB 저장 완결성을 함께 검사합니다. 
 `RUNNING`, 모든 조건을 통과한 완료 실행만 `PASS`를 반환합니다. 모델의 최소
 가격 이력을 채우지 못한 신규 상장 종목은 임계값을 완화하지 않고 `skipped`로
 분리하며, 실제 수집·저장 오류와 혼동하지 않습니다.
+
+`audit-prospective-evidence.sh`는 새 State S1 관측일마다 생성되는 전향 원장과
+21·63·126거래일 뒤 별도로 성숙하는 결과 원장의 해시·연결 상태를 검사합니다.
+스케줄러는 매일 실행되지만 같은 주의 S1 관측은 덮어쓰지 않습니다. 이 자료는
+향후 독립 OOS 연구용이며 현재 매수·익절 행동은 계속 `HOLD·0%`로 차단됩니다.
 
 Tier1은 단일 호스트 파일 잠금으로 중복 실행을 차단합니다. 실행 대상 전체는
 SHA-256으로 기록하며, 실제 실패 종목이 하나라도 있으면 새 State S1 번들을
