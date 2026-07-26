@@ -60,6 +60,7 @@ from scheduler.observation_s1 import (                                      # no
     write_observation_bundle,
 )
 from scheduler.observation_store import save_observation_bundle             # noqa: E402
+from scheduler.operation_log import write_operation_event                   # noqa: E402
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
@@ -85,6 +86,7 @@ def _get_session_factory():
 _CACHE_USER_ID = "cache"
 _TIER1_JOB_NAME = "HERD_TIER1_DAILY"
 _RUN_LOCK_PATH = _DATA_DIR / "runtime" / "herd-tier1.lock"
+_OPERATION_LOG_DIR = _DATA_DIR / "runtime" / "operations"
 _ALERT_CONFIG = IncidentAlertConfig(
     webhook_url=ALERT_WEBHOOK_URL,
     notify_success=ALERT_NOTIFY_SUCCESS,
@@ -94,6 +96,10 @@ _ALERT_CONFIG = IncidentAlertConfig(
 
 def _notify_scheduler_result(result: dict) -> None:
     """외부 알림 장애가 본 스케줄러 결과에 영향을 주지 않도록 격리한다."""
+    try:
+        write_operation_event(result, output_dir=_OPERATION_LOG_DIR)
+    except Exception as exc:
+        logger.error("[Operations] 운영 사건 기록 실패: %s", exc, exc_info=True)
     try:
         send_scheduler_alert(result, _ALERT_CONFIG)
     except Exception as exc:
