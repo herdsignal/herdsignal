@@ -43,6 +43,7 @@ def validate_preregistration(protocol: dict[str, Any]) -> dict[str, Any]:
         or boundary["historical_pass_can_authorize_action"] is not False
         or boundary["blind_holdout_access"] is not False
         or boundary["operational_action_ratio"] != 0.0
+        or protocol["legacy_boundary"]["legacy_formula_reuse_allowed"] is not False
     ):
         raise FinraRushDivergencePreregistrationError("research boundary was widened")
     return {
@@ -53,6 +54,7 @@ def validate_preregistration(protocol: dict[str, Any]) -> dict[str, Any]:
         "prospective_confirmation_months": evaluation["minimum_prospective_months"],
         "outcome_peeking": False,
         "historical_action_authority": False,
+        "legacy_formula_reuse": False,
         "operational_action_ratio": 0.0,
     }
 

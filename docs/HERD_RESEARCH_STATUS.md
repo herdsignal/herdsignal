@@ -66,6 +66,9 @@
 - 이 데이터셋은 이미 관측한 현재 구성종목 중심의 반복 pre-holdout
   진단 자료다. 새 임계값 선택, 익절 권한, Blind holdout 또는
   `survivorship_safe` 근거가 아니다.
+- 사건 ID가 `V61`인 레거시 경로 자료이므로 새 모델의 Rush 자격 판정에는
+  사용하지 않는다. 새 가설은 별도로 고정한 `HERD_STATE_S1` 주간 패널을
+  사용한다.
 
 계약과 재현 코드는 `data/herd/rush_event_dataset_v2.json`과
 `data/herd/rush_event_dataset_v2.py`다.

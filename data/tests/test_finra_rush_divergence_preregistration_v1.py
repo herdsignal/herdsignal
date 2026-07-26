@@ -17,6 +17,7 @@ def test_one_finra_rush_hypothesis_is_locked_without_action_authority():
     assert result["historical_role"] == "RECENT_PREHOLDOUT_SENSITIVITY_ONLY"
     assert result["prospective_confirmation_months"] == 18
     assert result["historical_action_authority"] is False
+    assert result["legacy_formula_reuse"] is False
     assert result["operational_action_ratio"] == 0.0
 
 

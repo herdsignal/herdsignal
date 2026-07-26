@@ -7,7 +7,10 @@
   "inputs": [
     {"path": "data/herd/leading_information_feasibility_v2.json", "sha256": "655fc985339623b36bde40b0243b2b759db73ce290c680900a909903e7a37a62"},
     {"path": "data/herd/finra_short_interest_incremental_v2_manifest.json", "sha256": "f6c0e3685392ce38d8a30e2dcbcb9abbd7bd9664f8d1391b7c284ff5d3369588"},
-    {"path": "data/reports/rush_event_dataset_v2.json", "sha256": "5be76a0a615ff9fb6f0ddfafe09b8e77207b7249ef64ee47d878a0f4a2491f3c"},
+    {"path": "data/herd/herd_state_s1.json", "sha256": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489"},
+    {"path": "data/reports/herd_state_s1.json", "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"},
+    {"path": "data/walk_forward/herd-state-s1/primary.csv.gz", "sha256": "0d79aa816ca8cb58569e22c8bddffc2b19987bb9b2c8fd1440f8863b442b5152"},
+    {"path": "data/walk_forward/herd-state-s1/independent_current_constituents.csv.gz", "sha256": "bb5f1f65e4329232ca8149b8ea44eed004e39e46ee5e88fb5458029c99ba072d"},
     {"path": "data/herd/model_establishment_split_v1.json", "sha256": "2978e0380cc5fcf7855587a83ec3a8495c26c328fd1d6b08a20f54e1da1ff9e1"}
   ],
   "exposure": {
@@ -62,5 +65,9 @@
     "historical_pass_can_authorize_action": false,
     "blind_holdout_access": false,
     "operational_action_ratio": 0.0
+  },
+  "legacy_boundary": {
+    "rush_event_dataset_v2": "DIAGNOSTIC_LEGACY_V61_PATHS_NOT_AN_ELIGIBILITY_INPUT",
+    "legacy_formula_reuse_allowed": false
   }
 }
