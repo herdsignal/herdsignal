@@ -17,7 +17,8 @@
     "name": "FINRA_RUSH_DTC_DIVERGENCE_V1",
     "rush_membership": "HERD_STATE_S1_RUSH_ALREADY_TRUE_BEFORE_FINRA_PUBLICATION",
     "available_at": "FIRST_TRADING_SESSION_AFTER_FINRA_OFFICIAL_PUBLICATION_DATE",
-    "short_interest_measure": "SHORT_INTEREST_SHARES / PRIOR_20_COMPLETED_SESSION_MEAN_VOLUME",
+    "short_interest_measure": "FINRA_REPORTED_DAYS_TO_COVER_QUANTITY",
+    "maximum_state_staleness_calendar_days": 10,
     "conditions_all_required": [
       "DAYS_TO_COVER_INCREASED_AT_EACH_OF_TWO_CONSECUTIVE_PUBLICATIONS",
       "LATEST_DAYS_TO_COVER_SECTOR_PERCENTILE_AT_LEAST_80",
@@ -29,7 +30,10 @@
   "outcome": {
     "primary": "LARGE_PULLBACK_OR_STRUCTURAL_BREAK_WITHIN_63_SESSIONS",
     "control": "TEMPORARY_PULLBACK_OR_RESUMED_UPTREND_WITHIN_63_SESSIONS",
-    "episode_overlap": "ONE_EARLIEST_ELIGIBLE_PUBLICATION_PER_RUSH_EPISODE"
+    "structural_break": "TERMINAL_RETURN_LE_NEGATIVE_15_PERCENT_OR_MINIMUM_RETURN_LE_NEGATIVE_25_PERCENT",
+    "large_pullback": "MINIMUM_RETURN_LE_NEGATIVE_12_PERCENT",
+    "episode_overlap": "ONE_EARLIEST_ELIGIBLE_PUBLICATION_PER_RUSH_EPISODE",
+    "episode_sampling": "ANCHOR_EVERY_RUSH_EPISODE_AT_ITS_FIRST_PUBLICATION_WITH_THREE_CONSECUTIVE_VALID_DTC_OBSERVATIONS_THEN_CLASSIFY_EXPOSURE_AT_THAT_ANCHOR"
   },
   "evaluation": {
     "historical_role": "RECENT_PREHOLDOUT_SENSITIVITY_ONLY",
@@ -40,6 +44,14 @@
     "minimum_distinct_tickers": 40,
     "minimum_distinct_sectors": 6,
     "minimum_directionally_consistent_time_folds": 3,
+    "time_folds": [
+      {"id": "F1", "start": "2021-07-01", "end": "2022-06-30"},
+      {"id": "F2", "start": "2022-07-01", "end": "2023-06-30"},
+      {"id": "F3", "start": "2023-07-01", "end": "2024-06-30"},
+      {"id": "F4", "start": "2024-07-01", "end": "2025-06-30"},
+      {"id": "F5", "start": "2025-07-01", "end": "2026-06-30"}
+    ],
+    "outcome_must_end_inside_fold": true,
     "minimum_effect_risk_difference": 0.05,
     "minimum_effect_risk_ratio": 1.25,
     "maximum_holm_p_value": 0.05,

@@ -1,0 +1,65 @@
+{
+  "report_version": "HERD_FINRA_RUSH_DIVERGENCE_OOS_V1",
+  "status": "RECENT_PREHOLDOUT_SENSITIVITY_COMPLETE",
+  "rows": 2082,
+  "tickers": 431,
+  "exposed_events": 125,
+  "exposed_adverse_events": 38,
+  "control_events": 1957,
+  "control_adverse_events": 557,
+  "exposed_adverse_rate": 0.304,
+  "control_adverse_rate": 0.2846193152784875,
+  "risk_difference": 0.019380684721512498,
+  "risk_ratio": 1.0680933572710951,
+  "one_sided_fisher_p_value": 0.35425684838797156,
+  "folds": [
+    {
+      "fold_id": "F1",
+      "exposed": 21,
+      "control": 357,
+      "risk_difference": -0.022408963585434205
+    },
+    {
+      "fold_id": "F2",
+      "exposed": 15,
+      "control": 191,
+      "risk_difference": -0.05933682373472954
+    },
+    {
+      "fold_id": "F3",
+      "exposed": 26,
+      "control": 415,
+      "risk_difference": -0.07256719184430027
+    },
+    {
+      "fold_id": "F4",
+      "exposed": 26,
+      "control": 541,
+      "risk_difference": 0.07777619792407225
+    },
+    {
+      "fold_id": "F5",
+      "exposed": 37,
+      "control": 453,
+      "risk_difference": 0.08531710518465485
+    }
+  ],
+  "checks": {
+    "minimum_exposed_events": true,
+    "minimum_exposed_adverse_events": true,
+    "minimum_distinct_tickers": true,
+    "minimum_distinct_sectors": true,
+    "minimum_directional_folds": false,
+    "minimum_risk_difference": false,
+    "minimum_risk_ratio": false,
+    "maximum_p_value": false
+  },
+  "historical_gate_passed": false,
+  "adoption_allowed": false,
+  "prospective_confirmation_required": true,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "panel_path": "data/reports/finra_rush_divergence_oos_v1.csv",
+  "panel_sha256": "d2cfbeabc564cd936af4f0de232e508121781aa94853b8e6d204346a4a911cb2"
+}

@@ -136,7 +136,7 @@
     },
     {
       "path": "data/herd/finra_rush_divergence_preregistration_v1.json",
-      "status": "ACTIVE"
+      "status": "REJECTED"
     },
     {
       "path": "data/herd/finra_short_interest_immutable_census_v1.json",
@@ -893,6 +893,14 @@
     {
       "path": "data/reports/fast_slow_transition_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/finra_rush_divergence_oos_v1.csv",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/finra_rush_divergence_oos_v1.json",
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/finra_short_interest_coverage_audit_v1.json",

@@ -35,8 +35,12 @@ def validate_preregistration(protocol: dict[str, Any]) -> dict[str, Any]:
     if (
         len(exposure["conditions_all_required"]) != 3
         or exposure["same_day_use_forbidden"] is not True
+        or exposure["short_interest_measure"] != "FINRA_REPORTED_DAYS_TO_COVER_QUANTITY"
+        or exposure["maximum_state_staleness_calendar_days"] != 10
         or evaluation["prospective_confirmation_required_for_adoption"] is not True
         or evaluation["interim_outcome_peeking_forbidden"] is not True
+        or len(evaluation["time_folds"]) != 5
+        or evaluation["outcome_must_end_inside_fold"] is not True
         or boundary["one_hypothesis_only"] is not True
         or boundary["threshold_retuning_after_results"] is not False
         or boundary["combine_with_rejected_features"] is not False

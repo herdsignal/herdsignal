@@ -104,6 +104,21 @@
 사전등록 계약은
 `data/herd/finra_rush_divergence_preregistration_v1.json`이다.
 
+## Part F — FINRA–Rush 독립 방향성 평가
+
+- S1 Rush episode 2,082건을 5개 비중첩 연간 fold에서 평가했다. FINRA
+  공식 공개 다음 거래일부터 63거래일 경로가 fold 안에서 완결된 경우만
+  사용했다.
+- 괴리 노출은 125건, 큰 조정·구조 훼손은 38건(30.4%)이었다. 대조군은
+  1,957건 중 557건(28.46%)으로 차이는 1.94%p, 위험비는 1.07,
+  단측 Fisher p값은 0.354였다.
+- 5개 fold 중 앞 3개는 반대 방향이고 뒤 2개만 정방향이었다. 최소 효과,
+  위험비, 통계 기준, 방향 일관성 게이트가 모두 탈락했다.
+- 같은 표본에서 days-to-cover 기간·백분위를 바꾸지 않는다. 익절 방향
+  증거가 아니므로 Part G의 5% 익절 시뮬레이션은 차단한다.
+
+평가 결과는 `data/reports/finra_rush_divergence_oos_v1.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.
