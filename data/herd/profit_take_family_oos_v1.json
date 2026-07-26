@@ -1,0 +1,58 @@
+{
+  "contract_version": "HERD_PROFIT_TAKE_FAMILY_OOS_V1",
+  "status": "LOCKED_BEFORE_FAMILY_RESULTS",
+  "locked_at": "2026-07-26",
+  "objective": "Test each State S1 information family alone against the newly fixed economic re-buy target without recombining rejected hypotheses.",
+  "inputs": [
+    {"path": "data/herd/simple_action_baselines_v1.json", "sha256": "b1d2a4f243064f30d3aced87cdcb37fea56337923c751c72e293ea90805ecc29"},
+    {"path": "data/reports/simple_action_baselines_v1.json", "sha256": "4258a9d1f7d13fa45c874cd422d6eb4d201fda3c00e821d48b7469221ec13f4d"},
+    {"path": "data/herd/failed_hypothesis_map_v1.json", "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2"},
+    {"path": "data/reports/herd_state_s1.json", "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"},
+    {"path": "data/walk_forward/herd-state-s1/primary.csv.gz", "sha256": "0d79aa816ca8cb58569e22c8bddffc2b19987bb9b2c8fd1440f8863b442b5152"},
+    {"path": "data/walk_forward/herd-state-s1/independent_current_constituents.csv.gz", "sha256": "bb5f1f65e4329232ca8149b8ea44eed004e39e46ee5e88fb5458029c99ba072d"},
+    {"path": "data/reports/profit_take_success_label_v2.csv", "sha256": "f17637313909580ee2b54c07653bcc6293eae38752b89aa6876d3d5f2f0a4ce4"}
+  ],
+  "families_tested_independently": [
+    "PRICE_EXTENSION",
+    "TREND_POSITION",
+    "RELATIVE_POSITION",
+    "PARTICIPATION",
+    "DOWNSIDE_RISK_CONTEXT"
+  ],
+  "target": {
+    "positive": "ECONOMIC_REBUY_OPPORTUNITY",
+    "negative": "HEALTHY_CONTINUATION",
+    "other_labels": "EXCLUDED_EXACTLY_AS_SIMPLE_ACTION_BASELINES_V1"
+  },
+  "estimator": {
+    "type": "ONE_VARIABLE_LOGISTIC_REGRESSION",
+    "feature_scale": "DIVIDE_BY_100",
+    "slope_l2_penalty": 1.0,
+    "maximum_newton_iterations": 50,
+    "probability_clip": [0.001, 0.999],
+    "training": "STRICTLY_EARLIER_FIXED_FOLDS_WITHIN_UNIVERSE",
+    "cold_start": "EXPANDING_PRIOR_PREVALENCE",
+    "missing_feature_policy": "EARLIER_TRAIN_FOLD_MEDIAN_OR_NEUTRAL_50_IF_NO_PRIOR_VALUE",
+    "dropping_missing_events_allowed": false
+  },
+  "admission_gate": {
+    "comparison_floor": "EXPANDING_PRIOR_PREVALENCE",
+    "minimum_log_loss_improvement": 0.005,
+    "minimum_brier_improvement": 0.005,
+    "minimum_balanced_accuracy_improvement": 0.03,
+    "minimum_directional_folds": 6,
+    "maximum_action_rate": 0.4,
+    "must_pass_primary_and_independent": true
+  },
+  "research_boundary": {
+    "one_time_redefined_economic_target": true,
+    "same_sample_threshold_search": false,
+    "family_combination_allowed": false,
+    "family_weight_learning_allowed": false,
+    "failed_external_sources_reused": false,
+    "passing_family_only_allows_ablation_design": true,
+    "survivorship_safe": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

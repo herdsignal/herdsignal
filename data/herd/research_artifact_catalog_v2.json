@@ -55,6 +55,7 @@
       "data/herd/simple_action_baselines_v1.json",
       "data/reports/simple_action_baselines_v1.json",
       "data/reports/simple_action_baselines_v1.csv",
+      "data/herd/profit_take_family_oos_v1.json",
       "data/herd/failed_hypothesis_map_v1.json",
       "data/herd/survivorship_readiness_v2.json",
       "data/herd/rush_event_dataset_v2.json",
@@ -156,7 +157,9 @@
       "data/reports/rush_pre_damage_path_audit_v2.json",
       "data/reports/independent_rush_evidence_v1.json",
       "data/reports/business_guard_oos_v1.json",
-      "data/reports/expectation_evidence_oos_v1.json"
+      "data/reports/expectation_evidence_oos_v1.json",
+      "data/reports/profit_take_family_oos_v1.json",
+      "data/reports/profit_take_family_oos_v1.csv"
     ],
     "LEGACY_REFERENCE": [
       "data/config/settings.py",
