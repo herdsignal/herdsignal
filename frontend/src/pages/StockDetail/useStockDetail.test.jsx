@@ -8,6 +8,8 @@ vi.mock('../../api/herdApi', () => ({
   getHerdObservationHistory: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
+  getPortfolio: vi.fn(),
+  getWatchlist: vi.fn(),
   getStockFinancials: vi.fn(),
   getSignalJournal: vi.fn(),
   createSignalJournal: vi.fn(),
@@ -49,6 +51,8 @@ function observation(ticker, score = 50) {
 }
 
 beforeEach(() => {
+  api.getPortfolio.mockReturnValue(response([]))
+  api.getWatchlist.mockReturnValue(response([]))
   api.getSignalJournal.mockReturnValue(response([]))
   api.getHerdObservation.mockImplementation((ticker) =>
     response(observation(ticker)))
@@ -91,10 +95,26 @@ describe('useStockDetail', () => {
     )
     await waitFor(() => expect(result.current.loading).toBe(false))
     await act(async () => { await result.current.handleAddPortfolio() })
-    expect(result.current.portfolioStatus).toBe('added')
+    expect(result.current.portfolioStatus).toBe('exists')
 
     rerender({ ticker: 'nvda' })
     await waitFor(() => expect(result.current.portfolioStatus).toBe('idle'))
+  })
+
+  it('shows existing membership before the user tries to add it again', async () => {
+    api.getPortfolio.mockReturnValue(response([{ ticker: 'NVDA' }]))
+    api.getWatchlist.mockReturnValue(response([{ ticker: 'NVDA' }]))
+
+    const { result } = renderHook(() => useStockDetail('nvda'))
+
+    await waitFor(() => expect(result.current.portfolioStatus).toBe('exists'))
+    expect(result.current.watchlistStatus).toBe('exists')
+    await act(async () => {
+      await result.current.handleAddPortfolio()
+      await result.current.handleAddWatchlist()
+    })
+    expect(api.addToPortfolio).not.toHaveBeenCalled()
+    expect(api.addToWatchlist).not.toHaveBeenCalled()
   })
 
   it('loads one fixed timeline and only slices it when the chart period changes', async () => {

@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
-import { addToPortfolio, addToWatchlist } from '../../api/herdApi'
+import { useMemo } from 'react'
 import { useAuth } from '../../auth/AuthContext'
-import { clearPortfolioCaches } from '../../features/portfolio/portfolioCache'
+import { useTickerMembership } from '../Search/useTickerMembership'
 import {
   isObservationAvailable,
   observationScore,
@@ -19,11 +18,13 @@ import { useStockSignalJournal } from './useStockSignalJournal'
 
 export function useStockDetail(ticker) {
   const { user } = useAuth()
-  const normalizedTicker = ticker.toUpperCase()
-  const [portfolioStatus, setPortfolioStatus] = useState('idle')
-  const [watchlistStatus, setWatchlistStatus] = useState('idle')
+  const normalizedTicker = String(ticker ?? '').trim().toUpperCase()
   const resources = useStockDetailResources(normalizedTicker, ticker)
   const journal = useStockSignalJournal(normalizedTicker)
+  const membership = useTickerMembership({
+    selectedTicker: normalizedTicker,
+    userId: user?.id,
+  })
   const {
     observation,
     loading,
@@ -37,46 +38,6 @@ export function useStockDetail(ticker) {
     financialsLoading,
     fetchData,
   } = resources
-
-  useEffect(() => {
-    setPortfolioStatus('idle')
-    setWatchlistStatus('idle')
-  }, [normalizedTicker])
-
-  async function handleAddPortfolio() {
-    if (portfolioStatus !== 'idle') return
-    setPortfolioStatus('loading')
-    journal.setActionError(null)
-    try {
-      await addToPortfolio(normalizedTicker)
-      clearPortfolioCaches(user?.id)
-      setPortfolioStatus('added')
-    } catch (errorResponse) {
-      if (errorResponse.response?.status === 409) {
-        setPortfolioStatus('exists')
-      } else {
-        setPortfolioStatus('idle')
-        journal.setActionError('포트폴리오에 추가하지 못했습니다. 잠시 후 다시 시도해주세요.')
-      }
-    }
-  }
-
-  async function handleAddWatchlist() {
-    if (watchlistStatus !== 'idle') return
-    setWatchlistStatus('loading')
-    journal.setActionError(null)
-    try {
-      await addToWatchlist(normalizedTicker)
-      setWatchlistStatus('added')
-    } catch (errorResponse) {
-      if (errorResponse.response?.status === 409) {
-        setWatchlistStatus('exists')
-      } else {
-        setWatchlistStatus('idle')
-        journal.setActionError('관심종목에 추가하지 못했습니다. 잠시 후 다시 시도해주세요.')
-      }
-    }
-  }
 
   const observationAvailable = isObservationAvailable(observation)
   const herdScore = observationScore(observation)
@@ -150,8 +111,8 @@ export function useStockDetail(ticker) {
     observationAvailable,
     loading,
     error,
-    portfolioStatus,
-    watchlistStatus,
+    portfolioStatus: membership.portfolioStatus,
+    watchlistStatus: membership.watchlistStatus,
     historyPeriod,
     setHistoryPeriod,
     historyLoading,
@@ -160,11 +121,11 @@ export function useStockDetail(ticker) {
     signalLogs: journal.signalLogs,
     journalAction: journal.journalAction,
     setJournalAction: journal.setJournalAction,
-    actionError: journal.actionError,
+    actionError: membership.addError || journal.actionError,
     normalizedTicker,
     fetchData,
-    handleAddPortfolio,
-    handleAddWatchlist,
+    handleAddPortfolio: () => membership.handleAddPortfolio(normalizedTicker),
+    handleAddWatchlist: () => membership.handleAddWatchlist(normalizedTicker),
     herdScore,
     herdStage,
     stageDisp,
