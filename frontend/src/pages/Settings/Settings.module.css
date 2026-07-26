@@ -1,4 +1,4 @@
-.page { display: grid; width: 100%; max-width: 1280px; gap: 14px; }
+.page { display: grid; width: 100%; gap: 14px; }
 .page > header { padding: 6px 2px 12px; }
 .page > header span { color: var(--text-3); font-size: var(--hs-type-label); font-weight: 800; }
 .page > header h1 { margin-top: 8px; color: var(--text-1); font-size: var(--hs-type-title); line-height: var(--hs-line-title); letter-spacing: -0.04em; }

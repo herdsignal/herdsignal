@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAuth } from '../../auth/AuthContext'
 import {
   canUseBrowserNotifications,
   observationNotificationsEnabled,
@@ -7,14 +8,18 @@ import {
 import styles from './Settings.module.css'
 
 export default function NotificationSettingsPanel() {
+  const { user } = useAuth()
+  const userId = user?.id
   const supported = canUseBrowserNotifications()
-  const [enabled, setEnabled] = useState(observationNotificationsEnabled)
+  const [enabled, setEnabled] = useState(
+    () => observationNotificationsEnabled(userId),
+  )
   const [status, setStatus] = useState('')
 
   async function toggle() {
     if (!supported) return
     if (enabled) {
-      setObservationNotificationsEnabled(false)
+      setObservationNotificationsEnabled(false, userId)
       setEnabled(false)
       setStatus('이 브라우저의 관찰 변화 알림을 껐습니다.')
       return
@@ -24,7 +29,7 @@ export default function NotificationSettingsPanel() {
       ? 'granted'
       : await Notification.requestPermission()
     const nextEnabled = permission === 'granted'
-    setObservationNotificationsEnabled(nextEnabled)
+    setObservationNotificationsEnabled(nextEnabled, userId)
     setEnabled(nextEnabled)
     setStatus(nextEnabled
       ? '앱 실행 중 새 State S1 변화가 생기면 알려드립니다.'
@@ -39,7 +44,12 @@ export default function NotificationSettingsPanel() {
           <strong>State S1 미확인 변화</strong>
           <em>앱 실행 중 5분마다 확인 · 매매 추천 알림 아님</em>
         </div>
-        <button type="button" onClick={toggle} disabled={!supported}>
+        <button
+          type="button"
+          onClick={toggle}
+          disabled={!supported}
+          aria-pressed={enabled}
+        >
           {!supported ? '지원 안 함' : enabled ? '켜짐' : '꺼짐'}
         </button>
       </div>

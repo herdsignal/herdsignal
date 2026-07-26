@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { getObservationChanges } from '../../api/herdApi'
+import { useAuth } from '../../auth/AuthContext'
 import {
   canUseBrowserNotifications,
   observationNotificationsEnabled,
@@ -12,6 +13,8 @@ export const OBSERVATION_CHANGES_REFRESH_EVENT = 'herdsignal:observation-changes
 const POLL_INTERVAL_MS = 5 * 60 * 1000
 
 export default function ObservationChangesIndicator() {
+  const { user } = useAuth()
+  const userId = user?.id
   const [unreadCount, setUnreadCount] = useState(null)
   const previousCount = useRef(null)
 
@@ -24,7 +27,7 @@ export default function ObservationChangesIndicator() {
           && shouldNotifyObservationChange(
             previousCount.current,
             nextCount,
-            observationNotificationsEnabled(),
+            observationNotificationsEnabled(userId),
             Notification.permission,
           )
         ) {
@@ -40,7 +43,7 @@ export default function ObservationChangesIndicator() {
         setUnreadCount(nextCount)
       })
       .catch(() => setUnreadCount(null))
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     refresh()

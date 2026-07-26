@@ -32,7 +32,7 @@ const PAGE_TITLES = {
   '/ledger': '거래 원장',
   '/journal': '판단 기록',
   '/herd-lab': 'HERD 연구실',
-  '/settings': '투자 프로필',
+  '/settings': '설정',
 }
 
 export function titleForPath(pathname) {

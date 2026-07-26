@@ -1,15 +1,19 @@
 export const OBSERVATION_NOTIFICATION_KEY = 'herdsignal_observation_notifications'
 
-export function observationNotificationsEnabled(storage = localStorage) {
+function preferenceKey(userId) {
+  return userId ? `${OBSERVATION_NOTIFICATION_KEY}:${userId}` : OBSERVATION_NOTIFICATION_KEY
+}
+
+export function observationNotificationsEnabled(userId, storage = localStorage) {
   try {
-    return storage.getItem(OBSERVATION_NOTIFICATION_KEY) === 'enabled'
+    return storage.getItem(preferenceKey(userId)) === 'enabled'
   } catch {
     return false
   }
 }
 
-export function setObservationNotificationsEnabled(enabled, storage = localStorage) {
-  storage.setItem(OBSERVATION_NOTIFICATION_KEY, enabled ? 'enabled' : 'disabled')
+export function setObservationNotificationsEnabled(enabled, userId, storage = localStorage) {
+  storage.setItem(preferenceKey(userId), enabled ? 'enabled' : 'disabled')
 }
 
 export function canUseBrowserNotifications(scope = globalThis) {
