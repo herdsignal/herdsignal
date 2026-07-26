@@ -182,6 +182,13 @@
   letter-spacing: -.02em;
 }
 
+.observationDate {
+  display: block;
+  margin-top: 6px;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
 .stateMeta {
   display: grid;
   grid-template-columns: repeat(4, minmax(76px, auto));
@@ -199,6 +206,13 @@
   color: var(--hs-text-subtle);
   font-size: var(--hs-type-label);
   font-weight: 650;
+}
+
+.stateMeta dd + small {
+  display: block;
+  margin-top: 4px;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
 }
 
 .evidenceSection {

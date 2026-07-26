@@ -44,6 +44,7 @@ export default function StockDetail() {
     fundamentalGuard,
     journalSummary,
     historyPoints,
+    stateSummary,
     handleJournalAction,
     handleJournalDelete,
   } = detail
@@ -126,9 +127,9 @@ export default function StockDetail() {
         <div className={styles.contentGrid}>
           <div className={styles.colMain}>
             <StockDetailHero
-              observation={observation}
               herdScore={herdScore}
               herdStage={herdStage}
+              stateSummary={stateSummary}
             />
             <StockDetailAnalysis
               observation={observation}

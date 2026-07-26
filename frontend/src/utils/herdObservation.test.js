@@ -5,6 +5,7 @@ import {
   observationBatchToMap,
   observationHistoryLimit,
   observationScore,
+  selectObservationHistory,
   observationToTrackedItem,
 } from './herdObservation'
 
@@ -28,6 +29,7 @@ describe('HERD S1 observation view model', () => {
       '2026-07-24',
     ])
     expect(observationHistoryLimit('3y')).toBeLessThanOrEqual(260)
+    expect(selectObservationHistory(points, '1m')).toEqual(points)
   })
 })
 

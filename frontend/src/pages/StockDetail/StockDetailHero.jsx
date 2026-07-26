@@ -1,5 +1,4 @@
 import MarketField from '../../components/MarketField/MarketField'
-import { resolvePreviousScore } from '../../components/HerdLens/herdLensModel'
 import styles from './StockDetail.module.css'
 
 function signed(value) {
@@ -10,11 +9,11 @@ function signed(value) {
 }
 
 export default function StockDetailHero({
-  observation,
   herdScore,
   herdStage,
+  stateSummary,
 }) {
-  const previous = resolvePreviousScore(herdScore, null, observation.delta4w)
+  const transition = stateSummary.recentTransition
 
   return (
     <section className={styles.stateSection} aria-labelledby="stock-state-title">
@@ -22,14 +21,27 @@ export default function StockDetailHero({
         <div>
           <span>HERD State S1</span>
           <h2 id="stock-state-title">현재 군중 상태</h2>
+          <small className={styles.observationDate}>
+            {stateSummary.currentDate ?? '—'} 관찰
+          </small>
         </div>
         <dl className={styles.stateMeta}>
-          <div><dt>4주 전</dt><dd>{previous == null ? '—' : Math.round(previous)}</dd></div>
-          <div><dt>4주 변화</dt><dd>{signed(observation.delta4w)}</dd></div>
-          <div><dt>전환</dt><dd>{observation.transition ?? '—'}</dd></div>
           <div>
-            <dt>관찰일</dt>
-            <dd>{observation.lastObservedSession ?? observation.observationDate ?? '—'}</dd>
+            <dt>4주 비교</dt>
+            <dd>{stateSummary.fourWeekComparison}</dd>
+          </div>
+          <div>
+            <dt>4주 변화</dt>
+            <dd>{signed(stateSummary.fourWeekDelta)}</dd>
+          </div>
+          <div>
+            <dt>현재 단계</dt>
+            <dd>{stateSummary.stageLabel} · {stateSummary.stageDurationLabel}</dd>
+          </div>
+          <div>
+            <dt>최근 전환</dt>
+            <dd>{transition?.label ?? '최근 전환 없음'}</dd>
+            {transition?.date && <small>{transition.date}</small>}
           </div>
         </dl>
       </div>

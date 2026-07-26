@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getHerdObservation,
   getHerdObservationHistory,
@@ -6,7 +6,8 @@ import {
 } from '../../api/herdApi'
 import {
   normalizeObservationHistory,
-  observationHistoryLimit,
+  OBSERVATION_TIMELINE_LIMIT,
+  selectObservationHistory,
 } from '../../utils/herdObservation'
 import { API_HOST } from './stockDetailModel'
 
@@ -14,7 +15,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
   const [observation, setObservation] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [herdHistory, setHerdHistory] = useState([])
+  const [herdTimeline, setHerdTimeline] = useState([])
   const [historyPeriod, setHistoryPeriod] = useState('1y')
   const [historyLoading, setHistoryLoading] = useState(false)
   const [financials, setFinancials] = useState(null)
@@ -54,20 +55,20 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
   useEffect(() => {
     let active = true
     setHistoryLoading(true)
-    setHerdHistory([])
+    setHerdTimeline([])
     getHerdObservationHistory(
       normalizedTicker,
-      observationHistoryLimit(historyPeriod),
+      OBSERVATION_TIMELINE_LIMIT,
     )
       .then((response) => {
         if (active) {
-          setHerdHistory(normalizeObservationHistory(
+          setHerdTimeline(normalizeObservationHistory(
             response.data?.data?.points,
           ))
         }
       })
       .catch(() => {
-        if (active) setHerdHistory([])
+        if (active) setHerdTimeline([])
       })
       .finally(() => {
         if (active) setHistoryLoading(false)
@@ -75,7 +76,12 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     return () => {
       active = false
     }
-  }, [historyPeriod, normalizedTicker])
+  }, [normalizedTicker])
+
+  const herdHistory = useMemo(
+    () => selectObservationHistory(herdTimeline, historyPeriod),
+    [herdTimeline, historyPeriod],
+  )
 
   useEffect(() => {
     let active = true
@@ -101,6 +107,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     loading,
     error,
     herdHistory,
+    herdTimeline,
     historyPeriod,
     setHistoryPeriod,
     historyLoading,

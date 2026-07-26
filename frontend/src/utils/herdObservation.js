@@ -9,6 +9,8 @@ const HISTORY_LIMITS = {
   '3y': 158,
 }
 
+export const OBSERVATION_TIMELINE_LIMIT = 260
+
 export function isObservationAvailable(observation) {
   return observation?.availabilityStatus === 'AVAILABLE'
     && Number.isFinite(Number(observation?.stateScore))
@@ -27,6 +29,11 @@ export function observationStage(observation) {
 
 export function observationHistoryLimit(period) {
   return HISTORY_LIMITS[period] ?? HISTORY_LIMITS['1y']
+}
+
+export function selectObservationHistory(points, period) {
+  if (!Array.isArray(points)) return []
+  return points.slice(-observationHistoryLimit(period))
 }
 
 export function normalizeObservationHistory(points) {

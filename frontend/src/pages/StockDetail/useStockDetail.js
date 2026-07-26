@@ -9,7 +9,11 @@ import {
 } from '../../utils/herdObservation'
 import { summarizeSignalJournal } from '../../utils/signalJournal'
 import { evaluateFundamentalGuard } from './stockFundamentalModel'
-import { journalActionLabel, stageColor } from './stockDetailModel'
+import {
+  buildStockStateSummary,
+  journalActionLabel,
+  stageColor,
+} from './stockDetailModel'
 import { useStockDetailResources } from './useStockDetailResources'
 import { useStockSignalJournal } from './useStockSignalJournal'
 
@@ -25,6 +29,7 @@ export function useStockDetail(ticker) {
     loading,
     error,
     herdHistory,
+    herdTimeline,
     historyPeriod,
     setHistoryPeriod,
     historyLoading,
@@ -91,6 +96,33 @@ export function useStockDetail(ticker) {
     if (!observationAvailable || !observation?.observationDate) return []
     return [{ date: observation.observationDate, score: herdScore }]
   }, [herdHistory, herdScore, observation, observationAvailable])
+  const timelinePoints = useMemo(() => {
+    if (herdTimeline.length > 0) return herdTimeline
+    if (!observationAvailable || !observation?.observationDate) return []
+    return [{
+      date: observation.observationDate,
+      lastObservedSession: observation.lastObservedSession,
+      score: herdScore,
+      stage: herdStage,
+      transition: observation.transition,
+      transitionEvent: observation.transitionEvent,
+    }]
+  }, [
+    herdScore,
+    herdStage,
+    herdTimeline,
+    observation,
+    observationAvailable,
+  ])
+  const stateSummary = useMemo(
+    () => buildStockStateSummary({
+      observation,
+      currentScore: herdScore,
+      currentStage: herdStage,
+      timeline: timelinePoints,
+    }),
+    [herdScore, herdStage, observation, timelinePoints],
+  )
 
   async function handleJournalAction(actionType, details = {}) {
     await journal.saveSignalLog({
@@ -104,7 +136,7 @@ export function useStockDetail(ticker) {
       signalLabel: 'State S1 관찰',
       actionRatio: 0,
       signalDurationDays: null,
-      stageDurationDays: null,
+      stageDurationDays: stateSummary.stageDurationDays,
       price: details.price,
       quantity: details.quantity,
       amount: details.amount,
@@ -140,6 +172,7 @@ export function useStockDetail(ticker) {
     fundamentalGuard,
     journalSummary,
     historyPoints,
+    stateSummary,
     handleJournalAction,
     handleJournalDelete: journal.removeSignalLog,
   }
