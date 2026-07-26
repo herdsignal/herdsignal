@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Portfolio from './Portfolio'
 import { usePortfolioPageData } from './usePortfolioPageData'
@@ -92,10 +92,24 @@ describe('Portfolio Lens', () => {
     expect(document.body.textContent).not.toMatch(/매수|매도|익절|추천/)
   })
 
-  it('reveals holding details without navigating away', () => {
+  it('opens the stock detail from a holding row', () => {
+    render(
+      <MemoryRouter initialEntries={['/portfolio']}>
+        <Routes>
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/stock/:ticker" element={<div>NVDA 상세 화면</div>} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'NVDA 종목 상세 열기' }))
+    expect(screen.getByText('NVDA 상세 화면')).toBeInTheDocument()
+  })
+
+  it('keeps holding management separate from stock navigation', () => {
     render(<MemoryRouter><Portfolio /></MemoryRouter>)
 
-    fireEvent.click(screen.getByRole('button', { name: /NVDA/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'NVDA 보유 정보 관리' }))
     expect(screen.getByText('평균 매수가')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '종목 분석' })).toBeInTheDocument()
   })

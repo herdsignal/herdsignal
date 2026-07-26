@@ -52,51 +52,60 @@ export default function PortfolioHoldings({
           <span>총 수익률</span>
           <span>오늘</span>
           <span>HERD · 4주</span>
+          <span>관리</span>
         </div>
         {rows.map((row) => {
           const expanded = expandedTicker === row.ticker
           return (
             <article className={styles.holding} key={row.ticker}>
-              <button
-                type="button"
-                className={styles.holdingSummary}
-                aria-expanded={expanded}
-                aria-controls={`holding-${row.ticker}`}
-                onClick={() => setExpandedTicker(expanded ? null : row.ticker)}
-              >
-                <span className={styles.stockIdentity}>
-                  <StockAvatar
-                    ticker={row.ticker}
-                    logoUrl={row.logoUrl}
-                    size="md"
-                  />
-                  <span>
-                    <strong>{row.ticker}</strong>
-                    <small>{row.companyName ?? '보유 종목'}</small>
+              <div className={styles.holdingRow}>
+                <button
+                  type="button"
+                  className={styles.holdingSummary}
+                  aria-label={`${row.ticker} 종목 상세 열기`}
+                  onClick={() => onOpenStock(row.ticker)}
+                >
+                  <span className={styles.stockIdentity}>
+                    <StockAvatar
+                      ticker={row.ticker}
+                      logoUrl={row.logoUrl}
+                      size="md"
+                    />
+                    <span>
+                      <strong>{row.ticker}</strong>
+                      <small>{row.companyName ?? '보유 종목'}</small>
+                    </span>
                   </span>
-                </span>
-                <span className={styles.amountCell}>
-                  <strong>{displayAmount(row.marketValue)}</strong>
-                  <small>{row.weightPct == null ? '—' : `${row.weightPct.toFixed(1)}%`}</small>
-                </span>
-                <span className={toneClass(row.returnPct)}>
-                  <strong>{fmtPct(row.returnPct)}</strong>
-                  <small>{displaySignedAmount(row.pnl)}</small>
-                </span>
-                <span className={toneClass(row.dailyChangePct)}>
-                  <strong>{fmtPct(row.dailyChangePct)}</strong>
-                  <small>전일 대비</small>
-                </span>
-                <HerdLens
-                  compact
-                  score={row.herdScore}
-                  stage={row.herdStage}
-                  previousScore={row.herdPreviousScore}
-                />
-                <span className={styles.expandMark} aria-hidden="true">
-                  {expanded ? '−' : '+'}
-                </span>
-              </button>
+                  <span className={styles.amountCell}>
+                    <strong>{displayAmount(row.marketValue)}</strong>
+                    <small>{row.weightPct == null ? '—' : `${row.weightPct.toFixed(1)}%`}</small>
+                  </span>
+                  <span className={toneClass(row.returnPct)}>
+                    <strong>{fmtPct(row.returnPct)}</strong>
+                    <small>{displaySignedAmount(row.pnl)}</small>
+                  </span>
+                  <span className={toneClass(row.dailyChangePct)}>
+                    <strong>{fmtPct(row.dailyChangePct)}</strong>
+                    <small>전일 대비</small>
+                  </span>
+                  <HerdLens
+                    compact
+                    score={row.herdScore}
+                    stage={row.herdStage}
+                    previousScore={row.herdPreviousScore}
+                  />
+                </button>
+                <button
+                  type="button"
+                  className={styles.holdingManage}
+                  aria-label={`${row.ticker} 보유 정보 관리`}
+                  aria-expanded={expanded}
+                  aria-controls={`holding-${row.ticker}`}
+                  onClick={() => setExpandedTicker(expanded ? null : row.ticker)}
+                >
+                  {expanded ? '닫기' : '관리'}
+                </button>
+              </div>
 
               {expanded && (
                 <div className={styles.holdingDetails} id={`holding-${row.ticker}`}>

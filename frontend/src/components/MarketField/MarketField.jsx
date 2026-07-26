@@ -34,7 +34,11 @@ export default function MarketField({ score, stage, compact = false }) {
   const resolvedStage = normalizeStage(stage)
     || stageFromScore(normalizedScore)
     || 'calm'
-  const dots = createMarketFieldDots(normalizedScore, MARKET_FIELD_DOT_COUNT)
+  const dots = createMarketFieldDots(
+    normalizedScore,
+    MARKET_FIELD_DOT_COUNT,
+    resolvedStage,
+  )
   const unavailable = normalizedScore == null
   const currentPosition = unavailable ? 50 : normalizedScore
 
@@ -42,6 +46,7 @@ export default function MarketField({ score, stage, compact = false }) {
     <section
       className={[
         styles.field,
+        styles[resolvedStage],
         compact ? styles.compact : '',
         unavailable ? styles.unavailable : '',
       ].filter(Boolean).join(' ')}
@@ -65,6 +70,12 @@ export default function MarketField({ score, stage, compact = false }) {
               '--dot-y': `${dot.y}%`,
               '--dot-size': `${dot.size}px`,
               '--dot-opacity': dot.opacity,
+              '--dot-shift-x-a': `${dot.shiftAX.toFixed(2)}px`,
+              '--dot-shift-y-a': `${dot.shiftAY.toFixed(2)}px`,
+              '--dot-shift-x-b': `${dot.shiftBX.toFixed(2)}px`,
+              '--dot-shift-y-b': `${dot.shiftBY.toFixed(2)}px`,
+              '--dot-duration': `${dot.duration.toFixed(2)}s`,
+              '--dot-delay': `${dot.delay.toFixed(2)}s`,
             }}
           />
         ))}

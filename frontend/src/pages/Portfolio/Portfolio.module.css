@@ -336,8 +336,7 @@
   border-bottom: 1px solid var(--hs-line);
 }
 
-.holdingsHead,
-.holdingSummary {
+.holdingsHead {
   display: grid;
   grid-template-columns:
     minmax(160px, 1.3fr)
@@ -345,7 +344,7 @@
     minmax(105px, .72fr)
     minmax(90px, .6fr)
     minmax(150px, 1fr)
-    18px;
+    44px;
   align-items: center;
   gap: 18px;
 }
@@ -361,7 +360,23 @@
   border-top: 1px solid var(--hs-line);
 }
 
+.holdingRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 18px;
+}
+
 .holdingSummary {
+  display: grid;
+  grid-template-columns:
+    minmax(160px, 1.3fr)
+    minmax(135px, .95fr)
+    minmax(105px, .72fr)
+    minmax(90px, .6fr)
+    minmax(150px, 1fr);
+  align-items: center;
+  gap: 18px;
   width: 100%;
   min-height: 88px;
   padding: 0;
@@ -385,7 +400,7 @@
 
 .stockIdentity > span:last-child,
 .amountCell,
-.holdingSummary > span:not(.stockIdentity, .expandMark) {
+.holdingSummary > span:not(.stockIdentity) {
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -411,10 +426,19 @@
   white-space: nowrap;
 }
 
-.expandMark {
+.holdingManage {
+  padding: 7px 0;
+  border: 0;
+  background: transparent;
   color: var(--hs-text-muted);
-  font-size: 13px;
-  text-align: right;
+  font-size: var(--hs-type-micro);
+  font-weight: 680;
+  cursor: pointer;
+}
+
+.holdingManage:hover,
+.holdingManage[aria-expanded="true"] {
+  color: var(--hs-text);
 }
 
 .holdingDetails {
@@ -508,7 +532,7 @@
   }
 
   .holdingSummary {
-    grid-template-columns: minmax(150px, 1.2fr) minmax(120px, 1fr) 90px 120px 18px;
+    grid-template-columns: minmax(150px, 1.2fr) minmax(120px, 1fr) 90px 120px;
   }
 
   .holdingSummary > span:nth-child(4) {
@@ -599,7 +623,7 @@
   }
 
   .holdingSummary {
-    grid-template-columns: minmax(96px, 1fr) minmax(78px, .8fr) 144px 14px;
+    grid-template-columns: minmax(96px, 1fr) minmax(78px, .8fr) 132px;
     min-height: 92px;
     gap: 6px;
   }

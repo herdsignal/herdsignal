@@ -7,6 +7,7 @@
   border-top: 1px solid var(--hs-line);
   border-bottom: 1px solid var(--hs-line);
   color: var(--field-color);
+  transition: color 700ms ease;
 }
 
 .dots {
@@ -24,6 +25,68 @@
   background: currentColor;
   opacity: var(--dot-opacity);
   transform: translate(-50%, -50%);
+  animation: herd-field-motion var(--dot-duration) ease-in-out var(--dot-delay) infinite;
+  transition:
+    top 900ms cubic-bezier(.22, 1, .36, 1),
+    left 900ms cubic-bezier(.22, 1, .36, 1),
+    width 500ms ease,
+    height 500ms ease;
+  will-change: transform;
+}
+
+.flee .dots i {
+  animation-timing-function: cubic-bezier(.3, .05, .7, .95);
+}
+
+.calm .dots i {
+  animation-timing-function: ease-in-out;
+}
+
+.rush .dots i {
+  animation-name: herd-field-rush;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, currentColor 34%, transparent));
+}
+
+@keyframes herd-field-motion {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(.94);
+  }
+
+  34% {
+    transform:
+      translate(-50%, -50%)
+      translate(var(--dot-shift-x-a), var(--dot-shift-y-a))
+      scale(1.04);
+  }
+
+  68% {
+    transform:
+      translate(-50%, -50%)
+      translate(var(--dot-shift-x-b), var(--dot-shift-y-b))
+      scale(.98);
+  }
+}
+
+@keyframes herd-field-rush {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(.88);
+  }
+
+  36% {
+    transform:
+      translate(-50%, -50%)
+      translate(var(--dot-shift-x-a), var(--dot-shift-y-a))
+      scale(1.16);
+  }
+
+  70% {
+    transform:
+      translate(-50%, -50%)
+      translate(var(--dot-shift-x-b), var(--dot-shift-y-b))
+      scale(.94);
+  }
 }
 
 .reading {

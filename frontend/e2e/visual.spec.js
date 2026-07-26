@@ -116,6 +116,31 @@ test('protected shell and search remain keyboard operable', async ({ page }) => 
   await expect(page.locator('#main-content')).toBeFocused()
 })
 
+test('market field moves and portfolio holdings open stock details', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'no-preference' })
+  await page.goto('/app')
+
+  const firstDot = page.locator('section[role="img"] i').first()
+  await expect(firstDot).toBeVisible()
+  await expect(firstDot).not.toHaveCSS('animation-name', 'none')
+  const firstTransform = await firstDot.evaluate((element) => (
+    getComputedStyle(element).transform
+  ))
+  await page.waitForTimeout(350)
+  const nextTransform = await firstDot.evaluate((element) => (
+    getComputedStyle(element).transform
+  ))
+  expect(nextTransform).not.toBe(firstTransform)
+
+  await page.goto('/portfolio')
+  await page.getByRole('button', { name: 'NVDA 종목 상세 열기' }).click()
+  await expect(page).toHaveURL(/\/stock\/NVDA$/)
+  await expect(page.getByRole('heading', { name: '현재 군중 상태' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'HERD 구성' })).toBeVisible()
+  await expect(page.getByText('가격 확장', { exact: true })).toBeVisible()
+  await expect(page.getByText('하방 위험 맥락', { exact: true })).toBeVisible()
+})
+
 function responseFor(pathname) {
   if (pathname === '/api/auth/csrf') return { token: 'visual-token' }
   if (pathname === '/api/auth/me') return user
