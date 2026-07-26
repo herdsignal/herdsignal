@@ -6,10 +6,8 @@ import {
 
 export function marketHomeViewModel({
   observation,
-  dataStatus,
   loading,
   observationError,
-  statusError,
 }) {
   const score = observationScore(observation)
   const stage = observationStage(observation)
@@ -25,15 +23,6 @@ export function marketHomeViewModel({
       ?? observation?.observationDate
       ?? null,
     freshness: observationFreshnessLabel(observation),
-    systemStatus: statusError
-      ? '상태 확인 불가'
-      : dataStatus?.status === 'FRESH'
-        ? '수집 정상'
-        : dataStatus?.status === 'RUNNING'
-          ? '업데이트 중'
-          : dataStatus?.status
-            ? '수집 확인 필요'
-            : null,
     observationError,
   }
 }
@@ -48,4 +37,3 @@ export function formatMarketDate(value) {
     day: 'numeric',
   })
 }
-

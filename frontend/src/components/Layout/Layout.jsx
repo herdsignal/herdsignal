@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import herdSignalMark from '../../assets/brand/herdsignal-mark.svg'
 import { useAuth } from '../../auth/AuthContext'
+import DataStatusIndicator from '../DataStatus/DataStatusIndicator'
 import styles from './Layout.module.css'
 
 const PRIMARY_NAVIGATION = [
@@ -113,6 +114,7 @@ export default function Layout() {
         <Navigation className={styles.desktopNav} label="주요 메뉴" />
 
         <div className={styles.account} ref={accountRef}>
+          <DataStatusIndicator />
           <NavLink className={styles.watchlistLink} to="/watchlist">
             관찰
           </NavLink>

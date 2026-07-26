@@ -11,10 +11,8 @@ vi.mock('./useMarketHomeData', () => ({
       stateScore: 64,
       lastObservedSession: '2026-07-23',
     },
-    dataStatus: { status: 'FRESH' },
     loading: false,
     observationError: false,
-    statusError: false,
   }),
 }))
 
@@ -28,4 +26,3 @@ describe('MarketHome', () => {
     expect(screen.queryByText(/BUY|SELL|매수|익절/)).not.toBeInTheDocument()
   })
 })
-

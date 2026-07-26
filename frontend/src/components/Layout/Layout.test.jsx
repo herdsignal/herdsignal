@@ -3,6 +3,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout'
 
+vi.mock('../../api/herdApi', () => ({
+  getDataStatus: vi.fn().mockResolvedValue({
+    data: { data: { status: 'FRESH' } },
+  }),
+}))
+
 vi.mock('../../auth/AuthContext', () => ({
   useAuth: () => ({
     user: {

@@ -21,7 +21,6 @@ export default function MarketHome() {
         <div className={styles.meta}>
           <strong>{formatMarketDate(view.observationDate)}</strong>
           <span>{view.freshness}</span>
-          {view.systemStatus && <em>{view.systemStatus}</em>}
         </div>
       </header>
 
@@ -45,4 +44,3 @@ export default function MarketHome() {
     </div>
   )
 }
-

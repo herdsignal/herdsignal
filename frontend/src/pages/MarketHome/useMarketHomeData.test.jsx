@@ -5,7 +5,6 @@ import * as api from '../../api/herdApi'
 import * as cache from '../../features/market/marketCache'
 
 vi.mock('../../api/herdApi', () => ({
-  getDataStatus: vi.fn(),
   getHerdObservation: vi.fn(),
 }))
 
@@ -27,9 +26,6 @@ beforeEach(() => {
       stateScore: 64,
     } },
   })
-  api.getDataStatus.mockResolvedValue({
-    data: { data: { status: 'FRESH' } },
-  })
 })
 
 describe('useMarketHomeData', () => {
@@ -43,6 +39,5 @@ describe('useMarketHomeData', () => {
     expect(cache.writeMarketObservationCache).toHaveBeenCalledWith(
       expect.objectContaining({ stateScore: 64 }),
     )
-    expect(result.current.dataStatus.status).toBe('FRESH')
   })
 })

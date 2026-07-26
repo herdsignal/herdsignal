@@ -12,8 +12,7 @@
 
 .header span,
 .header p,
-.meta strong,
-.meta em {
+.meta strong {
   display: block;
 }
 
@@ -53,23 +52,10 @@
   font-weight: 650;
 }
 
-.meta span,
-.meta em {
+.meta span {
   color: var(--hs-text-muted);
   font-size: var(--hs-type-label);
-  font-style: normal;
   font-weight: 620;
-}
-
-.meta em::before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin-right: 6px;
-  border-radius: 50%;
-  background: var(--hs-gain);
-  vertical-align: 1px;
 }
 
 .loading {
