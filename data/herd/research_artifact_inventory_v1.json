@@ -2437,6 +2437,10 @@
     {
       "path": "docs/HERD_S1_PRODUCTIZATION_PLAN.md",
       "status": "ACTIVE"
+    },
+    {
+      "path": "docs/README.md",
+      "status": "DIAGNOSTIC"
     }
   ]
 }
