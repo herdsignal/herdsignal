@@ -86,6 +86,21 @@
 
 기계 판독 감사는 `data/herd/leading_information_feasibility_v2.json`이다.
 
+## Part E — FINRA–Rush 괴리 가설 사전등록
+
+- Rush 상태에서 FINRA 공매도 days-to-cover가 2회 연속 확대되고 섹터
+  내 80백분위 이상인 경우만 하나의 노출로 고정했다. 공식 공개 다음
+  거래일부터만 관측하며 ticker–CIK interval이 없으면 제외한다.
+- 예측 대상은 63거래일 내 `큰 조정 또는 구조 훼손`이고, 한 Rush
+  episode에서 최초 노출 한 번만 사용한다.
+- 단순 short-interest 효과는 시대와 가중 방식에 따라 불안정하므로 절대
+  잔고, RSI 결합, 결과 확인 후 임계값 조정은 금지했다.
+- 2021년 이후 역사는 최근 pre-holdout 민감도일 뿐 행동 권한이 없다.
+  채택에는 결과를 보지 않는 최소 18개월 전향 확인이 별도로 필요하다.
+
+사전등록 계약은
+`data/herd/finra_rush_divergence_preregistration_v1.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.

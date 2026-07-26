@@ -46,6 +46,7 @@
       "data/herd/survivorship_readiness_v2.json",
       "data/herd/rush_event_dataset_v2.json",
       "data/herd/leading_information_feasibility_v2.json",
+      "data/herd/finra_rush_divergence_preregistration_v1.json",
       "data/herd/sec_13f_crowding_protocol_v1.json",
       "data/reports/sec_13f_crowding_protocol_v1.json",
       "data/herd/personal_cashflow_benchmark_v1.json",

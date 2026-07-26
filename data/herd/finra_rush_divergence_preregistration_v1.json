@@ -1,0 +1,66 @@
+{
+  "protocol_version": "HERD_FINRA_RUSH_DIVERGENCE_PREREGISTRATION_V1",
+  "status": "LOCKED_BEFORE_FEATURE_OUTCOME_JOIN",
+  "locked_at": "2026-07-26",
+  "research_question": "During a pre-existing Rush state, does a newly expanding sector-relative days-to-cover burden distinguish later adverse paths from benign continuation?",
+  "economic_mechanism": "A price that remains crowded upward while informed or hedging demand to stay short becomes costlier to unwind may indicate disagreement not visible in price-only features.",
+  "inputs": [
+    {"path": "data/herd/leading_information_feasibility_v2.json", "sha256": "655fc985339623b36bde40b0243b2b759db73ce290c680900a909903e7a37a62"},
+    {"path": "data/herd/finra_short_interest_incremental_v2_manifest.json", "sha256": "f6c0e3685392ce38d8a30e2dcbcb9abbd7bd9664f8d1391b7c284ff5d3369588"},
+    {"path": "data/reports/rush_event_dataset_v2.json", "sha256": "5be76a0a615ff9fb6f0ddfafe09b8e77207b7249ef64ee47d878a0f4a2491f3c"},
+    {"path": "data/herd/model_establishment_split_v1.json", "sha256": "2978e0380cc5fcf7855587a83ec3a8495c26c328fd1d6b08a20f54e1da1ff9e1"}
+  ],
+  "exposure": {
+    "name": "FINRA_RUSH_DTC_DIVERGENCE_V1",
+    "rush_membership": "HERD_STATE_S1_RUSH_ALREADY_TRUE_BEFORE_FINRA_PUBLICATION",
+    "available_at": "FIRST_TRADING_SESSION_AFTER_FINRA_OFFICIAL_PUBLICATION_DATE",
+    "short_interest_measure": "SHORT_INTEREST_SHARES / PRIOR_20_COMPLETED_SESSION_MEAN_VOLUME",
+    "conditions_all_required": [
+      "DAYS_TO_COVER_INCREASED_AT_EACH_OF_TWO_CONSECUTIVE_PUBLICATIONS",
+      "LATEST_DAYS_TO_COVER_SECTOR_PERCENTILE_AT_LEAST_80",
+      "TICKER_CIK_INTERVAL_VALID_ON_BOTH_SETTLEMENT_DATES"
+    ],
+    "same_day_use_forbidden": true,
+    "missing_or_revised_history": "INELIGIBLE_NO_IMPUTATION"
+  },
+  "outcome": {
+    "primary": "LARGE_PULLBACK_OR_STRUCTURAL_BREAK_WITHIN_63_SESSIONS",
+    "control": "TEMPORARY_PULLBACK_OR_RESUMED_UPTREND_WITHIN_63_SESSIONS",
+    "episode_overlap": "ONE_EARLIEST_ELIGIBLE_PUBLICATION_PER_RUSH_EPISODE"
+  },
+  "evaluation": {
+    "historical_role": "RECENT_PREHOLDOUT_SENSITIVITY_ONLY",
+    "historical_start": "2021-06-01",
+    "prospective_start_strictly_after": "2026-07-26T23:59:59-04:00",
+    "minimum_historical_exposed_events": 80,
+    "minimum_historical_adverse_events": 30,
+    "minimum_distinct_tickers": 40,
+    "minimum_distinct_sectors": 6,
+    "minimum_directionally_consistent_time_folds": 3,
+    "minimum_effect_risk_difference": 0.05,
+    "minimum_effect_risk_ratio": 1.25,
+    "maximum_holm_p_value": 0.05,
+    "prospective_confirmation_required_for_adoption": true,
+    "minimum_prospective_months": 18,
+    "interim_outcome_peeking_forbidden": true
+  },
+  "limitations": [
+    "FINRA short interest does not identify trader type or hedged exposure.",
+    "Publication is delayed and corrected history may be replaced.",
+    "Days-to-cover includes a liquidity denominator and is not pure negative information.",
+    "The available exchange-listed history is too short for primary long-horizon OOS adoption."
+  ],
+  "evidence_basis": [
+    {"url": "https://www.nber.org/papers/w10434", "claim": "Simple high short-interest return patterns are not robust across periods and value weighting."},
+    {"url": "https://www.nber.org/papers/w21166", "claim": "Days-to-cover is economically better motivated than shares-short ratios because it incorporates trading cost."},
+    {"url": "https://www.finra.org/finra-data/browse-catalog/equity-short-interest", "claim": "FINRA publishes on the seventh business day and only the latest corrected item remains available."}
+  ],
+  "decision_boundary": {
+    "one_hypothesis_only": true,
+    "threshold_retuning_after_results": false,
+    "combine_with_rejected_features": false,
+    "historical_pass_can_authorize_action": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

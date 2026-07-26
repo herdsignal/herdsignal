@@ -135,6 +135,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/finra_rush_divergence_preregistration_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/finra_short_interest_immutable_census_v1.json",
       "status": "REVIEW_REQUIRED"
     },
