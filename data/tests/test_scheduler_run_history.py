@@ -40,7 +40,11 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                 "save_herd_result",
                 side_effect=lambda ticker, *_: ticker == "AAPL",
             ),
-            patch.object(herd_scheduler, "calculate_portfolio_value", return_value={"stocks": []}),
+            patch.object(
+                herd_scheduler,
+                "_snapshot_all_portfolios",
+                return_value={"requested": [], "saved": [], "errors": []},
+            ),
             patch.object(
                 herd_scheduler,
                 "_build_and_write_observation",
@@ -75,6 +79,32 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             error_message=None,
         )
         notify.assert_called_once_with(result)
+
+    def test_portfolio_snapshots_cover_each_user_and_isolate_failures(self) -> None:
+        with (
+            patch.object(
+                herd_scheduler,
+                "_fetch_portfolio_user_ids",
+                return_value=["local", "user-2"],
+            ),
+            patch.object(
+                herd_scheduler,
+                "calculate_portfolio_value",
+                side_effect=[
+                    {"stocks": [{"ticker": "SPY"}], "total_value": 100.0},
+                    RuntimeError("price missing"),
+                ],
+            ) as calculate,
+        ):
+            result = herd_scheduler._snapshot_all_portfolios()
+
+        self.assertEqual(result["requested"], ["local", "user-2"])
+        self.assertEqual(result["saved"], ["local"])
+        self.assertEqual(result["errors"], ["user-2: price missing"])
+        self.assertEqual(
+            [call.args[0] for call in calculate.call_args_list],
+            ["local", "user-2"],
+        )
 
     def test_run_history_records_failure_when_ticker_lookup_fails(self) -> None:
         with (

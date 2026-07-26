@@ -147,6 +147,51 @@ def _fetch_tier1_tickers() -> list[str]:
     return tickers
 
 
+def _fetch_portfolio_user_ids() -> list[str]:
+    """평가 가능한 보유 종목이 있는 모든 사용자를 반환한다."""
+    with _get_session_factory()() as session:
+        rows = (
+            session.query(UserPortfolio.user_id)
+            .filter(
+                UserPortfolio.avg_price.isnot(None),
+                UserPortfolio.quantity.isnot(None),
+                UserPortfolio.quantity > 0,
+            )
+            .distinct()
+            .all()
+        )
+    return sorted({str(row[0]) for row in rows if row[0]})
+
+
+def _snapshot_all_portfolios() -> dict:
+    """사용자별 오류를 격리해 일별 포트폴리오 스냅샷을 저장한다."""
+    user_ids = _fetch_portfolio_user_ids()
+    saved: list[str] = []
+    errors: list[str] = []
+    for user_id in user_ids:
+        try:
+            result = calculate_portfolio_value(user_id)
+            if result["stocks"]:
+                saved.append(user_id)
+                logger.info(
+                    "[Tier1] 포트폴리오 스냅샷 저장 — 사용자 %s, 보유 %s종목, 총 평가 $%,.2f",
+                    user_id,
+                    len(result["stocks"]),
+                    result["total_value"],
+                )
+        except Exception as exc:
+            errors.append(f"{user_id}: {exc}")
+            logger.error(
+                "[Tier1] 사용자 %s 포트폴리오 스냅샷 저장 실패: %s",
+                user_id,
+                exc,
+                exc_info=True,
+            )
+    if not user_ids:
+        logger.info("[Tier1] 평가 가능한 포트폴리오 없음 — 스냅샷 생략")
+    return {"requested": user_ids, "saved": saved, "errors": errors}
+
+
 def _start_scheduler_run(trigger_type: str) -> int | None:
     return SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).start(trigger_type)
 
@@ -302,20 +347,13 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         logger.warning(f"[Tier1]   ⏭️ 최소 이력 미달 제외: {skipped_list}")
     logger.info("━" * 60)
 
-    # ── 5. 포트폴리오 스냅샷 저장 (local 사용자) ───────────────────
+    # ── 5. 모든 사용자의 포트폴리오 스냅샷 저장 ────────────────────
     # HERD 잡 완료 후 오늘의 포트폴리오 평가금액을 portfolio_history에 기록
     snapshot_error: str | None = None
     try:
-        result = calculate_portfolio_value("local")
-        if result["stocks"]:
-            logger.info(
-                f"[Tier1] 포트폴리오 스냅샷 저장 완료 — "
-                f"보유 {len(result['stocks'])}종목  "
-                f"총 평가 ${result['total_value']:,.2f}  "
-                f"수익률 {result['total_return_pct']:.2f}%"
-            )
-        else:
-            logger.info("[Tier1] 포트폴리오 보유 종목 없음 — 스냅샷 생략")
+        snapshot_result = _snapshot_all_portfolios()
+        if snapshot_result["errors"]:
+            snapshot_error = "; ".join(snapshot_result["errors"])
     except Exception as e:
         # 포트폴리오 저장 실패가 HERD 잡 전체를 중단시키지 않도록 예외 격리
         logger.error(f"[Tier1] 포트폴리오 스냅샷 저장 실패: {e}", exc_info=True)
