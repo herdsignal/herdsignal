@@ -20,6 +20,7 @@ const Search = lazy(() => import('./pages/Search/Search'))
 const Watchlist = lazy(() => import('./pages/Watchlist/Watchlist'))
 const ObservationChanges = lazy(() => import('./pages/ObservationChanges/ObservationChanges'))
 const History = lazy(() => import('./pages/History/History'))
+const Ledger = lazy(() => import('./pages/Ledger/Ledger'))
 const HerdLab = lazy(() => import('./pages/HerdLab/HerdLab'))
 const Journal = lazy(() => import('./pages/Journal/Journal'))
 const Settings = lazy(() => import('./pages/Settings/Settings'))
@@ -51,6 +52,7 @@ export default function App() {
             <Route path="/watchlist"     element={<Watchlist />} />
             <Route path="/changes"       element={<ObservationChanges />} />
             <Route path="/history"       element={<History />} />
+            <Route path="/ledger"        element={<Ledger />} />
             <Route path="/herd-lab"      element={<HerdLab />} />
             <Route path="/journal"       element={<Journal />} />
             <Route path="/settings"      element={<Settings />} />

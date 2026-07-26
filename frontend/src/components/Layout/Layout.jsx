@@ -17,6 +17,7 @@ const SECONDARY_NAVIGATION = [
   { to: '/changes', label: '관찰 변화' },
   { to: '/watchlist', label: '관찰 종목' },
   { to: '/history', label: '자산 히스토리' },
+  { to: '/ledger', label: '거래 원장' },
   { to: '/journal', label: '판단 기록' },
   { to: '/settings', label: '설정' },
 ]
@@ -28,6 +29,7 @@ const PAGE_TITLES = {
   '/watchlist': '관심종목',
   '/changes': '관찰 변화',
   '/history': '자산 히스토리',
+  '/ledger': '거래 원장',
   '/journal': '판단 기록',
   '/herd-lab': 'HERD 연구실',
   '/settings': '투자 프로필',

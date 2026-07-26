@@ -4,6 +4,7 @@ import com.herdsignal.dto.PortfolioLedgerEntryResponse;
 import com.herdsignal.exception.GlobalExceptionHandler;
 import com.herdsignal.service.CurrentUserService;
 import com.herdsignal.service.PortfolioLedgerService;
+import com.herdsignal.service.PortfolioLedgerValuationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,11 +32,14 @@ class PortfolioLedgerControllerTest {
     @BeforeEach
     void setUp() {
         service = mock(PortfolioLedgerService.class);
+        PortfolioLedgerValuationService valuationService =
+                mock(PortfolioLedgerValuationService.class);
         CurrentUserService currentUserService = mock(CurrentUserService.class);
         when(currentUserService.requireUserId()).thenReturn("user-a");
         mockMvc = MockMvcBuilders
                 .standaloneSetup(new PortfolioLedgerController(
                         service,
+                        valuationService,
                         currentUserService
                 ))
                 .setControllerAdvice(new GlobalExceptionHandler())

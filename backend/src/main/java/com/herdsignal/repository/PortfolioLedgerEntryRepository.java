@@ -11,6 +11,8 @@ public interface PortfolioLedgerEntryRepository
 
     List<PortfolioLedgerEntry> findByUserIdOrderByOccurredOnDescIdDesc(String userId);
 
+    List<PortfolioLedgerEntry> findByUserIdOrderByOccurredOnAscIdAsc(String userId);
+
     List<PortfolioLedgerEntry> findByUserIdAndTickerOrderByOccurredOnDescIdDesc(
             String userId,
             String ticker

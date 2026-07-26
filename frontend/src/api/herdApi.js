@@ -129,6 +129,9 @@ export const updateTargetWeight = (ticker, targetWeight) =>
 export const getPortfolioLedger = (ticker) =>
   api.get('/api/portfolio/ledger', { params: ticker ? { ticker } : {} })
 
+export const getPortfolioLedgerSummary = () =>
+  api.get('/api/portfolio/ledger/summary')
+
 export const createPortfolioLedgerEntry = (entry) =>
   api.post('/api/portfolio/ledger', entry)
 
