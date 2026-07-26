@@ -22,8 +22,11 @@
   아니라 경제적으로 중복되지 않는 새 방향 가설 하나와 새로운 독립 또는
   prospective OOS 표본을 사전 고정하는 것이다.
 
-기계 판독 상태는 `data/herd/model_establishment_status_v1.json`이며 각 단계
-산출물의 SHA-256을 다시 검증한다.
+현재 기계 판독 결정은 `data/herd/research_decision_v2.json`이다. 기존
+`model_establishment_status_v1.json`은 과거 Part J~O 승격 감사의 고정
+해시 입력으로 보존하며 최신 판정 원장으로 수정하지 않는다. V2는 State S1
+관찰 MVP, 최신 Form 4·FINRA·13F·giveback 탈락, 행동 후보 0개와
+`survivorship_safe=false`를 한 번에 검증한다.
 
 ## Part A — 실패 가설 지도
 

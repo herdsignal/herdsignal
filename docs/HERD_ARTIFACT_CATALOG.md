@@ -18,6 +18,12 @@
 
 V2는 파일을 상태별 명시적 chain에 한 번만 넣는다. 같은 파일이 두 상태에
 들어가거나 v4·v6.1이 `LEGACY_REFERENCE_ONLY`가 아니면 검증이 실패한다.
+
+현재 서비스·연구 결정의 단일 진입점은
+`data/herd/research_decision_v2.json`이다. 카탈로그는 산출물의 보존 상태를,
+결정 원장은 최신 후보 판정과 다음 연구 단계를 담당한다. 경제성 게이트에서
+탈락한 결과가 `ACTIVE`에 남거나 탈락 보고서가 행동 권한을 가지면 검증이
+실패한다.
 신규 모델은 레거시 공식이나 탈락 가설을 import할 수 없다.
 
 `research_artifact_inventory_v1.json`은 `data/herd`의 JSON,

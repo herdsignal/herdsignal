@@ -15,7 +15,8 @@
     "action_candidate": "NO_ADOPTABLE_ACTION_CANDIDATE",
     "personal_mvp_scope": "HERD_STATE_AND_TRANSITION_OBSERVATION_ONLY",
     "blind_holdout_access": false,
-    "operational_action_ratio": 0.0
+    "operational_action_ratio": 0.0,
+    "canonical_decision": "data/herd/research_decision_v2.json"
   },
   "statuses": {
     "ACTIVE": "현재 연구 경계와 다음 모델 판정에 직접 사용되는 계약",
@@ -42,6 +43,7 @@
       "data/herd/herd_vnext_model_charter_v1.json",
       "data/herd/model_establishment_protocol_v1.json",
       "data/herd/model_establishment_status_v1.json",
+      "data/herd/research_decision_v2.json",
       "data/herd/failed_hypothesis_map_v1.json",
       "data/herd/survivorship_readiness_v2.json",
       "data/herd/rush_event_dataset_v2.json",
@@ -58,13 +60,6 @@
       "data/herd/herd_transition_s1.json",
       "data/reports/herd_transition_s1.json",
       "data/reports/herd_transition_s1_latest.csv",
-      "data/herd/profit_giveback_policy_v1.json",
-      "data/reports/profit_giveback_policy_v1.json",
-      "data/reports/profit_giveback_policy_v1_events.csv",
-      "data/herd/profit_giveback_economic_v1.json",
-      "data/reports/profit_giveback_economic_v1.json",
-      "data/reports/profit_giveback_economic_v1_rows.csv",
-      "data/reports/profit_giveback_economic_v1_actions.csv",
       "data/herd/personal_mvp_promotion_v1.json",
       "data/reports/personal_mvp_promotion_v1.json",
       "data/herd/vnext_prospective_shadow_protocol_v1.json",
@@ -103,9 +98,16 @@
       "data/reports/rush_event_dataset_v2.csv",
       "data/reports/rush_event_dataset_v2.json",
       "data/reports/sec_form4_nonroutine_sale_events_v1.csv",
-      "data/reports/sec_form4_nonroutine_sale_feasibility_v1.json"
+      "data/reports/sec_form4_nonroutine_sale_feasibility_v1.json",
+      "data/herd/profit_giveback_policy_v1.json",
+      "data/reports/profit_giveback_policy_v1.json",
+      "data/reports/profit_giveback_policy_v1_events.csv"
     ],
     "REJECTED": [
+      "data/herd/profit_giveback_economic_v1.json",
+      "data/reports/profit_giveback_economic_v1.json",
+      "data/reports/profit_giveback_economic_v1_rows.csv",
+      "data/reports/profit_giveback_economic_v1_actions.csv",
       "data/herd/sec_form4_nonroutine_sale_rush_preregistration_v1.json",
       "data/reports/sec_form4_nonroutine_sale_rush_oos_v1.csv",
       "data/reports/sec_form4_nonroutine_sale_rush_oos_v1.json",

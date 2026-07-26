@@ -42,10 +42,16 @@ def test_v2_catalog_has_no_conflicting_statuses() -> None:
     assert catalog["current_decision"]["state_display_ready"] is True
     assert catalog["current_decision"]["transition_measurement"] == "HERD_TRANSITION_S1"
     assert catalog["current_decision"]["transition_display_ready"] is True
+    assert (
+        catalog["current_decision"]["canonical_decision"]
+        == "data/herd/research_decision_v2.json"
+    )
     assert catalog["current_decision"]["personal_policy_candidate"] == "HERD_GIVEBACK_S1"
     assert catalog["current_decision"]["personal_policy_events_ready"] is True
     assert catalog["model_boundaries"]["HERD_V4"]["role"] == "LEGACY_REFERENCE_ONLY"
     assert catalog["model_boundaries"]["HERD_V6_1"]["role"] == "LEGACY_REFERENCE_ONLY"
+    assert "data/reports/profit_giveback_economic_v1.json" in catalog["chains"]["REJECTED"]
+    assert "data/reports/profit_giveback_economic_v1.json" not in catalog["chains"]["ACTIVE"]
 
 
 def test_deletion_requires_reproducibility_checks() -> None:

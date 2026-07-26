@@ -1,0 +1,91 @@
+{
+  "decision_version": "HERD_RESEARCH_DECISION_V2",
+  "as_of": "2026-07-26",
+  "status": "STATE_OBSERVATION_MVP_READY_NO_ACTION_CANDIDATE",
+  "supersedes_for_current_status": "data/herd/model_establishment_status_v1.json",
+  "preserves_v1_as_reproducibility_input": true,
+  "inputs": [
+    {"path": "data/herd/model_establishment_status_v1.json", "sha256": "5576796fb32c8305c0bf7b2e91008ee2b1e5ac287167df0740e0d7a6ad4138c1"},
+    {"path": "data/herd/failed_hypothesis_map_v1.json", "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2"},
+    {"path": "data/herd/survivorship_readiness_v2.json", "sha256": "1b7ba3b2ab079b3b0c301dc4d8c8d7359105be6c68c4c9b0dd93f79efd7b97ef"},
+    {"path": "data/reports/herd_state_s1.json", "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"},
+    {"path": "data/reports/herd_transition_s1.json", "sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248"},
+    {"path": "data/reports/profit_giveback_economic_v1.json", "sha256": "6190d677a1b21fc482397c5f7ce4f0000306b4da2d5bde21bb51742d19b69124"},
+    {"path": "data/reports/finra_rush_divergence_oos_v1.json", "sha256": "e810240ddceaf6c7d15ad45f4a85e7eb68c512e00778096f326f7fd277f3983c"},
+    {"path": "data/reports/sec_13f_crowding_incremental_oos_v1.json", "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"},
+    {"path": "data/reports/sec_form4_nonroutine_sale_rush_oos_v1.json", "sha256": "43e2e66b49fd8f182678f8a4bc3459dc8770cda22dee479e6b6057e85fe533d9"},
+    {"path": "data/reports/sec_form4_nonroutine_sale_rush_promotion_audit_v1.json", "sha256": "649fa0841c8a2b3e8610b1f5637ae483b28b7832521393d4ef99be15896b1151"}
+  ],
+  "product_scope": {
+    "observation_model": "HERD_STATE_S1",
+    "transition_model": "HERD_TRANSITION_S1",
+    "observation_display_ready": true,
+    "portfolio_and_journal_mvp_ready": true,
+    "default_user_action": "HOLD",
+    "operational_action_ratio": 0.0
+  },
+  "action_research": {
+    "admitted_profit_take_evidence_count": 0,
+    "admitted_reentry_evidence_count": 0,
+    "adoptable_action_candidate": null,
+    "blind_holdout_access_count": 0,
+    "prospective_action_shadow_enabled": false
+  },
+  "candidate_decisions": [
+    {
+      "candidate": "HERD_GIVEBACK_S1",
+      "role": "PERSONAL_NO_CONTRIBUTION_POLICY",
+      "decision": "REJECTED_PREHOLDOUT_ECONOMIC_GATE",
+      "report": "data/reports/profit_giveback_economic_v1.json"
+    },
+    {
+      "candidate": "FINRA_RUSH_DTC_DIVERGENCE_V1",
+      "role": "PROFIT_TAKE_DIRECTION",
+      "decision": "REJECTED_OOS",
+      "report": "data/reports/finra_rush_divergence_oos_v1.json"
+    },
+    {
+      "candidate": "SEC_13F_INCREMENTAL_CROWDING",
+      "role": "SLOW_CROWDING_CONTEXT",
+      "decision": "REJECTED_OOS",
+      "report": "data/reports/sec_13f_crowding_incremental_oos_v1.json"
+    },
+    {
+      "candidate": "FORM4_TIMING_NONROUTINE_MULTI_OWNER_SALE_30D_AT_S1_RUSH_ENTRY",
+      "role": "PROFIT_TAKE_DIRECTION",
+      "decision": "REJECTED_DIRECTIONALLY_INVERTED",
+      "report": "data/reports/sec_form4_nonroutine_sale_rush_oos_v1.json"
+    }
+  ],
+  "claim_lanes": {
+    "current_holding_personal_research": {
+      "status": "PREHOLDOUT_RESEARCH_ALLOWED",
+      "survivorship_safe_required_for_diagnostic_rejection": false,
+      "prospective_confirmation_required_for_action": true
+    },
+    "market_general_action_model": {
+      "status": "BLOCKED_UNTIL_POINT_IN_TIME_UNIVERSE_READY",
+      "survivorship_safe_required": true
+    }
+  },
+  "data_boundaries": {
+    "survivorship_safe": false,
+    "current_constituent_preholdout_research_allowed": true,
+    "blind_holdout_eligible": false
+  },
+  "next_stage": {
+    "id": "PROFIT_TAKE_OPPORTUNITY_CEILING_V1",
+    "objective": "Measure whether economically meaningful five-percent trim and observable reentry opportunities exist often enough before training another predictor.",
+    "must_reuse_and_adjudicate": [
+      "data/herd/opportunity_cycle_target_v1.json",
+      "data/herd/vnext_competing_path_economic_label_v1.json",
+      "data/herd/profit_giveback_economic_v1.json"
+    ],
+    "forbidden": [
+      "RETUNE_REJECTED_THRESHOLDS",
+      "COMBINE_REJECTED_FEATURES",
+      "OPEN_BLIND_HOLDOUT",
+      "ENABLE_OPERATIONAL_ACTION"
+    ]
+  }
+}

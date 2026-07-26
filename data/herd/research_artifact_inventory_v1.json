@@ -320,11 +320,11 @@
     },
     {
       "path": "data/herd/profit_giveback_economic_v1.json",
-      "status": "ACTIVE"
+      "status": "REJECTED"
     },
     {
       "path": "data/herd/profit_giveback_policy_v1.json",
-      "status": "ACTIVE"
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/herd/profit_take_measurements_v2.json",
@@ -353,6 +353,10 @@
     {
       "path": "data/herd/research_artifact_catalog_v2.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/research_decision_v2.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/herd/research_input_contract.json",
@@ -1168,23 +1172,23 @@
     },
     {
       "path": "data/reports/profit_giveback_economic_v1.json",
-      "status": "ACTIVE"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/profit_giveback_economic_v1_actions.csv",
-      "status": "ACTIVE"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/profit_giveback_economic_v1_rows.csv",
-      "status": "ACTIVE"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/profit_giveback_policy_v1.json",
-      "status": "ACTIVE"
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/profit_giveback_policy_v1_events.csv",
-      "status": "ACTIVE"
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/profit_take_events_v2.csv",
