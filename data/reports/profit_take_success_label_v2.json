@@ -1,0 +1,103 @@
+{
+  "report_version": "HERD_PROFIT_TAKE_SUCCESS_LABEL_V2",
+  "status": "SUCCESS_LABEL_V2_COVERAGE_PASSED",
+  "rows": 2161,
+  "tickers": 439,
+  "folds": 9,
+  "label_counts": {
+    "ECONOMIC_REBUY_OPPORTUNITY": 1121,
+    "HEALTHY_CONTINUATION": 551,
+    "NO_ECONOMIC_EDGE": 321,
+    "STRUCTURAL_DAMAGE": 168
+  },
+  "universe_label_counts": {
+    "INDEPENDENT_CURRENT_CONSTITUENTS": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 1011,
+      "HEALTHY_CONTINUATION": 489,
+      "NO_ECONOMIC_EDGE": 286,
+      "STRUCTURAL_DAMAGE": 145
+    },
+    "PRIMARY": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 110,
+      "HEALTHY_CONTINUATION": 62,
+      "NO_ECONOMIC_EDGE": 35,
+      "STRUCTURAL_DAMAGE": 23
+    }
+  },
+  "fold_label_counts": {
+    "F02": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 175,
+      "HEALTHY_CONTINUATION": 91,
+      "NO_ECONOMIC_EDGE": 29,
+      "STRUCTURAL_DAMAGE": 16
+    },
+    "F04": {
+      "STRUCTURAL_DAMAGE": 90,
+      "ECONOMIC_REBUY_OPPORTUNITY": 86,
+      "NO_ECONOMIC_EDGE": 48,
+      "HEALTHY_CONTINUATION": 20
+    },
+    "F01": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 146,
+      "HEALTHY_CONTINUATION": 128,
+      "NO_ECONOMIC_EDGE": 44,
+      "STRUCTURAL_DAMAGE": 7
+    },
+    "F03": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 106,
+      "HEALTHY_CONTINUATION": 23,
+      "NO_ECONOMIC_EDGE": 20,
+      "STRUCTURAL_DAMAGE": 9
+    },
+    "F06": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 97,
+      "HEALTHY_CONTINUATION": 28,
+      "NO_ECONOMIC_EDGE": 27,
+      "STRUCTURAL_DAMAGE": 26
+    },
+    "F09": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 130,
+      "NO_ECONOMIC_EDGE": 49,
+      "HEALTHY_CONTINUATION": 39,
+      "STRUCTURAL_DAMAGE": 14
+    },
+    "F05": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 173,
+      "HEALTHY_CONTINUATION": 122,
+      "NO_ECONOMIC_EDGE": 53
+    },
+    "F08": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 97,
+      "HEALTHY_CONTINUATION": 82,
+      "NO_ECONOMIC_EDGE": 29,
+      "STRUCTURAL_DAMAGE": 4
+    },
+    "F07": {
+      "ECONOMIC_REBUY_OPPORTUNITY": 111,
+      "NO_ECONOMIC_EDGE": 22,
+      "HEALTHY_CONTINUATION": 18,
+      "STRUCTURAL_DAMAGE": 2
+    }
+  },
+  "exclusions": {
+    "OUTSIDE_FIXED_FOLD": 3715,
+    "RIGHT_CENSORED": 0
+  },
+  "checks": {
+    "minimum_total_labeled_events": true,
+    "economic_rebuy_opportunity_minimum_events": true,
+    "economic_rebuy_opportunity_minimum_tickers": true,
+    "economic_rebuy_opportunity_minimum_folds": true,
+    "healthy_continuation_minimum_events": true,
+    "healthy_continuation_minimum_tickers": true,
+    "healthy_continuation_minimum_folds": true
+  },
+  "coverage_passed": true,
+  "direction_evidence_admitted": false,
+  "labels_authorize_actions": false,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "panel_path": "data/reports/profit_take_success_label_v2.csv",
+  "panel_sha256": "f17637313909580ee2b54c07653bcc6293eae38752b89aa6876d3d5f2f0a4ce4"
+}

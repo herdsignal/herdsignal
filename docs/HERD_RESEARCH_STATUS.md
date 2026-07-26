@@ -48,6 +48,25 @@
 계약과 결과는 `data/herd/profit_take_opportunity_ceiling_v1.json`,
 `data/reports/profit_take_opportunity_ceiling_v1.json`이다.
 
+## 익절·재매수 성공 라벨 V2
+
+- 상한선의 미래 최저가를 실행 규칙으로 사용하지 않고 학습 목표 생성에만
+  사용한다. 고정 9개 가격 fold 안에서 126세션 결과가 모두 끝난 사건만
+  포함했다.
+- `STRUCTURAL_DAMAGE`를 최우선으로 분리한 뒤 비용 스트레스에서도 제약
+  기회가 남은 사건만 `ECONOMIC_REBUY_OPPORTUNITY`로 정의했다. 기회가
+  없고 상승 지속 경로인 사건은 `HEALTHY_CONTINUATION`, 나머지는
+  `NO_ECONOMIC_EDGE`다.
+- 439종목 2,161건에서 경제적 기회 1,121건, 건강한 지속 551건, 구조
+  훼손 168건, 우위 없음 321건을 확보했다. 두 주요 클래스는 사건·종목·
+  fold coverage 게이트를 통과했다.
+- 미래 경로, oracle 재진입 가격과 경제 라벨은 모델 입력으로 사용할 수
+  없다. 이 단계는 주장 범위와 단순 기준선 설계만 허용하며 방향 증거와
+  사용자 행동 권한은 계속 0이다.
+
+계약과 라벨 원장은 `data/herd/profit_take_success_label_v2.json`,
+`data/reports/profit_take_success_label_v2.csv`다.
+
 ## Part A — 실패 가설 지도
 
 - 가격 확장, Rush 전환, 하방 비대칭, 시장·섹터·참여, SEC PIT 기업 상태,

@@ -1,0 +1,77 @@
+{
+  "contract_version": "HERD_PROFIT_TAKE_SUCCESS_LABEL_V2",
+  "status": "LOCKED_BEFORE_LABEL_COUNTS",
+  "locked_at": "2026-07-26",
+  "objective": "Create mutually exclusive preholdout targets for economically useful five-percent trim opportunities without using the future oracle as an executable rule.",
+  "inputs": [
+    {"path": "data/herd/profit_take_opportunity_ceiling_v1.json", "sha256": "a009e826d14ac72a0b655fa62019ce2c41b53b02c4c0d40b05d899de3b05e8fe"},
+    {"path": "data/reports/profit_take_opportunity_ceiling_v1.json", "sha256": "3386515d8c9f6a57f8541b8be07d89057afabac7352f428123095b08839d3883"},
+    {"path": "data/reports/profit_take_opportunity_ceiling_v1.csv", "sha256": "714154b485b9d2e388131fda15259a9bb2365a9cf87aaaab8578b6715958f12f"},
+    {"path": "data/herd/opportunity_cycle_target_v1.json", "sha256": "7a70d6a1749a6f36a47f4e3dab821b3a61f467e0b15a9faa83fb68d1647ecb46"},
+    {"path": "data/herd/vnext_competing_path_economic_label_v1.json", "sha256": "9d78a297852379be5b5058616047893d67f5385acebaa1b9a7c99a46bc279f8e"},
+    {"path": "data/walk_forward/long-oos-v2-20260721/price_timing_6m.csv", "sha256": "18d82f2edd3e9be0d0d5882dedc88c6763203f24c042a2e65909c6ffbee9b831"}
+  ],
+  "population": {
+    "source": "SPARSE_ELIGIBLE_STATE_S1_RUSH_ENTRIES",
+    "maximum_events_per_ticker_year": 2,
+    "historical_role": "REPEATED_PREHOLDOUT_OOS_TARGETS",
+    "outcome_must_end_inside_test_fold": true,
+    "right_censored": "EXCLUDED_WITH_COUNT"
+  },
+  "labels_in_priority_order": [
+    {
+      "label": "STRUCTURAL_DAMAGE",
+      "condition": "TERMINAL_PATH_EQUALS_STRUCTURAL_BREAK",
+      "role": "FUTURE_BUSINESS_OR_DAMAGE_VETO_TARGET_NOT_A_REENTRY_SUCCESS"
+    },
+    {
+      "label": "ECONOMIC_REBUY_OPPORTUNITY",
+      "condition": "STRESS_CONSTRAINED_OPPORTUNITY_IS_TRUE_AND_NOT_STRUCTURAL_DAMAGE",
+      "role": "PRIMARY_POSITIVE_TARGET"
+    },
+    {
+      "label": "HEALTHY_CONTINUATION",
+      "condition": "STRESS_CONSTRAINED_OPPORTUNITY_IS_FALSE_AND_TERMINAL_PATH_EQUALS_CONTINUATION",
+      "role": "PREMATURE_TRIM_COST_TARGET"
+    },
+    {
+      "label": "NO_ECONOMIC_EDGE",
+      "condition": "ALL_OTHER_RESOLVED_PATHS",
+      "role": "ABSTAIN_TARGET"
+    }
+  ],
+  "economic_fields": [
+    "STRESS_CONSTRAINED_SLEEVE_SHARE_DELTA_RATE",
+    "STRESS_CONSTRAINED_TIME_TO_REENTRY_SESSIONS",
+    "MAXIMUM_FAVORABLE_EXCURSION",
+    "MAXIMUM_ADVERSE_EXCURSION",
+    "TERMINAL_RETURN",
+    "FIRST_BOUNDARY",
+    "TERMINAL_PATH"
+  ],
+  "firewall": {
+    "future_fields_are_labels_only": true,
+    "future_fields_may_enter_features": false,
+    "oracle_reentry_may_execute": false,
+    "labels_authorize_actions": false,
+    "survivorship_safe": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  },
+  "next_gate": {
+    "minimum_total_labeled_events": 1000,
+    "minimum_events_each_primary_class": 100,
+    "minimum_tickers_each_primary_class": 30,
+    "minimum_folds_each_primary_class": 5,
+    "passing_only_allows_claim_lane_and_baseline_design": true
+  },
+  "forbidden": [
+    "USE_FUTURE_FIELD_AS_MODEL_INPUT",
+    "TREAT_STRUCTURAL_DAMAGE_AS_REBUY_SUCCESS",
+    "DROP_HEALTHY_CONTINUATION",
+    "CHANGE_LABEL_PRIORITY_AFTER_COUNTS",
+    "USE_ORACLE_REENTRY_PRICE_IN_BACKTEST",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ]
+}
