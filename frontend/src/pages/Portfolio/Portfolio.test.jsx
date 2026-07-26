@@ -10,7 +10,12 @@ vi.mock('./usePortfolioPageData', () => ({
 
 function pageData() {
   return {
-    portfolio: [{ ticker: 'NVDA', avgPrice: 100, quantity: 2 }],
+    portfolio: [{
+      ticker: 'NVDA',
+      avgPrice: 100,
+      quantity: 2,
+      targetWeight: 0.6,
+    }],
     summary: {
       total_value: 500,
       total_asset_value: 500,
@@ -46,6 +51,8 @@ function pageData() {
       returnPct: 100,
       dailyChangePct: -2,
       weightPct: 80,
+      targetWeightPct: 60,
+      targetGapPct: 20,
       avgPrice: 100,
       quantity: 2,
       cost: 200,
@@ -58,6 +65,13 @@ function pageData() {
     sortBy: 'weight',
     selectSort: vi.fn(),
     todayChange: { amount: -8, pct: -1.6 },
+    exposure: {
+      topHolding: { ticker: 'NVDA', weightPct: 80 },
+      topThreeWeightPct: 80,
+      largestSector: { name: 'Technology', weightPct: 80 },
+      cashWeightPct: 20,
+      sectors: [{ name: 'Technology', weightPct: 80 }],
+    },
     displayAmount: (value) => value == null ? '—' : `$${Number(value).toFixed(2)}`,
     displaySignedAmount: (value) => value == null
       ? '—'
@@ -66,7 +80,9 @@ function pageData() {
     fetchData: vi.fn(),
     handleCashSave: vi.fn(),
     handleDelete: vi.fn(),
+    handleTargetWeightSave: vi.fn(),
     deletingTicker: null,
+    targetSavingTicker: null,
     modalTicker: null,
     setModalTicker: vi.fn(),
     modalStock: null,
@@ -87,9 +103,11 @@ describe('Portfolio Lens', () => {
     expect(screen.getByRole('heading', { name: '내 포트폴리오' })).toBeInTheDocument()
     expect(screen.getByText('전체 자산')).toBeInTheDocument()
     expect(screen.getByText('주식 평가액')).toBeInTheDocument()
-    expect(screen.getByText('현금')).toBeInTheDocument()
+    expect(screen.getAllByText('현금').length).toBeGreaterThan(0)
     expect(screen.getByText('계좌 가치 변화')).toBeInTheDocument()
     expect(screen.getByText('투자 수익률 아님')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '비중·노출' })).toBeInTheDocument()
+    expect(screen.getByText('ETF 내부 섹터 구성 미반영', { exact: false })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '상세 보기' })).toHaveAttribute('href', '/history')
     expect(screen.getByRole('img', { name: /HERD 78/ })).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/매수|매도|익절|추천/)
@@ -114,6 +132,8 @@ describe('Portfolio Lens', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'NVDA 보유 정보 관리' }))
     expect(screen.getByText('평균 매수가')).toBeInTheDocument()
+    expect(screen.getByText('+20.0%p')).toBeInTheDocument()
+    expect(screen.getByLabelText('목표 비중 (%)')).toHaveValue(60)
     expect(screen.getByRole('button', { name: '종목 분석' })).toBeInTheDocument()
   })
 })

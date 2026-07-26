@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import AvgPriceModal from '../../components/AvgPriceModal/AvgPriceModal'
 import PortfolioHistory from './PortfolioHistory'
 import PortfolioHoldings from './PortfolioHoldings'
+import PortfolioExposure from './PortfolioExposure'
 import { usePortfolioPageData } from './usePortfolioPageData'
 import styles from './Portfolio.module.css'
 
@@ -41,13 +42,16 @@ export default function Portfolio() {
     sortBy,
     selectSort,
     todayChange,
+    exposure,
     displayAmount,
     displaySignedAmount,
     refresh,
     fetchData,
     handleCashSave,
     handleDelete,
+    handleTargetWeightSave,
     deletingTicker,
+    targetSavingTicker,
     modalTicker,
     setModalTicker,
     modalStock,
@@ -173,6 +177,8 @@ export default function Portfolio() {
             onPeriodChange={setAssetHistoryPeriod}
           />
 
+          <PortfolioExposure exposure={exposure} />
+
           <PortfolioHoldings
             rows={sortedRows}
             sortBy={sortBy}
@@ -183,6 +189,8 @@ export default function Portfolio() {
             onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
             onEditHolding={setModalTicker}
             onDelete={handleDelete}
+            onTargetWeightSave={handleTargetWeightSave}
+            targetSavingTicker={targetSavingTicker}
           />
 
           <footer className={styles.meta}>

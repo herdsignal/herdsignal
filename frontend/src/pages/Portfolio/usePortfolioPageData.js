@@ -8,6 +8,7 @@ import { usePortfolioData } from './usePortfolioData'
 import { usePortfolioMutations } from './usePortfolioMutations'
 import {
   buildPortfolioRows,
+  buildPortfolioExposure,
   portfolioTodayChange,
   sortPortfolioRows,
 } from './portfolioModel'
@@ -81,6 +82,13 @@ export function usePortfolioPageData() {
     () => portfolioTodayChange(data.summary),
     [data.summary],
   )
+  const totalAssetValue = data.summary?.total_asset_value
+    ?? data.summary?.total_value
+    ?? 0
+  const exposure = useMemo(
+    () => buildPortfolioExposure(rows, data.cashBalance, totalAssetValue),
+    [data.cashBalance, rows, totalAssetValue],
+  )
 
   const displayAmount = useCallback((usdValue) => {
     if (usdValue == null) return '—'
@@ -127,6 +135,7 @@ export function usePortfolioPageData() {
     rows,
     sortedRows,
     todayChange,
+    exposure,
     displayAmount,
     displaySignedAmount,
     refresh,

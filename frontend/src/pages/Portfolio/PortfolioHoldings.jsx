@@ -10,6 +10,12 @@ function toneClass(value) {
   return Number(value) > 0 ? styles.positive : styles.negative
 }
 
+function isValidTargetWeight(value) {
+  if (value == null || String(value).trim() === '') return false
+  const numeric = Number(value)
+  return Number.isFinite(numeric) && numeric >= 0 && numeric <= 100
+}
+
 export default function PortfolioHoldings({
   rows,
   sortBy,
@@ -20,8 +26,11 @@ export default function PortfolioHoldings({
   onOpenStock,
   onEditHolding,
   onDelete,
+  onTargetWeightSave,
+  targetSavingTicker,
 }) {
   const [expandedTicker, setExpandedTicker] = useState(null)
+  const [targetDrafts, setTargetDrafts] = useState({})
 
   return (
     <section className={styles.holdingsSection} aria-labelledby="holdings-title">
@@ -78,7 +87,11 @@ export default function PortfolioHoldings({
                   </span>
                   <span className={styles.amountCell}>
                     <strong>{displayAmount(row.marketValue)}</strong>
-                    <small>{row.weightPct == null ? '—' : `${row.weightPct.toFixed(1)}%`}</small>
+                    <small>
+                      현재 {row.weightPct == null ? '—' : `${row.weightPct.toFixed(1)}%`}
+                      {' · '}
+                      목표 {row.targetWeightPct == null ? '미설정' : `${row.targetWeightPct.toFixed(1)}%`}
+                    </small>
                   </span>
                   <span className={toneClass(row.returnPct)}>
                     <strong>{fmtPct(row.returnPct)}</strong>
@@ -127,7 +140,46 @@ export default function PortfolioHoldings({
                       <dd>{row.herdPreviousScore == null ? '—' : Math.round(row.herdPreviousScore)}</dd>
                     </div>
                     <div><dt>관찰일</dt><dd>{row.observationDate ?? '—'}</dd></div>
+                    <div>
+                      <dt>목표 비중 차이</dt>
+                      <dd>
+                        {row.targetGapPct == null
+                          ? '—'
+                          : `${row.targetGapPct > 0 ? '+' : ''}${row.targetGapPct.toFixed(1)}%p`}
+                      </dd>
+                    </div>
                   </dl>
+                  <div className={styles.targetWeightEditor}>
+                    <label htmlFor={`target-weight-${row.ticker}`}>목표 비중 (%)</label>
+                    <input
+                      id={`target-weight-${row.ticker}`}
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      value={targetDrafts[row.ticker] ?? row.targetWeightPct ?? ''}
+                      placeholder="미설정"
+                      onChange={(event) => setTargetDrafts((current) => ({
+                        ...current,
+                        [row.ticker]: event.target.value,
+                      }))}
+                    />
+                    <button
+                      type="button"
+                      disabled={
+                        targetSavingTicker === row.ticker
+                        || !isValidTargetWeight(
+                          targetDrafts[row.ticker] ?? row.targetWeightPct,
+                        )
+                      }
+                      onClick={() => onTargetWeightSave(
+                        row.ticker,
+                        targetDrafts[row.ticker] ?? row.targetWeightPct,
+                      )}
+                    >
+                      {targetSavingTicker === row.ticker ? '저장 중…' : '비중 저장'}
+                    </button>
+                  </div>
                   <div className={styles.rowActions}>
                     <button type="button" onClick={() => onOpenStock(row.ticker)}>
                       종목 분석

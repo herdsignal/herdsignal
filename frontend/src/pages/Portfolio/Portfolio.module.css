@@ -267,6 +267,7 @@
 }
 
 .historySection,
+.exposureSection,
 .holdingsSection {
   border-top: 1px solid var(--hs-line);
 }
@@ -354,6 +355,86 @@
 
 .holdingsSection {
   margin-top: 54px;
+}
+
+.exposureSection {
+  margin-top: 54px;
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.exposureSummary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--hs-line);
+}
+
+.exposureSummary > div {
+  display: flex;
+  min-width: 0;
+  min-height: 104px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px 20px;
+}
+
+.exposureSummary > div + div {
+  border-left: 1px solid var(--hs-line);
+}
+
+.exposureSummary span,
+.exposureSummary small,
+.sectorExposure span,
+.exposureNote,
+.targetWeightEditor label {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.exposureSummary strong {
+  margin: 8px 0 5px;
+  overflow: hidden;
+  color: var(--hs-text);
+  font-size: var(--hs-type-body);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sectorExposure {
+  display: grid;
+  gap: 11px;
+  padding: 22px 20px;
+  border-top: 1px solid var(--hs-line);
+}
+
+.sectorExposure > div {
+  display: grid;
+  grid-template-columns: minmax(100px, 160px) minmax(80px, 1fr) 48px;
+  align-items: center;
+  gap: 14px;
+}
+
+.sectorExposure i {
+  height: 3px;
+  overflow: hidden;
+  background: var(--hs-line);
+}
+
+.sectorExposure b {
+  display: block;
+  height: 100%;
+  background: var(--hs-text-subtle);
+}
+
+.sectorExposure strong {
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-label);
+  font-weight: 620;
+  text-align: right;
+}
+
+.exposureNote {
+  margin: 0;
+  padding: 0 20px 18px;
 }
 
 .holdingsTable {
@@ -467,10 +548,41 @@
 
 .holdingDetails {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: end;
   gap: 28px;
   padding: 0 0 20px 52px;
+}
+
+.targetWeightEditor {
+  display: grid;
+  grid-template-columns: 88px 74px;
+  gap: 6px;
+  align-items: center;
+}
+
+.targetWeightEditor label {
+  grid-column: 1 / -1;
+}
+
+.targetWeightEditor input {
+  width: 74px;
+  padding: 8px 7px;
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-sm);
+  background: var(--hs-surface);
+  color: var(--hs-text);
+  font-size: var(--hs-type-label);
+}
+
+.targetWeightEditor button {
+  padding: 8px 7px;
+  border: 1px solid var(--hs-line-strong);
+  border-radius: var(--hs-radius-sm);
+  background: transparent;
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-micro);
+  cursor: pointer;
 }
 
 .holdingDetails dl {
@@ -570,6 +682,19 @@
   .holdingDetails dl {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .exposureSummary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .exposureSummary > div:nth-child(3) {
+    border-left: 0;
+    border-top: 1px solid var(--hs-line);
+  }
+
+  .exposureSummary > div:nth-child(4) {
+    border-top: 1px solid var(--hs-line);
+  }
 }
 
 @media (max-width: 680px) {
@@ -634,6 +759,10 @@
     margin-top: 40px;
   }
 
+  .exposureSection {
+    margin-top: 40px;
+  }
+
   .sectionHeader {
     align-items: flex-start;
     min-height: 76px;
@@ -678,6 +807,11 @@
 
   .holdingDetails dl {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sectorExposure > div {
+    grid-template-columns: 90px minmax(60px, 1fr) 44px;
+    gap: 9px;
   }
 
   .rowActions {

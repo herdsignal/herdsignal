@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import {
   removeFromPortfolio,
   updateCashBalance,
+  updateTargetWeight,
 } from '../../api/herdApi'
 import {
   CACHE_KEY_REALTIME,
@@ -29,6 +30,7 @@ export function usePortfolioMutations({
 }) {
   const [deletingTicker, setDeletingTicker] = useState(null)
   const [cashSaving, setCashSaving] = useState(false)
+  const [targetSavingTicker, setTargetSavingTicker] = useState(null)
 
   const handleCashSave = useCallback(async () => {
     const amount = Number(cashDraft || 0)
@@ -99,6 +101,40 @@ export function usePortfolioMutations({
     userId,
   ])
 
+  const handleTargetWeightSave = useCallback(async (ticker, percent) => {
+    if (percent == null || String(percent).trim() === '') return false
+    const numeric = Number(percent)
+    if (
+      targetSavingTicker
+      || !Number.isFinite(numeric)
+      || numeric < 0
+      || numeric > 100
+    ) return false
+    setTargetSavingTicker(ticker)
+    try {
+      const decimal = numeric / 100
+      await updateTargetWeight(ticker, decimal)
+      setPortfolio((previous) => previous.map((item) => (
+        item.ticker === ticker
+          ? { ...item, targetWeight: decimal, target_weight: decimal }
+          : item
+      )))
+      setTargetWeights((previous) => ({ ...previous, [ticker]: decimal }))
+      setRefreshNotice(`${ticker} 목표 비중을 저장했습니다.`)
+      return true
+    } catch {
+      setRefreshNotice(`${ticker} 목표 비중 저장에 실패했습니다.`)
+      return false
+    } finally {
+      setTargetSavingTicker(null)
+    }
+  }, [
+    setPortfolio,
+    setRefreshNotice,
+    setTargetWeights,
+    targetSavingTicker,
+  ])
+
   const handleModalSaved = useCallback((newAvgPrice, newQuantity) => {
     const ticker = modalTicker
     setPortfolio((previous) => previous.map((item) => (
@@ -166,8 +202,10 @@ export function usePortfolioMutations({
   return {
     deletingTicker,
     cashSaving,
+    targetSavingTicker,
     handleCashSave,
     handleDelete,
+    handleTargetWeightSave,
     handleModalSaved,
     modalStock,
   }

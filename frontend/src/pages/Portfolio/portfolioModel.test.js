@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildPortfolioRows,
+  buildPortfolioExposure,
   historyChartGeometry,
   portfolioTodayChange,
   sortPortfolioRows,
@@ -29,12 +30,17 @@ describe('portfolio lens model', () => {
   it('builds account weights and four-week HERD history without actions', () => {
     const rows = buildPortfolioRows(
       [
-        { ticker: 'NVDA', avgPrice: 100, quantity: 5 },
-        { ticker: 'TSLA', avgPrice: 210, quantity: 2 },
+        { ticker: 'NVDA', avgPrice: 100, quantity: 5, targetWeight: 0.4 },
+        { ticker: 'TSLA', avgPrice: 210, quantity: 2, targetWeight: 0.3 },
       ],
       summary,
       {
-        NVDA: { herdScore: 74, delta4w: 6, herdStage: 'Herd Drift' },
+        NVDA: {
+          herdScore: 74,
+          delta4w: 6,
+          herdStage: 'Herd Drift',
+          sector: 'Technology',
+        },
       },
     )
 
@@ -44,9 +50,33 @@ describe('portfolio lens model', () => {
       cost: 500,
       pnl: 100,
       herdPreviousScore: 68,
+      targetWeightPct: 40,
+      targetGapPct: 10,
+      sector: 'Technology',
     })
     expect(rows[1].herdScore).toBeNull()
     expect(rows[0]).not.toHaveProperty('action')
+  })
+
+  it('summarizes direct holding and sector exposure without assigning risk grades', () => {
+    const rows = buildPortfolioRows(
+      [
+        { ticker: 'NVDA', targetWeight: 0.4 },
+        { ticker: 'TSLA', targetWeight: 0.3 },
+      ],
+      summary,
+      {
+        NVDA: { sector: 'Technology' },
+        TSLA: { sector: 'Consumer Cyclical' },
+      },
+    )
+    const exposure = buildPortfolioExposure(rows, 200, 1200)
+
+    expect(exposure.topHolding).toEqual({ ticker: 'NVDA', weightPct: 50 })
+    expect(exposure.topThreeWeightPct).toBeCloseTo(83.33)
+    expect(exposure.cashWeightPct).toBeCloseTo(16.67)
+    expect(exposure.largestSector.name).toBe('Technology')
+    expect(exposure).not.toHaveProperty('riskGrade')
   })
 
   it('sorts null observations last and computes daily account movement', () => {
