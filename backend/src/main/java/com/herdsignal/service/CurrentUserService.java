@@ -18,6 +18,9 @@ public class CurrentUserService {
     @Value("${herdsignal.auth.enabled:false}")
     private boolean authEnabled;
 
+    @Value("${herdsignal.auth.owner-email:}")
+    private String ownerEmail;
+
     public String requireUserId() {
         if (!authEnabled) return "local";
         return requireUser().getId();
@@ -41,6 +44,12 @@ public class CurrentUserService {
         }
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         return AuthUserResponse.authenticated(findGoogleUser(oidcUser.getSubject()));
+    }
+
+    public boolean isOwner() {
+        if (!authEnabled) return true;
+        if (ownerEmail == null || ownerEmail.isBlank()) return false;
+        return ownerEmail.equalsIgnoreCase(requireUser().getEmail());
     }
 
     private AppUser requireUser() {
