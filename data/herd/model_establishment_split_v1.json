@@ -1,0 +1,62 @@
+{
+  "split_version": "HERD_MODEL_ESTABLISHMENT_SPLIT_V1",
+  "status": "LOCKED_WITH_BLIND_HOLDOUT_UNASSIGNED",
+  "locked_at": "2026-07-26",
+  "input_contract": {
+    "path": "data/herd/research_input_manifest_v2.json",
+    "sha256": "f46b91f40cf59cbda9b2fa6985c2134d4afee5916a97a83ab74d860cb57c5d3d"
+  },
+  "fold_protocol": {
+    "path": "data/herd/oos_fold_protocol.json",
+    "sha256": "0ce8bdccd06618add641f2b9e28a2771f9782c5466ea910478389b6146410026"
+  },
+  "historical_lanes": {
+    "PRICE_TIMING_6M": {
+      "path": "data/walk_forward/long-oos-v2-20260721/price_timing_6m.csv",
+      "sha256": "18d82f2edd3e9be0d0d5882dedc88c6763203f24c042a2e65909c6ffbee9b831",
+      "role": "REPEATED_PREHOLDOUT_OOS",
+      "minimum_complete_folds": 4,
+      "minimum_oos_years": 5
+    },
+    "BUSINESS_STATE_12M": {
+      "path": "data/walk_forward/long-oos-v2-20260721/business_state_12m.csv",
+      "sha256": "6bbc6757a4907bcead0275571a5ae5e2b7a1618ce0e8b4e288a5cf7480b9be4a",
+      "role": "REPEATED_PREHOLDOUT_OOS",
+      "minimum_complete_folds": 4,
+      "minimum_oos_years": 5
+    }
+  },
+  "historical_data_boundary": {
+    "start": "2012-01-03",
+    "end": "2026-07-17",
+    "post_last_fold_history_role": "DEVELOPMENT_ONLY_ALREADY_OBSERVED",
+    "may_become_blind_holdout": false
+  },
+  "blind_holdout": {
+    "holdout_id": "HERD_VNEXT_UNASSIGNED",
+    "assignment": null,
+    "data_path": null,
+    "status": "SEALED_UNASSIGNED",
+    "evaluation_count": 0,
+    "access_allowed": false,
+    "legacy_v61_holdout_reusable": false
+  },
+  "prospective_shadow": {
+    "protocol_path": "data/herd/unified_pit_shadow_panel_v1.json",
+    "protocol_sha256": "fe19920d1b17255ca0ecd52bf2498dd007ad57efb57f6661f21248560fa4a4ec",
+    "start_after": "2026-07-17",
+    "role": "FORWARD_OBSERVATION_ONLY",
+    "may_train_or_select_candidate": false,
+    "may_authorize_action": false
+  },
+  "invariants": {
+    "fold_test_windows_non_overlapping_within_lane": true,
+    "label_outcome_must_end_inside_test_fold": true,
+    "purge_and_embargo_required": true,
+    "cross_fold_event_reuse_forbidden": true,
+    "blind_dates_must_remain_unassigned_until_prerequisites_pass": true,
+    "prospective_shadow_must_not_be_backfilled": true,
+    "current_constituent_universe_is_not_survivorship_safe": true,
+    "operational_action_ratio": 0.0
+  }
+}
