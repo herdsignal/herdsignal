@@ -123,6 +123,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/failed_hypothesis_map_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/failed_price_information_audit_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -732,7 +736,7 @@
     },
     {
       "path": "data/reports/business_guard_oos_v1.json",
-      "status": "REVIEW_REQUIRED"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/business_state_events_v2.csv",
@@ -848,7 +852,7 @@
     },
     {
       "path": "data/reports/expectation_evidence_oos_v1.json",
-      "status": "REVIEW_REQUIRED"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/expectation_evidence_oos_v1_comparison.csv",
@@ -1004,7 +1008,7 @@
     },
     {
       "path": "data/reports/independent_rush_evidence_v1.json",
-      "status": "REVIEW_REQUIRED"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/independent_universe_v1.csv",
@@ -1244,7 +1248,7 @@
     },
     {
       "path": "data/reports/rush_pre_damage_path_audit_v2.json",
-      "status": "REVIEW_REQUIRED"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/rush_pre_damage_path_events_v2.csv",
@@ -2240,7 +2244,7 @@
     },
     {
       "path": "data/reports/weekly_rsi_oos_v1.json",
-      "status": "REVIEW_REQUIRED"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/weekly_rsi_paths_v1.csv",

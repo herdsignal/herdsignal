@@ -1,0 +1,137 @@
+{
+  "map_version": "HERD_FAILED_HYPOTHESIS_MAP_V1",
+  "status": "LOCKED_POST_RESEARCH_AUDIT",
+  "as_of": "2026-07-26",
+  "service_objective": "RARE_PARTIAL_PROFIT_TAKE_AND_EVIDENCE_BACKED_REENTRY_FOR_ALREADY_SELECTED_LONG_TERM_US_EQUITY_HOLDINGS",
+  "legacy_models": {
+    "HERD_V4": "LEGACY_REFERENCE_ONLY",
+    "HERD_V6_1": "LEGACY_REFERENCE_ONLY"
+  },
+  "experiments": [
+    {
+      "id": "WEEKLY_RSI_OVERBOUGHT_V1",
+      "economic_family": "PRICE_EXTENSION",
+      "sample_id": "MATCHED_WEEKLY_RSI_PAIRS_449",
+      "target": "PROFIT_TAKE_DIRECTION",
+      "source": {"path": "data/reports/weekly_rsi_oos_v1.json", "sha256": "bbb9a93e65dc5066131a0bc9192db49618a9e40e653fc57fb34b6af2f48a30ae"},
+      "assertions": {"profit_take_evidence_ready": false, "operational_action_ratio": 0.0},
+      "decision": "REJECTED",
+      "failure": "NO_PASSING_WEEKLY_RSI_HYPOTHESIS",
+      "retry_policy": "NEW_ECONOMIC_HYPOTHESIS_AND_NEW_SAMPLE_REQUIRED"
+    },
+    {
+      "id": "RUSH_PRE_DAMAGE_PRICE_VOLUME_V2",
+      "economic_family": "PRICE_TREND_VOLUME_TRANSITION",
+      "sample_id": "CURRENT_CONSTITUENTS_RUSH_DAMAGE_1998",
+      "target": "ADVERSE_VS_BENIGN_RUSH_PATH",
+      "source": {"path": "data/reports/rush_pre_damage_path_audit_v2.json", "sha256": "5617a9a793af132bef064627f5806b25de7a4290f11e8dedd91f181b45bc110c"},
+      "assertions": {"retained_count": 0, "profit_take_authorized": false, "operational_action_ratio": 0.0},
+      "decision": "REJECTED",
+      "failure": "NO_REPEATED_PRE_DAMAGE_SEPARATOR_AND_75_4_PERCENT_BENIGN_PATHS",
+      "retry_policy": "NEW_INFORMATION_FAMILY_AND_NEW_SAMPLE_REQUIRED"
+    },
+    {
+      "id": "RUSH_DOWNSIDE_ASYMMETRY_V1",
+      "economic_family": "PRICE_DOWNSIDE_ASYMMETRY",
+      "sample_id": "TICKER_DISJOINT_RUSH_EVENTS_240",
+      "target": "ADVERSE_VS_BENIGN_RUSH_PATH",
+      "source": {"path": "data/reports/rush_downside_asymmetry_oos_v1.json", "sha256": "636fbc88fa1c4e670f9db99360b7551d5e50211422f3b697a6ff93b85bbceda6"},
+      "assertions": {"status": "HYPOTHESIS_REJECTED", "operational_action_authority": false},
+      "decision": "REJECTED",
+      "failure": "NO_DIRECTIONAL_EFFECT_AND_NEGATIVE_PARTIAL_SALE_UPLIFT",
+      "retry_policy": "NEW_ECONOMIC_HYPOTHESIS_AND_NEW_SAMPLE_REQUIRED"
+    },
+    {
+      "id": "INDEPENDENT_RUSH_TRANSITION_FAMILIES_V1",
+      "economic_family": "SECTOR_RS_TREND_PARTICIPATION_MARKET_STRESS",
+      "sample_id": "CURRENT_SP500_INDEPENDENT_RUSH_2768",
+      "target": "ADVERSE_VS_BENIGN_RUSH_PATH",
+      "source": {"path": "data/reports/independent_rush_evidence_v1.json", "sha256": "0875c483685d219db00cadc9224efd7283a0849824d60cbc6ad94080cbf2ab52"},
+      "assertions": {"admitted_count": 0, "operational_action_authority": false},
+      "decision": "REJECTED",
+      "failure": "ZERO_OF_FOUR_PRICE_CONTEXT_FEATURES_ADMITTED",
+      "retry_policy": "NO_THRESHOLD_RETUNING_ON_THIS_OOS"
+    },
+    {
+      "id": "VNEXT_COMBINED_PATH_MODEL_V1",
+      "economic_family": "MULTI_FAMILY_COMPOSITE",
+      "sample_id": "PREHOLDOUT_F1_F4",
+      "target": "ADVERSE_RUSH_PATH",
+      "source": {"path": "data/reports/vnext_preholdout_evaluation_v1.json", "sha256": "1bf604eb91e2f12af874f68a92066dcba3269868a24bf5f15072f2499030a88e"},
+      "assertions": {"path_model_passed": false, "decision": "NO_ADOPTABLE_CANDIDATE", "operational_action_ratio": 0.0},
+      "decision": "REJECTED",
+      "failure": "AUC_LOG_LOSS_CALIBRATION_AND_ABLATION_GATES_FAILED",
+      "retry_policy": "DO_NOT_RECOMBINE_REJECTED_FAMILIES"
+    },
+    {
+      "id": "SEC_PIT_BUSINESS_GUARD_V1",
+      "economic_family": "PIT_BUSINESS_STATE",
+      "sample_id": "FIXED_PRICE_UNIVERSE_BUSINESS_FOLDS",
+      "target": "ADD_BUY_VETO",
+      "source": {"path": "data/reports/business_guard_oos_v1.json", "sha256": "4cf1786c0c50e59bc85713f324ad4b4456e466ea93df6f73752e1bf6f6113d32"},
+      "assertions": {"decision": "REJECT_BUSINESS_GUARD_PREDICTIVE_EVIDENCE", "primary_outcomes_passed": 0},
+      "decision": "REJECTED",
+      "failure": "ZERO_OF_TWO_PRIMARY_OUTCOMES_PASSED",
+      "retry_policy": "NEW_PIT_DEFINITION_AND_NEW_SAMPLE_REQUIRED"
+    },
+    {
+      "id": "FORM4_INSIDER_PURCHASE_SUPPORT_V1",
+      "economic_family": "INSIDER_BEHAVIOR",
+      "sample_id": "FORM4_RUSH_EPISODES_2626",
+      "target": "REENTRY_SUPPORT",
+      "source": {"path": "data/reports/sec_form4_insider_purchase_oos_v1.json", "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"},
+      "assertions": {"status": "REJECT_INSIDER_PURCHASE_SUPPORT_HYPOTHESIS", "result.passed": false, "operational_action_authority": false},
+      "decision": "REJECTED",
+      "failure": "INSUFFICIENT_FOLD_COVERAGE_AND_BOOTSTRAP_INTERVAL_CROSSED_ZERO",
+      "retry_policy": "NEW_PROSPECTIVE_SAMPLE_REQUIRED"
+    },
+    {
+      "id": "MANAGEMENT_GUIDANCE_LOWER_V2",
+      "economic_family": "MANAGEMENT_EXPECTATION",
+      "sample_id": "GUIDANCE_REVISION_PAIRS_170",
+      "target": "BUSINESS_DAMAGE_VETO",
+      "source": {"path": "data/reports/sec_guidance_lower_oos_v2.json", "sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d"},
+      "assertions": {"adoption_gate_passed": false, "decision": "REJECT_GUIDANCE_LOWER_HYPOTHESIS", "operational_action_ratio": 0.0},
+      "decision": "REJECTED",
+      "failure": "EFFECT_DIRECTION_AND_BOOTSTRAP_GATES_FAILED",
+      "retry_policy": "NO_MAGNITUDE_OR_HORIZON_RETUNING_ON_THIS_OOS"
+    },
+    {
+      "id": "SEC_13F_SLOW_CROWDING_INCREMENTAL_V1",
+      "economic_family": "INSTITUTIONAL_CROWDING",
+      "sample_id": "BREAKING_EVENTS_OOS_1423",
+      "target": "INCREMENTAL_ADVERSE_PATH_DIRECTION",
+      "source": {"path": "data/reports/sec_13f_crowding_incremental_oos_v1.json", "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"},
+      "assertions": {"status": "SEC_13F_DIRECTION_HYPOTHESIS_REJECTED", "hyperparameter_search": false, "operational_action_ratio": 0.0},
+      "decision": "REJECTED",
+      "failure": "INCREMENTAL_AUC_LOG_LOSS_FOLD_AND_BOOTSTRAP_GATES_FAILED",
+      "retry_policy": "KEEP_AS_NON_DIRECTIONAL_SLOW_CONTEXT_ONLY"
+    },
+    {
+      "id": "PERSONAL_PROFIT_GIVEBACK_CYCLE_V1",
+      "economic_family": "PERSONAL_GIVEBACK_POLICY",
+      "sample_id": "LONG51_COHORTS_459",
+      "target": "COMPLETED_CYCLE_TERMINAL_WEALTH",
+      "source": {"path": "data/reports/profit_giveback_economic_v1.json", "sha256": "6190d677a1b21fc482397c5f7ce4f0000306b4da2d5bde21bb51742d19b69124"},
+      "assertions": {"passed": false, "status": "PERSONAL_POLICY_REJECTED_PREHOLDOUT", "operational_action_ratio": 0.0},
+      "decision": "REJECTED",
+      "failure": "CYCLE_COUNT_POSITIVE_RATE_CAGR_AND_STRESS_WEALTH_GATES_FAILED",
+      "retry_policy": "NO_POLICY_THRESHOLD_RETUNING_ON_THIS_PREHOLDOUT"
+    }
+  ],
+  "global_rules": {
+    "same_sample_threshold_retuning_forbidden": true,
+    "same_sample_horizon_retuning_forbidden": true,
+    "rejected_feature_recombination_forbidden": true,
+    "legacy_formula_reuse_forbidden": true,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  },
+  "audit_summary": {
+    "experiment_count": 10,
+    "rejected_count": 10,
+    "adoptable_direction_count": 0,
+    "duplicate_experiment_keys": 0,
+    "unmapped_retry_policy_count": 0
+  }
+}

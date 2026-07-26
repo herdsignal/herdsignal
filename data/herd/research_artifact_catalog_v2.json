@@ -42,6 +42,7 @@
       "data/herd/herd_vnext_model_charter_v1.json",
       "data/herd/model_establishment_protocol_v1.json",
       "data/herd/model_establishment_status_v1.json",
+      "data/herd/failed_hypothesis_map_v1.json",
       "data/herd/sec_13f_crowding_protocol_v1.json",
       "data/reports/sec_13f_crowding_protocol_v1.json",
       "data/herd/personal_cashflow_benchmark_v1.json",
@@ -118,7 +119,12 @@
       "data/herd/model_conditional_reentry_gate_v1.json",
       "data/herd/model_completed_cycle_gate_v1.json",
       "data/herd/model_candidate_promotion_gate_v1.json",
-      "data/herd/model_prospective_shadow_gate_v1.json"
+      "data/herd/model_prospective_shadow_gate_v1.json",
+      "data/reports/weekly_rsi_oos_v1.json",
+      "data/reports/rush_pre_damage_path_audit_v2.json",
+      "data/reports/independent_rush_evidence_v1.json",
+      "data/reports/business_guard_oos_v1.json",
+      "data/reports/expectation_evidence_oos_v1.json"
     ],
     "LEGACY_REFERENCE": [
       "data/config/settings.py",
