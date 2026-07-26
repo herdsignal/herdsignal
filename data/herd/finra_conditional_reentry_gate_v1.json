@@ -1,0 +1,22 @@
+{
+  "gate_version": "HERD_FINRA_CONDITIONAL_REENTRY_GATE_V1",
+  "status": "BLOCKED_NO_VALIDATED_TRIM_CASH",
+  "dependency": {
+    "path": "data/herd/finra_five_percent_trim_gate_v1.json",
+    "sha256": "c6b7fd81bf495d21f1f729e851c2079f175ac487e6e3ef24df61486dc7bdde50"
+  },
+  "required_reentry_conditions": [
+    "PRIOR_VALIDATED_TRIM_CASH_EXISTS",
+    "WEAKNESS_EXPLAINED_BY_MARKET_OR_SECTOR",
+    "PIT_BUSINESS_STATE_NOT_DAMAGED",
+    "DOWNTREND_DECELERATED_OR_RELATIVE_STRENGTH_RECOVERED"
+  ],
+  "decision": {
+    "eligible_cash_events": 0,
+    "reentry_simulation_executed": false,
+    "reentry_rows": 0,
+    "candidate_passed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

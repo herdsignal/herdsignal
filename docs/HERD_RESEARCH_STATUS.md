@@ -129,6 +129,16 @@
 
 차단 계약은 `data/herd/finra_five_percent_trim_gate_v1.json`이다.
 
+## Part H — 조건부 재진입 의존성 게이트
+
+- 재진입은 검증된 부분 익절로 생긴 현금이 있을 때만 의미가 있다.
+  Part G 거래가 0건이므로 재진입 대상 현금·시뮬레이션·행동 행도 모두
+  0건으로 고정했다.
+- 시장·섹터 조정, PIT 기업 상태 정상, 하락 둔화 또는 상대강도 회복
+  조건은 향후 유효한 익절 후보가 생길 때까지 평가하지 않는다.
+
+차단 계약은 `data/herd/finra_conditional_reentry_gate_v1.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.

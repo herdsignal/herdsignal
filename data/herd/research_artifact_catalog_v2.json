@@ -106,6 +106,7 @@
       "data/reports/finra_rush_divergence_oos_v1.csv",
       "data/reports/finra_rush_divergence_oos_v1.json",
       "data/herd/finra_five_percent_trim_gate_v1.json",
+      "data/herd/finra_conditional_reentry_gate_v1.json",
       "data/herd/sec_13f_crowding_incremental_oos_v1.json",
       "data/reports/sec_13f_crowding_incremental_panel_v1.csv",
       "data/reports/sec_13f_crowding_incremental_folds_v1.csv",
