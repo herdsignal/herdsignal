@@ -47,4 +47,17 @@ describe('marketFieldModel', () => {
     expect(drift.filter((dot) => radialMotion(dot) < 0).length)
       .toBeGreaterThan(MARKET_FIELD_DOT_COUNT * 0.8)
   })
+
+  it('turns four-week movement into a visible horizontal flow', () => {
+    const gathering = createMarketFieldDots(64, 16, 'drift', 10)
+    const releasing = createMarketFieldDots(64, 16, 'drift', -10)
+    const meanShift = (dots) => (
+      dots.reduce((sum, dot) => sum + dot.shiftAX, 0) / dots.length
+    )
+
+    expect(meanShift(gathering)).toBeGreaterThan(meanShift(releasing))
+    expect(gathering[0].duration).toBeLessThan(
+      createMarketFieldDots(64, 16, 'drift', 0)[0].duration,
+    )
+  })
 })

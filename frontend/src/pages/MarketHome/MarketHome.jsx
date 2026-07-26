@@ -1,5 +1,6 @@
 import MarketField from '../../components/MarketField/MarketField'
 import {
+  formatMarketDelta,
   formatMarketDate,
   marketHomeViewModel,
 } from './marketHomeModel'
@@ -20,7 +21,7 @@ export default function MarketHome() {
         </div>
         <div className={styles.meta}>
           <strong>{formatMarketDate(view.observationDate)}</strong>
-          <span>{view.freshness}</span>
+          <span>{view.freshness} · {formatMarketDelta(view.delta4w)}</span>
         </div>
       </header>
 
@@ -31,7 +32,11 @@ export default function MarketHome() {
           </div>
           )
         : (
-          <MarketField score={view.score} stage={view.stage} />
+          <MarketField
+            score={view.score}
+            stage={view.stage}
+            momentum={view.delta4w}
+          />
           )}
 
       {view.unavailable && (

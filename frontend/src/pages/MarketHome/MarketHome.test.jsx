@@ -9,6 +9,7 @@ vi.mock('./useMarketHomeData', () => ({
       freshnessStatus: 'FRESH',
       scope: 'MARKET_AGGREGATE',
       stateScore: 64,
+      delta4w: -4.2,
       lastObservedSession: '2026-07-23',
     },
     loading: false,
@@ -23,6 +24,8 @@ describe('MarketHome', () => {
     expect(screen.getByRole('heading', { name: 'SPY' })).toBeInTheDocument()
     expect(screen.getByText('MARKET AGGREGATE')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: /HERD 64, Drift/ })).toBeInTheDocument()
+    expect(screen.getByText(/4W -4.2/)).toBeInTheDocument()
+    expect(screen.getByRole('img')).toHaveAttribute('data-motion', 'releasing')
     expect(screen.queryByText(/BUY|SELL|매수|익절/)).not.toBeInTheDocument()
   })
 })

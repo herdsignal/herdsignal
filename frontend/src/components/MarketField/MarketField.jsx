@@ -29,7 +29,12 @@ const STAGES = [
   { label: 'Rush', at: 87.5 },
 ]
 
-export default function MarketField({ score, stage, compact = false }) {
+export default function MarketField({
+  score,
+  stage,
+  momentum = 0,
+  compact = false,
+}) {
   const normalizedScore = clampHerdScore(score)
   const resolvedStage = normalizeStage(stage)
     || stageFromScore(normalizedScore)
@@ -38,6 +43,7 @@ export default function MarketField({ score, stage, compact = false }) {
     normalizedScore,
     MARKET_FIELD_DOT_COUNT,
     resolvedStage,
+    momentum,
   )
   const unavailable = normalizedScore == null
   const currentPosition = unavailable ? 50 : normalizedScore
@@ -55,6 +61,7 @@ export default function MarketField({ score, stage, compact = false }) {
         '--field-score': `${currentPosition}%`,
       }}
       role="img"
+      data-motion={momentum > 0 ? 'gathering' : momentum < 0 ? 'releasing' : 'steady'}
       aria-label={herdLensLabel({
         score: normalizedScore,
         stage: resolvedStage,

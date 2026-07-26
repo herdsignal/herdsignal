@@ -23,6 +23,7 @@ export function createMarketFieldDots(
   score,
   count = MARKET_FIELD_DOT_COUNT,
   stage = 'calm',
+  momentum = 0,
 ) {
   const dotCount = Math.max(8, Math.round(count))
   const normalized = clampHerdScore(score) ?? 50
@@ -30,6 +31,7 @@ export function createMarketFieldDots(
   const anchorX = 47 + normalized * 0.06
   const profile = MOTION_PROFILES[String(stage).toLowerCase()]
     ?? MOTION_PROFILES.calm
+  const direction = Math.max(-20, Math.min(20, Number(momentum) || 0)) / 20
 
   return Array.from({ length: dotCount }, (_, index) => {
     const ratio = Math.sqrt((index + 0.5) / dotCount)
@@ -49,11 +51,15 @@ export function createMarketFieldDots(
       y: 50 + Math.sin(angle) * spread.y * 0.5 * ratio,
       size: 2 + (index % 7 === 0 ? 2 : index % 3 === 0 ? 1 : 0),
       opacity: 0.28 + (index % 5) * 0.11,
-      shiftAX: radialX * radialMotion + tangentX * tangentMotion,
+      shiftAX: radialX * radialMotion
+        + tangentX * tangentMotion
+        + direction * (4 + ratio * 8),
       shiftAY: radialY * radialMotion + tangentY * tangentMotion,
       shiftBX: tangentX * profile.tangent * 0.7 * secondaryDirection,
       shiftBY: tangentY * profile.tangent * 0.7 * secondaryDirection,
-      duration: profile.duration + seededUnit(index, normalized, 4) * 2.4,
+      duration: profile.duration
+        + seededUnit(index, normalized, 4) * 2.4
+        - Math.abs(direction) * 0.7,
       delay: -seededUnit(index, normalized, 5) * (profile.duration + 2.4),
     }
   })
