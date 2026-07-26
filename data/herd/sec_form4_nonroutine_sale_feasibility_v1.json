@@ -1,0 +1,50 @@
+{
+  "protocol_version": "HERD_SEC_FORM4_NONROUTINE_SALE_FEASIBILITY_V1",
+  "status": "LOCKED_BEFORE_SALE_EVENT_BUILD",
+  "locked_at": "2026-07-26",
+  "objective": "Determine whether the existing official Form 4 census supports one price-blind hypothesis about clusters of timing-non-routine insider sales during S1 Rush.",
+  "inputs": [
+    {"path": "data/reference/sec/sec-form4-bulk-v2-2012q1-2026q2-20260723/normalized_manifest.json", "sha256": "fc5877818e705cec2cb197e4b3d7929de1a34f3f5d07de592805e78ef7bcca67"},
+    {"path": "data/reports/sec_form4_census_gate_v2.json", "sha256": "b8e5e658baeab37f1acea3900f9a2df3ff089c706040772cd70d0dfdea0cd773"},
+    {"path": "data/herd/failed_hypothesis_map_v1.json", "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2"}
+  ],
+  "event_definition": {
+    "research_split": "INDEPENDENT_CURRENT_CONSTITUENT",
+    "document_type": "4",
+    "amendments_excluded": true,
+    "transaction_table": "NONDERIV_TRANS",
+    "transaction_code": "S",
+    "positive_shares_and_price_required": true,
+    "direct_ownership_required": true,
+    "eligible_owner_relationships": ["Officer", "Director"],
+    "explicit_10b5_1_evidence_excluded": true,
+    "missing_10b5_1_checkbox": "UNKNOWN_NOT_FALSE",
+    "availability": "FILING_DATE_NEXT_TRADING_SESSION_ONLY"
+  },
+  "timing_classification": {
+    "routine": "At the filing date, the same owner and issuer had a qualifying S sale in the same calendar month in each of the three immediately preceding calendar years.",
+    "warmup": "Before three full prior calendar years are observable, status is UNKNOWN_WARMUP.",
+    "candidate": "After warmup, a sale not matching the routine rule is TIMING_NON_ROUTINE_CANDIDATE.",
+    "claim_limit": "Timing-non-routine is a noisy public proxy and must not be described as informed or illegal trading."
+  },
+  "coverage_gates": {
+    "minimum_owner_sale_events": 20000,
+    "minimum_timing_nonroutine_nonplan_events": 5000,
+    "minimum_candidate_issuers": 300,
+    "minimum_candidate_owners": 2000,
+    "minimum_source_years": 12
+  },
+  "evidence_basis": [
+    {"url": "https://www.nber.org/papers/w16454", "claim": "Trades outside repeated calendar timing were more informative than routine trades in the cited historical sample."},
+    {"url": "https://www.nber.org/papers/w6656", "claim": "Insider purchases were generally more informative than sales, requiring stricter treatment of sale evidence."},
+    {"url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets", "claim": "Official quarterly as-filed structured ownership data are public from 2006 onward; filings remain authoritative."}
+  ],
+  "firewall": {
+    "price_or_return_outcomes_opened": false,
+    "direction_hypothesis_executed": false,
+    "threshold_search": false,
+    "legacy_v4_or_v61_formula_reuse": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "report_version": "HERD_SEC_FORM4_NONROUTINE_SALE_FEASIBILITY_V1",
+  "status": "SALE_FEASIBILITY_COMPLETE",
+  "owner_sale_events": 81531,
+  "distinct_issuers": 386,
+  "distinct_owners": 9159,
+  "source_years": 15,
+  "explicit_10b5_1_events": 34745,
+  "timing_status_counts": {
+    "UNKNOWN_WARMUP": 41875,
+    "TIMING_NON_ROUTINE_CANDIDATE": 33547,
+    "ROUTINE": 6109
+  },
+  "candidate_events": 19417,
+  "candidate_issuers": 366,
+  "candidate_owners": 3866,
+  "checks": {
+    "minimum_owner_sale_events": true,
+    "minimum_timing_nonroutine_nonplan_events": true,
+    "minimum_candidate_issuers": true,
+    "minimum_candidate_owners": true,
+    "minimum_source_years": true
+  },
+  "coverage_gate_passed": true,
+  "price_or_return_outcomes_opened": false,
+  "direction_hypothesis_executed": false,
+  "operational_action_ratio": 0.0,
+  "events_path": "data/reports/sec_form4_nonroutine_sale_events_v1.csv",
+  "events_sha256": "95f4e4710b6e8b74cc9b5b37f0d4031d8f5068a45fd31f2cd2b5de89d3962a14"
+}

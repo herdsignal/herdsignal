@@ -447,6 +447,10 @@
       "status": "REJECTED"
     },
     {
+      "path": "data/herd/sec_form4_nonroutine_sale_feasibility_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/sec_form4_research_census_v2.json",
       "status": "DATA_PIPELINE"
     },
@@ -1493,6 +1497,14 @@
     {
       "path": "data/reports/sec_form4_issuer_year_coverage_v2.csv",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_form4_nonroutine_sale_events_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_form4_nonroutine_sale_feasibility_v1.json",
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/sec_form4_owner_purchase_events_v1.csv",

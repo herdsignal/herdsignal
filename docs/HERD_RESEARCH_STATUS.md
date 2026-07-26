@@ -162,6 +162,20 @@
 
 최종 감사는 `data/herd/model_parts_j_o_promotion_audit_v1.json`이다.
 
+## 다음 연구 — Form 4 timing-non-routine 매도 가능성
+
+- 내부자 매도는 매수보다 정보력이 약하고 보상·세금·분산 목적이 섞이므로
+  모든 code S를 약세 신호로 취급하지 않는다.
+- 공식 Form 4 census에서 81,531개 owner-sale 사건과 386개 issuer를
+  구성했다. 명시적 10b5-1 34,745건은 제외했고, 3년 warmup 뒤 반복 월
+  패턴이 없는 후보는 19,417건·366개 issuer·3,866명 owner였다.
+- 이 분류는 불법 또는 정보 거래 판정이 아니라 공개된 거래 시점의
+  `timing-non-routine` 잡음 proxy다. 가격·미래 수익률은 열지 않았고
+  coverage 게이트만 통과했다.
+
+계약과 원장은 `data/herd/sec_form4_nonroutine_sale_feasibility_v1.json`,
+`data/reports/sec_form4_nonroutine_sale_events_v1.csv`다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.

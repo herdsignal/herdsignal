@@ -47,6 +47,7 @@
       "data/herd/rush_event_dataset_v2.json",
       "data/herd/leading_information_feasibility_v2.json",
       "data/herd/model_parts_j_o_promotion_audit_v1.json",
+      "data/herd/sec_form4_nonroutine_sale_feasibility_v1.json",
       "data/herd/sec_13f_crowding_protocol_v1.json",
       "data/reports/sec_13f_crowding_protocol_v1.json",
       "data/herd/personal_cashflow_benchmark_v1.json",
@@ -100,7 +101,9 @@
       "data/herd/model_establishment_split_v1.json",
       "data/herd/model_rush_episode_ledger_v1.json",
       "data/reports/rush_event_dataset_v2.csv",
-      "data/reports/rush_event_dataset_v2.json"
+      "data/reports/rush_event_dataset_v2.json",
+      "data/reports/sec_form4_nonroutine_sale_events_v1.csv",
+      "data/reports/sec_form4_nonroutine_sale_feasibility_v1.json"
     ],
     "REJECTED": [
       "data/herd/finra_rush_divergence_preregistration_v1.json",
