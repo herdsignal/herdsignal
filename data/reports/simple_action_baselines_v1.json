@@ -1,0 +1,107 @@
+{
+  "report_version": "HERD_SIMPLE_ACTION_BASELINES_V1",
+  "status": "SIMPLE_BASELINE_FLOORS_ESTABLISHED",
+  "scored_rows": 1672,
+  "excluded_label_counts": {
+    "STRUCTURAL_DAMAGE": 168,
+    "NO_ECONOMIC_EDGE": 321
+  },
+  "universe_aggregate": {
+    "INDEPENDENT_CURRENT_CONSTITUENTS": {
+      "NEVER_TRIM": {
+        "rows": 1500,
+        "brier": 0.6726530000000001,
+        "log_loss": 4.6561532211427075,
+        "balanced_accuracy": 0.5,
+        "action_rate": 0.0
+      },
+      "ALWAYS_TRIM": {
+        "rows": 1500,
+        "brier": 0.32534900000000005,
+        "log_loss": 2.2526025581730114,
+        "balanced_accuracy": 0.5,
+        "action_rate": 1.0
+      },
+      "FIRST_RUSH_PER_TICKER_YEAR": {
+        "rows": 1500,
+        "brier": 0.37458366666666676,
+        "log_loss": 2.5933357939196733,
+        "balanced_accuracy": 0.5209474917017106,
+        "action_rate": 0.8053333333333333
+      },
+      "EXPANDING_PRIOR_PREVALENCE": {
+        "rows": 1500,
+        "brier": 0.22402210675783302,
+        "log_loss": 0.6403486322693484,
+        "balanced_accuracy": 0.5,
+        "action_rate": 1.0
+      }
+    },
+    "PRIMARY": {
+      "NEVER_TRIM": {
+        "rows": 172,
+        "brier": 0.6382568139534885,
+        "log_loss": 4.418111114585565,
+        "balanced_accuracy": 0.5,
+        "action_rate": 0.0
+      },
+      "ALWAYS_TRIM": {
+        "rows": 172,
+        "brier": 0.3597451860465117,
+        "log_loss": 2.4906446647301546,
+        "balanced_accuracy": 0.5,
+        "action_rate": 1.0
+      },
+      "FIRST_RUSH_PER_TICKER_YEAR": {
+        "rows": 172,
+        "brier": 0.38875681395348843,
+        "log_loss": 2.6914224199234265,
+        "balanced_accuracy": 0.5124633431085044,
+        "action_rate": 0.8546511627906976
+      },
+      "EXPANDING_PRIOR_PREVALENCE": {
+        "rows": 172,
+        "brier": 0.24127058116007793,
+        "log_loss": 0.6762431488258029,
+        "balanced_accuracy": 0.5,
+        "action_rate": 1.0
+      }
+    }
+  },
+  "selected_floor_by_universe": {
+    "INDEPENDENT_CURRENT_CONSTITUENTS": "EXPANDING_PRIOR_PREVALENCE",
+    "PRIMARY": "EXPANDING_PRIOR_PREVALENCE"
+  },
+  "checks": {
+    "INDEPENDENT_CURRENT_CONSTITUENTS_minimum_rows": true,
+    "INDEPENDENT_CURRENT_CONSTITUENTS_minimum_folds": true,
+    "PRIMARY_minimum_rows": true,
+    "PRIMARY_minimum_folds": true
+  },
+  "coverage_passed": true,
+  "candidate_gate": {
+    "must_beat_selected_floor_in_both_universes": true,
+    "minimum_log_loss_improvement": 0.005,
+    "minimum_brier_improvement": 0.005,
+    "minimum_balanced_accuracy_improvement": 0.03,
+    "minimum_directional_folds": 6,
+    "maximum_action_rate": 0.4
+  },
+  "deferred_non_commensurable_baselines": {
+    "comparators": [
+      "ANNUAL_FIXED_REBALANCE",
+      "TARGET_WEIGHT_BAND_REBALANCE",
+      "VOLATILITY_BAND_REBALANCE"
+    ],
+    "stage": "COMPLETED_PORTFOLIO_CYCLE_EVALUATION",
+    "reason": "Portfolio target-weight policies cannot be scored as single-stock Rush-event classifiers."
+  },
+  "direction_evidence_admitted": false,
+  "herd_predictor_trained": false,
+  "baseline_results_authorize_action": false,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "detail_path": "data/reports/simple_action_baselines_v1.csv",
+  "detail_sha256": "2c12c5f4985c5415169b05a478babf3dbb8832d967ba9a0abcea32ed1910070b"
+}

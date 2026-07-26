@@ -707,6 +707,10 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/herd/simple_action_baselines_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/sparse_action_protocol_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -2265,6 +2269,14 @@
     {
       "path": "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
       "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/simple_action_baselines_v1.csv",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/simple_action_baselines_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/survivorship_readiness_v1.json",

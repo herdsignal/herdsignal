@@ -1,0 +1,81 @@
+{
+  "contract_version": "HERD_SIMPLE_ACTION_BASELINES_V1",
+  "status": "LOCKED_BEFORE_BASELINE_RESULTS",
+  "locked_at": "2026-07-26",
+  "objective": "Set honest prediction floors for a rare five-percent trim opportunity before any HERD direction model is trained.",
+  "inputs": [
+    {"path": "data/herd/research_claim_scope_v1.json", "sha256": "4abcd7aa36b06322304c8a9ee9592101675e2af4589ff1a4ad136ef4bb73daf0"},
+    {"path": "data/herd/profit_take_success_label_v2.json", "sha256": "354ad4db4dfa997f1ab334bc0e6a92197cec58f79260937e30558ea3e6343975"},
+    {"path": "data/reports/profit_take_success_label_v2.json", "sha256": "8b7fe9d30e475eb3c9b1f69e4329d2b28a2046277ef4877ebf5274d48ec61c00"},
+    {"path": "data/reports/profit_take_success_label_v2.csv", "sha256": "f17637313909580ee2b54c07653bcc6293eae38752b89aa6876d3d5f2f0a4ce4"}
+  ],
+  "scored_population": {
+    "positive": "ECONOMIC_REBUY_OPPORTUNITY",
+    "negative": "HEALTHY_CONTINUATION",
+    "STRUCTURAL_DAMAGE": "EXCLUDED_AND_RESERVED_FOR_A_SEPARATE_BUSINESS_DAMAGE_VETO",
+    "NO_ECONOMIC_EDGE": "EXCLUDED_AS_ABSTAIN_TARGET",
+    "reason": "Do not turn structural damage into a lower-price re-entry success or force ambiguous paths into a directional label."
+  },
+  "event_level_baselines": [
+    {
+      "id": "NEVER_TRIM",
+      "probability": 0.001,
+      "meaning": "Buy and hold at every eligible Rush event."
+    },
+    {
+      "id": "ALWAYS_TRIM",
+      "probability": 0.999,
+      "meaning": "Trim five percent at every eligible Rush event."
+    },
+    {
+      "id": "FIRST_RUSH_PER_TICKER_YEAR",
+      "probability_if_first": 0.999,
+      "probability_otherwise": 0.001,
+      "meaning": "A sparse calendar rule with no predictive information."
+    },
+    {
+      "id": "EXPANDING_PRIOR_PREVALENCE",
+      "minimum_probability": 0.001,
+      "maximum_probability": 0.999,
+      "cold_start_probability": 0.5,
+      "meaning": "Probability learned only from chronologically earlier fold outcomes."
+    }
+  ],
+  "metrics": [
+    "BRIER",
+    "LOG_LOSS",
+    "BALANCED_ACCURACY",
+    "ACTION_RATE"
+  ],
+  "reporting": {
+    "report_each_fold": true,
+    "report_primary_and_independent_separately": true,
+    "select_floor_by": "LOWEST_AGGREGATE_LOG_LOSS",
+    "minimum_rows_each_universe": 100,
+    "minimum_folds_each_universe": 5
+  },
+  "candidate_gate_for_next_stage": {
+    "must_beat_selected_floor_in_both_universes": true,
+    "minimum_log_loss_improvement": 0.005,
+    "minimum_brier_improvement": 0.005,
+    "minimum_balanced_accuracy_improvement": 0.03,
+    "minimum_directional_folds": 6,
+    "maximum_action_rate": 0.4
+  },
+  "deferred_non_commensurable_baselines": {
+    "comparators": [
+      "ANNUAL_FIXED_REBALANCE",
+      "TARGET_WEIGHT_BAND_REBALANCE",
+      "VOLATILITY_BAND_REBALANCE"
+    ],
+    "stage": "COMPLETED_PORTFOLIO_CYCLE_EVALUATION",
+    "reason": "Portfolio target-weight policies cannot be scored as single-stock Rush-event classifiers."
+  },
+  "firewall": {
+    "herd_predictor_training_allowed": false,
+    "baseline_pass_authorizes_action": false,
+    "survivorship_safe": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
