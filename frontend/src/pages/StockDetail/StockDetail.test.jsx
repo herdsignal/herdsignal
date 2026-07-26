@@ -10,6 +10,8 @@ vi.mock('../../api/herdApi', () => ({
   getHerdObservationHistory: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
+  getPortfolio: vi.fn(),
+  getWatchlist: vi.fn(),
   getStockFinancials: vi.fn(),
   getSignalJournal: vi.fn(),
   createSignalJournal: vi.fn(),
@@ -23,6 +25,8 @@ vi.mock('../../auth/AuthContext', () => ({
 const response = (data) => Promise.resolve({ data: { data } })
 
 beforeEach(() => {
+  api.getPortfolio.mockReturnValue(response([]))
+  api.getWatchlist.mockReturnValue(response([]))
   api.getHerdObservation.mockReturnValue(response({
     ticker: 'NVDA',
     companyName: 'NVIDIA Corp',

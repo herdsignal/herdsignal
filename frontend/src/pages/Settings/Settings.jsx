@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getInvestorProfile, updateInvestorProfile } from '../../api/herdApi'
 import InvestorProfilePanel from './InvestorProfilePanel'
+import NotificationSettingsPanel from './NotificationSettingsPanel'
 import styles from './Settings.module.css'
 
 export default function Settings() {
@@ -52,6 +53,7 @@ export default function Settings() {
         onChange={changeProfile}
         onSubmit={saveProfile}
       />
+      <NotificationSettingsPanel />
     </div>
   )
 }
