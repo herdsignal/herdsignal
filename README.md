@@ -209,8 +209,18 @@ cd ..
 ./scripts/start-local.sh --with-scheduler
 ```
 
-스케줄러는 기본적으로 미국 동부시간 장 마감 후 실행됩니다. 맥이 종료되거나 절전 상태이면
-예약 작업도 멈추므로, 필요한 날 직접 갱신하려면 `./scripts/run-scheduler-once.sh`를 실행합니다.
+매번 터미널을 열지 않고 로그인 후 백엔드와 스케줄러를 자동 실행하려면 macOS `launchd`에
+등록할 수 있습니다.
+
+```bash
+./scripts/install-launchd.sh
+./scripts/launchd-status.sh
+```
+
+등록을 해제하려면 `./scripts/uninstall-launchd.sh`를 실행합니다. 스케줄러는 기본적으로 미국
+동부시간 장 마감 후 실행됩니다. 맥이 꺼져 있거나 프로세스가 중단돼 예약을 놓친 경우,
+다음 기동 시 당일 성공 이력을 확인해 한 번 보충 실행합니다. 맥이 장기간 꺼져 있었다면
+과거 날짜를 소급 실행하지 않으므로 `./scripts/run-scheduler-once.sh`로 직접 갱신해야 합니다.
 시장 홈과 연구 화면에서는 최신 관찰 기준일과 모델 상태를 확인할 수 있습니다.
 예약 실행이 실패하거나 부분 실패하면 전체 대상을 한 번 자동 재시도합니다.
 

@@ -467,6 +467,10 @@ def run_scheduler() -> None:
         run_herd_job,
         hour_et=SCHEDULER_HOUR_ET,
         minute_et=SCHEDULER_MINUTE_ET,
+        latest_success_loader=lambda: SchedulerRunRecorder(
+            _get_session_factory(),
+            _TIER1_JOB_NAME,
+        ).latest_success_at(),
     )
 
 

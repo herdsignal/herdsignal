@@ -34,6 +34,25 @@ class SchedulerRunRecorder:
             logger.error("스케줄러 실행 시작 이력 저장 실패: %s", exc, exc_info=True)
             return None
 
+    def latest_success_at(self) -> datetime | None:
+        """가장 최근 정상 완료 시각을 반환한다."""
+        try:
+            with self._session_factory() as session:
+                row = (
+                    session.query(SchedulerRun)
+                    .filter(
+                        SchedulerRun.job_name == self._job_name,
+                        SchedulerRun.status == "SUCCESS",
+                        SchedulerRun.finished_at.isnot(None),
+                    )
+                    .order_by(SchedulerRun.finished_at.desc())
+                    .first()
+                )
+                return row.finished_at if row else None
+        except Exception as exc:
+            logger.error("최근 스케줄러 성공 이력 조회 실패: %s", exc, exc_info=True)
+            raise
+
     def finish(
         self,
         run_id: int | None,
