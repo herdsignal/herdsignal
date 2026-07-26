@@ -43,6 +43,7 @@ from config.settings import (                                           # noqa: 
     SCHEDULER_MINUTE_ET,
 )
 from scheduler.daemon import run_scheduler as start_scheduler                 # noqa: E402
+from scheduler.data_quality_gate import validate_operational_price_frame      # noqa: E402
 from scheduler.incident_alerts import IncidentAlertConfig, send_scheduler_alert  # noqa: E402
 from scheduler.on_demand import (                                             # noqa: E402
     calculate_many as calculate_many_cached,
@@ -302,6 +303,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         on_success=lambda ticker, frame: observation_frames.__setitem__(
             ticker, frame
         ),
+        validate=validate_operational_price_frame,
     )
 
     # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────

@@ -31,6 +31,25 @@ class SchedulerComponentsTest(unittest.TestCase):
         self.assertEqual(skipped, [])
         self.assertEqual(collected, [("AAPL", "frame:AAPL")])
 
+    def test_ticker_execution_validates_before_calculation(self):
+        calculate = MagicMock(return_value={"score": 50, "stage": "Calm"})
+        save = MagicMock(return_value=True)
+        validate = MagicMock(side_effect=ValueError("invalid OHLC"))
+
+        success, failed, skipped = execute_tickers(
+            ["AAPL"],
+            collect=MagicMock(return_value="frame"),
+            calculate=calculate,
+            save=save,
+            validate=validate,
+        )
+
+        self.assertEqual(success, [])
+        self.assertEqual(failed, ["AAPL"])
+        self.assertEqual(skipped, [])
+        calculate.assert_not_called()
+        save.assert_not_called()
+
     def test_ticker_execution_separates_ineligible_history_from_failure(self):
         def calculate(ticker, frame):
             if ticker == "SNDK":

@@ -34,6 +34,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             patch.object(herd_scheduler, "_record_scheduler_universe"),
             patch.object(herd_scheduler, "_fetch_tier1_tickers", return_value=["AAPL", "SNDK"]),
             patch.object(herd_scheduler, "collect", return_value=object()),
+            patch.object(herd_scheduler, "validate_operational_price_frame"),
             patch.object(herd_scheduler, "run", return_value=herd_result),
             patch.object(
                 herd_scheduler,
