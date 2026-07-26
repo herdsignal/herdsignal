@@ -1,0 +1,50 @@
+{
+  "protocol_version": "HERD_LEADING_INFORMATION_FEASIBILITY_V2",
+  "status": "LOCKED_PUBLIC_SOURCE_REASSESSMENT",
+  "as_of": "2026-07-26",
+  "objective": "Decide whether any economically non-price public source can support one new long-horizon Rush direction hypothesis without retuning a rejected hypothesis.",
+  "minimum_primary_history_years": 10,
+  "inputs": [
+    {"id": "FORM4_CENSUS", "path": "data/reports/sec_form4_census_gate_v2.json", "sha256": "b8e5e658baeab37f1acea3900f9a2df3ff089c706040772cd70d0dfdea0cd773"},
+    {"id": "FORM4_OOS", "path": "data/reports/sec_form4_insider_purchase_oos_v1.json", "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"},
+    {"id": "GUIDANCE_BINDINGS", "path": "data/reports/sec_guidance_atomic_bindings_v2.json", "sha256": "cce0ad8b539b36841f8c5c48499264d8e97e1ca03024533560bdd23e1a8c04c6"},
+    {"id": "GUIDANCE_OOS", "path": "data/reports/sec_guidance_lower_oos_v2.json", "sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d"},
+    {"id": "13F_SOURCE_REVIEW", "path": "data/reports/sec_13f_source_review_v1.json", "sha256": "e9c7858222b7a0d916d1dfdf8618739bcf284f778c97e231f50c8785500993e2"},
+    {"id": "13F_OOS", "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json", "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"},
+    {"id": "FINRA_INCREMENTAL", "path": "data/reports/finra_short_interest_incremental_v2.json", "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f"}
+  ],
+  "official_facts": [
+    {
+      "source": "SEC_FORM4",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+      "checked_on": "2026-07-26",
+      "fact": "Quarterly as-filed structured Forms 3/4/5 are public from January 2006 through the current period; primary filings remain authoritative."
+    },
+    {
+      "source": "SEC_13F",
+      "url": "https://www.sec.gov/rules-regulations/staff-guidance/division-investment-management/frequently-asked-questions-about-form-13f",
+      "checked_on": "2026-07-26",
+      "fact": "Structured XML starts in May 2013 and filings may arrive up to 45 days after quarter end."
+    },
+    {
+      "source": "FINRA_SHORT_INTEREST",
+      "url": "https://www.finra.org/finra-data/browse-catalog/equity-short-interest",
+      "checked_on": "2026-07-26",
+      "fact": "Security-level short interest is published on the seventh business day; corrections replace prior displayed data and only the most recent corrected item remains available."
+    }
+  ],
+  "source_decisions": {
+    "FORM4": "REJECTED_TESTED_HYPOTHESIS_NEW_DISTINCT_HYPOTHESIS_REQUIRED",
+    "GUIDANCE": "REJECTED_TESTED_HYPOTHESIS_NEW_DISTINCT_HYPOTHESIS_REQUIRED",
+    "SEC_13F": "NON_DIRECTIONAL_CONTEXT_ONLY",
+    "FINRA_SHORT_INTEREST": "RECENT_SENSITIVITY_AND_PROSPECTIVE_SHADOW_ONLY"
+  },
+  "decision": {
+    "primary_long_horizon_source_ready_count": 0,
+    "new_historical_direction_hypothesis_allowed": false,
+    "prospective_shadow_source_count": 1,
+    "next_step": "DEFINE_ONE_ECONOMICALLY_DISTINCT_PROSPECTIVE_FINRA_HYPOTHESIS_WITHOUT_OPENING_OUTCOMES",
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

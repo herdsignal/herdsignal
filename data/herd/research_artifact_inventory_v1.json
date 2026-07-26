@@ -203,6 +203,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/leading_information_feasibility_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/leading_information_readiness_v2.json",
       "status": "REVIEW_REQUIRED"
     },

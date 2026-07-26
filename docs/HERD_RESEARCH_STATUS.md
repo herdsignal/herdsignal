@@ -70,6 +70,22 @@
 계약과 재현 코드는 `data/herd/rush_event_dataset_v2.json`과
 `data/herd/rush_event_dataset_v2.py`다.
 
+## Part D — 공개 선행정보 가능성 V2
+
+- SEC·FINRA 공식 문서와 고정 산출물을 다시 대조했다. Form 4는 2006년
+  이후 장기 자료가 있고 387개 독립 issuer를 확보했지만, 이미 검증한
+  내부자 매수 가설은 탈락했다.
+- 가이던스는 원문 검수 700행을 확보했지만 하향 가설이 탈락했고, 13F는
+  최대 45일 지연되는 분기 자료라 방향 신호가 아닌 느린 맥락으로만 남았다.
+- FINRA는 122개 결산일 자료가 있으나 교환상장 종목 이력은 약 5년이고
+  수정본이 과거 버전을 대체한다. 장기 OOS가 아니라 최근 민감도와
+  prospective shadow에만 사용할 수 있다.
+- 결과적으로 새 장기 역사 방향 가설을 바로 열 수 있는 공개 source는
+  0개다. 다음 가설은 결과를 열기 전에 FINRA의 경제적 정의와 전향 관측
+  시점을 고정하는 범위로 제한한다.
+
+기계 판독 감사는 `data/herd/leading_information_feasibility_v2.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.
