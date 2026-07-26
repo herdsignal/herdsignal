@@ -39,18 +39,22 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
   const failed = numberOrZero(run?.failedCount)
   const skipped = numberOrZero(run?.skippedCount)
   const missingPrice = numberOrZero(data?.missingPriceTickerCount)
-  const missingScore = numberOrZero(data?.missingScoreTickerCount)
+  const missingObservation = numberOrZero(
+    data?.missingObservationTickerCount ?? data?.missingScoreTickerCount,
+  )
   const issues = [
     failed > 0 ? `실패 ${failed}` : null,
     skipped > 0 ? `제외 ${skipped}` : null,
     missingPrice > 0 ? `가격 미수집 ${missingPrice}` : null,
-    missingScore > 0 ? `S1 미산출 ${missingScore}` : null,
+    missingObservation > 0 ? `S1 미산출 ${missingObservation}` : null,
   ].filter(Boolean)
 
   return {
     ...status,
     priceDate: formatObservedDate(data?.latestPriceDate),
-    scoreDate: formatObservedDate(data?.latestScoreDate),
+    scoreDate: formatObservedDate(
+      data?.latestObservationDate ?? data?.latestScoreDate,
+    ),
     runLabel: schedulerRunLabel(run),
     coverageLabel: expected > 0 ? `${completed}/${expected} 종목` : '집계 없음',
     issueLabel: issues.length > 0 ? issues.join(' · ') : null,

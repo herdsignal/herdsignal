@@ -165,6 +165,7 @@ def _finish_scheduler_run(
     failed_tickers: list[str] | None = None,
     skipped_tickers: list[str] | None = None,
     publish_status: str | None = None,
+    observation_count: int | None = None,
     error_message: str | None = None,
 ) -> None:
     SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).finish(
@@ -175,6 +176,7 @@ def _finish_scheduler_run(
         failed_tickers,
         skipped_tickers,
         publish_status,
+        observation_count,
         error_message,
     )
 
@@ -259,6 +261,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
 
     # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────
     observation_error: str | None = None
+    observation_count: int | None = None
     publish_status = "SKIPPED_INCOMPLETE_INPUT" if failed_list else "SUCCESS"
     if failed_list:
         logger.error(
@@ -270,6 +273,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             bundle = _build_and_write_observation(
                 observation_frames, success_list
             )
+            observation_count = len(bundle["records"])
             logger.info(
                 "[Tier1] State S1 관찰 번들 생성 완료 — %s종목, 기준 %s",
                 len(bundle["records"]),
@@ -334,6 +338,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         failed_tickers=failed_list,
         skipped_tickers=skipped_list,
         publish_status=publish_status,
+        observation_count=observation_count,
         error_message=combined_error,
     )
     result = {

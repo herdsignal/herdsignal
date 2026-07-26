@@ -8,11 +8,16 @@ public record DataFreshnessResponse(
         String status,
         String message,
         LocalDate latestPriceDate,
+        LocalDate latestObservationDate,
         LocalDate latestScoreDate,
         Integer priceBusinessDaysOld,
+        Integer observationBusinessDaysOld,
         Integer scoreBusinessDaysOld,
         int expectedTickerCount,
         int freshPriceTickerCount,
+        int expectedObservationTickerCount,
+        int freshObservationTickerCount,
+        int missingObservationTickerCount,
         int freshScoreTickerCount,
         int missingPriceTickerCount,
         int missingScoreTickerCount,
@@ -32,6 +37,7 @@ public record DataFreshnessResponse(
             List<String> skippedTickers,
             String universeSha256,
             String publishStatus,
+            int observationCount,
             String errorMessage
     ) {}
 }

@@ -71,6 +71,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             failed_tickers=["SNDK"],
             skipped_tickers=[],
             publish_status="SKIPPED_INCOMPLETE_INPUT",
+            observation_count=None,
             error_message=None,
         )
         notify.assert_called_once_with(result)

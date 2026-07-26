@@ -10,7 +10,7 @@ describe('dataStatusViewModel', () => {
     const view = dataStatusViewModel({
       status: 'FRESH',
       latestPriceDate: '2026-07-24',
-      latestScoreDate: '2026-07-24',
+      latestObservationDate: '2026-07-18',
       expectedTickerCount: 55,
       latestRun: {
         status: 'SUCCESS',
@@ -24,6 +24,7 @@ describe('dataStatusViewModel', () => {
     expect(view.label).toBe('데이터 최신')
     expect(view.tone).toBe('fresh')
     expect(view.priceDate).toBe('2026.07.24')
+    expect(view.scoreDate).toBe('2026.07.18')
     expect(view.coverageLabel).toBe('55/55 종목')
     expect(view.runLabel).toContain('완료')
     expect(view.issueLabel).toBeNull()
@@ -34,7 +35,7 @@ describe('dataStatusViewModel', () => {
       status: 'WARNING',
       expectedTickerCount: 55,
       missingPriceTickerCount: 2,
-      missingScoreTickerCount: 3,
+      missingObservationTickerCount: 3,
       latestRun: {
         status: 'PARTIAL_FAILURE',
         successCount: 50,

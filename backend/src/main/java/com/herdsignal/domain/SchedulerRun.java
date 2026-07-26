@@ -54,6 +54,9 @@ public class SchedulerRun {
     @Column(name = "publish_status", length = 30)
     private String publishStatus;
 
+    @Column(name = "observation_count")
+    private Integer observationCount;
+
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 }

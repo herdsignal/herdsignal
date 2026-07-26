@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.domain.SchedulerRun;
 import com.herdsignal.dto.DataFreshnessResponse;
 import com.herdsignal.repository.DailyPriceRepository;
-import com.herdsignal.repository.HerdScoreRepository;
+import com.herdsignal.repository.HerdObservationRepository;
 import com.herdsignal.repository.SchedulerRunRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,19 +23,19 @@ import static org.mockito.Mockito.when;
 class DataFreshnessServiceTest {
     private SchedulerRunRepository schedulerRunRepository;
     private DailyPriceRepository dailyPriceRepository;
-    private HerdScoreRepository herdScoreRepository;
+    private HerdObservationRepository herdObservationRepository;
     private DataFreshnessService service;
 
     @BeforeEach
     void setUp() {
         schedulerRunRepository = mock(SchedulerRunRepository.class);
         dailyPriceRepository = mock(DailyPriceRepository.class);
-        herdScoreRepository = mock(HerdScoreRepository.class);
+        herdObservationRepository = mock(HerdObservationRepository.class);
         Clock clock = Clock.fixed(Instant.parse("2026-07-15T03:00:00Z"), ZoneOffset.UTC);
         service = new DataFreshnessService(
                 schedulerRunRepository,
                 dailyPriceRepository,
-                herdScoreRepository,
+                herdObservationRepository,
                 new ObjectMapper(),
                 clock
         );
@@ -45,7 +45,7 @@ class DataFreshnessServiceTest {
     void returnsFreshWhenSuccessfulRunAndRecentDataExist() {
         SchedulerRun successfulRun = run("SUCCESS");
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
-        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockObservationDate(LocalDate.of(2026, 7, 11));
         mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(successfulRun));
@@ -67,7 +67,7 @@ class DataFreshnessServiceTest {
     void returnsWarningWhenLatestRunPartiallyFailed() {
         SchedulerRun partialRun = run("PARTIAL_FAILURE");
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
-        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockObservationDate(LocalDate.of(2026, 7, 11));
         mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(partialRun));
@@ -87,7 +87,7 @@ class DataFreshnessServiceTest {
     void returnsStaleWhenDataIsMoreThanTwoBusinessDaysOld() {
         SchedulerRun successfulRun = run("SUCCESS");
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 9)));
-        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 9)));
+        mockObservationDate(LocalDate.of(2026, 7, 3));
         mockCoverage(LocalDate.of(2026, 7, 9), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(successfulRun));
@@ -100,7 +100,7 @@ class DataFreshnessServiceTest {
         SchedulerRun running = run("RUNNING");
         when(running.getStartedAt()).thenReturn(LocalDateTime.of(2026, 7, 15, 0, 0));
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
-        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockObservationDate(LocalDate.of(2026, 7, 11));
         mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(running));
@@ -112,7 +112,7 @@ class DataFreshnessServiceTest {
     void returnsFailedWhenLatestSchedulerRunFailed() {
         SchedulerRun failed = run("FAILED");
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
-        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockObservationDate(LocalDate.of(2026, 7, 11));
         mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(failed));
@@ -125,7 +125,9 @@ class DataFreshnessServiceTest {
         SchedulerRun successfulRun = run("SUCCESS");
         LocalDate latestDate = LocalDate.of(2026, 7, 14);
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(latestDate));
-        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(latestDate));
+        mockObservationDate(latestDate);
+        when(herdObservationRepository.countDistinctTickersByObservationDate(
+                "HERD_STATE_S1", latestDate)).thenReturn(9L);
         mockCoverage(latestDate, 9);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(successfulRun));
@@ -134,7 +136,7 @@ class DataFreshnessServiceTest {
 
         assertThat(response.status()).isEqualTo("WARNING");
         assertThat(response.missingPriceTickerCount()).isEqualTo(3);
-        assertThat(response.missingScoreTickerCount()).isEqualTo(3);
+        assertThat(response.missingObservationTickerCount()).isEqualTo(3);
     }
 
     @Test
@@ -142,7 +144,7 @@ class DataFreshnessServiceTest {
         SchedulerRun running = run("RUNNING");
         when(running.getStartedAt()).thenReturn(LocalDateTime.of(2026, 7, 15, 2, 30));
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
-        when(herdScoreRepository.findLatestScoreDate()).thenReturn(Optional.of(LocalDate.of(2026, 7, 14)));
+        mockObservationDate(LocalDate.of(2026, 7, 11));
         mockCoverage(LocalDate.of(2026, 7, 14), 12);
         when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_TIER1_DAILY"))
                 .thenReturn(Optional.of(running));
@@ -155,7 +157,13 @@ class DataFreshnessServiceTest {
 
     private void mockCoverage(LocalDate date, long count) {
         when(dailyPriceRepository.countDistinctTickersByPriceDate(date)).thenReturn(count);
-        when(herdScoreRepository.countDistinctTickersByScoreDate(date)).thenReturn(count);
+    }
+
+    private void mockObservationDate(LocalDate date) {
+        when(herdObservationRepository.findLatestObservationDate("HERD_STATE_S1"))
+                .thenReturn(Optional.of(date));
+        when(herdObservationRepository.countDistinctTickersByObservationDate(
+                "HERD_STATE_S1", date)).thenReturn(12L);
     }
 
     private SchedulerRun run(String status) {
@@ -170,6 +178,7 @@ class DataFreshnessServiceTest {
         when(run.getUniverseSha256()).thenReturn("a".repeat(64));
         when(run.getPublishStatus()).thenReturn(
                 status.equals("SUCCESS") ? "SUCCESS" : "SKIPPED_INCOMPLETE_INPUT");
+        when(run.getObservationCount()).thenReturn(12);
         return run;
     }
 }

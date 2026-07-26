@@ -15,7 +15,7 @@ beforeEach(() => {
       data: {
         status: 'FRESH',
         latestPriceDate: '2026-07-24',
-        latestScoreDate: '2026-07-24',
+        latestObservationDate: '2026-07-24',
         expectedTickerCount: 55,
         latestRun: {
           status: 'SUCCESS',

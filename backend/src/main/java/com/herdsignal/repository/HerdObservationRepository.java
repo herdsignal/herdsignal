@@ -14,6 +14,26 @@ import java.util.Optional;
 public interface HerdObservationRepository
         extends JpaRepository<HerdObservation, Long> {
 
+    @Query("""
+            select max(observation.observationDate)
+            from HerdObservation observation
+            where observation.stateModelVersion = :stateModelVersion
+            """)
+    Optional<LocalDate> findLatestObservationDate(
+            @Param("stateModelVersion") String stateModelVersion
+    );
+
+    @Query("""
+            select count(distinct observation.ticker)
+            from HerdObservation observation
+            where observation.stateModelVersion = :stateModelVersion
+              and observation.observationDate = :observationDate
+            """)
+    long countDistinctTickersByObservationDate(
+            @Param("stateModelVersion") String stateModelVersion,
+            @Param("observationDate") LocalDate observationDate
+    );
+
     Optional<HerdObservation>
     findTopByTickerAndStateModelVersionOrderByObservationDateDesc(
             String ticker,

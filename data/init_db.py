@@ -236,6 +236,7 @@ class SchedulerRun(Base):
     skipped_tickers = Column(Text, nullable=True)
     universe_sha256 = Column(String(64), nullable=True)
     publish_status = Column(String(30), nullable=True)
+    observation_count = Column(Integer, nullable=True)
     error_message  = Column(Text, nullable=True)
 
 

@@ -43,6 +43,7 @@ class SchedulerRunRecorder:
         failed_tickers: list[str] | None = None,
         skipped_tickers: list[str] | None = None,
         publish_status: str | None = None,
+        observation_count: int | None = None,
         error_message: str | None = None,
     ) -> None:
         """실행 결과를 저장하되 기록 장애를 본 작업 실패로 전파하지 않는다."""
@@ -65,6 +66,7 @@ class SchedulerRunRecorder:
                 row.skipped_count = len(skipped)
                 row.skipped_tickers = json.dumps(skipped) if skipped else None
                 row.publish_status = publish_status
+                row.observation_count = observation_count
                 row.error_message = error_message[:2000] if error_message else None
                 session.commit()
         except Exception as exc:

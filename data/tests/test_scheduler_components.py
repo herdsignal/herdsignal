@@ -67,10 +67,12 @@ class SchedulerComponentsTest(unittest.TestCase):
             ["BAD"],
             [],
             None,
-            "x" * 2100,
+            observation_count=1,
+            error_message="x" * 2100,
         )
         self.assertEqual(row.failed_tickers, '["BAD"]')
         self.assertEqual(row.skipped_count, 0)
+        self.assertEqual(row.observation_count, 1)
         self.assertEqual(len(row.error_message), 2000)
         session.commit.assert_called_once()
 
