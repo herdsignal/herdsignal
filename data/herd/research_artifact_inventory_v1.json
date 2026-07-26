@@ -355,6 +355,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/rush_event_dataset_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/rush_hypothesis_preregistration_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1225,6 +1229,14 @@
     {
       "path": "data/reports/rush_episode_study_v2.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_event_dataset_v2.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/rush_event_dataset_v2.json",
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/rush_feature_selection_v1.csv",

@@ -1,0 +1,24 @@
+{
+  "protocol_version": "HERD_RUSH_EVENT_DATASET_V2",
+  "status": "BUILT_DIAGNOSTIC_ONLY",
+  "rows": 1998,
+  "tickers": 381,
+  "folds": [
+    "F01",
+    "F02",
+    "F03",
+    "F04"
+  ],
+  "path_labels": {
+    "RESUMED_UPTREND": 735,
+    "LARGE_PULLBACK": 299,
+    "TEMPORARY_PULLBACK": 772,
+    "STRUCTURAL_BREAK": 192
+  },
+  "missing_pre_confirmation_feature_cells": 13,
+  "dataset_path": "data/reports/rush_event_dataset_v2.csv",
+  "dataset_sha256": "2154ba80eb068984e8368763accefa4e0e2520050cc510511cc1745f6fc848ee",
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0
+}

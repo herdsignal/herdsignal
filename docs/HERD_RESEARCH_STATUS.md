@@ -55,6 +55,21 @@
 
 기계 판독 계약은 `data/herd/survivorship_readiness_v2.json`이다.
 
+## Part C — Rush Event Dataset V2
+
+- 381종목의 완결된 Rush 사건 1,998건을 사건 ID, 고정 fold, 관측시점,
+  결과 구간, 상호 배타적인 4개 경로 라벨로 정규화했다.
+- 모든 행은 `signal ≤ last observed ≤ feature cutoff < damage <
+  next-session execution ≤ path end ≤ outcome end`를 만족한다.
+- 6개 사전 관측값의 결측 cell 13개는 대체하지 않는다. 해당 변수를
+  검증할 때만 complete-case로 제외하며 결측 수를 결과에 남긴다.
+- 이 데이터셋은 이미 관측한 현재 구성종목 중심의 반복 pre-holdout
+  진단 자료다. 새 임계값 선택, 익절 권한, Blind holdout 또는
+  `survivorship_safe` 근거가 아니다.
+
+계약과 재현 코드는 `data/herd/rush_event_dataset_v2.json`과
+`data/herd/rush_event_dataset_v2.py`다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.

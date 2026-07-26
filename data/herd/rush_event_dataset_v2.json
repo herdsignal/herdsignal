@@ -1,0 +1,61 @@
+{
+  "protocol_version": "HERD_RUSH_EVENT_DATASET_V2",
+  "status": "LOCKED_DIAGNOSTIC_DATASET",
+  "locked_at": "2026-07-26",
+  "objective": "Represent each completed Rush damage episode with an immutable identity, strictly pre-confirmation observations, mutually exclusive future path, and preassigned OOS fold.",
+  "source": {
+    "path": "data/reports/rush_pre_damage_path_events_v2.csv",
+    "sha256": "10eac5722a9fcd9cd155f626d5ec60ca06cfa961836a6605f9ab946d75687089",
+    "expected_rows": 1998,
+    "expected_tickers": 381
+  },
+  "split_contract": {
+    "path": "data/herd/model_establishment_split_v1.json",
+    "sha256": "2978e0380cc5fcf7855587a83ec3a8495c26c328fd1d6b08a20f54e1da1ff9e1"
+  },
+  "schema": {
+    "identity": ["episode_id", "ticker", "sector_etf", "fold_id"],
+    "observation_time": ["signal_date", "last_observed_session", "feature_cutoff_date"],
+    "outcome_time": ["damage_date", "damage_execution_date", "path_end", "outcome_end"],
+    "pre_confirmation_features": [
+      "breakdown_severity_vol20",
+      "below_sma50_severity_vol63",
+      "relative_damage_21d",
+      "downside_acceleration_5_21",
+      "down_up_volume_ratio_20d",
+      "realized_vol_expansion_20_63"
+    ],
+    "future_outcomes": [
+      "path_label",
+      "path_minimum_return_63d",
+      "path_maximum_return_63d",
+      "path_terminal_return_63d"
+    ]
+  },
+  "path_labels": {
+    "TEMPORARY_PULLBACK": 772,
+    "RESUMED_UPTREND": 735,
+    "LARGE_PULLBACK": 299,
+    "STRUCTURAL_BREAK": 192
+  },
+  "time_invariants": {
+    "required_order": "signal_date <= last_observed_session <= feature_cutoff_date < damage_date < damage_execution_date <= path_end <= outcome_end",
+    "feature_cutoff": "PREVIOUS_COMPLETED_TRADING_SESSION_BEFORE_DAMAGE_CONFIRMATION",
+    "future_path_sessions": 63
+  },
+  "missing_value_policy": {
+    "imputation_allowed": false,
+    "feature_specific_complete_case_only": true,
+    "missing_cells_must_be_reported": true
+  },
+  "authority": {
+    "dataset_role": "REPEATED_PREHOLDOUT_DIAGNOSTIC",
+    "feature_selection": false,
+    "threshold_retuning": false,
+    "profit_take": false,
+    "reentry": false,
+    "blind_holdout_access": false,
+    "survivorship_safe": false,
+    "operational_action_ratio": 0.0
+  }
+}
