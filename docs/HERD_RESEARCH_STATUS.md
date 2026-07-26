@@ -139,6 +139,17 @@
 
 차단 계약은 `data/herd/finra_conditional_reentry_gate_v1.json`이다.
 
+## Part I — 완결 사이클 판정
+
+- 검증된 익절과 재진입이 모두 0건이므로 완결 사이클과 동일 조건
+  Buy & Hold 비교도 0건이다.
+- FINRA–Rush 후보는 승격 불가로 종료했다. Blind holdout을 열지 않았고
+  운영 행동 비율은 계속 0%다.
+- 다음 연구는 같은 FINRA 표본의 70·75·90백분위 조정이 아니라, 실패
+  지도와 경제적으로 중복되지 않는 새 방향 가설부터 다시 시작해야 한다.
+
+최종 차단 계약은 `data/herd/finra_completed_cycle_gate_v1.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.

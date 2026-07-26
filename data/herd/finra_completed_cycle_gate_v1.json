@@ -1,0 +1,23 @@
+{
+  "gate_version": "HERD_FINRA_COMPLETED_CYCLE_GATE_V1",
+  "status": "BLOCKED_UPSTREAM_ACTIONS_UNAVAILABLE",
+  "dependencies": [
+    {"path": "data/herd/finra_five_percent_trim_gate_v1.json", "sha256": "c6b7fd81bf495d21f1f729e851c2079f175ac487e6e3ef24df61486dc7bdde50"},
+    {"path": "data/herd/finra_conditional_reentry_gate_v1.json", "sha256": "c93b99e8e06bff96ea0c70fffed27e7712d00965feedaaa59f82a78efb252a22"}
+  ],
+  "required_cycle": [
+    "VALIDATED_FIVE_PERCENT_TRIM",
+    "TRACEABLE_CASH_LEDGER",
+    "VALIDATED_CONDITIONAL_REENTRY",
+    "SAME_CAPITAL_PERIOD_EXECUTION_COST_AND_DIVIDEND_BENCHMARK"
+  ],
+  "decision": {
+    "completed_cycles": 0,
+    "benchmark_comparisons": 0,
+    "candidate_passed": false,
+    "candidate_promotable": false,
+    "next_step": "RETURN_TO_NEW_NON_DUPLICATIVE_DIRECTION_HYPOTHESIS",
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
