@@ -663,6 +663,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/survivorship_readiness_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/systematic_healthy_pullback_v1.json",
       "status": "REVIEW_REQUIRED"
     },

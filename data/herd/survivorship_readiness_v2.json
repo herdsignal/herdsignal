@@ -1,0 +1,38 @@
+{
+  "protocol_version": "HERD_SURVIVORSHIP_READINESS_V2",
+  "status": "LOCKED_PUBLIC_RESEARCH_AUDIT",
+  "as_of": "2026-07-26",
+  "period": {"start": "2016-07-18", "end": "2026-07-17"},
+  "inputs": {
+    "community_memberships": {"path": "data/reference/point_in_time/community-sp500-1996-2026/memberships.csv.gz", "sha256": "9af7890c166437b56aa4d9718e0865e61580de5fbb1c4d94ec286a3b6ff02fcd"},
+    "official_event_replay": {"path": "data/reference/point_in_time/diagnostic_replay_v16_20160718_20260717.json", "sha256": "0667798404162186ba7c4d8c12fb2dc88334c33fd005d059e5c4e8613064e4bd"},
+    "event_ledger": {"path": "data/reference/point_in_time/integrated_event_ledger_v13_20160718_20260717.csv", "sha256": "d28f22b8bc73ee32ac3fa8b9a592e197b3c63fed92ac6f75e92a194b9e70881f"},
+    "event_backlog": {"path": "data/reference/point_in_time/constituent_blocker_backlog_v5_20160718_20260717.csv", "sha256": "9a17cb216d6d9bfd64ad2cf783f2aced0e1fdad66db1ad2a06d2911dfa9568f2"},
+    "identity_report": {"path": "data/reports/sec_time_valid_ticker_cik_ledger_v5.json", "sha256": "8f399c79b9a21a148184e4973d436f7fe9871e32caff367564631c0aae32c37a"},
+    "identity_intervals": {"path": "data/reports/sec_time_valid_ticker_cik_intervals_v5.csv", "sha256": "4b10a272f1e5145cc1d73bdf6f91aace99502766d0a2d2c57cb30a206d6b9eed"},
+    "price_manifests": [
+      {"path": "data/snapshots/yf-independent-current-sp500-20260721/manifest.json", "sha256": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781"},
+      {"path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json", "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b"}
+    ],
+    "prior_delisting_audit": {"path": "data/herd/survivorship_evidence_v1.json", "sha256": "e110c5d8b1a224e4f3ef8f9faf0f68fec2cf035053039a0c9db01c2c4b1d4945"}
+  },
+  "gates": {
+    "official_membership_history_required": true,
+    "replay_complete_required": true,
+    "maximum_unresolved_events": 0,
+    "maximum_replay_errors": 0,
+    "minimum_identity_coverage": 0.95,
+    "minimum_historical_price_coverage": 0.95,
+    "minimum_delisted_price_coverage": 0.95,
+    "price_adjustment_audit_required": true,
+    "split_dividend_audit_required": true
+  },
+  "decision": {
+    "status": "BLOCKED_PUBLIC_DATA_GAPS",
+    "survivorship_safe": false,
+    "promotion_allowed": false,
+    "allowed_use": "DIAGNOSTIC_MODEL_ELIMINATION_AND_SENSITIVITY_ONLY",
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

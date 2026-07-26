@@ -43,6 +43,7 @@
       "data/herd/model_establishment_protocol_v1.json",
       "data/herd/model_establishment_status_v1.json",
       "data/herd/failed_hypothesis_map_v1.json",
+      "data/herd/survivorship_readiness_v2.json",
       "data/herd/sec_13f_crowding_protocol_v1.json",
       "data/reports/sec_13f_crowding_protocol_v1.json",
       "data/herd/personal_cashflow_benchmark_v1.json",

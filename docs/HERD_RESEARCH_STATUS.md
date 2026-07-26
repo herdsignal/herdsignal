@@ -40,6 +40,21 @@
 
 기계 판독 지도는 `data/herd/failed_hypothesis_map_v1.json`이다.
 
+## Part B — 시점 정합 모집단 승격 감사
+
+- 공개 S&P 구성 재생, 사건 원장, ticker–CIK interval, 가격 snapshot과
+  상장폐지 가격 감사를 최신 해시로 묶었다.
+- 공식 사건은 336건 검증됐고 16건이 미해결이다. 재생 오류는 0건이지만
+  공식 전체 구성 이력이 아니며 재생 완료 판정도 아니다.
+- 과거 ticker 1,128개 중 SEC 식별자 coverage는 46.81%, 확보된 가격
+  coverage는 42.64%다. 상장폐지 가격은 요구 652개 중 1개뿐이며 가격
+  snapshot 실패 1건도 별도 게이트로 남겼다.
+- 따라서 `survivorship_safe=false`와 승격 금지를 유지한다. 이 자료는
+  진단·후보 탈락·민감도 연구에는 쓸 수 있지만 Blind holdout이나 운영
+  행동 후보 채택 근거로 사용할 수 없다.
+
+기계 판독 계약은 `data/herd/survivorship_readiness_v2.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.
