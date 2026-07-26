@@ -12,15 +12,15 @@
 }
 
 .head {
-  min-height: 34px;
+  min-height: 40px;
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-micro);
   font-weight: 650;
 }
 
 .row {
   position: relative;
-  min-height: 84px;
+  min-height: 88px;
   border-top: 1px solid var(--hs-line);
 }
 
@@ -68,7 +68,7 @@
 .date strong {
   overflow: hidden;
   color: var(--hs-text);
-  font-size: 10px;
+  font-size: var(--hs-type-body);
   font-weight: 680;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -79,7 +79,7 @@
 .date small {
   overflow: hidden;
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-label);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -90,7 +90,7 @@
   border: 0;
   background: transparent;
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-micro);
   cursor: pointer;
 }
 

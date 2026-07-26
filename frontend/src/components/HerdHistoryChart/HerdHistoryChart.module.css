@@ -34,7 +34,7 @@
   border-radius: 999px;
   background: rgba(251, 146, 60, 0.08);
   color: var(--drift);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 700;
   line-height: 1;
 }
@@ -62,7 +62,7 @@
   display: block;
   margin-bottom: 4px;
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 700;
 }
 
@@ -79,7 +79,7 @@
   display: block;
   margin-top: 5px;
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
@@ -98,7 +98,7 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
   margin-top: -2px;
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   color: var(--text-3);
 }
 
@@ -131,7 +131,7 @@
 
 .tooltipDate {
   margin-bottom: 4px;
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   color: var(--text-3);
 }
 
@@ -144,6 +144,6 @@
 
 .tooltipStage {
   margin-top: 2px;
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   color: var(--text-2);
 }

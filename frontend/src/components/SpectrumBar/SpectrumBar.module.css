@@ -11,7 +11,7 @@
   margin-bottom: 6px;
 }
 .label {
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   color: var(--text-3);
   letter-spacing: 0.04em;
 }

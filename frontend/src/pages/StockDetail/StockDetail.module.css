@@ -1,8 +1,7 @@
 .page {
-  width: min(var(--hs-content-max), 100%);
+  width: 100%;
   min-height: calc(100vh - var(--hs-header-height));
-  margin: 0 auto;
-  padding: 30px var(--hs-page-gutter) 76px;
+  padding: 8px 0 64px;
   color: var(--hs-text);
 }
 
@@ -22,7 +21,7 @@
   gap: 8px;
   min-height: 30px;
   color: var(--hs-text-muted);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
 }
 
 .breadcrumbLink {
@@ -70,7 +69,8 @@
 
 .stockTicker {
   color: var(--hs-text);
-  font-size: 21px;
+  font-size: var(--hs-type-title);
+  line-height: var(--hs-line-title);
   font-weight: 650;
   letter-spacing: -.04em;
 }
@@ -79,7 +79,7 @@
   margin-top: 5px;
   overflow: hidden;
   color: var(--hs-text-muted);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -92,7 +92,7 @@
   border-radius: var(--hs-radius-sm);
   background: transparent;
   color: var(--hs-text-subtle);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   font-weight: 680;
   cursor: pointer;
 }
@@ -115,7 +115,7 @@
   border: 1px solid color-mix(in srgb, var(--hs-loss) 35%, transparent);
   border-radius: var(--hs-radius-sm);
   color: var(--hs-loss);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
 }
 
 .loadingState,
@@ -131,7 +131,7 @@
 
 .loadingText,
 .errorSub {
-  font-size: 10px;
+  font-size: var(--hs-type-label);
 }
 
 .errorState p {
@@ -168,7 +168,7 @@
 .sectionHeader span,
 .stateMeta dt {
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-micro);
   font-weight: 660;
 }
 
@@ -176,7 +176,8 @@
 .sectionHeader h2 {
   margin: 5px 0 0;
   color: var(--hs-text);
-  font-size: 12px;
+  font-size: var(--hs-type-subtitle);
+  line-height: var(--hs-line-subtitle);
   font-weight: 700;
   letter-spacing: -.02em;
 }
@@ -196,7 +197,7 @@
 .stateMeta dd {
   margin: 6px 0 0;
   color: var(--hs-text-subtle);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 650;
 }
 
@@ -235,7 +236,7 @@
 .evidenceItem span,
 .riskContext > span {
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-micro);
   font-weight: 650;
 }
 
@@ -282,7 +283,7 @@
 
 .riskContext strong {
   color: var(--hs-text-subtle);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   text-align: right;
 }
 
@@ -304,7 +305,7 @@
   border-radius: 5px;
   background: transparent;
   color: var(--hs-text-muted);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   font-weight: 690;
   cursor: pointer;
 }
@@ -323,7 +324,7 @@
   display: grid;
   min-height: 210px;
   color: var(--hs-text-muted);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   place-items: center;
 }
 
@@ -355,13 +356,13 @@
 .detailDisclosure > summary span,
 .detailDisclosure > summary em {
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-micro);
   font-style: normal;
 }
 
 .detailDisclosure > summary strong {
   color: var(--hs-text);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 670;
 }
 
@@ -397,14 +398,14 @@
 
 .cardTitle {
   color: var(--hs-text);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 680;
 }
 
 .cardMeta {
   margin-top: 4px;
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-micro);
 }
 
 .cardBody,

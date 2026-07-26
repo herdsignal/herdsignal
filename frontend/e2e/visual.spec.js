@@ -54,10 +54,16 @@ test.beforeEach(async ({ page }) => {
 })
 
 const visualScenarios = [
+  { name: 'public-home', path: '/', ready: 'HERD 확인' },
+  { name: 'login', path: '/login', ready: '내 포트폴리오 보기' },
   { name: 'market-home', path: '/app', ready: 'SPY' },
   { name: 'portfolio', path: '/portfolio', ready: '내 포트폴리오' },
   { name: 'stock-detail', path: '/stock/NVDA', ready: 'NVDA' },
   { name: 'watchlist', path: '/watchlist', ready: '관심종목' },
+  { name: 'history', path: '/history', ready: '자산 히스토리' },
+  { name: 'herd-lab', path: '/herd-lab', ready: 'HERD 연구실' },
+  { name: 'journal', path: '/journal', ready: '판단 기록' },
+  { name: 'settings', path: '/settings', ready: '투자 프로필' },
   {
     name: 'search',
     path: '/search',
@@ -135,6 +141,73 @@ function responseFor(pathname) {
     return watchlist.map(({ ticker }) => ({ ticker, memo: null }))
   }
   if (pathname === '/api/journal') return journal
+  if (pathname === '/api/investor-profile') {
+    return {
+      strategy: 'TARGET_REBALANCE',
+      riskTolerance: 'BALANCED',
+      timeHorizonYears: 10,
+      liquidityBufferMonths: 6,
+      maxActionRatio: 0.05,
+      targetEquityRatio: 0.8,
+    }
+  }
+  if (pathname === '/api/model/shadow-status') {
+    return {
+      shadowStatus: 'SHADOW_ACTIVE',
+      candidateId: 'HERD_STATE_S1',
+    }
+  }
+  if (pathname === '/api/model/validation') {
+    return {
+      modelVersion: 'HERD_v6.1',
+      generatedAt: '2026-07-24T00:52:00Z',
+      validationRun: {
+        completedTickers: 55,
+        requestedTickers: 55,
+        coverage: 1,
+        embargoDays: 20,
+      },
+      walkForward: {
+        samples: 440,
+        improvementRate: 36.4,
+        mddImprovementMedian: 0.9,
+      },
+      parameterStability: {
+        sameParameterRate: 59.4,
+        singleParameterSpike: true,
+        recommendation: 'USE_FIXED_PARAMETERS',
+      },
+      overfitting: {
+        parametersTested: 9,
+        deflatedSharpeStatus: 'FAIL',
+      },
+      adoptionGate: {
+        policyVersion: '2026.07-v1',
+        status: 'RESEARCH_VALIDATION',
+        eligibleForHumanReview: false,
+        failedCriteria: ['deflated_sharpe', 'survivorship_bias'],
+      },
+      scoreParityPassed: true,
+      survivorshipStatus: 'SURVIVORSHIP_BIAS_REMAINS',
+      actionOutcomes: [
+        {
+          horizon: '3m',
+          samples: 126,
+          hitRate: 58.7,
+          counterfactualDeltaMean: 1.8,
+          drawdownMean: -6.4,
+        },
+      ],
+      tickers: [
+        { ticker: 'NVDA', buyHoldReturn: 180, actionReturn: 142, capture: 78.9, mddImprovement: 4.8, actions: 11 },
+        { ticker: 'JPM', buyHoldReturn: 65, actionReturn: 57, capture: 87.7, mddImprovement: 3.1, actions: 8 },
+        { ticker: 'LLY', buyHoldReturn: 210, actionReturn: 160, capture: 76.2, mddImprovement: 2.6, actions: 10 },
+        { ticker: 'AMZN', buyHoldReturn: 92, actionReturn: 71, capture: 77.2, mddImprovement: 1.7, actions: 9 },
+        { ticker: 'GE', buyHoldReturn: 88, actionReturn: 70, capture: 79.5, mddImprovement: 2.2, actions: 8 },
+        { ticker: 'XOM', buyHoldReturn: 41, actionReturn: 30, capture: 73.2, mddImprovement: -0.4, actions: 7 },
+      ],
+    }
+  }
   if (pathname === '/api/stocks/search') {
     return {
       results: [

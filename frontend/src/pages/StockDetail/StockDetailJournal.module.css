@@ -25,7 +25,7 @@
 .journalSummaryItem span {
   margin-bottom: 6px;
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
 }
 
 .journalSummaryItem strong {
@@ -39,7 +39,7 @@
 
 .journalSummaryItem em {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-style: normal;
   font-weight: 600;
 }
@@ -93,7 +93,7 @@
 
 .journalItem span {
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
 }
 
 .journalItem strong {
@@ -104,14 +104,14 @@
 
 .journalItem em {
   color: var(--text-2);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-style: normal;
   font-weight: 600;
 }
 
 .journalItem small {
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 600;
 }
 
@@ -122,7 +122,7 @@
   color: var(--text-3);
   cursor: pointer;
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 700;
   padding: 4px 0;
   transition: color 0.15s;

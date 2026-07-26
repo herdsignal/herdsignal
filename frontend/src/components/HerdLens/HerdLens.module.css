@@ -2,13 +2,13 @@
   --lens-color: var(--hs-calm);
 
   display: grid;
-  grid-template-columns: minmax(80px, 1fr) 44px;
+  grid-template-columns: minmax(112px, 1fr) 52px;
   grid-template-areas:
     "lens reading"
     "motion reading";
   align-items: center;
   gap: 7px 12px;
-  min-width: 126px;
+  min-width: 176px;
   color: var(--lens-color);
 }
 
@@ -16,7 +16,7 @@
   grid-area: lens;
   position: relative;
   display: block;
-  height: 14px;
+  height: 18px;
 }
 
 .dot {
@@ -39,7 +39,7 @@
 .score {
   display: block;
   color: var(--hs-text);
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 480;
   line-height: 0.9;
   letter-spacing: -0.04em;
@@ -49,7 +49,7 @@
   display: block;
   margin-top: 6px;
   color: currentColor;
-  font-size: 7px;
+  font-size: var(--hs-type-micro);
   font-weight: 720;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -59,7 +59,7 @@
   grid-area: motion;
   position: relative;
   display: block;
-  height: 8px;
+  height: 10px;
 }
 
 .motion::before {
@@ -100,13 +100,13 @@
 }
 
 .compact {
-  grid-template-columns: minmax(64px, 1fr) 38px;
-  min-width: 106px;
+  grid-template-columns: minmax(88px, 1fr) 44px;
+  min-width: 144px;
   gap: 6px 9px;
 }
 
 .compact .score {
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .compact .stage {
@@ -129,4 +129,3 @@
     animation: none !important;
   }
 }
-

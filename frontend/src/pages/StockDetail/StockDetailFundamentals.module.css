@@ -7,7 +7,7 @@
   border-radius: 999px;
   padding: 5px 10px;
   background: rgba(255, 255, 255, 0.03);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 700;
   white-space: nowrap;
 }
@@ -35,7 +35,7 @@
   overflow: hidden;
   margin-bottom: 6px;
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -67,7 +67,7 @@
   border-radius: 999px;
   background: rgba(249, 115, 22, 0.08);
   color: var(--drift);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 700;
 }
 

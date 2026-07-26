@@ -5,5 +5,5 @@
 .card p { color: #929caa; font-size: 13px; line-height: 1.7; word-break: keep-all; }
 .googleButton { display: flex; align-items: center; justify-content: center; gap: 11px; margin-top: 28px; padding: 13px 18px; border: 1px solid #d7dce3; border-radius: 9px; background: #fff; color: #1f2937; font-size: 13px; font-weight: 800; }
 .googleButton span { display: grid; width: 20px; height: 20px; place-items: center; color: #4285f4; font-size: 16px; font-weight: 900; }
-.back { display: inline-block; margin-top: 20px; color: #7f8a99; font-size: 11px; }
-.error { margin-top: 18px; padding: 10px; border: 1px solid rgba(239,68,68,.25); border-radius: 8px; background: rgba(239,68,68,.08); color: #fca5a5; font-size: 11px; }
+.back { display: inline-block; margin-top: 20px; color: #7f8a99; font-size: var(--hs-type-body-sm); }
+.error { margin-top: 18px; padding: 10px; border: 1px solid rgba(239,68,68,.25); border-radius: 8px; background: rgba(239,68,68,.08); color: #fca5a5; font-size: var(--hs-type-body-sm); }

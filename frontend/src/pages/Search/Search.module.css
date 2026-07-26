@@ -1,5 +1,5 @@
 .page {
-  width: min(100%, 1120px);
+  width: min(100%, 1440px);
   margin: 0 auto;
   padding: 20px 0 64px;
 }
@@ -11,7 +11,7 @@
 
 .pageHeader > span {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 800;
   letter-spacing: .12em;
 }
@@ -19,8 +19,8 @@
 .pageHeader h1 {
   margin: 8px 0 4px;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(28px, 4vw, 42px);
-  line-height: 1;
+  font-size: var(--hs-type-title);
+  line-height: var(--hs-line-title);
 }
 
 .pageHeader p {
@@ -48,7 +48,7 @@
 
 .searchPanelHead span {
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
 }
 
 .searchWrap {
@@ -118,7 +118,7 @@
 
 .suggestionChip small {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
 }
 
 .searchDropdown,
@@ -133,7 +133,7 @@
 .dropdownHeader,
 .sectionLabel {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -205,7 +205,7 @@
 .recentName,
 .resultNote {
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
 }
 
 .resultName {
@@ -229,7 +229,7 @@
 
 .observationMeta small {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
 }
 
 .resultAddBtn {
@@ -266,7 +266,7 @@
 .resultError {
   max-width: 160px;
   color: var(--hs-rush);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
 }
 
 .sectionLabel {

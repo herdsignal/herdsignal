@@ -7,7 +7,7 @@
   align-items: end;
   justify-content: space-between;
   gap: 32px;
-  padding: 18px 0 28px;
+  padding: 22px 0 30px;
 }
 
 .header span,
@@ -19,14 +19,15 @@
 
 .header > div:first-child > span {
   color: var(--hs-text-subtle);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 680;
 }
 
 .header h1 {
   margin: 7px 0 0;
   color: var(--hs-text);
-  font-size: 22px;
+  font-size: var(--hs-type-title);
+  line-height: var(--hs-line-title);
   font-weight: 640;
   letter-spacing: -0.035em;
 }
@@ -34,7 +35,7 @@
 .header p {
   margin: 7px 0 0;
   color: var(--hs-text-muted);
-  font-size: 7px;
+  font-size: var(--hs-type-label);
   font-weight: 720;
   letter-spacing: 0.12em;
 }
@@ -48,14 +49,14 @@
 
 .meta strong {
   color: var(--hs-text-subtle);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   font-weight: 650;
 }
 
 .meta span,
 .meta em {
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-label);
   font-style: normal;
   font-weight: 620;
 }
@@ -78,13 +79,13 @@
   border-top: 1px solid var(--hs-line);
   border-bottom: 1px solid var(--hs-line);
   color: var(--hs-text-muted);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
 }
 
 .notice {
   margin: 14px 0 0;
   color: var(--hs-text-muted);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   text-align: center;
 }
 
@@ -98,4 +99,3 @@
     max-width: 130px;
   }
 }
-

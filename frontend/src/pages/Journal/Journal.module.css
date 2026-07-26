@@ -1,7 +1,8 @@
 /* Journal.module.css — 전체 HERD 판단 기록 */
 
 .page {
-  max-width: 1180px;
+  width: 100%;
+  max-width: 1480px;
   margin: 0 auto;
 }
 
@@ -92,7 +93,7 @@
   display: block;
   margin-bottom: 8px;
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 800;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -140,7 +141,7 @@
 
 .tableHead span {
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 800;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -172,7 +173,7 @@
 
 .table th {
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 800;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -217,7 +218,7 @@
   border-radius: 6px;
   background: rgba(163, 170, 184, 0.14);
   color: var(--calm);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 900;
   padding: 5px 8px;
 }
@@ -244,7 +245,7 @@
 .resultStack em {
   overflow: hidden;
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -56,7 +56,7 @@
   border-radius: var(--hs-radius-sm);
   background: var(--hs-text);
   color: var(--hs-bg);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 720;
   transform: translateY(-160%);
 }
@@ -86,14 +86,14 @@
   justify-self: start;
   gap: 10px;
   color: var(--hs-text);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 720;
   letter-spacing: -0.035em;
 }
 
 .brand img {
-  width: 29px;
-  height: 29px;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
 }
 
@@ -108,7 +108,7 @@
   padding: 9px 12px;
   border-radius: var(--hs-radius-sm);
   color: var(--hs-text-muted);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 680;
   white-space: nowrap;
   transition: color var(--t-fast), background var(--t-fast);
@@ -144,7 +144,7 @@
 .watchlistLink {
   padding: 8px 9px;
   color: var(--hs-text-muted);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 680;
 }
 
@@ -155,8 +155,8 @@
 .accountTrigger {
   display: grid;
   place-items: center;
-  width: 31px;
-  height: 31px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   border: 1px solid var(--hs-line);
   border-radius: 50%;
@@ -180,7 +180,7 @@
 .accountTrigger span {
   display: grid;
   place-items: center;
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 720;
 }
 
@@ -206,13 +206,13 @@
 
 .userSummary strong {
   color: var(--hs-text);
-  font-size: 11px;
+  font-size: var(--hs-type-body);
 }
 
 .userSummary span {
   overflow: hidden;
   color: var(--hs-text-muted);
-  font-size: 8px;
+  font-size: var(--hs-type-label);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -227,7 +227,7 @@
   padding: 10px 3px;
   border-bottom: 1px solid var(--hs-line);
   color: var(--hs-text-subtle);
-  font-size: 10px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 640;
 }
 
@@ -248,7 +248,7 @@
   border-radius: var(--hs-radius-sm);
   background: transparent;
   color: var(--hs-text-muted);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   font-weight: 680;
   cursor: pointer;
 }
@@ -259,10 +259,11 @@
 }
 
 .main {
-  width: min(var(--hs-content-max), 100%);
+  width: 100%;
+  max-width: var(--hs-content-max);
   min-width: 0;
   margin: 0 auto;
-  padding: 40px var(--hs-page-gutter) 72px;
+  padding: 32px var(--hs-page-gutter) 64px;
 }
 
 .main:focus {
@@ -308,7 +309,7 @@
     place-items: center;
     min-width: 0;
     padding: 10px 4px;
-    font-size: 10px;
+    font-size: var(--hs-type-label);
   }
 
   .mobileNav .navItem.active::after {

@@ -1,7 +1,7 @@
-.page { display: grid; gap: 14px; max-width: 1120px; }
+.page { display: grid; width: 100%; max-width: 1280px; gap: 14px; }
 .page > header { padding: 6px 2px 12px; }
-.page > header span { color: var(--text-3); font-size: 10px; font-weight: 800; }
-.page > header h1 { margin-top: 8px; color: var(--text-1); font-size: 30px; letter-spacing: -0.04em; }
+.page > header span { color: var(--text-3); font-size: var(--hs-type-label); font-weight: 800; }
+.page > header h1 { margin-top: 8px; color: var(--text-1); font-size: var(--hs-type-title); line-height: var(--hs-line-title); letter-spacing: -0.04em; }
 .page > header p { margin-top: 8px; color: var(--text-2); font-size: 12px; }
 
 .panel {
@@ -27,12 +27,12 @@
 .disclosure summary > div { display: grid; gap: 5px; }
 .disclosure summary span {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 800;
   text-transform: uppercase;
 }
 .disclosure summary strong { font-family: 'Space Grotesk', sans-serif; font-size: 15px; }
-.disclosure summary em { color: var(--text-3); font-size: 10px; font-style: normal; }
+.disclosure summary em { color: var(--text-3); font-size: var(--hs-type-label); font-style: normal; }
 
 .profileForm {
   display: grid;
@@ -42,7 +42,7 @@
   border-top: 1px solid var(--border);
 }
 .profileForm label { position: relative; display: grid; gap: 6px; padding-top: 16px; }
-.profileForm label > span { color: var(--text-2); font-size: 11px; }
+.profileForm label > span { color: var(--text-2); font-size: var(--hs-type-body-sm); }
 .profileForm select,
 .profileForm input {
   min-width: 0;
@@ -75,7 +75,7 @@
   font-weight: 750;
 }
 .formActions em,
-.inlineStatus { color: var(--text-3); font-size: 11px; font-style: normal; }
+.inlineStatus { color: var(--text-3); font-size: var(--hs-type-body-sm); font-style: normal; }
 .inlineStatus { padding: 18px 20px; }
 
 @media (max-width: 760px) {

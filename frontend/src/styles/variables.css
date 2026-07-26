@@ -12,7 +12,7 @@
   --hs-line-strong: rgba(206, 199, 184, 0.22);
   --hs-text: #ECEAE4;
   --hs-text-subtle: #AAA69D;
-  --hs-text-muted: #6E6B64;
+  --hs-text-muted: #8A867E;
   --hs-gain: #57A77F;
   --hs-loss: #D96A70;
   --hs-flee: #4E7FC7;
@@ -21,12 +21,27 @@
   --hs-drift: #D77738;
   --hs-rush: #DC515A;
 
-  --hs-content-max: 1380px;
-  --hs-page-gutter: clamp(20px, 5vw, 72px);
-  --hs-header-height: 68px;
+  --hs-content-max: 1680px;
+  --hs-page-gutter: clamp(20px, 3vw, 48px);
+  --hs-header-height: 72px;
   --hs-radius-sm: 6px;
   --hs-radius-md: 8px;
   --hs-focus-ring: 0 0 0 2px var(--hs-bg), 0 0 0 4px rgba(110, 152, 212, 0.72);
+
+  /* 읽기 계층 — 금융 데이터 화면의 최소 가독성 계약 */
+  --hs-type-micro: 11px;
+  --hs-type-label: 12px;
+  --hs-type-body-sm: 13px;
+  --hs-type-body: 14px;
+  --hs-type-subtitle: 16px;
+  --hs-type-title-sm: 20px;
+  --hs-type-title: 28px;
+  --hs-line-micro: 16px;
+  --hs-line-label: 16px;
+  --hs-line-body-sm: 18px;
+  --hs-line-body: 20px;
+  --hs-line-subtitle: 22px;
+  --hs-line-title: 36px;
 
   --hs-space-1: 4px;
   --hs-space-2: 8px;
@@ -39,19 +54,19 @@
   --hs-space-12: 48px;
 
   /* 배경 계층 */
-  --bg:       #0D121A;
-  --surface:  #151B25;
-  --surface2: #1B2330;
-  --surface3: #202A38;
+  --bg:       var(--hs-bg);
+  --surface:  var(--hs-surface);
+  --surface2: var(--hs-surface-raised);
+  --surface3: color-mix(in srgb, var(--hs-surface-raised) 82%, var(--hs-text) 18%);
 
   /* 경계선 */
-  --border:  #2B3545;
-  --border2: #465366;
+  --border:  var(--hs-line);
+  --border2: var(--hs-line-strong);
 
   /* 텍스트 계층 */
-  --text-1: #F5F7FA;
-  --text-2: #B9C0CC;
-  --text-3: #7D8796;
+  --text-1: var(--hs-text);
+  --text-2: var(--hs-text-subtle);
+  --text-3: var(--hs-text-muted);
 
   /* HERD 5단계 색상 */
   --flee:    #3B82F6;   /* 파랑 — 0~15 */
@@ -99,19 +114,19 @@ body.light {
   --hs-line-strong: rgba(61, 57, 50, 0.22);
   --hs-text: #191918;
   --hs-text-subtle: #5E5B55;
-  --hs-text-muted: #8A857C;
+  --hs-text-muted: #6F6B63;
   --hs-gain: #267553;
   --hs-loss: #B84450;
 
-  --bg:       #F4F7FB;
-  --surface:  #FFFFFF;
-  --surface2: #EEF3F8;
-  --surface3: #E3EAF3;
-  --border:   #D8E0EA;
-  --border2:  #B8C4D3;
-  --text-1:   #111827;
-  --text-2:   #475569;
-  --text-3:   #7B8794;
+  --bg:       var(--hs-bg);
+  --surface:  var(--hs-surface);
+  --surface2: var(--hs-surface-raised);
+  --surface3: color-mix(in srgb, var(--hs-surface-raised) 82%, var(--hs-text) 18%);
+  --border:   var(--hs-line);
+  --border2:  var(--hs-line-strong);
+  --text-1:   var(--hs-text);
+  --text-2:   var(--hs-text-subtle);
+  --text-3:   var(--hs-text-muted);
   --calm:     #64748B;
   --action-hold: #64748B;
   --action-hold-soft: rgba(100, 116, 139, 0.12);

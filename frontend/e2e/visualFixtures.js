@@ -62,6 +62,10 @@ export const portfolioSummary = {
   total_cost: 20_200,
   total_return_pct: 13.27,
   daily_change_pct: -1.14,
+  totalValue: 25_000,
+  totalCost: 20_200,
+  totalReturnPct: 13.27,
+  dailyChangePct: -1.14,
   market_data_date: scoreDate,
   stocks: [
     priceRow('NVDA', 178, 5_696, 50.85, -1.2),

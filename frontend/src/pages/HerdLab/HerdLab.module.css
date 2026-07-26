@@ -1,7 +1,8 @@
 .page {
   display: grid;
+  width: 100%;
   gap: 14px;
-  max-width: 1280px;
+  max-width: 1480px;
 }
 
 .overview,
@@ -29,7 +30,7 @@
 .sectionHead span,
 .methodology summary span {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-weight: 800;
   text-transform: uppercase;
 }
@@ -44,7 +45,7 @@
 .overview header p {
   margin-top: 9px;
   color: var(--text-3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   line-height: 1.45;
 }
 
@@ -74,7 +75,7 @@
   overflow: hidden;
   margin-top: 6px;
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-style: normal;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -139,7 +140,7 @@
 .sectionHead p,
 .methodology summary em {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-style: normal;
 }
 
@@ -194,7 +195,7 @@
 .sectorList dt {
   margin-top: 3px;
   color: var(--text-3);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
 }
 
 .sectorList dl {
@@ -217,7 +218,7 @@
 .tableDisclosure > summary {
   padding: 14px 20px;
   color: var(--text-2);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-weight: 750;
 }
 
@@ -256,7 +257,7 @@
 .th span {
   color: var(--text-3);
   font-family: 'Inter', sans-serif;
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   text-transform: uppercase;
 }
 
@@ -269,7 +270,7 @@
   margin-top: 2px;
   color: var(--text-3);
   font-family: 'Inter', sans-serif;
-  font-size: 9px;
+  font-size: var(--hs-type-label);
 }
 
 .tr span em {
@@ -277,7 +278,7 @@
   padding: 3px 7px;
   border: 1px solid;
   border-radius: 999px;
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   font-style: normal;
 }
 
@@ -346,14 +347,14 @@
 .stageGrid strong,
 .stageGrid b,
 .weightList strong {
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
 }
 
 .stageGrid span,
 .stageGrid em,
 .weightList span {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   font-style: normal;
 }
 
@@ -385,7 +386,7 @@
   margin: 0;
   padding: 0 20px 20px 38px;
   color: var(--text-3);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
   line-height: 1.5;
 }
 
@@ -427,7 +428,7 @@
   .tr { grid-template-columns: 1fr; gap: 5px; padding: 13px 0; }
   .th { display: none; }
   .tr span { display: flex; justify-content: space-between; }
-  .tr span::before { color: var(--text-3); font-family: 'Inter', sans-serif; font-size: 9px; }
+  .tr span::before { color: var(--text-3); font-family: 'Inter', sans-serif; font-size: var(--hs-type-label); }
   .tr span:nth-child(1)::before { content: '종목'; }
   .tr span:nth-child(2)::before { content: 'B&H'; }
   .tr span:nth-child(3)::before { content: 'Action'; }
@@ -445,9 +446,9 @@
 }
 .outcomeGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .outcomeGrid article { padding: 18px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface2); }
-.outcomeGrid span { display: block; color: var(--text-3); font-size: 10px; }
+.outcomeGrid span { display: block; color: var(--text-3); font-size: var(--hs-type-label); }
 .outcomeGrid strong { display: block; margin: 7px 0; color: var(--scatter); font-size: 24px; }
-.outcomeGrid p, .outcomeGrid em { display: block; color: var(--text-2); font-size: 10px; font-style: normal; line-height: 1.6; }
+.outcomeGrid p, .outcomeGrid em { display: block; color: var(--text-2); font-size: var(--hs-type-label); font-style: normal; line-height: 1.6; }
 .outcomeGrid em { color: var(--text-3); }
 
 .legacyGrid {
@@ -468,7 +469,7 @@
 .legacyGrid em {
   display: block;
   color: var(--text-3);
-  font-size: 9px;
+  font-size: var(--hs-type-label);
   font-style: normal;
 }
 
@@ -482,7 +483,7 @@
 .legacyGrid p {
   margin-top: 8px;
   color: var(--text-2);
-  font-size: 10px;
+  font-size: var(--hs-type-label);
 }
 
 @media (max-width: 760px) {
@@ -496,7 +497,7 @@
   gap: 7px;
   margin-top: 12px;
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--hs-type-body-sm);
   font-style: normal;
 }
 
