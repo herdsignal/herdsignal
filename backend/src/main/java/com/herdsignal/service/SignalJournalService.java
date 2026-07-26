@@ -1,11 +1,13 @@
 package com.herdsignal.service;
 
 import com.herdsignal.domain.SignalJournal;
+import com.herdsignal.domain.HerdObservation;
 import com.herdsignal.dto.SignalJournalRequest;
 import com.herdsignal.dto.SignalJournalResponse;
 import com.herdsignal.exception.ResourceNotFoundException;
 import com.herdsignal.repository.DailyPriceRepository;
 import com.herdsignal.repository.SignalJournalRepository;
+import com.herdsignal.repository.HerdObservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +23,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SignalJournalService {
 
+    private static final String STATE_MODEL_VERSION = "HERD_STATE_S1";
+
     private final SignalJournalRepository signalJournalRepository;
     private final DailyPriceRepository dailyPriceRepository;
+    private final HerdObservationRepository observationRepository;
     private final UserActionBoundary actionBoundary;
     private final SignalJournalOutcomeService outcomeService;
 
@@ -43,6 +48,14 @@ public class SignalJournalService {
     public SignalJournalResponse createJournal(String userId, SignalJournalRequest request) {
         String ticker = normalizeTicker(request.getTicker());
         String actionType = normalizeActionType(request.getActionType());
+        HerdObservation observation = observationRepository
+                .findTopByTickerAndStateModelVersionOrderByObservationDateDesc(
+                        ticker,
+                        STATE_MODEL_VERSION
+                )
+                .orElseThrow(() -> new IllegalStateException(
+                        ticker + " 종목의 State S1 관찰값이 준비되지 않았습니다."
+                ));
         UserActionBoundary.Output modelAction = actionBoundary.locked();
         LocalDateTime now = LocalDateTime.now();
 
@@ -51,9 +64,9 @@ public class SignalJournalService {
                 .ticker(ticker)
                 .actionType(actionType)
                 .actionLabel(cleanText(request.getActionLabel(), 50))
-                .scoreDate(request.getScoreDate())
-                .herdScore(request.getHerdScore())
-                .herdStage(cleanText(request.getHerdStage(), 20))
+                .scoreDate(observation.getObservationDate())
+                .herdScore(observation.getStateScore())
+                .herdStage(observation.getHerdStage())
                 .signal(modelAction.action())
                 .signalLabel("State S1 관찰")
                 .actionRatio(modelAction.ratio())

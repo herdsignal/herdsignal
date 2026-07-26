@@ -1,9 +1,11 @@
 package com.herdsignal.service;
 
 import com.herdsignal.domain.SignalJournal;
+import com.herdsignal.domain.HerdObservation;
 import com.herdsignal.exception.ResourceNotFoundException;
 import com.herdsignal.repository.DailyPriceRepository;
 import com.herdsignal.repository.SignalJournalRepository;
+import com.herdsignal.repository.HerdObservationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,18 +22,32 @@ import static org.mockito.Mockito.when;
 class SignalJournalServiceTest {
     private SignalJournalRepository repository;
     private DailyPriceRepository dailyPriceRepository;
+    private HerdObservationRepository observationRepository;
     private SignalJournalService service;
 
     @BeforeEach
     void setUp() {
         repository = mock(SignalJournalRepository.class);
         dailyPriceRepository = mock(DailyPriceRepository.class);
+        observationRepository = mock(HerdObservationRepository.class);
         service = new SignalJournalService(
                 repository,
                 dailyPriceRepository,
+                observationRepository,
                 new UserActionBoundary(),
                 new SignalJournalOutcomeService(dailyPriceRepository)
         );
+        when(observationRepository
+                .findTopByTickerAndStateModelVersionOrderByObservationDateDesc(
+                        org.mockito.ArgumentMatchers.anyString(),
+                        org.mockito.ArgumentMatchers.eq("HERD_STATE_S1")
+                ))
+                .thenReturn(Optional.of(HerdObservation.builder()
+                        .ticker("NVDA")
+                        .observationDate(java.time.LocalDate.of(2026, 7, 24))
+                        .stateScore(new java.math.BigDecimal("51.25"))
+                        .herdStage("CALM")
+                        .build()));
     }
 
     @Test
@@ -79,9 +95,32 @@ class SignalJournalServiceTest {
         assertThat(saved.getValue().getSignal()).isEqualTo("HOLD");
         assertThat(saved.getValue().getActionRatio()).isZero();
         assertThat(saved.getValue().getSignalDurationDays()).isNull();
+        assertThat(saved.getValue().getScoreDate())
+                .isEqualTo(java.time.LocalDate.of(2026, 7, 24));
+        assertThat(saved.getValue().getHerdScore())
+                .isEqualByComparingTo("51.25");
+        assertThat(saved.getValue().getHerdStage()).isEqualTo("CALM");
         assertThat(response.getActionType()).isEqualTo("SELL");
         assertThat(response.getSignal()).isEqualTo("HOLD");
         assertThat(response.getActionRatio()).isZero();
+    }
+
+    @Test
+    void rejectsJournalWhenStateObservationDoesNotExist() {
+        when(observationRepository
+                .findTopByTickerAndStateModelVersionOrderByObservationDateDesc(
+                        "RKLB",
+                        "HERD_STATE_S1"
+                ))
+                .thenReturn(Optional.empty());
+        var request = new com.herdsignal.dto.SignalJournalRequest();
+        org.springframework.test.util.ReflectionTestUtils.setField(request, "ticker", "RKLB");
+        org.springframework.test.util.ReflectionTestUtils.setField(request, "actionType", "HOLD");
+
+        assertThatThrownBy(() -> service.createJournal("user-a", request))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("State S1");
+        verify(repository, never()).save(any());
     }
 
     @Test
