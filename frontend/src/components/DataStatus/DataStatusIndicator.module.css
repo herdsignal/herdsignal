@@ -165,6 +165,35 @@
   font-size: var(--hs-type-label);
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hs-line);
+}
+
+.actions button {
+  padding: 8px 10px;
+  border: 1px solid var(--hs-line-strong);
+  border-radius: var(--hs-radius-sm);
+  background: transparent;
+  color: var(--hs-text);
+  font-size: var(--hs-type-label);
+  cursor: pointer;
+}
+
+.actions button:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.actions span {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
 @media (max-width: 760px) {
   .trigger span:last-child {
     display: none;

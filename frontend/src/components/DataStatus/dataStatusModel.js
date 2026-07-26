@@ -17,6 +17,7 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
       runLabel: '확인 중',
       coverageLabel: '—',
       issueLabel: null,
+      isRunning: false,
     }
   }
 
@@ -29,6 +30,7 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
       runLabel: '백엔드 연결 확인',
       coverageLabel: '—',
       issueLabel: null,
+      isRunning: false,
     }
   }
 
@@ -58,6 +60,7 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
     runLabel: schedulerRunLabel(run),
     coverageLabel: expected > 0 ? `${completed}/${expected} 종목` : '집계 없음',
     issueLabel: issues.length > 0 ? issues.join(' · ') : null,
+    isRunning: run?.status === 'RUNNING',
   }
 }
 

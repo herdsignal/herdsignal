@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { getDataStatus } from '../../api/herdApi'
+import { getDataStatus, requestSchedulerRun } from '../../api/herdApi'
 import { dataStatusViewModel } from './dataStatusModel'
 import styles from './DataStatusIndicator.module.css'
 
@@ -10,6 +10,8 @@ export default function DataStatusIndicator() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [requesting, setRequesting] = useState(false)
+  const [requestMessage, setRequestMessage] = useState(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -23,6 +25,24 @@ export default function DataStatusIndicator() {
       setLoading(false)
     }
   }, [])
+
+  const runNow = useCallback(async () => {
+    setRequesting(true)
+    setRequestMessage(null)
+    try {
+      await requestSchedulerRun()
+      setRequestMessage('갱신을 시작했습니다.')
+      window.setTimeout(load, 1_000)
+    } catch (requestError) {
+      setRequestMessage(
+        requestError.response?.status === 409
+          ? '이미 갱신 중입니다.'
+          : '갱신 요청에 실패했습니다.',
+      )
+    } finally {
+      setRequesting(false)
+    }
+  }, [load])
 
   useEffect(() => {
     load()
@@ -54,6 +74,12 @@ export default function DataStatusIndicator() {
       document.removeEventListener('keydown', closeOnEscape)
     }
   }, [open])
+
+  useEffect(() => {
+    if (!open) return undefined
+    const intervalId = window.setInterval(load, 10_000)
+    return () => window.clearInterval(intervalId)
+  }, [load, open])
 
   const view = dataStatusViewModel(data, { loading, error })
 
@@ -107,6 +133,12 @@ export default function DataStatusIndicator() {
             <small>{view.coverageLabel}</small>
           </div>
           {view.issueLabel && <p className={styles.issue}>{view.issueLabel}</p>}
+          <div className={styles.actions}>
+            <button type="button" onClick={runNow} disabled={requesting || view.isRunning}>
+              {requesting ? '요청 중' : view.isRunning ? '갱신 중' : '지금 전체 갱신'}
+            </button>
+            {requestMessage && <span role="status">{requestMessage}</span>}
+          </div>
         </section>
       )}
     </div>

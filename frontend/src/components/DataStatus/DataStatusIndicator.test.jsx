@@ -1,10 +1,11 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { getDataStatus } from '../../api/herdApi'
+import { getDataStatus, requestSchedulerRun } from '../../api/herdApi'
 import DataStatusIndicator from './DataStatusIndicator'
 
 vi.mock('../../api/herdApi', () => ({
   getDataStatus: vi.fn(),
+  requestSchedulerRun: vi.fn(),
 }))
 
 afterEach(cleanup)
@@ -26,6 +27,7 @@ beforeEach(() => {
       },
     },
   })
+  requestSchedulerRun.mockResolvedValue({ status: 202 })
 })
 
 describe('DataStatusIndicator', () => {
@@ -45,5 +47,14 @@ describe('DataStatusIndicator', () => {
       expect(screen.queryByRole('dialog', { name: '데이터 수집 상태' })).not.toBeInTheDocument()
     })
     expect(trigger).toHaveFocus()
+  })
+
+  it('requests a full scheduler run explicitly', async () => {
+    render(<DataStatusIndicator />)
+    fireEvent.click(await screen.findByRole('button', { name: '데이터 상태: 데이터 최신' }))
+    fireEvent.click(screen.getByRole('button', { name: '지금 전체 갱신' }))
+
+    await waitFor(() => expect(requestSchedulerRun).toHaveBeenCalledOnce())
+    expect(await screen.findByRole('status')).toHaveTextContent('갱신을 시작했습니다.')
   })
 })

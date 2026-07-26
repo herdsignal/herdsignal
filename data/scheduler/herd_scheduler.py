@@ -502,6 +502,7 @@ if __name__ == "__main__":
 
     if args.run_now or args.retry_now:
         logger.info("[--run-now] Tier1 즉시 실행 모드")
-        run_herd_job(trigger_type="RETRY" if args.retry_now else "MANUAL")
+        result = run_herd_job(trigger_type="RETRY" if args.retry_now else "MANUAL")
+        print(json.dumps(result, ensure_ascii=False))
     else:
         run_scheduler()
