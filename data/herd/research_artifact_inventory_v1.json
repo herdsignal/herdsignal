@@ -452,7 +452,7 @@
     },
     {
       "path": "data/herd/sec_form4_nonroutine_sale_rush_preregistration_v1.json",
-      "status": "ACTIVE"
+      "status": "REJECTED"
     },
     {
       "path": "data/herd/sec_form4_research_census_v2.json",
@@ -1509,6 +1509,18 @@
     {
       "path": "data/reports/sec_form4_nonroutine_sale_feasibility_v1.json",
       "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_form4_nonroutine_sale_rush_oos_v1.csv",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/sec_form4_nonroutine_sale_rush_oos_v1.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/sec_form4_nonroutine_sale_rush_promotion_audit_v1.json",
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/sec_form4_owner_purchase_events_v1.csv",

@@ -176,6 +176,18 @@
 계약과 원장은 `data/herd/sec_form4_nonroutine_sale_feasibility_v1.json`,
 `data/reports/sec_form4_nonroutine_sale_events_v1.csv`다.
 
+사전등록된 다중 owner 가설은 OOS에서 탈락했다.
+
+- 7,397개 S1 Rush 진입·439개 종목 중 노출 사건은 631개였다.
+- 노출군 악화율은 18.54%, 비노출군은 22.51%로 사전등록 방향과 반대였다.
+- 위험 차이는 -3.97%p, 상대위험은 0.824였고 네 fold 모두 반대였다.
+- 역방향 결과를 사후 매수 신호로 바꾸지 않는다. 5% 익절·재진입·완결
+  사이클과 운영 행동 비율은 계속 차단한다.
+
+결과와 차단 감사는
+`data/reports/sec_form4_nonroutine_sale_rush_oos_v1.json`,
+`data/reports/sec_form4_nonroutine_sale_rush_promotion_audit_v1.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.

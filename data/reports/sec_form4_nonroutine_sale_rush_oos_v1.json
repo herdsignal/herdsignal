@@ -1,0 +1,84 @@
+{
+  "report_version": "HERD_SEC_FORM4_NONROUTINE_SALE_RUSH_OOS_V1",
+  "status": "PREHOLDOUT_OOS_COMPLETE",
+  "episodes": 7397,
+  "tickers": 439,
+  "feature_positive_episodes": 631,
+  "feature_positive_tickers": 218,
+  "feature_positive_adverse_episodes": 117,
+  "feature_negative_episodes": 6766,
+  "feature_negative_adverse_episodes": 1523,
+  "feature_positive_adverse_rate": 0.18541996830427893,
+  "feature_negative_adverse_rate": 0.22509606857818504,
+  "pooled_adverse_risk_difference": -0.03967610027390611,
+  "pooled_relative_risk": 0.8237370358153324,
+  "one_sided_fisher_p_value": 0.9914117613374072,
+  "folds": [
+    {
+      "fold_id": "OOS_2016_2018",
+      "episodes": 2466,
+      "feature_positive_episodes": 241,
+      "feature_positive_adverse_rate": 0.12448132780082988,
+      "feature_negative_adverse_rate": 0.1451685393258427,
+      "adverse_risk_difference": -0.020687211525012822,
+      "relative_risk": 0.8574952147270789,
+      "direction_matches_hypothesis": false
+    },
+    {
+      "fold_id": "OOS_2019_2021",
+      "episodes": 2233,
+      "feature_positive_episodes": 198,
+      "feature_positive_adverse_rate": 0.19696969696969696,
+      "feature_negative_adverse_rate": 0.24422604422604421,
+      "adverse_risk_difference": -0.04725634725634725,
+      "relative_risk": 0.8065057008718981,
+      "direction_matches_hypothesis": false
+    },
+    {
+      "fold_id": "OOS_2024_2026Q2",
+      "episodes": 1960,
+      "feature_positive_episodes": 144,
+      "feature_positive_adverse_rate": 0.2361111111111111,
+      "feature_negative_adverse_rate": 0.24118942731277532,
+      "adverse_risk_difference": -0.0050783162016642125,
+      "relative_risk": 0.9789446981227803,
+      "direction_matches_hypothesis": false
+    },
+    {
+      "fold_id": "OOS_2022_2023",
+      "episodes": 738,
+      "feature_positive_episodes": 48,
+      "feature_positive_adverse_rate": 0.2916666666666667,
+      "feature_negative_adverse_rate": 0.38405797101449274,
+      "adverse_risk_difference": -0.09239130434782605,
+      "relative_risk": 0.759433962264151,
+      "direction_matches_hypothesis": false
+    }
+  ],
+  "ticker_cluster_bootstrap": {
+    "iterations": 2000,
+    "valid_iterations": 2000,
+    "risk_difference_ci_95": [
+      -0.07599345078885715,
+      -0.003758958581612809
+    ]
+  },
+  "checks": {
+    "minimum_resolved_episodes": true,
+    "minimum_feature_positive_episodes": true,
+    "minimum_feature_positive_tickers": true,
+    "minimum_folds_with_at_least_10_positive_episodes": true,
+    "minimum_direction_consistent_folds": false,
+    "minimum_pooled_adverse_risk_difference": false,
+    "minimum_pooled_relative_risk": false,
+    "bootstrap_lower_risk_difference_above_zero": false,
+    "maximum_one_sided_fisher_p_value": false
+  },
+  "passed": false,
+  "adoption_allowed": false,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "panel_path": "data/reports/sec_form4_nonroutine_sale_rush_oos_v1.csv",
+  "panel_sha256": "85d1d37f7308dbe6219cdae5abbf0fdafa1368ce38b5c4efb0422e476bfae1f1"
+}

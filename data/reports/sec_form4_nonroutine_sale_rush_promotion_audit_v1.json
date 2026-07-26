@@ -1,0 +1,20 @@
+{
+  "report_version": "HERD_SEC_FORM4_NONROUTINE_SALE_RUSH_PROMOTION_AUDIT_V1",
+  "status": "REJECTED_DIRECTIONALLY_INVERTED",
+  "source": {
+    "path": "data/reports/sec_form4_nonroutine_sale_rush_oos_v1.json",
+    "sha256": "43e2e66b49fd8f182678f8a4bc3459dc8770cda22dee479e6b6057e85fe533d9"
+  },
+  "reason": "The prespecified higher-risk direction failed in every fold; pooled adverse risk was lower, not higher, among exposed entries.",
+  "failed_hypothesis": "FORM4_TIMING_NONROUTINE_MULTI_OWNER_SALE_30D_AT_S1_RUSH_ENTRY",
+  "downstream": {
+    "five_percent_profit_take": "BLOCKED",
+    "reentry_rule": "BLOCKED_NO_VALIDATED_SALE_CASH",
+    "completed_cycle": "BLOCKED",
+    "shadow_action_layer": "BLOCKED"
+  },
+  "forbidden_interpretation": "The inverse association is not permission to create a buy signal because that direction was not preregistered.",
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "operational_action_ratio": 0.0
+}
