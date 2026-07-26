@@ -1,0 +1,40 @@
+{
+  "ledger_version": "HERD_MODEL_RUSH_EPISODE_LEDGER_V1",
+  "status": "PINNED_DIAGNOSTIC_LEDGER",
+  "locked_at": "2026-07-26",
+  "events": {
+    "path": "data/reports/rush_pre_damage_path_events_v2.csv",
+    "sha256": "10eac5722a9fcd9cd155f626d5ec60ca06cfa961836a6605f9ab946d75687089",
+    "expected_rows": 1998,
+    "expected_tickers": 381
+  },
+  "protocol": {
+    "path": "data/herd/rush_pre_damage_path_audit_v2.json",
+    "sha256": "b85f837d6a62399b0dd0d6e23165a34d969f0c27eadb1823852104dff4adf862"
+  },
+  "result": {
+    "path": "data/reports/rush_pre_damage_path_audit_v2.json",
+    "sha256": "5617a9a793af132bef064627f5806b25de7a4290f11e8dedd91f181b45bc110c"
+  },
+  "path_labels": {
+    "TEMPORARY_PULLBACK": 772,
+    "RESUMED_UPTREND": 735,
+    "LARGE_PULLBACK": 299,
+    "STRUCTURAL_BREAK": 192
+  },
+  "time_contract": {
+    "feature_cutoff": "PREVIOUS_COMPLETED_TRADING_SESSION_BEFORE_DAMAGE_CONFIRMATION",
+    "execution": "NEXT_TRADING_SESSION_OPEN",
+    "future_path_sessions": 63,
+    "outcome_must_follow_feature_cutoff": true
+  },
+  "authority": {
+    "descriptive_path_input": true,
+    "feature_selection": false,
+    "profit_take": false,
+    "reentry": false,
+    "blind_holdout_access": false,
+    "survivorship_safe": false,
+    "operational_action_ratio": 0.0
+  }
+}
