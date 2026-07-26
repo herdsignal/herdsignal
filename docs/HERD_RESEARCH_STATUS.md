@@ -150,6 +150,18 @@
 
 최종 차단 계약은 `data/herd/finra_completed_cycle_gate_v1.json`이다.
 
+## Part J~O — 최종 승격 감사
+
+- 채택 가능한 방향 증거가 0개이므로 조합 후보와 일반화 평가는 0건이다.
+  빈 후보를 B0~B5 또는 새 HERD 버전으로 이름 붙이지 않았다.
+- Blind holdout은 배정·접근·개방 모두 0회이며, 행동 Shadow와 행동
+  개인화도 활성화하지 않았다.
+- 현재 개인 MVP 범위는 `HERD_STATE_S1` 상태와
+  `HERD_TRANSITION_S1` 전환 관찰이다. 새 모델명은 승격 전까지
+  `UNASSIGNED_UNTIL_PROMOTION`, 운영 행동 비율은 0%다.
+
+최종 감사는 `data/herd/model_parts_j_o_promotion_audit_v1.json`이다.
+
 연구 코드와 산출물의 현행·탈락·레거시·데이터 파이프라인 구분은
 `HERD_ARTIFACT_CATALOG.md`와 기계 판독 원장
 현행 분류는 `data/herd/research_artifact_catalog_v2.json`을 기준으로 한다.

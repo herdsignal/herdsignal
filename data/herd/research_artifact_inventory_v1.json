@@ -259,6 +259,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/model_parts_j_o_promotion_audit_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/model_prospective_shadow_gate_v1.json",
       "status": "REJECTED"
     },

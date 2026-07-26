@@ -1,0 +1,31 @@
+{
+  "audit_version": "HERD_MODEL_PARTS_J_O_PROMOTION_AUDIT_V1",
+  "status": "STATE_OBSERVATION_ONLY_NO_ACTION_CANDIDATE",
+  "inputs": [
+    {"path": "data/herd/finra_completed_cycle_gate_v1.json", "sha256": "6e40c1cc25e9b04cea4f6fd1962635ef37bc6bf0849d28b85412ed0dde493fca"},
+    {"path": "data/herd/survivorship_readiness_v2.json", "sha256": "1b7ba3b2ab079b3b0c301dc4d8c8d7359105be6c68c4c9b0dd93f79efd7b97ef"},
+    {"path": "data/herd/model_establishment_status_v1.json", "sha256": "5576796fb32c8305c0bf7b2e91008ee2b1e5ac287167df0740e0d7a6ad4138c1"},
+    {"path": "data/reports/herd_state_s1.json", "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"},
+    {"path": "data/reports/herd_transition_s1.json", "sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248"}
+  ],
+  "parts": {
+    "J_COMBINATION": {"eligible_direction_evidence": 0, "candidate_combinations": 0, "executed": false},
+    "K_GENERALIZATION": {"eligible_candidates": 0, "evaluations": 0, "executed": false},
+    "L_BLIND_HOLDOUT": {"assigned": false, "access_count": 0, "opened": false},
+    "M_SHADOW": {"action_candidates": 0, "action_shadow_enabled": false},
+    "N_PERSONALIZATION": {"action_model_personalized": false, "state_display_personalized": false},
+    "O_MVP": {
+      "state_observation": "HERD_STATE_S1",
+      "transition_observation": "HERD_TRANSITION_S1",
+      "allowed_scope": "STATE_AND_TRANSITION_OBSERVATION_ONLY",
+      "buy_or_profit_take_recommendation": false
+    }
+  },
+  "decision": {
+    "new_model_name": "UNASSIGNED_UNTIL_PROMOTION",
+    "survivorship_safe": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0,
+    "next_research": "ONE_NEW_NON_DUPLICATIVE_DIRECTION_HYPOTHESIS_OR_PROSPECTIVE_DATA_ACCUMULATION"
+  }
+}
