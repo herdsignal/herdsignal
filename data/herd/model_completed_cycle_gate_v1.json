@@ -1,0 +1,41 @@
+{
+  "gate_version": "HERD_MODEL_DOWNSTREAM_GATE_V1",
+  "stage_id": 7,
+  "stage_name": "COMPLETED_CYCLE",
+  "status": "BLOCKED_UPSTREAM_FAIL_CLOSED",
+  "dependencies": [
+    {
+      "path": "data/herd/model_conditional_reentry_gate_v1.json",
+      "sha256": "9fb7f64a1436cb58b2263ad3ee070463b63640a1acb54e1f39c84128bb3c6dc5"
+    }
+  ],
+  "blocker": {
+    "field": "validated_profit_take_reentry_pair_exists",
+    "required_value": true,
+    "actual_value": false,
+    "reason": "A completed cycle cannot be scored when neither leg has passed its directional gate."
+  },
+  "execution": {
+    "attempted": false,
+    "trades_simulated": false,
+    "parameters_selected": false,
+    "baselines_if_unblocked": [
+      "MATCHED_BUY_AND_HOLD",
+      "CASH_HOLD",
+      "PERIODIC_INVESTMENT",
+      "SCHEDULED_REBALANCE"
+    ],
+    "costs_if_unblocked": [
+      "COMMISSION",
+      "SLIPPAGE",
+      "DIVIDENDS",
+      "STOCK_SPLITS",
+      "NEXT_OPEN_EXECUTION"
+    ]
+  },
+  "authority": {
+    "candidate_promoted": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
