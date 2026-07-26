@@ -1,0 +1,34 @@
+{
+  "gate_version": "HERD_MODEL_DOWNSTREAM_GATE_V1",
+  "stage_id": 6,
+  "stage_name": "CONDITIONAL_REENTRY",
+  "status": "BLOCKED_UPSTREAM_FAIL_CLOSED",
+  "dependencies": [
+    {
+      "path": "data/herd/model_sparse_profit_take_gate_v1.json",
+      "sha256": "1379e483afddcc44685fb360116ceff5cac7226c593c31f0533e690361a66f55"
+    }
+  ],
+  "blocker": {
+    "field": "verified_profit_take_proceeds_exist",
+    "required_value": true,
+    "actual_value": false,
+    "reason": "Reentry cannot exist before an independently validated profit-take creates cash."
+  },
+  "execution": {
+    "attempted": false,
+    "trades_simulated": false,
+    "parameters_selected": false,
+    "required_if_unblocked": [
+      "PRIOR_PROCEEDS",
+      "PIT_BUSINESS_STATE_NOT_DAMAGED",
+      "MARKET_OR_SECTOR_EXPLAINED_WEAKNESS",
+      "DOWNSIDE_DECELERATION_OR_RELATIVE_STRENGTH_RECOVERY"
+    ]
+  },
+  "authority": {
+    "candidate_promoted": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
