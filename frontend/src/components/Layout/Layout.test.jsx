@@ -7,6 +7,9 @@ vi.mock('../../api/herdApi', () => ({
   getDataStatus: vi.fn().mockResolvedValue({
     data: { data: { status: 'FRESH' } },
   }),
+  getObservationChanges: vi.fn().mockResolvedValue({
+    data: { data: { unreadCount: 2 } },
+  }),
 }))
 
 vi.mock('../../auth/AuthContext', () => ({

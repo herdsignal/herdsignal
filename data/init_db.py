@@ -298,6 +298,31 @@ class UserWatchlist(Base):
     created_at  = Column(DateTime,    nullable=False, default=datetime.utcnow, comment="레코드 생성 시각 (UTC)")
 
 
+class UserObservationReceipt(Base):
+    """사용자가 종목별 State S1 변화를 확인한 마지막 관찰일."""
+    __tablename__ = "user_observation_receipts"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "ticker",
+            name="uq_observation_receipt_user_ticker",
+        ),
+        Index("ix_observation_receipt_user", "user_id"),
+    )
+
+    id                = Column(BigInteger, primary_key=True, autoincrement=True)
+    user_id           = Column(String(50), nullable=False)
+    ticker            = Column(String(10), nullable=False)
+    seen_through_date = Column(Date, nullable=False)
+    created_at        = Column(DateTime, nullable=False, default=_utc_now_naive)
+    updated_at        = Column(
+        DateTime,
+        nullable=False,
+        default=_utc_now_naive,
+        onupdate=_utc_now_naive,
+    )
+
+
 # ──────────────────────────────────────────────
 # 7. 현금 보유액 현재값 (user_cash_balance)
 # ──────────────────────────────────────────────
@@ -404,7 +429,8 @@ SQLITE_PATH = "herdsignal_test.db"
 
 MODELS = [
     AppUser, Stock, HerdScore, HerdIndicator, DailyPrice, HerdObservation,
-    UserPortfolio, InvestorProfile, UserWatchlist, UserCashBalance, UserCashHistory, PortfolioHistory,
+    UserPortfolio, InvestorProfile, UserWatchlist, UserObservationReceipt,
+    UserCashBalance, UserCashHistory, PortfolioHistory,
     SignalJournal,
 ]
 

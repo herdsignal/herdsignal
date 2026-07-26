@@ -83,6 +83,22 @@ export const addToWatchlist = (ticker, memo) => api.post('/api/watchlist', { tic
 /** 관심 종목 삭제 */
 export const removeFromWatchlist = (ticker) => api.delete(`/api/watchlist/${tickerPath(ticker)}`)
 
+/* ── 관찰 변화함 ───────────────────────────── */
+
+/** 보유·관심 종목의 확인된 State S1 변화. limit=0은 개수만 조회한다. */
+export const getObservationChanges = (limit = 50) =>
+  api.get('/api/observation-changes', { params: { limit } })
+
+/** 특정 종목의 관찰 변화를 해당 날짜까지 확인 처리. */
+export const markObservationTickerSeen = (ticker, seenThroughDate) =>
+  api.post(`/api/observation-changes/${tickerPath(ticker)}/seen`, {
+    seenThroughDate,
+  })
+
+/** 현재 추적 중인 모든 종목의 최신 관찰일까지 확인 처리. */
+export const markAllObservationChangesSeen = () =>
+  api.post('/api/observation-changes/seen-all')
+
 /* ── 포트폴리오 평가금액 ─────────────────────── */
 
 /** 포트폴리오 현재 평가 요약 (총액·수익률·일일등락·종목별 현재가) */

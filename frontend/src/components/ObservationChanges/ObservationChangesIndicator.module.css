@@ -1,0 +1,32 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 5px;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+  font-weight: 680;
+}
+
+.link:hover {
+  color: var(--hs-text);
+}
+
+.link strong {
+  display: grid;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--hs-text);
+  color: var(--hs-bg);
+  font-size: 10px;
+  line-height: 1;
+}
+
+@media (max-width: 760px) {
+  .link {
+    display: none;
+  }
+}

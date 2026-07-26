@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import herdSignalMark from '../../assets/brand/herdsignal-mark.svg'
 import { useAuth } from '../../auth/AuthContext'
 import DataStatusIndicator from '../DataStatus/DataStatusIndicator'
+import ObservationChangesIndicator from '../ObservationChanges/ObservationChangesIndicator'
 import styles from './Layout.module.css'
 
 const PRIMARY_NAVIGATION = [
@@ -13,6 +14,7 @@ const PRIMARY_NAVIGATION = [
 ]
 
 const SECONDARY_NAVIGATION = [
+  { to: '/changes', label: '관찰 변화' },
   { to: '/watchlist', label: '관찰 종목' },
   { to: '/history', label: '자산 히스토리' },
   { to: '/journal', label: '판단 기록' },
@@ -24,6 +26,7 @@ const PAGE_TITLES = {
   '/portfolio': '포트폴리오',
   '/search': '종목 찾기',
   '/watchlist': '관심종목',
+  '/changes': '관찰 변화',
   '/history': '자산 히스토리',
   '/journal': '판단 기록',
   '/herd-lab': 'HERD 연구실',
@@ -114,6 +117,7 @@ export default function Layout() {
         <Navigation className={styles.desktopNav} label="주요 메뉴" />
 
         <div className={styles.account} ref={accountRef}>
+          <ObservationChangesIndicator />
           <DataStatusIndicator />
           <NavLink className={styles.watchlistLink} to="/watchlist">
             관찰

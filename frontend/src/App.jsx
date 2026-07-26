@@ -18,6 +18,7 @@ const Login = lazy(() => import('./pages/Login/Login'))
 const StockDetail = lazy(() => import('./pages/StockDetail/StockDetail'))
 const Search = lazy(() => import('./pages/Search/Search'))
 const Watchlist = lazy(() => import('./pages/Watchlist/Watchlist'))
+const ObservationChanges = lazy(() => import('./pages/ObservationChanges/ObservationChanges'))
 const History = lazy(() => import('./pages/History/History'))
 const HerdLab = lazy(() => import('./pages/HerdLab/HerdLab'))
 const Journal = lazy(() => import('./pages/Journal/Journal'))
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/stock/:ticker" element={<StockDetail />} />
             <Route path="/search"        element={<Search />} />
             <Route path="/watchlist"     element={<Watchlist />} />
+            <Route path="/changes"       element={<ObservationChanges />} />
             <Route path="/history"       element={<History />} />
             <Route path="/herd-lab"      element={<HerdLab />} />
             <Route path="/journal"       element={<Journal />} />

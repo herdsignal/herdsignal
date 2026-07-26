@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
 /** HERD S1 관찰 스냅샷 조회 전용 저장소. */
@@ -41,5 +42,19 @@ public interface HerdObservationRepository
     List<HerdObservation> findLatestByTickersAndStateModelVersion(
             @Param("tickers") List<String> tickers,
             @Param("stateModelVersion") String stateModelVersion
+    );
+
+    @Query("""
+            select observation
+            from HerdObservation observation
+            where observation.stateModelVersion = :stateModelVersion
+              and observation.ticker in :tickers
+              and observation.observationDate >= :fromDate
+            order by observation.observationDate desc, observation.ticker asc
+            """)
+    List<HerdObservation> findTrackedHistorySince(
+            @Param("tickers") List<String> tickers,
+            @Param("stateModelVersion") String stateModelVersion,
+            @Param("fromDate") LocalDate fromDate
     );
 }
