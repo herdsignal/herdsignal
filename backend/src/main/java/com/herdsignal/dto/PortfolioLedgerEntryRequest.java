@@ -22,6 +22,7 @@ public class PortfolioLedgerEntryRequest {
 
     private BigDecimal quantity;
     private BigDecimal unitPrice;
+    private BigDecimal splitRatio;
     private BigDecimal amount;
     private BigDecimal fee;
     private String note;

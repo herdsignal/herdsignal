@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +53,7 @@ public class PortfolioLedgerService {
 
         BigDecimal quantity = null;
         BigDecimal unitPrice = null;
+        BigDecimal splitRatio = null;
         BigDecimal grossAmount;
         if (type == PortfolioLedgerEntryType.BUY || type == PortfolioLedgerEntryType.SELL) {
             quantity = positive(request.getQuantity(), "수량").setScale(6, RoundingMode.HALF_UP);
@@ -59,6 +61,13 @@ public class PortfolioLedgerService {
             grossAmount = quantity.multiply(unitPrice).setScale(2, RoundingMode.HALF_UP);
             if (type == PortfolioLedgerEntryType.SELL && fee.compareTo(grossAmount) > 0) {
                 throw new IllegalArgumentException("매도 수수료는 거래 금액을 초과할 수 없습니다.");
+            }
+        } else if (type == PortfolioLedgerEntryType.SPLIT) {
+            splitRatio = positive(request.getSplitRatio(), "분할 배율")
+                    .setScale(8, RoundingMode.HALF_UP);
+            grossAmount = ZERO;
+            if (fee.compareTo(BigDecimal.ZERO) > 0) {
+                throw new IllegalArgumentException("주식 분할에는 수수료를 기록할 수 없습니다.");
             }
         } else {
             grossAmount = positive(request.getAmount(), "금액").setScale(2, RoundingMode.HALF_UP);
@@ -74,6 +83,7 @@ public class PortfolioLedgerService {
                 .occurredOn(request.getOccurredOn())
                 .quantity(quantity)
                 .unitPrice(unitPrice)
+                .splitRatio(splitRatio)
                 .grossAmount(grossAmount)
                 .feeAmount(fee)
                 .currency("USD")
@@ -91,12 +101,20 @@ public class PortfolioLedgerService {
         repository.delete(entry);
     }
 
+    @Transactional(readOnly = true)
+    public String exportCsv(String userId) {
+        String header = "date,type,ticker,quantity,unit_price,split_ratio,gross_amount,fee,currency,note";
+        return repository.findByUserIdOrderByOccurredOnAscIdAsc(userId).stream()
+                .map(this::csvRow)
+                .collect(Collectors.joining("\n", header + "\n", "\n"));
+    }
+
     private PortfolioLedgerEntryType parseType(String value) {
         try {
             return PortfolioLedgerEntryType.valueOf(value.trim().toUpperCase(Locale.ROOT));
         } catch (RuntimeException exception) {
             throw new IllegalArgumentException(
-                    "원장 유형은 BUY/SELL/DEPOSIT/WITHDRAWAL/DIVIDEND/FEE 중 하나여야 합니다."
+                    "원장 유형은 BUY/SELL/DEPOSIT/WITHDRAWAL/DIVIDEND/FEE/SPLIT 중 하나여야 합니다."
             );
         }
     }
@@ -104,7 +122,8 @@ public class PortfolioLedgerService {
     private String normalizedTicker(PortfolioLedgerEntryType type, String rawTicker) {
         boolean required = type == PortfolioLedgerEntryType.BUY
                 || type == PortfolioLedgerEntryType.SELL
-                || type == PortfolioLedgerEntryType.DIVIDEND;
+                || type == PortfolioLedgerEntryType.DIVIDEND
+                || type == PortfolioLedgerEntryType.SPLIT;
         if (!required && (rawTicker == null || rawTicker.isBlank())) return null;
         if (
                 (type == PortfolioLedgerEntryType.DEPOSIT
@@ -115,6 +134,30 @@ public class PortfolioLedgerService {
             throw new IllegalArgumentException("입출금 항목에는 종목을 지정할 수 없습니다.");
         }
         return tickerSymbolPolicy.normalize(rawTicker);
+    }
+
+    private String csvRow(PortfolioLedgerEntry entry) {
+        return String.join(",",
+                entry.getOccurredOn().toString(),
+                entry.getEntryType().name(),
+                csv(entry.getTicker()),
+                csv(entry.getQuantity()),
+                csv(entry.getUnitPrice()),
+                csv(entry.getSplitRatio()),
+                csv(entry.getGrossAmount()),
+                csv(entry.getFeeAmount()),
+                csv(entry.getCurrency()),
+                csv(entry.getNote())
+        );
+    }
+
+    private String csv(Object value) {
+        if (value == null) return "";
+        String text = String.valueOf(value);
+        if (text.contains(",") || text.contains("\"") || text.contains("\n")) {
+            return "\"" + text.replace("\"", "\"\"") + "\"";
+        }
+        return text;
     }
 
     private void validateDate(LocalDate date) {

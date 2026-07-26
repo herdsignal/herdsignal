@@ -78,6 +78,19 @@ final class PortfolioLedgerCalculator {
                                 .subtract(consumedCost);
                     }
                 }
+                case SPLIT -> {
+                    PositionState state = states.computeIfAbsent(
+                            entry.getTicker(),
+                            ignored -> new PositionState()
+                    );
+                    ArrayDeque<Lot> adjusted = new ArrayDeque<>();
+                    state.lots.forEach(lot -> adjusted.addLast(new Lot(
+                            lot.quantity().multiply(entry.getSplitRatio()),
+                            lot.cost()
+                    )));
+                    state.lots.clear();
+                    state.lots.addAll(adjusted);
+                }
             }
         }
 

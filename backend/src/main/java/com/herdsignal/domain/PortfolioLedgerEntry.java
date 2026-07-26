@@ -61,6 +61,9 @@ public class PortfolioLedgerEntry {
     @Column(name = "unit_price", precision = 16, scale = 6)
     private BigDecimal unitPrice;
 
+    @Column(name = "split_ratio", precision = 18, scale = 8)
+    private BigDecimal splitRatio;
+
     @Column(name = "gross_amount", nullable = false, precision = 18, scale = 2)
     private BigDecimal grossAmount;
 

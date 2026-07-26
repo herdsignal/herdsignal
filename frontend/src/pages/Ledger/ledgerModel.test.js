@@ -37,4 +37,20 @@ describe('ledgerModel', () => {
       note: null,
     })
   })
+
+  it('keeps a split cash-neutral', () => {
+    expect(entryPayload({
+      entryType: 'SPLIT',
+      ticker: 'nvda',
+      occurredOn: '2026-01-02',
+      splitRatio: '10',
+      note: '',
+    })).toEqual({
+      entryType: 'SPLIT',
+      ticker: 'NVDA',
+      occurredOn: '2026-01-02',
+      splitRatio: 10,
+      note: null,
+    })
+  })
 })

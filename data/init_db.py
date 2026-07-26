@@ -287,6 +287,7 @@ class PortfolioLedgerEntry(Base):
     occurred_on  = Column(Date, nullable=False)
     quantity     = Column(Decimal(18, 6), nullable=True)
     unit_price   = Column(Decimal(16, 6), nullable=True)
+    split_ratio  = Column(Decimal(18, 8), nullable=True)
     gross_amount = Column(Decimal(18, 2), nullable=False)
     fee_amount   = Column(Decimal(16, 2), nullable=False, default=0)
     currency     = Column(String(3), nullable=False, default="USD")

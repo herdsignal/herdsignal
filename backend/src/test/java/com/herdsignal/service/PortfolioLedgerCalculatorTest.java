@@ -3,6 +3,7 @@ package com.herdsignal.service;
 import com.herdsignal.domain.PortfolioLedgerEntry;
 import com.herdsignal.domain.PortfolioLedgerEntryType;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,6 +46,22 @@ class PortfolioLedgerCalculatorTest {
         assertThat(result.positions()).singleElement()
                 .extracting(PortfolioLedgerCalculator.OpenPosition::quantity)
                 .isEqualTo(new BigDecimal("1"));
+    }
+
+    @Test
+    void appliesAStockSplitToQuantityWithoutChangingLotCost() {
+        PortfolioLedgerEntry split = entry(2L, "SPLIT", "NVDA", null, "0", "0");
+        ReflectionTestUtils.setField(split, "splitRatio", new BigDecimal("10"));
+
+        var result = calculator.calculate(List.of(
+                entry(1L, "BUY", "NVDA", "2", "200", "2"),
+                split
+        ));
+
+        assertThat(result.positions()).singleElement().satisfies(position -> {
+            assertThat(position.quantity()).isEqualByComparingTo("20");
+            assertThat(position.costBasis()).isEqualByComparingTo("202");
+        });
     }
 
     private PortfolioLedgerEntry entry(

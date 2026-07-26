@@ -12,6 +12,8 @@ import com.herdsignal.service.PortfolioPerformanceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,5 +72,16 @@ public class PortfolioLedgerController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         ledgerService.delete(currentUserService.requireUserId(), id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/export.csv", produces = "text/csv")
+    public ResponseEntity<String> exportCsv() {
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/csv;charset=UTF-8"))
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"herdsignal-ledger.csv\""
+                )
+                .body(ledgerService.exportCsv(currentUserService.requireUserId()));
     }
 }

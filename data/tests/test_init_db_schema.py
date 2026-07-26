@@ -38,3 +38,4 @@ class InitDbSchemaTest(unittest.TestCase):
         self.assertIn("occurred_on", columns)
         self.assertIn("gross_amount", columns)
         self.assertIn("fee_amount", columns)
+        self.assertIn("split_ratio", columns)

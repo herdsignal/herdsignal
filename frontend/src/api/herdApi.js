@@ -141,6 +141,9 @@ export const createPortfolioLedgerEntry = (entry) =>
 export const deletePortfolioLedgerEntry = (id) =>
   api.delete(`/api/portfolio/ledger/${id}`)
 
+export const exportPortfolioLedgerCsv = () =>
+  api.get('/api/portfolio/ledger/export.csv', { responseType: 'blob' })
+
 /* ── HERD 판단 기록 ────────────────────────── */
 
 /** 전체 또는 특정 종목 HERD 판단 기록 조회 */

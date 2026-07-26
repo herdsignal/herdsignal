@@ -75,6 +75,10 @@ final class PortfolioTwrCalculator {
                         quantities.put(entry.getTicker(), remaining);
                         cash = cash.add(gross.subtract(fee));
                     }
+                    case SPLIT -> quantities.computeIfPresent(
+                            entry.getTicker(),
+                            (ticker, quantity) -> quantity.multiply(entry.getSplitRatio())
+                    );
                 }
             }
 

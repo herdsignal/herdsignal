@@ -11,6 +11,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -75,6 +76,39 @@ class PortfolioLedgerServiceTest {
         assertThatThrownBy(() -> service.delete("user-b", 4L))
                 .isInstanceOf(ResourceNotFoundException.class);
         verify(repository, never()).delete(any());
+    }
+
+    @Test
+    void storesAStockSplitWithoutCreatingCashFlow() {
+        PortfolioLedgerEntryRequest request = request("SPLIT", "NVDA");
+        ReflectionTestUtils.setField(request, "splitRatio", new BigDecimal("10"));
+        when(repository.save(any(PortfolioLedgerEntry.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        var response = service.create("user-a", request);
+
+        assertThat(response.getSplitRatio()).isEqualByComparingTo("10");
+        assertThat(response.getGrossAmount()).isEqualByComparingTo("0");
+        assertThat(response.getCashEffect()).isEqualByComparingTo("0");
+    }
+
+    @Test
+    void exportsCsvWithEscapedNotes() {
+        when(repository.findByUserIdOrderByOccurredOnAscIdAsc("user-a")).thenReturn(List.of(
+                PortfolioLedgerEntry.builder()
+                        .entryType(com.herdsignal.domain.PortfolioLedgerEntryType.DEPOSIT)
+                        .occurredOn(LocalDate.of(2026, 1, 2))
+                        .grossAmount(new BigDecimal("500"))
+                        .feeAmount(BigDecimal.ZERO)
+                        .currency("USD")
+                        .note("첫 입금, 시작")
+                        .build()
+        ));
+
+        String csv = service.exportCsv("user-a");
+
+        assertThat(csv).startsWith("date,type,ticker");
+        assertThat(csv).contains("\"첫 입금, 시작\"");
     }
 
     private PortfolioLedgerEntryRequest request(String type, String ticker) {

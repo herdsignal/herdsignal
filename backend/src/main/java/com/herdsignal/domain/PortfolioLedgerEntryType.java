@@ -6,5 +6,6 @@ public enum PortfolioLedgerEntryType {
     DEPOSIT,
     WITHDRAWAL,
     DIVIDEND,
-    FEE
+    FEE,
+    SPLIT
 }

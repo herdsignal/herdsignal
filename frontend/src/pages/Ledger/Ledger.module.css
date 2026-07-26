@@ -47,6 +47,20 @@
   cursor: pointer;
 }
 
+.headerActions {
+  display: flex;
+  gap: 8px;
+}
+
+.secondary {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
 .primary:disabled { opacity: .5; cursor: wait; }
 
 .form {

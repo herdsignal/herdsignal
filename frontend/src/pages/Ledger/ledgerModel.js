@@ -5,10 +5,12 @@ export const ENTRY_TYPES = {
   WITHDRAWAL: '출금',
   DIVIDEND: '배당',
   FEE: '비용',
+  SPLIT: '주식 분할',
 }
 
 export const isTrade = (type) => type === 'BUY' || type === 'SELL'
-export const needsTicker = (type) => isTrade(type) || type === 'DIVIDEND'
+export const needsTicker = (type) =>
+  isTrade(type) || type === 'DIVIDEND' || type === 'SPLIT'
 
 export function entryPayload(form) {
   const payload = {
@@ -21,6 +23,8 @@ export function entryPayload(form) {
     payload.quantity = Number(form.quantity)
     payload.unitPrice = Number(form.unitPrice)
     payload.fee = Number(form.fee || 0)
+  } else if (form.entryType === 'SPLIT') {
+    payload.splitRatio = Number(form.splitRatio)
   } else {
     payload.amount = Number(form.amount)
   }

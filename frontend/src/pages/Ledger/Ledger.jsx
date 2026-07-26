@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import {
   createPortfolioLedgerEntry,
   deletePortfolioLedgerEntry,
+  exportPortfolioLedgerCsv,
   getPortfolioLedger,
   getPortfolioLedgerSummary,
 } from '../../api/herdApi'
@@ -23,6 +24,7 @@ const initialForm = {
   unitPrice: '',
   amount: '',
   fee: '',
+  splitRatio: '',
   note: '',
 }
 
@@ -85,6 +87,20 @@ export default function Ledger() {
     }
   }
 
+  const exportCsv = async () => {
+    try {
+      const response = await exportPortfolioLedgerCsv()
+      const url = URL.createObjectURL(response.data)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = 'herdsignal-ledger.csv'
+      anchor.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      setError('CSV를 내보내지 못했습니다.')
+    }
+  }
+
   const statusMessage = {
     EMPTY_LEDGER: '입금과 거래를 실제 발생 순서대로 기록하면 원가와 손익을 계산합니다.',
     INVALID_LEDGER: '보유 수량보다 많은 매도가 있어 계산을 중단했습니다.',
@@ -100,9 +116,12 @@ export default function Ledger() {
           <h1>거래 원장</h1>
           <p>입출금과 거래 사실을 한 통화(USD)로 기록합니다.</p>
         </div>
-        <button type="button" className={styles.primary} onClick={() => setFormOpen((open) => !open)}>
-          {formOpen ? '닫기' : '항목 기록'}
-        </button>
+        <div className={styles.headerActions}>
+          <button type="button" className={styles.secondary} onClick={exportCsv}>CSV 내보내기</button>
+          <button type="button" className={styles.primary} onClick={() => setFormOpen((open) => !open)}>
+            {formOpen ? '닫기' : '항목 기록'}
+          </button>
+        </div>
       </header>
 
       {error && <div className={styles.error} role="alert">{error}</div>}
@@ -142,6 +161,11 @@ export default function Ledger() {
                 <input min="0" step="0.01" type="number" name="fee" value={form.fee} onChange={update} placeholder="0" />
               </label>
             </>
+          ) : form.entryType === 'SPLIT' ? (
+            <label>
+              분할 배율
+              <input required min="0" step="0.00000001" type="number" name="splitRatio" value={form.splitRatio} onChange={update} placeholder="예: 4대1은 4" />
+            </label>
           ) : (
             <label>
               금액

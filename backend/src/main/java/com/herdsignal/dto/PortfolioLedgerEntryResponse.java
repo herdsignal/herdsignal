@@ -19,6 +19,7 @@ public class PortfolioLedgerEntryResponse {
     private LocalDate occurredOn;
     private BigDecimal quantity;
     private BigDecimal unitPrice;
+    private BigDecimal splitRatio;
     private BigDecimal grossAmount;
     private BigDecimal feeAmount;
     private BigDecimal cashEffect;
@@ -35,6 +36,7 @@ public class PortfolioLedgerEntryResponse {
                 .occurredOn(entry.getOccurredOn())
                 .quantity(entry.getQuantity())
                 .unitPrice(entry.getUnitPrice())
+                .splitRatio(entry.getSplitRatio())
                 .grossAmount(entry.getGrossAmount())
                 .feeAmount(entry.getFeeAmount())
                 .cashEffect(cashEffect(entry))
@@ -54,6 +56,7 @@ public class PortfolioLedgerEntryResponse {
             case SELL -> gross.subtract(fee);
             case DEPOSIT, DIVIDEND -> gross;
             case WITHDRAWAL, FEE -> gross.negate();
+            case SPLIT -> BigDecimal.ZERO.setScale(2);
         };
     }
 }
