@@ -46,6 +46,18 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
             LocalDate priceDate
     );
 
+    Optional<DailyPrice> findTopByTickerAndPriceDateBetweenAndClosePriceIsNotNullOrderByPriceDateDesc(
+            String ticker,
+            LocalDate startDate,
+            LocalDate endDate
+    );
+
+    Optional<DailyPrice> findTopByTickerAndPriceDateBetweenAndClosePriceIsNotNullOrderByPriceDateAsc(
+            String ticker,
+            LocalDate startDate,
+            LocalDate endDate
+    );
+
     @Query("""
             SELECT DISTINCT d.priceDate
             FROM DailyPrice d

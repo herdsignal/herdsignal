@@ -10,13 +10,14 @@ import { getSignalJournal } from '../../api/herdApi'
 import {
   formatJournalAmount,
   formatJournalCount,
+  formatJournalDate,
   formatJournalDuration,
-  formatJournalOutcome,
+  formatHorizonOutcome,
   formatJournalPrice,
   formatJournalProfit,
   formatJournalQuantity,
   formatJournalTime,
-  formatOutcomeDays,
+  findHorizonOutcome,
   summarizeSignalJournal,
 } from '../../utils/signalJournal'
 import styles from './Journal.module.css'
@@ -117,9 +118,9 @@ export default function Journal() {
           <em>익절 기록 기준</em>
         </div>
         <div className={styles.summaryCard}>
-          <span>평균 추적 결과</span>
-          <strong>{summary.hasOutcomeData ? formatJournalOutcome(summary.avgOutcomePct) : '—'}</strong>
-          <em>현재 가격 기준</em>
+          <span>결과 확인</span>
+          <strong>{formatJournalCount(summary.outcomeAvailableCount)}</strong>
+          <em>1·3·6개월 종가 기준</em>
         </div>
       </div>
 
@@ -153,7 +154,7 @@ export default function Journal() {
                   <th>판단</th>
                   <th>체결 정보</th>
                   <th>기록 수익률</th>
-                  <th>현재 결과</th>
+                  <th>1·3·6개월</th>
                   <th>HERD 신호</th>
                   <th>메모</th>
                   <th>날짜</th>
@@ -184,16 +185,34 @@ export default function Journal() {
                       {formatJournalProfit(log.profitPct) ?? '—'}
                     </td>
                     <td>
-                      <div className={styles.resultStack}>
-                        <strong className={Number(log.outcomePct) >= 0 ? styles.positive : styles.negative}>
-                          {formatJournalOutcome(log.outcomePct) ?? '—'}
-                        </strong>
-                        <span>
-                          {log.outcomeLabel ?? '현재 결과'}
-                          {formatOutcomeDays(log.outcomeDays) ? ` · ${formatOutcomeDays(log.outcomeDays)}` : ''}
-                        </span>
+                      <div className={styles.horizonStack}>
+                        {[
+                          ['1M', '1개월'],
+                          ['3M', '3개월'],
+                          ['6M', '6개월'],
+                        ].map(([horizon, label]) => {
+                          const outcome = findHorizonOutcome(log, horizon)
+                          const returnValue = outcome?.status === 'AVAILABLE'
+                            ? Number(outcome.returnPct)
+                            : null
+                          return (
+                            <span key={horizon}>
+                              <small>{label}</small>
+                              <strong className={
+                                returnValue == null
+                                  ? ''
+                                  : returnValue >= 0 ? styles.positive : styles.negative
+                              }>
+                                {formatHorizonOutcome(outcome)}
+                              </strong>
+                            </span>
+                          )
+                        })}
                         <em>
-                          {formatJournalAmount(log.outcomeAmount) ?? formatJournalPrice(log.currentPrice) ?? ''}
+                          기준 {formatJournalPrice(log.referencePrice) ?? '—'}
+                          {log.referencePriceDate
+                            ? ` · ${formatJournalDate(log.referencePriceDate)}`
+                            : ''}
                         </em>
                       </div>
                     </td>

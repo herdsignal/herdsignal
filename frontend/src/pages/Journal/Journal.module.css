@@ -225,7 +225,7 @@
 
 .tradeStack,
 .signalStack,
-.resultStack {
+.horizonStack {
   display: grid;
   gap: 4px;
   min-width: 0;
@@ -233,7 +233,7 @@
 
 .tradeStack strong,
 .signalStack strong,
-.resultStack strong {
+.horizonStack strong {
   color: var(--text-1);
   font-size: 12px;
   font-weight: 850;
@@ -241,8 +241,8 @@
 
 .tradeStack span,
 .signalStack span,
-.resultStack span,
-.resultStack em {
+.horizonStack span,
+.horizonStack em {
   overflow: hidden;
   color: var(--text-3);
   font-size: var(--hs-type-body-sm);
@@ -251,8 +251,34 @@
   white-space: nowrap;
 }
 
-.resultStack em {
+.horizonStack {
+  grid-template-columns: repeat(3, auto);
+  gap: 4px 12px;
+}
+
+.horizonStack > span {
+  display: grid;
+  gap: 3px;
+}
+
+.horizonStack small {
+  color: var(--text-3);
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.horizonStack strong {
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.horizonStack em {
+  grid-column: 1 / -1;
+  color: var(--text-3);
+  font-size: 9px;
   font-style: normal;
+  font-weight: 650;
 }
 
 .memoCell {

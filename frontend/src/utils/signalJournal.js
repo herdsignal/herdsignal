@@ -17,9 +17,13 @@ export function summarizeSignalJournal(items) {
   const sells = logs.filter((item) => item.actionType === 'SELL')
   const holds = logs.filter((item) => item.actionType === 'HOLD')
   const profitValues = sells.map((item) => item.profitPct)
-  const outcomeValues = logs.map((item) => item.outcomePct)
   const avgProfitPct = average(profitValues)
-  const avgOutcomePct = average(outcomeValues)
+  const logsWithOutcome = logs.filter((item) => (
+    (item.horizonOutcomes ?? []).some((outcome) => outcome.status === 'AVAILABLE')
+  ))
+  const pendingOutcomeCount = logs.filter((item) => (
+    (item.horizonOutcomes ?? []).some((outcome) => outcome.status === 'PENDING')
+  )).length
 
   return {
     totalCount: logs.length,
@@ -29,9 +33,9 @@ export function summarizeSignalJournal(items) {
     buyAmount: sumBy(buys, 'amount'),
     sellAmount: sumBy(sells, 'amount'),
     avgProfitPct,
-    avgOutcomePct,
     hasProfitData: avgProfitPct != null,
-    hasOutcomeData: avgOutcomePct != null,
+    outcomeAvailableCount: logsWithOutcome.length,
+    pendingOutcomeCount,
   }
 }
 
@@ -75,8 +79,27 @@ export function formatJournalProfit(value) {
   return `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
 }
 
-export function formatJournalOutcome(value) {
-  return formatJournalProfit(value)
+export function formatJournalDate(value) {
+  if (!value) return ''
+  const date = new Date(`${value}T00:00:00`)
+  if (Number.isNaN(date.getTime())) return ''
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  })
+}
+
+export function findHorizonOutcome(log, horizon) {
+  if (!Array.isArray(log?.horizonOutcomes)) return null
+  return log.horizonOutcomes.find((outcome) => outcome.horizon === horizon) ?? null
+}
+
+export function formatHorizonOutcome(outcome) {
+  if (!outcome) return '자료 없음'
+  if (outcome.status === 'PENDING') return '대기'
+  if (outcome.status !== 'AVAILABLE') return '자료 없음'
+  return formatJournalProfit(outcome.returnPct) ?? '자료 없음'
 }
 
 export function formatJournalCount(value) {
@@ -89,11 +112,4 @@ export function formatJournalDuration(value) {
   const n = Number(value)
   if (!Number.isFinite(n) || n <= 0) return null
   return `신호 ${Math.round(n).toLocaleString('ko-KR')}일째`
-}
-
-export function formatOutcomeDays(value) {
-  const n = Number(value)
-  if (!Number.isFinite(n) || n < 0) return null
-  if (n === 0) return '오늘 기록'
-  return `${Math.round(n).toLocaleString('ko-KR')}일 추적`
 }

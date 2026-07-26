@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +24,7 @@ public class SignalJournalService {
     private final SignalJournalRepository signalJournalRepository;
     private final DailyPriceRepository dailyPriceRepository;
     private final UserActionBoundary actionBoundary;
+    private final SignalJournalOutcomeService outcomeService;
 
     @Transactional(readOnly = true)
     public List<SignalJournalResponse> getJournals(String userId, String ticker) {
@@ -33,8 +33,9 @@ public class SignalJournalService {
                 ? signalJournalRepository.findByUserIdOrderByRecordedAtDesc(userId)
                 : signalJournalRepository.findByUserIdAndTickerOrderByRecordedAtDesc(userId, normalizedTicker);
 
+        var latestMarketDate = dailyPriceRepository.findLatestPriceDate().orElse(null);
         return rows.stream()
-                .map(this::toResponse)
+                .map(journal -> toResponse(journal, latestMarketDate))
                 .toList();
     }
 
@@ -69,7 +70,7 @@ public class SignalJournalService {
                 .build();
 
         SignalJournal saved = signalJournalRepository.save(journal);
-        return toResponse(saved);
+        return toResponse(saved, dailyPriceRepository.findLatestPriceDate().orElse(null));
     }
 
     @Transactional
@@ -116,22 +117,17 @@ public class SignalJournalService {
         return trimmed;
     }
 
-    private BigDecimal latestClose(String ticker) {
-        if (ticker == null || ticker.isBlank()) return null;
-        return dailyPriceRepository.findTop2ByTickerOrderByPriceDateDesc(ticker).stream()
-                .filter((price) -> price.getClosePrice() != null)
-                .findFirst()
-                .map((price) -> price.getClosePrice())
-                .orElse(null);
-    }
-
-    private SignalJournalResponse toResponse(SignalJournal journal) {
+    private SignalJournalResponse toResponse(SignalJournal journal, java.time.LocalDate latestMarketDate) {
         UserActionBoundary.Output modelAction = actionBoundary.locked();
+        SignalJournalOutcomeService.Result result = outcomeService.evaluate(journal, latestMarketDate);
         return SignalJournalResponse.from(
                 journal,
-                latestClose(journal.getTicker()),
                 modelAction.action(),
-                modelAction.ratio()
+                modelAction.ratio(),
+                result.observationDate(),
+                result.referencePriceDate(),
+                result.referencePrice(),
+                result.outcomes()
         );
     }
 }

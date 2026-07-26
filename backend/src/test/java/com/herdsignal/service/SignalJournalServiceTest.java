@@ -19,15 +19,18 @@ import static org.mockito.Mockito.when;
 
 class SignalJournalServiceTest {
     private SignalJournalRepository repository;
+    private DailyPriceRepository dailyPriceRepository;
     private SignalJournalService service;
 
     @BeforeEach
     void setUp() {
         repository = mock(SignalJournalRepository.class);
+        dailyPriceRepository = mock(DailyPriceRepository.class);
         service = new SignalJournalService(
                 repository,
-                mock(DailyPriceRepository.class),
-                new UserActionBoundary()
+                dailyPriceRepository,
+                new UserActionBoundary(),
+                new SignalJournalOutcomeService(dailyPriceRepository)
         );
     }
 
