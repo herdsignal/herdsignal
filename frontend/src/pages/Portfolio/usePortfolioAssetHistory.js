@@ -81,9 +81,12 @@ export function buildAssetHistoryMetrics(
       : best
   ), null)
 
-  const totalFlowPct = ratioChange(assetLatest?.totalAssetValue, assetStartValue)
-  const investedChangePct = ratioChange(assetLatest?.investedValue, investedStartValue)
-  const assetDrawdownPct = ratioChange(assetLatest?.totalAssetValue, assetPeak?.totalAssetValue)
+  const accountValueChangePct = ratioChange(assetLatest?.totalAssetValue, assetStartValue)
+  const stockValueChangePct = ratioChange(assetLatest?.investedValue, investedStartValue)
+  const accountValueDrawdownPct = ratioChange(
+    assetLatest?.totalAssetValue,
+    assetPeak?.totalAssetValue,
+  )
   const assetValues = assetChartHistory
     .flatMap((point) => [Number(point.totalAssetValue), Number(point.investedValue)])
     .filter(Number.isFinite)
@@ -97,9 +100,9 @@ export function buildAssetHistoryMetrics(
     assetLatest,
     assetFirst,
     assetStartValue,
-    totalFlowPct,
-    investedChangePct,
-    assetDrawdownPct,
+    accountValueChangePct,
+    stockValueChangePct,
+    accountValueDrawdownPct,
     assetYDomain: [Math.max(0, assetMin - assetPadding), assetMax + assetPadding],
     assetPeriodLabel:
       ASSET_HISTORY_PERIODS.find((item) => item.value === period)?.label ?? '선택 기간',

@@ -2,7 +2,6 @@ import {
   CartesianGrid,
   Line,
   LineChart,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -24,12 +23,12 @@ function HistoryTooltip({ active, payload, label }) {
     <div className={styles.tooltip}>
       <div className={styles.tooltipDate}>{dateLabel}</div>
       <div className={styles.tooltipRow}>
-        <span className={styles.tooltipLabel}>평가금액</span>
+        <span className={styles.tooltipLabel}>계좌 가치</span>
         <span className={styles.tooltipValue}>{fmtUSD(totalValue)}</span>
       </div>
       {totalReturnPct != null && (
         <div className={styles.tooltipRow}>
-          <span className={styles.tooltipLabel}>총 수익률</span>
+          <span className={styles.tooltipLabel}>보유 주식 평가손익</span>
           <span style={{ color: pctColor(totalReturnPct) }}>{fmtPct(totalReturnPct)}</span>
         </div>
       )}
@@ -37,7 +36,7 @@ function HistoryTooltip({ active, payload, label }) {
   )
 }
 
-export default function HistoryChart({ points, totalCost, yDomain }) {
+export default function HistoryChart({ points, yDomain }) {
   return (
     <ResponsiveContainer width="100%" height={320}>
       <LineChart data={points} margin={{ top: 10, right: 16, left: 0, bottom: 4 }}>
@@ -63,20 +62,6 @@ export default function HistoryChart({ points, totalCost, yDomain }) {
           width={56}
         />
         <Tooltip content={<HistoryTooltip />} />
-        {totalCost != null && (
-          <ReferenceLine
-            y={totalCost}
-            stroke="rgba(163, 170, 184, 0.5)"
-            strokeDasharray="4 4"
-            label={{
-              value: '매입원가',
-              position: 'insideTopRight',
-              fontSize: 10,
-              fill: 'var(--text-3)',
-              fontFamily: 'Inter',
-            }}
-          />
-        )}
         <Line
           type="monotone"
           dataKey="totalValue"

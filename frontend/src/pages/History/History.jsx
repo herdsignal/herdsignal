@@ -9,7 +9,13 @@
 
 import { useMemo, useState } from 'react'
 import HistoryChart from './HistoryChart'
-import { buildHistoryView, fmtPct, fmtUSD, pctColor } from './historyModel'
+import {
+  buildHistorySummary,
+  buildHistoryView,
+  fmtPct,
+  fmtUSD,
+  pctColor,
+} from './historyModel'
 import { usePortfolioHistory } from './usePortfolioHistory'
 import styles from './History.module.css'
 
@@ -27,6 +33,7 @@ export default function History() {
     () => buildHistoryView(points),
     [points]
   )
+  const summaryView = useMemo(() => buildHistorySummary(summary), [summary])
 
   return (
     <div className={styles.page}>
@@ -54,21 +61,21 @@ export default function History() {
         </div>
       </div>
 
-      {/* ── 현재 평가금액 요약 ── */}
-      {summary && (
+      {/* ── 현재 계좌 요약 ── */}
+      {summaryView && (
         <div className={styles.metaRow}>
           <div className={styles.metaItem}>
-            <div className={styles.metaLabel}>현재 평가금액</div>
-            <div className={styles.metaValue}>{fmtUSD(summary.totalValue)}</div>
+            <div className={styles.metaLabel}>현재 계좌 가치</div>
+            <div className={styles.metaValue}>{fmtUSD(summaryView.accountValue)}</div>
           </div>
           <div className={styles.metaDivider} />
           <div className={styles.metaItem}>
-            <div className={styles.metaLabel}>총 수익률</div>
+            <div className={styles.metaLabel}>보유 주식 평가손익</div>
             <div
               className={styles.metaValue}
-              style={{ color: pctColor(summary.totalReturnPct) }}
+              style={{ color: pctColor(summaryView.holdingReturnPct) }}
             >
-              {fmtPct(summary.totalReturnPct)}
+              {fmtPct(summaryView.holdingReturnPct)}
             </div>
           </div>
           <div className={styles.metaDivider} />
@@ -76,29 +83,34 @@ export default function History() {
             <div className={styles.metaLabel}>오늘 등락</div>
             <div
               className={styles.metaValue}
-              style={{ color: pctColor(summary.dailyChangePct) }}
+              style={{ color: pctColor(summaryView.dailyChangePct) }}
             >
-              {fmtPct(summary.dailyChangePct)}
+              {fmtPct(summaryView.dailyChangePct)}
             </div>
           </div>
         </div>
       )}
 
+      <p className={styles.semanticsNotice}>
+        계좌 가치 변화에는 현금 입력과 종목 추가·삭제가 포함됩니다.
+        투자 성과와 벤치마크 비교는 거래 원장 구축 후 제공합니다.
+      </p>
+
       {historyInsight && (
         <div className={styles.insightGrid}>
           <div className={styles.insightCard}>
-            <span>시작 대비</span>
-            <strong style={{ color: pctColor(historyInsight.fromStart) }}>
-              {fmtPct(historyInsight.fromStart)}
+            <span>계좌 가치 변화</span>
+            <strong style={{ color: pctColor(historyInsight.accountValueChange) }}>
+              {fmtPct(historyInsight.accountValueChange)}
             </strong>
-            <em>{historyInsight.first.date} 이후</em>
+            <em>{historyInsight.first.date} 이후 · 입출금 포함</em>
           </div>
           <div className={styles.insightCard}>
-            <span>고점 대비</span>
-            <strong style={{ color: pctColor(historyInsight.drawdown) }}>
-              {fmtPct(historyInsight.drawdown)}
+            <span>계좌 가치 고점 대비</span>
+            <strong style={{ color: pctColor(historyInsight.accountValueDrawdown) }}>
+              {fmtPct(historyInsight.accountValueDrawdown)}
             </strong>
-            <em>고점 {fmtUSD(historyInsight.peak.totalValue)}</em>
+            <em>고점 {fmtUSD(historyInsight.peak.totalValue)} · 성과 MDD 아님</em>
           </div>
           <div className={styles.insightCard}>
             <span>기록 기간</span>
@@ -111,7 +123,7 @@ export default function History() {
       {/* ── 차트 카드 ── */}
       <div className={styles.chartCard}>
         <div className={styles.chartTitleRow}>
-          <span className={styles.chartTitle}>총 평가금액</span>
+          <span className={styles.chartTitle}>계좌 가치 · 주식 + 현금</span>
           {latest && (
             <span className={styles.chartLatest}>{fmtUSD(latest.totalValue)}</span>
           )}
@@ -138,7 +150,6 @@ export default function History() {
         {!loading && !error && points.length > 0 && (
           <HistoryChart
             points={points}
-            totalCost={summary?.totalCost}
             yDomain={yDomain}
           />
         )}
@@ -149,8 +160,8 @@ export default function History() {
         <div className={styles.pointsCard}>
           <div className={styles.pointsHeader}>
             <div className={styles.pointsTh}>날짜</div>
-            <div className={`${styles.pointsTh} ${styles.thRight}`}>평가금액</div>
-            <div className={`${styles.pointsTh} ${styles.thRight}`}>총 수익률</div>
+            <div className={`${styles.pointsTh} ${styles.thRight}`}>계좌 가치</div>
+            <div className={`${styles.pointsTh} ${styles.thRight}`}>보유 주식 평가손익</div>
           </div>
           {[...points].reverse().map((p) => (
             <div key={p.date} className={styles.pointsRow}>

@@ -45,7 +45,7 @@ public class PortfolioHistory {
     @Column(name = "total_cost", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalCost;
 
-    /** 총 수익률 (%) */
+    /** 스냅샷 시점 보유 주식의 매입원가 대비 평가손익률 (%) */
     @Column(name = "total_return_pct", nullable = false, precision = 8, scale = 4)
     private BigDecimal totalReturnPct;
 

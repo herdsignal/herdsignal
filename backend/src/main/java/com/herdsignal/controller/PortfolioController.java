@@ -63,7 +63,7 @@ public class PortfolioController {
     /**
      * GET /api/portfolio/summary
      * 포트폴리오 현재 평가 요약 조회.
-     * 총 평가금액·수익률·일일 등락률·종목별 상세 반환.
+     * 계좌 가치·보유 주식 평가손익률·일일 등락률·종목별 상세 반환.
      */
     @GetMapping("/summary")
     public ResponseEntity<ApiResponse<PortfolioSummaryResponse>> getPortfolioSummary() {

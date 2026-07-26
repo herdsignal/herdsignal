@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { buildAssetHistoryMetrics } from './usePortfolioAssetHistory'
 
 describe('buildAssetHistoryMetrics', () => {
-  it('derives flow, drawdown, and chart bounds without mutating history', () => {
+  it('derives account-value changes and chart bounds without calling them returns', () => {
     const history = [
       {
         date: '2026-07-01',
@@ -29,8 +29,8 @@ describe('buildAssetHistoryMetrics', () => {
 
     expect(history).toEqual(original)
     expect(metrics.assetStartValue).toBe(120)
-    expect(metrics.totalFlowPct).toBeCloseTo(8.3333, 3)
-    expect(metrics.assetDrawdownPct).toBeCloseTo(-13.3333, 3)
+    expect(metrics.accountValueChangePct).toBeCloseTo(8.3333, 3)
+    expect(metrics.accountValueDrawdownPct).toBeCloseTo(-13.3333, 3)
     expect(metrics.assetPeriodLabel).toBe('1년')
     expect(metrics.assetYDomain[0]).toBeLessThan(100)
     expect(metrics.assetYDomain[1]).toBeGreaterThan(150)

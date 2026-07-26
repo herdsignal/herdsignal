@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { historyChartGeometry } from './portfolioModel'
 import styles from './Portfolio.module.css'
 
@@ -17,7 +18,7 @@ export default function PortfolioHistory({
   points,
   period,
   periodLabel,
-  totalFlowPct,
+  accountValueChangePct,
   loading,
   error,
   displayAmount,
@@ -26,39 +27,48 @@ export default function PortfolioHistory({
   const geometry = historyChartGeometry(points)
   const latest = points.at(-1) ?? null
   const first = points[0] ?? null
-  const tone = Number(totalFlowPct) >= 0 ? styles.positive : styles.negative
+  const change = accountValueChangePct == null ? null : Number(accountValueChangePct)
+  const tone = change == null || !Number.isFinite(change)
+    ? ''
+    : change >= 0 ? styles.positive : styles.negative
 
   return (
     <section className={styles.historySection} aria-labelledby="asset-history-title">
       <div className={styles.sectionHeader}>
         <div>
-          <h2 id="asset-history-title">자산 히스토리</h2>
-          <span>{periodLabel}</span>
+          <h2 id="asset-history-title">계좌 가치</h2>
+          <span>입출금 포함 · {periodLabel}</span>
         </div>
-        <div className={styles.periodTabs} aria-label="자산 히스토리 기간">
-          {PERIODS.map((item) => (
-            <button
-              type="button"
-              key={item.value}
-              className={period === item.value ? styles.activeTab : ''}
-              aria-pressed={period === item.value}
-              onClick={() => onPeriodChange(item.value)}
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className={styles.historyControls}>
+          <div className={styles.periodTabs} aria-label="계좌 가치 기간">
+            {PERIODS.map((item) => (
+              <button
+                type="button"
+                key={item.value}
+                className={period === item.value ? styles.activeTab : ''}
+                aria-pressed={period === item.value}
+                onClick={() => onPeriodChange(item.value)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <Link className={styles.historyDetailLink} to="/history">
+            상세 보기
+          </Link>
         </div>
       </div>
 
       <div className={styles.historyBody}>
         <div className={styles.historyMetrics}>
-          <span>기간 변화</span>
-          <strong className={tone}>{signedPct(totalFlowPct)}</strong>
+          <span>계좌 가치 변화</span>
+          <strong className={tone}>{signedPct(accountValueChangePct)}</strong>
           <small>
             {first && latest
               ? `${displayAmount(first.totalAssetValue)} → ${displayAmount(latest.totalAssetValue)}`
               : '기록이 쌓이면 변화를 표시합니다.'}
           </small>
+          <em>투자 수익률 아님</em>
         </div>
 
         <div className={styles.chartFrame}>
@@ -72,7 +82,7 @@ export default function PortfolioHistory({
               viewBox="0 0 1000 220"
               preserveAspectRatio="none"
               role="img"
-              aria-label={`${periodLabel} 자산 변화`}
+              aria-label={`${periodLabel} 계좌 가치 변화`}
             >
               <defs>
                 <linearGradient id="portfolio-area" x1="0" y1="0" x2="0" y2="1">

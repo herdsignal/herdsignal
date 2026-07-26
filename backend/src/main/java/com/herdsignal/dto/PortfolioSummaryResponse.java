@@ -33,7 +33,7 @@ public class PortfolioSummaryResponse {
     /** 총 매입금액 (USD) */
     private BigDecimal totalCost;
 
-    /** 총 수익률 (%) */
+    /** 현재 보유 주식의 매입원가 대비 평가손익률 (%) */
     private BigDecimal totalReturnPct;
 
     /**

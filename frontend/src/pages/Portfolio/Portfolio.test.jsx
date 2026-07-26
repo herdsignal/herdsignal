@@ -37,7 +37,7 @@ function pageData() {
       { date: '2026-07-25', totalAssetValue: 500 },
     ],
     assetPeriodLabel: '1년',
-    totalFlowPct: 25,
+    accountValueChangePct: 25,
     sortedRows: [{
       ticker: 'NVDA',
       companyName: 'NVIDIA',
@@ -88,6 +88,9 @@ describe('Portfolio Lens', () => {
     expect(screen.getByText('전체 자산')).toBeInTheDocument()
     expect(screen.getByText('주식 평가액')).toBeInTheDocument()
     expect(screen.getByText('현금')).toBeInTheDocument()
+    expect(screen.getByText('계좌 가치 변화')).toBeInTheDocument()
+    expect(screen.getByText('투자 수익률 아님')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '상세 보기' })).toHaveAttribute('href', '/history')
     expect(screen.getByRole('img', { name: /HERD 78/ })).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/매수|매도|익절|추천/)
   })

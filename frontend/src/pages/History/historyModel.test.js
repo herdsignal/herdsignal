@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { buildHistoryView, fmtAxisDate } from './historyModel'
+import { buildHistorySummary, buildHistoryView, fmtAxisDate } from './historyModel'
 
 describe('historyModel', () => {
-  it('calculates the period return, peak drawdown, and padded chart domain', () => {
+  it('calculates account-value changes without labeling them as returns', () => {
     const view = buildHistoryView([
       { date: '2026-01-01', totalValue: 100 },
       { date: '2026-02-01', totalValue: 150 },
@@ -10,11 +10,24 @@ describe('historyModel', () => {
     ])
 
     expect(view.latest.totalValue).toBe(120)
-    expect(view.insight.fromStart).toBeCloseTo(20)
-    expect(view.insight.drawdown).toBeCloseTo(-20)
+    expect(view.insight.accountValueChange).toBeCloseTo(20)
+    expect(view.insight.accountValueDrawdown).toBeCloseTo(-20)
     expect(view.insight.peak.totalValue).toBe(150)
     expect(view.yDomain[0]).toBeLessThan(100)
     expect(view.yDomain[1]).toBeGreaterThan(150)
+  })
+
+  it('separates account value from the holding cost-basis return', () => {
+    expect(buildHistorySummary({
+      totalAssetValue: 130,
+      totalValue: 120,
+      totalReturnPct: 5,
+      dailyChangePct: -1,
+    })).toEqual({
+      accountValue: 130,
+      holdingReturnPct: 5,
+      dailyChangePct: -1,
+    })
   })
 
   it('handles empty and invalid date input without chart exceptions', () => {

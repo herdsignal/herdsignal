@@ -44,6 +44,7 @@
 }
 
 .headerControls,
+.historyControls,
 .currencyToggle,
 .periodTabs,
 .sortTabs,
@@ -55,6 +56,22 @@
 
 .headerControls {
   gap: 8px;
+}
+
+.historyControls {
+  gap: 12px;
+}
+
+.historyDetailLink {
+  padding: 6px 0 6px 10px;
+  border-left: 1px solid var(--hs-line);
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-label);
+  font-weight: 700;
+}
+
+.historyDetailLink:hover {
+  color: var(--hs-text);
 }
 
 .currencyToggle,
@@ -306,6 +323,13 @@
   color: var(--hs-text-muted);
   font-size: var(--hs-type-micro);
   line-height: 1.6;
+}
+
+.historyMetrics em {
+  margin-top: 8px;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+  font-style: normal;
 }
 
 .chartFrame {
@@ -620,6 +644,12 @@
   .periodTabs {
     flex-wrap: wrap;
     justify-content: flex-end;
+  }
+
+  .historyControls {
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 5px;
   }
 
   .holdingSummary {

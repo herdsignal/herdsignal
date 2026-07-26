@@ -47,16 +47,45 @@ export function buildHistoryView(points) {
   const peak = safePoints.reduce((best, point) =>
     Number(point.totalValue) > Number(best.totalValue) ? point : best
   , first)
-  const drawdown = Number(latest.totalValue) && Number(peak.totalValue)
+  const accountValueDrawdown = Number(latest.totalValue) && Number(peak.totalValue)
     ? (Number(latest.totalValue) / Number(peak.totalValue) - 1) * 100
     : null
-  const fromStart = Number(first.totalValue) && Number(latest.totalValue)
+  const accountValueChange = Number(first.totalValue) && Number(latest.totalValue)
     ? (Number(latest.totalValue) / Number(first.totalValue) - 1) * 100
     : null
 
   return {
     latest,
     yDomain,
-    insight: { first, peak, drawdown, fromStart },
+    insight: { first, peak, accountValueDrawdown, accountValueChange },
   }
+}
+
+export function buildHistorySummary(summary) {
+  if (!summary) return null
+  return {
+    accountValue: firstNumber(
+      summary.totalAssetValue,
+      summary.total_asset_value,
+      summary.totalValue,
+      summary.total_value,
+    ),
+    holdingReturnPct: firstNumber(
+      summary.totalReturnPct,
+      summary.total_return_pct,
+    ),
+    dailyChangePct: firstNumber(
+      summary.dailyChangePct,
+      summary.daily_change_pct,
+    ),
+  }
+}
+
+function firstNumber(...values) {
+  for (const value of values) {
+    if (value == null || value === '') continue
+    const number = Number(value)
+    if (Number.isFinite(number)) return number
+  }
+  return null
 }

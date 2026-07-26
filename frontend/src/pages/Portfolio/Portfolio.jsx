@@ -36,7 +36,7 @@ export default function Portfolio() {
     assetHistoryError,
     assetChartHistory,
     assetPeriodLabel,
-    totalFlowPct,
+    accountValueChangePct,
     sortedRows,
     sortBy,
     selectSort,
@@ -166,7 +166,7 @@ export default function Portfolio() {
             points={assetChartHistory}
             period={assetHistoryPeriod}
             periodLabel={assetPeriodLabel}
-            totalFlowPct={totalFlowPct}
+            accountValueChangePct={accountValueChangePct}
             loading={assetHistoryLoading}
             error={assetHistoryError}
             displayAmount={displayAmount}

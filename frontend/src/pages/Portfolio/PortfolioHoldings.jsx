@@ -49,7 +49,7 @@ export default function PortfolioHoldings({
         <div className={styles.holdingsHead} aria-hidden="true">
           <span>종목</span>
           <span>평가금액 · 비중</span>
-          <span>총 수익률</span>
+          <span>평가손익률</span>
           <span>오늘</span>
           <span>HERD · 4주</span>
           <span>관리</span>
@@ -115,7 +115,7 @@ export default function PortfolioHoldings({
                     <div><dt>수량</dt><dd>{fmtShares(row.quantity)}</dd></div>
                     <div><dt>매입금액</dt><dd>{displayAmount(row.cost)}</dd></div>
                     <div>
-                      <dt>총 수익률</dt>
+                      <dt>평가손익률</dt>
                       <dd className={toneClass(row.returnPct)}>{fmtPct(row.returnPct)}</dd>
                     </div>
                     <div>

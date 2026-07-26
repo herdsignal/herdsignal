@@ -102,6 +102,15 @@
   letter-spacing: 0;
 }
 
+.semanticsNotice {
+  margin: -12px 0 24px;
+  padding: 11px 14px;
+  border-left: 2px solid var(--hs-line-strong);
+  color: var(--text-3);
+  font-size: var(--hs-type-label);
+  line-height: 1.55;
+}
+
 .insightGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
