@@ -132,6 +132,9 @@ export const getPortfolioLedger = (ticker) =>
 export const getPortfolioLedgerSummary = () =>
   api.get('/api/portfolio/ledger/summary')
 
+export const getPortfolioPerformance = () =>
+  api.get('/api/portfolio/ledger/performance')
+
 export const createPortfolioLedgerEntry = (entry) =>
   api.post('/api/portfolio/ledger', entry)
 

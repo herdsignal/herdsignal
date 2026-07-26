@@ -83,4 +83,18 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
               )
             """)
     List<DailyPrice> findLatestByTickers(@Param("tickers") List<String> tickers);
+
+    @Query("""
+            SELECT d
+            FROM DailyPrice d
+            WHERE d.ticker IN :tickers
+              AND d.priceDate BETWEEN :startDate AND :endDate
+              AND d.closePrice IS NOT NULL
+            ORDER BY d.priceDate, d.ticker
+            """)
+    List<DailyPrice> findPricesForTickersBetween(
+            @Param("tickers") List<String> tickers,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

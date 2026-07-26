@@ -4,9 +4,11 @@ import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.PortfolioLedgerEntryRequest;
 import com.herdsignal.dto.PortfolioLedgerEntryResponse;
 import com.herdsignal.dto.PortfolioLedgerSummaryResponse;
+import com.herdsignal.dto.PortfolioPerformanceResponse;
 import com.herdsignal.service.CurrentUserService;
 import com.herdsignal.service.PortfolioLedgerService;
 import com.herdsignal.service.PortfolioLedgerValuationService;
+import com.herdsignal.service.PortfolioPerformanceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,7 @@ public class PortfolioLedgerController {
 
     private final PortfolioLedgerService ledgerService;
     private final PortfolioLedgerValuationService valuationService;
+    private final PortfolioPerformanceService performanceService;
     private final CurrentUserService currentUserService;
 
     @GetMapping
@@ -44,6 +47,13 @@ public class PortfolioLedgerController {
     public ResponseEntity<ApiResponse<PortfolioLedgerSummaryResponse>> getSummary() {
         return ResponseEntity.ok(ApiResponse.success(
                 valuationService.getSummary(currentUserService.requireUserId())
+        ));
+    }
+
+    @GetMapping("/performance")
+    public ResponseEntity<ApiResponse<PortfolioPerformanceResponse>> getPerformance() {
+        return ResponseEntity.ok(ApiResponse.success(
+                performanceService.getPerformance(currentUserService.requireUserId())
         ));
     }
 

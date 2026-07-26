@@ -9,6 +9,7 @@
 
 import { useMemo, useState } from 'react'
 import HistoryChart from './HistoryChart'
+import PerformanceChart from './PerformanceChart'
 import {
   buildHistorySummary,
   buildHistoryView,
@@ -23,7 +24,7 @@ import styles from './History.module.css'
 
 export default function History() {
   const [period,  setPeriod]  = useState('month')
-  const { points, summary, loading, error, fetchData } = usePortfolioHistory(period)
+  const { points, summary, performance, loading, error, fetchData } = usePortfolioHistory(period)
 
   const today = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
@@ -93,8 +94,31 @@ export default function History() {
 
       <p className={styles.semanticsNotice}>
         계좌 가치 변화에는 현금 입력과 종목 추가·삭제가 포함됩니다.
-        투자 성과와 벤치마크 비교는 거래 원장 구축 후 제공합니다.
+        아래 투자 성과는 거래 원장의 입출금을 제거한 별도 계산입니다.
       </p>
+
+      <section className={styles.performanceCard}>
+        <div className={styles.chartTitleRow}>
+          <div>
+            <span className={styles.chartTitle}>투자 성과 · 일별 TWR</span>
+            <p className={styles.performanceMeta}>원장 기준 · SPY 동일 현금흐름</p>
+          </div>
+          {performance?.status === 'PERFORMANCE_READY' && (
+            <div className={styles.performanceReturns}>
+              <span>계좌 <strong>{fmtPct(performance.portfolioReturnPct)}</strong></span>
+              <span>SPY <strong>{fmtPct(performance.benchmarkReturnPct)}</strong></span>
+              <span>차이 <strong>{fmtPct(performance.excessReturnPct)}</strong></span>
+            </div>
+          )}
+        </div>
+        {performance?.status === 'PERFORMANCE_READY'
+          ? <PerformanceChart points={performance.points ?? []} />
+          : (
+            <div className={styles.performanceGate}>
+              {performance?.errors?.[0] || '거래 원장을 입력하면 투자 성과를 계산합니다.'}
+            </div>
+            )}
+      </section>
 
       {historyInsight && (
         <div className={styles.insightGrid}>
