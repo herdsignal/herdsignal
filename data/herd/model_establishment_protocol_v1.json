@@ -1,0 +1,78 @@
+{
+  "protocol_version": "HERD_MODEL_ESTABLISHMENT_V1",
+  "status": "LOCKED_BEFORE_INTEGRATED_PIPELINE_RESULTS",
+  "locked_at": "2026-07-26",
+  "mission": {
+    "population": "ALREADY_SELECTED_LONG_TERM_US_EQUITY_HOLDINGS",
+    "objective": "IMPROVE_TERMINAL_WEALTH_OR_SHARE_COUNT_VERSUS_MATCHED_BUY_AND_HOLD",
+    "mechanism": "RARE_PARTIAL_PROFIT_TAKE_FOLLOWED_BY_EVIDENCE_BACKED_REENTRY",
+    "default_action": "HOLD",
+    "state_is_not_action": true
+  },
+  "action_boundary": {
+    "initial_fraction": 0.05,
+    "maximum_cumulative_fraction": 0.15,
+    "full_exit_forbidden": true,
+    "leverage_forbidden": true,
+    "maximum_profit_take_candidates_per_ticker_year": 2,
+    "maximum_completed_actions_per_ticker_year": 5,
+    "minimum_cooldown_weeks": 8,
+    "profit_take_without_reentry_is_incomplete": true,
+    "operational_action_ratio_before_promotion": 0.0
+  },
+  "pipeline": [
+    {"id": 1, "name": "MISSION_AND_ACTION_CONTRACT", "gate": "LOCKED"},
+    {"id": 2, "name": "DEVELOPMENT_OOS_BLIND_SPLIT", "gate": "HASHED_AND_NON_OVERLAPPING"},
+    {"id": 3, "name": "RUSH_PATH_EPISODES", "gate": "POINT_IN_TIME_AND_PATH_COMPLETE"},
+    {"id": 4, "name": "INDEPENDENT_EVIDENCE_OOS", "gate": "AT_LEAST_ONE_EVIDENCE_FAMILY_ADMITTED"},
+    {"id": 5, "name": "SPARSE_PROFIT_TAKE", "gate": "DIRECTION_AND_ECONOMIC_GATE_PASSED"},
+    {"id": 6, "name": "CONDITIONAL_REENTRY", "gate": "PRIOR_PROCEEDS_AND_BUSINESS_VETO_AND_RECOVERY"},
+    {"id": 7, "name": "COMPLETED_CYCLE", "gate": "BUY_AND_HOLD_AND_CASH_AND_PERIODIC_BASELINES_PASSED"},
+    {"id": 8, "name": "HERD_CANDIDATE", "gate": "ABLATION_WALK_FORWARD_COST_PBO_DSR_PASSED"},
+    {"id": 9, "name": "PROSPECTIVE_SHADOW", "gate": "HUMAN_APPROVAL_AFTER_SEALED_EVALUATION"}
+  ],
+  "evidence_families": {
+    "STOCK_EXTENSION_AND_TRANSITION": "PROFIT_TAKE_DIRECTION_ONLY",
+    "MARKET_AND_SECTOR_REGIME": "CONDITIONAL_CONTEXT_ONLY",
+    "PEER_PARTICIPATION": "INCREMENTAL_CONFIRMATION_ONLY",
+    "DOWNSIDE_ASYMMETRY": "RISK_TRANSITION_ONLY",
+    "PIT_BUSINESS_STATE": "REENTRY_VETO_ONLY",
+    "NON_PRICE_LEADING_INFORMATION": "INCREMENTAL_DIRECTION_ONLY"
+  },
+  "evaluation": {
+    "execution": "NEXT_TRADING_SESSION_OPEN",
+    "base_one_way_commission": 0.001,
+    "base_one_way_slippage": 0.0005,
+    "stress_one_way_commission": 0.002,
+    "stress_one_way_slippage": 0.0015,
+    "minimum_complete_oos_folds": 4,
+    "minimum_oos_years": 5,
+    "minimum_median_upside_capture": 0.85,
+    "maximum_median_downside_capture": 0.90,
+    "minimum_median_excess_cagr": 0.0,
+    "minimum_ticker_excess_cagr_pass_rate": 0.60,
+    "minimum_median_mdd_improvement": 0.0,
+    "minimum_average_equity_exposure": 0.80,
+    "maximum_pbo": 0.20,
+    "minimum_deflated_sharpe_probability": 0.95
+  },
+  "research_boundaries": {
+    "public_research_only": true,
+    "point_in_time_required": true,
+    "blind_holdout_access": false,
+    "survivorship_safe_required_for_promotion": true,
+    "failed_hypothesis_relabeling_forbidden": true,
+    "threshold_retuning_on_same_oos_forbidden": true,
+    "high_herd_alone_is_not_profit_take": true,
+    "weekly_rsi_alone_is_not_profit_take": true,
+    "mdd_improvement_alone_is_not_success": true,
+    "missing_metric_is_failure": true
+  },
+  "current_baseline": {
+    "state_product": "HERD_STATE_S1",
+    "legacy_references": ["HERD_V4_STATE", "HERD_V61_ACTION_LAYER"],
+    "current_action_candidate": null,
+    "current_decision": "NO_ADOPTABLE_ACTION_CANDIDATE",
+    "operational_action_ratio": 0.0
+  }
+}

@@ -3,6 +3,10 @@
 상태: `APPROVED_BASELINE`  
 최신화: 2026-07-22
 
+1~9 통합 모델 확립 순서와 행동·검증 경계는
+`data/herd/model_establishment_protocol_v1.json`을 최상위 기계 판독
+계약으로 사용한다. 기존 개별 프로토콜은 이 계약을 완화할 수 없다.
+
 ## 정의
 
 HERD는 사용자가 장기 보유 대상으로 이미 선택한 미국 주식의 군중 밀집과
