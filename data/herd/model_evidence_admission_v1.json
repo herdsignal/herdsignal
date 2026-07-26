@@ -1,0 +1,62 @@
+{
+  "registry_version": "HERD_MODEL_EVIDENCE_ADMISSION_V1",
+  "status": "POST_OOS_DECISIONS_PINNED",
+  "locked_at": "2026-07-26",
+  "families": [
+    {
+      "id": "PRICE_AND_RELATIVE_RUSH_TRANSITION",
+      "result_path": "data/reports/independent_rush_evidence_v1.json",
+      "result_sha256": "0875c483685d219db00cadc9224efd7283a0849824d60cbc6ad94080cbf2ab52",
+      "role": "PROFIT_TAKE_DIRECTION",
+      "decision": "REJECTED",
+      "admitted": false
+    },
+    {
+      "id": "PIT_INSIDER_PURCHASE_SUPPORT",
+      "result_path": "data/reports/sec_form4_insider_purchase_oos_v1.json",
+      "result_sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69",
+      "role": "REENTRY_SUPPORT",
+      "decision": "REJECTED",
+      "admitted": false
+    },
+    {
+      "id": "PIT_MANAGEMENT_GUIDANCE_LOWER",
+      "result_path": "data/reports/sec_guidance_lower_oos_v2.json",
+      "result_sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d",
+      "role": "BUSINESS_STATE_VETO",
+      "decision": "REJECTED",
+      "admitted": false
+    },
+    {
+      "id": "EXPECTATION_AND_IDIOSYNCRATIC_DAMAGE",
+      "result_path": "data/reports/expectation_evidence_oos_v1.json",
+      "result_sha256": "8a3272f2a45762101246fa336774e6e68ae7516e4841815c2edfd1e4fda4e918",
+      "role": "PROFIT_TAKE_DIRECTION",
+      "decision": "REJECTED",
+      "admitted": false
+    },
+    {
+      "id": "STOCK_DOWNSIDE_RISK",
+      "result_path": "data/reports/timing_evidence_oos_v2.json",
+      "result_sha256": "7a58d181ada78f9fd1079b013e9bde48f2a9096ddd6bf05775177d975a9e6061",
+      "role": "RISK_CAP_ABLATION_ONLY",
+      "decision": "CONTEXT_ADMITTED",
+      "admitted": true
+    }
+  ],
+  "admission_summary": {
+    "direction_evidence_admitted": 0,
+    "reentry_support_admitted": 0,
+    "business_veto_admitted": 0,
+    "risk_context_admitted": 1,
+    "profit_take_gate_passed": false,
+    "reentry_gate_passed": false
+  },
+  "claim_boundary": {
+    "current_constituents_only": true,
+    "survivorship_safe": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0,
+    "next_stage_may_execute_trades": false
+  }
+}
