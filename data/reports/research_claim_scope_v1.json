@@ -1,0 +1,9 @@
+{
+  "report_version": "HERD_RESEARCH_CLAIM_SCOPE_V1",
+  "status": "CLAIM_LANES_SEPARATED",
+  "current_holding_research": "PREHOLDOUT_ALLOWED_WITH_DISCLOSURE",
+  "personal_prospective_shadow": "BLOCKED_UNTIL_PREHOLDOUT_CYCLE_PASS",
+  "market_general_model": "BLOCKED_SURVIVORSHIP_UNSAFE",
+  "next_stage": "SIMPLE_ACTION_BASELINES_V1",
+  "operational_action_ratio": 0.0
+}

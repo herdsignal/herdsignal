@@ -1,0 +1,73 @@
+{
+  "contract_version": "HERD_RESEARCH_CLAIM_SCOPE_V1",
+  "status": "LOCKED_BEFORE_BASELINE_RESULTS",
+  "locked_at": "2026-07-26",
+  "objective": "Separate what current-constituent preholdout research may claim from what requires survivorship-safe market history and prospective evidence.",
+  "inputs": [
+    {"path": "data/herd/research_decision_v2.json", "sha256": "96606cd3cf313fbae835f4b7034134c9aaebc926a85a4d703dd0bb2f4663d1c3"},
+    {"path": "data/herd/survivorship_readiness_v2.json", "sha256": "1b7ba3b2ab079b3b0c301dc4d8c8d7359105be6c68c4c9b0dd93f79efd7b97ef"},
+    {"path": "data/herd/profit_take_success_label_v2.json", "sha256": "354ad4db4dfa997f1ab334bc0e6a92197cec58f79260937e30558ea3e6343975"},
+    {"path": "data/reports/profit_take_success_label_v2.json", "sha256": "8b7fe9d30e475eb3c9b1f69e4329d2b28a2046277ef4877ebf5274d48ec61c00"},
+    {"path": "data/reports/profit_take_success_label_v2.csv", "sha256": "f17637313909580ee2b54c07653bcc6293eae38752b89aa6876d3d5f2f0a4ce4"},
+    {"path": "docs/HERD_ADOPTION_POLICY.md", "sha256": "6c1f2a1340d3450d6a4dd511a9da32c204451991a02c15027877588ec787b980"}
+  ],
+  "lanes": {
+    "CURRENT_HOLDING_PREHOLDOUT": {
+      "population": "PRIMARY_AND_INDEPENDENT_CURRENT_CONSTITUENTS",
+      "allowed": [
+        "BUILD_AND_REJECT_HYPOTHESES",
+        "COMPARE_SIMPLE_BASELINES",
+        "REPORT_FOLD_AND_UNIVERSE_RESULTS",
+        "DESIGN_PROSPECTIVE_SHADOW_CANDIDATE_AFTER_PREHOLDOUT_PASS"
+      ],
+      "required_disclosure": "CURRENT_CONSTITUENT_PREHOLDOUT_NOT_SURVIVORSHIP_SAFE",
+      "may_authorize_user_action": false
+    },
+    "PERSONAL_PROSPECTIVE_SHADOW": {
+      "population": "USER_SELECTED_HOLDINGS_OBSERVED_ONLY_AFTER_PROTOCOL_LOCK",
+      "entry_requirement": "PREHOLDOUT_DIRECTION_AND_COMPLETED_CYCLE_GATES_PASSED",
+      "minimum_observation_months_before_policy_review": 12,
+      "minimum_complete_candidate_events_before_policy_review": 30,
+      "minimum_distinct_tickers_before_policy_review": 10,
+      "interim_outcome_peeking": false,
+      "may_train_or_retune": false,
+      "may_authorize_user_action": false,
+      "may_auto_authorize_user_action": false
+    },
+    "MARKET_GENERAL_ACTION_MODEL": {
+      "population": "POINT_IN_TIME_MARKET_UNIVERSE_INCLUDING_DELISTED_AND_REMOVED_CONSTITUENTS",
+      "entry_requirement": "SURVIVORSHIP_SAFE_TRUE",
+      "current_status": "BLOCKED",
+      "may_claim_generalization": false,
+      "may_authorize_user_action": false
+    }
+  },
+  "shared_operational_gate": {
+    "current_policy": "docs/HERD_ADOPTION_POLICY.md",
+    "survivorship_safe_required": true,
+    "blind_holdout_single_evaluation_required": true,
+    "human_approval_required": true,
+    "audit_persistence_required": true,
+    "maximum_action_fraction": 0.05,
+    "current_operational_action_ratio": 0.0
+  },
+  "next_stage": {
+    "id": "SIMPLE_ACTION_BASELINES_V1",
+    "allowed_comparators": [
+      "BUY_AND_HOLD",
+      "ANNUAL_FIXED_REBALANCE",
+      "TARGET_WEIGHT_BAND_REBALANCE",
+      "VOLATILITY_BAND_REBALANCE",
+      "UNCONDITIONAL_FIRST_TWO_RUSH_ENTRY_TRIM"
+    ],
+    "herd_predictor_training_allowed": false
+  },
+  "forbidden_claims": [
+    "SURVIVORSHIP_SAFE",
+    "GENERAL_US_EQUITY_ACTION_MODEL",
+    "VALIDATED_BUY_SIGNAL",
+    "VALIDATED_PROFIT_TAKE_SIGNAL",
+    "BLIND_HOLDOUT_PASSED",
+    "OPERATIONAL_ACTION_ENABLED"
+  ]
+}

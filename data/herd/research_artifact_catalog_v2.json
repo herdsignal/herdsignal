@@ -50,6 +50,8 @@
       "data/herd/profit_take_success_label_v2.json",
       "data/reports/profit_take_success_label_v2.json",
       "data/reports/profit_take_success_label_v2.csv",
+      "data/herd/research_claim_scope_v1.json",
+      "data/reports/research_claim_scope_v1.json",
       "data/herd/failed_hypothesis_map_v1.json",
       "data/herd/survivorship_readiness_v2.json",
       "data/herd/rush_event_dataset_v2.json",

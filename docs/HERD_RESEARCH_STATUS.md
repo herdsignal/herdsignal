@@ -67,6 +67,23 @@
 계약과 라벨 원장은 `data/herd/profit_take_success_label_v2.json`,
 `data/reports/profit_take_success_label_v2.csv`다.
 
+## 연구 주장 범위 분리
+
+- 현재 구성종목 중심 preholdout은 가설 생성·탈락, 단순 기준선 비교와
+  fold·universe별 연구 결과까지만 허용한다. 모든 결과에
+  `CURRENT_CONSTITUENT_PREHOLDOUT_NOT_SURVIVORSHIP_SAFE` 경계를 붙인다.
+- 개인 보유 종목 prospective shadow는 preholdout 방향성과 완결 사이클이
+  먼저 통과해야 시작할 수 있다. 최소 12개월·완결 후보 30건·10종목은
+  향후 정책 검토 조건이며 중간 결과로 재학습하거나 자동 행동을 열 수 없다.
+- 미국 주식 전체 일반화 모델은 point-in-time 편출·상장폐지 종목까지
+  준비돼 `survivorship_safe=true`가 되기 전까지 차단한다.
+- 현재 운영 정책은 생존자 편향 안전성, Blind holdout 단 1회, 사람 승인,
+  감사 저장을 계속 요구한다. 개인 연구 lane 분리는 이 조건을 완화하지
+  않는다.
+
+계약은 `data/herd/research_claim_scope_v1.json`이며 다음 허용 단계는
+`SIMPLE_ACTION_BASELINES_V1`이다.
+
 ## Part A — 실패 가설 지도
 
 - 가격 확장, Rush 전환, 하방 비대칭, 시장·섹터·참여, SEC PIT 기업 상태,

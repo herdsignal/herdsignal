@@ -363,6 +363,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/research_claim_scope_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/research_decision_v2.json",
       "status": "ACTIVE"
     },
@@ -1245,6 +1249,10 @@
     {
       "path": "data/reports/reentry_worthwhile_target_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/research_claim_scope_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/rush_confirmation_oos_v1.json",
