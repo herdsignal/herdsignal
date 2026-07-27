@@ -137,10 +137,6 @@ export default function StockDetail() {
               stateSummary={stateSummary}
             />
             <StockDetailBrief items={briefItems} />
-            <StockDetailAnalysis
-              observation={observation}
-              color={color}
-            />
             <StockDetailHistory
               period={historyPeriod}
               onPeriodChange={setHistoryPeriod}
@@ -151,6 +147,10 @@ export default function StockDetail() {
               episodeLoading={episodeLoading}
               timelineMeta={timelineMeta}
               observation={observation}
+            />
+            <StockDetailAnalysis
+              observation={observation}
+              color={color}
             />
             <StockDetailRecords
               financialsLoading={financialsLoading}

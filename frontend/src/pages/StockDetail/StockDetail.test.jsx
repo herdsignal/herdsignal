@@ -125,6 +125,11 @@ describe('StockDetail route', () => {
     expect(screen.getByText('HERD 구성')).toBeInTheDocument()
     expect(screen.getAllByText('수정 종가')).toHaveLength(2)
     expect(screen.getByText('4/4')).toBeInTheDocument()
+    expect(
+      screen.getByText('가격 · HERD 이력').compareDocumentPosition(
+        screen.getByText('HERD 구성'),
+      ) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
     expect(document.body.textContent).not.toMatch(/익절 근거|매수 근거|추천/)
   })
 })
