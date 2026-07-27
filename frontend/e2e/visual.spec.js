@@ -139,7 +139,9 @@ test('market field moves and portfolio holdings open stock details', async ({ pa
     timeout: 15_000,
   })
   await expect(page.getByRole('heading', { name: 'HERD 구성' })).toBeVisible()
-  await expect(page.getByText('가격 확장', { exact: true })).toBeVisible()
+  await expect(
+    page.getByLabel('HERD 구성').getByText('가격 확장', { exact: true }),
+  ).toBeVisible()
   await expect(page.getByText('하방 위험 맥락', { exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: '기업 정보 · 판단 로그' })).toBeVisible()
   await expect(page.locator('details')).toHaveCount(0)

@@ -93,7 +93,7 @@ export function usePortfolioData({
     } catch {
       return false
     }
-  }, [userId])
+  }, [])
 
   const revalidateRealtimeSummary = useCallback(async ({ force = false } = {}) => {
     const now = Date.now()
