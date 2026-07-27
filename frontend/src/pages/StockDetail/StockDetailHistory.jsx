@@ -10,6 +10,8 @@ export default function StockDetailHistory({
   currentScore,
   episodeStudy,
   episodeLoading,
+  timelineMeta,
+  observation,
 }) {
   return (
     <section className={styles.historySection} aria-labelledby="stock-history-title">
@@ -38,7 +40,37 @@ export default function StockDetailHistory({
         )}
       </div>
       <EpisodeSummary study={episodeStudy} loading={episodeLoading} />
+      <DataBasis timeline={timelineMeta} observation={observation} />
     </section>
+  )
+}
+
+function DataBasis({ timeline, observation }) {
+  const observed = timeline?.observationCount ?? 0
+  const priced = timeline?.pricedObservationCount ?? 0
+  return (
+    <dl className={styles.dataBasis} aria-label="데이터 기준">
+      <div>
+        <dt>모델</dt>
+        <dd>{observation?.stateModelVersion ?? timeline?.stateModelVersion ?? 'HERD_STATE_S1'}</dd>
+      </div>
+      <div>
+        <dt>관찰일</dt>
+        <dd>{observation?.observationDate ?? '—'}</dd>
+      </div>
+      <div>
+        <dt>가격</dt>
+        <dd>{timeline?.priceField === 'ADJUSTED_CLOSE' ? '수정 종가' : '—'}</dd>
+      </div>
+      <div>
+        <dt>가격 연결</dt>
+        <dd>{priced}/{observed}</dd>
+      </div>
+      <div>
+        <dt>상태</dt>
+        <dd>{observation?.freshnessStatus === 'FRESH' ? '최신' : '확인 필요'}</dd>
+      </div>
+    </dl>
   )
 }
 

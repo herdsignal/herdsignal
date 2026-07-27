@@ -414,6 +414,40 @@
   font-size: var(--hs-type-micro);
 }
 
+.dataBasis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 18px 0 0;
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.dataBasis div {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-right: 1px solid var(--hs-line);
+}
+
+.dataBasis div:last-child {
+  border-right: 0;
+}
+
+.dataBasis dt {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.dataBasis dd {
+  overflow: hidden;
+  margin: 0;
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-label);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 680px) {
   .episodeGrid {
     grid-template-columns: 1fr;
@@ -426,6 +460,14 @@
 
   .episodeMetric:last-child {
     border-bottom: 0;
+  }
+
+  .dataBasis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dataBasis div {
+    border-bottom: 1px solid var(--hs-line);
   }
 }
 

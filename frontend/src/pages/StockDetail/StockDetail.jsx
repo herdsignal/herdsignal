@@ -44,6 +44,7 @@ export default function StockDetail() {
     fundamentalGuard,
     journalSummary,
     historyPoints,
+    timelineMeta,
     episodeStudy,
     episodeLoading,
     stateSummary,
@@ -145,6 +146,8 @@ export default function StockDetail() {
               currentScore={herdScore}
               episodeStudy={episodeStudy}
               episodeLoading={episodeLoading}
+              timelineMeta={timelineMeta}
+              observation={observation}
             />
             <StockDetailRecords
               financialsLoading={financialsLoading}

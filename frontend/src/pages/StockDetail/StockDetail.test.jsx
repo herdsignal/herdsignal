@@ -56,7 +56,12 @@ beforeEach(() => {
     episodeCount: 2,
     summaries: [],
   }))
-  api.getHerdPriceTimeline.mockReturnValue(response({ points: [
+  api.getHerdPriceTimeline.mockReturnValue(response({
+    stateModelVersion: 'HERD_STATE_S1',
+    priceField: 'ADJUSTED_CLOSE',
+    observationCount: 4,
+    pricedObservationCount: 4,
+    points: [
     {
       observationDate: '2026-07-03',
       marketSession: '2026-07-03',
@@ -93,7 +98,8 @@ beforeEach(() => {
       transition: 'NEUTRAL',
       transitionEvent: false,
     },
-  ] }))
+    ],
+  }))
   api.getStockFinancials.mockReturnValue(response({
     marketCap: 5_000_000_000_000, trailingPe: 32, eps: 6.5,
     operatingMargin: 65, totalRevenue: 250_000_000_000,
@@ -117,6 +123,8 @@ describe('StockDetail route', () => {
     expect(screen.getByText('Drift · 3주째')).toBeInTheDocument()
     expect(screen.getByText('군중 회복')).toBeInTheDocument()
     expect(screen.getByText('HERD 구성')).toBeInTheDocument()
+    expect(screen.getAllByText('수정 종가')).toHaveLength(2)
+    expect(screen.getByText('4/4')).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/익절 근거|매수 근거|추천/)
   })
 })

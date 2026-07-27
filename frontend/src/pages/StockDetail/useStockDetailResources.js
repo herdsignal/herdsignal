@@ -17,6 +17,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [herdTimeline, setHerdTimeline] = useState([])
+  const [timelineMeta, setTimelineMeta] = useState(null)
   const [historyPeriod, setHistoryPeriod] = useState('1y')
   const [historyLoading, setHistoryLoading] = useState(false)
   const [financials, setFinancials] = useState(null)
@@ -78,15 +79,16 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     let active = true
     setHistoryLoading(true)
     setHerdTimeline([])
+    setTimelineMeta(null)
     getHerdPriceTimeline(
       normalizedTicker,
       OBSERVATION_TIMELINE_LIMIT,
     )
       .then((response) => {
         if (active) {
-          setHerdTimeline(normalizeHerdPriceTimeline(
-            response.data?.data?.points,
-          ))
+          const timeline = response.data?.data ?? null
+          setHerdTimeline(normalizeHerdPriceTimeline(timeline?.points))
+          setTimelineMeta(timeline)
         }
       })
       .catch(() => {
@@ -130,6 +132,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     error,
     herdHistory,
     herdTimeline,
+    timelineMeta,
     historyPeriod,
     setHistoryPeriod,
     historyLoading,
