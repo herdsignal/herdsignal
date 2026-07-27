@@ -75,6 +75,8 @@ export function usePortfolioData({
   const refreshNoticeTimer = useRef(null)
   const summaryRequest = useRef(0)
   const lastSummaryValidation = useRef(0)
+  const lastRealtimeValidation = useRef(0)
+  const cashBalanceRef = useRef(0)
 
   const revalidatePortfolioSummary = useCallback(async ({ force = false } = {}) => {
     const now = Date.now()
@@ -86,6 +88,26 @@ export function usePortfolioData({
       const response = await getPortfolioSummary()
       if (requestId !== summaryRequest.current) return false
       const data = normalizePortfolioSummary(response.data?.data ?? null)
+      setSummary(data)
+      return true
+    } catch {
+      return false
+    }
+  }, [userId])
+
+  const revalidateRealtimeSummary = useCallback(async ({ force = false } = {}) => {
+    const now = Date.now()
+    if (!force && now - lastRealtimeValidation.current < 60_000) return false
+    lastRealtimeValidation.current = now
+    const requestId = ++summaryRequest.current
+
+    try {
+      const response = await getPortfolioRealtime()
+      if (requestId !== summaryRequest.current) return false
+      const data = withCash(
+        normalizePortfolioSummary(response.data?.data ?? null),
+        cashBalanceRef.current,
+      )
       setSummary(data)
       writeUserCache(CACHE_KEY_REALTIME, userId, data)
       setLastUpdated(savePortfolioCacheTime(userId))
@@ -140,11 +162,15 @@ export function usePortfolioData({
       getCashBalance()
         .then((response) => {
           const amount = Number(response.data?.data?.cashAmount ?? 0)
+          cashBalanceRef.current = amount
           setCashBalance(amount)
           setCashDraft(amount > 0 ? String(amount) : '')
           setSummary((previous) => withCash(previous, amount))
         })
-        .catch(() => setCashBalance(0))
+        .catch(() => {
+          cashBalanceRef.current = 0
+          setCashBalance(0)
+        })
     } finally {
       setLoading(false)
     }
@@ -155,9 +181,15 @@ export function usePortfolioData({
   }, [fetchData])
 
   useEffect(() => {
+    if (loading || error || portfolio.length === 0) return undefined
+    revalidateRealtimeSummary({ force: true })
+    return undefined
+  }, [error, loading, portfolio.length, revalidateRealtimeSummary])
+
+  useEffect(() => {
     const revalidateOnReturn = () => {
       if (document.visibilityState !== 'visible') return
-      revalidatePortfolioSummary()
+      revalidateRealtimeSummary()
     }
     window.addEventListener('focus', revalidateOnReturn)
     document.addEventListener('visibilitychange', revalidateOnReturn)
@@ -165,36 +197,25 @@ export function usePortfolioData({
       window.removeEventListener('focus', revalidateOnReturn)
       document.removeEventListener('visibilitychange', revalidateOnReturn)
     }
-  }, [revalidatePortfolioSummary])
+  }, [revalidateRealtimeSummary])
 
   useEffect(() => () => {
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
   }, [])
 
   const handleRefresh = useCallback(async () => {
-    const priceRequestId = ++summaryRequest.current
-    lastSummaryValidation.current = Date.now()
     setRefreshing(true)
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
     setRefreshNotice('현재가 조회 · State S1 관찰값 조회 중')
 
     try {
       const [priceResult, herdResult] = await Promise.allSettled([
-        getPortfolioRealtime(),
+        revalidateRealtimeSummary({ force: true }).then((updated) => {
+          if (!updated) throw new Error('현재가 갱신 실패')
+          return true
+        }),
         getPortfolioObservations(portfolio),
       ])
-
-      if (priceResult.status === 'fulfilled') {
-        const data = withCash(
-          normalizePortfolioSummary(priceResult.value.data?.data ?? null),
-          cashBalance,
-        )
-        if (priceRequestId === summaryRequest.current) {
-          setSummary(data)
-          writeUserCache(CACHE_KEY_REALTIME, userId, data)
-          setLastUpdated(savePortfolioCacheTime(userId))
-        }
-      }
 
       if (herdResult.status === 'fulfilled') {
         const herdData = observationResponseToCacheData(herdResult.value)
@@ -212,8 +233,8 @@ export function usePortfolioData({
       setRefreshing(false)
     }
   }, [
-    cashBalance,
     portfolio,
+    revalidateRealtimeSummary,
     userId,
   ])
 

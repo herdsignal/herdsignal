@@ -29,6 +29,10 @@ beforeEach(() => {
     totalValue: 110,
     stocks: [{ ticker: 'AAPL', dailyChangePct: 0.56 }],
   }))
+  api.getPortfolioRealtime.mockReturnValue(response({
+    totalValue: 111,
+    stocks: [{ ticker: 'AAPL', dailyChangePct: 0.75 }],
+  }))
   api.getHerdObservations.mockReturnValue(response({
     observations: [{
       ticker: 'AAPL',
@@ -57,8 +61,9 @@ describe('usePortfolioData', () => {
     }))
 
     await waitFor(() => expect(result.current.loading).toBe(false))
-    await waitFor(() => expect(result.current.summary?.total_asset_value).toBe(120))
+    await waitFor(() => expect(result.current.summary?.total_asset_value).toBe(121))
     expect(api.getPortfolioSummary).toHaveBeenCalledTimes(1)
+    expect(api.getPortfolioRealtime).toHaveBeenCalledTimes(1)
     expect(api.getHerdObservations).toHaveBeenCalledTimes(1)
     expect(result.current.herdMap.AAPL?.herdScore).toBe(40)
   })
@@ -72,13 +77,13 @@ describe('usePortfolioData', () => {
       setTargetWeights,
     }))
     await waitFor(() => expect(result.current.loading).toBe(false))
-    const callsBeforeFocus = api.getPortfolioSummary.mock.calls.length
+    const callsBeforeFocus = api.getPortfolioRealtime.mock.calls.length
 
     nowSpy.mockReturnValue(now + 61_000)
     act(() => window.dispatchEvent(new Event('focus')))
 
     await waitFor(() => {
-      expect(api.getPortfolioSummary).toHaveBeenCalledTimes(callsBeforeFocus + 1)
+      expect(api.getPortfolioRealtime).toHaveBeenCalledTimes(callsBeforeFocus + 1)
     })
     nowSpy.mockRestore()
   })
