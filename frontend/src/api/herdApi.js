@@ -179,6 +179,12 @@ export const getHerdObservationHistory = (ticker, limit = 52) =>
     params: { limit },
   })
 
+/** State S1 관찰일의 수정 종가와 HERD를 같은 시점으로 결합한 이력. */
+export const getHerdPriceTimeline = (ticker, limit = 52) =>
+  api.get(`/api/observations/${tickerPath(ticker)}/timeline`, {
+    params: { limit },
+  })
+
 /** 회사명/티커 기반 종목 검색 */
 export const searchStocks = (query) =>
   api.get('/api/stocks/search', { params: { q: query } })

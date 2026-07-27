@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   isObservationAvailable,
+  normalizeHerdPriceTimeline,
   normalizeObservationHistory,
   observationBatchToMap,
   observationHistoryLimit,
@@ -30,6 +31,32 @@ describe('HERD S1 observation view model', () => {
     ])
     expect(observationHistoryLimit('3y')).toBeLessThanOrEqual(260)
     expect(selectObservationHistory(points, '1m')).toEqual(points)
+  })
+
+  it('keeps missing exact-session prices as gaps', () => {
+    const points = normalizeHerdPriceTimeline([
+      {
+        observationDate: '2026-07-24',
+        marketSession: '2026-07-24',
+        adjustedClose: null,
+        herdScore: 62,
+        herdStage: 'DRIFT',
+      },
+      {
+        observationDate: '2026-07-17',
+        marketSession: '2026-07-17',
+        adjustedClose: 171.4,
+        herdScore: 58,
+        herdStage: 'CALM',
+      },
+    ])
+
+    expect(points[0]).toMatchObject({
+      date: '2026-07-17',
+      adjustedClose: 171.4,
+      score: 58,
+    })
+    expect(points[1].adjustedClose).toBeNull()
   })
 })
 

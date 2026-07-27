@@ -7,7 +7,7 @@ import * as api from '../../api/herdApi'
 
 vi.mock('../../api/herdApi', () => ({
   getHerdObservation: vi.fn(),
-  getHerdObservationHistory: vi.fn(),
+  getHerdPriceTimeline: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
   getPortfolio: vi.fn(),
@@ -47,32 +47,40 @@ beforeEach(() => {
     downsideRiskContext: 35,
   }))
   api.getSignalJournal.mockReturnValue(response([]))
-  api.getHerdObservationHistory.mockReturnValue(response({ points: [
+  api.getHerdPriceTimeline.mockReturnValue(response({ points: [
     {
       observationDate: '2026-07-03',
-      stateScore: 55,
-      stage: 'CALM',
+      marketSession: '2026-07-03',
+      adjustedClose: 148,
+      herdScore: 55,
+      herdStage: 'CALM',
       transition: 'NEUTRAL',
       transitionEvent: false,
     },
     {
       observationDate: '2026-07-10',
-      stateScore: 60,
-      stage: 'DRIFT',
+      marketSession: '2026-07-10',
+      adjustedClose: 151,
+      herdScore: 60,
+      herdStage: 'DRIFT',
       transition: 'RECOVERING',
       transitionEvent: true,
     },
     {
       observationDate: '2026-07-17',
-      stateScore: 61,
-      stage: 'DRIFT',
+      marketSession: '2026-07-17',
+      adjustedClose: 154,
+      herdScore: 61,
+      herdStage: 'DRIFT',
       transition: 'NEUTRAL',
       transitionEvent: false,
     },
     {
       observationDate: '2026-07-24',
-      stateScore: 63,
-      stage: 'DRIFT',
+      marketSession: '2026-07-24',
+      adjustedClose: 157,
+      herdScore: 63,
+      herdStage: 'DRIFT',
       transition: 'NEUTRAL',
       transitionEvent: false,
     },

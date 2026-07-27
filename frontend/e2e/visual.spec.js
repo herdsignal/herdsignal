@@ -7,6 +7,7 @@ import {
   nvda,
   nvdaObservation,
   observationHistory,
+  observationTimeline,
   portfolio,
   portfolioHerd,
   portfolioHistory,
@@ -253,6 +254,17 @@ function responseFor(pathname) {
     }
   }
   if (pathname === '/api/observations/NVDA') return nvdaObservation
+  if (pathname === '/api/observations/NVDA/timeline') {
+    return {
+      availabilityStatus: 'AVAILABLE',
+      ticker: 'NVDA',
+      stateModelVersion: 'HERD_STATE_S1',
+      priceField: 'ADJUSTED_CLOSE',
+      observationCount: observationTimeline.length,
+      pricedObservationCount: observationTimeline.length,
+      points: observationTimeline,
+    }
+  }
   if (pathname === '/api/observations/NVDA/history') {
     return {
       availabilityStatus: 'AVAILABLE',

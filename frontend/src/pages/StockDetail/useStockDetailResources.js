@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getHerdObservation,
-  getHerdObservationHistory,
+  getHerdPriceTimeline,
   getStockFinancials,
 } from '../../api/herdApi'
 import {
-  normalizeObservationHistory,
+  normalizeHerdPriceTimeline,
   OBSERVATION_TIMELINE_LIMIT,
   selectObservationHistory,
 } from '../../utils/herdObservation'
@@ -56,13 +56,13 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     let active = true
     setHistoryLoading(true)
     setHerdTimeline([])
-    getHerdObservationHistory(
+    getHerdPriceTimeline(
       normalizedTicker,
       OBSERVATION_TIMELINE_LIMIT,
     )
       .then((response) => {
         if (active) {
-          setHerdTimeline(normalizeObservationHistory(
+          setHerdTimeline(normalizeHerdPriceTimeline(
             response.data?.data?.points,
           ))
         }

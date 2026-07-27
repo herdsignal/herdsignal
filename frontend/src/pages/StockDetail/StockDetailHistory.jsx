@@ -1,4 +1,4 @@
-import HerdHistoryChart from '../../components/HerdHistoryChart/HerdHistoryChart'
+import PriceHerdTimelineChart from '../../components/PriceHerdTimelineChart/PriceHerdTimelineChart'
 import styles from './StockDetail.module.css'
 import { HISTORY_PERIODS } from './stockDetailModel'
 
@@ -13,8 +13,8 @@ export default function StockDetailHistory({
     <section className={styles.historySection} aria-labelledby="stock-history-title">
       <div className={styles.sectionHeader}>
         <div>
-          <h2 id="stock-history-title">HERD 이력</h2>
-          <span>주간 관찰</span>
+          <h2 id="stock-history-title">가격 · HERD 이력</h2>
+          <span>수정 종가 · 주간 관찰</span>
         </div>
         <div className={styles.historyTabs}>
           {HISTORY_PERIODS.map((item) => (
@@ -32,7 +32,7 @@ export default function StockDetailHistory({
         {loading ? (
           <div className={styles.chartEmpty}>로딩 중…</div>
         ) : (
-          <HerdHistoryChart points={points} currentScore={currentScore} height={230} />
+          <PriceHerdTimelineChart points={points} currentScore={currentScore} />
         )}
       </div>
     </section>

@@ -5,7 +5,7 @@ import * as api from '../../api/herdApi'
 
 vi.mock('../../api/herdApi', () => ({
   getHerdObservation: vi.fn(),
-  getHerdObservationHistory: vi.fn(),
+  getHerdPriceTimeline: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
   getPortfolio: vi.fn(),
@@ -56,7 +56,7 @@ beforeEach(() => {
   api.getSignalJournal.mockReturnValue(response([]))
   api.getHerdObservation.mockImplementation((ticker) =>
     response(observation(ticker)))
-  api.getHerdObservationHistory.mockReturnValue(response({ points: [] }))
+  api.getHerdPriceTimeline.mockReturnValue(response({ points: [] }))
   api.getStockFinancials.mockReturnValue(response(null))
 })
 
@@ -120,45 +120,53 @@ describe('useStockDetail', () => {
   it('loads one fixed timeline and only slices it when the chart period changes', async () => {
     const points = Array.from({ length: 20 }, (_, index) => ({
       observationDate: `2026-${String(Math.floor(index / 4) + 1).padStart(2, '0')}-${String((index % 4) * 7 + 1).padStart(2, '0')}`,
-      stateScore: 40 + index,
-      stage: index < 10 ? 'CALM' : 'DRIFT',
+      marketSession: `2026-${String(Math.floor(index / 4) + 1).padStart(2, '0')}-${String((index % 4) * 7 + 1).padStart(2, '0')}`,
+      adjustedClose: 100 + index,
+      herdScore: 40 + index,
+      herdStage: index < 10 ? 'CALM' : 'DRIFT',
       transition: 'NEUTRAL',
       transitionEvent: false,
     }))
-    api.getHerdObservationHistory.mockReturnValue(response({ points }))
+    api.getHerdPriceTimeline.mockReturnValue(response({ points }))
 
     const { result } = renderHook(() => useStockDetail('nvda'))
     await waitFor(() => expect(result.current.historyLoading).toBe(false))
 
-    expect(api.getHerdObservationHistory).toHaveBeenCalledTimes(1)
-    expect(api.getHerdObservationHistory).toHaveBeenCalledWith('NVDA', 260)
+    expect(api.getHerdPriceTimeline).toHaveBeenCalledTimes(1)
+    expect(api.getHerdPriceTimeline).toHaveBeenCalledWith('NVDA', 260)
     expect(result.current.historyPoints).toHaveLength(20)
 
     act(() => result.current.setHistoryPeriod('1m'))
     expect(result.current.historyPoints).toHaveLength(6)
-    expect(api.getHerdObservationHistory).toHaveBeenCalledTimes(1)
+    expect(api.getHerdPriceTimeline).toHaveBeenCalledTimes(1)
   })
 
   it('stores the observed stage duration with a journal entry', async () => {
-    api.getHerdObservationHistory.mockReturnValue(response({ points: [
+    api.getHerdPriceTimeline.mockReturnValue(response({ points: [
       {
         observationDate: '2026-07-10',
-        stateScore: 48,
-        stage: 'CALM',
+        marketSession: '2026-07-10',
+        adjustedClose: 150,
+        herdScore: 48,
+        herdStage: 'CALM',
         transition: 'NEUTRAL',
         transitionEvent: false,
       },
       {
         observationDate: '2026-07-17',
-        stateScore: 49,
-        stage: 'CALM',
+        marketSession: '2026-07-17',
+        adjustedClose: 152,
+        herdScore: 49,
+        herdStage: 'CALM',
         transition: 'NEUTRAL',
         transitionEvent: false,
       },
       {
         observationDate: '2026-07-24',
-        stateScore: 50,
-        stage: 'CALM',
+        marketSession: '2026-07-24',
+        adjustedClose: 154,
+        herdScore: 50,
+        herdStage: 'CALM',
         transition: 'NEUTRAL',
         transitionEvent: false,
       },

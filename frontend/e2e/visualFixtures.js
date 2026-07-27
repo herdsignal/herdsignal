@@ -128,6 +128,16 @@ export const observationHistory = history.map((point) => ({
   transitionEvent: false,
 })).reverse()
 
+export const observationTimeline = [...observationHistory].reverse().map((point, index) => ({
+  observationDate: point.observationDate,
+  marketSession: point.lastObservedSession,
+  adjustedClose: 132 + (index * 2.4) + Math.sin(index) * 3,
+  herdScore: point.stateScore,
+  herdStage: point.stage,
+  transition: point.transition,
+  transitionEvent: point.transitionEvent,
+}))
+
 export const journal = [
   {
     id: 1,

@@ -51,6 +51,27 @@ export function normalizeObservationHistory(points) {
     .sort((left, right) => left.date.localeCompare(right.date))
 }
 
+export function normalizeHerdPriceTimeline(points) {
+  if (!Array.isArray(points)) return []
+  return points
+    .map((point) => {
+      const adjustedClose = point.adjustedClose == null
+        ? null
+        : Number(point.adjustedClose)
+      return {
+        date: point.observationDate,
+        marketSession: point.marketSession,
+        adjustedClose: Number.isFinite(adjustedClose) ? adjustedClose : null,
+        score: Number(point.herdScore),
+        stage: point.herdStage,
+        transition: point.transition,
+        transitionEvent: Boolean(point.transitionEvent),
+      }
+    })
+    .filter((point) => point.date && Number.isFinite(point.score))
+    .sort((left, right) => left.date.localeCompare(right.date))
+}
+
 export function observationFreshnessLabel(observation) {
   if (!isObservationAvailable(observation)) return '관찰값 준비 중'
   if (observation.freshnessStatus === 'STALE') return '업데이트 필요'
