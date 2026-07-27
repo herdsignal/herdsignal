@@ -154,6 +154,65 @@
   border-top: 1px solid var(--hs-line);
 }
 
+.briefSection {
+  margin-top: 30px;
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.briefTitle {
+  display: flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.briefTitle h2 {
+  margin: 0;
+  color: var(--hs-text);
+  font-size: var(--hs-type-body);
+}
+
+.briefTitle span {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.briefGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--hs-line);
+}
+
+.briefGrid div {
+  display: grid;
+  gap: 5px;
+  padding: 14px 16px;
+  border-right: 1px solid var(--hs-line);
+}
+
+.briefGrid div:last-child {
+  border-right: 0;
+}
+
+.briefGrid dt,
+.briefGrid small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.briefGrid dd {
+  overflow: hidden;
+  margin: 0;
+  color: var(--hs-text);
+  font-size: var(--hs-type-body);
+  font-weight: 680;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .stateHeader,
 .sectionHeader {
   display: flex;
@@ -449,6 +508,14 @@
 }
 
 @media (max-width: 680px) {
+  .briefGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .briefGrid div {
+    border-bottom: 1px solid var(--hs-line);
+  }
+
   .episodeGrid {
     grid-template-columns: 1fr;
   }

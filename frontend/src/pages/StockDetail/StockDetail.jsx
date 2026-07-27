@@ -9,6 +9,7 @@ import styles from './StockDetail.module.css'
 import StockDetailAnalysis from './StockDetailAnalysis'
 import StockDetailHero from './StockDetailHero'
 import StockDetailHistory from './StockDetailHistory'
+import StockDetailBrief from './StockDetailBrief'
 import StockDetailRecords from './StockDetailRecords'
 import { BTN_LABELS, badgeColors } from './stockDetailModel'
 import { useStockDetail } from './useStockDetail'
@@ -47,6 +48,7 @@ export default function StockDetail() {
     timelineMeta,
     episodeStudy,
     episodeLoading,
+    briefItems,
     stateSummary,
     handleJournalAction,
     handleJournalDelete,
@@ -134,6 +136,7 @@ export default function StockDetail() {
               herdStage={herdStage}
               stateSummary={stateSummary}
             />
+            <StockDetailBrief items={briefItems} />
             <StockDetailAnalysis
               observation={observation}
               color={color}

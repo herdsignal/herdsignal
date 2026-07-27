@@ -15,6 +15,7 @@ import {
 } from './stockDetailModel'
 import { useStockDetailResources } from './useStockDetailResources'
 import { useStockSignalJournal } from './useStockSignalJournal'
+import { buildStockBrief } from './stockBriefModel'
 
 export function useStockDetail(ticker) {
   const { user } = useAuth()
@@ -87,6 +88,14 @@ export function useStockDetail(ticker) {
     }),
     [herdScore, herdStage, observation, timelinePoints],
   )
+  const briefItems = useMemo(
+    () => buildStockBrief({
+      observation,
+      fundamentalGuard,
+      episodeStudy,
+    }),
+    [episodeStudy, fundamentalGuard, observation],
+  )
 
   async function handleJournalAction(actionType, details = {}) {
     await journal.saveSignalLog({
@@ -139,6 +148,7 @@ export function useStockDetail(ticker) {
     timelineMeta,
     episodeStudy,
     episodeLoading,
+    briefItems,
     stateSummary,
     handleJournalAction,
     handleJournalDelete: journal.removeSignalLog,
