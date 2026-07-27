@@ -341,6 +341,94 @@
   place-items: center;
 }
 
+.episodeStudy {
+  margin-top: 18px;
+  border-top: 1px solid var(--hs-line);
+}
+
+.episodeHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0 14px;
+}
+
+.episodeHeader div {
+  display: grid;
+  gap: 4px;
+}
+
+.episodeHeader strong {
+  color: var(--hs-text);
+  font-size: var(--hs-type-body);
+}
+
+.episodeHeader span,
+.episodeHeader div span {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.episodeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.episodeMetric {
+  display: grid;
+  gap: 5px;
+  padding: 16px;
+  border-right: 1px solid var(--hs-line);
+}
+
+.episodeMetric:last-child {
+  border-right: 0;
+}
+
+.episodeMetric span,
+.episodeMetric small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.episodeMetric strong {
+  color: var(--hs-text);
+  font-size: var(--hs-type-subtitle);
+  font-variant-numeric: tabular-nums;
+}
+
+.episodeNote {
+  padding: 16px;
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-sm);
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.episodeDisclaimer {
+  margin: 10px 0 0;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+@media (max-width: 680px) {
+  .episodeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .episodeMetric {
+    border-right: 0;
+    border-bottom: 1px solid var(--hs-line);
+  }
+
+  .episodeMetric:last-child {
+    border-bottom: 0;
+  }
+}
+
 .recordsSection {
   margin-top: 44px;
   padding-top: 8px;

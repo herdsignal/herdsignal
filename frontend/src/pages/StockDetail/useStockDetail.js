@@ -36,6 +36,8 @@ export function useStockDetail(ticker) {
     historyLoading,
     financials,
     financialsLoading,
+    episodeStudy,
+    episodeLoading,
     fetchData,
   } = resources
 
@@ -133,6 +135,8 @@ export function useStockDetail(ticker) {
     fundamentalGuard,
     journalSummary,
     historyPoints,
+    episodeStudy,
+    episodeLoading,
     stateSummary,
     handleJournalAction,
     handleJournalDelete: journal.removeSignalLog,

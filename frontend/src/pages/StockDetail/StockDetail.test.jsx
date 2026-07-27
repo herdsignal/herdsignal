@@ -8,6 +8,7 @@ import * as api from '../../api/herdApi'
 vi.mock('../../api/herdApi', () => ({
   getHerdObservation: vi.fn(),
   getHerdPriceTimeline: vi.fn(),
+  getHerdEpisodeStudy: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
   getPortfolio: vi.fn(),
@@ -47,6 +48,14 @@ beforeEach(() => {
     downsideRiskContext: 35,
   }))
   api.getSignalJournal.mockReturnValue(response([]))
+  api.getHerdEpisodeStudy.mockReturnValue(response({
+    availabilityStatus: 'AVAILABLE',
+    evidenceStatus: 'INSUFFICIENT_SAMPLE',
+    herdStage: 'DRIFT',
+    minimumCompletedEpisodes: 5,
+    episodeCount: 2,
+    summaries: [],
+  }))
   api.getHerdPriceTimeline.mockReturnValue(response({ points: [
     {
       observationDate: '2026-07-03',

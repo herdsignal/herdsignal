@@ -28,6 +28,10 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
      */
     List<DailyPrice> findTop2ByTickerOrderByPriceDateDesc(String ticker);
 
+    Optional<DailyPrice> findTopByTickerAndClosePriceIsNotNullOrderByPriceDateDesc(
+            String ticker
+    );
+
     /**
      * 특정 기준일 이하의 최신 종가 조회.
      * KST 22:30 미국장 시작 기준 "오늘" 가격 계산에 사용.

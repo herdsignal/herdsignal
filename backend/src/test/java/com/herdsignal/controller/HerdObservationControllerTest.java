@@ -4,8 +4,10 @@ import com.herdsignal.dto.HerdObservationBatchResponse;
 import com.herdsignal.dto.HerdObservationResponse;
 import com.herdsignal.dto.HerdPriceTimelinePoint;
 import com.herdsignal.dto.HerdPriceTimelineResponse;
+import com.herdsignal.dto.HerdEpisodeStudyResponse;
 import com.herdsignal.exception.GlobalExceptionHandler;
 import com.herdsignal.service.HerdObservationService;
+import com.herdsignal.service.HerdEpisodeStudyService;
 import com.herdsignal.service.HerdPriceTimelineService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,16 +27,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class HerdObservationControllerTest {
     private HerdObservationService service;
     private HerdPriceTimelineService timelineService;
+    private HerdEpisodeStudyService episodeStudyService;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         service = mock(HerdObservationService.class);
         timelineService = mock(HerdPriceTimelineService.class);
+        episodeStudyService = mock(HerdEpisodeStudyService.class);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(new HerdObservationController(
                         service,
-                        timelineService
+                        timelineService,
+                        episodeStudyService
                 ))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -112,6 +117,30 @@ class HerdObservationControllerTest {
                         .value(175.5))
                 .andExpect(jsonPath("$.data.points[0].herdScore")
                         .value(64));
+    }
+
+    @Test
+    void episodeEndpointKeepsInsufficientSamplesExplicit() throws Exception {
+        when(episodeStudyService.studyCurrentStage("NVDA"))
+                .thenReturn(new HerdEpisodeStudyResponse(
+                        "AVAILABLE",
+                        "INSUFFICIENT_SAMPLE",
+                        "NVDA",
+                        "RUSH",
+                        "HERD_STATE_S1",
+                        5,
+                        2,
+                        List.of(),
+                        List.of()
+                ));
+
+        mockMvc.perform(get("/api/observations/NVDA/episodes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.herdStage").value("RUSH"))
+                .andExpect(jsonPath("$.data.evidenceStatus")
+                        .value("INSUFFICIENT_SAMPLE"))
+                .andExpect(jsonPath("$.data.minimumCompletedEpisodes")
+                        .value(5));
     }
 
     private HerdObservationResponse unavailable() {

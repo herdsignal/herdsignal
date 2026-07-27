@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getHerdObservation,
+  getHerdEpisodeStudy,
   getHerdPriceTimeline,
   getStockFinancials,
 } from '../../api/herdApi'
@@ -20,11 +21,32 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
   const [historyLoading, setHistoryLoading] = useState(false)
   const [financials, setFinancials] = useState(null)
   const [financialsLoading, setFinancialsLoading] = useState(false)
+  const [episodeStudy, setEpisodeStudy] = useState(null)
+  const [episodeLoading, setEpisodeLoading] = useState(false)
   const herdRequest = useRef(0)
 
   useEffect(() => {
     setObservation(null)
     setError(null)
+  }, [normalizedTicker])
+
+  useEffect(() => {
+    let active = true
+    setEpisodeLoading(true)
+    setEpisodeStudy(null)
+    getHerdEpisodeStudy(normalizedTicker)
+      .then((response) => {
+        if (active) setEpisodeStudy(response.data?.data ?? null)
+      })
+      .catch(() => {
+        if (active) setEpisodeStudy(null)
+      })
+      .finally(() => {
+        if (active) setEpisodeLoading(false)
+      })
+    return () => {
+      active = false
+    }
   }, [normalizedTicker])
 
   const fetchData = useCallback(async () => {
@@ -113,6 +135,8 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     historyLoading,
     financials,
     financialsLoading,
+    episodeStudy,
+    episodeLoading,
     fetchData,
   }
 }

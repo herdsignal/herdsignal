@@ -5,6 +5,8 @@ import com.herdsignal.dto.HerdObservationBatchResponse;
 import com.herdsignal.dto.HerdObservationHistoryResponse;
 import com.herdsignal.dto.HerdObservationResponse;
 import com.herdsignal.dto.HerdPriceTimelineResponse;
+import com.herdsignal.dto.HerdEpisodeStudyResponse;
+import com.herdsignal.service.HerdEpisodeStudyService;
 import com.herdsignal.service.HerdObservationService;
 import com.herdsignal.service.HerdPriceTimelineService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.Arrays;
 public class HerdObservationController {
     private final HerdObservationService service;
     private final HerdPriceTimelineService timelineService;
+    private final HerdEpisodeStudyService episodeStudyService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<HerdObservationBatchResponse>> getLatestBatch(
@@ -55,5 +58,14 @@ public class HerdObservationController {
         return ResponseEntity.ok(
                 ApiResponse.success(timelineService.getTimeline(ticker, limit))
         );
+    }
+
+    @GetMapping("/{ticker}/episodes")
+    public ResponseEntity<ApiResponse<HerdEpisodeStudyResponse>> getEpisodes(
+            @PathVariable String ticker
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                episodeStudyService.studyCurrentStage(ticker)
+        ));
     }
 }

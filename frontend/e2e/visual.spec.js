@@ -265,6 +265,19 @@ function responseFor(pathname) {
       points: observationTimeline,
     }
   }
+  if (pathname === '/api/observations/NVDA/episodes') {
+    return {
+      availabilityStatus: 'AVAILABLE',
+      evidenceStatus: 'INSUFFICIENT_SAMPLE',
+      ticker: 'NVDA',
+      herdStage: 'RUSH',
+      stateModelVersion: 'HERD_STATE_S1',
+      minimumCompletedEpisodes: 5,
+      episodeCount: 2,
+      summaries: [],
+      episodes: [],
+    }
+  }
   if (pathname === '/api/observations/NVDA/history') {
     return {
       availabilityStatus: 'AVAILABLE',

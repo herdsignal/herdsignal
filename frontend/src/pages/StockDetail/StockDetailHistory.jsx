@@ -8,6 +8,8 @@ export default function StockDetailHistory({
   loading,
   points,
   currentScore,
+  episodeStudy,
+  episodeLoading,
 }) {
   return (
     <section className={styles.historySection} aria-labelledby="stock-history-title">
@@ -35,6 +37,51 @@ export default function StockDetailHistory({
           <PriceHerdTimelineChart points={points} currentScore={currentScore} />
         )}
       </div>
+      <EpisodeSummary study={episodeStudy} loading={episodeLoading} />
     </section>
+  )
+}
+
+function signedPercent(value) {
+  const number = Number(value)
+  if (!Number.isFinite(number)) return '—'
+  return `${number > 0 ? '+' : ''}${number.toFixed(1)}%`
+}
+
+function EpisodeSummary({ study, loading }) {
+  if (loading) {
+    return <div className={styles.episodeNote}>과거 상태 경로 계산 중…</div>
+  }
+  if (!study || study.availabilityStatus !== 'AVAILABLE') return null
+  const insufficient = study.evidenceStatus === 'INSUFFICIENT_SAMPLE'
+
+  return (
+    <div className={styles.episodeStudy}>
+      <div className={styles.episodeHeader}>
+        <div>
+          <strong>같은 {study.herdStage} 진입 이후</strong>
+          <span>상태 진입 1회를 한 사건으로 집계</span>
+        </div>
+        <span>{study.episodeCount}개 episode</span>
+      </div>
+      {insufficient ? (
+        <div className={styles.episodeNote}>
+          완결 표본이 {study.minimumCompletedEpisodes}개 미만입니다. 방향 판단에는 사용하지 않습니다.
+        </div>
+      ) : (
+        <div className={styles.episodeGrid}>
+          {study.summaries.map((summary) => (
+            <div key={summary.weeks} className={styles.episodeMetric}>
+              <span>{summary.weeks}주 후 · {summary.completedCount}건</span>
+              <strong>{signedPercent(summary.medianReturnPct)}</strong>
+              <small>
+                상승 {Number(summary.positiveRatePct).toFixed(0)}% · 중간 최대낙폭 {signedPercent(summary.medianMaxDrawdownPct)}
+              </small>
+            </div>
+          ))}
+        </div>
+      )}
+      <p className={styles.episodeDisclaimer}>과거 경로의 기술 통계이며 매수·매도 적중률이 아닙니다.</p>
+    </div>
   )
 }

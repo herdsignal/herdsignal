@@ -185,6 +185,10 @@ export const getHerdPriceTimeline = (ticker, limit = 52) =>
     params: { limit },
   })
 
+/** 현재 HERD 단계 진입 episode 이후의 완결된 가격 경로 기술 통계. */
+export const getHerdEpisodeStudy = (ticker) =>
+  api.get(`/api/observations/${tickerPath(ticker)}/episodes`)
+
 /** 회사명/티커 기반 종목 검색 */
 export const searchStocks = (query) =>
   api.get('/api/stocks/search', { params: { q: query } })

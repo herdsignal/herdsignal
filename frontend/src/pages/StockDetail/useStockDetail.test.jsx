@@ -6,6 +6,7 @@ import * as api from '../../api/herdApi'
 vi.mock('../../api/herdApi', () => ({
   getHerdObservation: vi.fn(),
   getHerdPriceTimeline: vi.fn(),
+  getHerdEpisodeStudy: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
   getPortfolio: vi.fn(),
@@ -57,6 +58,14 @@ beforeEach(() => {
   api.getHerdObservation.mockImplementation((ticker) =>
     response(observation(ticker)))
   api.getHerdPriceTimeline.mockReturnValue(response({ points: [] }))
+  api.getHerdEpisodeStudy.mockReturnValue(response({
+    availabilityStatus: 'AVAILABLE',
+    evidenceStatus: 'INSUFFICIENT_SAMPLE',
+    herdStage: 'CALM',
+    minimumCompletedEpisodes: 5,
+    episodeCount: 0,
+    summaries: [],
+  }))
   api.getStockFinancials.mockReturnValue(response(null))
 })
 
