@@ -4,7 +4,9 @@ import numpy as np
 import pandas as pd
 
 from scheduler.observation_s1 import (
+    apply_operational_identity_window,
     build_observation_bundle,
+    load_operational_identity_starts,
     sector_etf_for_name,
 )
 
@@ -83,3 +85,20 @@ def test_sector_name_mapping_is_explicit_and_conservative() -> None:
     assert sector_etf_for_name("Technology") == "XLK"
     assert sector_etf_for_name("Aerospace & Defense") == "XLI"
     assert sector_etf_for_name("Unknown Industry") is None
+
+
+def test_operational_identity_window_removes_reused_ticker_history() -> None:
+    starts = load_operational_identity_starts()
+
+    assert starts["SW"] == pd.Timestamp("2024-07-09")
+    assert starts["BLK"] == pd.Timestamp("2024-10-02")
+    assert starts["FISV"] == pd.Timestamp("2021-06-03")
+
+    frame = pd.DataFrame({
+        "Date": ["2024-07-08", "2024-07-09", "2024-07-10"],
+        "Close": [10.0, 20.0, 21.0],
+        "Volume": [100, 200, 300],
+    })
+    trimmed = apply_operational_identity_window("SW", frame, starts=starts)
+
+    assert trimmed["Date"].tolist() == ["2024-07-09", "2024-07-10"]

@@ -1,6 +1,6 @@
 import hashlib
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 from unittest.mock import patch
 
 from scheduler import herd_scheduler
@@ -34,6 +34,16 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             patch.object(herd_scheduler, "_record_scheduler_universe"),
             patch.object(herd_scheduler, "_fetch_tier1_tickers", return_value=["AAPL", "SNDK"]),
             patch.object(herd_scheduler, "collect", return_value=object()),
+            patch.object(
+                herd_scheduler,
+                "load_operational_identity_starts",
+                return_value={},
+            ),
+            patch.object(
+                herd_scheduler,
+                "apply_operational_identity_window",
+                side_effect=lambda ticker, frame, **_: frame,
+            ),
             patch.object(herd_scheduler, "validate_operational_price_frame"),
             patch.object(herd_scheduler, "run", return_value=herd_result),
             patch.object(
@@ -53,6 +63,21 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                     "records": {"SPY": {"asOfDate": "2026-07-24"}}
                 },
             ) as build_observation,
+            patch.object(
+                herd_scheduler,
+                "_record_prospective_evidence",
+                return_value={
+                    "archive": {
+                        "status": "SKIPPED_NO_NEW_OBSERVATION",
+                        "recordCount": 0,
+                    },
+                    "maturity": {
+                        "status": "SUCCESS",
+                        "created": 0,
+                        "pending": 0,
+                    },
+                },
+            ) as record_prospective,
             patch.object(herd_scheduler, "_finish_scheduler_run") as finish,
             patch.object(herd_scheduler, "_notify_scheduler_result") as notify,
         ):
@@ -66,8 +91,20 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             "skipped": [],
             "observation": "SKIPPED_INCOMPLETE_INPUT",
             "universeSha256": hashlib.sha256(b"AAPL\nSNDK\n").hexdigest(),
+            "prospectiveEvidence": {
+                "archive": {
+                    "status": "SKIPPED_NO_NEW_OBSERVATION",
+                    "recordCount": 0,
+                },
+                "maturity": {
+                    "status": "SUCCESS",
+                    "created": 0,
+                    "pending": 0,
+                },
+            },
         })
         build_observation.assert_not_called()
+        record_prospective.assert_called_once_with(None, {"AAPL": ANY})
         finish.assert_called_once_with(
             7,
             "PARTIAL_FAILURE",

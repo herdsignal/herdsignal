@@ -3,8 +3,10 @@ collectors/stock_collector.py — yfinance 주가 데이터 수집기
 티커 하나를 입력받아 일봉 OHLCV 데이터를 DataFrame으로 반환한다.
 """
 
-import time
 import logging
+import time
+from datetime import datetime, time as clock_time
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import yfinance as yf
@@ -17,6 +19,8 @@ logger = logging.getLogger(__name__)
 # 재시도 설정 상수
 MAX_RETRIES = 3
 RETRY_DELAY_SEC = 2
+NEW_YORK_TZ = ZoneInfo("America/New_York")
+DAILY_BAR_COMPLETION_TIME = clock_time(16, 15)
 
 
 class IncompleteMarketDataError(RuntimeError):
@@ -64,6 +68,27 @@ def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _drop_incomplete_market_session(
+    df: pd.DataFrame,
+    *,
+    now: datetime | None = None,
+) -> pd.DataFrame:
+    """미국 정규장 종료 전에는 공급자의 당일 미완성 일봉을 사용하지 않는다."""
+    current = now or datetime.now(NEW_YORK_TZ)
+    if current.tzinfo is None:
+        current = current.replace(tzinfo=NEW_YORK_TZ)
+    else:
+        current = current.astimezone(NEW_YORK_TZ)
+
+    if current.time() >= DAILY_BAR_COMPLETION_TIME or df.empty:
+        return df
+
+    session_date = current.date()
+    if df["Date"].iloc[-1] != session_date:
+        return df
+    return df.loc[df["Date"] < session_date].reset_index(drop=True)
+
+
 def _validate_normalized(df: pd.DataFrame, ticker: str) -> None:
     """빈 행 수만으로 성공 처리하지 않고 필수 시세의 완결성을 확인한다."""
     numeric_columns = ["Open", "High", "Low", "Close", "Volume"]
@@ -98,6 +123,8 @@ def collect(ticker: str, period: str = YFINANCE_PERIOD) -> pd.DataFrame:
             df = _fetch_raw(ticker, period)
             _validate(df, ticker)
             df = _normalize_columns(df)
+            df = _drop_incomplete_market_session(df)
+            _validate(df, ticker)
             _validate_normalized(df, ticker)
 
             logger.info(f"[{ticker}] 수집 완료 — {len(df)}행, {df['Date'].min()} ~ {df['Date'].max()}")

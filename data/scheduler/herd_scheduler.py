@@ -55,7 +55,9 @@ from scheduler.run_lock import SchedulerRunLock                                #
 from scheduler.ticker_job import execute_tickers                                # noqa: E402
 from scheduler.realtime_portfolio import calculate_current_portfolio as value_portfolio  # noqa: E402
 from scheduler.observation_s1 import (                                      # noqa: E402
+    apply_operational_identity_window,
     build_observation_bundle,
+    load_operational_identity_starts,
     required_collection_tickers,
     sector_etf_for_name,
     write_observation_bundle,
@@ -273,13 +275,20 @@ def _fetch_tracking_scopes() -> dict[str, set[str]]:
 
 
 def _record_prospective_evidence(
-    bundle: dict,
+    bundle: dict | None,
     observation_frames: dict,
 ) -> dict:
-    archive = archive_observation(
-        bundle,
-        observation_frames,
-        _fetch_tracking_scopes(),
+    archive = (
+        archive_observation(
+            bundle,
+            observation_frames,
+            _fetch_tracking_scopes(),
+        )
+        if bundle is not None
+        else {
+            "status": "SKIPPED_NO_NEW_OBSERVATION",
+            "recordCount": 0,
+        }
     )
     maturity = mature_outcomes(observation_frames)
     logger.info(
@@ -349,6 +358,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
     # ── 2. 종목별 순차 처리 ────────────────────
     total = len(tickers)
     observation_frames: dict = {}
+    identity_starts = load_operational_identity_starts()
     success_list, failed_list, skipped_list = execute_tickers(
         tickers,
         collect,
@@ -358,6 +368,11 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             ticker, frame
         ),
         validate=validate_operational_price_frame,
+        transform=lambda ticker, frame: apply_operational_identity_window(
+            ticker,
+            frame,
+            starts=identity_starts,
+        ),
     )
 
     # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────
@@ -365,6 +380,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
     prospective_error: str | None = None
     observation_count: int | None = None
     prospective_result: dict | None = None
+    bundle: dict | None = None
     publish_status = "SKIPPED_INCOMPLETE_INPUT" if failed_list else "SUCCESS"
     if failed_list:
         logger.error(
@@ -382,17 +398,6 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
                 len(bundle["records"]),
                 bundle["records"]["SPY"]["asOfDate"],
             )
-            try:
-                prospective_result = _record_prospective_evidence(
-                    bundle, observation_frames
-                )
-            except Exception as exc:
-                prospective_error = str(exc)
-                logger.error(
-                    "[Tier1] prospective evidence 기록 실패: %s",
-                    exc,
-                    exc_info=True,
-                )
         except Exception as exc:
             observation_error = str(exc)
             publish_status = "FAILED"
@@ -401,6 +406,20 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
                 exc,
                 exc_info=True,
             )
+    try:
+        # 새 S1 발행이 차단된 날에도 이전 관측의 21·63·126일 결과는
+        # 가능한 종목부터 성숙시킨다. 새 관측 생성과 결과 성숙의 장애
+        # 경계를 분리해 단일 종목 수집 실패가 기존 원장을 멈추지 않게 한다.
+        prospective_result = _record_prospective_evidence(
+            bundle, observation_frames
+        )
+    except Exception as exc:
+        prospective_error = str(exc)
+        logger.error(
+            "[Tier1] prospective evidence 기록/성숙 실패: %s",
+            exc,
+            exc_info=True,
+        )
 
     # ── 4. 전체 결과 요약 ─────────────────────
     logger.info("━" * 60)

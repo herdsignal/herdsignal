@@ -17,6 +17,7 @@ def execute_tickers(
     save: Callable,
     on_success: Callable | None = None,
     validate: Callable | None = None,
+    transform: Callable | None = None,
 ) -> tuple[list[str], list[str], list[str]]:
     success: list[str] = []
     failed: list[str] = []
@@ -26,6 +27,8 @@ def execute_tickers(
         logger.info("[Tier1][%s] 처리 시작 (%s/%s)", ticker, index, total)
         try:
             frame = collect(ticker)
+            if transform is not None:
+                frame = transform(ticker, frame)
             if validate is not None:
                 validate(ticker, frame)
             result = calculate(ticker, frame)

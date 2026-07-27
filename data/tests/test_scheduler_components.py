@@ -50,6 +50,33 @@ class SchedulerComponentsTest(unittest.TestCase):
         calculate.assert_not_called()
         save.assert_not_called()
 
+    def test_ticker_execution_transforms_before_validation_and_calculation(self):
+        calls = []
+
+        success, failed, skipped = execute_tickers(
+            ["SW"],
+            collect=lambda ticker: "raw",
+            transform=lambda ticker, frame: calls.append(
+                ("transform", ticker, frame)
+            ) or "identity-safe",
+            validate=lambda ticker, frame: calls.append(
+                ("validate", ticker, frame)
+            ),
+            calculate=lambda ticker, frame: calls.append(
+                ("calculate", ticker, frame)
+            ) or {"score": 50, "stage": "Calm"},
+            save=lambda ticker, result, frame: True,
+        )
+
+        self.assertEqual(success, ["SW"])
+        self.assertEqual(failed, [])
+        self.assertEqual(skipped, [])
+        self.assertEqual(calls, [
+            ("transform", "SW", "raw"),
+            ("validate", "SW", "identity-safe"),
+            ("calculate", "SW", "identity-safe"),
+        ])
+
     def test_ticker_execution_separates_ineligible_history_from_failure(self):
         def calculate(ticker, frame):
             if ticker == "SNDK":

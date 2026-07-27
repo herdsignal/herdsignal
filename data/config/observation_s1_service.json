@@ -20,6 +20,13 @@
     "minimum_total_coverage_fraction": 0.9,
     "minimum_sector_peer_count": 3
   },
+  "operational_identity_window": {
+    "path": "data/reports/sec_time_valid_ticker_cik_intervals_v5.csv",
+    "sha256": "4b10a272f1e5145cc1d73bdf6f91aace99502766d0a2d2c57cb30a206d6b9eed",
+    "required_status": "TIME_VALID_CIK_VERIFIED",
+    "policy": "LATEST_VERIFIED_INTERVAL_START_ONLY",
+    "purpose": "Prevent reused ticker history from entering current-issuer observations"
+  },
   "market_observation": {
     "public_ticker": "SPY",
     "label": "S&P 500 군중 상태",

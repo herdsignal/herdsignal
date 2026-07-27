@@ -91,6 +91,14 @@ def load_service_contract(path: Path = CONTRACT_PATH) -> dict[str, Any]:
     source = _rooted(universe["independent_universe_path"])
     if _sha256(source) != universe["independent_universe_sha256"]:
         raise ObservationS1Error("reference universe hash changed")
+    identity_window = contract["operational_identity_window"]
+    identity_source = _rooted(identity_window["path"])
+    if (
+        _sha256(identity_source) != identity_window["sha256"]
+        or identity_window["required_status"] != "TIME_VALID_CIK_VERIFIED"
+        or identity_window["policy"] != "LATEST_VERIFIED_INTERVAL_START_ONLY"
+    ):
+        raise ObservationS1Error("operational identity window changed")
     boundary = contract["claim_boundary"]
     if (
         boundary["direction_prediction"]
@@ -101,6 +109,57 @@ def load_service_contract(path: Path = CONTRACT_PATH) -> dict[str, Any]:
     ):
         raise ObservationS1Error("observation contract cannot authorize actions")
     return contract
+
+
+def load_operational_identity_starts(
+    service_contract: dict[str, Any] | None = None,
+) -> dict[str, pd.Timestamp]:
+    """현재 issuer에 해당하는 검증된 ticker 구간의 시작일을 반환한다."""
+    contract = service_contract or load_service_contract()
+    specification = contract["operational_identity_window"]
+    rows = pd.read_csv(_rooted(specification["path"]), dtype=str)
+    required = {"canonical_symbol", "cik", "valid_from", "valid_to", "status"}
+    if not required.issubset(rows.columns):
+        raise ObservationS1Error(
+            f"identity window columns missing: {sorted(required - set(rows.columns))}"
+        )
+    rows = rows.loc[
+        rows["status"].eq(specification["required_status"])
+    ].copy()
+    rows["canonical_symbol"] = rows["canonical_symbol"].str.strip().str.upper()
+    rows["valid_from"] = pd.to_datetime(rows["valid_from"], errors="coerce")
+    rows["valid_to"] = pd.to_datetime(rows["valid_to"], errors="coerce")
+    if rows[["valid_from", "valid_to"]].isna().any().any():
+        raise ObservationS1Error("identity window contains invalid dates")
+    starts: dict[str, pd.Timestamp] = {}
+    for ticker, ticker_rows in rows.groupby("canonical_symbol", sort=True):
+        latest = ticker_rows.sort_values(
+            ["valid_to", "valid_from", "cik"]
+        ).iloc[-1]
+        same_issuer = ticker_rows.loc[ticker_rows["cik"].eq(latest["cik"])]
+        starts[ticker] = pd.Timestamp(same_issuer["valid_from"].min()).normalize()
+    return starts
+
+
+def apply_operational_identity_window(
+    ticker: str,
+    frame: pd.DataFrame,
+    *,
+    starts: dict[str, pd.Timestamp] | None = None,
+) -> pd.DataFrame:
+    """ticker 재사용 전 가격을 현재 State S1 운영 입력에서 제거한다."""
+    start = (starts or load_operational_identity_starts()).get(ticker.upper())
+    if start is None:
+        return frame
+    if "Date" not in frame.columns:
+        raise ObservationS1Error(f"{ticker} price Date column missing")
+    dates = pd.to_datetime(frame["Date"], errors="coerce")
+    result = frame.loc[dates.ge(start)].copy().reset_index(drop=True)
+    if result.empty:
+        raise ObservationS1Error(
+            f"{ticker} has no price rows inside verified identity window"
+        )
+    return result
 
 
 def load_model_contracts(
