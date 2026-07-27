@@ -2,14 +2,18 @@ package com.herdsignal.controller;
 
 import com.herdsignal.dto.HerdObservationBatchResponse;
 import com.herdsignal.dto.HerdObservationResponse;
+import com.herdsignal.dto.HerdPriceTimelinePoint;
+import com.herdsignal.dto.HerdPriceTimelineResponse;
 import com.herdsignal.exception.GlobalExceptionHandler;
 import com.herdsignal.service.HerdObservationService;
+import com.herdsignal.service.HerdPriceTimelineService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -20,13 +24,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class HerdObservationControllerTest {
     private HerdObservationService service;
+    private HerdPriceTimelineService timelineService;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         service = mock(HerdObservationService.class);
+        timelineService = mock(HerdPriceTimelineService.class);
         mockMvc = MockMvcBuilders
-                .standaloneSetup(new HerdObservationController(service))
+                .standaloneSetup(new HerdObservationController(
+                        service,
+                        timelineService
+                ))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }
@@ -70,6 +79,39 @@ class HerdObservationControllerTest {
                 .andExpect(jsonPath("$.data.availableCount").value(0))
                 .andExpect(jsonPath("$.data.observations[0].ticker")
                         .value("NVDA"));
+    }
+
+    @Test
+    void timelineEndpointExposesJoinedPriceAndHerdContract() throws Exception {
+        when(timelineService.getTimeline("NVDA", 52))
+                .thenReturn(new HerdPriceTimelineResponse(
+                        "AVAILABLE",
+                        "NVDA",
+                        "HERD_STATE_S1",
+                        "ADJUSTED_CLOSE",
+                        1,
+                        1,
+                        List.of(new HerdPriceTimelinePoint(
+                                LocalDate.of(2026, 7, 24),
+                                LocalDate.of(2026, 7, 24),
+                                new BigDecimal("175.50"),
+                                new BigDecimal("64"),
+                                "DRIFT",
+                                "NEUTRAL",
+                                false
+                        ))
+                ));
+
+        mockMvc.perform(get("/api/observations/NVDA/timeline?limit=52"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.priceField")
+                        .value("ADJUSTED_CLOSE"))
+                .andExpect(jsonPath("$.data.points[0].marketSession[0]")
+                        .value(2026))
+                .andExpect(jsonPath("$.data.points[0].adjustedClose")
+                        .value(175.5))
+                .andExpect(jsonPath("$.data.points[0].herdScore")
+                        .value(64));
     }
 
     private HerdObservationResponse unavailable() {

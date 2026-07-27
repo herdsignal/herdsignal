@@ -97,4 +97,18 @@ public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("""
+            SELECT d
+            FROM DailyPrice d
+            WHERE d.ticker = :ticker
+              AND d.priceDate BETWEEN :startDate AND :endDate
+              AND d.closePrice IS NOT NULL
+            ORDER BY d.priceDate
+            """)
+    List<DailyPrice> findPricesForTickerBetween(
+            @Param("ticker") String ticker,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

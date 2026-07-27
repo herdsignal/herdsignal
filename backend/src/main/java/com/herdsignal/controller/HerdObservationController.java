@@ -4,7 +4,9 @@ import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.HerdObservationBatchResponse;
 import com.herdsignal.dto.HerdObservationHistoryResponse;
 import com.herdsignal.dto.HerdObservationResponse;
+import com.herdsignal.dto.HerdPriceTimelineResponse;
 import com.herdsignal.service.HerdObservationService;
+import com.herdsignal.service.HerdPriceTimelineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class HerdObservationController {
     private final HerdObservationService service;
+    private final HerdPriceTimelineService timelineService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<HerdObservationBatchResponse>> getLatestBatch(
@@ -41,6 +44,16 @@ public class HerdObservationController {
     ) {
         return ResponseEntity.ok(
                 ApiResponse.success(service.getHistory(ticker, limit))
+        );
+    }
+
+    @GetMapping("/{ticker}/timeline")
+    public ResponseEntity<ApiResponse<HerdPriceTimelineResponse>> getTimeline(
+            @PathVariable String ticker,
+            @RequestParam(required = false) Integer limit
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(timelineService.getTimeline(ticker, limit))
         );
     }
 }
