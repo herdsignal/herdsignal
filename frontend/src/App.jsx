@@ -12,7 +12,6 @@ import ProtectedRoute from './auth/ProtectedRoute'
 import { ROUTER_FUTURE } from './routerConfig'
 
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'))
-const PublicHome = lazy(() => import('./pages/PublicHome/PublicHome'))
 const Login = lazy(() => import('./pages/Login/Login'))
 const StockDetail = lazy(() => import('./pages/StockDetail/StockDetail'))
 const Watchlist = lazy(() => import('./pages/Watchlist/Watchlist'))
@@ -38,7 +37,7 @@ export default function App() {
       <RouteErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
-          <Route path="/" element={<PublicHome />} />
+          <Route path="/" element={<Navigate to="/app" replace />} />
           <Route path="/login" element={<Login />} />
           <Route element={<ProtectedRoute />}>
           {/* Layout이 공통 탐색 + <Outlet>으로 모든 보호 페이지를 감싼다 */}

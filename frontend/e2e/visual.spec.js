@@ -54,7 +54,6 @@ test.beforeEach(async ({ page }) => {
 })
 
 const visualScenarios = [
-  { name: 'public-home', path: '/', ready: 'HERD 확인' },
   { name: 'login', path: '/login', ready: '내 포트폴리오 보기' },
   { name: 'dashboard', path: '/app', ready: 'SPY' },
   { name: 'stock-detail', path: '/stock/NVDA', ready: 'NVDA' },
@@ -80,6 +79,12 @@ for (const scenario of visualScenarios) {
     )
   })
 }
+
+test('root opens the dashboard without a separate public home', async ({ page }) => {
+  await page.goto('/')
+  await expect(page).toHaveURL(/\/app$/)
+  await expect(page.getByRole('searchbox', { name: '티커 또는 종목명 검색' })).toBeVisible()
+})
 
 test('protected shell and search remain keyboard operable', async ({ page }) => {
   await page.goto('/app')

@@ -17,7 +17,7 @@ export default function Login() {
         <a className={styles.googleButton} href={googleLoginUrl()}>
           <span>G</span> Google로 계속하기
         </a>
-        <Link className={styles.back} to="/">홈으로 돌아가기</Link>
+        <Link className={styles.back} to="/">대시보드로 이동</Link>
       </section>
     </main>
   )
