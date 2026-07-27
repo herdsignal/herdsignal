@@ -92,7 +92,7 @@
 }
 
 .compact .header {
-  min-height: 104px;
+  min-height: 92px;
 }
 
 .compact .header h2 {
@@ -100,12 +100,20 @@
 }
 
 .compact .actions {
-  min-height: 58px;
+  min-height: 54px;
 }
 
 @media (max-width: 620px) {
   .header {
-    min-height: 116px;
+    min-height: 92px;
+  }
+
+  .header h2 {
+    font-size: 28px;
+  }
+
+  .header p {
+    margin-top: 6px;
   }
 
   .meta strong {

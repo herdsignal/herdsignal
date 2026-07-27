@@ -100,7 +100,16 @@ describe('Dashboard', () => {
   it('SPY를 기본으로 보여주고 자산은 요청할 때만 연다', () => {
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
 
-    expect(screen.getByRole('heading', { name: 'SPY' })).toBeInTheDocument()
+    const search = screen.getByRole('searchbox', { name: '티커 또는 종목명 검색' })
+    const observation = screen.getByRole('heading', { name: 'SPY' })
+    const portfolio = screen.getByRole('heading', { name: '보유 현황' })
+
+    expect(search.compareDocumentPosition(observation)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    )
+    expect(observation.compareDocumentPosition(portfolio)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    )
     expect(screen.queryByText('전체 자산')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'TSLA' })).toBeInTheDocument()
 

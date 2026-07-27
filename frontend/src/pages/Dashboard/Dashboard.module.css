@@ -1,22 +1,14 @@
 .page {
   width: 100%;
-  padding: 34px 0 90px;
+  padding: 28px 0 90px;
 }
 
-.pageHeader,
 .portfolioSection > header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.pageHeader {
-  min-height: 72px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--hs-line);
-}
-
-.pageHeader span,
 .portfolioSection > header span {
   color: var(--hs-text-muted);
   font-size: var(--hs-type-micro);
@@ -24,16 +16,11 @@
   letter-spacing: .15em;
 }
 
-.pageHeader h1,
 .portfolioSection h2 {
   margin: 7px 0 0;
   font-weight: 660;
   line-height: 1;
   letter-spacing: -.05em;
-}
-
-.pageHeader h1 {
-  font-size: var(--hs-type-title);
 }
 
 .searchState button,
@@ -95,7 +82,7 @@
   display: grid;
   grid-template-columns: minmax(260px, .42fr) minmax(0, 1fr);
   gap: 44px;
-  margin-top: 20px;
+  margin-bottom: 28px;
   padding: 34px;
   border: 1px solid var(--hs-line);
   border-radius: 12px;
@@ -172,10 +159,9 @@
 
 .finder {
   display: grid;
-  width: min(100%, 1040px);
+  width: min(100%, 1120px);
   gap: 10px;
-  margin: 0 auto;
-  padding: 30px 0 18px;
+  margin: 0 auto 22px;
 }
 
 .searchState {
@@ -228,7 +214,7 @@
 }
 
 .portfolioSection {
-  margin-top: 70px;
+  margin-top: 42px;
   border-top: 1px solid var(--hs-line);
 }
 
@@ -239,6 +225,12 @@
 .portfolioSection > header small {
   color: var(--hs-text-muted);
   font-size: var(--hs-type-label);
+}
+
+.portfolioTools {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .portfolioSection > section {
@@ -270,15 +262,12 @@
 
 @media (max-width: 620px) {
   .page {
+    padding-top: 18px;
     padding-bottom: 110px;
   }
 
   .finder {
-    padding-top: 34px;
-  }
-
-  .pageHeader {
-    gap: 18px;
+    margin-bottom: 14px;
   }
 
   .searchState {
@@ -293,5 +282,26 @@
 
   .assets {
     padding: 20px;
+  }
+
+  .portfolioSection {
+    margin-top: 30px;
+  }
+
+  .portfolioSection > header {
+    min-height: 82px;
+  }
+
+  .portfolioTools {
+    gap: 8px;
+  }
+
+  .portfolioTools > small {
+    display: none;
+  }
+
+  .assetToggle {
+    min-height: 40px;
+    padding-inline: 12px;
   }
 }

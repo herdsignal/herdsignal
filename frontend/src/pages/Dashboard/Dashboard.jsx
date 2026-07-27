@@ -98,95 +98,6 @@ export default function Dashboard() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.pageHeader}>
-        <div>
-          <span>DASHBOARD</span>
-          <h1>HerdSignal</h1>
-        </div>
-        <button
-          type="button"
-          className={styles.assetToggle}
-          aria-expanded={assetsOpen}
-          aria-controls="dashboard-assets"
-          onClick={toggleAssets}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7.5h16v11H4zM7 7.5V5.8A1.8 1.8 0 0 1 8.8 4h7.4A1.8 1.8 0 0 1 18 5.8v1.7M16 13h4" />
-            <circle cx="16" cy="13" r=".8" />
-          </svg>
-          <span>{assetsOpen ? '내 자산 닫기' : '내 자산 보기'}</span>
-        </button>
-      </header>
-
-      {assetsOpen && (
-        <section id="dashboard-assets" className={styles.assets} aria-label="내 자산">
-          <div className={styles.assetSummary}>
-            <span>전체 자산</span>
-            <strong>{portfolio.displayAmount(totalAsset)}</strong>
-            <dl>
-              <div>
-                <dt>주식 평가액</dt>
-                <dd>{portfolio.displayAmount(invested)}</dd>
-              </div>
-              <div>
-                <dt>현금</dt>
-                <dd>{portfolio.displayAmount(portfolio.cashBalance)}</dd>
-              </div>
-            </dl>
-            <div className={styles.assetControls}>
-              {['KRW', 'USD'].map((mode) => (
-                <button
-                  type="button"
-                  key={mode}
-                  aria-pressed={portfolio.currencyMode === mode}
-                  onClick={() => portfolio.selectCurrency(mode)}
-                >
-                  {mode}
-                </button>
-              ))}
-              <button type="button" onClick={portfolio.togglePrivacyMode}>
-                {portfolio.privacyMode ? '금액 보기' : '금액 가리기'}
-              </button>
-            </div>
-          </div>
-          <PortfolioHistory
-            points={portfolio.assetChartHistory}
-            period={portfolio.assetHistoryPeriod}
-            periodLabel={portfolio.assetPeriodLabel}
-            accountValueChangePct={portfolio.accountValueChangePct}
-            loading={portfolio.assetHistoryLoading}
-            error={portfolio.assetHistoryError}
-            displayAmount={portfolio.displayAmount}
-            privacyMode={portfolio.privacyMode}
-            onPeriodChange={portfolio.setAssetHistoryPeriod}
-          />
-        </section>
-      )}
-
-      <HerdObservationPanel
-        compact
-        condensed
-        ticker={selected.ticker}
-        name={selected.name}
-        scopeLabel={showingMarket ? 'MARKET AGGREGATE' : 'STOCK OBSERVATION'}
-        score={selected.score}
-        stage={selected.stage}
-        delta4w={selected.delta4w}
-        observationDate={selected.observationDate}
-        freshness={selected.freshness}
-        loading={showingMarket && market.loading}
-        unavailable={showingMarket ? market.unavailable : selected.score == null}
-        error={showingMarket && market.observationError}
-        actions={(
-          <>
-            {!showingMarket && (
-              <button type="button" onClick={() => setActiveStock(null)}>SPY로 돌아가기</button>
-            )}
-            <Link to={`/stock/${selected.ticker}`}>종목 상세 보기</Link>
-          </>
-        )}
-      />
-
       <section id="stock-search" className={styles.finder} aria-label="종목 검색">
         <TickerSearch
           ref={inputRef}
@@ -250,14 +161,98 @@ export default function Dashboard() {
         )}
       </section>
 
+      <HerdObservationPanel
+        compact
+        condensed
+        ticker={selected.ticker}
+        name={selected.name}
+        scopeLabel={showingMarket ? 'MARKET AGGREGATE' : 'STOCK OBSERVATION'}
+        score={selected.score}
+        stage={selected.stage}
+        delta4w={selected.delta4w}
+        observationDate={selected.observationDate}
+        freshness={selected.freshness}
+        loading={showingMarket && market.loading}
+        unavailable={showingMarket ? market.unavailable : selected.score == null}
+        error={showingMarket && market.observationError}
+        actions={(
+          <>
+            {!showingMarket && (
+              <button type="button" onClick={() => setActiveStock(null)}>SPY로 돌아가기</button>
+            )}
+            <Link to={`/stock/${selected.ticker}`}>종목 상세 보기</Link>
+          </>
+        )}
+      />
+
       <section className={styles.portfolioSection} aria-label="보유 현황">
         <header>
           <div>
             <span>PORTFOLIO OBSERVATION</span>
             <h2>보유 현황</h2>
           </div>
-          <small>{portfolio.sortedRows.length}개 종목</small>
+          <div className={styles.portfolioTools}>
+            <small>{portfolio.sortedRows.length}개 종목</small>
+            <button
+              type="button"
+              className={styles.assetToggle}
+              aria-expanded={assetsOpen}
+              aria-controls="dashboard-assets"
+              onClick={toggleAssets}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7.5h16v11H4zM7 7.5V5.8A1.8 1.8 0 0 1 8.8 4h7.4A1.8 1.8 0 0 1 18 5.8v1.7M16 13h4" />
+                <circle cx="16" cy="13" r=".8" />
+              </svg>
+              <span>{assetsOpen ? '자산 닫기' : '내 자산 보기'}</span>
+            </button>
+          </div>
         </header>
+
+        {assetsOpen && (
+          <section id="dashboard-assets" className={styles.assets} aria-label="내 자산">
+            <div className={styles.assetSummary}>
+              <span>전체 자산</span>
+              <strong>{portfolio.displayAmount(totalAsset)}</strong>
+              <dl>
+                <div>
+                  <dt>주식 평가액</dt>
+                  <dd>{portfolio.displayAmount(invested)}</dd>
+                </div>
+                <div>
+                  <dt>현금</dt>
+                  <dd>{portfolio.displayAmount(portfolio.cashBalance)}</dd>
+                </div>
+              </dl>
+              <div className={styles.assetControls}>
+                {['KRW', 'USD'].map((mode) => (
+                  <button
+                    type="button"
+                    key={mode}
+                    aria-pressed={portfolio.currencyMode === mode}
+                    onClick={() => portfolio.selectCurrency(mode)}
+                  >
+                    {mode}
+                  </button>
+                ))}
+                <button type="button" onClick={portfolio.togglePrivacyMode}>
+                  {portfolio.privacyMode ? '금액 보기' : '금액 가리기'}
+                </button>
+              </div>
+            </div>
+            <PortfolioHistory
+              points={portfolio.assetChartHistory}
+              period={portfolio.assetHistoryPeriod}
+              periodLabel={portfolio.assetPeriodLabel}
+              accountValueChangePct={portfolio.accountValueChangePct}
+              loading={portfolio.assetHistoryLoading}
+              error={portfolio.assetHistoryError}
+              displayAmount={portfolio.displayAmount}
+              privacyMode={portfolio.privacyMode}
+              onPeriodChange={portfolio.setAssetHistoryPeriod}
+            />
+          </section>
+        )}
 
         {portfolio.loading && <p role="status">포트폴리오 불러오는 중…</p>}
         {!portfolio.loading && portfolio.error && (

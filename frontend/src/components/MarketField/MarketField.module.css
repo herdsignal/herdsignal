@@ -186,7 +186,7 @@
 }
 
 .condensed {
-  min-height: clamp(310px, 36vh, 380px);
+  min-height: clamp(280px, 32vh, 340px);
 }
 
 .condensed .reading strong {
@@ -215,7 +215,7 @@
   }
 
   .condensed {
-    min-height: 330px;
+    min-height: 280px;
   }
 
   .dots {
