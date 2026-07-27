@@ -10,6 +10,37 @@ from herd.errors import InsufficientModelHistoryError
 logger = logging.getLogger(__name__)
 
 
+def collect_ticker_frames(
+    tickers: list[str],
+    collect: Callable,
+    *,
+    validate: Callable | None = None,
+    transform: Callable | None = None,
+) -> tuple[dict[str, object], list[str]]:
+    """S1 입력 프레임을 계산·저장 부작용 없이 수집하고 검증한다."""
+    frames: dict[str, object] = {}
+    failed: list[str] = []
+    total = len(tickers)
+    for index, ticker in enumerate(tickers, start=1):
+        logger.info("[Tier1][%s] 가격 수집 (%s/%s)", ticker, index, total)
+        try:
+            frame = collect(ticker)
+            if transform is not None:
+                frame = transform(ticker, frame)
+            if validate is not None:
+                validate(ticker, frame)
+            frames[ticker] = frame
+        except Exception as exc:
+            failed.append(ticker)
+            logger.error(
+                "[Tier1][%s] 가격 수집·검증 실패: %s",
+                ticker,
+                exc,
+                exc_info=True,
+            )
+    return frames, failed
+
+
 def execute_tickers(
     tickers: list[str],
     collect: Callable,

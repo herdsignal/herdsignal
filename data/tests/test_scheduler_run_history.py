@@ -33,7 +33,16 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             patch.object(herd_scheduler, "_start_scheduler_run", return_value=7),
             patch.object(herd_scheduler, "_record_scheduler_universe"),
             patch.object(herd_scheduler, "_fetch_tier1_tickers", return_value=["AAPL", "SNDK"]),
-            patch.object(herd_scheduler, "collect", return_value=object()),
+            patch.object(
+                herd_scheduler,
+                "_fetch_operational_tickers",
+                return_value=["AAPL"],
+            ),
+            patch.object(
+                herd_scheduler,
+                "collect_ticker_frames",
+                return_value=({"AAPL": object()}, ["SNDK"]),
+            ),
             patch.object(
                 herd_scheduler,
                 "load_operational_identity_starts",
@@ -44,7 +53,6 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                 "apply_operational_identity_window",
                 side_effect=lambda ticker, frame, **_: frame,
             ),
-            patch.object(herd_scheduler, "validate_operational_price_frame"),
             patch.object(herd_scheduler, "run", return_value=herd_result),
             patch.object(
                 herd_scheduler,
@@ -68,8 +76,8 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                 "_record_prospective_evidence",
                 return_value={
                     "archive": {
-                        "status": "SKIPPED_NO_NEW_OBSERVATION",
-                        "recordCount": 0,
+                        "status": "SUCCESS",
+                        "recordCount": 1,
                     },
                     "maturity": {
                         "status": "SUCCESS",
@@ -89,12 +97,12 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             "success": ["AAPL"],
             "failed": ["SNDK"],
             "skipped": [],
-            "observation": "SKIPPED_INCOMPLETE_INPUT",
+            "observation": "SUCCESS",
             "universeSha256": hashlib.sha256(b"AAPL\nSNDK\n").hexdigest(),
             "prospectiveEvidence": {
                 "archive": {
-                    "status": "SKIPPED_NO_NEW_OBSERVATION",
-                    "recordCount": 0,
+                    "status": "SUCCESS",
+                    "recordCount": 1,
                 },
                 "maturity": {
                     "status": "SUCCESS",
@@ -103,8 +111,8 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                 },
             },
         })
-        build_observation.assert_not_called()
-        record_prospective.assert_called_once_with(None, {"AAPL": ANY})
+        build_observation.assert_called_once_with({"AAPL": ANY}, ["AAPL"])
+        record_prospective.assert_called_once_with(ANY, {"AAPL": ANY})
         finish.assert_called_once_with(
             7,
             "PARTIAL_FAILURE",
@@ -112,8 +120,8 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             success_count=1,
             failed_tickers=["SNDK"],
             skipped_tickers=[],
-            publish_status="SKIPPED_INCOMPLETE_INPUT",
-            observation_count=None,
+            publish_status="SUCCESS",
+            observation_count=1,
             error_message=None,
         )
         notify.assert_called_once_with(result)

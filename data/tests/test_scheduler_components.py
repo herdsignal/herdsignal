@@ -4,10 +4,25 @@ from unittest.mock import MagicMock
 
 from herd.errors import InsufficientModelHistoryError
 from scheduler.run_history import SchedulerRunRecorder
-from scheduler.ticker_job import execute_tickers
+from scheduler.ticker_job import collect_ticker_frames, execute_tickers
 
 
 class SchedulerComponentsTest(unittest.TestCase):
+    def test_frame_collection_has_no_calculation_or_save_side_effect(self):
+        frames, failed = collect_ticker_frames(
+            ["AAPL", "BAD"],
+            collect=lambda ticker: (
+                (_ for _ in ()).throw(RuntimeError("bad"))
+                if ticker == "BAD"
+                else "raw"
+            ),
+            transform=lambda ticker, frame: f"{frame}-safe",
+            validate=lambda ticker, frame: None,
+        )
+
+        self.assertEqual(frames, {"AAPL": "raw-safe"})
+        self.assertEqual(failed, ["BAD"])
+
     def test_ticker_execution_isolates_individual_failure(self):
         collect = MagicMock(side_effect=lambda ticker: ticker)
         calculate = MagicMock(side_effect=lambda ticker, frame: {"score": 50, "stage": "Calm"})

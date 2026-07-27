@@ -91,7 +91,7 @@ def test_operational_identity_window_removes_reused_ticker_history() -> None:
     starts = load_operational_identity_starts()
 
     assert starts["SW"] == pd.Timestamp("2024-07-09")
-    assert starts["BLK"] == pd.Timestamp("2024-10-02")
+    assert starts["BLK"] == pd.Timestamp("2021-07-14")
     assert starts["FISV"] == pd.Timestamp("2021-06-03")
 
     frame = pd.DataFrame({

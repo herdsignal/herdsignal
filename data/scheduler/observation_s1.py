@@ -96,7 +96,7 @@ def load_service_contract(path: Path = CONTRACT_PATH) -> dict[str, Any]:
     if (
         _sha256(identity_source) != identity_window["sha256"]
         or identity_window["required_status"] != "TIME_VALID_CIK_VERIFIED"
-        or identity_window["policy"] != "LATEST_VERIFIED_INTERVAL_START_ONLY"
+        or identity_window["policy"] != "EARLIEST_VERIFIED_INTERVAL_START"
     ):
         raise ObservationS1Error("operational identity window changed")
     boundary = contract["claim_boundary"]
@@ -133,11 +133,13 @@ def load_operational_identity_starts(
         raise ObservationS1Error("identity window contains invalid dates")
     starts: dict[str, pd.Timestamp] = {}
     for ticker, ticker_rows in rows.groupby("canonical_symbol", sort=True):
-        latest = ticker_rows.sort_values(
-            ["valid_to", "valid_from", "cik"]
-        ).iloc[-1]
-        same_issuer = ticker_rows.loc[ticker_rows["cik"].eq(latest["cik"])]
-        starts[ticker] = pd.Timestamp(same_issuer["valid_from"].min()).normalize()
+        # 동일 ticker의 CIK 변경은 지주회사 전환·법적 승계일 수 있다.
+        # 따라서 가장 최근 CIK로 자르지 않고 SEC가 확인한 최초 ticker
+        # 구간부터 가격 연속성을 허용한다. SW처럼 검증 구간 이전에 다른
+        # 회사가 사용한 가격만 제거된다.
+        starts[ticker] = pd.Timestamp(
+            ticker_rows["valid_from"].min()
+        ).normalize()
     return starts
 
 

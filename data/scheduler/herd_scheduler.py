@@ -52,7 +52,7 @@ from scheduler.on_demand import (                                             # 
 )
 from scheduler.run_history import SchedulerRunRecorder                          # noqa: E402
 from scheduler.run_lock import SchedulerRunLock                                # noqa: E402
-from scheduler.ticker_job import execute_tickers                                # noqa: E402
+from scheduler.ticker_job import collect_ticker_frames, execute_tickers         # noqa: E402
 from scheduler.realtime_portfolio import calculate_current_portfolio as value_portfolio  # noqa: E402
 from scheduler.observation_s1 import (                                      # noqa: E402
     apply_operational_identity_window,
@@ -159,6 +159,22 @@ def _fetch_tier1_tickers() -> list[str]:
         f"관심종목 {len(watchlist_tickers)}개 → 합집합 + SPY)"
     )
     return tickers
+
+
+def _fetch_operational_tickers() -> list[str]:
+    """구형 v4 저장이 필요한 실제 보유·관심 종목과 SPY만 반환한다."""
+    with _get_session_factory()() as session:
+        portfolio = {
+            row.ticker
+            for row in session.query(UserPortfolio)
+            .filter(UserPortfolio.user_id != _CACHE_USER_ID)
+            .all()
+        }
+        watchlist = {
+            row.ticker
+            for row in session.query(UserWatchlist).all()
+        }
+    return sorted(portfolio | watchlist | {"SPY"})
 
 
 def _fetch_portfolio_user_ids() -> list[str]:
@@ -355,18 +371,12 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
     ).hexdigest()
     _record_scheduler_universe(run_id, universe_sha256)
 
-    # ── 2. 종목별 순차 처리 ────────────────────
+    # ── 2. S1 가격 수집과 구형 v4 운영 계산을 분리 ────────────────
     total = len(tickers)
-    observation_frames: dict = {}
     identity_starts = load_operational_identity_starts()
-    success_list, failed_list, skipped_list = execute_tickers(
+    observation_frames, collection_failed = collect_ticker_frames(
         tickers,
         collect,
-        run,
-        save_herd_result,
-        on_success=lambda ticker, frame: observation_frames.__setitem__(
-            ticker, frame
-        ),
         validate=validate_operational_price_frame,
         transform=lambda ticker, frame: apply_operational_identity_window(
             ticker,
@@ -374,6 +384,30 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             starts=identity_starts,
         ),
     )
+    try:
+        operational_scope = set(_fetch_operational_tickers())
+    except Exception as exc:
+        # 운영 범위 조회 실패 시 점수를 누락하지 않도록 기존 전체 계산으로
+        # 보수적으로 폴백한다. 속도보다 사용자 화면의 연속성을 우선한다.
+        logger.error(
+            "[Tier1] 운영 종목 범위 조회 실패 — 전체 v4 계산으로 폴백: %s",
+            exc,
+            exc_info=True,
+        )
+        operational_scope = set(observation_frames)
+    operational_tickers = sorted(
+        operational_scope.intersection(observation_frames)
+    )
+    _, legacy_failed, skipped_list = execute_tickers(
+        operational_tickers,
+        collect=lambda ticker: observation_frames[ticker],
+        calculate=run,
+        save=save_herd_result,
+    )
+    success_list = sorted(
+        set(observation_frames) - set(legacy_failed) - set(skipped_list)
+    )
+    failed_list = sorted(set(collection_failed) | set(legacy_failed))
 
     # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────
     observation_error: str | None = None
@@ -381,31 +415,27 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
     observation_count: int | None = None
     prospective_result: dict | None = None
     bundle: dict | None = None
-    publish_status = "SKIPPED_INCOMPLETE_INPUT" if failed_list else "SUCCESS"
-    if failed_list:
-        logger.error(
-            "[Tier1] 실패 종목이 있어 새 State S1 발행을 차단합니다: %s",
-            failed_list,
+    publish_status = "SUCCESS"
+    try:
+        # 단일 종목 실패가 아니라 잠긴 계약의 90% coverage 게이트가
+        # S1 발행 가능 여부를 결정한다.
+        bundle = _build_and_write_observation(
+            observation_frames, sorted(observation_frames)
         )
-    else:
-        try:
-            bundle = _build_and_write_observation(
-                observation_frames, success_list
-            )
-            observation_count = len(bundle["records"])
-            logger.info(
-                "[Tier1] State S1 관찰 번들 생성 완료 — %s종목, 기준 %s",
-                len(bundle["records"]),
-                bundle["records"]["SPY"]["asOfDate"],
-            )
-        except Exception as exc:
-            observation_error = str(exc)
-            publish_status = "FAILED"
-            logger.error(
-                "[Tier1] State S1 관찰 번들 생성 실패: %s",
-                exc,
-                exc_info=True,
-            )
+        observation_count = len(bundle["records"])
+        logger.info(
+            "[Tier1] State S1 관찰 번들 생성 완료 — %s종목, 기준 %s",
+            len(bundle["records"]),
+            bundle["records"]["SPY"]["asOfDate"],
+        )
+    except Exception as exc:
+        observation_error = str(exc)
+        publish_status = "FAILED"
+        logger.error(
+            "[Tier1] State S1 관찰 번들 생성 실패: %s",
+            exc,
+            exc_info=True,
+        )
     try:
         # 새 S1 발행이 차단된 날에도 이전 관측의 21·63·126일 결과는
         # 가능한 종목부터 성숙시킨다. 새 관측 생성과 결과 성숙의 장애
