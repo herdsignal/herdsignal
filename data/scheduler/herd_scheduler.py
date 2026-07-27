@@ -22,6 +22,7 @@ Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
 
 import argparse
 import hashlib
+import json
 import logging
 import sys
 from pathlib import Path
@@ -185,10 +186,10 @@ def _snapshot_all_portfolios() -> dict:
             if result["stocks"]:
                 saved.append(user_id)
                 logger.info(
-                    "[Tier1] 포트폴리오 스냅샷 저장 — 사용자 %s, 보유 %s종목, 총 평가 $%,.2f",
+                    "[Tier1] 포트폴리오 스냅샷 저장 — 사용자 %s, 보유 %s종목, 총 평가 $%s",
                     user_id,
                     len(result["stocks"]),
-                    result["total_value"],
+                    f"{result['total_value']:,.2f}",
                 )
         except Exception as exc:
             errors.append(f"{user_id}: {exc}")

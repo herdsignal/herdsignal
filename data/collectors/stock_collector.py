@@ -6,6 +6,7 @@ collectors/stock_collector.py — yfinance 주가 데이터 수집기
 import time
 import logging
 
+import numpy as np
 import yfinance as yf
 import pandas as pd
 
@@ -16,6 +17,10 @@ logger = logging.getLogger(__name__)
 # 재시도 설정 상수
 MAX_RETRIES = 3
 RETRY_DELAY_SEC = 2
+
+
+class IncompleteMarketDataError(RuntimeError):
+    """공급자가 행은 반환했지만 필수 OHLCV 값이 비어 있는 일시 오류."""
 
 
 def _fetch_raw(ticker: str, period: str) -> pd.DataFrame:
@@ -59,6 +64,17 @@ def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _validate_normalized(df: pd.DataFrame, ticker: str) -> None:
+    """빈 행 수만으로 성공 처리하지 않고 필수 시세의 완결성을 확인한다."""
+    numeric_columns = ["Open", "High", "Low", "Close", "Volume"]
+    numeric = df[numeric_columns].apply(pd.to_numeric, errors="coerce")
+    invalid = int((~np.isfinite(numeric.to_numpy(dtype=float))).sum())
+    if invalid:
+        raise IncompleteMarketDataError(
+            f"[{ticker}] 불완전 OHLCV 응답 — 유효하지 않은 셀 {invalid}개"
+        )
+
+
 def collect(ticker: str, period: str = YFINANCE_PERIOD) -> pd.DataFrame:
     """
     지정 티커의 일봉 OHLCV 데이터를 수집해 DataFrame으로 반환한다.
@@ -82,6 +98,7 @@ def collect(ticker: str, period: str = YFINANCE_PERIOD) -> pd.DataFrame:
             df = _fetch_raw(ticker, period)
             _validate(df, ticker)
             df = _normalize_columns(df)
+            _validate_normalized(df, ticker)
 
             logger.info(f"[{ticker}] 수집 완료 — {len(df)}행, {df['Date'].min()} ~ {df['Date'].max()}")
             return df
@@ -97,8 +114,9 @@ def collect(ticker: str, period: str = YFINANCE_PERIOD) -> pd.DataFrame:
             logger.warning(f"[{ticker}] 수집 실패 (시도 {attempt}/{MAX_RETRIES}): {e}")
 
             if attempt < MAX_RETRIES:
-                logger.info(f"[{ticker}] {RETRY_DELAY_SEC}초 후 재시도합니다.")
-                time.sleep(RETRY_DELAY_SEC)
+                delay = RETRY_DELAY_SEC * attempt
+                logger.info(f"[{ticker}] {delay}초 후 재시도합니다.")
+                time.sleep(delay)
 
     logger.error(f"[{ticker}] {MAX_RETRIES}회 재시도 후 최종 실패: {last_error}")
     raise RuntimeError(f"[{ticker}] 데이터 수집 실패 — {last_error}") from last_error
