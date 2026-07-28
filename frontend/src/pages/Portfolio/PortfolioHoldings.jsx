@@ -135,6 +135,7 @@ export default function PortfolioHoldings({
                       <dt>오늘</dt>
                       <dd className={toneClass(row.dailyChangePct)}>{fmtPct(row.dailyChangePct)}</dd>
                     </div>
+                    <div><dt>시세 기준</dt><dd>{row.priceDate ?? '—'}</dd></div>
                     <div>
                       <dt>HERD 4주 전</dt>
                       <dd>{row.herdPreviousScore == null ? '—' : Math.round(row.herdPreviousScore)}</dd>

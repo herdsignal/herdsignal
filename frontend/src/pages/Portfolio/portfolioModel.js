@@ -56,6 +56,7 @@ export function buildPortfolioRows(portfolio = [], summary, herdMap = {}) {
       logoUrl: herd?.logoUrl ?? null,
       marketValue,
       currentPrice: numberOrNull(price?.current_price),
+      priceDate: price?.price_date ?? null,
       dailyChangePct: numberOrNull(price?.daily_change_pct),
       returnPct: numberOrNull(price?.return_pct),
       weightPct,

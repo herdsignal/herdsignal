@@ -110,6 +110,11 @@ def empty_portfolio() -> dict:
         "total_cost": 0.0,
         "total_return_pct": 0.0,
         "daily_change_pct": 0.0,
+        "market_data_date": None,
+        "expected_stock_count": 0,
+        "priced_stock_count": 0,
+        "missing_price_tickers": [],
+        "valuation_status": "EMPTY",
         "stocks": [],
     }
 
@@ -128,14 +133,25 @@ def calculate_current_portfolio(
         logger.warning("[Tier3][%s] 평가 가능한 보유 종목 없음", user_id)
         return empty_portfolio()
 
-    prices = price_loader([holding["ticker"] for holding in holdings])
+    expected_tickers = [holding["ticker"] for holding in holdings]
+    prices = price_loader(expected_tickers)
     stocks, totals = value_holdings(holdings, prices)
     if not stocks:
         logger.warning("[Tier3][%s] 유효한 현재가가 있는 종목 없음", user_id)
-        return empty_portfolio()
+        return {
+            **empty_portfolio(),
+            "expected_stock_count": len(expected_tickers),
+            "missing_price_tickers": expected_tickers,
+            "valuation_status": "UNAVAILABLE",
+        }
 
     total_value = totals["total_value"]
     total_cost = totals["total_cost"]
+    priced_tickers = {stock["ticker"] for stock in stocks}
+    missing_price_tickers = [
+        ticker for ticker in expected_tickers if ticker not in priced_tickers
+    ]
+    valuation_status = "PARTIAL" if missing_price_tickers else "COMPLETE"
     total_return_pct = (
         (total_value - total_cost) / total_cost * 100
         if total_cost > 0
@@ -148,14 +164,21 @@ def calculate_current_portfolio(
         if totals["previous_value"] > 0
         else 0.0
     )
-    upsert_snapshot(
-        user_id,
-        effective_date,
-        total_value,
-        total_cost,
-        total_return_pct,
-        session_factory,
-    )
+    if valuation_status == "COMPLETE":
+        upsert_snapshot(
+            user_id,
+            effective_date,
+            total_value,
+            total_cost,
+            total_return_pct,
+            session_factory,
+        )
+    else:
+        logger.warning(
+            "[Tier3][%s] 일부 시세 누락으로 자산 스냅샷 저장 생략: %s",
+            user_id,
+            ", ".join(missing_price_tickers),
+        )
     logger.info(
         "[Tier3][%s] 보유 %s종목 총 평가 $%s 수익률 %.2f%%",
         user_id,
@@ -169,5 +192,9 @@ def calculate_current_portfolio(
         "total_return_pct": round(total_return_pct, 4),
         "daily_change_pct": round(daily_change_pct, 4),
         "market_data_date": min(stock["price_date"] for stock in stocks),
+        "expected_stock_count": len(expected_tickers),
+        "priced_stock_count": len(stocks),
+        "missing_price_tickers": missing_price_tickers,
+        "valuation_status": valuation_status,
         "stocks": stocks,
     }

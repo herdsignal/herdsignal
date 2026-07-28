@@ -48,6 +48,10 @@ describe('portfolio cache policy', () => {
     expect(normalizePortfolioSummary({
       investedValue: 100,
       cashBalance: 20,
+      expectedStockCount: 2,
+      pricedStockCount: 1,
+      missingPriceTickers: ['TSLA'],
+      valuationStatus: 'PARTIAL',
       stocks: [{
         ticker: 'NVDA',
         currentPrice: 10,
@@ -57,6 +61,10 @@ describe('portfolio cache policy', () => {
       invested_value: 100,
       cash_balance: 20,
       total_asset_value: 120,
+      expected_stock_count: 2,
+      priced_stock_count: 1,
+      missing_price_tickers: ['TSLA'],
+      valuation_status: 'PARTIAL',
       stocks: [{
         ticker: 'NVDA',
         current_price: 10,

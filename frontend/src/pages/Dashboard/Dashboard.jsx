@@ -306,19 +306,29 @@ export default function Dashboard() {
           </div>
         )}
         {!portfolio.loading && !portfolio.error && portfolio.sortedRows.length > 0 && (
-          <PortfolioHoldings
-            rows={portfolio.sortedRows}
-            sortBy={portfolio.sortBy}
-            deletingTicker={portfolio.deletingTicker}
-            displayAmount={portfolio.displayAmount}
-            displaySignedAmount={portfolio.displaySignedAmount}
-            onSortChange={portfolio.selectSort}
-            onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
-            onEditHolding={portfolio.setModalTicker}
-            onDelete={portfolio.handleDelete}
-            onTargetWeightSave={portfolio.handleTargetWeightSave}
-            targetSavingTicker={portfolio.targetSavingTicker}
-          />
+          <>
+            <div className={styles.valuationBasis}>
+              <span>시세 기준 {portfolio.summary?.market_data_date ?? '확인 중'}</span>
+              {portfolio.summary?.valuation_status === 'PARTIAL' && (
+                <strong role="status">
+                  일부 평가 · {portfolio.summary.missing_price_tickers.join(', ')} 시세 누락
+                </strong>
+              )}
+            </div>
+            <PortfolioHoldings
+              rows={portfolio.sortedRows}
+              sortBy={portfolio.sortBy}
+              deletingTicker={portfolio.deletingTicker}
+              displayAmount={portfolio.displayAmount}
+              displaySignedAmount={portfolio.displaySignedAmount}
+              onSortChange={portfolio.selectSort}
+              onOpenStock={(ticker) => navigate(`/stock/${ticker}`)}
+              onEditHolding={portfolio.setModalTicker}
+              onDelete={portfolio.handleDelete}
+              onTargetWeightSave={portfolio.handleTargetWeightSave}
+              targetSavingTicker={portfolio.targetSavingTicker}
+            />
+          </>
         )}
 
         {portfolio.modalTicker && (

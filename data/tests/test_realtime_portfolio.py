@@ -81,4 +81,46 @@ def test_calculate_current_portfolio_uses_injected_price_and_snapshot_date(monke
 
     assert result["total_value"] == 220.0
     assert result["market_data_date"] == "2026-07-23"
+    assert result["valuation_status"] == "COMPLETE"
+    assert result["expected_stock_count"] == 1
+    assert result["priced_stock_count"] == 1
+    assert result["missing_price_tickers"] == []
     assert snapshot_calls[0][0:2] == ("user-1", date(2026, 7, 24))
+
+
+def test_calculate_current_portfolio_marks_partial_and_skips_snapshot(monkeypatch):
+    holdings = [
+        {"ticker": "NVDA", "avg_price": 90.0, "quantity": 2.0},
+        {"ticker": "TSLA", "avg_price": 200.0, "quantity": 1.0},
+    ]
+    snapshot_calls = []
+    monkeypatch.setattr(
+        realtime_portfolio,
+        "load_holdings",
+        lambda user_id, session_factory: holdings,
+    )
+    monkeypatch.setattr(
+        realtime_portfolio,
+        "upsert_snapshot",
+        lambda *args: snapshot_calls.append(args),
+    )
+
+    result = calculate_current_portfolio(
+        "user-1",
+        session_factory=object(),
+        price_loader=lambda tickers: {
+            "NVDA": {
+                "price": 110.0,
+                "prev_close": 100.0,
+                "change_pct": 10.0,
+                "price_date": "2026-07-23",
+            },
+        },
+        snapshot_date=date(2026, 7, 24),
+    )
+
+    assert result["valuation_status"] == "PARTIAL"
+    assert result["expected_stock_count"] == 2
+    assert result["priced_stock_count"] == 1
+    assert result["missing_price_tickers"] == ["TSLA"]
+    assert snapshot_calls == []

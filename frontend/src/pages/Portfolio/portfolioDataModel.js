@@ -55,6 +55,10 @@ export function normalizePortfolioSummary(data) {
     total_return_pct: data.total_return_pct ?? data.totalReturnPct ?? null,
     daily_change_pct: data.daily_change_pct ?? data.dailyChangePct ?? null,
     market_data_date: data.market_data_date ?? data.marketDataDate ?? null,
+    expected_stock_count: data.expected_stock_count ?? data.expectedStockCount ?? 0,
+    priced_stock_count: data.priced_stock_count ?? data.pricedStockCount ?? 0,
+    missing_price_tickers: data.missing_price_tickers ?? data.missingPriceTickers ?? [],
+    valuation_status: data.valuation_status ?? data.valuationStatus ?? 'UNKNOWN',
     stocks: (data.stocks ?? []).map((stock) => ({
       ticker: stock.ticker,
       avg_price: stock.avg_price ?? stock.avgPrice ?? null,

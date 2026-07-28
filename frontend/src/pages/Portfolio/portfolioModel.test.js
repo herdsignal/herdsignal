@@ -14,6 +14,7 @@ describe('portfolio lens model', () => {
       {
         ticker: 'NVDA',
         market_value: 600,
+        price_date: '2026-07-27',
         return_pct: 20,
         daily_change_pct: 10,
       },
@@ -52,6 +53,7 @@ describe('portfolio lens model', () => {
       targetWeightPct: 40,
       targetGapPct: 10,
       sector: 'Technology',
+      priceDate: '2026-07-27',
     })
     expect(rows[1].herdScore).toBeNull()
     expect(rows[0]).not.toHaveProperty('action')

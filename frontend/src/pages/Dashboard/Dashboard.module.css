@@ -309,6 +309,21 @@
   gap: 14px;
 }
 
+.valuationBasis {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid var(--hs-line);
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.valuationBasis strong {
+  color: var(--hs-drift);
+  font-weight: 650;
+}
+
 .portfolioSection > section {
   margin-top: 0;
 }
