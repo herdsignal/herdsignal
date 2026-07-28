@@ -1,0 +1,42 @@
+{
+  "report_version": "HERD_MARKET_GENERALIZATION_READINESS_V3",
+  "status": "PERSONAL_DIAGNOSTIC_ALLOWED_MARKET_GENERALIZATION_BLOCKED",
+  "period": {
+    "start": "2016-07-18",
+    "end": "2026-07-17"
+  },
+  "coverage": {
+    "historical_tickers": 1128,
+    "identity_tickers": 528,
+    "identity_fraction": 0.468085,
+    "price_tickers": 481,
+    "historical_price_fraction": 0.426418,
+    "delisted_requested": 652,
+    "delisted_available": 1,
+    "delisted_price_fraction": 0.001534
+  },
+  "event_replay": {
+    "verified": 336,
+    "unresolved": 16,
+    "errors": 0,
+    "complete": false
+  },
+  "failed_checks": [
+    "official_membership_history",
+    "replay_complete",
+    "unresolved_events",
+    "identity_coverage",
+    "historical_price_coverage",
+    "delisted_price_coverage",
+    "price_snapshot_failures",
+    "price_adjustment_audit",
+    "split_dividend_audit"
+  ],
+  "allowed_claim": "CURRENT_CONSTITUENT_PERSONAL_DIAGNOSTIC",
+  "blocked_claim": "HISTORICAL_SP500_MARKET_GENERALIZATION",
+  "survivorship_safe": false,
+  "promotion_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

@@ -62,6 +62,8 @@
       "data/reports/prospective_readiness_gate_v2.json",
       "data/herd/personal_action_review_gate_v2.json",
       "data/reports/personal_action_review_gate_v2.json",
+      "data/herd/market_generalization_readiness_v3.json",
+      "data/reports/market_generalization_readiness_v3.json",
       "data/herd/research_claim_scope_v1.json",
       "data/reports/research_claim_scope_v1.json",
       "data/herd/simple_action_baselines_v1.json",
