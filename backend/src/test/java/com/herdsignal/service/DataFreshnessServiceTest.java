@@ -121,7 +121,7 @@ class DataFreshnessServiceTest {
     }
 
     @Test
-    void returnsWarningWhenOnlySomeTickersAreFresh() {
+    void usesLatestRunCoverageInsteadOfComparingEveryTickerToOneGlobalPriceDate() {
         SchedulerRun successfulRun = run("SUCCESS");
         LocalDate latestDate = LocalDate.of(2026, 7, 14);
         when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(latestDate));
@@ -135,7 +135,8 @@ class DataFreshnessServiceTest {
         DataFreshnessResponse response = service.getStatus();
 
         assertThat(response.status()).isEqualTo("WARNING");
-        assertThat(response.missingPriceTickerCount()).isEqualTo(3);
+        assertThat(response.freshPriceTickerCount()).isEqualTo(12);
+        assertThat(response.missingPriceTickerCount()).isZero();
         assertThat(response.missingObservationTickerCount()).isEqualTo(3);
     }
 

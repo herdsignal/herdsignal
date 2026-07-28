@@ -108,6 +108,30 @@
   opacity: 0.55;
 }
 
+.schedule {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.schedule span,
+.schedule small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.schedule strong {
+  color: var(--hs-text);
+  font-size: var(--hs-type-body-sm);
+}
+
+.schedule small {
+  grid-column: 1 / -1;
+  color: var(--hs-text-subtle);
+}
+
 .dates {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -191,13 +215,34 @@
   font-size: var(--hs-type-label);
 }
 
+.manual {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hs-line);
+}
+
+.manual summary {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+  cursor: pointer;
+}
+
+.manual[open] summary {
+  color: var(--hs-text);
+}
+
+.manual p {
+  margin: 9px 0 0;
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-label);
+  line-height: 1.5;
+}
+
 .actions {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--hs-line);
+  margin-top: 10px;
 }
 
 .actions button {

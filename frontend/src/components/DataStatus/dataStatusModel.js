@@ -40,14 +40,12 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
   const completed = numberOrZero(run?.successCount)
   const failed = numberOrZero(run?.failedCount)
   const skipped = numberOrZero(run?.skippedCount)
-  const missingPrice = numberOrZero(data?.missingPriceTickerCount)
   const missingObservation = numberOrZero(
     data?.missingObservationTickerCount ?? data?.missingScoreTickerCount,
   )
   const issues = [
     failed > 0 ? `실패 ${failed}` : null,
     skipped > 0 ? `제외 ${skipped}` : null,
-    missingPrice > 0 ? `가격 미수집 ${missingPrice}` : null,
     missingObservation > 0 ? `S1 미산출 ${missingObservation}` : null,
   ].filter(Boolean)
 
@@ -61,6 +59,8 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
     coverageLabel: expected > 0 ? `${completed}/${expected} 종목` : '집계 없음',
     issueLabel: issues.length > 0 ? issues.join(' · ') : null,
     isRunning: run?.status === 'RUNNING',
+    scheduleLabel: '매일 16:30 ET',
+    scheduleLocalLabel: '한국 05:30 · 겨울 06:30',
   }
 }
 

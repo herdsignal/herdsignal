@@ -47,6 +47,9 @@ describe('DataStatusIndicator', () => {
     expect(screen.getByText('미국장 마감 후 반영')).toBeInTheDocument()
     expect(screen.getByText('완료된 금요일 기준')).toBeInTheDocument()
     expect(screen.getByText('55/55 종목')).toBeInTheDocument()
+    expect(screen.getByText('매일 16:30 ET')).toBeInTheDocument()
+    expect(screen.getByText('한국 05:30 · 겨울 06:30')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '상태 다시 확인' })).toBeInTheDocument()
 
     fireEvent.keyDown(document, { key: 'Escape' })
     await waitFor(() => {
@@ -58,7 +61,8 @@ describe('DataStatusIndicator', () => {
   it('requests a full scheduler run explicitly', async () => {
     render(<DataStatusIndicator />)
     fireEvent.click(await screen.findByRole('button', { name: '데이터 상태: 데이터 최신' }))
-    fireEvent.click(screen.getByRole('button', { name: '지금 전체 갱신' }))
+    fireEvent.click(screen.getByText('수동 실행'))
+    fireEvent.click(screen.getByRole('button', { name: '전체 데이터 다시 계산' }))
 
     await waitFor(() => expect(requestSchedulerRun).toHaveBeenCalledOnce())
     expect(await screen.findByRole('status')).toHaveTextContent('갱신을 시작했습니다.')

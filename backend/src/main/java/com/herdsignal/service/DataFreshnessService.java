@@ -77,11 +77,12 @@ public class DataFreshnessService {
         Integer priceAge = businessDaysBetween(latestPriceDate, today);
         Integer observationAge = businessDaysBetween(latestObservationDate, today);
         int expectedTickerCount = latestRun != null ? valueOrZero(latestRun.getTotalCount()) : 0;
-        int freshPriceTickerCount = countPriceTickers(latestPriceDate);
+        int freshPriceTickerCount = freshPriceTickerCount(latestRun, latestPriceDate);
         int freshObservationTickerCount = countObservationTickers(latestObservationDate);
         int expectedObservationTickerCount = expectedObservationCount(
                 latestRun, freshObservationTickerCount);
-        int missingPriceTickerCount = missingCount(expectedTickerCount, freshPriceTickerCount);
+        int missingPriceTickerCount = missingPriceCount(
+                latestRun, expectedTickerCount, freshPriceTickerCount);
         int missingObservationTickerCount = missingCount(
                 expectedObservationTickerCount, freshObservationTickerCount);
         String status = determineStatus(
@@ -189,10 +190,22 @@ public class DataFreshnessService {
         return value == null ? 0 : value;
     }
 
-    private int countPriceTickers(LocalDate latestPriceDate) {
+    private int freshPriceTickerCount(SchedulerRun run, LocalDate latestPriceDate) {
+        if (run != null && run.getTotalCount() != null) {
+            int total = valueOrZero(run.getTotalCount());
+            int failed = valueOrZero(run.getFailedCount());
+            return Math.max(0, total - failed);
+        }
         return latestPriceDate == null
                 ? 0
                 : Math.toIntExact(dailyPriceRepository.countDistinctTickersByPriceDate(latestPriceDate));
+    }
+
+    private int missingPriceCount(SchedulerRun run, int expected, int actual) {
+        if (run != null) {
+            return Math.max(0, valueOrZero(run.getFailedCount()));
+        }
+        return missingCount(expected, actual);
     }
 
     private int countObservationTickers(LocalDate latestObservationDate) {

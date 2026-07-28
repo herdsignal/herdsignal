@@ -112,9 +112,15 @@ export default function DataStatusIndicator() {
               <strong>{view.label}</strong>
             </div>
             <button type="button" onClick={load} disabled={loading}>
-              {loading ? '확인 중' : '새로고침'}
+              {loading ? '확인 중' : '상태 다시 확인'}
             </button>
           </header>
+
+          <div className={styles.schedule}>
+            <span>자동 수집 예정</span>
+            <strong>{view.scheduleLabel}</strong>
+            <small>{view.scheduleLocalLabel}</small>
+          </div>
 
           <dl className={styles.dates}>
             <div>
@@ -141,12 +147,16 @@ export default function DataStatusIndicator() {
             <small>{view.coverageLabel}</small>
           </div>
           {view.issueLabel && <p className={styles.issue}>{view.issueLabel}</p>}
-          <div className={styles.actions}>
-            <button type="button" onClick={runNow} disabled={requesting || view.isRunning}>
-              {requesting ? '요청 중' : view.isRunning ? '갱신 중' : '지금 전체 갱신'}
-            </button>
-            {requestMessage && <span role="status">{requestMessage}</span>}
-          </div>
+          <details className={styles.manual}>
+            <summary>수동 실행</summary>
+            <p>자동 수집을 놓쳤을 때만 전체 데이터를 다시 계산합니다.</p>
+            <div className={styles.actions}>
+              <button type="button" onClick={runNow} disabled={requesting || view.isRunning}>
+                {requesting ? '요청 중' : view.isRunning ? '갱신 중' : '전체 데이터 다시 계산'}
+              </button>
+              {requestMessage && <span role="status">{requestMessage}</span>}
+            </div>
+          </details>
         </section>
       )}
     </div>

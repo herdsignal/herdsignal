@@ -35,7 +35,7 @@ export default function Watchlist() {
     if (silent) {
       setRefreshing(true)
       clearTimeout(refreshNoticeTimer.current)
-      setRefreshNotice('State S1 조회 중')
+      setRefreshNotice('저장된 State S1 불러오는 중')
     } else {
       setLoading(true)
     }
@@ -66,7 +66,7 @@ export default function Watchlist() {
         observationMap[item.ticker]
         ?? observationToTrackedItem(null, item)
       )))
-      if (silent) setRefreshNotice('State S1 갱신 완료')
+      if (silent) setRefreshNotice('최신 저장값을 불러왔습니다')
     } catch {
       setError('관심종목의 State S1 관찰값을 불러오지 못했습니다.')
       if (silent) setRefreshNotice('State S1 조회 실패')
@@ -125,7 +125,7 @@ export default function Watchlist() {
             onClick={() => fetchData(true)}
             disabled={refreshing || loading}
           >
-            {refreshing ? '갱신 중…' : '새로고침'}
+            {refreshing ? '불러오는 중…' : '다시 불러오기'}
           </button>
           <button type="button" onClick={() => navigate('/app#stock-search')}>종목 추가</button>
         </div>

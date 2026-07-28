@@ -45,8 +45,9 @@ describe('dataStatusViewModel', () => {
     })
 
     expect(view.label).toBe('일부 확인')
-    expect(view.issueLabel).toBe('실패 2 · 제외 3 · 가격 미수집 2 · S1 미산출 3')
+    expect(view.issueLabel).toBe('실패 2 · 제외 3 · S1 미산출 3')
     expect(view.coverageLabel).toBe('50/55 종목')
+    expect(view.scheduleLabel).toBe('매일 16:30 ET')
   })
 
   it('fails closed when status cannot be loaded', () => {
