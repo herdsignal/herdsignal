@@ -5,6 +5,7 @@ import com.herdsignal.exception.GlobalExceptionHandler;
 import com.herdsignal.service.CurrentUserService;
 import com.herdsignal.service.PortfolioLedgerService;
 import com.herdsignal.service.PortfolioLedgerValuationService;
+import com.herdsignal.service.PortfolioOpeningSnapshotService;
 import com.herdsignal.service.PortfolioPerformanceService;
 import com.herdsignal.service.PortfolioSourceReconciliationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,8 @@ class PortfolioLedgerControllerTest {
                 mock(PortfolioLedgerValuationService.class);
         PortfolioPerformanceService performanceService =
                 mock(PortfolioPerformanceService.class);
+        PortfolioOpeningSnapshotService openingSnapshotService =
+                mock(PortfolioOpeningSnapshotService.class);
         PortfolioSourceReconciliationService reconciliationService =
                 mock(PortfolioSourceReconciliationService.class);
         CurrentUserService currentUserService = mock(CurrentUserService.class);
@@ -47,6 +50,7 @@ class PortfolioLedgerControllerTest {
                         service,
                         valuationService,
                         performanceService,
+                        openingSnapshotService,
                         reconciliationService,
                         currentUserService
                 ))

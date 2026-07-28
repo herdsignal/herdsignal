@@ -6,6 +6,7 @@ import {
   getPortfolioLedger,
   getPortfolioLedgerSummary,
   getPortfolioSourceReconciliation,
+  importPortfolioOpeningSnapshot,
 } from '../../api/herdApi'
 import {
   ENTRY_TYPES,
@@ -37,6 +38,10 @@ export default function Ledger() {
   const [formOpen, setFormOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [importingSnapshot, setImportingSnapshot] = useState(false)
+  const [openingDate, setOpeningDate] = useState(
+    () => new Date().toISOString().slice(0, 10),
+  )
   const [error, setError] = useState('')
 
   const load = useCallback(async () => {
@@ -105,6 +110,26 @@ export default function Ledger() {
     }
   }
 
+  const importOpeningSnapshot = async () => {
+    if (importingSnapshot) return
+    if (!window.confirm(
+      `${openingDate} 기준 현재 수량·평단·현금을 원장의 시작점으로 가져올까요?`,
+    )) return
+    setImportingSnapshot(true)
+    setError('')
+    try {
+      await importPortfolioOpeningSnapshot(openingDate)
+      await load()
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message
+        || '기초 자산을 가져오지 못했습니다. 수량과 평균 매수가를 확인해주세요.',
+      )
+    } finally {
+      setImportingSnapshot(false)
+    }
+  }
+
   const statusMessage = {
     EMPTY_LEDGER: '입금과 거래를 실제 발생 순서대로 기록하면 원가와 손익을 계산합니다.',
     INVALID_LEDGER: '보유 수량보다 많은 매도가 있어 계산을 중단했습니다.',
@@ -152,6 +177,29 @@ export default function Ledger() {
               수량 차이 {reconciliation.positionDifferences.map((item) => item.ticker).join(', ')}
               {' · '}현금 차이 {formatSignedUsd(reconciliation.cashDifference)}
             </small>
+          )}
+          {reconciliation?.status === 'NO_LEDGER' && (
+            <div className={styles.snapshotImport}>
+              <label>
+                시작 기준일
+                <input
+                  type="date"
+                  value={openingDate}
+                  max={new Date().toISOString().slice(0, 10)}
+                  onChange={(event) => setOpeningDate(event.target.value)}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={importOpeningSnapshot}
+                disabled={importingSnapshot || !openingDate}
+              >
+                {importingSnapshot ? '가져오는 중…' : '현재 자산을 시작점으로 가져오기'}
+              </button>
+              <small>
+                이전 성과를 추정하지 않고 이 날짜 이후 기록만 계산합니다.
+              </small>
+            </div>
           )}
         </section>
       )}

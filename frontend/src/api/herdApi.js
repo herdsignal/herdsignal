@@ -137,6 +137,9 @@ export const getPortfolioLedgerSummary = () =>
 export const getPortfolioSourceReconciliation = () =>
   api.get('/api/portfolio/ledger/reconciliation')
 
+export const importPortfolioOpeningSnapshot = (occurredOn) =>
+  api.post('/api/portfolio/ledger/opening-snapshot', { occurredOn })
+
 export const getPortfolioPerformance = () =>
   api.get('/api/portfolio/ledger/performance')
 

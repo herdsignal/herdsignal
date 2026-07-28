@@ -174,6 +174,49 @@
   background: rgba(69, 181, 137, .06);
 }
 
+.snapshotImport {
+  grid-column: 2;
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.snapshotImport label {
+  display: grid;
+  gap: 5px;
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+.snapshotImport input,
+.snapshotImport button {
+  min-height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text-2);
+  font: inherit;
+}
+
+.snapshotImport input {
+  padding: 0 10px;
+}
+
+.snapshotImport button {
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.snapshotImport button:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+.snapshotImport small {
+  align-self: center;
+}
+
 .positions,
 .entries {
   margin-top: 30px;
@@ -227,4 +270,9 @@
   .note { grid-column: auto; }
   .reconciliation { grid-template-columns: 1fr; }
   .reconciliation small { grid-column: auto; }
+  .snapshotImport {
+    grid-column: auto;
+    align-items: stretch;
+    flex-direction: column;
+  }
 }

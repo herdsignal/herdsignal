@@ -4,12 +4,14 @@ import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.PortfolioLedgerEntryRequest;
 import com.herdsignal.dto.PortfolioLedgerEntryResponse;
 import com.herdsignal.dto.PortfolioLedgerSummaryResponse;
+import com.herdsignal.dto.PortfolioOpeningSnapshotRequest;
 import com.herdsignal.dto.PortfolioPerformanceResponse;
 import com.herdsignal.dto.PortfolioSourceReconciliationResponse;
 import com.herdsignal.service.CurrentUserService;
 import com.herdsignal.service.PortfolioLedgerService;
 import com.herdsignal.service.PortfolioLedgerValuationService;
 import com.herdsignal.service.PortfolioPerformanceService;
+import com.herdsignal.service.PortfolioOpeningSnapshotService;
 import com.herdsignal.service.PortfolioSourceReconciliationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,7 @@ public class PortfolioLedgerController {
     private final PortfolioLedgerService ledgerService;
     private final PortfolioLedgerValuationService valuationService;
     private final PortfolioPerformanceService performanceService;
+    private final PortfolioOpeningSnapshotService openingSnapshotService;
     private final PortfolioSourceReconciliationService reconciliationService;
     private final CurrentUserService currentUserService;
 
@@ -66,6 +69,18 @@ public class PortfolioLedgerController {
     public ResponseEntity<ApiResponse<PortfolioSourceReconciliationResponse>> getReconciliation() {
         return ResponseEntity.ok(ApiResponse.success(
                 reconciliationService.reconcile(currentUserService.requireUserId())
+        ));
+    }
+
+    @PostMapping("/opening-snapshot")
+    public ResponseEntity<ApiResponse<PortfolioSourceReconciliationResponse>> importOpeningSnapshot(
+            @Valid @RequestBody PortfolioOpeningSnapshotRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(
+                openingSnapshotService.importCurrentSnapshot(
+                        currentUserService.requireUserId(),
+                        request.occurredOn()
+                )
         ));
     }
 
