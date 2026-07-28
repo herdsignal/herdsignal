@@ -12,24 +12,17 @@ public class ShadowModelStatusService {
 
     private final boolean enabled;
     private final String candidateId;
-    private final boolean holdoutPassed;
     private final OperationalPromotionGate promotionGate;
 
     @Autowired
     public ShadowModelStatusService(
             @Value("${herdsignal.shadow.enabled:false}") boolean enabled,
             @Value("${herdsignal.shadow.candidate-id:}") String candidateId,
-            @Value("${herdsignal.shadow.holdout-passed:false}") boolean holdoutPassed,
             OperationalPromotionGate promotionGate
     ) {
         this.enabled = enabled;
         this.candidateId = candidateId == null ? "" : candidateId.trim();
-        this.holdoutPassed = holdoutPassed;
         this.promotionGate = promotionGate;
-    }
-
-    ShadowModelStatusService(boolean enabled, String candidateId, boolean holdoutPassed) {
-        this(enabled, candidateId, holdoutPassed, ignored -> holdoutPassed);
     }
 
     public ShadowModelStatusResponse getStatus() {
@@ -41,12 +34,11 @@ public class ShadowModelStatusService {
             );
         }
         if (!StringUtils.hasText(candidateId)
-                || !holdoutPassed
-                || !promotionGate.isApproved(candidateId)) {
+                || promotionGate.approvalEvidence(candidateId).isEmpty()) {
             return response(
                     "BLOCKED_INVALID_CONFIGURATION",
                     StringUtils.hasText(candidateId) ? candidateId : null,
-                    "후보 ID, 단일 Blind holdout, 최종 게이트와 사람 승인 기록이 모두 필요합니다."
+                    "후보 ID와 검증 산출물·단일 Blind holdout·사람 승인을 묶은 승인 근거가 필요합니다."
             );
         }
         return response(
@@ -58,7 +50,7 @@ public class ShadowModelStatusService {
 
     private ShadowModelStatusResponse response(String status, String candidate, String reason) {
         return new ShadowModelStatusResponse(
-                "HERD_v4 + HERD_v6.1 action",
+                "HERD_STATE_S1_ACTION_CANDIDATE",
                 status,
                 candidate,
                 true,
