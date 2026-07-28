@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { ROUTER_FUTURE } from '../../routerConfig'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import StockDetail from './StockDetail'
 import * as api from '../../api/herdApi'
 
@@ -106,6 +106,8 @@ beforeEach(() => {
   }))
 })
 
+afterEach(cleanup)
+
 describe('StockDetail route', () => {
   it('renders the stock page after loading', async () => {
     render(
@@ -146,5 +148,28 @@ describe('StockDetail route', () => {
       ) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy()
     expect(document.body.textContent).not.toMatch(/익절 근거|매수 근거|추천/)
+  })
+
+  it('keeps company context and personal records available without a HERD observation', async () => {
+    api.getHerdObservation.mockReturnValue(response({
+      ticker: 'NVDA',
+      companyName: 'NVIDIA Corp',
+      availabilityStatus: 'PENDING',
+    }))
+
+    render(
+      <MemoryRouter initialEntries={['/stock/NVDA']} future={ROUTER_FUTURE}>
+        <Routes>
+          <Route path="/stock/:ticker" element={<StockDetail />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByText('HERD 관찰값 준비 중')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '기업 정보 · 판단 기록' }))
+      .toBeInTheDocument()
+    expect(screen.getByText('내 판단 기록')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: '가격 · HERD 이력' }))
+      .not.toBeInTheDocument()
   })
 })

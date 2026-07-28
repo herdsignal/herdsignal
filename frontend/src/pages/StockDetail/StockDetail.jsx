@@ -54,6 +54,18 @@ export default function StockDetail() {
     handleJournalAction,
     handleJournalDelete,
   } = detail
+  const records = (
+    <StockDetailRecords
+      authenticated={authenticated}
+      financialsLoading={financialsLoading}
+      financials={financials}
+      fundamentalGuard={fundamentalGuard}
+      journalSummary={journalSummary}
+      signalLogs={signalLogs}
+      onCreateJournal={setJournalAction}
+      onDeleteJournal={handleJournalDelete}
+    />
+  )
 
   return (
     <div className={styles.page} aria-busy={loading}>
@@ -138,6 +150,18 @@ export default function StockDetail() {
         </div>
       )}
 
+      {!loading && !observationAvailable && (
+        <div className={styles.contentGrid}>
+          <div className={styles.colMain}>
+            <nav className={styles.detailNav} aria-label="종목 상세 구역">
+              <a href="#stock-records">기업 정보</a>
+              {authenticated && <a href="#stock-journal">판단 기록</a>}
+            </nav>
+            {records}
+          </div>
+        </div>
+      )}
+
       {!loading && !error && observationAvailable && (
         <div className={styles.contentGrid}>
           <div className={styles.colMain}>
@@ -169,16 +193,7 @@ export default function StockDetail() {
               observation={observation}
               color={color}
             />
-            <StockDetailRecords
-              authenticated={authenticated}
-              financialsLoading={financialsLoading}
-              financials={financials}
-              fundamentalGuard={fundamentalGuard}
-              journalSummary={journalSummary}
-              signalLogs={signalLogs}
-              onCreateJournal={setJournalAction}
-              onDeleteJournal={handleJournalDelete}
-            />
+            {records}
           </div>
         </div>
       )}
