@@ -5,6 +5,7 @@ import {
   exportPortfolioLedgerCsv,
   getPortfolioLedger,
   getPortfolioLedgerSummary,
+  getPortfolioSourceReconciliation,
 } from '../../api/herdApi'
 import {
   ENTRY_TYPES,
@@ -31,6 +32,7 @@ const initialForm = {
 export default function Ledger() {
   const [entries, setEntries] = useState([])
   const [summary, setSummary] = useState(null)
+  const [reconciliation, setReconciliation] = useState(null)
   const [form, setForm] = useState(initialForm)
   const [formOpen, setFormOpen] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -41,12 +43,14 @@ export default function Ledger() {
     setLoading(true)
     setError('')
     try {
-      const [entriesResponse, summaryResponse] = await Promise.all([
+      const [entriesResponse, summaryResponse, reconciliationResponse] = await Promise.all([
         getPortfolioLedger(),
         getPortfolioLedgerSummary(),
+        getPortfolioSourceReconciliation(),
       ])
       setEntries(entriesResponse.data?.data ?? [])
       setSummary(summaryResponse.data?.data ?? null)
+      setReconciliation(reconciliationResponse.data?.data ?? null)
     } catch (requestError) {
       setError(requestError.response?.data?.message || '거래 원장을 불러오지 못했습니다.')
     } finally {
@@ -107,6 +111,12 @@ export default function Ledger() {
     PRICE_INCOMPLETE: '일부 종목의 최신 종가가 없어 계좌 평가를 숨겼습니다.',
     LEDGER_READY: 'FIFO 원가 기준 · 수수료 포함',
   }[summary?.status]
+  const reconciliationMessage = {
+    NO_LEDGER: '원장이 비어 있어 현재 보유 현황을 계속 기준으로 사용합니다.',
+    LEDGER_INVALID: '원장 계산 오류가 있어 현재 보유 현황과 연결하지 않습니다.',
+    DIVERGED: '현재 보유 현황과 원장 수량·현금이 달라 자동으로 전환하지 않습니다.',
+    MATCHED: '현재 보유 현황과 원장이 일치합니다. 원장 기준 전환 준비가 됐습니다.',
+  }[reconciliation?.status]
 
   return (
     <div className={styles.page}>
@@ -125,6 +135,26 @@ export default function Ledger() {
       </header>
 
       {error && <div className={styles.error} role="alert">{error}</div>}
+      {!loading && reconciliationMessage && (
+        <section
+          className={`${styles.reconciliation} ${
+            reconciliation?.ledgerCanBecomeSource ? styles.reconciliationReady : ''
+          }`}
+          aria-label="포트폴리오 기준 정합성"
+        >
+          <div>
+            <span>PORTFOLIO SOURCE</span>
+            <strong>{reconciliation?.status}</strong>
+          </div>
+          <p>{reconciliationMessage}</p>
+          {reconciliation?.positionDifferences?.length > 0 && (
+            <small>
+              수량 차이 {reconciliation.positionDifferences.map((item) => item.ticker).join(', ')}
+              {' · '}현금 차이 {formatSignedUsd(reconciliation.cashDifference)}
+            </small>
+          )}
+        </section>
+      )}
 
       {formOpen && (
         <form className={styles.form} onSubmit={submit}>

@@ -6,6 +6,7 @@ import com.herdsignal.service.CurrentUserService;
 import com.herdsignal.service.PortfolioLedgerService;
 import com.herdsignal.service.PortfolioLedgerValuationService;
 import com.herdsignal.service.PortfolioPerformanceService;
+import com.herdsignal.service.PortfolioSourceReconciliationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,6 +38,8 @@ class PortfolioLedgerControllerTest {
                 mock(PortfolioLedgerValuationService.class);
         PortfolioPerformanceService performanceService =
                 mock(PortfolioPerformanceService.class);
+        PortfolioSourceReconciliationService reconciliationService =
+                mock(PortfolioSourceReconciliationService.class);
         CurrentUserService currentUserService = mock(CurrentUserService.class);
         when(currentUserService.requireUserId()).thenReturn("user-a");
         mockMvc = MockMvcBuilders
@@ -44,6 +47,7 @@ class PortfolioLedgerControllerTest {
                         service,
                         valuationService,
                         performanceService,
+                        reconciliationService,
                         currentUserService
                 ))
                 .setControllerAdvice(new GlobalExceptionHandler())

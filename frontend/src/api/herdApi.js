@@ -134,6 +134,9 @@ export const getPortfolioLedger = (ticker) =>
 export const getPortfolioLedgerSummary = () =>
   api.get('/api/portfolio/ledger/summary')
 
+export const getPortfolioSourceReconciliation = () =>
+  api.get('/api/portfolio/ledger/reconciliation')
+
 export const getPortfolioPerformance = () =>
   api.get('/api/portfolio/ledger/performance')
 

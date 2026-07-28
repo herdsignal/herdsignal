@@ -5,10 +5,12 @@ import com.herdsignal.dto.PortfolioLedgerEntryRequest;
 import com.herdsignal.dto.PortfolioLedgerEntryResponse;
 import com.herdsignal.dto.PortfolioLedgerSummaryResponse;
 import com.herdsignal.dto.PortfolioPerformanceResponse;
+import com.herdsignal.dto.PortfolioSourceReconciliationResponse;
 import com.herdsignal.service.CurrentUserService;
 import com.herdsignal.service.PortfolioLedgerService;
 import com.herdsignal.service.PortfolioLedgerValuationService;
 import com.herdsignal.service.PortfolioPerformanceService;
+import com.herdsignal.service.PortfolioSourceReconciliationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,7 @@ public class PortfolioLedgerController {
     private final PortfolioLedgerService ledgerService;
     private final PortfolioLedgerValuationService valuationService;
     private final PortfolioPerformanceService performanceService;
+    private final PortfolioSourceReconciliationService reconciliationService;
     private final CurrentUserService currentUserService;
 
     @GetMapping
@@ -56,6 +59,13 @@ public class PortfolioLedgerController {
     public ResponseEntity<ApiResponse<PortfolioPerformanceResponse>> getPerformance() {
         return ResponseEntity.ok(ApiResponse.success(
                 performanceService.getPerformance(currentUserService.requireUserId())
+        ));
+    }
+
+    @GetMapping("/reconciliation")
+    public ResponseEntity<ApiResponse<PortfolioSourceReconciliationResponse>> getReconciliation() {
+        return ResponseEntity.ok(ApiResponse.success(
+                reconciliationService.reconcile(currentUserService.requireUserId())
         ));
     }
 
