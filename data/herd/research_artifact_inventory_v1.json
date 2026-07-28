@@ -195,6 +195,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/historical_s1_replay_v1.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
       "path": "data/herd/idiosyncratic_relative_damage_v2.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -316,6 +320,10 @@
     },
     {
       "path": "data/herd/personal_mvp_promotion_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/product_scope_contract_v1.json",
       "status": "ACTIVE"
     },
     {
@@ -1037,6 +1045,10 @@
     {
       "path": "data/reports/herd_vnext_model_charter_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/historical_s1_replay_v1.json",
+      "status": "DIAGNOSTIC"
     },
     {
       "path": "data/reports/idiosyncratic_relative_damage_v2.csv",
@@ -2436,6 +2448,10 @@
     },
     {
       "path": "docs/HERD_S1_PRODUCTIZATION_PLAN.md",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "docs/PRODUCT_SCOPE.md",
       "status": "ACTIVE"
     },
     {

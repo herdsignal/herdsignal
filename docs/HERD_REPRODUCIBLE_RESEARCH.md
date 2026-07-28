@@ -687,6 +687,24 @@ fold의 엄격 PIT 연결은 51개 기업 중 50개다. CRM은 CompanyFacts의 �
 제출번호에 SEC 접수시각이 없어 별도 제외 영향 감사를 통과하기 전까지
 엄격 PIT 준비 상태로 승격하지 않는다.
 
+## 16. S1 과거 설명 재생
+
+State S1과 Transition S1의 고정 패널을 다시 계산하지 않고, 고정 가격
+스냅샷에 연결해 사건별 다중 만기 결과를 만든다.
+
+```bash
+cd data
+.venv/bin/python -m herd.historical_s1_replay_v1
+```
+
+입력 패널과 가격 manifest는 기존 보고서의 SHA-256과 대조한다. 결과는
+`reports/historical_s1_replay_v1.csv.gz`와 동명의 JSON 영수증에 저장한다.
+같은 episode와 horizon 조합이 중복되면 실행을 중단한다.
+
+이 재생은 현재 구성 종목의 과거 가격을 사용한 진단이며 공식 과거
+S&P 500 구성 백테스트가 아니다. `survivorship_safe=false`,
+`operational_action=HOLD`, `operational_action_ratio=0.0`은 변경할 수 없다.
+
 ## 근거
 
 - scikit-learn `TimeSeriesSplit`: 시간 순서를 보존하고 train과 test 사이

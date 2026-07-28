@@ -1,6 +1,6 @@
 {
   "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V2",
-  "as_of": "2026-07-26",
+  "as_of": "2026-07-29",
   "current_decision": {
     "status": "STATE_OBSERVATION_MVP_READY",
     "new_model_name": "UNASSIGNED_UNTIL_PROMOTION",
@@ -75,7 +75,9 @@
       "data/herd/personal_mvp_promotion_v1.json",
       "data/reports/personal_mvp_promotion_v1.json",
       "data/herd/vnext_prospective_shadow_protocol_v1.json",
+      "data/herd/product_scope_contract_v1.json",
       "docs/HERD_S1_PRODUCTIZATION_PLAN.md",
+      "docs/PRODUCT_SCOPE.md",
       "docs/HERD_RESEARCH_STATUS.md",
       "docs/HERD_REPRODUCIBLE_RESEARCH.md"
     ],
@@ -175,6 +177,9 @@
       "data/reports/sec_13f_phase_review_v1.json",
       "data/reports/sec_guidance_structure_v10_final.json",
       "data/reports/overnight_pit_shadow_completion_v1.json",
+      "data/herd/historical_s1_replay_v1.json",
+      "data/reports/historical_s1_replay_v1.json",
+      "data/reports/historical_s1_replay_v1.csv.gz",
       "docs/README.md"
     ]
   },

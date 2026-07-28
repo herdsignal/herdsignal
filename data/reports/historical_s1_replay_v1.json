@@ -1,0 +1,39 @@
+{
+  "report_version": "HERD_HISTORICAL_S1_REPLAY_V1",
+  "status": "DESCRIPTIVE_REPLAY_COMPLETE",
+  "input_hashes": {
+    "contract": "e675f3a7f4f9bba71a6d4ad34875ab8ce2e04b81ced50eafbce1ea9d072a5f82",
+    "transition_report": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248",
+    "state_contract": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489",
+    "primary_manifest": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b",
+    "independent_current_constituents_manifest": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781"
+  },
+  "ledger": {
+    "path": "data/reports/historical_s1_replay_v1.csv.gz",
+    "sha256": "8b81dd008d1fd536381068e5d9e92a2fdf41b37a024ee108c7d3d74ff60df878",
+    "rows": 141109,
+    "episodes": 23900,
+    "tickers": 439
+  },
+  "extracted_episodes": 23927,
+  "evaluable_episodes": 23900,
+  "extracted_episodes_by_role": {
+    "INDEPENDENT_CURRENT_CONSTITUENTS": 21047,
+    "PRIMARY": 2880
+  },
+  "matured_rows_by_horizon": {
+    "5": 23900,
+    "10": 23871,
+    "20": 23680,
+    "40": 23557,
+    "60": 23353,
+    "130": 22748
+  },
+  "direction_prediction": false,
+  "buy_or_profit_take_authority": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "claim": "Current-constituent historical replay for descriptive diagnosis; not a point-in-time membership backtest."
+}

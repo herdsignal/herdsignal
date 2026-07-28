@@ -1,0 +1,73 @@
+{
+  "contract_version": "HERD_HISTORICAL_S1_REPLAY_V1",
+  "status": "LOCKED_DESCRIPTIVE_REPLAY_ONLY",
+  "source_state_model": "HERD_STATE_S1",
+  "source_transition_model": "HERD_TRANSITION_S1",
+  "event_contract": {
+    "stage_entries": [
+      "FLEE",
+      "RUSH"
+    ],
+    "highlighted_transitions": [
+      "COOLING",
+      "BREAKING",
+      "RECOVERING"
+    ],
+    "collapse_calendar_days": 42
+  },
+  "outcome_contract": {
+    "entry_basis": "NEXT_AVAILABLE_SESSION_SPLIT_DIVIDEND_ADJUSTED_OPEN",
+    "horizons_sessions": [
+      5,
+      10,
+      20,
+      40,
+      60,
+      130
+    ],
+    "measures": [
+      "TOTAL_RETURN",
+      "MAXIMUM_FAVORABLE_EXCURSION",
+      "MAXIMUM_ADVERSE_EXCURSION"
+    ]
+  },
+  "era_contract": [
+    {
+      "id": "ERA_2013_2015",
+      "start_year": 2013,
+      "end_year": 2015
+    },
+    {
+      "id": "ERA_2016_2018",
+      "start_year": 2016,
+      "end_year": 2018
+    },
+    {
+      "id": "ERA_2019_2021",
+      "start_year": 2019,
+      "end_year": 2021
+    },
+    {
+      "id": "ERA_2022_2024",
+      "start_year": 2022,
+      "end_year": 2024
+    },
+    {
+      "id": "ERA_2025_2026",
+      "start_year": 2025,
+      "end_year": 2026
+    }
+  ],
+  "claim_boundary": {
+    "descriptive_outcomes_only": true,
+    "point_in_time_price_calculation": true,
+    "point_in_time_membership": false,
+    "candidate_selection": false,
+    "direction_prediction": false,
+    "buy_or_profit_take_authority": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}
