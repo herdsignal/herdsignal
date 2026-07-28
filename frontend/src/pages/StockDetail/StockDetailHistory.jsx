@@ -14,7 +14,7 @@ export default function StockDetailHistory({
   observation,
 }) {
   return (
-    <section className={styles.historySection} aria-labelledby="stock-history-title">
+    <section id="stock-history" className={styles.historySection} aria-labelledby="stock-history-title">
       <div className={styles.sectionHeader}>
         <div>
           <h2 id="stock-history-title">가격 · HERD 이력</h2>

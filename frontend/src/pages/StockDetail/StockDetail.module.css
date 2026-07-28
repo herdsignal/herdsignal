@@ -148,6 +148,50 @@
   min-width: 0;
 }
 
+.detailNav {
+  position: sticky;
+  z-index: 4;
+  top: var(--hs-header-height);
+  display: flex;
+  overflow-x: auto;
+  gap: 4px;
+  margin: 0 0 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+  background: color-mix(in srgb, var(--hs-bg) 92%, transparent);
+  backdrop-filter: blur(14px);
+  scrollbar-width: none;
+}
+
+.detailNav::-webkit-scrollbar {
+  display: none;
+}
+
+.detailNav a {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border-radius: var(--hs-radius-sm);
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.detailNav a:hover,
+.detailNav a:focus-visible {
+  background: var(--hs-surface);
+  color: var(--hs-text);
+}
+
+:global(#stock-state),
+:global(#stock-history),
+:global(#stock-evidence),
+:global(#stock-records),
+:global(#stock-journal) {
+  scroll-margin-top: calc(var(--hs-header-height) + 66px);
+}
+
 .stateSection,
 .evidenceSection,
 .historySection {

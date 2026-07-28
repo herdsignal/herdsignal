@@ -16,7 +16,7 @@ export default function StockDetailAnalysis({ observation, color }) {
   const risk = bounded(observation.downsideRiskContext)
 
   return (
-    <section className={styles.evidenceSection} aria-labelledby="stock-evidence-title">
+    <section id="stock-evidence" className={styles.evidenceSection} aria-labelledby="stock-evidence-title">
       <div className={styles.sectionHeader}>
         <div>
           <h2 id="stock-evidence-title">HERD 구성</h2>

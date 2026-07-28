@@ -141,6 +141,13 @@ export default function StockDetail() {
       {!loading && !error && observationAvailable && (
         <div className={styles.contentGrid}>
           <div className={styles.colMain}>
+            <nav className={styles.detailNav} aria-label="종목 상세 구역">
+              <a href="#stock-state">현재 상태</a>
+              <a href="#stock-history">가격 · HERD 이력</a>
+              <a href="#stock-evidence">HERD 근거</a>
+              <a href="#stock-records">기업 정보</a>
+              {authenticated && <a href="#stock-journal">판단 기록</a>}
+            </nav>
             <StockDetailHero
               herdScore={herdScore}
               herdStage={herdStage}

@@ -13,10 +13,12 @@ export default function StockDetailRecords({
   onDeleteJournal,
 }) {
   return (
-    <section className={styles.recordsSection} aria-labelledby="stock-records-title">
+    <section id="stock-records" className={styles.recordsSection} aria-labelledby="stock-records-title">
       <header className={styles.recordsHeader}>
         <span>CONTEXT &amp; JOURNAL</span>
-        <h2 id="stock-records-title">기업 정보 · 판단 로그</h2>
+        <h2 id="stock-records-title">
+          {authenticated ? '기업 정보 · 판단 기록' : '기업 정보'}
+        </h2>
       </header>
       <div className={styles.recordsBody}>
         <StockDetailFundamentals
@@ -25,12 +27,14 @@ export default function StockDetailRecords({
           guard={fundamentalGuard}
         />
         {authenticated && (
-          <StockDetailJournal
-            summary={journalSummary}
-            logs={signalLogs}
-            onCreate={onCreateJournal}
-            onDelete={onDeleteJournal}
-          />
+          <div id="stock-journal">
+            <StockDetailJournal
+              summary={journalSummary}
+              logs={signalLogs}
+              onCreate={onCreateJournal}
+              onDelete={onDeleteJournal}
+            />
+          </div>
         )}
       </div>
     </section>

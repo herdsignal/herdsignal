@@ -16,7 +16,7 @@ export default function StockDetailHero({
   const transition = stateSummary.recentTransition
 
   return (
-    <section className={styles.stateSection} aria-labelledby="stock-state-title">
+    <section id="stock-state" className={styles.stateSection} aria-labelledby="stock-state-title">
       <div className={styles.stateHeader}>
         <div>
           <span>HERD State S1</span>

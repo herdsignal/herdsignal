@@ -118,6 +118,19 @@ describe('StockDetail route', () => {
 
     expect(await screen.findByText('NVIDIA Corp')).toBeInTheDocument()
     expect(screen.getByText('HERD State S1')).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: '종목 상세 구역' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '가격 · HERD 이력' })).toHaveAttribute(
+      'href',
+      '#stock-history',
+    )
+    expect(screen.getByRole('link', { name: '기업 정보' })).toHaveAttribute(
+      'href',
+      '#stock-records',
+    )
+    expect(screen.getByRole('link', { name: '판단 기록' })).toHaveAttribute(
+      'href',
+      '#stock-journal',
+    )
     expect(screen.getByText('현재 군중 상태')).toBeInTheDocument()
     expect(await screen.findByText('57 → 63')).toBeInTheDocument()
     expect(screen.getByText('Drift · 3주째')).toBeInTheDocument()
@@ -126,8 +139,8 @@ describe('StockDetail route', () => {
     expect(screen.getAllByText('수정 종가')).toHaveLength(2)
     expect(screen.getByText('4/4')).toBeInTheDocument()
     expect(
-      screen.getByText('가격 · HERD 이력').compareDocumentPosition(
-        screen.getByText('HERD 구성'),
+      screen.getByRole('heading', { name: '가격 · HERD 이력' }).compareDocumentPosition(
+        screen.getByRole('heading', { name: 'HERD 구성' }),
       ) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy()
     expect(document.body.textContent).not.toMatch(/익절 근거|매수 근거|추천/)
