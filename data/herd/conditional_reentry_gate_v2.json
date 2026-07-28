@@ -1,0 +1,27 @@
+{
+  "gate_version": "HERD_CONDITIONAL_REENTRY_GATE_V2",
+  "status": "LOCKED_BEFORE_GATE_RESULT",
+  "locked_at": "2026-07-29",
+  "inputs": [
+    {"path": "data/reports/evidence_admission_registry_v10.json", "sha256": "af27d4cbf3f6762a63c8617becf43eaafcbe1b0d702a3da09932bb774eb8e21a"},
+    {"path": "data/reports/confirmed_reentry_v1.json", "sha256": "afd9d3db11c85b39dd385c194d70d6eb411c7150a7f7ec498ec5c37e98df5383"},
+    {"path": "data/reports/business_guard_oos_v1.json", "sha256": "4cf1786c0c50e59bc85713f324ad4b4456e466ea93df6f73752e1bf6f6113d32"},
+    {"path": "data/reports/reentry_feature_discovery_report_v1.json", "sha256": "e3e711bec45b979756365bccd1527fb253e7e76c513a5a38752d430abae2912a"},
+    {"path": "data/reports/sec_form4_insider_purchase_oos_v1.json", "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"}
+  ],
+  "required_sequence": [
+    "VALIDATED_PROFIT_TAKE_PROCEEDS_EXIST",
+    "WEAKNESS_EXPLAINED_BY_MARKET_OR_SECTOR",
+    "PIT_BUSINESS_STATE_NOT_DAMAGED",
+    "DOWNSIDE_DECELERATION_OR_RELATIVE_STRENGTH_RECOVERY",
+    "AFTER_COST_REENTRY_BEATS_CASH_AND_PERIODIC_BUY"
+  ],
+  "firewall": {
+    "missing_upstream_cash_blocks_reentry": true,
+    "falling_price_alone_is_not_reentry": true,
+    "reentry_simulation_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0
+  }
+}

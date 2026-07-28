@@ -35,6 +35,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/conditional_reentry_gate_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/confirmed_reentry_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -873,6 +877,10 @@
     {
       "path": "data/reports/completed_cycle_gate_v5.json",
       "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/conditional_reentry_gate_v2.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/confirmed_reentry_comparison_v1.json",

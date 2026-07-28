@@ -1,0 +1,17 @@
+{
+  "report_version": "HERD_CONDITIONAL_REENTRY_GATE_V2",
+  "status": "REENTRY_BLOCKED_NO_VALIDATED_PROFIT_TAKE_CASH",
+  "checks": {
+    "validated_profit_take_cash": false,
+    "confirmed_reentry_rule": false,
+    "pit_business_veto": false,
+    "new_recovery_feature": false,
+    "independent_insider_support": false
+  },
+  "eligible_cash_events": 0,
+  "reentry_simulation_executed": false,
+  "next_gate": "PROFIT_TAKE_DIRECTION_EVIDENCE",
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}
