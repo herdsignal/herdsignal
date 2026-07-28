@@ -20,7 +20,7 @@ export default function StockDetailAnalysis({ observation, color }) {
       <div className={styles.sectionHeader}>
         <div>
           <h2 id="stock-evidence-title">HERD 구성</h2>
-          <span>State S1 · 각 25%</span>
+          <span>4개 관측군 · 동일 비중</span>
         </div>
         <span>{observation.lastObservedSession ?? '—'} 기준</span>
       </div>

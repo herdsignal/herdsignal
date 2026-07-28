@@ -196,7 +196,7 @@ export default function Dashboard() {
         condensed
         ticker={selected.ticker}
         name={selected.name}
-        scopeLabel={showingMarket ? 'MARKET AGGREGATE' : 'STOCK OBSERVATION'}
+        scopeLabel={showingMarket ? 'S&P 500 MARKET' : 'INDIVIDUAL STOCK'}
         score={selected.score}
         stage={selected.stage}
         delta4w={selected.delta4w}

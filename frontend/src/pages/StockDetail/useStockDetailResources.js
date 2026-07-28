@@ -62,7 +62,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     } catch (requestError) {
       if (requestId === herdRequest.current) {
         const unavailable = requestError.response?.status
-          ? `${displayTicker} 종목의 S1 관찰 API를 확인할 수 없습니다.\n기존 v4 점수로 대체하지 않습니다.`
+          ? `${displayTicker} 종목의 HERD 관찰 API를 확인할 수 없습니다.\n이전 모델 점수로 대체 표시하지 않습니다.`
           : `백엔드 서버에 연결할 수 없습니다.\n${API_HOST}이 실행 중인지 확인해주세요.`
         setError(unavailable)
       }

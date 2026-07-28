@@ -19,7 +19,7 @@ export default function StockDetailHero({
     <section id="stock-state" className={styles.stateSection} aria-labelledby="stock-state-title">
       <div className={styles.stateHeader}>
         <div>
-          <span>HERD State S1</span>
+          <span>HERD WEEKLY OBSERVATION</span>
           <h2 id="stock-state-title">현재 군중 상태</h2>
           <small className={styles.observationDate}>
             {stateSummary.currentDate ?? '—'} 관찰

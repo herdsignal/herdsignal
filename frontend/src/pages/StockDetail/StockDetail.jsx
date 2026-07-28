@@ -130,9 +130,9 @@ export default function StockDetail() {
 
       {!loading && !error && !observationAvailable && (
         <div className={styles.errorState} role="status">
-          <p className={styles.errorTitle}>HERD State S1 관찰값 준비 중</p>
+          <p className={styles.errorTitle}>HERD 관찰값 준비 중</p>
           <p className={styles.errorSub}>
-            기존 v4 점수로 대체하지 않습니다. 다음 스케줄러 완료 후 다시 확인해주세요.
+            이전 모델 점수로 대체 표시하지 않습니다. 다음 주간 갱신 후 다시 확인해주세요.
           </p>
           <button type="button" className={styles.retryBtn} onClick={fetchData}>다시 확인</button>
         </div>
@@ -190,7 +190,7 @@ export default function StockDetail() {
           herdSnapshot={{
             score: Math.round(herdScore),
             stage: stageDisp,
-            signalLabel: 'State S1 관찰',
+            signalLabel: 'HERD 관찰',
           }}
           onClose={() => setJournalAction(null)}
           onSave={(details) => handleJournalAction(journalAction, details)}

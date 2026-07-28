@@ -94,7 +94,7 @@ function EpisodeSummary({ study, loading }) {
           <strong>같은 {study.herdStage} 진입 이후</strong>
           <span>상태 진입 1회를 한 사건으로 집계</span>
         </div>
-        <span>{study.episodeCount}개 episode</span>
+        <span>{study.episodeCount}회 진입</span>
       </div>
       {insufficient ? (
         <div className={styles.episodeNote}>

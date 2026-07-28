@@ -117,7 +117,8 @@ describe('StockDetail route', () => {
     )
 
     expect(await screen.findByText('NVIDIA Corp')).toBeInTheDocument()
-    expect(screen.getByText('HERD State S1')).toBeInTheDocument()
+    expect(screen.getByText('HERD WEEKLY OBSERVATION')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '관찰 요약' })).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: '종목 상세 구역' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '가격 · HERD 이력' })).toHaveAttribute(
       'href',

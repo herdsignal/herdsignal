@@ -110,7 +110,7 @@ export function useStockDetail(ticker) {
       herdScore: Math.round(herdScore),
       herdStage: stageDisp,
       signal: 'HOLD',
-      signalLabel: 'State S1 관찰',
+      signalLabel: 'HERD 관찰',
       actionRatio: 0,
       signalDurationDays: null,
       stageDurationDays: stateSummary.stageDurationDays,
