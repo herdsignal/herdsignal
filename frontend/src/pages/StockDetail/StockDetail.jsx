@@ -82,7 +82,7 @@ export default function StockDetail() {
         </div>
         <div className={styles.stockHeaderRight}>
           {!authenticated && (
-            <button type="button" className={styles.btnWatchlist} onClick={() => navigate('/login')}>
+            <button type="button" className={styles.btnPrimary} onClick={() => navigate('/login')}>
               로그인
             </button>
           )}

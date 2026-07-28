@@ -41,6 +41,29 @@
   background: var(--hs-surface);
 }
 
+.searchState .primaryAction,
+.loginAction {
+  border-color: var(--hs-text);
+  background: var(--hs-text);
+  color: var(--hs-bg);
+}
+
+.searchState .primaryAction:hover:not(:disabled),
+.loginAction:hover {
+  background: var(--hs-text);
+  opacity: .88;
+}
+
+.loginAction {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 9px 13px;
+  border: 1px solid var(--hs-text);
+  border-radius: 7px;
+  font-size: var(--hs-type-label);
+  font-weight: 680;
+}
+
 .assetToggle {
   display: inline-flex;
   min-height: 42px;
@@ -86,8 +109,8 @@
   padding: 34px;
   border: 1px solid var(--hs-line);
   border-radius: 12px;
-  background: var(--hs-surface);
-  box-shadow: 0 20px 64px rgba(0, 0, 0, .14);
+  background: var(--hs-surface-overlay);
+  box-shadow: var(--hs-panel-shadow);
 }
 
 .assetSummary {
@@ -213,7 +236,7 @@
 }
 
 .onboarding button:hover {
-  background: var(--hs-surface);
+  background: var(--hs-surface-overlay);
   color: var(--hs-text);
 }
 

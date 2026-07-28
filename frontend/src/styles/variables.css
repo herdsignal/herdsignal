@@ -8,6 +8,7 @@
   --hs-bg: #080B10;
   --hs-surface: #0F141C;
   --hs-surface-raised: #171E28;
+  --hs-surface-overlay: #121A24;
   --hs-line: rgba(151, 170, 194, 0.14);
   --hs-line-strong: rgba(169, 188, 212, 0.25);
   --hs-text: #F0F1ED;
@@ -27,6 +28,7 @@
   --hs-radius-sm: 6px;
   --hs-radius-md: 8px;
   --hs-focus-ring: 0 0 0 2px var(--hs-bg), 0 0 0 4px rgba(110, 152, 212, 0.72);
+  --hs-panel-shadow: 0 20px 56px rgba(0, 0, 0, 0.32);
 
   /* 읽기 계층 — 금융 데이터 화면의 최소 가독성 계약 */
   --hs-type-micro: 11px;
@@ -110,6 +112,7 @@ body.light {
   --hs-bg: #F5F3EE;
   --hs-surface: #FFFFFF;
   --hs-surface-raised: #EEEAE2;
+  --hs-surface-overlay: #FAF9F6;
   --hs-line: rgba(61, 57, 50, 0.12);
   --hs-line-strong: rgba(61, 57, 50, 0.22);
   --hs-text: #191918;
@@ -117,6 +120,7 @@ body.light {
   --hs-text-muted: #6F6B63;
   --hs-gain: #267553;
   --hs-loss: #B84450;
+  --hs-panel-shadow: 0 18px 44px rgba(48, 43, 35, 0.12);
 
   --bg:       var(--hs-bg);
   --surface:  var(--hs-surface);

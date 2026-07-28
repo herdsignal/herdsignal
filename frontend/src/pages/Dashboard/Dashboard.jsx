@@ -162,6 +162,7 @@ export default function Dashboard() {
                 <div>
                   <button
                     type="button"
+                    className={styles.primaryAction}
                     disabled={searchResult.status !== 'found'}
                     onClick={showCandidateHerd}
                   >
@@ -219,7 +220,7 @@ export default function Dashboard() {
         {!authenticated ? (
           <div className={styles.empty}>
             <p>포트폴리오와 관심 종목은 로그인 후 저장됩니다.</p>
-            <Link to="/login">Google로 로그인</Link>
+            <Link className={styles.loginAction} to="/login">Google로 로그인</Link>
           </div>
         ) : (
           <>

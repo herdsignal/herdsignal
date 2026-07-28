@@ -624,7 +624,7 @@
 .card {
   border: 1px solid var(--hs-line);
   border-radius: var(--hs-radius-md);
-  background: var(--hs-surface);
+  background: var(--hs-surface-overlay);
 }
 
 .cardHeader {

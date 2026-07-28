@@ -58,8 +58,8 @@
   padding: 16px;
   border: 1px solid var(--hs-line-strong);
   border-radius: 10px;
-  background: var(--hs-surface);
-  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.36);
+  background: var(--hs-surface-overlay);
+  box-shadow: var(--hs-panel-shadow);
 }
 
 .panel header {
