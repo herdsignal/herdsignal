@@ -1,0 +1,19 @@
+{
+  "report_version": "HERD_PROSPECTIVE_READINESS_GATE_V2",
+  "status": "STATE_OBSERVATION_ACTIVE_ACTION_SHADOW_BLOCKED",
+  "state_observation_collection": true,
+  "action_candidate_shadow": false,
+  "observation_dates": 1,
+  "observation_records": 440,
+  "matured_outcomes": 0,
+  "comparison_ready_by_horizon": {
+    "21": false,
+    "63": false,
+    "126": false
+  },
+  "drift_monitor_status": "NOT_APPLICABLE_NO_ACTION_CANDIDATE",
+  "next_gate": "INDEPENDENT_PROFIT_TAKE_AND_REENTRY_EVIDENCE",
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

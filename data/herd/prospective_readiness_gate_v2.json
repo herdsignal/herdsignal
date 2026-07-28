@@ -1,0 +1,30 @@
+{
+  "gate_version": "HERD_PROSPECTIVE_READINESS_GATE_V2",
+  "status": "LOCKED_BEFORE_READINESS_RESULT",
+  "locked_at": "2026-07-29",
+  "inputs": [
+    {"path": "data/reports/completed_cycle_gate_v6.json", "sha256": "4434b4fe23c7b16d53cb6fafd78eb65790c2cdc425eeee11fd0cbefa4eda2965"},
+    {"path": "data/reports/historical_prospective_bridge_v1.json", "sha256": "11237b6430f97610ba76247922d81c204534994d8415af499f821d759d08682a"},
+    {"path": "data/herd/vnext_prospective_shadow_protocol_v1.json", "sha256": "aa21216c822a72b21a15da25d484cb7eb5d89b643668fe7d08825807a1d09ad0"}
+  ],
+  "lanes": {
+    "STATE_OBSERVATION": {
+      "collection_allowed": true,
+      "historical_backfill_allowed": false,
+      "use": "PERSONAL_OBSERVATION_AND_DESCRIPTIVE_CONTEXT"
+    },
+    "ACTION_CANDIDATE_SHADOW": {
+      "collection_allowed": false,
+      "requires_completed_cycle_gate": true,
+      "append_only": true,
+      "minimum_outcome_delay_sessions": 126
+    }
+  },
+  "firewall": {
+    "outcome_peeking": false,
+    "candidate_retuning": false,
+    "blind_holdout_access": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0
+  }
+}

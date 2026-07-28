@@ -379,6 +379,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/prospective_readiness_gate_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/public_leading_data_feasibility_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1320,6 +1324,10 @@
     },
     {
       "path": "data/reports/profit_take_success_label_v2.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/prospective_readiness_gate_v2.json",
       "status": "ACTIVE"
     },
     {
