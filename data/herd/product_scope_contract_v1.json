@@ -1,0 +1,50 @@
+{
+  "contract_version": "HERDSIGNAL_PRODUCT_SCOPE_V1",
+  "status": "LOCKED_PERSONAL_OBSERVATION_MVP",
+  "locked_at": "2026-07-28",
+  "primary_user": "SELF_DIRECTED_LONG_TERM_US_EQUITY_INVESTOR_WITH_LIMITED_NEW_CAPITAL",
+  "core_loop": [
+    "OBSERVE_MARKET_OR_SELECTED_TICKER",
+    "REVIEW_MEANINGFUL_HOLDING_OR_WATCHLIST_CHANGES",
+    "INSPECT_STATE_HISTORY_AND_EVIDENCE",
+    "RECORD_PERSONAL_JUDGMENT",
+    "REVIEW_LATER_OUTCOME"
+  ],
+  "primary_surfaces": [
+    "DASHBOARD",
+    "OBSERVATION_INBOX",
+    "STOCK_DETAIL"
+  ],
+  "secondary_surfaces": [
+    "ASSET_HISTORY",
+    "PORTFOLIO_LEDGER",
+    "JUDGMENT_JOURNAL",
+    "HERD_RESEARCH",
+    "SETTINGS"
+  ],
+  "operational_capabilities": [
+    "HERD_STATE_S1_OBSERVATION",
+    "TICKER_SEARCH",
+    "PORTFOLIO_AND_WATCHLIST",
+    "PRICE_AND_HERD_HISTORY",
+    "PERSONAL_JUDGMENT_RECORD",
+    "LOCAL_DATA_FRESHNESS"
+  ],
+  "excluded_until_separately_approved": [
+    "ACTION_RECOMMENDATION",
+    "AUTOMATIC_ORDER_EXECUTION",
+    "STOCK_SELECTION",
+    "REALTIME_TRADING_TERMINAL",
+    "KOREAN_EQUITIES",
+    "BROKERAGE_SYNC",
+    "GENERATIVE_AI_INVESTMENT_ADVICE",
+    "UNVALIDATED_ACTION_RATIO"
+  ],
+  "authority": {
+    "state_model": "HERD_STATE_S1",
+    "default_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "state_is_not_action": true,
+    "asset_values_private_by_default": true
+  }
+}

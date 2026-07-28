@@ -9,7 +9,6 @@ import styles from './Layout.module.css'
 const PRIMARY_NAVIGATION = [
   { to: '/app', label: '대시보드', end: true },
   { to: '/watchlist', label: '관찰' },
-  { to: '/herd-lab', label: '연구' },
 ]
 
 const SECONDARY_NAVIGATION = [
@@ -18,6 +17,7 @@ const SECONDARY_NAVIGATION = [
   { to: '/history', label: '자산 히스토리' },
   { to: '/ledger', label: '거래 원장' },
   { to: '/journal', label: '판단 기록' },
+  { to: '/herd-lab', label: 'HERD 연구실' },
   { to: '/settings', label: '설정' },
 ]
 

@@ -5,10 +5,11 @@
 
 ## 현재 기준
 
-1. [HERD_MODEL_CHARTER.md](HERD_MODEL_CHARTER.md) — 제품·모델 목표와 경계
-2. [HERD_ADOPTION_POLICY.md](HERD_ADOPTION_POLICY.md) — 행동 모델 채택 기준
-3. [HERD_RESEARCH_STATUS.md](HERD_RESEARCH_STATUS.md) — 상단의 최신 연구 판정
-4. [ARCHITECTURE.md](ARCHITECTURE.md) — 현재 코드 구조와 변경 원칙
+1. [PRODUCT_SCOPE.md](PRODUCT_SCOPE.md) — 사용자, 핵심 흐름, 제공·비제공 범위
+2. [HERD_MODEL_CHARTER.md](HERD_MODEL_CHARTER.md) — 모델 목표와 경계
+3. [HERD_ADOPTION_POLICY.md](HERD_ADOPTION_POLICY.md) — 행동 모델 채택 기준
+4. [HERD_RESEARCH_STATUS.md](HERD_RESEARCH_STATUS.md) — 상단의 최신 연구 판정
+5. [ARCHITECTURE.md](ARCHITECTURE.md) — 현재 코드 구조와 변경 원칙
 
 ## 데이터와 재현 계약
 
