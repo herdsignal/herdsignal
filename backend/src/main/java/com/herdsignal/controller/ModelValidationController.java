@@ -2,9 +2,11 @@ package com.herdsignal.controller;
 
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.dto.ModelValidationReportResponse;
+import com.herdsignal.dto.ProspectiveEvidenceStatusResponse;
 import com.herdsignal.dto.ShadowModelStatusResponse;
 import com.herdsignal.dto.VNextModelStatusResponse;
 import com.herdsignal.service.ModelValidationReportService;
+import com.herdsignal.service.ProspectiveEvidenceStatusService;
 import com.herdsignal.service.ShadowModelStatusService;
 import com.herdsignal.service.VNextModelStatusService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class ModelValidationController {
     private final ModelValidationReportService reportService;
     private final ShadowModelStatusService shadowModelStatusService;
     private final VNextModelStatusService vNextModelStatusService;
+    private final ProspectiveEvidenceStatusService prospectiveEvidenceStatusService;
 
     @GetMapping("/validation")
     public ResponseEntity<ApiResponse<ModelValidationReportResponse>> getValidationReport() {
@@ -35,5 +38,10 @@ public class ModelValidationController {
     @GetMapping("/vnext-status")
     public ResponseEntity<ApiResponse<VNextModelStatusResponse>> getVNextStatus() {
         return ResponseEntity.ok(ApiResponse.success(vNextModelStatusService.getStatus()));
+    }
+
+    @GetMapping("/prospective-status")
+    public ResponseEntity<ApiResponse<ProspectiveEvidenceStatusResponse>> getProspectiveStatus() {
+        return ResponseEntity.ok(ApiResponse.success(prospectiveEvidenceStatusService.getStatus()));
     }
 }

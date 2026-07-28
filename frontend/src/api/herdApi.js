@@ -236,6 +236,9 @@ export const getShadowModelStatus = () => api.get('/api/model/shadow-status')
 /** 최신 개인 연구 MVP의 채택 게이트와 운영 차단 상태 */
 export const getVNextModelStatus = () => api.get('/api/model/vnext-status')
 
+/** 해시 감사된 State S1 전향 관찰 원장의 축적·성숙 상태 */
+export const getProspectiveEvidenceStatus = () => api.get('/api/model/prospective-status')
+
 /* ── 투자자 행동 설정 ──────────────────────── */
 
 export const getInvestorProfile = () => api.get('/api/investor-profile')

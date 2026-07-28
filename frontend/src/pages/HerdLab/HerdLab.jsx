@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react'
 import {
   getModelValidationReport,
+  getProspectiveEvidenceStatus,
   getShadowModelStatus,
   getVNextModelStatus,
 } from '../../api/herdApi'
@@ -13,6 +14,7 @@ import styles from './HerdLab.module.css'
 import { presentValidationReport } from './herdModelPresentation'
 import { presentShadowStatus } from './shadowModelPresentation'
 import { presentVNextStatus } from './vNextModelPresentation'
+import { presentProspectiveEvidence } from './prospectiveEvidencePresentation'
 import {
   ActionOutcomesPanel,
   LegacyBaselinesPanel,
@@ -26,6 +28,7 @@ export default function HerdLab() {
   const [report, setReport] = useState(null)
   const [shadow, setShadow] = useState(() => presentShadowStatus(null))
   const [vNext, setVNext] = useState(() => presentVNextStatus(null))
+  const [prospective, setProspective] = useState(() => presentProspectiveEvidence(null))
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -35,8 +38,9 @@ export default function HerdLab() {
       getModelValidationReport(),
       getShadowModelStatus(),
       getVNextModelStatus(),
+      getProspectiveEvidenceStatus(),
     ])
-      .then(([validationResult, shadowResult, vNextResult]) => {
+      .then(([validationResult, shadowResult, vNextResult, prospectiveResult]) => {
         if (!active) return
         if (validationResult.status === 'fulfilled') {
           setReport(presentValidationReport(validationResult.value.data.data))
@@ -52,6 +56,9 @@ export default function HerdLab() {
         }
         if (vNextResult.status === 'fulfilled') {
           setVNext(presentVNextStatus(vNextResult.value.data.data))
+        }
+        if (prospectiveResult.status === 'fulfilled') {
+          setProspective(presentProspectiveEvidence(prospectiveResult.value.data.data))
         }
       })
       .finally(() => {
@@ -90,6 +97,22 @@ export default function HerdLab() {
               {vNext.blockers.map((blocker) => <em key={blocker}>{blocker}</em>)}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className={styles.prospectiveScope}>
+        <header>
+          <div>
+            <span>PROSPECTIVE OBSERVATION</span>
+            <strong>전향 관찰 원장</strong>
+          </div>
+          <em>{prospective.period}</em>
+        </header>
+        <div>
+          <ScopeItem label="감사 상태" value={prospective.statusLabel} sub="해시·행동 차단 계약" tone={prospective.available ? 'blue' : 'slate'} />
+          <ScopeItem label="관찰일" value={prospective.archives} sub="덮어쓰기 금지" tone="slate" />
+          <ScopeItem label="관찰 레코드" value={prospective.records} sub="당시 추적 범위 고정" tone="slate" />
+          <ScopeItem label="성숙 결과" value={prospective.matured} sub={`대기 ${prospective.pending}`} tone="slate" />
         </div>
       </section>
 

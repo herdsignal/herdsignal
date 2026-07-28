@@ -6,11 +6,72 @@
 }
 
 .currentScope,
+.prospectiveScope,
 .panel {
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent), var(--surface);
+}
+
+.prospectiveScope > header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 17px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.prospectiveScope > header > div {
+  display: grid;
+  gap: 5px;
+}
+
+.prospectiveScope > header span {
+  color: var(--text-3);
+  font-size: var(--hs-type-label);
+  font-weight: 800;
+}
+
+.prospectiveScope > header strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+}
+
+.prospectiveScope > header em {
+  color: var(--text-3);
+  font-size: var(--hs-type-label);
+  font-style: normal;
+}
+
+.prospectiveScope > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.prospectiveScope > div > div {
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+}
+
+.prospectiveScope > div > div:last-child {
+  border-right: 0;
+}
+
+.prospectiveScope > div span,
+.prospectiveScope > div em {
+  display: block;
+  color: var(--text-3);
+  font-size: var(--hs-type-label);
+  font-style: normal;
+}
+
+.prospectiveScope > div strong {
+  display: block;
+  margin: 7px 0 5px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
 }
 
 .currentScope {
@@ -486,6 +547,9 @@
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .gateSummary { grid-column: span 2; }
   .trustLine { grid-column: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .prospectiveScope > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .prospectiveScope > div > div:nth-child(2) { border-right: 0; }
+  .prospectiveScope > div > div:nth-child(-n + 2) { border-bottom: 1px solid var(--border); }
 }
 
 @media (max-width: 760px) {
@@ -536,6 +600,10 @@
   .metrics,
   .trustLine { grid-template-columns: 1fr; }
   .gateSummary { grid-column: span 1; }
+  .prospectiveScope > header { align-items: flex-start; flex-direction: column; }
+  .prospectiveScope > div { grid-template-columns: 1fr; }
+  .prospectiveScope > div > div { border-right: 0; border-bottom: 1px solid var(--border); }
+  .prospectiveScope > div > div:last-child { border-bottom: 0; }
   .sectorList article { grid-template-columns: 1fr; }
   .sectorList dl { margin-top: 4px; }
 }
