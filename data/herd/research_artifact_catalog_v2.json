@@ -183,6 +183,9 @@
       "data/herd/historical_s1_dependency_audit_v1.json",
       "data/reports/historical_s1_dependency_audit_v1.json",
       "data/reports/historical_s1_dependency_summary_v1.csv",
+      "data/herd/historical_prospective_bridge_v1.json",
+      "data/reports/historical_prospective_bridge_v1.json",
+      "data/reports/historical_prospective_bridge_v1.csv",
       "docs/README.md"
     ]
   },

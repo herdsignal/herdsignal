@@ -720,6 +720,18 @@ sector-signal week·era의 고유 개수와 관측 주 집중도를 기록한다
 이 결과는 이후 군집 검정의 단위를 고정할 뿐 통계적 독립성이나 방향
 예측력을 승인하지 않는다.
 
+과거 설명 맥락과 전향 관측의 준비 상태는 다음으로 감사한다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.historical_prospective_bridge_v1
+```
+
+과거와 전향 원장은 정확히 같은 21·63·126거래일에서만 비교한다.
+전향 관측일이 2개 미만이거나 만기별 결과가 30건 미만이면 비교를
+`PENDING`으로 유지한다. 이 기준은 상태 관찰과 과거 설명 통계 사용을
+막지 않지만 방향 예측과 행동 비율은 승인하지 않는다.
+
 ## 근거
 
 - scikit-learn `TimeSeriesSplit`: 시간 순서를 보존하고 train과 test 사이

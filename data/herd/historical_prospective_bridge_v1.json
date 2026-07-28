@@ -1,0 +1,28 @@
+{
+  "contract_version": "HERD_HISTORICAL_PROSPECTIVE_BRIDGE_V1",
+  "status": "LOCKED_DESCRIPTIVE_BRIDGE_ONLY",
+  "historical_replay_version": "HERD_HISTORICAL_S1_REPLAY_V1",
+  "prospective_evidence_version": "HERD_PROSPECTIVE_EVIDENCE_V1",
+  "comparison_horizons_sessions": [
+    21,
+    63,
+    126
+  ],
+  "historical_grouping": [
+    "universe_role",
+    "event_kind",
+    "horizon_sessions"
+  ],
+  "minimum_prospective_observation_dates_for_transition_comparison": 2,
+  "minimum_matured_outcomes_per_group": 30,
+  "claim_boundary": {
+    "historical_context_only_until_prospective_ready": true,
+    "candidate_selection": false,
+    "direction_prediction": false,
+    "buy_or_profit_take_authority": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

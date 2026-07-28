@@ -1,0 +1,48 @@
+{
+  "report_version": "HERD_HISTORICAL_PROSPECTIVE_BRIDGE_V1",
+  "status": "HISTORICAL_CONTEXT_READY_PROSPECTIVE_PENDING",
+  "historical_context": {
+    "ready": true,
+    "groups": 30,
+    "rows": 69792,
+    "survivorship_safe": false,
+    "use": "DESCRIPTIVE_CONTEXT_ONLY"
+  },
+  "prospective": {
+    "observation_dates": 1,
+    "observation_records": 440,
+    "matured_outcomes": 0,
+    "transition_comparison_ready": false,
+    "comparison_ready_by_horizon": {
+      "21": false,
+      "63": false,
+      "126": false
+    },
+    "minimum_matured_outcomes_per_group": 30
+  },
+  "waiting_does_not_block": [
+    "HERD_STATE_S1_OBSERVATION",
+    "HERD_TRANSITION_S1_OBSERVATION",
+    "HISTORICAL_DESCRIPTIVE_CONTEXT"
+  ],
+  "still_blocked": [
+    "DIRECTION_PREDICTION",
+    "BUY_OR_PROFIT_TAKE_AUTHORITY",
+    "OPERATIONAL_ACTION_RATIO"
+  ],
+  "candidate_selection": false,
+  "direction_prediction": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "survivorship_safe": false,
+  "inputs": {
+    "contract_sha256": "7341a3dbb9a08d7962db8c95d9369893d2ad7f3df2de54bc3d9c967e9e687628",
+    "historical_report_sha256": "fa1253006029b1d8666315024436c9d7fddd0537ccaa9feb1aeab8cbc8d97b4e",
+    "historical_ledger_sha256": "4ba4657d210f4905eea953ddeb9dd91dfd7bbea94cbdff81e63b66ae21f000a8"
+  },
+  "summary": {
+    "path": "data/reports/historical_prospective_bridge_v1.csv",
+    "sha256": "cf633a580450020e0e8f2e2993ea5e439c331556ec1de7c537b09f510b01088a"
+  }
+}
