@@ -7,7 +7,12 @@ import {
 } from '../../api/herdApi'
 import { clearPortfolioCaches } from '../../features/portfolio/portfolioCache'
 
-export function useTickerMembership({ selectedTicker, userId, onPortfolioAdded }) {
+export function useTickerMembership({
+  selectedTicker,
+  userId,
+  onPortfolioAdded,
+  enabled = true,
+}) {
   const [portfolioTickers, setPortfolioTickers] = useState(new Set())
   const [watchlistTickers, setWatchlistTickers] = useState(new Set())
   const [portfolioStatus, setPortfolioStatus] = useState('idle')
@@ -15,6 +20,11 @@ export function useTickerMembership({ selectedTicker, userId, onPortfolioAdded }
   const [addError, setAddError] = useState('')
 
   useEffect(() => {
+    if (!enabled) {
+      setPortfolioTickers(new Set())
+      setWatchlistTickers(new Set())
+      return undefined
+    }
     let active = true
     Promise.allSettled([getPortfolio(), getWatchlist()]).then(([portfolio, watchlist]) => {
       if (!active) return
@@ -28,7 +38,7 @@ export function useTickerMembership({ selectedTicker, userId, onPortfolioAdded }
       }
     })
     return () => { active = false }
-  }, [])
+  }, [enabled])
 
   useEffect(() => {
     setPortfolioStatus(
@@ -41,6 +51,7 @@ export function useTickerMembership({ selectedTicker, userId, onPortfolioAdded }
   }, [selectedTicker, portfolioTickers, watchlistTickers])
 
   const handleAddPortfolio = useCallback(async (ticker) => {
+    if (!enabled) return
     if (portfolioStatus !== 'idle') return
     setAddError('')
     setPortfolioStatus('loading')
@@ -56,9 +67,10 @@ export function useTickerMembership({ selectedTicker, userId, onPortfolioAdded }
         setAddError(error.response?.data?.message ?? '종목을 추가할 수 없습니다.')
       }
     }
-  }, [portfolioStatus, userId, onPortfolioAdded])
+  }, [enabled, portfolioStatus, userId, onPortfolioAdded])
 
   const handleAddWatchlist = useCallback(async (ticker) => {
+    if (!enabled) return
     if (watchlistStatus !== 'idle') return
     setAddError('')
     setWatchlistStatus('loading')
@@ -72,7 +84,7 @@ export function useTickerMembership({ selectedTicker, userId, onPortfolioAdded }
         setAddError(error.response?.data?.message ?? '종목을 추가할 수 없습니다.')
       }
     }
-  }, [watchlistStatus])
+  }, [enabled, watchlistStatus])
 
   return {
     portfolioTickers,

@@ -47,6 +47,22 @@ beforeEach(() => {
 afterEach(() => cleanup())
 
 describe('usePortfolioData', () => {
+  it('does not request private portfolio data when disabled', async () => {
+    const setTargetWeights = vi.fn()
+    const { result } = renderHook(() => usePortfolioData({
+      userId: null,
+      setTargetWeights,
+      enabled: false,
+    }))
+
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    expect(api.getPortfolio).not.toHaveBeenCalled()
+    expect(api.getPortfolioSummary).not.toHaveBeenCalled()
+    expect(api.getPortfolioRealtime).not.toHaveBeenCalled()
+    expect(api.getHerdObservations).not.toHaveBeenCalled()
+    expect(api.getCashBalance).not.toHaveBeenCalled()
+  })
+
   it('revalidates the summary and loads State S1 observations', async () => {
     const setTargetWeights = vi.fn()
     localStorage.setItem(CACHE_KEY_VERSION, PORTFOLIO_CACHE_VERSION)

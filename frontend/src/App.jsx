@@ -39,21 +39,20 @@ export default function App() {
           <Routes>
           <Route path="/" element={<Navigate to="/app" replace />} />
           <Route path="/login" element={<Login />} />
-          <Route element={<ProtectedRoute />}>
-          {/* Layout이 공통 탐색 + <Outlet>으로 모든 보호 페이지를 감싼다 */}
           <Route element={<Layout />}>
             <Route path="/app"           element={<Dashboard />} />
             <Route path="/portfolio"     element={<Navigate to="/app" replace />} />
             <Route path="/stock/:ticker" element={<StockDetail />} />
             <Route path="/search"        element={<Navigate to="/app" replace />} />
-            <Route path="/watchlist"     element={<Watchlist />} />
-            <Route path="/changes"       element={<ObservationChanges />} />
-            <Route path="/history"       element={<History />} />
-            <Route path="/ledger"        element={<Ledger />} />
-            <Route path="/herd-lab"      element={<HerdLab />} />
-            <Route path="/journal"       element={<Journal />} />
-            <Route path="/settings"      element={<Settings />} />
-          </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/watchlist"   element={<Watchlist />} />
+              <Route path="/changes"     element={<ObservationChanges />} />
+              <Route path="/history"     element={<History />} />
+              <Route path="/ledger"      element={<Ledger />} />
+              <Route path="/herd-lab"    element={<HerdLab />} />
+              <Route path="/journal"     element={<Journal />} />
+              <Route path="/settings"    element={<Settings />} />
+            </Route>
           </Route>
           </Routes>
         </Suspense>

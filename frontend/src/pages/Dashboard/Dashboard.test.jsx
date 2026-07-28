@@ -6,7 +6,7 @@ import Dashboard from './Dashboard'
 const addWatchlist = vi.fn()
 
 vi.mock('../../auth/AuthContext', () => ({
-  useAuth: () => ({ user: { id: 1 } }),
+  useAuth: () => ({ user: { authenticated: true, id: 1 } }),
 }))
 
 vi.mock('../MarketHome/useMarketHomeData', () => ({

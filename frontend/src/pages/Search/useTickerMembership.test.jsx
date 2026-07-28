@@ -30,6 +30,24 @@ afterEach(() => {
 })
 
 describe('useTickerMembership', () => {
+  it('does not read or mutate private membership when disabled', async () => {
+    const { result } = renderHook(() => useTickerMembership({
+      selectedTicker: 'NVDA',
+      userId: null,
+      enabled: false,
+    }))
+
+    await act(async () => {
+      await result.current.handleAddPortfolio('NVDA')
+      await result.current.handleAddWatchlist('NVDA')
+    })
+
+    expect(getPortfolio).not.toHaveBeenCalled()
+    expect(getWatchlist).not.toHaveBeenCalled()
+    expect(addToPortfolio).not.toHaveBeenCalled()
+    expect(addToWatchlist).not.toHaveBeenCalled()
+  })
+
   it('marks existing membership and clears portfolio cache after a new addition', async () => {
     const onAdded = vi.fn()
     const { result, rerender } = renderHook(

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import herdSignalMark from '../../assets/brand/herdsignal-mark.svg'
 import { useAuth } from '../../auth/AuthContext'
 import DataStatusIndicator from '../DataStatus/DataStatusIndicator'
@@ -40,10 +40,13 @@ export function titleForPath(pathname) {
   return title ? `${title} · HerdSignal` : 'HerdSignal'
 }
 
-function Navigation({ className, label }) {
+function Navigation({ className, label, authenticated = true }) {
+  const items = authenticated
+    ? PRIMARY_NAVIGATION
+    : PRIMARY_NAVIGATION.filter((item) => item.to === '/app')
   return (
     <nav className={className} aria-label={label}>
-      {PRIMARY_NAVIGATION.map((item) => (
+      {items.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
@@ -60,6 +63,7 @@ function Navigation({ className, label }) {
 }
 export default function Layout() {
   const { user, signOut } = useAuth()
+  const authenticated = Boolean(user?.authenticated)
   const location = useLocation()
   const accountRef = useRef(null)
   const accountTriggerRef = useRef(null)
@@ -115,33 +119,41 @@ export default function Layout() {
           <span>HerdSignal</span>
         </NavLink>
 
-        <Navigation className={styles.desktopNav} label="주요 메뉴" />
+        <Navigation
+          className={styles.desktopNav}
+          label="주요 메뉴"
+          authenticated={authenticated}
+        />
 
         <div className={styles.account} ref={accountRef}>
-          <ObservationChangesIndicator />
+          {authenticated && <ObservationChangesIndicator />}
           <DataStatusIndicator />
-          <button
-            ref={accountTriggerRef}
-            type="button"
-            className={styles.accountTrigger}
-            aria-label={accountOpen ? '계정 메뉴 닫기' : '계정 메뉴 열기'}
-            aria-expanded={accountOpen}
-            aria-controls="account-panel"
-            aria-haspopup="true"
-            onClick={() => setAccountOpen((open) => !open)}
-          >
-            {user?.profileImageUrl
-              ? (
-                <img
-                  src={user.profileImageUrl}
-                  alt=""
-                  referrerPolicy="no-referrer"
-                />
-                )
-              : <span>{userInitial}</span>}
-          </button>
+          {authenticated ? (
+            <button
+              ref={accountTriggerRef}
+              type="button"
+              className={styles.accountTrigger}
+              aria-label={accountOpen ? '계정 메뉴 닫기' : '계정 메뉴 열기'}
+              aria-expanded={accountOpen}
+              aria-controls="account-panel"
+              aria-haspopup="true"
+              onClick={() => setAccountOpen((open) => !open)}
+            >
+              {user?.profileImageUrl
+                ? (
+                  <img
+                    src={user.profileImageUrl}
+                    alt=""
+                    referrerPolicy="no-referrer"
+                  />
+                  )
+                : <span>{userInitial}</span>}
+            </button>
+          ) : (
+            <Link className={styles.loginLink} to="/login">로그인</Link>
+          )}
 
-          {accountOpen && (
+          {authenticated && accountOpen && (
             <aside id="account-panel" className={styles.accountPanel} aria-label="계정 메뉴">
               <div className={styles.userSummary}>
                 <strong>{user?.displayName || 'HerdSignal 사용자'}</strong>
@@ -176,7 +188,11 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <Navigation className={styles.mobileNav} label="모바일 주요 메뉴" />
+      <Navigation
+        className={styles.mobileNav}
+        label="모바일 주요 메뉴"
+        authenticated={authenticated}
+      />
     </div>
   )
 }

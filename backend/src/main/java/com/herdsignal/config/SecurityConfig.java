@@ -77,8 +77,11 @@ public class SecurityConfig {
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers("/oauth2/**", "/login/**", "/error", "/actuator/health/**").permitAll()
                             .requestMatchers("/api/auth/**", "/api/model/**").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/api/stocks/SPY/herd").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/api/observations/SPY").permitAll()
+                            .requestMatchers(HttpMethod.GET,
+                                    "/api/stocks/search",
+                                    "/api/stocks/*/financials",
+                                    "/api/observations/**",
+                                    "/api/system/data-status").permitAll()
                             .anyRequest().authenticated())
                     .oauth2Login(login -> login
                             .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcAppUserService))

@@ -58,6 +58,7 @@ function withCash(summary, cashBalance) {
 export function usePortfolioData({
   userId,
   setTargetWeights,
+  enabled = true,
 }) {
   const [portfolio, setPortfolio] = useState([])
   const [summary, setSummary] = useState(null)
@@ -79,6 +80,7 @@ export function usePortfolioData({
   const cashBalanceRef = useRef(0)
 
   const revalidatePortfolioSummary = useCallback(async ({ force = false } = {}) => {
+    if (!enabled) return false
     const now = Date.now()
     if (!force && now - lastSummaryValidation.current < 60_000) return false
     lastSummaryValidation.current = now
@@ -93,9 +95,10 @@ export function usePortfolioData({
     } catch {
       return false
     }
-  }, [])
+  }, [enabled])
 
   const revalidateRealtimeSummary = useCallback(async ({ force = false } = {}) => {
+    if (!enabled) return false
     const now = Date.now()
     if (!force && now - lastRealtimeValidation.current < 60_000) return false
     lastRealtimeValidation.current = now
@@ -115,9 +118,17 @@ export function usePortfolioData({
     } catch {
       return false
     }
-  }, [userId])
+  }, [enabled, userId])
 
   const fetchData = useCallback(async () => {
+    if (!enabled) {
+      setPortfolio([])
+      setSummary(null)
+      setHerdMap({})
+      setError(null)
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError(null)
     if (ensurePortfolioCacheVersion()) setLastUpdated(null)
@@ -174,19 +185,20 @@ export function usePortfolioData({
     } finally {
       setLoading(false)
     }
-  }, [revalidatePortfolioSummary, setTargetWeights, userId])
+  }, [enabled, revalidatePortfolioSummary, setTargetWeights, userId])
 
   useEffect(() => {
     fetchData()
   }, [fetchData])
 
   useEffect(() => {
-    if (loading || error || portfolio.length === 0) return undefined
+    if (!enabled || loading || error || portfolio.length === 0) return undefined
     revalidateRealtimeSummary({ force: true })
     return undefined
-  }, [error, loading, portfolio.length, revalidateRealtimeSummary])
+  }, [enabled, error, loading, portfolio.length, revalidateRealtimeSummary])
 
   useEffect(() => {
+    if (!enabled) return undefined
     const revalidateOnReturn = () => {
       if (document.visibilityState !== 'visible') return
       revalidateRealtimeSummary()
@@ -197,13 +209,14 @@ export function usePortfolioData({
       window.removeEventListener('focus', revalidateOnReturn)
       document.removeEventListener('visibilitychange', revalidateOnReturn)
     }
-  }, [revalidateRealtimeSummary])
+  }, [enabled, revalidateRealtimeSummary])
 
   useEffect(() => () => {
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
   }, [])
 
   const handleRefresh = useCallback(async () => {
+    if (!enabled) return
     setRefreshing(true)
     if (refreshNoticeTimer.current) clearTimeout(refreshNoticeTimer.current)
     setRefreshNotice('현재가 조회 · State S1 관찰값 조회 중')
@@ -233,6 +246,7 @@ export function usePortfolioData({
       setRefreshing(false)
     }
   }, [
+    enabled,
     portfolio,
     revalidateRealtimeSummary,
     userId,

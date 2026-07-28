@@ -41,16 +41,21 @@ class SecurityConfigTest {
         mockMvc.perform(get("/api/portfolio"))
                 .andExpect(status().isUnauthorized());
 
-        mockMvc.perform(get("/api/stocks/NVDA/herd"))
-                .andExpect(status().isUnauthorized());
-
         mockMvc.perform(get("/api/observations/SPY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.availabilityStatus")
                         .value("UNAVAILABLE"));
 
         mockMvc.perform(get("/api/observations/NVDA"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.availabilityStatus")
+                        .value("UNAVAILABLE"));
+
+        mockMvc.perform(get("/api/observations/NVDA/timeline"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/stocks/search").param("q", "NVDA"))
+                .andExpect(status().isOk());
     }
 
     @Test

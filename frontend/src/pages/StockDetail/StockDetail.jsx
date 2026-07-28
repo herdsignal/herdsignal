@@ -20,6 +20,7 @@ export default function StockDetail() {
   const detail = useStockDetail(ticker)
   const {
     observation,
+    authenticated,
     observationAvailable,
     loading,
     error,
@@ -80,6 +81,13 @@ export default function StockDetail() {
           </div>
         </div>
         <div className={styles.stockHeaderRight}>
+          {!authenticated && (
+            <button type="button" className={styles.btnWatchlist} onClick={() => navigate('/login')}>
+              로그인
+            </button>
+          )}
+          {authenticated && (
+            <>
           <button
             type="button"
             className={styles.btnWatchlist}
@@ -96,6 +104,8 @@ export default function StockDetail() {
           >
             {BTN_LABELS.portfolio[portfolioStatus]}
           </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -153,6 +163,7 @@ export default function StockDetail() {
               color={color}
             />
             <StockDetailRecords
+              authenticated={authenticated}
               financialsLoading={financialsLoading}
               financials={financials}
               fundamentalGuard={fundamentalGuard}
@@ -165,7 +176,7 @@ export default function StockDetail() {
         </div>
       )}
 
-      {journalAction && observationAvailable && (
+      {authenticated && journalAction && observationAvailable && (
         <SignalJournalModal
           ticker={normalizedTicker}
           actionType={journalAction}

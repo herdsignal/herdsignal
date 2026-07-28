@@ -154,6 +154,22 @@
   cursor: pointer;
 }
 
+.loginLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid var(--hs-line-strong);
+  border-radius: var(--hs-radius-sm);
+  color: var(--hs-text);
+  font-size: var(--hs-type-label);
+  font-weight: 680;
+}
+
+.loginLink:hover {
+  background: var(--hs-surface);
+}
+
 .accountTrigger img,
 .accountTrigger span {
   width: 100%;

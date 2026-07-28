@@ -5,7 +5,7 @@ import {
   getSignalJournal,
 } from '../../api/herdApi'
 
-export function useStockSignalJournal(normalizedTicker) {
+export function useStockSignalJournal(normalizedTicker, { enabled = true } = {}) {
   const [signalLogs, setSignalLogs] = useState([])
   const [journalAction, setJournalAction] = useState(null)
   const [actionError, setActionError] = useState(null)
@@ -18,6 +18,10 @@ export function useStockSignalJournal(normalizedTicker) {
   }, [normalizedTicker])
 
   const fetchSignalLogs = useCallback(async () => {
+    if (!enabled) {
+      setSignalLogs([])
+      return
+    }
     const requestId = ++journalRequest.current
     try {
       const response = await getSignalJournal(normalizedTicker)
@@ -27,7 +31,7 @@ export function useStockSignalJournal(normalizedTicker) {
     } catch {
       if (requestId === journalRequest.current) setSignalLogs([])
     }
-  }, [normalizedTicker])
+  }, [enabled, normalizedTicker])
 
   useEffect(() => {
     fetchSignalLogs()

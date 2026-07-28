@@ -19,12 +19,16 @@ import { buildStockBrief } from './stockBriefModel'
 
 export function useStockDetail(ticker) {
   const { user } = useAuth()
+  const authenticated = Boolean(user?.authenticated)
   const normalizedTicker = String(ticker ?? '').trim().toUpperCase()
   const resources = useStockDetailResources(normalizedTicker, ticker)
-  const journal = useStockSignalJournal(normalizedTicker)
+  const journal = useStockSignalJournal(normalizedTicker, {
+    enabled: authenticated,
+  })
   const membership = useTickerMembership({
     selectedTicker: normalizedTicker,
     userId: user?.id,
+    enabled: authenticated,
   })
   const {
     observation,
@@ -119,6 +123,7 @@ export function useStockDetail(ticker) {
   }
 
   return {
+    authenticated,
     observation,
     observationAvailable,
     loading,

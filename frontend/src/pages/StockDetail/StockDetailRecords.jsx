@@ -3,6 +3,7 @@ import StockDetailFundamentals from './StockDetailFundamentals'
 import StockDetailJournal from './StockDetailJournal'
 
 export default function StockDetailRecords({
+  authenticated = true,
   financialsLoading,
   financials,
   fundamentalGuard,
@@ -23,12 +24,14 @@ export default function StockDetailRecords({
           financials={financials}
           guard={fundamentalGuard}
         />
-        <StockDetailJournal
-          summary={journalSummary}
-          logs={signalLogs}
-          onCreate={onCreateJournal}
-          onDelete={onDeleteJournal}
-        />
+        {authenticated && (
+          <StockDetailJournal
+            summary={journalSummary}
+            logs={signalLogs}
+            onCreate={onCreateJournal}
+            onDelete={onDeleteJournal}
+          />
+        )}
       </div>
     </section>
   )

@@ -16,7 +16,10 @@ const CURRENCY_STORAGE_KEY = 'herdsignal_currency'
 const SORT_STORAGE_KEY = 'herdsignal_portfolio_lens_sort'
 const PRIVACY_STORAGE_KEY = 'herdsignal_portfolio_privacy'
 
-export function usePortfolioPageData({ assetHistoryInitiallyOpen = true } = {}) {
+export function usePortfolioPageData({
+  assetHistoryInitiallyOpen = true,
+  enabled = true,
+} = {}) {
   const { user } = useAuth()
   const userId = user?.id
   const [, setTargetWeights] = useState({})
@@ -35,6 +38,7 @@ export function usePortfolioPageData({ assetHistoryInitiallyOpen = true } = {}) 
   const data = usePortfolioData({
     userId,
     setTargetWeights,
+    enabled,
   })
   const history = usePortfolioAssetHistory(data.summary, data.cashBalance, {
     initiallyOpen: assetHistoryInitiallyOpen,

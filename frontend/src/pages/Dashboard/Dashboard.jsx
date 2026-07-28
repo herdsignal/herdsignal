@@ -45,6 +45,7 @@ function selectedObservation(result) {
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const authenticated = Boolean(user?.authenticated)
   const navigate = useNavigate()
   const inputRef = useRef(null)
   const [assetsOpen, setAssetsOpen] = useState(false)
@@ -54,10 +55,14 @@ export default function Dashboard() {
   const candidate = resultMeta(searchResult)
   const candidateTicker = resultTicker(searchResult)
   const market = marketHomeViewModel(useMarketHomeData())
-  const portfolio = usePortfolioPageData({ assetHistoryInitiallyOpen: false })
+  const portfolio = usePortfolioPageData({
+    assetHistoryInitiallyOpen: false,
+    enabled: authenticated,
+  })
   const membership = useTickerMembership({
     selectedTicker: candidateTicker,
     userId: user?.id,
+    enabled: authenticated,
   })
 
   const suggestions = useMemo(() => {
@@ -140,6 +145,7 @@ export default function Dashboard() {
                   </button>
                   <button
                     type="button"
+                    hidden={!authenticated}
                     disabled={[
                       'loading',
                       'added',
@@ -186,6 +192,13 @@ export default function Dashboard() {
       />
 
       <section className={styles.portfolioSection} aria-label="보유 현황">
+        {!authenticated ? (
+          <div className={styles.empty}>
+            <p>포트폴리오와 관심 종목은 로그인 후 저장됩니다.</p>
+            <Link to="/login">Google로 로그인</Link>
+          </div>
+        ) : (
+          <>
         <header>
           <div>
             <span>PORTFOLIO OBSERVATION</span>
@@ -282,17 +295,19 @@ export default function Dashboard() {
             targetSavingTicker={portfolio.targetSavingTicker}
           />
         )}
-      </section>
 
-      {portfolio.modalTicker && (
-        <AvgPriceModal
-          ticker={portfolio.modalTicker}
-          currentAvgPrice={portfolio.modalStock?.avgPrice ?? null}
-          currentQuantity={portfolio.modalStock?.quantity ?? null}
-          onClose={() => portfolio.setModalTicker(null)}
-          onSaved={portfolio.handleModalSaved}
-        />
-      )}
+        {portfolio.modalTicker && (
+          <AvgPriceModal
+            ticker={portfolio.modalTicker}
+            currentAvgPrice={portfolio.modalStock?.avgPrice ?? null}
+            currentQuantity={portfolio.modalStock?.quantity ?? null}
+            onClose={() => portfolio.setModalTicker(null)}
+            onSaved={portfolio.handleModalSaved}
+          />
+        )}
+          </>
+        )}
+      </section>
     </div>
   )
 }
