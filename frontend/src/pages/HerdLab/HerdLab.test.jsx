@@ -3,12 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   getModelValidationReport,
   getShadowModelStatus,
+  getVNextModelStatus,
 } from '../../api/herdApi'
 import HerdLab from './HerdLab'
 
 vi.mock('../../api/herdApi', () => ({
   getModelValidationReport: vi.fn(),
   getShadowModelStatus: vi.fn(),
+  getVNextModelStatus: vi.fn(),
 }))
 
 const legacyReport = {
@@ -55,6 +57,22 @@ beforeEach(() => {
   getShadowModelStatus.mockResolvedValue({
     data: { data: { shadowStatus: 'DISABLED_RESEARCH_GATE_FAILED' } },
   })
+  getVNextModelStatus.mockResolvedValue({
+    data: {
+      data: {
+        sourceContractAccepted: true,
+        validationStatus: 'STATE_OBSERVATION_MVP_READY',
+        adoptableCandidate: false,
+        operationalActionRatio: 0,
+        blindHoldoutOpened: false,
+        promotionBlockers: [
+          'PERSONAL_POLICY_PREHOLDOUT_FAILED',
+          'BLIND_HOLDOUT_NOT_PASSED',
+          'SURVIVORSHIP_SAFE_FALSE',
+        ],
+      },
+    },
+  })
 })
 
 describe('HerdLab', () => {
@@ -62,6 +80,9 @@ describe('HerdLab', () => {
     render(<HerdLab />)
 
     expect(screen.getByText('State S1 관찰 운영 · 행동 모델 미채택')).toBeInTheDocument()
+    expect(await screen.findByText('사전 채택 기준 미통과')).toBeInTheDocument()
+    expect(screen.getByText('Blind holdout 미통과')).toBeInTheDocument()
+    expect(screen.getByText('생존자 편향 잔존')).toBeInTheDocument()
     const summary = await screen.findByText('v4 · v6.1 검증 기록')
     const archive = summary.closest('details')
     expect(archive).not.toHaveAttribute('open')

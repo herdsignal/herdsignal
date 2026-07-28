@@ -88,6 +88,27 @@
   white-space: nowrap;
 }
 
+.gateSummary {
+  grid-column: span 3;
+}
+
+.gateSummary > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.scopeGrid .gateSummary em {
+  display: inline-flex;
+  margin: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface2);
+  white-space: normal;
+}
+
 .trustLine {
   grid-column: 1 / -1;
   display: grid;
@@ -463,6 +484,7 @@
   .archiveOverview { grid-template-columns: 1fr; }
   .scopeGrid,
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gateSummary { grid-column: span 2; }
   .trustLine { grid-column: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -513,6 +535,7 @@
   .scopeGrid,
   .metrics,
   .trustLine { grid-template-columns: 1fr; }
+  .gateSummary { grid-column: span 1; }
   .sectorList article { grid-template-columns: 1fr; }
   .sectorList dl { margin-top: 4px; }
 }

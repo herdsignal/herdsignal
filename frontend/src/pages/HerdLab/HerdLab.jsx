@@ -3,11 +3,16 @@
  */
 
 import { useEffect, useState } from 'react'
-import { getModelValidationReport, getShadowModelStatus } from '../../api/herdApi'
+import {
+  getModelValidationReport,
+  getShadowModelStatus,
+  getVNextModelStatus,
+} from '../../api/herdApi'
 import herdModelReport from '../../data/herdModelReport'
 import styles from './HerdLab.module.css'
 import { presentValidationReport } from './herdModelPresentation'
 import { presentShadowStatus } from './shadowModelPresentation'
+import { presentVNextStatus } from './vNextModelPresentation'
 import {
   ActionOutcomesPanel,
   LegacyBaselinesPanel,
@@ -20,13 +25,18 @@ const { model: MODEL_BASE } = herdModelReport
 export default function HerdLab() {
   const [report, setReport] = useState(null)
   const [shadow, setShadow] = useState(() => presentShadowStatus(null))
+  const [vNext, setVNext] = useState(() => presentVNextStatus(null))
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let active = true
-    Promise.allSettled([getModelValidationReport(), getShadowModelStatus()])
-      .then(([validationResult, shadowResult]) => {
+    Promise.allSettled([
+      getModelValidationReport(),
+      getShadowModelStatus(),
+      getVNextModelStatus(),
+    ])
+      .then(([validationResult, shadowResult, vNextResult]) => {
         if (!active) return
         if (validationResult.status === 'fulfilled') {
           setReport(presentValidationReport(validationResult.value.data.data))
@@ -40,14 +50,15 @@ export default function HerdLab() {
         if (shadowResult.status === 'fulfilled') {
           setShadow(presentShadowStatus(shadowResult.value.data.data))
         }
+        if (vNextResult.status === 'fulfilled') {
+          setVNext(presentVNextStatus(vNextResult.value.data.data))
+        }
       })
       .finally(() => {
         if (active) setLoading(false)
       })
     return () => { active = false }
   }, [])
-
-  const model = report?.model
 
   return (
     <div className={styles.page}>
@@ -63,20 +74,22 @@ export default function HerdLab() {
           </div>
         </header>
         <div className={styles.scopeGrid}>
-          <ScopeItem label="운영 지수" value="State S1" sub="시장·종목 상태" tone="blue" />
-          <ScopeItem label="매수·익절 모델" value="비활성" sub="채택 후보 없음" tone="slate" />
+          <ScopeItem label="운영 관찰" value={vNext.observationLabel} sub="시장·종목 상태" tone="blue" />
+          <ScopeItem label="매수·익절 후보" value={vNext.actionLabel} sub="운영 연결 없음" tone="slate" />
+          <ScopeItem label="운영 행동 비율" value={vNext.actionRatioLabel} sub="기본 행동 HOLD" tone="slate" />
+          <ScopeItem label="Blind holdout" value={vNext.holdoutLabel} sub="승격 전까지 잠금" tone="slate" />
           <ScopeItem
             label="Shadow 후보"
             value={shadow.candidate ?? '없음'}
             sub={shadow.candidate ? '병렬 관측 중' : '검증 통과 대기'}
             tone={shadow.candidate ? 'blue' : 'slate'}
           />
-          <ScopeItem
-            label="최신 연구 기록"
-            value={model?.generatedAt ?? (loading ? '확인 중' : '없음')}
-            sub="과거 모델 보고서"
-            tone="slate"
-          />
+          <div className={styles.gateSummary}>
+            <span>현재 승격 차단</span>
+            <div>
+              {vNext.blockers.map((blocker) => <em key={blocker}>{blocker}</em>)}
+            </div>
+          </div>
         </div>
       </section>
 

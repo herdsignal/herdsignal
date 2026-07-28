@@ -233,6 +233,9 @@ export const getModelValidationReport = () => api.get('/api/model/validation')
 /** 운영 모델과 격리된 차세대 HERD shadow 실행 상태 */
 export const getShadowModelStatus = () => api.get('/api/model/shadow-status')
 
+/** 최신 개인 연구 MVP의 채택 게이트와 운영 차단 상태 */
+export const getVNextModelStatus = () => api.get('/api/model/vnext-status')
+
 /* ── 투자자 행동 설정 ──────────────────────── */
 
 export const getInvestorProfile = () => api.get('/api/investor-profile')
