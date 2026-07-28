@@ -1,0 +1,31 @@
+{
+  "report_version": "HERD_EVIDENCE_ADMISSION_V10",
+  "status": "NO_INDEPENDENT_PROFIT_TAKE_EVIDENCE_ADMITTED",
+  "adjudicated_hypotheses": 10,
+  "rejected_hypotheses": [
+    "WEEKLY_RSI_OVERBOUGHT_V1",
+    "RUSH_PRE_DAMAGE_PRICE_VOLUME_V2",
+    "RUSH_DOWNSIDE_ASYMMETRY_V1",
+    "INDEPENDENT_RUSH_TRANSITION_FAMILIES_V1",
+    "VNEXT_COMBINED_PATH_MODEL_V1",
+    "SEC_PIT_BUSINESS_GUARD_V1",
+    "FORM4_INSIDER_PURCHASE_SUPPORT_V1",
+    "MANAGEMENT_GUIDANCE_LOWER_V2",
+    "SEC_13F_SLOW_CROWDING_INCREMENTAL_V1",
+    "PERSONAL_PROFIT_GIVEBACK_CYCLE_V1"
+  ],
+  "tested_state_families": [
+    "DOWNSIDE_RISK_CONTEXT",
+    "PARTICIPATION",
+    "PRICE_EXTENSION",
+    "RELATIVE_POSITION",
+    "TREND_POSITION"
+  ],
+  "admitted_families": [],
+  "combination_allowed": false,
+  "next_gate": "NEW_ECONOMIC_INFORMATION_ON_NEW_OOS_SAMPLE",
+  "completed_cycle_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

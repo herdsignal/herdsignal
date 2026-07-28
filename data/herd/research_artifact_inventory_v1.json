@@ -63,6 +63,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/evidence_admission_registry_v10.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/evidence_admission_registry_v2.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -901,6 +905,10 @@
     {
       "path": "data/reports/data_quality_audit_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/evidence_admission_registry_v10.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/evidence_family_validation_v1.json",

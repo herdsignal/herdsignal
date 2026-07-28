@@ -1,0 +1,37 @@
+{
+  "registry_version": "HERD_EVIDENCE_ADMISSION_V10",
+  "status": "LOCKED_BEFORE_CONSOLIDATED_ADMISSION_RESULT",
+  "locked_at": "2026-07-29",
+  "objective": "Consolidate every adjudicated price and non-price hypothesis without allowing rejected evidence to be renamed, retuned, or recombined.",
+  "inputs": [
+    {
+      "path": "data/herd/failed_hypothesis_map_v1.json",
+      "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2"
+    },
+    {
+      "path": "data/reports/profit_take_family_oos_v1.json",
+      "sha256": "da46e8641171916094a62bb1b236cb416604d130454f7a35bb17bd009dd47842"
+    }
+  ],
+  "admission_rule": {
+    "all_source_hashes_must_match": true,
+    "rejected_hypothesis_cannot_be_admitted": true,
+    "both_primary_and_independent_universe_required": true,
+    "minimum_log_loss_improvement": 0.005,
+    "minimum_directional_folds": 4,
+    "missing_metric_is_failure": true,
+    "combination_requires_at_least_one_independently_admitted_family": true
+  },
+  "retry_boundary": {
+    "same_oos_threshold_retuning": false,
+    "relabeling_rejected_family": false,
+    "recombining_rejected_families": false,
+    "new_economic_information_and_new_oos_required": true
+  },
+  "firewall": {
+    "blind_holdout_access": false,
+    "completed_cycle_allowed": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0
+  }
+}
