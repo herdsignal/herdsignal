@@ -119,6 +119,7 @@
 .dates div {
   display: grid;
   gap: 5px;
+  min-width: 0;
 }
 
 .dates div + div {
@@ -126,10 +127,28 @@
   border-left: 1px solid var(--hs-line);
 }
 
-.dates dt,
 .run span {
   color: var(--hs-text-muted);
   font-size: var(--hs-type-label);
+}
+
+.dates dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.dates dt small {
+  padding: 2px 5px;
+  border: 1px solid var(--hs-line);
+  border-radius: 999px;
+  color: var(--hs-text-subtle);
+  font-size: 9px;
+  font-weight: 680;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .dates dd {
@@ -137,6 +156,13 @@
   color: var(--hs-text);
   font-size: var(--hs-type-body);
   font-weight: 680;
+}
+
+.dates p {
+  margin: 0;
+  color: var(--hs-text-subtle);
+  font-size: 10px;
+  line-height: 1.4;
 }
 
 .run {

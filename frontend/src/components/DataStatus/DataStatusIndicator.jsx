@@ -118,12 +118,20 @@ export default function DataStatusIndicator() {
 
           <dl className={styles.dates}>
             <div>
-              <dt>가격 기준일</dt>
+              <dt>
+                <span>가격 데이터</span>
+                <small>거래일마다</small>
+              </dt>
               <dd>{view.priceDate}</dd>
+              <p>미국장 마감 후 반영</p>
             </div>
             <div>
-              <dt>State S1 기준일</dt>
+              <dt>
+                <span>State S1</span>
+                <small>주 1회</small>
+              </dt>
               <dd>{view.scoreDate}</dd>
+              <p>완료된 금요일 기준</p>
             </div>
           </dl>
 

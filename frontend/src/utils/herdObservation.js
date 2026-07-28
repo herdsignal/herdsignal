@@ -73,9 +73,9 @@ export function normalizeHerdPriceTimeline(points) {
 }
 
 export function observationFreshnessLabel(observation) {
-  if (!isObservationAvailable(observation)) return '관찰값 준비 중'
-  if (observation.freshnessStatus === 'STALE') return '업데이트 필요'
-  return '최신 관찰'
+  if (!isObservationAvailable(observation)) return '주간 관찰 준비 중'
+  if (observation.freshnessStatus === 'STALE') return '주간 관찰 갱신 필요'
+  return '주간 관찰'
 }
 
 /**

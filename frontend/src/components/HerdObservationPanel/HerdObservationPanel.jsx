@@ -26,7 +26,7 @@ export default function HerdObservationPanel({
   stage,
   delta4w,
   observationDate,
-  freshness = '최신 관찰',
+  freshness = '주간 관찰',
   loading = false,
   unavailable = false,
   error = false,

@@ -40,6 +40,12 @@ describe('DataStatusIndicator', () => {
     fireEvent.click(trigger)
     expect(screen.getByRole('dialog', { name: '데이터 수집 상태' })).toBeInTheDocument()
     expect(screen.getAllByText('2026.07.24')).toHaveLength(2)
+    expect(screen.getByText('가격 데이터')).toBeInTheDocument()
+    expect(screen.getByText('거래일마다')).toBeInTheDocument()
+    expect(screen.getByText('State S1')).toBeInTheDocument()
+    expect(screen.getByText('주 1회')).toBeInTheDocument()
+    expect(screen.getByText('미국장 마감 후 반영')).toBeInTheDocument()
+    expect(screen.getByText('완료된 금요일 기준')).toBeInTheDocument()
     expect(screen.getByText('55/55 종목')).toBeInTheDocument()
 
     fireEvent.keyDown(document, { key: 'Escape' })

@@ -39,7 +39,7 @@ function selectedObservation(result) {
     stage: result.data.herdStage,
     delta4w: result.data.delta4w,
     observationDate: result.data.scoreDate,
-    freshness: result.data.freshnessStatus === 'STALE' ? '갱신 필요' : '최신 관찰',
+    freshness: result.data.freshnessStatus === 'STALE' ? '주간 관찰 갱신 필요' : '주간 관찰',
   }
 }
 
