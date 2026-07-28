@@ -610,7 +610,7 @@ pre-holdout 통과 전까지 변경할 수 없다.
 현재 증거에서 개인 MVP에 허용되는 범위는 다음 판정으로 고정한다.
 
 ```bash
-PYTHONPATH=data data/.venv/bin/python -m herd.personal_mvp_promotion_v1
+PYTHONPATH=data data/.venv/bin/python -m herd.personal_action_review_gate_v2
 ```
 
 State S1과 Transition S1은 관찰 기능으로 승격할 수 있지만, 경제성

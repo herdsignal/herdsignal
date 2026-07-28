@@ -637,7 +637,7 @@ HERD 후보에서 PASS 재진입은 9건, UNKNOWN 차단은 9건, VETO 차단은
 
 - API: `GET /api/model/vnext-status`
 - 구현: `VNextModelStatusService`
-- 백엔드는 `personal_mvp_promotion_v1.json`의 계약 버전, State·Transition
+- 백엔드는 `personal_action_review_gate_v2.json`의 계약 버전, State·Transition
   준비 상태, 행동 후보 탈락, 생존자 편향, Blind holdout 미개방과 운영
   행동 0%를 함께 검증한다.
 - 정상 판정은 `PERSONAL_RESEARCH_MVP`,
