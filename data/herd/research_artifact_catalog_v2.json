@@ -180,6 +180,9 @@
       "data/herd/historical_s1_replay_v1.json",
       "data/reports/historical_s1_replay_v1.json",
       "data/reports/historical_s1_replay_v1.csv.gz",
+      "data/herd/historical_s1_dependency_audit_v1.json",
+      "data/reports/historical_s1_dependency_audit_v1.json",
+      "data/reports/historical_s1_dependency_summary_v1.csv",
       "docs/README.md"
     ]
   },

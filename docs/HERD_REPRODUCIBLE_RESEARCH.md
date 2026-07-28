@@ -705,6 +705,19 @@ cd data
 S&P 500 구성 백테스트가 아니다. `survivorship_safe=false`,
 `operational_action=HOLD`, `operational_action_ratio=0.0`은 변경할 수 없다.
 
+재생 행을 독립 표본으로 과장하지 않도록 다음 의존성 감사를 실행한다.
+
+```bash
+cd data
+.venv/bin/python -m herd.historical_s1_dependency_audit_v1
+```
+
+감사는 전체 439종목의 주간 중앙값으로 시장 HERD 국면을, 고정 섹터
+peer의 중앙값으로 섹터 국면을 계산한다. episode·ticker·signal week·
+sector-signal week·era의 고유 개수와 관측 주 집중도를 기록한다.
+이 결과는 이후 군집 검정의 단위를 고정할 뿐 통계적 독립성이나 방향
+예측력을 승인하지 않는다.
+
 ## 근거
 
 - scikit-learn `TimeSeriesSplit`: 시간 순서를 보존하고 train과 test 사이
