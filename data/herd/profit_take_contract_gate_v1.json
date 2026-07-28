@@ -1,0 +1,70 @@
+{
+  "contract_version": "HERD_PROFIT_TAKE_CONTRACT_GATE_V1",
+  "status": "LOCKED_BEFORE_GATE_RESULT",
+  "locked_at": "2026-07-29",
+  "objective": "Verify that the sparse five-percent profit-take research target, execution assumptions, frequency limits, opportunity-cost labels, and fail-closed product boundary remain mutually consistent.",
+  "inputs": [
+    {
+      "path": "data/herd/model_establishment_protocol_v1.json",
+      "sha256": "0263d1aecdcdb4105b29bea0856b22ec935ebda5444bc6b45d034a175f84cb76"
+    },
+    {
+      "path": "data/herd/profit_take_opportunity_ceiling_v1.json",
+      "sha256": "a009e826d14ac72a0b655fa62019ce2c41b53b02c4c0d40b05d899de3b05e8fe"
+    },
+    {
+      "path": "data/reports/profit_take_opportunity_ceiling_v1.json",
+      "sha256": "3386515d8c9f6a57f8541b8be07d89057afabac7352f428123095b08839d3883"
+    },
+    {
+      "path": "data/herd/profit_take_success_label_v2.json",
+      "sha256": "354ad4db4dfa997f1ab334bc0e6a92197cec58f79260937e30558ea3e6343975"
+    },
+    {
+      "path": "data/reports/profit_take_success_label_v2.json",
+      "sha256": "8b7fe9d30e475eb3c9b1f69e4329d2b28a2046277ef4877ebf5274d48ec61c00"
+    }
+  ],
+  "required_contract": {
+    "initial_fraction": 0.05,
+    "maximum_cumulative_fraction": 0.15,
+    "maximum_profit_take_candidates_per_ticker_year": 2,
+    "maximum_completed_actions_per_ticker_year": 5,
+    "minimum_cooldown_weeks": 8,
+    "execution": "NEXT_TRADING_SESSION_OPEN",
+    "base_round_trip_cost_rate": 0.003,
+    "stress_round_trip_cost_rate": 0.007,
+    "profit_take_without_reentry_is_incomplete": true
+  },
+  "economic_interpretation": {
+    "primary_success": "AFTER_COST_FIVE_PERCENT_TRIM_THEN_LOWER_PRICE_REENTRY",
+    "premature_trim_cost": "HEALTHY_CONTINUATION",
+    "structural_damage_is_not_reentry_success": true,
+    "future_oracle_is_label_only": true
+  },
+  "research_basis": [
+    {
+      "title": "Momentum Crashes",
+      "url": "https://www.nber.org/papers/w20439",
+      "constraint": "High past returns alone do not justify selling a long-term winner."
+    },
+    {
+      "title": "Momentum Trading, Return Chasing, and Predictable Crashes",
+      "url": "https://www.nber.org/papers/w20660",
+      "constraint": "The model must distinguish continuation cost from genuine downside transition."
+    },
+    {
+      "title": "FINRA Fees and Commissions",
+      "url": "https://www.finra.org/investors/investing/investing-basics/fees-commissions",
+      "constraint": "Trading costs must be included before an action can beat matched buy and hold."
+    }
+  ],
+  "firewall": {
+    "direction_evidence_required_after_this_gate": true,
+    "this_gate_authorizes_actions": false,
+    "blind_holdout_access": false,
+    "survivorship_safe": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0
+  }
+}

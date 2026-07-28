@@ -50,6 +50,8 @@
       "data/herd/profit_take_success_label_v2.json",
       "data/reports/profit_take_success_label_v2.json",
       "data/reports/profit_take_success_label_v2.csv",
+      "data/herd/profit_take_contract_gate_v1.json",
+      "data/reports/profit_take_contract_gate_v1.json",
       "data/herd/research_claim_scope_v1.json",
       "data/reports/research_claim_scope_v1.json",
       "data/herd/simple_action_baselines_v1.json",

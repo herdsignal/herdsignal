@@ -1,0 +1,30 @@
+{
+  "report_version": "HERD_PROFIT_TAKE_CONTRACT_GATE_V1",
+  "status": "PROFIT_TAKE_TARGET_AND_FREQUENCY_LOCKED",
+  "checks": {
+    "initial_fraction": true,
+    "maximum_cumulative_fraction": true,
+    "candidate_frequency": true,
+    "completed_action_frequency": true,
+    "cooldown": true,
+    "execution": true,
+    "base_round_trip_cost": true,
+    "stress_round_trip_cost": true,
+    "complete_cycle": true,
+    "opportunity_ceiling": true,
+    "label_coverage": true,
+    "healthy_continuation_preserved": true,
+    "structural_damage_preserved": true,
+    "no_direction_authority": true,
+    "no_action_authority": true
+  },
+  "labeled_events": 2161,
+  "tickers": 439,
+  "folds": 9,
+  "next_gate": "INDEPENDENT_OOS_DIRECTION_EVIDENCE",
+  "direction_evidence_admitted": false,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

@@ -347,6 +347,10 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/herd/profit_take_contract_gate_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/profit_take_family_oos_v1.json",
       "status": "ACTIVE"
     },
@@ -1253,6 +1257,10 @@
     {
       "path": "data/reports/profit_giveback_policy_v1_events.csv",
       "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/profit_take_contract_gate_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/profit_take_events_v2.csv",
