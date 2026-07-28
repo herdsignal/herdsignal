@@ -1,0 +1,39 @@
+{
+  "gate_version": "HERD_COMPLETED_CYCLE_GATE_V6",
+  "status": "LOCKED_BEFORE_GATE_RESULT",
+  "locked_at": "2026-07-29",
+  "inputs": [
+    {"path": "data/reports/evidence_admission_registry_v10.json", "sha256": "af27d4cbf3f6762a63c8617becf43eaafcbe1b0d702a3da09932bb774eb8e21a"},
+    {"path": "data/reports/conditional_reentry_gate_v2.json", "sha256": "a252937e077b65ea6a7968dc6947039b2f331aa389bc0630817e78c81ec4b203"},
+    {"path": "data/reports/simple_action_baselines_v1.json", "sha256": "4258a9d1f7d13fa45c874cd422d6eb4d201fda3c00e821d48b7469221ec13f4d"},
+    {"path": "data/reports/personal_cashflow_benchmark_v1.json", "sha256": "6610e04237a4160b04e59ddff3faab5f0ab3db30dd831df635d25f017a3d5fe6"},
+    {"path": "data/herd/model_establishment_protocol_v1.json", "sha256": "0263d1aecdcdb4105b29bea0856b22ec935ebda5444bc6b45d034a175f84cb76"}
+  ],
+  "required_comparators": [
+    "MATCHED_BUY_AND_HOLD",
+    "KEEP_SALE_CASH",
+    "CALENDAR_DCA",
+    "SCHEDULED_REBALANCE"
+  ],
+  "required_metrics": [
+    "TERMINAL_WEALTH",
+    "SHARE_COUNT",
+    "CAGR",
+    "MDD",
+    "SORTINO",
+    "CALMAR",
+    "UPSIDE_CAPTURE",
+    "DOWNSIDE_CAPTURE",
+    "AVERAGE_EXPOSURE",
+    "CASH_DRAG"
+  ],
+  "execution_firewall": {
+    "both_legs_must_be_independently_admitted": true,
+    "same_capital_period_price_and_cost_required": true,
+    "open_sale_is_not_completed_cycle": true,
+    "simulation_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0
+  }
+}

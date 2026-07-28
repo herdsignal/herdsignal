@@ -1,0 +1,22 @@
+{
+  "report_version": "HERD_COMPLETED_CYCLE_GATE_V6",
+  "status": "BLOCKED_INCOMPLETE_DIRECTION_EVIDENCE",
+  "checks": {
+    "profit_take_direction": false,
+    "conditional_reentry": false,
+    "simple_baselines": true,
+    "cashflow_contract": true,
+    "minimum_oos_folds": true,
+    "minimum_oos_years": true
+  },
+  "blocked_reasons": [
+    "profit_take_direction",
+    "conditional_reentry"
+  ],
+  "completed_cycle_executed": false,
+  "buy_hold_comparison_executed": false,
+  "cost_stress_executed": false,
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

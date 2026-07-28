@@ -56,6 +56,8 @@
       "data/reports/evidence_admission_registry_v10.json",
       "data/herd/conditional_reentry_gate_v2.json",
       "data/reports/conditional_reentry_gate_v2.json",
+      "data/herd/completed_cycle_gate_v6.json",
+      "data/reports/completed_cycle_gate_v6.json",
       "data/herd/research_claim_scope_v1.json",
       "data/reports/research_claim_scope_v1.json",
       "data/herd/simple_action_baselines_v1.json",
