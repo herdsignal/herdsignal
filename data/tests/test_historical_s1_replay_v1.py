@@ -58,7 +58,10 @@ def test_outcomes_use_next_session_and_keep_actions_locked() -> None:
 
     outcomes = attach_outcomes(events, {"AAPL": prices}, contract)
 
-    assert outcomes["horizon_sessions"].tolist() == [5, 10, 20, 40, 60, 130]
+    assert outcomes["horizon_sessions"].tolist() == [
+        5, 10, 20, 21, 40, 60, 63, 126, 130
+    ]
+    assert {21, 63, 126}.issubset(outcomes["horizon_sessions"])
     assert outcomes["entry_date"].iloc[0] == pd.Timestamp("2025-01-20")
     assert outcomes["total_return"].iloc[0] == pytest.approx(0.02)
     assert outcomes["maximum_adverse_excursion"].iloc[0] == pytest.approx(-0.05)

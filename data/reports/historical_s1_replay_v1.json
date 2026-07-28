@@ -2,7 +2,7 @@
   "report_version": "HERD_HISTORICAL_S1_REPLAY_V1",
   "status": "DESCRIPTIVE_REPLAY_COMPLETE",
   "input_hashes": {
-    "contract": "e675f3a7f4f9bba71a6d4ad34875ab8ce2e04b81ced50eafbce1ea9d072a5f82",
+    "contract": "a1df98380e6a62d66a8ed3924377ab53072f817e0401067b253d46b71197262f",
     "transition_report": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248",
     "state_contract": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489",
     "primary_manifest": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b",
@@ -10,8 +10,8 @@
   },
   "ledger": {
     "path": "data/reports/historical_s1_replay_v1.csv.gz",
-    "sha256": "8b81dd008d1fd536381068e5d9e92a2fdf41b37a024ee108c7d3d74ff60df878",
-    "rows": 141109,
+    "sha256": "4ba4657d210f4905eea953ddeb9dd91dfd7bbea94cbdff81e63b66ae21f000a8",
+    "rows": 210901,
     "episodes": 23900,
     "tickers": 439
   },
@@ -25,8 +25,11 @@
     "5": 23900,
     "10": 23871,
     "20": 23680,
+    "21": 23680,
     "40": 23557,
     "60": 23353,
+    "63": 23322,
+    "126": 22790,
     "130": 22748
   },
   "direction_prediction": false,

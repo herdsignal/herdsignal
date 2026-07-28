@@ -700,6 +700,8 @@ cd data
 입력 패널과 가격 manifest는 기존 보고서의 SHA-256과 대조한다. 결과는
 `reports/historical_s1_replay_v1.csv.gz`와 동명의 JSON 영수증에 저장한다.
 같은 episode와 horizon 조합이 중복되면 실행을 중단한다.
+5·10·20·40·60·130거래일은 설명용 경로이며, prospective evidence
+원장과 직접 비교할 때는 계약이 같은 21·63·126거래일만 사용한다.
 
 이 재생은 현재 구성 종목의 과거 가격을 사용한 진단이며 공식 과거
 S&P 500 구성 백테스트가 아니다. `survivorship_safe=false`,

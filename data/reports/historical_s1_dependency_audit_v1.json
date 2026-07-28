@@ -2,7 +2,7 @@
   "report_version": "HERD_HISTORICAL_S1_DEPENDENCY_AUDIT_V1",
   "status": "DEPENDENCY_DIAGNOSTIC_COMPLETE",
   "independence_units": {
-    "raw_horizon_rows": 141109,
+    "raw_horizon_rows": 210901,
     "episodes": 23900,
     "tickers": 439,
     "signal_weeks": 665,
@@ -29,13 +29,13 @@
   "survivorship_safe": false,
   "inputs": {
     "contract_sha256": "8f2458f6eacd64092d10ea98cbf25b35366fafc3b6c8fcc69494df959f396fdc",
-    "replay_report_sha256": "151a3bf24c91b2a8e6bfe0a4d6792216d6b3aa45babf4b8df66f13bc6ebe32d8",
-    "replay_ledger_sha256": "8b81dd008d1fd536381068e5d9e92a2fdf41b37a024ee108c7d3d74ff60df878",
+    "replay_report_sha256": "fa1253006029b1d8666315024436c9d7fddd0537ccaa9feb1aeab8cbc8d97b4e",
+    "replay_ledger_sha256": "4ba4657d210f4905eea953ddeb9dd91dfd7bbea94cbdff81e63b66ae21f000a8",
     "transition_report_sha256": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248"
   },
   "summary": {
     "path": "data/reports/historical_s1_dependency_summary_v1.csv",
-    "sha256": "341025664b565bc2b20591e504970743af0043c46b7b6a43209067fd6a3bb0f0",
-    "rows": 3006
+    "sha256": "91f02d4af09f4f032429e665108e3b6c2dec9ed72410d97fd4c6eec3a40bd994",
+    "rows": 4491
   }
 }

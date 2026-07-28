@@ -21,6 +21,8 @@ STATE_CONTRACT_PATH = ROOT / "data/herd/herd_state_s1.json"
 DEFAULT_LEDGER_PATH = ROOT / "data/reports/historical_s1_replay_v1.csv.gz"
 DEFAULT_REPORT_PATH = ROOT / "data/reports/historical_s1_replay_v1.json"
 VERSION = "HERD_HISTORICAL_S1_REPLAY_V1"
+LOCKED_HORIZONS = [5, 10, 20, 21, 40, 60, 63, 126, 130]
+PROSPECTIVE_COMPARISON_HORIZONS = [21, 63, 126]
 ROLE_MANIFEST_KEYS = {
     "PRIMARY": "primary_snapshot_manifest",
     "INDEPENDENT_CURRENT_CONSTITUENTS": "independent_snapshot_manifest",
@@ -54,7 +56,10 @@ def load_contract(path: Path = CONTRACT_PATH) -> dict[str, Any]:
         or contract.get("status") != "LOCKED_DESCRIPTIVE_REPLAY_ONLY"
         or contract["event_contract"].get("collapse_calendar_days") != 42
         or contract["outcome_contract"].get("horizons_sessions")
-        != [5, 10, 20, 40, 60, 130]
+        != LOCKED_HORIZONS
+        or contract["outcome_contract"].get(
+            "prospective_comparison_horizons_sessions"
+        ) != PROSPECTIVE_COMPARISON_HORIZONS
         or boundary.get("descriptive_outcomes_only") is not True
         or boundary.get("point_in_time_price_calculation") is not True
         or boundary.get("point_in_time_membership") is not False
