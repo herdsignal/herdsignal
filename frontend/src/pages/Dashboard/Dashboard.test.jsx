@@ -119,15 +119,16 @@ describe('Dashboard', () => {
     expect(screen.getByText('자산 그래프')).toBeInTheDocument()
   })
 
-  it('검색한 종목을 선택해야 HERD 패널을 교체한다', () => {
+  it('Enter로 검색한 종목의 HERD 패널을 바로 연다', () => {
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
 
-    fireEvent.change(screen.getByRole('searchbox', { name: '티커 또는 종목명 검색' }), {
+    const search = screen.getByRole('searchbox', { name: '티커 또는 종목명 검색' })
+    fireEvent.change(search, {
       target: { value: 'NVDA' },
     })
     expect(screen.getByRole('heading', { name: 'SPY' })).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: 'HERD 보기' }))
+    fireEvent.submit(search.closest('form'))
 
     expect(screen.getByRole('heading', { name: 'NVDA' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '종목 상세 보기' })).toHaveAttribute(

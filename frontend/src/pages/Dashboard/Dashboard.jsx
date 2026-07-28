@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import HerdObservationPanel from '../../components/HerdObservationPanel/HerdObservationPanel'
 import TickerSearch from '../../components/TickerSearch/TickerSearch'
@@ -51,6 +51,7 @@ export default function Dashboard() {
   const [assetsOpen, setAssetsOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [activeStock, setActiveStock] = useState(null)
+  const [searchRequested, setSearchRequested] = useState(false)
   const { searchResult, recentSearches } = useStockSearch(query)
   const candidate = resultMeta(searchResult)
   const candidateTicker = resultTicker(searchResult)
@@ -90,7 +91,22 @@ export default function Dashboard() {
 
   function showCandidateHerd() {
     const next = selectedObservation(searchResult)
-    if (next) setActiveStock(next)
+    if (!next) {
+      setSearchRequested(true)
+      return
+    }
+    setActiveStock(next)
+    setSearchRequested(false)
+  }
+
+  function changeQuery(nextQuery) {
+    setQuery(nextQuery)
+    setSearchRequested(false)
+  }
+
+  function selectAndShow(ticker) {
+    setQuery(ticker)
+    setSearchRequested(true)
   }
 
   function toggleAssets() {
@@ -100,6 +116,14 @@ export default function Dashboard() {
       return next
     })
   }
+
+  useEffect(() => {
+    if (!searchRequested || searchResult?.status !== 'found') return
+    const next = selectedObservation(searchResult)
+    if (!next) return
+    setActiveStock(next)
+    setSearchRequested(false)
+  }, [searchRequested, searchResult])
 
   return (
     <div className={styles.page}>
@@ -111,22 +135,20 @@ export default function Dashboard() {
           suggestions={
             candidateTicker === query.trim().toUpperCase() ? [] : suggestions
           }
-          onQueryChange={setQuery}
+          onQueryChange={changeQuery}
           onSubmit={showCandidateHerd}
           recentTickers={recentSearches}
-          onRecentSelect={(ticker) => {
-            setQuery(ticker)
-            inputRef.current?.focus()
-          }}
+          onRecentSelect={selectAndShow}
           onSuggestionSelect={(item) => {
-            setQuery(item.ticker)
-            inputRef.current?.focus()
+            selectAndShow(item.ticker)
           }}
         />
 
         {query.trim().length >= 2 && searchResult && (
           <div className={styles.searchState} role="status">
-            {searchResult.status === 'loading' && <span>검색 중…</span>}
+            {searchResult.status === 'loading' && (
+              <span>{searchRequested ? 'HERD 불러오는 중…' : '검색 중…'}</span>
+            )}
             {searchResult.status === 'not_found' && <span>검색 결과가 없습니다.</span>}
             {(searchResult.status === 'found' || searchResult.status === 'symbol_found') && (
               <>
