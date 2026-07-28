@@ -1,0 +1,47 @@
+{
+  "report_version": "HERD_PERSONAL_ACTION_REVIEW_GATE_V2",
+  "status": "STATE_OBSERVATION_MVP_READY",
+  "decision": "NO_ADOPTABLE_ACTION_CANDIDATE",
+  "model_family": "HERD_STATE_S1",
+  "lifecycle": "PERSONAL_RESEARCH_MVP",
+  "state_observation_ready": true,
+  "transition_observation_ready": true,
+  "action_candidate_ready": false,
+  "action_model_status": "INDEPENDENT_DIRECTION_EVIDENCE_REJECTED",
+  "allowed_scope": [
+    "HERD_STATE_S1",
+    "HERD_TRANSITION_S1",
+    "HISTORICAL_DESCRIPTIVE_CONTEXT",
+    "SOURCE_DATE_AND_LIMITATION_DISCLOSURE",
+    "PERSONAL_OBSERVATION_LOG"
+  ],
+  "blocked_scope": [
+    "BUY_RATIO",
+    "PROFIT_TAKE_RATIO",
+    "REENTRY_RATIO",
+    "AUTOMATED_ORDER",
+    "PUBLIC_INVESTMENT_RECOMMENDATION"
+  ],
+  "default_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "user_action_suppressed": true,
+  "herd_state_role": "HERD_STATE_S1_OBSERVATION",
+  "historical_role": "CURRENT_CONSTITUENTS_DESCRIPTIVE_ONLY",
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "prospective_shadow_status": "STATE_ONLY_ACTION_SHADOW_BLOCKED",
+  "promotion_checks": {
+    "profit_take_direction": false,
+    "conditional_reentry": false,
+    "completed_cycle": false,
+    "prospective_shadow": false,
+    "survivorship_safe": false
+  },
+  "promotion_blockers": [
+    "PROFIT_TAKE_DIRECTION_NOT_PASSED",
+    "CONDITIONAL_REENTRY_NOT_PASSED",
+    "COMPLETED_CYCLE_NOT_PASSED",
+    "PROSPECTIVE_SHADOW_NOT_PASSED",
+    "SURVIVORSHIP_SAFE_NOT_PASSED"
+  ]
+}

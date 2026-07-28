@@ -60,6 +60,8 @@
       "data/reports/completed_cycle_gate_v6.json",
       "data/herd/prospective_readiness_gate_v2.json",
       "data/reports/prospective_readiness_gate_v2.json",
+      "data/herd/personal_action_review_gate_v2.json",
+      "data/reports/personal_action_review_gate_v2.json",
       "data/herd/research_claim_scope_v1.json",
       "data/reports/research_claim_scope_v1.json",
       "data/herd/simple_action_baselines_v1.json",

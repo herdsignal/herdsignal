@@ -339,6 +339,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/personal_action_review_gate_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/personal_cashflow_benchmark_v1.json",
       "status": "ACTIVE"
     },
@@ -1253,6 +1257,10 @@
     {
       "path": "data/reports/peer_cluster_breadth_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/personal_action_review_gate_v2.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/personal_cashflow_benchmark_v1.json",

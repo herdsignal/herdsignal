@@ -35,7 +35,8 @@ class VNextModelStatusServiceTest {
         assertThat(result.blindHoldoutOpened()).isFalse();
         assertThat(result.sourceSha256()).hasSize(64);
         assertThat(result.herdStateRole()).isEqualTo("HERD_STATE_S1_OBSERVATION");
-        assertThat(result.promotionBlockers()).contains("SURVIVORSHIP_SAFE_FALSE");
+        assertThat(result.promotionBlockers())
+                .contains("SURVIVORSHIP_SAFE_NOT_PASSED");
     }
 
     @Test
@@ -112,7 +113,7 @@ class VNextModelStatusServiceTest {
     private String validPromotionReport() {
         return """
                 {
-                  "report_version": "HERD_PERSONAL_MVP_PROMOTION_V1",
+                  "report_version": "HERD_PERSONAL_ACTION_REVIEW_GATE_V2",
                   "status": "STATE_OBSERVATION_MVP_READY",
                   "decision": "NO_ADOPTABLE_ACTION_CANDIDATE",
                   "model_family": "HERD_STATE_S1",
@@ -120,20 +121,22 @@ class VNextModelStatusServiceTest {
                   "state_observation_ready": true,
                   "transition_observation_ready": true,
                   "action_candidate_ready": false,
-                  "action_model_status": "PERSONAL_POLICY_REJECTED_PREHOLDOUT",
+                  "action_model_status": "INDEPENDENT_DIRECTION_EVIDENCE_REJECTED",
                   "allowed_scope": ["HERD_STATE_S1", "HERD_TRANSITION_S1"],
                   "blocked_scope": ["BUY_RATIO", "PROFIT_TAKE_RATIO", "REENTRY_RATIO"],
                   "default_action": "HOLD",
                   "user_action_suppressed": true,
                   "herd_state_role": "HERD_STATE_S1_OBSERVATION",
                   "promotion_blockers": [
-                    "PERSONAL_POLICY_PREHOLDOUT_FAILED",
-                    "BLIND_HOLDOUT_NOT_PASSED",
-                    "SURVIVORSHIP_SAFE_FALSE"
+                    "PROFIT_TAKE_DIRECTION_NOT_PASSED",
+                    "CONDITIONAL_REENTRY_NOT_PASSED",
+                    "COMPLETED_CYCLE_NOT_PASSED",
+                    "PROSPECTIVE_SHADOW_NOT_PASSED",
+                    "SURVIVORSHIP_SAFE_NOT_PASSED"
                   ],
-                  "historical_role": "PRE_HOLDOUT_RESEARCH_ONLY",
+                  "historical_role": "CURRENT_CONSTITUENTS_DESCRIPTIVE_ONLY",
                   "survivorship_safe": false,
-                  "prospective_shadow_status": "ACTION_SHADOW_BLOCKED_POLICY_FAILED",
+                  "prospective_shadow_status": "STATE_ONLY_ACTION_SHADOW_BLOCKED",
                   "operational_action_ratio": 0.0,
                   "blind_holdout_access": false
                 }

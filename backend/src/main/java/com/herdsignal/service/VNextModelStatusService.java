@@ -25,7 +25,8 @@ import java.util.List;
 @Service
 public class VNextModelStatusService {
 
-    static final String EXPECTED_REPORT_VERSION = "HERD_PERSONAL_MVP_PROMOTION_V1";
+    static final String EXPECTED_REPORT_VERSION =
+            "HERD_PERSONAL_ACTION_REVIEW_GATE_V2";
     private static final String MODEL_FAMILY = "HERD_STATE_S1";
     private static final String LIFECYCLE = "PERSONAL_RESEARCH_MVP";
     private static final String NO_CANDIDATE = "NO_ADOPTABLE_ACTION_CANDIDATE";
@@ -38,7 +39,7 @@ public class VNextModelStatusService {
     public VNextModelStatusService(
             ObjectMapper objectMapper,
             @Value("${herdsignal.vnext.promotion-report-path:"
-                    + "../data/reports/personal_mvp_promotion_v1.json}")
+                    + "../data/reports/personal_action_review_gate_v2.json}")
             String reportPath
     ) {
         this.objectMapper = objectMapper;
@@ -75,11 +76,15 @@ public class VNextModelStatusService {
         requireText(root, "model_family", MODEL_FAMILY);
         requireText(root, "lifecycle", LIFECYCLE);
         requireText(root, "herd_state_role", HERD_STATE_ROLE);
-        requireText(root, "historical_role", "PRE_HOLDOUT_RESEARCH_ONLY");
+        requireText(
+                root,
+                "historical_role",
+                "CURRENT_CONSTITUENTS_DESCRIPTIVE_ONLY"
+        );
         requireText(
                 root,
                 "prospective_shadow_status",
-                "ACTION_SHADOW_BLOCKED_POLICY_FAILED"
+                "STATE_ONLY_ACTION_SHADOW_BLOCKED"
         );
         requireText(root, "default_action", HOLD);
         requireBoolean(root, "state_observation_ready", true);
@@ -89,7 +94,7 @@ public class VNextModelStatusService {
         requireText(
                 root,
                 "action_model_status",
-                "PERSONAL_POLICY_REJECTED_PREHOLDOUT"
+                "INDEPENDENT_DIRECTION_EVIDENCE_REJECTED"
         );
         requireBoolean(root, "survivorship_safe", false);
         requireBoolean(root, "blind_holdout_access", false);
@@ -99,9 +104,11 @@ public class VNextModelStatusService {
         requireStringArrayContains(
                 blockers,
                 "승격 차단 사유",
-                "PERSONAL_POLICY_PREHOLDOUT_FAILED",
-                "BLIND_HOLDOUT_NOT_PASSED",
-                "SURVIVORSHIP_SAFE_FALSE"
+                "PROFIT_TAKE_DIRECTION_NOT_PASSED",
+                "CONDITIONAL_REENTRY_NOT_PASSED",
+                "COMPLETED_CYCLE_NOT_PASSED",
+                "PROSPECTIVE_SHADOW_NOT_PASSED",
+                "SURVIVORSHIP_SAFE_NOT_PASSED"
         );
         JsonNode allowedScope = root.path("allowed_scope");
         JsonNode blockedScope = root.path("blocked_scope");
@@ -154,7 +161,7 @@ public class VNextModelStatusService {
                 BigDecimal.ZERO,
                 true,
                 HERD_STATE_ROLE,
-                "PRE_HOLDOUT_RESEARCH_ONLY",
+                "CURRENT_CONSTITUENTS_DESCRIPTIVE_ONLY",
                 false,
                 false,
                 "BLOCKED_SOURCE_CONTRACT",

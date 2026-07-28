@@ -1,0 +1,22 @@
+{
+  "gate_version": "HERD_PERSONAL_ACTION_REVIEW_GATE_V2",
+  "status": "LOCKED_BEFORE_REVIEW_RESULT",
+  "locked_at": "2026-07-29",
+  "inputs": [
+    {"path": "data/reports/evidence_admission_registry_v10.json", "sha256": "af27d4cbf3f6762a63c8617becf43eaafcbe1b0d702a3da09932bb774eb8e21a"},
+    {"path": "data/reports/conditional_reentry_gate_v2.json", "sha256": "a252937e077b65ea6a7968dc6947039b2f331aa389bc0630817e78c81ec4b203"},
+    {"path": "data/reports/completed_cycle_gate_v6.json", "sha256": "4434b4fe23c7b16d53cb6fafd78eb65790c2cdc425eeee11fd0cbefa4eda2965"},
+    {"path": "data/reports/prospective_readiness_gate_v2.json", "sha256": "6e33b1cdc860487a9f706bc4e3ed0fc692da7d355d9593a9a1469f7899cb83d1"},
+    {"path": "data/herd/survivorship_readiness_v2.json", "sha256": "1b7ba3b2ab079b3b0c301dc4d8c8d7359105be6c68c4c9b0dd93f79efd7b97ef"}
+  ],
+  "maximum_personal_action_fraction_if_all_gates_pass": 0.05,
+  "human_review_required": true,
+  "automatic_promotion": false,
+  "firewall": {
+    "state_is_not_action": true,
+    "missing_gate_is_failure": true,
+    "current_default_action": "HOLD",
+    "current_operational_action_ratio": 0.0,
+    "blind_holdout_access": false
+  }
+}

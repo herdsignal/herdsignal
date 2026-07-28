@@ -72,7 +72,7 @@ herdsignal:
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}
   vnext:
     # 최신 개인 MVP 판정을 읽기만 하며, 행동 채택 전에는 HOLD·0%로 fail-closed 한다.
-    promotion-report-path: ${HERD_VNEXT_PROMOTION_REPORT_PATH:../data/reports/personal_mvp_promotion_v1.json}
+    promotion-report-path: ${HERD_VNEXT_PROMOTION_REPORT_PATH:../data/reports/personal_action_review_gate_v2.json}
   promotion:
     approval-path: ${HERD_PROMOTION_APPROVAL_PATH:}
   shadow:
