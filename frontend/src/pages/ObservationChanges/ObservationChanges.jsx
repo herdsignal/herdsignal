@@ -14,6 +14,7 @@ import {
   displayStage,
   formatObservationDelta,
   sortObservationChanges,
+  trackingScopeLabel,
 } from './observationChangesModel'
 import styles from './ObservationChanges.module.css'
 
@@ -168,8 +169,10 @@ export default function ObservationChanges() {
               <span className={styles.change}>
                 <strong>{describeObservationChange(event)}</strong>
                 <small>
+                  {trackingScopeLabel(event.trackingScope)}
+                  {' · '}
                   {event.eventType === 'TRANSITION'
-                    ? `${displayStage(event.stage)} · Transition S1`
+                    ? `${displayStage(event.stage)} · 상태 전환`
                     : '단계 경계 통과'}
                 </small>
               </span>

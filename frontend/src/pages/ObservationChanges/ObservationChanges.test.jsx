@@ -35,6 +35,7 @@ beforeEach(() => {
         stage: 'DRIFT',
         transition: 'COOLING',
         delta4w: -6,
+        trackingScope: 'HOLDING',
         unread: true,
       }],
     } },
@@ -51,6 +52,7 @@ describe('ObservationChanges', () => {
 
     expect(await screen.findByText('NVIDIA Corporation')).toBeInTheDocument()
     expect(screen.getByText('밀집 완화')).toBeInTheDocument()
+    expect(screen.getByText(/보유 · Drift · 상태 전환/)).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/매수|매도|익절|추천/)
 
     fireEvent.click(screen.getByRole('button', {

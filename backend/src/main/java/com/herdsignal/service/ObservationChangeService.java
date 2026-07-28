@@ -41,7 +41,8 @@ public class ObservationChangeService {
     @Transactional(readOnly = true)
     public ObservationChangesResponse getChanges(String userId, Integer requestedLimit) {
         int limit = validateLimit(requestedLimit);
-        List<String> tickers = trackedTickers(userId);
+        Map<String, String> trackingScopes = trackingScopes(userId);
+        List<String> tickers = List.copyOf(trackingScopes.keySet());
         if (tickers.isEmpty()) {
             return new ObservationChangesResponse(null, 0, 0, List.of());
         }
@@ -76,7 +77,8 @@ public class ObservationChangeService {
                 ),
                 effectiveCursors,
                 receipts,
-                stocks
+                stocks,
+                trackingScopes
         );
         int unreadCount = (int) allEvents.stream()
                 .filter(ObservationChangeEvent::unread)
@@ -132,7 +134,8 @@ public class ObservationChangeService {
             List<HerdObservation> observations,
             Map<String, LocalDate> effectiveCursors,
             Map<String, LocalDate> storedReceipts,
-            Map<String, Stock> stocks
+            Map<String, Stock> stocks,
+            Map<String, String> trackingScopes
     ) {
         List<ObservationChangeEvent> events = new ArrayList<>();
         observations.stream()
@@ -169,6 +172,7 @@ public class ObservationChangeService {
                                 previous.getHerdStage(),
                                 transition ? current.getTransitionCode() : null,
                                 current.getDelta4w(),
+                                trackingScopes.getOrDefault(ticker, "WATCHLIST"),
                                 storedReceipt == null
                                         || current.getObservationDate().isAfter(storedReceipt)
                         ));
@@ -198,16 +202,18 @@ public class ObservationChangeService {
     }
 
     private List<String> trackedTickers(String userId) {
-        return java.util.stream.Stream.concat(
-                        portfolioRepository.findByUserId(userId).stream()
-                                .map(item -> item.getTicker()),
-                        watchlistRepository.findByUserId(userId).stream()
-                                .map(item -> item.getTicker())
-                )
-                .map(this::normalizeTicker)
-                .distinct()
-                .sorted()
-                .toList();
+        return List.copyOf(trackingScopes(userId).keySet());
+    }
+
+    private Map<String, String> trackingScopes(String userId) {
+        Map<String, String> scopes = new TreeMap<>();
+        portfolioRepository.findByUserId(userId).forEach(item ->
+                scopes.put(normalizeTicker(item.getTicker()), "HOLDING")
+        );
+        watchlistRepository.findByUserId(userId).forEach(item ->
+                scopes.putIfAbsent(normalizeTicker(item.getTicker()), "WATCHLIST")
+        );
+        return Collections.unmodifiableMap(scopes);
     }
 
     private void requireTracked(String userId, String ticker) {

@@ -30,6 +30,16 @@ export function sortObservationChanges(events) {
   if (!Array.isArray(events)) return []
   return [...events].sort((left, right) => {
     if (left.unread !== right.unread) return left.unread ? -1 : 1
+    const leftHolding = left.trackingScope === 'HOLDING'
+    const rightHolding = right.trackingScope === 'HOLDING'
+    if (leftHolding !== rightHolding) return leftHolding ? -1 : 1
+    const leftTransition = left.eventType === 'TRANSITION'
+    const rightTransition = right.eventType === 'TRANSITION'
+    if (leftTransition !== rightTransition) return leftTransition ? -1 : 1
     return String(right.observationDate).localeCompare(String(left.observationDate))
   })
+}
+
+export function trackingScopeLabel(scope) {
+  return scope === 'HOLDING' ? '보유' : '관심'
 }

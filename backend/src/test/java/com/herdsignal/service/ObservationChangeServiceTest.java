@@ -84,6 +84,9 @@ class ObservationChangeServiceTest {
         assertThat(response.events().get(1).previousStage()).isEqualTo("CALM");
         assertThat(response.events().get(1).stage()).isEqualTo("DRIFT");
         assertThat(response.events()).allMatch(event -> event.unread());
+        assertThat(response.events()).allMatch(
+                event -> event.trackingScope().equals("HOLDING")
+        );
     }
 
     @Test

@@ -17,5 +17,6 @@ public record ObservationChangeEvent(
         String previousStage,
         String transition,
         BigDecimal delta4w,
+        String trackingScope,
         boolean unread
 ) {}
