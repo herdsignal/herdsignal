@@ -17,7 +17,9 @@ import {
   formatJournalProfit,
   formatJournalQuantity,
   formatJournalTime,
+  filterSignalJournal,
   findHorizonOutcome,
+  getJournalReviewStatus,
   summarizeSignalJournal,
 } from '../../utils/signalJournal'
 import styles from './Journal.module.css'
@@ -27,6 +29,12 @@ const FILTERS = [
   { value: 'BUY', label: '매수' },
   { value: 'SELL', label: '익절' },
   { value: 'HOLD', label: '보류' },
+]
+
+const REVIEW_FILTERS = [
+  { value: 'ALL', label: '전체 결과' },
+  { value: 'READY', label: '확인 가능' },
+  { value: 'PENDING', label: '대기 중' },
 ]
 
 function actionText(log) {
@@ -51,6 +59,7 @@ function actionClass(type) {
 export default function Journal() {
   const navigate = useNavigate()
   const [filter, setFilter] = useState('ALL')
+  const [reviewFilter, setReviewFilter] = useState('ALL')
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -65,9 +74,8 @@ export default function Journal() {
   }, [])
 
   const filteredLogs = useMemo(() => {
-    if (filter === 'ALL') return logs
-    return logs.filter((log) => log.actionType === filter)
-  }, [filter, logs])
+    return filterSignalJournal(logs, filter, reviewFilter)
+  }, [filter, logs, reviewFilter])
 
   const summary = useMemo(() => summarizeSignalJournal(logs), [logs])
 
@@ -126,8 +134,22 @@ export default function Journal() {
 
       <div className={styles.tableCard}>
         <div className={styles.tableHead}>
-          <span>기록 {formatJournalCount(filteredLogs.length)}</span>
-          <strong>{filter === 'ALL' ? '전체' : FILTERS.find((item) => item.value === filter)?.label}</strong>
+          <div>
+            <span>기록 {formatJournalCount(filteredLogs.length)}</span>
+            <strong>{filter === 'ALL' ? '전체 판단' : FILTERS.find((item) => item.value === filter)?.label}</strong>
+          </div>
+          <div className={styles.reviewTabs} aria-label="결과 확인 필터">
+            {REVIEW_FILTERS.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                className={`${styles.reviewBtn} ${reviewFilter === item.value ? styles.reviewBtnActive : ''}`}
+                onClick={() => setReviewFilter(item.value)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
@@ -142,8 +164,14 @@ export default function Journal() {
           </div>
         ) : filteredLogs.length === 0 ? (
           <div className={styles.emptyState}>
-            <strong>아직 기록이 없습니다.</strong>
-            <span>종목 상세에서 HERD 판단을 남기면 여기에 쌓입니다.</span>
+            <strong>{reviewFilter === 'ALL' ? '아직 기록이 없습니다.' : '조건에 맞는 기록이 없습니다.'}</strong>
+            <span>
+              {reviewFilter === 'PENDING'
+                ? '결과를 기다리는 기록이 없습니다.'
+                : reviewFilter === 'READY'
+                  ? '1·3·6개월 중 확인 가능한 결과가 아직 없습니다.'
+                  : '종목 상세에서 HERD 판단을 남기면 여기에 쌓입니다.'}
+            </span>
           </div>
         ) : (
           <div className={styles.tableWrap}>
@@ -186,6 +214,13 @@ export default function Journal() {
                     </td>
                     <td>
                       <div className={styles.horizonStack}>
+                        <em className={`${styles.reviewStatus} ${styles[getJournalReviewStatus(log).toLowerCase()]}`}>
+                          {getJournalReviewStatus(log) === 'READY'
+                            ? '결과 확인 가능'
+                            : getJournalReviewStatus(log) === 'PENDING'
+                              ? '기간 경과 대기'
+                              : '가격 자료 없음'}
+                        </em>
                         {[
                           ['1M', '1개월'],
                           ['3M', '3개월'],

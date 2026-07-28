@@ -95,6 +95,21 @@ export function findHorizonOutcome(log, horizon) {
   return log.horizonOutcomes.find((outcome) => outcome.horizon === horizon) ?? null
 }
 
+export function getJournalReviewStatus(log) {
+  const outcomes = Array.isArray(log?.horizonOutcomes) ? log.horizonOutcomes : []
+  if (outcomes.some((outcome) => outcome.status === 'AVAILABLE')) return 'READY'
+  if (outcomes.some((outcome) => outcome.status === 'PENDING')) return 'PENDING'
+  return 'UNAVAILABLE'
+}
+
+export function filterSignalJournal(items, actionFilter = 'ALL', reviewFilter = 'ALL') {
+  const logs = Array.isArray(items) ? items : []
+  return logs.filter((log) => (
+    (actionFilter === 'ALL' || log.actionType === actionFilter)
+    && (reviewFilter === 'ALL' || getJournalReviewStatus(log) === reviewFilter)
+  ))
+}
+
 export function formatHorizonOutcome(outcome) {
   if (!outcome) return '자료 없음'
   if (outcome.status === 'PENDING') return '대기'

@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getSignalJournal } from '../../api/herdApi'
@@ -38,6 +38,10 @@ describe('Journal', () => {
     expect(screen.getByText('대기')).toBeInTheDocument()
     expect(screen.getByText('자료 없음')).toBeInTheDocument()
     expect(screen.getByText('기준 $100 · 2025. 1. 2.')).toBeInTheDocument()
+    expect(screen.getByText('결과 확인 가능')).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/익절 후 방어|현재 결과/)
+
+    fireEvent.click(screen.getByRole('button', { name: '대기 중' }))
+    expect(screen.getByText('조건에 맞는 기록이 없습니다.')).toBeInTheDocument()
   })
 })

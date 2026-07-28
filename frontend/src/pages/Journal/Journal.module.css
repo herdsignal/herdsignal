@@ -139,6 +139,11 @@
   border-bottom: 1px solid var(--border);
 }
 
+.tableHead > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
 .tableHead span {
   color: var(--text-3);
   font-size: var(--hs-type-body-sm);
@@ -151,6 +156,33 @@
   color: var(--text-1);
   font-size: 13px;
   font-weight: 800;
+}
+
+.reviewTabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reviewBtn {
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: var(--hs-type-body-sm);
+  font-weight: 800;
+  padding: 6px 9px;
+}
+
+.reviewBtn:hover {
+  color: var(--text-1);
+}
+
+.reviewBtnActive {
+  border-color: var(--border);
+  background: var(--surface2);
+  color: var(--text-1);
 }
 
 .tableWrap {
@@ -279,6 +311,24 @@
   font-size: 9px;
   font-style: normal;
   font-weight: 650;
+}
+
+.horizonStack .reviewStatus {
+  margin-bottom: 2px;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.horizonStack .ready {
+  color: var(--scatter);
+}
+
+.horizonStack .pending {
+  color: var(--calm);
+}
+
+.horizonStack .unavailable {
+  color: var(--text-3);
 }
 
 .memoCell {
