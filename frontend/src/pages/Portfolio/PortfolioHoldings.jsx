@@ -28,6 +28,8 @@ export default function PortfolioHoldings({
   onDelete,
   onTargetWeightSave,
   targetSavingTicker,
+  ledgerManaged = false,
+  onOpenLedger,
 }) {
   const [expandedTicker, setExpandedTicker] = useState(null)
   const [targetDrafts, setTargetDrafts] = useState({})
@@ -185,17 +187,27 @@ export default function PortfolioHoldings({
                     <button type="button" onClick={() => onOpenStock(row.ticker)}>
                       종목 분석
                     </button>
-                    <button type="button" onClick={() => onEditHolding(row.ticker)}>
-                      평단·수량 수정
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.removeButton}
-                      disabled={Boolean(deletingTicker)}
-                      onClick={(event) => onDelete(event, row.ticker)}
-                    >
-                      {deletingTicker === row.ticker ? '삭제 중…' : '삭제'}
-                    </button>
+                    {ledgerManaged
+                      ? (
+                        <button type="button" onClick={onOpenLedger}>
+                          거래 원장
+                        </button>
+                        )
+                      : (
+                        <>
+                          <button type="button" onClick={() => onEditHolding(row.ticker)}>
+                            평단·수량 수정
+                          </button>
+                          <button
+                            type="button"
+                            className={styles.removeButton}
+                            disabled={Boolean(deletingTicker)}
+                            onClick={(event) => onDelete(event, row.ticker)}
+                          >
+                            {deletingTicker === row.ticker ? '삭제 중…' : '삭제'}
+                          </button>
+                        </>
+                        )}
                   </div>
                 </div>
               )}

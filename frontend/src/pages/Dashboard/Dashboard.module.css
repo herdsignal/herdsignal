@@ -309,6 +309,16 @@
   gap: 14px;
 }
 
+.sourceBadge {
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--hs-scatter) 38%, var(--hs-line));
+  border-radius: 999px;
+  color: var(--hs-scatter) !important;
+  font-size: var(--hs-type-micro) !important;
+  font-weight: 680 !important;
+  letter-spacing: 0 !important;
+}
+
 .valuationBasis {
   display: flex;
   justify-content: flex-end;

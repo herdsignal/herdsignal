@@ -5,6 +5,7 @@ import java.util.List;
 
 public record PortfolioSourceReconciliationResponse(
         String status,
+        boolean ledgerManaged,
         boolean ledgerCanBecomeSource,
         BigDecimal manualCash,
         BigDecimal ledgerCash,

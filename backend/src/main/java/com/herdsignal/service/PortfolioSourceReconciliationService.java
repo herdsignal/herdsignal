@@ -29,6 +29,10 @@ public class PortfolioSourceReconciliationService {
 
     @Transactional(readOnly = true)
     public PortfolioSourceReconciliationResponse reconcile(String userId) {
+        boolean ledgerManaged = ledgerRepository.existsByUserIdAndSource(
+                userId,
+                PortfolioSourceModeService.OPENING_SNAPSHOT_SOURCE
+        );
         List<PortfolioLedgerEntry> entries =
                 ledgerRepository.findByUserIdOrderByOccurredOnAscIdAsc(userId);
         BigDecimal manualCash = cashBalanceRepository.findByUserId(userId)
@@ -38,6 +42,7 @@ public class PortfolioSourceReconciliationService {
         if (entries.isEmpty()) {
             return response(
                     "NO_LEDGER",
+                    ledgerManaged,
                     false,
                     manualCash,
                     ZERO,
@@ -51,6 +56,7 @@ public class PortfolioSourceReconciliationService {
         if (!calculation.errors().isEmpty()) {
             return response(
                     "LEDGER_INVALID",
+                    ledgerManaged,
                     false,
                     manualCash,
                     calculation.cashBalance(),
@@ -79,6 +85,7 @@ public class PortfolioSourceReconciliationService {
 
         return response(
                 matched ? "MATCHED" : "DIVERGED",
+                ledgerManaged,
                 matched,
                 manualCash,
                 ledgerCash,
@@ -113,6 +120,7 @@ public class PortfolioSourceReconciliationService {
 
     private PortfolioSourceReconciliationResponse response(
             String status,
+            boolean ledgerManaged,
             boolean canPromote,
             BigDecimal manualCash,
             BigDecimal ledgerCash,
@@ -121,6 +129,7 @@ public class PortfolioSourceReconciliationService {
     ) {
         return new PortfolioSourceReconciliationResponse(
                 status,
+                ledgerManaged,
                 canPromote,
                 manualCash,
                 ledgerCash,

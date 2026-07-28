@@ -226,10 +226,10 @@ export default function Dashboard() {
           <>
         <header>
           <div>
-            <span>PORTFOLIO OBSERVATION</span>
             <h2>보유 현황</h2>
           </div>
           <div className={styles.portfolioTools}>
+            {portfolio.ledgerManaged && <span className={styles.sourceBadge}>거래 원장 기준</span>}
             <small>{portfolio.sortedRows.length}개 종목</small>
             <button
               type="button"
@@ -327,11 +327,13 @@ export default function Dashboard() {
               onDelete={portfolio.handleDelete}
               onTargetWeightSave={portfolio.handleTargetWeightSave}
               targetSavingTicker={portfolio.targetSavingTicker}
+              ledgerManaged={portfolio.ledgerManaged}
+              onOpenLedger={() => navigate('/ledger')}
             />
           </>
         )}
 
-        {portfolio.modalTicker && (
+        {portfolio.modalTicker && !portfolio.ledgerManaged && (
           <AvgPriceModal
             ticker={portfolio.modalTicker}
             currentAvgPrice={portfolio.modalStock?.avgPrice ?? null}

@@ -82,6 +82,7 @@ vi.mock('../Portfolio/usePortfolioPageData', () => ({
     targetSavingTicker: null,
     modalTicker: null,
     fetchData: vi.fn(),
+    ledgerManaged: false,
   }),
 }))
 

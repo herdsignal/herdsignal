@@ -58,7 +58,7 @@ class PortfolioOpeningSnapshotServiceTest {
         ));
         PortfolioSourceReconciliationResponse matched =
                 new PortfolioSourceReconciliationResponse(
-                        "MATCHED", true,
+                        "MATCHED", true, true,
                         new BigDecimal("300"), new BigDecimal("300"), BigDecimal.ZERO,
                         List.of(), List.of()
                 );

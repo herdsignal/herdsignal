@@ -14,6 +14,7 @@ vi.mock('../../api/herdApi', () => ({
   getPortfolio: vi.fn(),
   getHerdObservations: vi.fn(),
   getPortfolioRealtime: vi.fn(),
+  getPortfolioSourceReconciliation: vi.fn(),
   getPortfolioSummary: vi.fn(),
 }))
 
@@ -42,6 +43,10 @@ beforeEach(() => {
     }],
   }))
   api.getCashBalance.mockReturnValue(response({ cashAmount: 10 }))
+  api.getPortfolioSourceReconciliation.mockReturnValue(response({
+    status: 'NO_LEDGER',
+    ledgerManaged: false,
+  }))
 })
 
 afterEach(() => cleanup())
@@ -59,6 +64,7 @@ describe('usePortfolioData', () => {
     expect(api.getPortfolio).not.toHaveBeenCalled()
     expect(api.getPortfolioSummary).not.toHaveBeenCalled()
     expect(api.getPortfolioRealtime).not.toHaveBeenCalled()
+    expect(api.getPortfolioSourceReconciliation).not.toHaveBeenCalled()
     expect(api.getHerdObservations).not.toHaveBeenCalled()
     expect(api.getCashBalance).not.toHaveBeenCalled()
   })
@@ -102,5 +108,20 @@ describe('usePortfolioData', () => {
       expect(api.getPortfolioRealtime).toHaveBeenCalledTimes(callsBeforeFocus + 1)
     })
     nowSpy.mockRestore()
+  })
+
+  it('exposes ledger-managed source mode to the portfolio UI', async () => {
+    api.getPortfolioSourceReconciliation.mockReturnValue(response({
+      status: 'MATCHED',
+      ledgerManaged: true,
+    }))
+    const setTargetWeights = vi.fn()
+    const { result } = renderHook(() => usePortfolioData({
+      userId: 'user-1',
+      setTargetWeights,
+    }))
+
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    expect(result.current.ledgerManaged).toBe(true)
   })
 })

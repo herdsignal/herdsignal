@@ -4,6 +4,7 @@ import {
   getPortfolio,
   getHerdObservations,
   getPortfolioRealtime,
+  getPortfolioSourceReconciliation,
   getPortfolioSummary,
 } from '../../api/herdApi'
 import { targetWeightsFromPortfolio } from '../../utils/portfolioTools'
@@ -73,6 +74,7 @@ export function usePortfolioData({
   })
   const [cashBalance, setCashBalance] = useState(0)
   const [cashDraft, setCashDraft] = useState('')
+  const [ledgerManaged, setLedgerManaged] = useState(false)
   const refreshNoticeTimer = useRef(null)
   const summaryRequest = useRef(0)
   const lastSummaryValidation = useRef(0)
@@ -125,6 +127,7 @@ export function usePortfolioData({
       setPortfolio([])
       setSummary(null)
       setHerdMap({})
+      setLedgerManaged(false)
       setError(null)
       setLoading(false)
       return
@@ -134,7 +137,10 @@ export function usePortfolioData({
     if (ensurePortfolioCacheVersion()) setLastUpdated(null)
 
     try {
-      const portfolioResponse = await getPortfolio().catch(() => null)
+      const [portfolioResponse, sourceResponse] = await Promise.all([
+        getPortfolio().catch(() => null),
+        getPortfolioSourceReconciliation().catch(() => null),
+      ])
       if (!portfolioResponse) {
         setPortfolio([])
         setError(`백엔드 서버에 연결할 수 없습니다. ${API_HOST}이 실행 중인지 확인해주세요.`)
@@ -144,6 +150,7 @@ export function usePortfolioData({
       const rawPortfolio = portfolioResponse.data?.data
       const nextPortfolio = Array.isArray(rawPortfolio) ? rawPortfolio : []
       setPortfolio(nextPortfolio)
+      setLedgerManaged(Boolean(sourceResponse?.data?.data?.ledgerManaged))
       setTargetWeights(targetWeightsFromPortfolio(nextPortfolio))
 
       const cachedSummary = readUserCache(CACHE_KEY_REALTIME, userId)
@@ -268,6 +275,7 @@ export function usePortfolioData({
     setCashBalance,
     cashDraft,
     setCashDraft,
+    ledgerManaged,
     fetchData,
     handleRefresh,
   }

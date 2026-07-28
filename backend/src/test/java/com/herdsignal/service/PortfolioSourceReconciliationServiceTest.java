@@ -54,6 +54,8 @@ class PortfolioSourceReconciliationServiceTest {
 
     @Test
     void reportsMatchedOnlyWhenPositionsAndCashAgree() {
+        when(ledgerRepository.existsByUserIdAndSource("user", "OPENING_SNAPSHOT"))
+                .thenReturn(true);
         when(ledgerRepository.findByUserIdOrderByOccurredOnAscIdAsc("user"))
                 .thenReturn(List.of(
                         cashEntry(PortfolioLedgerEntryType.DEPOSIT, "1000"),
@@ -69,6 +71,7 @@ class PortfolioSourceReconciliationServiceTest {
         PortfolioSourceReconciliationResponse result = service.reconcile("user");
 
         assertThat(result.status()).isEqualTo("MATCHED");
+        assertThat(result.ledgerManaged()).isTrue();
         assertThat(result.ledgerCanBecomeSource()).isTrue();
         assertThat(result.positionDifferences()).isEmpty();
         assertThat(result.cashDifference()).isEqualByComparingTo("0");
