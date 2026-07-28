@@ -17,6 +17,7 @@ import { useTickerMembership } from '../Search/useTickerMembership'
 import { useMarketHomeData } from '../MarketHome/useMarketHomeData'
 import { marketHomeViewModel } from '../MarketHome/marketHomeModel'
 import styles from './Dashboard.module.css'
+import DashboardOnboarding from './DashboardOnboarding'
 
 function resultTicker(result) {
   return result?.data?.ticker ?? result?.candidate?.ticker ?? null
@@ -143,6 +144,7 @@ export default function Dashboard() {
             selectAndShow(item.ticker)
           }}
         />
+        <DashboardOnboarding />
 
         {query.trim().length >= 2 && searchResult && (
           <div className={styles.searchState} role="status">
