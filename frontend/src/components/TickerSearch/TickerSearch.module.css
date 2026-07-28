@@ -182,3 +182,25 @@
     animation: none;
   }
 }
+
+@media (max-width: 520px) {
+  .large .inputWrap {
+    min-height: 56px;
+    padding-right: 13px;
+    padding-left: 14px;
+  }
+
+  .inputWrap kbd {
+    display: none;
+  }
+
+  .suggestions button {
+    grid-template-columns: 62px 1fr;
+    min-height: 50px;
+  }
+
+  .recent {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}

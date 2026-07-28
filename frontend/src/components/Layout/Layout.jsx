@@ -45,7 +45,7 @@ function Navigation({ className, label, authenticated = true }) {
     ? PRIMARY_NAVIGATION
     : PRIMARY_NAVIGATION.filter((item) => item.to === '/app')
   return (
-    <nav className={className} aria-label={label}>
+    <nav className={className} aria-label={label} data-items={items.length}>
       {items.map((item) => (
         <NavLink
           key={item.to}

@@ -301,12 +301,24 @@
     left: 0;
     z-index: 45;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(var(--mobile-nav-count, 3), 1fr);
     min-height: 66px;
     padding: 7px 10px calc(7px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--hs-line);
     background: color-mix(in srgb, var(--hs-bg) 94%, transparent);
     backdrop-filter: blur(18px);
+  }
+
+  .mobileNav[data-items="1"] {
+    display: none;
+  }
+
+  .mobileNav[data-items="2"] {
+    --mobile-nav-count: 2;
+  }
+
+  .mobileNav[data-items="3"] {
+    --mobile-nav-count: 3;
   }
 
   .mobileNav .navItem {

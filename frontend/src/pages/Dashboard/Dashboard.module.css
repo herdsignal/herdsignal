@@ -364,7 +364,18 @@
   }
 
   .searchState > div:nth-child(2) {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     flex-wrap: wrap;
+  }
+
+  .searchState > div:nth-child(2) button {
+    min-height: 42px;
+  }
+
+  .searchState > div:nth-child(2) button:only-child {
+    grid-column: 1 / -1;
   }
 
   .assets {
@@ -376,6 +387,7 @@
   }
 
   .portfolioSection > header {
+    align-items: flex-end;
     min-height: 82px;
   }
 
