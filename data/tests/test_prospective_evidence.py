@@ -189,3 +189,11 @@ def test_only_mature_horizons_receive_descriptive_outcomes(tmp_path: Path) -> No
     assert audit["status"] == "PASS"
     assert audit["observationArchives"] == 1
     assert audit["maturedOutcomes"] == 2
+    assert audit["pendingOutcomes"] == 1
+    assert audit["firstObservationDate"] == "2026-07-24"
+    assert audit["latestObservationDate"] == "2026-07-24"
+    assert audit["maturityByHorizon"] == {
+        "21": {"expected": 1, "matured": 1, "pending": 0},
+        "63": {"expected": 1, "matured": 1, "pending": 0},
+        "126": {"expected": 1, "matured": 0, "pending": 1},
+    }

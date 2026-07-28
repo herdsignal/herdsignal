@@ -353,7 +353,7 @@ def audit_archive(
     contract_path: Path = CONTRACT_PATH,
 ) -> dict[str, Any]:
     """모든 관측·결과 파일의 해시와 행동 차단 경계를 검사한다."""
-    load_contract(contract_path)
+    contract = load_contract(contract_path)
     observations = [
         verify_observation(path)
         for path in sorted((archive_dir / "observations").glob("*.json"))
@@ -369,10 +369,40 @@ def audit_archive(
     ]
     if orphan_outcomes:
         raise ProspectiveEvidenceError("outcome without source observation")
+    horizons = contract["horizons_sessions"]
+    outcome_keys = {
+        (
+            item["sourceEvidenceSha256"],
+            item["ticker"],
+            int(item["horizonSessions"]),
+        )
+        for item in outcomes
+    }
+    maturity_by_horizon = {}
+    pending_outcomes = 0
+    for horizon in horizons:
+        eligible = [
+            (observation["evidenceSha256"], record["ticker"], horizon)
+            for observation in observations
+            for record in observation["evidence"]["records"]
+        ]
+        matured = sum(key in outcome_keys for key in eligible)
+        pending = len(eligible) - matured
+        pending_outcomes += pending
+        maturity_by_horizon[str(horizon)] = {
+            "expected": len(eligible),
+            "matured": matured,
+            "pending": pending,
+        }
+    observation_dates = [
+        item["evidence"]["observationDate"] for item in observations
+    ]
     return {
         "schemaVersion": "HERD_PROSPECTIVE_EVIDENCE_AUDIT_V1",
         "status": "PASS",
         "observationArchives": len(observations),
+        "firstObservationDate": observation_dates[0] if observation_dates else None,
+        "latestObservationDate": observation_dates[-1] if observation_dates else None,
         "observationRecords": sum(
             len(item["evidence"]["records"]) for item in observations
         ),
@@ -380,6 +410,8 @@ def audit_archive(
             len(item["evidence"].get("unavailable", [])) for item in observations
         ),
         "maturedOutcomes": len(outcomes),
+        "pendingOutcomes": pending_outcomes,
+        "maturityByHorizon": maturity_by_horizon,
         "operationalAction": "HOLD",
         "operationalActionRatio": 0.0,
     }
