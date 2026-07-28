@@ -397,6 +397,11 @@ def audit_archive(
     observation_dates = [
         item["evidence"]["observationDate"] for item in observations
     ]
+    distinct_tickers = {
+        record["ticker"]
+        for observation in observations
+        for record in observation["evidence"]["records"]
+    }
     return {
         "schemaVersion": "HERD_PROSPECTIVE_EVIDENCE_AUDIT_V1",
         "status": "PASS",
@@ -406,6 +411,7 @@ def audit_archive(
         "observationRecords": sum(
             len(item["evidence"]["records"]) for item in observations
         ),
+        "distinctTickers": len(distinct_tickers),
         "unavailableRecords": sum(
             len(item["evidence"].get("unavailable", [])) for item in observations
         ),

@@ -32,6 +32,13 @@
 관찰 MVP, 최신 Form 4·FINRA·13F·giveback 탈락, 행동 후보 0개와
 `survivorship_safe=false`를 한 번에 검증한다.
 
+운영 중인 전향 원장과 현재 연구 계약을 함께 보는 최신 준비 상태는
+`./scripts/audit-model-readiness.sh`로 검사한다. 결과는 Git에 넣지 않는
+`data/runtime/reports/model-readiness-latest.json`에 저장한다. 이 감사는
+State S1 관찰 가능 여부, 126거래일 결과 성숙 수, 행동 후보 수,
+생존자 편향 안전성을 분리해 보여주며 어느 하나가 비어 있을 때 행동
+권한을 열지 않는다.
+
 ## Prospective Evidence Ledger V1
 
 - State S1 스케줄러가 생성한 동일 번들을 관측일별 불변 JSON envelope로
