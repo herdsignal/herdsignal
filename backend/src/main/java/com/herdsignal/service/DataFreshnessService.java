@@ -16,7 +16,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,6 +31,9 @@ public class DataFreshnessService {
     private static final int PRICE_STALE_AFTER_BUSINESS_DAYS = 2;
     private static final int OBSERVATION_WARNING_AFTER_BUSINESS_DAYS = 5;
     private static final int OBSERVATION_STALE_AFTER_BUSINESS_DAYS = 7;
+    private static final ZoneId SCHEDULER_ZONE = ZoneId.of("America/New_York");
+    private static final int SCHEDULER_HOUR = 16;
+    private static final int SCHEDULER_MINUTE = 30;
 
     private final SchedulerRunRepository schedulerRunRepository;
     private final DailyPriceRepository dailyPriceRepository;
@@ -110,8 +115,28 @@ public class DataFreshnessService {
                 freshObservationTickerCount,
                 missingPriceTickerCount,
                 missingObservationTickerCount,
+                schedulerCadence(),
                 toSummary(latestRun),
                 toSummary(latestSuccessfulRun)
+        );
+    }
+
+    private DataFreshnessResponse.SchedulerCadence schedulerCadence() {
+        ZonedDateTime now = ZonedDateTime.ofInstant(clock.instant(), SCHEDULER_ZONE);
+        ZonedDateTime next = now.withHour(SCHEDULER_HOUR)
+                .withMinute(SCHEDULER_MINUTE)
+                .withSecond(0)
+                .withNano(0);
+        if (!next.isAfter(now)) {
+            next = next.plusDays(1);
+        }
+        return new DataFreshnessResponse.SchedulerCadence(
+                "EXTERNAL_DAEMON",
+                true,
+                SCHEDULER_ZONE.getId(),
+                "%02d:%02d".formatted(SCHEDULER_HOUR, SCHEDULER_MINUTE),
+                next.toOffsetDateTime(),
+                "FULL_TIER1"
         );
     }
 

@@ -18,6 +18,14 @@ beforeEach(() => {
         latestPriceDate: '2026-07-24',
         latestObservationDate: '2026-07-24',
         expectedTickerCount: 55,
+        schedulerCadence: {
+          automationMode: 'EXTERNAL_DAEMON',
+          requiresExternalProcess: true,
+          timezone: 'America/New_York',
+          dailyTime: '16:30',
+          nextScheduledAt: '2026-07-28T16:30:00-04:00',
+          manualRunScope: 'FULL_TIER1',
+        },
         latestRun: {
           status: 'SUCCESS',
           successCount: 55,
@@ -47,8 +55,10 @@ describe('DataStatusIndicator', () => {
     expect(screen.getByText('미국장 마감 후 반영')).toBeInTheDocument()
     expect(screen.getByText('완료된 금요일 기준')).toBeInTheDocument()
     expect(screen.getByText('55/55 종목')).toBeInTheDocument()
-    expect(screen.getByText('매일 16:30 ET')).toBeInTheDocument()
-    expect(screen.getByText('한국 05:30 · 겨울 06:30')).toBeInTheDocument()
+    expect(screen.getByText('16:30 ET')).toBeInTheDocument()
+    expect(screen.getByText(/다음 예정/)).toBeInTheDocument()
+    expect(screen.getByText('로컬 스케줄러가 실행 중일 때 자동')).toBeInTheDocument()
+    expect(screen.getByText(/가격·State S1·전향 관찰 전체/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '상태 다시 확인' })).toBeInTheDocument()
 
     fireEvent.keyDown(document, { key: 'Escape' })

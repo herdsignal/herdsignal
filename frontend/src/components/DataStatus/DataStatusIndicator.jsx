@@ -120,6 +120,7 @@ export default function DataStatusIndicator() {
             <span>자동 수집 예정</span>
             <strong>{view.scheduleLabel}</strong>
             <small>{view.scheduleLocalLabel}</small>
+            <small>{view.automationLabel}</small>
           </div>
 
           <dl className={styles.dates}>
@@ -149,7 +150,10 @@ export default function DataStatusIndicator() {
           {view.issueLabel && <p className={styles.issue}>{view.issueLabel}</p>}
           <details className={styles.manual}>
             <summary>수동 실행</summary>
-            <p>자동 수집을 놓쳤을 때만 전체 데이터를 다시 계산합니다.</p>
+            <p>
+              자동 수집을 놓쳤을 때만 실행합니다.
+              범위: {view.manualRunLabel}
+            </p>
             <div className={styles.actions}>
               <button type="button" onClick={runNow} disabled={requesting || view.isRunning}>
                 {requesting ? '요청 중' : view.isRunning ? '갱신 중' : '전체 데이터 다시 계산'}

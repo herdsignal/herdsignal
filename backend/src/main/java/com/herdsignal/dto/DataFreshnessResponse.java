@@ -21,9 +21,19 @@ public record DataFreshnessResponse(
         int freshScoreTickerCount,
         int missingPriceTickerCount,
         int missingScoreTickerCount,
+        SchedulerCadence schedulerCadence,
         SchedulerRunSummary latestRun,
         SchedulerRunSummary latestSuccessfulRun
 ) {
+    public record SchedulerCadence(
+            String automationMode,
+            boolean requiresExternalProcess,
+            String timezone,
+            String dailyTime,
+            OffsetDateTime nextScheduledAt,
+            String manualRunScope
+    ) {}
+
     public record SchedulerRunSummary(
             String status,
             String triggerType,

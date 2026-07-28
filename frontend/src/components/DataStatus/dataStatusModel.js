@@ -36,6 +36,7 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
 
   const status = STATUS_META[data?.status] ?? STATUS_META.NO_DATA
   const run = data?.latestRun
+  const cadence = data?.schedulerCadence
   const expected = numberOrZero(data?.expectedTickerCount)
   const completed = numberOrZero(run?.successCount)
   const failed = numberOrZero(run?.failedCount)
@@ -59,9 +60,37 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
     coverageLabel: expected > 0 ? `${completed}/${expected} 종목` : '집계 없음',
     issueLabel: issues.length > 0 ? issues.join(' · ') : null,
     isRunning: run?.status === 'RUNNING',
-    scheduleLabel: '매일 16:30 ET',
-    scheduleLocalLabel: '한국 05:30 · 겨울 06:30',
+    scheduleLabel: scheduleLabel(cadence),
+    scheduleLocalLabel: scheduleLocalLabel(cadence),
+    automationLabel: cadence?.requiresExternalProcess
+      ? '로컬 스케줄러가 실행 중일 때 자동'
+      : '서비스에서 자동 실행',
+    manualRunLabel: cadence?.manualRunScope === 'FULL_TIER1'
+      ? '가격·State S1·전향 관찰 전체'
+      : '전체 데이터',
   }
+}
+
+export function scheduleLabel(cadence) {
+  const time = cadence?.dailyTime
+  const timezone = cadence?.timezone
+  if (!time) return '예정 정보 없음'
+  return `${time} ${timezone === 'America/New_York' ? 'ET' : timezone ?? ''}`.trim()
+}
+
+export function scheduleLocalLabel(cadence) {
+  const value = cadence?.nextScheduledAt
+  if (!value) return '다음 실행 시각 확인 불가'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '다음 실행 시각 확인 불가'
+  return `다음 예정 · ${new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date)}`
 }
 
 export function formatObservedDate(value) {

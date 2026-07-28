@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   dataStatusViewModel,
   formatObservedDate,
+  scheduleLabel,
+  scheduleLocalLabel,
   schedulerRunLabel,
 } from './dataStatusModel'
 
@@ -47,7 +49,7 @@ describe('dataStatusViewModel', () => {
     expect(view.label).toBe('일부 확인')
     expect(view.issueLabel).toBe('실패 2 · 제외 3 · S1 미산출 3')
     expect(view.coverageLabel).toBe('50/55 종목')
-    expect(view.scheduleLabel).toBe('매일 16:30 ET')
+    expect(view.scheduleLabel).toBe('예정 정보 없음')
   })
 
   it('fails closed when status cannot be loaded', () => {
@@ -58,6 +60,17 @@ describe('dataStatusViewModel', () => {
 })
 
 describe('data status formatting', () => {
+  it('formats the backend-owned scheduler cadence instead of assuming automation', () => {
+    const cadence = {
+      timezone: 'America/New_York',
+      dailyTime: '16:30',
+      nextScheduledAt: '2026-07-28T16:30:00-04:00',
+    }
+
+    expect(scheduleLabel(cadence)).toBe('16:30 ET')
+    expect(scheduleLocalLabel(cadence)).toContain('다음 예정')
+  })
+
   it('formats observation dates and unknown values safely', () => {
     expect(formatObservedDate('2026-07-24')).toBe('2026.07.24')
     expect(formatObservedDate(null)).toBe('—')

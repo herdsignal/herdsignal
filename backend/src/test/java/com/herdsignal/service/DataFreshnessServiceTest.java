@@ -61,6 +61,13 @@ class DataFreshnessServiceTest {
         assertThat(response.latestSuccessfulRun().status()).isEqualTo("SUCCESS");
         assertThat(response.latestSuccessfulRun().publishStatus()).isEqualTo("SUCCESS");
         assertThat(response.latestSuccessfulRun().universeSha256()).hasSize(64);
+        assertThat(response.schedulerCadence().automationMode()).isEqualTo("EXTERNAL_DAEMON");
+        assertThat(response.schedulerCadence().requiresExternalProcess()).isTrue();
+        assertThat(response.schedulerCadence().timezone()).isEqualTo("America/New_York");
+        assertThat(response.schedulerCadence().dailyTime()).isEqualTo("16:30");
+        assertThat(response.schedulerCadence().nextScheduledAt())
+                .isEqualTo("2026-07-15T16:30-04:00");
+        assertThat(response.schedulerCadence().manualRunScope()).isEqualTo("FULL_TIER1");
     }
 
     @Test
