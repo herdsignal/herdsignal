@@ -6,6 +6,7 @@ import {
   Line,
   LineChart,
   ReferenceArea,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -25,6 +26,34 @@ const formatPrice = (value) => (
     ? `$${Number(value).toLocaleString('en-US', { maximumFractionDigits: 2 })}`
     : '—'
 )
+
+const TRANSITION_LABELS = {
+  BREAKING: '밀집 훼손',
+  RECOVERING: '군중 회복',
+  COOLING: '밀집 완화',
+  EXTENDING: '밀집 확대',
+  FALLING: '분산 확대',
+  STABILIZING: '저위 안정',
+  PLATEAU: '고위 정체',
+}
+
+export function timelineEvents(points = []) {
+  return points
+    .filter((point) => point.transitionEvent && TRANSITION_LABELS[point.transition])
+    .map((point) => {
+      const adjustedClose = point.adjustedClose == null
+        ? null
+        : Number(point.adjustedClose)
+      return {
+        date: point.date,
+        marketSession: point.marketSession ?? point.date,
+        label: TRANSITION_LABELS[point.transition],
+        stage: point.stage ?? stageLabelFromScore(point.score),
+        score: Number(point.score),
+        adjustedClose: Number.isFinite(adjustedClose) ? adjustedClose : null,
+      }
+    })
+}
 
 function TimelineTooltip({ active, payload }) {
   if (!active || !payload?.length) return null
@@ -49,6 +78,7 @@ export default function PriceHerdTimelineChart({
   const pricedCount = points.filter((point) => point.adjustedClose != null).length
   const score = currentScore ?? points.at(-1)?.score ?? null
   const color = scoreColor(score)
+  const events = timelineEvents(points)
 
   if (!points.length) {
     return (
@@ -81,6 +111,15 @@ export default function PriceHerdTimelineChart({
             width={48}
           />
           <Tooltip content={<TimelineTooltip />} />
+          {events.map((event) => (
+            <ReferenceLine
+              key={`price-${event.date}-${event.label}`}
+              x={event.date}
+              stroke={scoreColor(event.score)}
+              strokeDasharray="2 4"
+              strokeOpacity={0.45}
+            />
+          ))}
           <Line
             type="monotone"
             dataKey="adjustedClose"
@@ -132,6 +171,15 @@ export default function PriceHerdTimelineChart({
             width={48}
           />
           <Tooltip content={<TimelineTooltip />} />
+          {events.map((event) => (
+            <ReferenceLine
+              key={`herd-${event.date}-${event.label}`}
+              x={event.date}
+              stroke={scoreColor(event.score)}
+              strokeDasharray="2 4"
+              strokeOpacity={0.45}
+            />
+          ))}
           <Area
             type="monotone"
             dataKey="score"
@@ -147,6 +195,26 @@ export default function PriceHerdTimelineChart({
       <div className={styles.legend}>
         <span>Flee</span><span>Scatter</span><span>Calm</span><span>Drift</span><span>Rush</span>
       </div>
+      {events.length > 0 && (
+        <ol className={styles.events} aria-label="HERD 상태 사건">
+          {events.slice(-4).reverse().map((event) => (
+            <li key={`${event.date}-${event.label}`}>
+              <i
+                aria-hidden="true"
+                style={{ background: scoreColor(event.score) }}
+              />
+              <span>{event.marketSession}</span>
+              <strong>{event.label}</strong>
+              <small>
+                HERD {Math.round(event.score)}
+                {Number.isFinite(event.adjustedClose)
+                  ? ` · ${formatPrice(event.adjustedClose)}`
+                  : ''}
+              </small>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   )
 }
