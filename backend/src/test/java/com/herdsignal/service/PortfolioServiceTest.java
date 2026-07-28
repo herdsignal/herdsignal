@@ -30,6 +30,7 @@ class PortfolioServiceTest {
     private PortfolioHistoryRepository historyRepository;
     private DailyPriceRepository dailyPriceRepository;
     private UserCashBalanceRepository cashBalanceRepository;
+    private PortfolioSourceModeService sourceModeService;
     private PortfolioService portfolioService;
 
     @BeforeEach
@@ -38,6 +39,7 @@ class PortfolioServiceTest {
         historyRepository = mock(PortfolioHistoryRepository.class);
         dailyPriceRepository = mock(DailyPriceRepository.class);
         cashBalanceRepository = mock(UserCashBalanceRepository.class);
+        sourceModeService = mock(PortfolioSourceModeService.class);
         UserCashHistoryRepository cashHistoryRepository = mock(UserCashHistoryRepository.class);
         UsMarketSessionClock marketSessionClock = new UsMarketSessionClock();
         PortfolioCashService cashService = new PortfolioCashService(
@@ -60,7 +62,8 @@ class PortfolioServiceTest {
                 new PortfolioRealtimeRunner(
                         new ObjectMapper(),
                         new PythonProcessGateway("")
-                )
+                ),
+                sourceModeService
         );
 
         when(historyRepository.findTopByUserIdOrderBySnapshotDateDesc(anyString()))

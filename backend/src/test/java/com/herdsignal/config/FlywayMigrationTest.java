@@ -19,7 +19,7 @@ class FlywayMigrationTest {
                 .locations("classpath:db/migration")
                 .load();
 
-        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(12);
+        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(13);
 
         try (var connection = DriverManager.getConnection(url, "sa", "");
              var tables = connection.getMetaData().getTables(null, "PUBLIC", "%", new String[]{"TABLE"})) {
@@ -62,6 +62,21 @@ class FlywayMigrationTest {
 
             assertThat(types.get("artifact_sha256")).startsWith("CHAR");
             assertThat(types.get("approval_file_sha256")).startsWith("CHAR");
+        }
+
+        try (var connection = DriverManager.getConnection(url, "sa", "");
+             var columns = connection.getMetaData().getColumns(
+                     null, "PUBLIC", "USER_PORTFOLIO", "%")) {
+            Map<String, Integer> scales = new HashMap<>();
+            while (columns.next()) {
+                scales.put(
+                        columns.getString("COLUMN_NAME").toLowerCase(),
+                        columns.getInt("DECIMAL_DIGITS")
+                );
+            }
+
+            assertThat(scales.get("avg_price")).isEqualTo(6);
+            assertThat(scales.get("quantity")).isEqualTo(6);
         }
     }
 }

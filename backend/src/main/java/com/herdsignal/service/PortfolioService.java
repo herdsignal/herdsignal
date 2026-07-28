@@ -38,9 +38,11 @@ public class PortfolioService {
     private final PortfolioQueryService queryService;
     private final PortfolioCashService cashService;
     private final PortfolioRealtimeRunner realtimeRunner;
+    private final PortfolioSourceModeService sourceModeService;
 
     @Transactional
     public void addStock(String userId, PortfolioAddRequest request) {
+        sourceModeService.requireManualWriteAllowed(userId);
         String ticker = tickerSymbolPolicy.normalize(request.getTicker());
         if (portfolioRepository.existsByUserIdAndTicker(userId, ticker)) {
             throw new DuplicateResourceException(ticker + " 종목이 이미 포트폴리오에 있습니다.");
@@ -59,6 +61,7 @@ public class PortfolioService {
 
     @Transactional
     public void removeStock(String userId, String ticker) {
+        sourceModeService.requireManualWriteAllowed(userId);
         UserPortfolio portfolio = findHolding(userId, ticker);
         portfolioRepository.delete(portfolio);
     }
@@ -83,11 +86,13 @@ public class PortfolioService {
     }
 
     public CashBalanceResponse updateCashBalance(String userId, CashBalanceRequest request) {
+        sourceModeService.requireManualWriteAllowed(userId);
         return cashService.updateBalance(userId, request);
     }
 
     @Transactional
     public void updateAvgPrice(String userId, String ticker, AvgPriceUpdateRequest request) {
+        sourceModeService.requireManualWriteAllowed(userId);
         UserPortfolio portfolio = findHolding(userId, ticker);
         portfolio.setAvgPrice(request.getAvgPrice());
         portfolio.setQuantity(request.getQuantity());

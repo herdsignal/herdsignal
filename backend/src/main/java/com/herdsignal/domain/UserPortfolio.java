@@ -41,11 +41,11 @@ public class UserPortfolio {
     private String ticker;
 
     /** 평균 매수가 (USD) */
-    @Column(name = "avg_price", precision = 12, scale = 4)
+    @Column(name = "avg_price", precision = 16, scale = 6)
     private BigDecimal avgPrice;
 
     /** 보유 수량 (소수점 지원) */
-    @Column(name = "quantity", precision = 12, scale = 4)
+    @Column(name = "quantity", precision = 18, scale = 6)
     private BigDecimal quantity;
 
     /** 총자산 대비 종목 목표 비중 (0~1) */

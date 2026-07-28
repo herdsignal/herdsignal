@@ -26,6 +26,7 @@ public class PortfolioLedgerService {
 
     private final PortfolioLedgerEntryRepository repository;
     private final TickerSymbolPolicy tickerSymbolPolicy;
+    private final PortfolioLedgerProjectionService projectionService;
 
     @Transactional(readOnly = true)
     public List<PortfolioLedgerEntryResponse> getEntries(String userId, String ticker) {
@@ -91,6 +92,7 @@ public class PortfolioLedgerService {
                 .note(cleanNote(request.getNote()))
                 .createdAt(LocalDateTime.now())
                 .build());
+        projectionService.synchronizeIfManaged(userId);
         return PortfolioLedgerEntryResponse.from(saved);
     }
 
@@ -99,6 +101,8 @@ public class PortfolioLedgerService {
         PortfolioLedgerEntry entry = repository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("원장 항목을 찾을 수 없습니다."));
         repository.delete(entry);
+        repository.flush();
+        projectionService.synchronizeIfManaged(userId);
     }
 
     @Transactional(readOnly = true)

@@ -19,4 +19,6 @@ public interface PortfolioLedgerEntryRepository
     );
 
     Optional<PortfolioLedgerEntry> findByIdAndUserId(Long id, String userId);
+
+    boolean existsByUserIdAndSource(String userId, String source);
 }

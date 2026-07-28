@@ -24,12 +24,18 @@ import static org.mockito.Mockito.when;
 class PortfolioLedgerServiceTest {
 
     private PortfolioLedgerEntryRepository repository;
+    private PortfolioLedgerProjectionService projectionService;
     private PortfolioLedgerService service;
 
     @BeforeEach
     void setUp() {
         repository = mock(PortfolioLedgerEntryRepository.class);
-        service = new PortfolioLedgerService(repository, new TickerSymbolPolicy());
+        projectionService = mock(PortfolioLedgerProjectionService.class);
+        service = new PortfolioLedgerService(
+                repository,
+                new TickerSymbolPolicy(),
+                projectionService
+        );
     }
 
     @Test
@@ -46,6 +52,7 @@ class PortfolioLedgerServiceTest {
         assertThat(response.getTicker()).isEqualTo("NVDA");
         assertThat(response.getGrossAmount()).isEqualByComparingTo("250.00");
         assertThat(response.getCashEffect()).isEqualByComparingTo("-251.25");
+        verify(projectionService).synchronizeIfManaged("user-a");
     }
 
     @Test
