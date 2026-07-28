@@ -7,6 +7,7 @@ vi.mock('../../api/herdApi', () => ({
   getHerdObservation: vi.fn(),
   getHerdPriceTimeline: vi.fn(),
   getHerdEpisodeStudy: vi.fn(),
+  getHistoricalS1Context: vi.fn(),
   addToPortfolio: vi.fn(),
   addToWatchlist: vi.fn(),
   getPortfolio: vi.fn(),
@@ -64,6 +65,10 @@ beforeEach(() => {
     herdStage: 'CALM',
     minimumCompletedEpisodes: 5,
     episodeCount: 0,
+    summaries: [],
+  }))
+  api.getHistoricalS1Context.mockReturnValue(response({
+    availabilityStatus: 'UNAVAILABLE',
     summaries: [],
   }))
   api.getStockFinancials.mockReturnValue(response(null))

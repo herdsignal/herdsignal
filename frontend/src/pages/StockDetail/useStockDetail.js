@@ -44,6 +44,8 @@ export function useStockDetail(ticker) {
     financialsLoading,
     episodeStudy,
     episodeLoading,
+    historicalContext,
+    historicalContextLoading,
     fetchData,
   } = resources
 
@@ -153,6 +155,8 @@ export function useStockDetail(ticker) {
     timelineMeta,
     episodeStudy,
     episodeLoading,
+    historicalContext,
+    historicalContextLoading,
     briefItems,
     stateSummary,
     handleJournalAction,

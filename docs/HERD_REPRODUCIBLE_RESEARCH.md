@@ -732,6 +732,19 @@ PYTHONPATH=. .venv/bin/python -m herd.historical_prospective_bridge_v1
 `PENDING`으로 유지한다. 이 기준은 상태 관찰과 과거 설명 통계 사용을
 막지 않지만 방향 예측과 행동 비율은 승인하지 않는다.
 
+종목 상세에 제공할 설명 전용 축약 자료는 다음 명령으로 재생한다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.historical_s1_product_context_v1
+```
+
+다섯 단계의 ENTRY 사건을 42일 간격으로 접고 21·63·126거래일만
+집계한다. 종목별 5건 미만이면 현재 구성 종목 참조군으로 대체한다.
+생성된 classpath JSON은 Spring이 시작할 때 행동 차단 계약과 버전을
+검증한다. 이 자료는 설명 전용이며 `survivorship_safe=false`,
+`direction_prediction=false`, `HOLD·0%`를 유지한다.
+
 ## 근거
 
 - scikit-learn `TimeSeriesSplit`: 시간 순서를 보존하고 train과 test 사이

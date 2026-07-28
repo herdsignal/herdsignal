@@ -10,6 +10,8 @@ export default function StockDetailHistory({
   currentScore,
   episodeStudy,
   episodeLoading,
+  historicalContext,
+  historicalContextLoading,
   timelineMeta,
   observation,
 }) {
@@ -39,7 +41,12 @@ export default function StockDetailHistory({
           <PriceHerdTimelineChart points={points} currentScore={currentScore} />
         )}
       </div>
-      <EpisodeSummary study={episodeStudy} loading={episodeLoading} />
+      <EpisodeSummary
+        historicalContext={historicalContext}
+        historicalLoading={historicalContextLoading}
+        liveStudy={episodeStudy}
+        liveLoading={episodeLoading}
+      />
       <DataBasis timeline={timelineMeta} observation={observation} />
     </section>
   )
@@ -80,29 +87,74 @@ function signedPercent(value) {
   return `${number > 0 ? '+' : ''}${number.toFixed(1)}%`
 }
 
-function EpisodeSummary({ study, loading }) {
-  if (loading) {
+function EpisodeSummary({
+  historicalContext,
+  historicalLoading,
+  liveStudy,
+  liveLoading,
+}) {
+  if (historicalLoading) {
     return <div className={styles.episodeNote}>과거 상태 경로 계산 중…</div>
   }
-  if (!study || study.availabilityStatus !== 'AVAILABLE') return null
-  const insufficient = study.evidenceStatus === 'INSUFFICIENT_SAMPLE'
+  if (
+    historicalContext?.availabilityStatus === 'AVAILABLE'
+    && historicalContext?.summaries?.length > 0
+  ) {
+    const scope = historicalContext.contextScope === 'TICKER_HISTORY'
+      ? '이 종목 이력'
+      : '현재 구성 종목 참조'
+    const liveEpisodes = liveStudy?.episodeCount ?? 0
+    return (
+      <div className={styles.episodeStudy}>
+        <div className={styles.episodeHeader}>
+          <div>
+            <strong>과거 같은 {historicalContext.herdStage} 진입 이후</strong>
+            <span>{scope} · 상태 진입 1회를 한 사건으로 집계</span>
+          </div>
+          <span>{historicalContext.episodeCount}회 진입</span>
+        </div>
+        <div className={styles.episodeGrid}>
+          {historicalContext.summaries.map((summary) => (
+            <div key={summary.horizonSessions} className={styles.episodeMetric}>
+              <span>
+                {horizonLabel(summary.horizonSessions)} · {summary.completedEpisodes}건
+              </span>
+              <strong>{signedPercent(summary.medianReturnPct)}</strong>
+              <small>
+                상승 {Number(summary.positiveRatePct).toFixed(0)}%
+                {' · '}중간 최대낙폭 {signedPercent(summary.medianMaePct)}
+              </small>
+            </div>
+          ))}
+        </div>
+        <p className={styles.episodeDisclaimer}>
+          현재 구성 종목의 과거 기술 통계입니다. 상장폐지 종목을 모두 포함하지 않아
+          방향 예측이나 매수·매도 판단에는 사용하지 않습니다.
+          {!liveLoading && liveEpisodes > 0 ? ` 실제 저장 관찰 ${liveEpisodes}건.` : ''}
+        </p>
+      </div>
+    )
+  }
+
+  if (!liveStudy || liveStudy.availabilityStatus !== 'AVAILABLE') return null
+  const insufficient = liveStudy.evidenceStatus === 'INSUFFICIENT_SAMPLE'
 
   return (
     <div className={styles.episodeStudy}>
       <div className={styles.episodeHeader}>
         <div>
-          <strong>같은 {study.herdStage} 진입 이후</strong>
+          <strong>같은 {liveStudy.herdStage} 진입 이후</strong>
           <span>상태 진입 1회를 한 사건으로 집계</span>
         </div>
-        <span>{study.episodeCount}회 진입</span>
+        <span>{liveStudy.episodeCount}회 진입</span>
       </div>
       {insufficient ? (
         <div className={styles.episodeNote}>
-          완결 표본이 {study.minimumCompletedEpisodes}개 미만입니다. 방향 판단에는 사용하지 않습니다.
+          완결 표본이 {liveStudy.minimumCompletedEpisodes}개 미만입니다. 방향 판단에는 사용하지 않습니다.
         </div>
       ) : (
         <div className={styles.episodeGrid}>
-          {study.summaries.map((summary) => (
+          {liveStudy.summaries.map((summary) => (
             <div key={summary.weeks} className={styles.episodeMetric}>
               <span>{summary.weeks}주 후 · {summary.completedCount}건</span>
               <strong>{signedPercent(summary.medianReturnPct)}</strong>
@@ -116,4 +168,11 @@ function EpisodeSummary({ study, loading }) {
       <p className={styles.episodeDisclaimer}>과거 경로의 기술 통계이며 매수·매도 적중률이 아닙니다.</p>
     </div>
   )
+}
+
+function horizonLabel(sessions) {
+  if (sessions === 21) return '1개월 후'
+  if (sessions === 63) return '3개월 후'
+  if (sessions === 126) return '6개월 후'
+  return `${sessions}거래일 후`
 }

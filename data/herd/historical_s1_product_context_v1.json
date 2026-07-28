@@ -1,0 +1,32 @@
+{
+  "contract_version": "HERD_HISTORICAL_S1_PRODUCT_CONTEXT_V1",
+  "status": "LOCKED_DESCRIPTIVE_PRODUCT_CONTEXT_ONLY",
+  "source_model": "HERD_STATE_S1",
+  "source_replay_contract": "HERD_HISTORICAL_S1_REPLAY_V1",
+  "stage_entries": [
+    "FLEE",
+    "SCATTER",
+    "CALM",
+    "DRIFT",
+    "RUSH"
+  ],
+  "collapse_calendar_days": 42,
+  "horizons_sessions": [
+    21,
+    63,
+    126
+  ],
+  "minimum_ticker_episodes": 5,
+  "minimum_reference_episodes": 30,
+  "claim_boundary": {
+    "descriptive_context_only": true,
+    "current_constituent_history": true,
+    "candidate_selection": false,
+    "direction_prediction": false,
+    "buy_or_profit_take_authority": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

@@ -195,6 +195,10 @@ export const getHerdPriceTimeline = (ticker, limit = 52) =>
 export const getHerdEpisodeStudy = (ticker) =>
   api.get(`/api/observations/${tickerPath(ticker)}/episodes`)
 
+/** 불변 과거 가격에서 재생한 현재 S1 단계 이후의 기술 통계. */
+export const getHistoricalS1Context = (ticker) =>
+  api.get(`/api/observations/${tickerPath(ticker)}/historical-context`)
+
 /** 회사명/티커 기반 종목 검색 */
 export const searchStocks = (query) =>
   api.get('/api/stocks/search', { params: { q: query } })

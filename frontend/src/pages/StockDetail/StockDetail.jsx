@@ -49,6 +49,8 @@ export default function StockDetail() {
     timelineMeta,
     episodeStudy,
     episodeLoading,
+    historicalContext,
+    historicalContextLoading,
     briefItems,
     stateSummary,
     handleJournalAction,
@@ -186,6 +188,8 @@ export default function StockDetail() {
               currentScore={herdScore}
               episodeStudy={episodeStudy}
               episodeLoading={episodeLoading}
+              historicalContext={historicalContext}
+              historicalContextLoading={historicalContextLoading}
               timelineMeta={timelineMeta}
               observation={observation}
             />

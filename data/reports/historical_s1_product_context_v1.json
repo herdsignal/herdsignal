@@ -1,0 +1,26 @@
+{
+  "reportVersion": "HERD_HISTORICAL_S1_PRODUCT_CONTEXT_V1",
+  "status": "DESCRIPTIVE_PRODUCT_CONTEXT_READY",
+  "episodes": 53034,
+  "rows": 156360,
+  "tickers": 439,
+  "historyStartDate": "2013-10-18",
+  "historyEndDate": "2026-06-12",
+  "inputHashes": {
+    "contract": "a1df98380e6a62d66a8ed3924377ab53072f817e0401067b253d46b71197262f",
+    "transition_report": "dc789170d11c2d295e190a820ae0e6473cb8ad8af8faa95907f47a806cee0248",
+    "state_contract": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489",
+    "primary_manifest": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b",
+    "independent_current_constituents_manifest": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781",
+    "productContract": "646e404613e738e1eff213c9af96dafad76b5c0e75e379fe50f819492be45bc3"
+  },
+  "resource": {
+    "path": "backend/src/main/resources/research/historical_s1_product_context_v1.json",
+    "sha256": "97c0e4ba3c019fee9dbf80f247a2dbaa9f7d5a0b17458bb01ac7c4a31c055a7f"
+  },
+  "directionPrediction": false,
+  "operationalAction": "HOLD",
+  "operationalActionRatio": 0.0,
+  "blindHoldoutAccess": false,
+  "survivorshipSafe": false
+}

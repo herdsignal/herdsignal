@@ -5,10 +5,13 @@ import com.herdsignal.dto.HerdObservationResponse;
 import com.herdsignal.dto.HerdPriceTimelinePoint;
 import com.herdsignal.dto.HerdPriceTimelineResponse;
 import com.herdsignal.dto.HerdEpisodeStudyResponse;
+import com.herdsignal.dto.HistoricalS1ContextResponse;
+import com.herdsignal.dto.HistoricalS1ContextSummary;
 import com.herdsignal.exception.GlobalExceptionHandler;
 import com.herdsignal.service.HerdObservationService;
 import com.herdsignal.service.HerdEpisodeStudyService;
 import com.herdsignal.service.HerdPriceTimelineService;
+import com.herdsignal.service.HistoricalS1ContextService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +31,7 @@ class HerdObservationControllerTest {
     private HerdObservationService service;
     private HerdPriceTimelineService timelineService;
     private HerdEpisodeStudyService episodeStudyService;
+    private HistoricalS1ContextService historicalS1ContextService;
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -35,11 +39,13 @@ class HerdObservationControllerTest {
         service = mock(HerdObservationService.class);
         timelineService = mock(HerdPriceTimelineService.class);
         episodeStudyService = mock(HerdEpisodeStudyService.class);
+        historicalS1ContextService = mock(HistoricalS1ContextService.class);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(new HerdObservationController(
                         service,
                         timelineService,
-                        episodeStudyService
+                        episodeStudyService,
+                        historicalS1ContextService
                 ))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -141,6 +147,44 @@ class HerdObservationControllerTest {
                         .value("INSUFFICIENT_SAMPLE"))
                 .andExpect(jsonPath("$.data.minimumCompletedEpisodes")
                         .value(5));
+    }
+
+    @Test
+    void historicalContextEndpointKeepsDescriptiveBoundaryExplicit() throws Exception {
+        when(historicalS1ContextService.getCurrentStageContext("NVDA"))
+                .thenReturn(new HistoricalS1ContextResponse(
+                        "AVAILABLE",
+                        "DESCRIPTIVE_ONLY",
+                        "TICKER_HISTORY",
+                        "NVDA",
+                        "RUSH",
+                        "HERD_STATE_S1",
+                        LocalDate.of(2013, 10, 18),
+                        LocalDate.of(2026, 6, 12),
+                        false,
+                        5,
+                        12,
+                        List.of(new HistoricalS1ContextSummary(
+                                21,
+                                12,
+                                new BigDecimal("2.40"),
+                                new BigDecimal("58.30"),
+                                new BigDecimal("8.10"),
+                                new BigDecimal("-6.20")
+                        )),
+                        false,
+                        "HOLD",
+                        0
+                ));
+
+        mockMvc.perform(get("/api/observations/NVDA/historical-context"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.contextScope")
+                        .value("TICKER_HISTORY"))
+                .andExpect(jsonPath("$.data.survivorshipSafe").value(false))
+                .andExpect(jsonPath("$.data.directionPrediction").value(false))
+                .andExpect(jsonPath("$.data.operationalAction").value("HOLD"))
+                .andExpect(jsonPath("$.data.operationalActionRatio").value(0));
     }
 
     private HerdObservationResponse unavailable() {

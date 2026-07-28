@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getHerdObservation,
   getHerdEpisodeStudy,
+  getHistoricalS1Context,
   getHerdPriceTimeline,
   getStockFinancials,
 } from '../../api/herdApi'
@@ -24,11 +25,32 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
   const [financialsLoading, setFinancialsLoading] = useState(false)
   const [episodeStudy, setEpisodeStudy] = useState(null)
   const [episodeLoading, setEpisodeLoading] = useState(false)
+  const [historicalContext, setHistoricalContext] = useState(null)
+  const [historicalContextLoading, setHistoricalContextLoading] = useState(false)
   const herdRequest = useRef(0)
 
   useEffect(() => {
     setObservation(null)
     setError(null)
+  }, [normalizedTicker])
+
+  useEffect(() => {
+    let active = true
+    setHistoricalContextLoading(true)
+    setHistoricalContext(null)
+    getHistoricalS1Context(normalizedTicker)
+      .then((response) => {
+        if (active) setHistoricalContext(response.data?.data ?? null)
+      })
+      .catch(() => {
+        if (active) setHistoricalContext(null)
+      })
+      .finally(() => {
+        if (active) setHistoricalContextLoading(false)
+      })
+    return () => {
+      active = false
+    }
   }, [normalizedTicker])
 
   useEffect(() => {
@@ -140,6 +162,8 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     financialsLoading,
     episodeStudy,
     episodeLoading,
+    historicalContext,
+    historicalContextLoading,
     fetchData,
   }
 }

@@ -203,6 +203,10 @@
       "status": "DIAGNOSTIC"
     },
     {
+      "path": "data/herd/historical_s1_product_context_v1.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
       "path": "data/herd/historical_s1_replay_v1.json",
       "status": "DIAGNOSTIC"
     },
@@ -1068,6 +1072,10 @@
     },
     {
       "path": "data/reports/historical_s1_dependency_summary_v1.csv",
+      "status": "DIAGNOSTIC"
+    },
+    {
+      "path": "data/reports/historical_s1_product_context_v1.json",
       "status": "DIAGNOSTIC"
     },
     {
