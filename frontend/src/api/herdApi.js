@@ -164,6 +164,15 @@ export const getHerdObservation = (ticker) =>
 export const getDailyHerdObservation = (ticker) =>
   api.get(`/api/observations/daily/${tickerPath(ticker)}`)
 
+/** Daily D1 최신 잠정 관찰값 일괄 조회 (최대 100종목). */
+export const getDailyHerdObservations = (tickers) => api.get('/api/observations/daily', {
+  params: {
+    tickers: [...new Set((tickers ?? []).map(tickerPath))]
+      .filter(Boolean)
+      .join(','),
+  },
+})
+
 /** State S1 최신 관찰값 일괄 조회 (최대 100종목). */
 export const getHerdObservations = (tickers) => api.get('/api/observations', {
   params: {

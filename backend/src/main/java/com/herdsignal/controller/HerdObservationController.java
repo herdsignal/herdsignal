@@ -36,6 +36,15 @@ public class HerdObservationController {
         ));
     }
 
+    @GetMapping("/daily")
+    public ResponseEntity<ApiResponse<HerdObservationBatchResponse>> getLatestDailyBatch(
+            @RequestParam String tickers
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                service.getLatestDailyBatch(Arrays.asList(tickers.split(",")))
+        ));
+    }
+
     @GetMapping("/{ticker}")
     public ResponseEntity<ApiResponse<HerdObservationResponse>> getLatest(
             @PathVariable String ticker

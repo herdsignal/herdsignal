@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
+  getDailyHerdObservations,
   getHerdObservations,
   getWatchlist,
   removeFromWatchlist,
@@ -8,6 +9,7 @@ import {
 import { API_HOST } from '../../utils/apiConfig'
 import {
   observationBatchToMap,
+  mergeDailyObservationBatch,
   observationToTrackedItem,
 } from '../../utils/herdObservation'
 import styles from './Watchlist.module.css'
@@ -55,12 +57,22 @@ export default function Watchlist() {
         rawItems.map((item) => [item.ticker, item]),
       )
       const tickers = rawItems.map((item) => item.ticker)
-      const batchResponse = tickers.length > 0
-        ? await getHerdObservations(tickers)
-        : null
-      const observationMap = observationBatchToMap(
-        batchResponse?.data?.data,
+      const [confirmedResult, dailyResult] = tickers.length > 0
+        ? await Promise.allSettled([
+          getHerdObservations(tickers),
+          getDailyHerdObservations(tickers),
+        ])
+        : []
+      if (confirmedResult?.status === 'rejected') throw confirmedResult.reason
+      const confirmedMap = observationBatchToMap(
+        confirmedResult?.value?.data?.data,
         extras,
+      )
+      const observationMap = mergeDailyObservationBatch(
+        confirmedMap,
+        dailyResult?.status === 'fulfilled'
+          ? dailyResult.value?.data?.data
+          : null,
       )
       setWatchlist(rawItems.map((item) => (
         observationMap[item.ticker]

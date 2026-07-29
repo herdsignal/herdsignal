@@ -66,9 +66,11 @@ export default function WatchlistQueue({
                 <small>
                   {score == null
                     ? 'S1 준비 중'
+                    : item.provisional
+                      ? '일간 잠정'
                     : item.freshnessStatus === 'STALE'
                       ? '갱신 필요'
-                      : 'State S1'}
+                      : '주간 확정'}
                 </small>
               </span>
             </button>

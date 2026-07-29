@@ -80,11 +80,25 @@ public class HerdObservationService {
 
     @Transactional(readOnly = true)
     public HerdObservationBatchResponse getLatestBatch(List<String> rawTickers) {
+        return getLatestBatchByModel(rawTickers, STATE_MODEL_VERSION);
+    }
+
+    @Transactional(readOnly = true)
+    public HerdObservationBatchResponse getLatestDailyBatch(
+            List<String> rawTickers
+    ) {
+        return getLatestBatchByModel(rawTickers, DAILY_MODEL_VERSION);
+    }
+
+    private HerdObservationBatchResponse getLatestBatchByModel(
+            List<String> rawTickers,
+            String modelVersion
+    ) {
         List<String> tickers = normalizeBatch(rawTickers);
         Map<String, HerdObservation> observations = repository
                 .findLatestByTickersAndStateModelVersion(
                         tickers,
-                        STATE_MODEL_VERSION
+                        modelVersion
                 )
                 .stream()
                 .collect(Collectors.toMap(
@@ -99,7 +113,7 @@ public class HerdObservationService {
                     HerdObservation observation = observations.get(ticker);
                     Stock stock = stocks.get(ticker);
                     return observation == null
-                            ? unavailable(ticker, stock)
+                            ? unavailable(ticker, stock, modelVersion)
                             : toResponse(observation, stock);
                 })
                 .toList();

@@ -125,3 +125,44 @@ export function observationBatchToMap(batch, extrasByTicker = {}) {
     ]
   }).filter(([ticker]) => ticker))
 }
+
+export function mergeDailyObservationBatch(
+  confirmedMap,
+  dailyBatch,
+) {
+  const dailyMap = observationBatchToMap(dailyBatch)
+  return Object.fromEntries(Object.entries(confirmedMap ?? {}).map(
+    ([ticker, confirmed]) => {
+      const daily = dailyMap[ticker]
+      if (
+        daily?.availabilityStatus !== 'AVAILABLE'
+        || !Number.isFinite(Number(daily?.herdScore))
+      ) {
+        return [ticker, {
+          ...confirmed,
+          confirmedHerdScore: confirmed.herdScore,
+          confirmedHerdStage: confirmed.herdStage,
+          confirmedObservationDate:
+            confirmed.lastObservedSession ?? confirmed.scoreDate ?? null,
+          provisional: false,
+        }]
+      }
+      return [ticker, {
+        ...confirmed,
+        herdScore: daily.herdScore,
+        herdStage: daily.herdStage,
+        scoreDate: daily.scoreDate,
+        lastObservedSession: daily.lastObservedSession,
+        delta4w: daily.delta4w,
+        families: daily.families,
+        downsideRiskContext: daily.downsideRiskContext,
+        stateModelVersion: daily.stateModelVersion,
+        confirmedHerdScore: confirmed.herdScore,
+        confirmedHerdStage: confirmed.herdStage,
+        confirmedObservationDate:
+          confirmed.lastObservedSession ?? confirmed.scoreDate ?? null,
+        provisional: true,
+      }]
+    },
+  ))
+}

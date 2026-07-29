@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   isObservationAvailable,
+  mergeDailyObservationBatch,
   normalizeHerdPriceTimeline,
   normalizeObservationHistory,
   observationBatchToMap,
@@ -94,5 +95,31 @@ describe('S1 tracked item boundary', () => {
     expect(map.AAPL.companyName).toBe('Apple Inc.')
     expect(map.AAPL.memo).toBe('watch')
     expect(map.AAPL.herdScore).toBeNull()
+  })
+
+  it('uses Daily D1 as a provisional reading without losing confirmed S1', () => {
+    const confirmed = observationBatchToMap({
+      observations: [{
+        ticker: 'NVDA',
+        availabilityStatus: 'AVAILABLE',
+        stateScore: 52,
+        stage: 'CALM',
+        lastObservedSession: '2026-07-24',
+      }],
+    })
+    const merged = mergeDailyObservationBatch(confirmed, {
+      observations: [{
+        ticker: 'NVDA',
+        availabilityStatus: 'AVAILABLE',
+        stateScore: 61,
+        stage: 'DRIFT',
+        lastObservedSession: '2026-07-28',
+      }],
+    })
+
+    expect(merged.NVDA.herdScore).toBe(61)
+    expect(merged.NVDA.provisional).toBe(true)
+    expect(merged.NVDA.confirmedHerdScore).toBe(52)
+    expect(merged.NVDA.confirmedObservationDate).toBe('2026-07-24')
   })
 })

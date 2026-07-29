@@ -142,7 +142,20 @@ export default function PortfolioHoldings({
                       <dt>HERD 4주 전</dt>
                       <dd>{row.herdPreviousScore == null ? '—' : Math.round(row.herdPreviousScore)}</dd>
                     </div>
-                    <div><dt>관찰일</dt><dd>{row.observationDate ?? '—'}</dd></div>
+                    <div>
+                      <dt>{row.herdProvisional ? '일간 잠정' : '주간 확정'}</dt>
+                      <dd>{row.observationDate ?? '—'}</dd>
+                    </div>
+                    {row.herdProvisional && (
+                      <div>
+                        <dt>주간 확정 HERD</dt>
+                        <dd>
+                          {row.confirmedHerdScore == null
+                            ? '—'
+                            : `${Math.round(row.confirmedHerdScore)} · ${row.confirmedObservationDate ?? '—'}`}
+                        </dd>
+                      </div>
+                    )}
                     <div>
                       <dt>목표 비중 차이</dt>
                       <dd>

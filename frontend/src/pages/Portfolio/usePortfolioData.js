@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   getCashBalance,
+  getDailyHerdObservations,
   getPortfolio,
   getHerdObservations,
   getPortfolioRealtime,
@@ -23,25 +24,43 @@ import {
   userCacheKey,
   writeUserCache,
 } from './portfolioDataModel'
-import { observationBatchToMap } from '../../utils/herdObservation'
+import {
+  mergeDailyObservationBatch,
+  observationBatchToMap,
+} from '../../utils/herdObservation'
 
 function herdStocksToMap(stocks = []) {
   return Object.fromEntries(stocks.map((item) => [item.ticker, item]))
 }
 
 function observationResponseToCacheData(response) {
-  const batch = response?.data?.data
+  const confirmedBatch = response?.confirmed?.data?.data
+  const dailyBatch = response?.daily?.data?.data
+  const confirmedMap = observationBatchToMap(confirmedBatch)
+  const mergedMap = mergeDailyObservationBatch(confirmedMap, dailyBatch)
   return {
-    stocks: Object.values(observationBatchToMap(batch)),
-    stateModelVersion: 'HERD_STATE_S1',
+    stocks: Object.values(mergedMap),
+    stateModelVersion: dailyBatch ? 'HERD_DAILY_D1' : 'HERD_STATE_S1',
   }
 }
 
 function getPortfolioObservations(portfolio) {
   const tickers = (portfolio ?? []).map((item) => item.ticker).filter(Boolean)
   return tickers.length > 0
-    ? getHerdObservations(tickers)
-    : Promise.resolve({ data: { data: { observations: [] } } })
+    ? Promise.allSettled([
+      getHerdObservations(tickers),
+      getDailyHerdObservations(tickers),
+    ]).then(([confirmed, daily]) => {
+      if (confirmed.status === 'rejected') throw confirmed.reason
+      return {
+        confirmed: confirmed.value,
+        daily: daily.status === 'fulfilled' ? daily.value : null,
+      }
+    })
+    : Promise.resolve({
+      confirmed: { data: { data: { observations: [] } } },
+      daily: null,
+    })
 }
 
 function withCash(summary, cashBalance) {

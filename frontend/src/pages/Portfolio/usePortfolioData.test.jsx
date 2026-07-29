@@ -11,6 +11,7 @@ import {
 
 vi.mock('../../api/herdApi', () => ({
   getCashBalance: vi.fn(),
+  getDailyHerdObservations: vi.fn(),
   getPortfolio: vi.fn(),
   getHerdObservations: vi.fn(),
   getPortfolioRealtime: vi.fn(),
@@ -39,6 +40,14 @@ beforeEach(() => {
       ticker: 'AAPL',
       availabilityStatus: 'AVAILABLE',
       stateScore: 40,
+      stage: 'CALM',
+    }],
+  }))
+  api.getDailyHerdObservations.mockReturnValue(response({
+    observations: [{
+      ticker: 'AAPL',
+      availabilityStatus: 'AVAILABLE',
+      stateScore: 44,
       stage: 'CALM',
     }],
   }))
@@ -87,7 +96,9 @@ describe('usePortfolioData', () => {
     expect(api.getPortfolioSummary).toHaveBeenCalledTimes(1)
     expect(api.getPortfolioRealtime).toHaveBeenCalledTimes(1)
     expect(api.getHerdObservations).toHaveBeenCalledTimes(1)
-    expect(result.current.herdMap.AAPL?.herdScore).toBe(40)
+    expect(api.getDailyHerdObservations).toHaveBeenCalledTimes(1)
+    expect(result.current.herdMap.AAPL?.herdScore).toBe(44)
+    expect(result.current.herdMap.AAPL?.confirmedHerdScore).toBe(40)
   })
 
   it('revalidates once when the page regains focus after the cooldown', async () => {

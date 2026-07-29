@@ -71,6 +71,10 @@ export function buildPortfolioRows(portfolio = [], summary, herdMap = {}) {
       herd,
       herdScore,
       herdStage: herd?.herdStage ?? null,
+      herdProvisional: herd?.provisional === true,
+      confirmedHerdScore: numberOrNull(herd?.confirmedHerdScore),
+      confirmedHerdStage: herd?.confirmedHerdStage ?? null,
+      confirmedObservationDate: herd?.confirmedObservationDate ?? null,
       herdPreviousScore: resolvePreviousScore(
         herdScore,
         null,
