@@ -4,8 +4,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
 from scheduler.prospective_evidence import (
+    archived_tickers,
     audit_archive,
     archive_observation,
     mature_outcomes,
@@ -111,7 +111,7 @@ def test_observation_is_immutable_idempotent_and_actionless(tmp_path: Path) -> N
     assert envelope["evidence"]["records"][0]["observation"]["action"] == "HOLD"
 
 
-def test_same_observation_date_keeps_first_immutable_record(tmp_path: Path) -> None:
+def test_same_observation_date_rejects_conflicting_immutable_record(tmp_path: Path) -> None:
     bundle = _bundle()
     frame = _frame()
     frame.loc[frame.index[-1], "Date"] = pd.Timestamp("2026-07-24")
@@ -125,8 +125,27 @@ def test_same_observation_date_keeps_first_immutable_record(tmp_path: Path) -> N
         changed, {"AAPL": frame}, {}, archive_dir=tmp_path, contract_path=contract
     )
     stored = verify_observation(tmp_path / "observations/2026-07-24.json")
-    assert result["status"] == "EXISTS"
+    assert result["status"] == "CONFLICT_REJECTED"
+    assert "existing evidence preserved" in result["reason"]
     assert stored["evidence"]["records"][0]["observation"]["stateScore"] == 62.5
+
+
+def test_archived_tickers_keep_removed_tracking_targets_until_maturity(
+    tmp_path: Path,
+) -> None:
+    bundle = _bundle()
+    frame = _frame()
+    frame.loc[frame.index[-1], "Date"] = pd.Timestamp("2026-07-24")
+    contract = _contract(tmp_path / "contract.json")
+    archive_observation(
+        bundle,
+        {"AAPL": frame},
+        {},
+        archive_dir=tmp_path,
+        contract_path=contract,
+    )
+
+    assert archived_tickers(tmp_path) == {"AAPL"}
 
 
 def test_personal_unavailable_ticker_is_preserved_with_scope(tmp_path: Path) -> None:
@@ -185,6 +204,8 @@ def test_only_mature_horizons_receive_descriptive_outcomes(tmp_path: Path) -> No
     ).to_dict()
     assert outcome["economicLabel"] == "NOT_ASSIGNED_OBSERVATION_ONLY"
     assert outcome["operationalAction"] == "HOLD"
+    assert outcome["outcomeInput"]["rowCount"] == 21
+    assert len(outcome["outcomeInput"]["sha256"]) == 64
     audit = audit_archive(tmp_path, contract_path=contract)
     assert audit["status"] == "PASS"
     assert audit["observationArchives"] == 1

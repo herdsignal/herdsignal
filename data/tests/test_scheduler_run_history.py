@@ -7,6 +7,34 @@ from scheduler import herd_scheduler
 
 
 class SchedulerRunHistoryTest(unittest.TestCase):
+    def test_outcome_tracking_collects_archived_ticker_removed_from_current_scope(
+        self,
+    ) -> None:
+        old_frame = object()
+        with (
+            patch.object(
+                herd_scheduler,
+                "archived_tickers",
+                return_value={"AAPL", "REMOVED"},
+            ),
+            patch.object(
+                herd_scheduler,
+                "collect_ticker_frames",
+                return_value=({"REMOVED": old_frame}, []),
+            ) as collect_missing,
+        ):
+            frames, failed = herd_scheduler._complete_prospective_outcome_frames(
+                {"AAPL": "current"}
+            )
+
+        self.assertEqual(frames, {"AAPL": "current", "REMOVED": old_frame})
+        self.assertEqual(failed, [])
+        collect_missing.assert_called_once_with(
+            ["REMOVED"],
+            herd_scheduler.collect,
+            validate=herd_scheduler.validate_operational_price_frame,
+        )
+
     def test_duplicate_execution_is_skipped_before_run_history_is_created(self) -> None:
         with (
             patch.object(
@@ -73,6 +101,11 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             ) as build_observation,
             patch.object(
                 herd_scheduler,
+                "_complete_prospective_outcome_frames",
+                return_value=({"AAPL": object()}, []),
+            ) as complete_outcomes,
+            patch.object(
+                herd_scheduler,
                 "_record_prospective_evidence",
                 return_value={
                     "archive": {
@@ -109,9 +142,11 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                     "created": 0,
                     "pending": 0,
                 },
+                "outcomeCollectionFailed": [],
             },
         })
         build_observation.assert_called_once_with({"AAPL": ANY}, ["AAPL"])
+        complete_outcomes.assert_called_once_with({"AAPL": ANY})
         record_prospective.assert_called_once_with(ANY, {"AAPL": ANY})
         finish.assert_called_once_with(
             7,

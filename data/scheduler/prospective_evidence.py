@@ -194,19 +194,29 @@ def archive_observation(
         raise ProspectiveEvidenceError("bundle contains multiple observation dates")
     observation_date = next(iter(dates))
     path = archive_dir / "observations" / f"{observation_date}.json"
-    if path.exists():
-        existing = verify_observation(path)
-        return {
-            "status": "EXISTS",
-            "path": str(path),
-            "recordCount": len(existing["evidence"]["records"]),
-        }
     cutoff = max(
         record["lastObservedSession"] for record in bundle["records"].values()
     )
     manifest = _input_manifest(frames, cutoff=cutoff)
     evidence = _stable_evidence(bundle, manifest, tracking, contract)
     evidence_hash = _sha256(evidence)
+    if path.exists():
+        existing = verify_observation(path)
+        if existing["evidenceSha256"] != evidence_hash:
+            return {
+                "status": "CONFLICT_REJECTED",
+                "path": str(path),
+                "recordCount": len(existing["evidence"]["records"]),
+                "reason": (
+                    f"immutable observation conflict for {observation_date}: "
+                    "existing evidence preserved"
+                ),
+            }
+        return {
+            "status": "EXISTS",
+            "path": str(path),
+            "recordCount": len(existing["evidence"]["records"]),
+        }
     timestamp = (recorded_at or datetime.now(UTC)).astimezone(UTC)
     envelope = {
         "recordedAt": timestamp.isoformat().replace("+00:00", "Z"),
@@ -216,6 +226,17 @@ def archive_observation(
     envelope["envelopeSha256"] = _sha256(envelope)
     _atomic_json(path, envelope)
     return {"status": "CREATED", "path": str(path), "recordCount": len(evidence["records"])}
+
+
+def archived_tickers(
+    archive_dir: Path = DEFAULT_ARCHIVE_DIR,
+) -> set[str]:
+    """아직 결과 추적 대상인 과거 관측 종목을 불변 원장에서 복원한다."""
+    return {
+        record["ticker"]
+        for path in sorted((archive_dir / "observations").glob("*.json"))
+        for record in verify_observation(path)["evidence"]["records"]
+    }
 
 
 def verify_observation(path: Path) -> dict[str, Any]:
@@ -265,12 +286,21 @@ def _outcome(
     if len(future) < horizon:
         return None
     window = future.iloc[:horizon]
+    input_rows = _normalized_rows(
+        window,
+        cutoff=pd.Timestamp(window.iloc[-1]["Date"]).date().isoformat(),
+    )
     entry = float(window.iloc[0]["Open"])
     terminal = float(window.iloc[-1]["Close"])
     if not math.isfinite(entry) or entry <= 0 or not math.isfinite(terminal):
         raise ProspectiveEvidenceError(f"invalid outcome price: {record['ticker']}")
     highs = pd.to_numeric(window["High"], errors="coerce") / entry - 1
     lows = pd.to_numeric(window["Low"], errors="coerce") / entry - 1
+    if (
+        not math.isfinite(float(highs.max()))
+        or not math.isfinite(float(lows.min()))
+    ):
+        raise ProspectiveEvidenceError(f"invalid outcome range: {record['ticker']}")
     payload = {
         "schemaVersion": OUTCOME_SCHEMA_VERSION,
         "sourceEvidenceSha256": source_hash,
@@ -279,6 +309,11 @@ def _outcome(
         "observationDate": observation["asOfDate"],
         "lastObservedSession": observation["lastObservedSession"],
         "horizonSessions": horizon,
+        "outcomeInput": {
+            "columns": list(PRICE_COLUMNS),
+            "rowCount": len(input_rows),
+            "sha256": _sha256(input_rows),
+        },
         "entry": {
             "date": pd.Timestamp(window.iloc[0]["Date"]).date().isoformat(),
             "basis": "NEXT_AVAILABLE_SESSION_OPEN",

@@ -64,6 +64,7 @@ from scheduler.observation_s1 import (                                      # no
 )
 from scheduler.observation_store import save_observation_bundle             # noqa: E402
 from scheduler.prospective_evidence import (                               # noqa: E402
+    archived_tickers,
     archive_observation,
     mature_outcomes,
 )
@@ -316,6 +317,25 @@ def _record_prospective_evidence(
     return {"archive": archive, "maturity": maturity}
 
 
+def _complete_prospective_outcome_frames(
+    observation_frames: dict,
+) -> tuple[dict, list[str]]:
+    """현재 추적 범위에서 빠진 과거 관측 종목도 만기까지 가격을 수집한다."""
+    missing = sorted(archived_tickers() - set(observation_frames))
+    if not missing:
+        return observation_frames, []
+    logger.info(
+        "[Tier1] prospective 과거 관측 %s종목 결과 추적 보충 수집",
+        len(missing),
+    )
+    supplemental, failed = collect_ticker_frames(
+        missing,
+        collect,
+        validate=validate_operational_price_frame,
+    )
+    return {**observation_frames, **supplemental}, failed
+
+
 def _build_and_write_observation(
     observation_frames: dict,
     success_list: list[str],
@@ -440,9 +460,15 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         # 새 S1 발행이 차단된 날에도 이전 관측의 21·63·126일 결과는
         # 가능한 종목부터 성숙시킨다. 새 관측 생성과 결과 성숙의 장애
         # 경계를 분리해 단일 종목 수집 실패가 기존 원장을 멈추지 않게 한다.
-        prospective_result = _record_prospective_evidence(
-            bundle, observation_frames
+        outcome_frames, outcome_collection_failed = (
+            _complete_prospective_outcome_frames(observation_frames)
         )
+        prospective_result = _record_prospective_evidence(
+            bundle, outcome_frames
+        )
+        prospective_result["outcomeCollectionFailed"] = outcome_collection_failed
+        if prospective_result["archive"]["status"] == "CONFLICT_REJECTED":
+            prospective_error = prospective_result["archive"]["reason"]
     except Exception as exc:
         prospective_error = str(exc)
         logger.error(
