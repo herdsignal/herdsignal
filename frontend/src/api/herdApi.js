@@ -55,13 +55,6 @@ export const requestSchedulerRun = () =>
 
 /* ── 포트폴리오 ─────────────────────────────── */
 
-/** 포트폴리오 전체 HERD 점수 조회 */
-export const getPortfolioHerd = () => api.get('/api/portfolio/herd')
-
-/** 포트폴리오 전체 HERD 점수 강제 갱신 */
-export const refreshPortfolioHerd = () =>
-  api.post('/api/portfolio/herd/refresh', null, { timeout: 180_000 })
-
 /** 포트폴리오 종목 추가 */
 export const addToPortfolio = (ticker) => api.post('/api/portfolio', { ticker })
 
@@ -72,9 +65,6 @@ export const removeFromPortfolio = (ticker) => api.delete(`/api/portfolio/${tick
 export const getPortfolio = () => api.get('/api/portfolio')
 
 /* ── 관심 종목 ──────────────────────────────── */
-
-/** 관심 종목 전체 HERD 점수 조회 */
-export const getWatchlistHerd = () => api.get('/api/watchlist/herd')
 
 /** 관심 종목 목록 조회 */
 export const getWatchlist = () => api.get('/api/watchlist')
@@ -179,12 +169,6 @@ export const getHerdObservations = (tickers) => api.get('/api/observations', {
   },
 })
 
-/** State S1 관찰 이력 조회 (최신순, 최대 260개). */
-export const getHerdObservationHistory = (ticker, limit = 52) =>
-  api.get(`/api/observations/${tickerPath(ticker)}/history`, {
-    params: { limit },
-  })
-
 /** State S1 관찰일의 수정 종가와 HERD를 같은 시점으로 결합한 이력. */
 export const getHerdPriceTimeline = (ticker, limit = 52) =>
   api.get(`/api/observations/${tickerPath(ticker)}/timeline`, {
@@ -203,13 +187,6 @@ export const getHistoricalS1Context = (ticker) =>
 export const searchStocks = (query) =>
   api.get('/api/stocks/search', { params: { q: query } })
 
-/** 특정 종목 HERD 점수 + 지표 분해값 조회 */
-export const getStockHerd = (ticker) => api.get(`/api/stocks/${tickerPath(ticker)}/herd`)
-
-/** 특정 종목 HERD 점수 강제 갱신 */
-export const refreshStockHerd = (ticker) =>
-  api.post(`/api/stocks/${tickerPath(ticker)}/herd/refresh`, null, { timeout: 60_000 })
-
 /** 특정 종목 재무 가드용 핵심 재무정보 조회 */
 export const getStockFinancials = (ticker) =>
   api.get(`/api/stocks/${tickerPath(ticker)}/financials`, { timeout: 40_000 })
@@ -217,17 +194,6 @@ export const getStockFinancials = (ticker) =>
 /** 특정 종목 HERD 히스토리 조회 (기본 3y) */
 export const getStockHerdHistory = (ticker, period = '3y') =>
   api.get(`/api/stocks/${tickerPath(ticker)}/herd/history`, { params: { period } })
-
-/** 특정 종목 HERD 신호 신뢰도 조회 */
-export const getStockHerdReliability = (ticker, years = 3) =>
-  api.get(`/api/stocks/${tickerPath(ticker)}/herd/reliability`, {
-    params: { years },
-    timeout: 70_000,
-  })
-
-/** SPY HERD 히스토리 조회 (기본 3y) */
-export const getSpyHerdHistory = (period = '3y') =>
-  getStockHerdHistory('SPY', period)
 
 /* ── 모델 검증 ─────────────────────────────── */
 

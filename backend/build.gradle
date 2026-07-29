@@ -42,6 +42,8 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// 셸의 범용 DEBUG 환경변수가 Spring Boot 조건 보고서를 켜지 못하게 한다.
+	systemProperty 'debug', 'false'
 }
 
 sourceSets {

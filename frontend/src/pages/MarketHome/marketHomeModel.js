@@ -34,17 +34,6 @@ export function formatMarketDelta(value) {
   return `4W ${sign}${value.toFixed(1)}`
 }
 
-export function formatMarketDate(value) {
-  if (!value) return '기준일 없음'
-  const date = new Date(`${value}T00:00:00`)
-  if (Number.isNaN(date.getTime())) return value
-  return date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
-
 function finiteNumber(value) {
   const number = Number(value)
   return Number.isFinite(number) ? number : null

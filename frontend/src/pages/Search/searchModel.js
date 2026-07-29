@@ -16,8 +16,6 @@ export const STOCK_CANDIDATES = [
 
 export const TICKER_META =
   Object.fromEntries(STOCK_CANDIDATES.map((item) => [item.ticker, item]))
-export const TICKER_NAMES =
-  Object.fromEntries(STOCK_CANDIDATES.map((item) => [item.ticker, item.name]))
 
 const RECENT_KEY = 'hs_recent_searches'
 
@@ -58,11 +56,4 @@ export function saveRecentSearch(ticker) {
   const list = loadRecentSearches().filter((savedTicker) => savedTicker !== ticker)
   list.unshift(ticker)
   localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 5)))
-}
-
-export function addButtonLabel(status, idleLabel) {
-  if (status === 'loading') return '…'
-  if (status === 'added') return '추가됨 ✓'
-  if (status === 'exists') return '이미 추가됨'
-  return idleLabel
 }

@@ -8,26 +8,26 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Pattern;
 
 /** Python 데이터 엔진의 on-demand HERD 계산을 격리해 실행한다. */
 @Slf4j
 @Component
 public class HerdOnDemandRunner {
-    private static final Pattern SAFE_TICKER = Pattern.compile("[A-Z0-9.-]+");
     private static final int SINGLE_TIMEOUT_SECONDS = 30;
     private static final int BATCH_TIMEOUT_SECONDS = 120;
 
     private final ObjectMapper objectMapper;
     private final PythonProcessGateway processGateway;
+    private final TickerSymbolPolicy tickerSymbolPolicy;
 
     public HerdOnDemandRunner(
             ObjectMapper objectMapper,
-            PythonProcessGateway processGateway
+            PythonProcessGateway processGateway,
+            TickerSymbolPolicy tickerSymbolPolicy
     ) {
         this.objectMapper = objectMapper;
         this.processGateway = processGateway;
+        this.tickerSymbolPolicy = tickerSymbolPolicy;
     }
 
     public void refresh(String ticker, boolean force) throws IOException, InterruptedException {
@@ -75,16 +75,7 @@ public class HerdOnDemandRunner {
             throw new IllegalArgumentException("티커 목록이 필요합니다.");
         }
         return tickers.stream()
-                .map(ticker -> {
-                    if (ticker == null || ticker.isBlank()) {
-                        throw new IllegalArgumentException("빈 티커는 허용되지 않습니다.");
-                    }
-                    String normalized = ticker.trim().toUpperCase(Locale.ROOT);
-                    if (!SAFE_TICKER.matcher(normalized).matches()) {
-                        throw new IllegalArgumentException("유효하지 않은 티커 형식: " + ticker);
-                    }
-                    return normalized;
-                })
+                .map(tickerSymbolPolicy::normalize)
                 .distinct()
                 .toList();
     }

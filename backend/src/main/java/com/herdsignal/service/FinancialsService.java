@@ -20,6 +20,7 @@ import java.util.Map;
 public class FinancialsService {
     private final ObjectMapper objectMapper;
     private final PythonProcessGateway processGateway;
+    private final TickerSymbolPolicy tickerSymbolPolicy;
 
     /**
      * 종목 재무정보를 조회한다.
@@ -31,13 +32,10 @@ public class FinancialsService {
      * @throws RuntimeException Python 실행 실패 또는 타임아웃 시
      */
     public StockFinancialsResponse getFinancials(String ticker) {
-        // 티커 유효성 검사 — 코드 주입 방지 (HerdService와 동일 규칙)
-        if (!ticker.matches("[A-Z0-9\\-\\.]+")) {
-            throw new IllegalArgumentException("유효하지 않은 티커 형식: " + ticker);
-        }
+        String normalizedTicker = tickerSymbolPolicy.normalize(ticker);
 
         try {
-            String tickerLiteral = objectMapper.writeValueAsString(ticker);
+            String tickerLiteral = objectMapper.writeValueAsString(normalizedTicker);
             String script = String.join("\n",
                     "import sys, json",
                     "sys.path.insert(0, 'data')",
@@ -45,7 +43,7 @@ public class FinancialsService {
                     "print(json.dumps(get_stock_financials(" + tickerLiteral + ")))"
             );
             String output = processGateway.executeInline(
-                    "[financials][" + ticker + "]", script, Duration.ofSeconds(30)).stdout();
+                    "[financials][" + normalizedTicker + "]", script, Duration.ofSeconds(30)).stdout();
             Map<String, Object> raw = objectMapper.readValue(output, new TypeReference<>() {});
 
             return StockFinancialsResponse.builder()
@@ -59,8 +57,9 @@ public class FinancialsService {
                     .build();
 
         } catch (Exception e) {
-            log.error("[financials][{}] 재무정보 조회 실패: {}", ticker, e.getMessage(), e);
-            throw new RuntimeException("[" + ticker + "] 재무정보 조회 실패: " + e.getMessage());
+            log.error("[financials][{}] 재무정보 조회 실패: {}", normalizedTicker, e.getMessage(), e);
+            throw new RuntimeException(
+                    "[" + normalizedTicker + "] 재무정보 조회 실패: " + e.getMessage(), e);
         }
     }
 

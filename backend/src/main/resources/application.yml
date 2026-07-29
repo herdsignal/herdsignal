@@ -1,3 +1,5 @@
+debug: ${SPRING_DEBUG:false}
+
 spring:
   datasource:
     # 반드시 환경변수로 주입 — 기본값 없음 (없으면 기동 실패)

@@ -13,5 +13,9 @@ set -a
 source "$ENV_FILE"
 set +a
 
+# 일부 개발 도구가 사용하는 범용 DEBUG 값은 Spring Boot의 전역 debug 플래그로
+# 자동 매핑된다. HerdSignal은 SPRING_DEBUG만 명시적인 서버 디버그 설정으로 쓴다.
+unset DEBUG
+
 cd "$ROOT_DIR/backend"
 exec ./gradlew bootRun

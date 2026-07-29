@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class HerdOnDemandRunnerTest {
     private final HerdOnDemandRunner runner = new HerdOnDemandRunner(
-            new ObjectMapper(), new PythonProcessGateway(""));
+            new ObjectMapper(), new PythonProcessGateway(""), new TickerSymbolPolicy());
 
     @Test
     void normalizesAndDeduplicatesTickers() {
