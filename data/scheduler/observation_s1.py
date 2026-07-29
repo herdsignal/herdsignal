@@ -337,18 +337,20 @@ def _serialize_record(row: pd.Series, scope: str) -> dict[str, Any]:
     }
 
 
-def build_observation_bundle(
+def _prepare_observation_inputs(
     frames: dict[str, pd.DataFrame],
-    *,
-    target_tickers: set[str] | None = None,
-    sector_overrides: dict[str, str] | None = None,
-    service_contract: dict[str, Any] | None = None,
-    reference_mapping: dict[str, str] | None = None,
-    generated_at: datetime | None = None,
-) -> dict[str, Any]:
-    service = service_contract or load_service_contract()
-    state_contract, transition_contract = load_model_contracts(service)
-    reference = reference_mapping or load_reference_mapping(service)
+    target_tickers: set[str] | None,
+    sector_overrides: dict[str, str] | None,
+    service: dict[str, Any],
+    reference: dict[str, str],
+) -> tuple[
+    dict[str, pd.DataFrame],
+    dict[str, str],
+    float,
+    dict[str, str],
+    dict[str, str],
+]:
+    """S1과 D1이 공유하는 입력 정규화·coverage·섹터 매핑 gate."""
     normalized: dict[str, pd.DataFrame] = {}
     rejected_frames: dict[str, str] = {}
     for ticker, frame in frames.items():
@@ -394,6 +396,40 @@ def build_observation_bundle(
             unavailable[ticker] = f"INSUFFICIENT_FIXED_SECTOR_PEERS:{sector}"
         else:
             target_mapping[ticker] = sector
+    return (
+        normalized,
+        available_reference,
+        coverage,
+        target_mapping,
+        unavailable,
+    )
+
+
+def build_observation_bundle(
+    frames: dict[str, pd.DataFrame],
+    *,
+    target_tickers: set[str] | None = None,
+    sector_overrides: dict[str, str] | None = None,
+    service_contract: dict[str, Any] | None = None,
+    reference_mapping: dict[str, str] | None = None,
+    generated_at: datetime | None = None,
+) -> dict[str, Any]:
+    service = service_contract or load_service_contract()
+    state_contract, transition_contract = load_model_contracts(service)
+    reference = reference_mapping or load_reference_mapping(service)
+    (
+        normalized,
+        available_reference,
+        coverage,
+        target_mapping,
+        unavailable,
+    ) = _prepare_observation_inputs(
+        frames,
+        target_tickers,
+        sector_overrides,
+        service,
+        reference,
+    )
     calculation_mapping = dict(available_reference)
     calculation_mapping.update(target_mapping)
     state_panel = build_state_panel(
@@ -538,51 +574,19 @@ def build_daily_observation_bundle(
     state_contract, _ = load_model_contracts(service)
     provisional = daily_contract or load_daily_contract()
     reference = reference_mapping or load_reference_mapping(service)
-    normalized: dict[str, pd.DataFrame] = {}
-    rejected_frames: dict[str, str] = {}
-    for ticker, frame in frames.items():
-        try:
-            normalized[ticker] = _normalise_frame(frame, ticker)
-        except ObservationS1Error as exc:
-            rejected_frames[ticker] = str(exc)
-    available_reference = {
-        ticker: sector
-        for ticker, sector in reference.items()
-        if ticker in normalized and sector in normalized
-    }
-    coverage = len(available_reference) / max(1, len(reference))
-    minimum_coverage = float(
-        service["reference_universe"]["minimum_total_coverage_fraction"]
+    (
+        normalized,
+        available_reference,
+        coverage,
+        target_mapping,
+        unavailable,
+    ) = _prepare_observation_inputs(
+        frames,
+        target_tickers,
+        sector_overrides,
+        service,
+        reference,
     )
-    if coverage < minimum_coverage:
-        raise ObservationS1Error(
-            f"reference coverage too low: {coverage:.4f} < {minimum_coverage:.4f}"
-        )
-    sector_counts = pd.Series(available_reference).value_counts().to_dict()
-    minimum_peers = int(
-        service["reference_universe"]["minimum_sector_peer_count"]
-    )
-    requested = set(target_tickers or available_reference)
-    overrides = sector_overrides or {}
-    sector_benchmarks = set(reference.values())
-    target_mapping: dict[str, str] = {}
-    unavailable: dict[str, str] = {}
-    for ticker in sorted(requested):
-        if ticker == MARKET_TICKER or ticker in sector_benchmarks:
-            continue
-        sector = reference.get(ticker) or overrides.get(ticker)
-        if ticker not in normalized:
-            unavailable[ticker] = rejected_frames.get(
-                ticker, "PRICE_FRAME_UNAVAILABLE"
-            )
-        elif sector is None:
-            unavailable[ticker] = "SECTOR_ETF_UNAVAILABLE"
-        elif sector not in normalized:
-            unavailable[ticker] = f"SECTOR_BENCHMARK_UNAVAILABLE:{sector}"
-        elif int(sector_counts.get(sector, 0)) < minimum_peers:
-            unavailable[ticker] = f"INSUFFICIENT_FIXED_SECTOR_PEERS:{sector}"
-        else:
-            target_mapping[ticker] = sector
     calculation_mapping = dict(available_reference)
     calculation_mapping.update(target_mapping)
     daily_panel = build_state_panel(

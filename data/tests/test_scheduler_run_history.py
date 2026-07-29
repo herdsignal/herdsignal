@@ -101,6 +101,13 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             ) as build_observation,
             patch.object(
                 herd_scheduler,
+                "_build_and_write_daily_observation",
+                return_value={
+                    "records": {"SPY": {"asOfDate": "2026-07-28"}}
+                },
+            ) as build_daily_observation,
+            patch.object(
+                herd_scheduler,
                 "_complete_prospective_outcome_frames",
                 return_value=({"AAPL": object()}, []),
             ) as complete_outcomes,
@@ -146,6 +153,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             },
         })
         build_observation.assert_called_once_with({"AAPL": ANY}, ["AAPL"])
+        build_daily_observation.assert_called_once_with({"AAPL": ANY}, ["AAPL"])
         complete_outcomes.assert_called_once_with({"AAPL": ANY})
         record_prospective.assert_called_once_with(ANY, {"AAPL": ANY})
         finish.assert_called_once_with(
