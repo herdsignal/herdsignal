@@ -41,6 +41,7 @@ class ObservationChangeControllerTest {
                         LocalDate.of(2026, 7, 24),
                         3,
                         2,
+                        List.of(),
                         List.of()
                 )
         );

@@ -5,6 +5,7 @@ import com.herdsignal.domain.Stock;
 import com.herdsignal.domain.UserObservationReceipt;
 import com.herdsignal.dto.ObservationChangeEvent;
 import com.herdsignal.dto.ObservationChangesResponse;
+import com.herdsignal.dto.ProvisionalObservationAttention;
 import com.herdsignal.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ObservationChangeService {
     static final String STATE_MODEL_VERSION = "HERD_STATE_S1";
+    static final String DAILY_MODEL_VERSION = "HERD_DAILY_D1";
     static final int INITIAL_LOOKBACK_DAYS = 28;
     static final int MAX_UNREAD_DAYS = 364;
     static final int MAX_EVENTS = 100;
@@ -44,7 +46,9 @@ public class ObservationChangeService {
         Map<String, String> trackingScopes = trackingScopes(userId);
         List<String> tickers = List.copyOf(trackingScopes.keySet());
         if (tickers.isEmpty()) {
-            return new ObservationChangesResponse(null, 0, 0, List.of());
+            return new ObservationChangesResponse(
+                    null, 0, 0, List.of(), List.of()
+            );
         }
 
         Map<String, HerdObservation> latest = observationRepository
@@ -52,7 +56,9 @@ public class ObservationChangeService {
                 .stream()
                 .collect(Collectors.toMap(HerdObservation::getTicker, Function.identity()));
         if (latest.isEmpty()) {
-            return new ObservationChangesResponse(null, tickers.size(), 0, List.of());
+            return new ObservationChangesResponse(
+                    null, tickers.size(), 0, List.of(), List.of()
+            );
         }
 
         Map<String, LocalDate> receipts = receiptRepository.findByUserId(userId)
@@ -90,12 +96,72 @@ public class ObservationChangeService {
         List<ObservationChangeEvent> visibleEvents = limit == 0
                 ? List.of()
                 : allEvents.stream().limit(limit).toList();
+        List<ProvisionalObservationAttention> provisionalAttention =
+                buildProvisionalAttention(
+                        tickers,
+                        latest,
+                        stocks,
+                        trackingScopes
+                );
         return new ObservationChangesResponse(
                 generatedThrough,
                 tickers.size(),
                 unreadCount,
-                visibleEvents
+                visibleEvents,
+                provisionalAttention
         );
+    }
+
+    private List<ProvisionalObservationAttention> buildProvisionalAttention(
+            List<String> tickers,
+            Map<String, HerdObservation> confirmed,
+            Map<String, Stock> stocks,
+            Map<String, String> trackingScopes
+    ) {
+        return observationRepository
+                .findLatestByTickersAndStateModelVersion(
+                        tickers,
+                        DAILY_MODEL_VERSION
+                )
+                .stream()
+                .filter(daily -> {
+                    HerdObservation weekly = confirmed.get(daily.getTicker());
+                    return weekly != null
+                            && daily.getLastObservedSession().isAfter(
+                                    weekly.getLastObservedSession()
+                            )
+                            && !Objects.equals(
+                                    daily.getHerdStage(),
+                                    weekly.getHerdStage()
+                            );
+                })
+                .map(daily -> {
+                    HerdObservation weekly = confirmed.get(daily.getTicker());
+                    Stock stock = stocks.get(daily.getTicker());
+                    return new ProvisionalObservationAttention(
+                            daily.getTicker(),
+                            stock == null ? null : stock.getName(),
+                            trackingScopes.getOrDefault(
+                                    daily.getTicker(), "WATCHLIST"
+                            ),
+                            daily.getLastObservedSession(),
+                            daily.getStateScore(),
+                            daily.getHerdStage(),
+                            weekly.getLastObservedSession(),
+                            weekly.getStateScore(),
+                            weekly.getHerdStage(),
+                            "PROVISIONAL_STAGE_DIVERGENCE"
+                    );
+                })
+                .sorted(Comparator
+                        .comparing(
+                                ProvisionalObservationAttention::provisionalDate
+                        )
+                        .reversed()
+                        .thenComparing(
+                                ProvisionalObservationAttention::ticker
+                        ))
+                .toList();
     }
 
     @Transactional

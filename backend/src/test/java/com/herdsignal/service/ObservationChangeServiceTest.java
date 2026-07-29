@@ -72,6 +72,15 @@ class ObservationChangeServiceTest {
                 observation(LocalDate.of(2026, 7, 17), "DRIFT", "NEUTRAL", false),
                 latest
         ));
+        when(observationRepository.findLatestByTickersAndStateModelVersion(
+                List.of("NVDA"),
+                "HERD_DAILY_D1"
+        )).thenReturn(List.of(observation(
+                LocalDate.of(2026, 7, 28),
+                "CALM",
+                "PROVISIONAL",
+                false
+        )));
 
         ObservationChangesResponse response = service.getChanges("user", 50);
 
@@ -87,6 +96,13 @@ class ObservationChangeServiceTest {
         assertThat(response.events()).allMatch(
                 event -> event.trackingScope().equals("HOLDING")
         );
+        assertThat(response.provisionalAttention()).hasSize(1);
+        assertThat(response.provisionalAttention().get(0).eventType())
+                .isEqualTo("PROVISIONAL_STAGE_DIVERGENCE");
+        assertThat(response.provisionalAttention().get(0).confirmedStage())
+                .isEqualTo("DRIFT");
+        assertThat(response.provisionalAttention().get(0).provisionalStage())
+                .isEqualTo("CALM");
     }
 
     @Test
@@ -98,6 +114,7 @@ class ObservationChangeServiceTest {
 
         assertThat(response.unreadCount()).isZero();
         assertThat(response.events()).isEmpty();
+        assertThat(response.provisionalAttention()).isEmpty();
         verifyNoInteractions(observationRepository);
     }
 

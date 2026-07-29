@@ -38,6 +38,15 @@ beforeEach(() => {
         trackingScope: 'HOLDING',
         unread: true,
       }],
+      provisionalAttention: [{
+        ticker: 'TSLA',
+        provisionalDate: '2026-07-28',
+        provisionalScore: 39,
+        provisionalStage: 'SCATTER',
+        confirmedDate: '2026-07-24',
+        confirmedScore: 43,
+        confirmedStage: 'CALM',
+      }],
     } },
   })
 })
@@ -53,6 +62,8 @@ describe('ObservationChanges', () => {
     expect(await screen.findByText('NVIDIA Corporation')).toBeInTheDocument()
     expect(screen.getByText('밀집 완화')).toBeInTheDocument()
     expect(screen.getByText(/보유 · Drift · 상태 전환/)).toBeInTheDocument()
+    expect(screen.getByText('주간 확정과 다른 단계')).toBeInTheDocument()
+    expect(screen.getByText('Calm → Scatter')).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/매수|매도|익절|추천/)
 
     fireEvent.click(screen.getByRole('button', {

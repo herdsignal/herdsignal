@@ -8,5 +8,6 @@ public record ObservationChangesResponse(
         LocalDate generatedThrough,
         int trackedTickerCount,
         int unreadCount,
-        List<ObservationChangeEvent> events
+        List<ObservationChangeEvent> events,
+        List<ProvisionalObservationAttention> provisionalAttention
 ) {}

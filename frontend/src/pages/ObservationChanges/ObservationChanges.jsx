@@ -139,6 +139,38 @@ export default function ObservationChanges() {
           <button type="button" onClick={fetchChanges}>다시 시도</button>
         </div>
       )}
+      {!loading && !error && (data?.provisionalAttention?.length ?? 0) > 0 && (
+        <section className={styles.attention} aria-label="일간 잠정 관찰 차이">
+          <header>
+            <div>
+              <span>DAILY NOWCAST</span>
+              <h2>주간 확정과 다른 단계</h2>
+            </div>
+            <small>확정 사건·행동 신호 아님</small>
+          </header>
+          {data.provisionalAttention.map((item) => (
+            <button
+              type="button"
+              key={`${item.ticker}:${item.provisionalDate}`}
+              onClick={() => navigate(`/stock/${item.ticker}`)}
+            >
+              <strong>{item.ticker}</strong>
+              <span>
+                {displayStage(item.confirmedStage)}
+                {' → '}
+                {displayStage(item.provisionalStage)}
+              </span>
+              <small>
+                주간 {Math.round(Number(item.confirmedScore))}
+                {' · '}
+                잠정 {Math.round(Number(item.provisionalScore))}
+                {' · '}
+                {item.provisionalDate}
+              </small>
+            </button>
+          ))}
+        </section>
+      )}
       {!loading && !error && events.length === 0 && (
         <div className={styles.emptyState}>
           <span>{filter === 'unread' ? 'ALL SEEN' : 'NO RECENT CHANGE'}</span>
