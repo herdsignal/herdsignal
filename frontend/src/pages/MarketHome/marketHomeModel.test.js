@@ -32,4 +32,29 @@ describe('marketHomeViewModel', () => {
     expect(formatMarketDelta(-2)).toBe('4W -2.0')
     expect(formatMarketDelta(null)).toBe('4W —')
   })
+
+  it('shows daily nowcast while preserving the weekly confirmed reading', () => {
+    const view = marketHomeViewModel({
+      observation: {
+        availabilityStatus: 'AVAILABLE',
+        scope: 'MARKET_AGGREGATE',
+        stateScore: 52,
+        lastObservedSession: '2026-07-24',
+      },
+      dailyObservation: {
+        availabilityStatus: 'AVAILABLE',
+        scope: 'MARKET_AGGREGATE',
+        stateScore: 57,
+        lastObservedSession: '2026-07-28',
+        delta4w: 2.5,
+      },
+      loading: false,
+    })
+
+    expect(view.score).toBe(57)
+    expect(view.provisional).toBe(true)
+    expect(view.freshness).toBe('일간 잠정 관찰')
+    expect(view.confirmedScore).toBe(52)
+    expect(view.confirmedDate).toBe('2026-07-24')
+  })
 })

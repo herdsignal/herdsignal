@@ -6,11 +6,15 @@ import {
 
 export function marketHomeViewModel({
   observation,
+  dailyObservation,
   loading,
   observationError,
 }) {
-  const score = observationScore(observation)
-  const stage = observationStage(observation)
+  const dailyScopeValid = dailyObservation?.scope === 'MARKET_AGGREGATE'
+  const dailyScore = dailyScopeValid ? observationScore(dailyObservation) : null
+  const displayed = dailyScore == null ? observation : dailyObservation
+  const score = observationScore(displayed)
+  const stage = observationStage(displayed)
   const scopeValid = observation?.scope === 'MARKET_AGGREGATE'
 
   return {
@@ -19,11 +23,19 @@ export function marketHomeViewModel({
     scopeValid,
     loading: loading && observation == null,
     unavailable: !loading && (!scopeValid || score == null),
-    observationDate: observation?.lastObservedSession
+    observationDate: displayed?.lastObservedSession
+      ?? displayed?.observationDate
+      ?? null,
+    delta4w: finiteNumber(displayed?.delta4w),
+    freshness: dailyScore == null
+      ? observationFreshnessLabel(observation)
+      : '일간 잠정 관찰',
+    provisional: dailyScore != null,
+    confirmedScore: scopeValid ? observationScore(observation) : null,
+    confirmedStage: scopeValid ? observationStage(observation) : null,
+    confirmedDate: observation?.lastObservedSession
       ?? observation?.observationDate
       ?? null,
-    delta4w: finiteNumber(observation?.delta4w),
-    freshness: observationFreshnessLabel(observation),
     observationError,
   }
 }

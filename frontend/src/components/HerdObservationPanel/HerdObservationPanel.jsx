@@ -27,6 +27,10 @@ export default function HerdObservationPanel({
   delta4w,
   observationDate,
   freshness = '주간 관찰',
+  provisional = false,
+  confirmedScore = null,
+  confirmedStage = null,
+  confirmedDate = null,
   loading = false,
   unavailable = false,
   error = false,
@@ -47,7 +51,16 @@ export default function HerdObservationPanel({
         </div>
         <div className={styles.meta}>
           <strong>{formatDate(observationDate)}</strong>
-          <span>{freshness} · {formatDelta(delta4w)}</span>
+          <span className={provisional ? styles.provisional : ''}>
+            {freshness} · {formatDelta(delta4w)}
+          </span>
+          {provisional && Number.isFinite(Number(confirmedScore)) && (
+            <small>
+              주간 확정 {Math.round(Number(confirmedScore))}
+              {confirmedStage ? ` · ${confirmedStage}` : ''}
+              {confirmedDate ? ` · ${formatDate(confirmedDate)}` : ''}
+            </small>
+          )}
         </div>
       </header>
 

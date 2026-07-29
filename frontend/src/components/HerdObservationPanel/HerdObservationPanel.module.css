@@ -48,6 +48,15 @@
   font-size: var(--hs-type-micro);
 }
 
+.meta small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.meta .provisional {
+  color: var(--status-info);
+}
+
 .loading {
   display: grid;
   min-height: 520px;

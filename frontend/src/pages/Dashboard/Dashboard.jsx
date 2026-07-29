@@ -84,6 +84,10 @@ export default function Dashboard() {
     delta4w: market.delta4w,
     observationDate: market.observationDate,
     freshness: market.freshness,
+    provisional: market.provisional,
+    confirmedScore: market.confirmedScore,
+    confirmedStage: market.confirmedStage,
+    confirmedDate: market.confirmedDate,
   }
   const showingMarket = selected.ticker === 'SPY'
   const totalAsset = portfolio.summary?.total_asset_value
@@ -203,6 +207,10 @@ export default function Dashboard() {
         delta4w={selected.delta4w}
         observationDate={selected.observationDate}
         freshness={selected.freshness}
+        provisional={showingMarket && selected.provisional}
+        confirmedScore={showingMarket ? selected.confirmedScore : null}
+        confirmedStage={showingMarket ? selected.confirmedStage : null}
+        confirmedDate={showingMarket ? selected.confirmedDate : null}
         loading={showingMarket && market.loading}
         unavailable={showingMarket ? market.unavailable : selected.score == null}
         error={showingMarket && market.observationError}

@@ -5,6 +5,7 @@ import * as api from '../../api/herdApi'
 import * as cache from '../../features/market/marketCache'
 
 vi.mock('../../api/herdApi', () => ({
+  getDailyHerdObservation: vi.fn(),
   getHerdObservation: vi.fn(),
 }))
 
@@ -26,6 +27,14 @@ beforeEach(() => {
       stateScore: 64,
     } },
   })
+  api.getDailyHerdObservation.mockResolvedValue({
+    data: { data: {
+      availabilityStatus: 'AVAILABLE',
+      scope: 'MARKET_AGGREGATE',
+      stateModelVersion: 'HERD_DAILY_D1',
+      stateScore: 66,
+    } },
+  })
 })
 
 describe('useMarketHomeData', () => {
@@ -36,6 +45,7 @@ describe('useMarketHomeData', () => {
     await waitFor(() => {
       expect(result.current.observation.stateScore).toBe(64)
     })
+    expect(result.current.dailyObservation.stateScore).toBe(66)
     expect(cache.writeMarketObservationCache).toHaveBeenCalledWith(
       expect.objectContaining({ stateScore: 64 }),
     )
