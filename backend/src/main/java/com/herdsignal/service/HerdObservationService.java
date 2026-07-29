@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class HerdObservationService {
     static final String STATE_MODEL_VERSION = "HERD_STATE_S1";
+    static final String DAILY_MODEL_VERSION = "HERD_DAILY_D1";
     static final int DEFAULT_HISTORY_LIMIT = 52;
     static final int MAX_HISTORY_LIMIT = 260;
     static final int MAX_BATCH_SIZE = 100;
@@ -51,16 +52,29 @@ public class HerdObservationService {
 
     @Transactional(readOnly = true)
     public HerdObservationResponse getLatest(String rawTicker) {
+        return getLatestByModel(rawTicker, STATE_MODEL_VERSION);
+    }
+
+    @Transactional(readOnly = true)
+    public HerdObservationResponse getLatestDaily(String rawTicker) {
+        return getLatestByModel(rawTicker, DAILY_MODEL_VERSION);
+    }
+
+    private HerdObservationResponse getLatestByModel(
+            String rawTicker,
+            String modelVersion
+    ) {
         String ticker = normalizeTicker(rawTicker);
         return repository
                 .findTopByTickerAndStateModelVersionOrderByObservationDateDesc(
                         ticker,
-                        STATE_MODEL_VERSION
+                        modelVersion
                 )
                 .map(row -> toResponse(row, stockRepository.findByTicker(ticker).orElse(null)))
                 .orElseGet(() -> unavailable(
                         ticker,
-                        stockRepository.findByTicker(ticker).orElse(null)
+                        stockRepository.findByTicker(ticker).orElse(null),
+                        modelVersion
                 ));
     }
 
@@ -185,6 +199,14 @@ public class HerdObservationService {
     }
 
     private HerdObservationResponse unavailable(String ticker, Stock stock) {
+        return unavailable(ticker, stock, STATE_MODEL_VERSION);
+    }
+
+    private HerdObservationResponse unavailable(
+            String ticker,
+            Stock stock,
+            String modelVersion
+    ) {
         UserActionBoundary.Output action = actionBoundary.locked();
         String label = "SPY".equals(ticker) ? "S&P 500 군중 상태" : null;
         return new HerdObservationResponse(
@@ -199,7 +221,7 @@ public class HerdObservationService {
                 null,
                 null,
                 null,
-                STATE_MODEL_VERSION,
+                modelVersion,
                 null,
                 null,
                 null,

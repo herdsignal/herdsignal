@@ -8,7 +8,12 @@ from decimal import Decimal, InvalidOperation
 from typing import Any, Callable
 
 from init_db import HerdObservation
-from scheduler.observation_s1 import FORMAT_VERSION
+from scheduler.observation_s1 import (
+    DAILY_FORMAT_VERSION,
+    DAILY_STATE_MODEL_VERSION,
+    DAILY_TRANSITION_MODEL_VERSION,
+    FORMAT_VERSION,
+)
 
 
 STATE_MODEL_VERSION = "HERD_STATE_S1"
@@ -178,12 +183,21 @@ def _record_values(
 
 def validate_observation_bundle(bundle: dict[str, Any]) -> list[dict[str, Any]]:
     """DB 연결 전에 전체 번들을 검증해 부분 저장 가능성을 제거한다."""
-    if bundle.get("schemaVersion") != FORMAT_VERSION:
-        raise ObservationStoreError("unexpected observation schema version")
-    if bundle.get("stateModelVersion") != STATE_MODEL_VERSION:
-        raise ObservationStoreError("unexpected state model version")
-    if bundle.get("transitionModelVersion") != TRANSITION_MODEL_VERSION:
-        raise ObservationStoreError("unexpected transition model version")
+    identity = (
+        bundle.get("schemaVersion"),
+        bundle.get("stateModelVersion"),
+        bundle.get("transitionModelVersion"),
+    )
+    allowed = {
+        (FORMAT_VERSION, STATE_MODEL_VERSION, TRANSITION_MODEL_VERSION),
+        (
+            DAILY_FORMAT_VERSION,
+            DAILY_STATE_MODEL_VERSION,
+            DAILY_TRANSITION_MODEL_VERSION,
+        ),
+    }
+    if identity not in allowed:
+        raise ObservationStoreError("unexpected observation model identity")
     boundary = bundle.get("claimBoundary")
     if not isinstance(boundary, dict):
         raise ObservationStoreError("claimBoundary must be an object")

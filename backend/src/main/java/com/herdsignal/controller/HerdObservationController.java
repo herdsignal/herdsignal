@@ -43,6 +43,15 @@ public class HerdObservationController {
         return ResponseEntity.ok(ApiResponse.success(service.getLatest(ticker)));
     }
 
+    @GetMapping("/daily/{ticker}")
+    public ResponseEntity<ApiResponse<HerdObservationResponse>> getLatestDaily(
+            @PathVariable String ticker
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                service.getLatestDaily(ticker)
+        ));
+    }
+
     @GetMapping("/{ticker}/history")
     public ResponseEntity<ApiResponse<HerdObservationHistoryResponse>> getHistory(
             @PathVariable String ticker,

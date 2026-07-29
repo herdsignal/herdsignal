@@ -1,0 +1,25 @@
+{
+  "contract_version": "HERD_OBSERVATION_D1_SERVICE_V1",
+  "status": "LOCKED_PROVISIONAL_STATE_ONLY_SERVICE_CONTRACT",
+  "source_state_contract": "HERD_STATE_S1",
+  "purpose": "Show an outcome-blind daily nowcast of the locked S1 evidence families without confirming a weekly state transition or authorizing an action.",
+  "observation_contract": {
+    "frequency": "LATEST_COMPLETED_MARKET_SESSION",
+    "normalization": "REUSE_LOCKED_S1_TRAILING_WITHIN_TICKER_PERCENTILE",
+    "four_week_session_lag": 20,
+    "thirteen_week_session_lag": 65,
+    "weekly_confirmation_required": true,
+    "future_outcomes_allowed": false
+  },
+  "claim_boundary": {
+    "display_label": "일간 잠정 관찰",
+    "confirmed_state": false,
+    "confirmed_transition": false,
+    "direction_prediction": false,
+    "buy_or_profit_take_authority": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

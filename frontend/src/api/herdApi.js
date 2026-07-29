@@ -160,6 +160,10 @@ export const deleteSignalJournal = (id) => api.delete(`/api/journal/${id}`)
 export const getHerdObservation = (ticker) =>
   api.get(`/api/observations/${tickerPath(ticker)}`)
 
+/** 최신 완료 시장 세션까지 계산한 비확정 Daily D1 관찰값. */
+export const getDailyHerdObservation = (ticker) =>
+  api.get(`/api/observations/daily/${tickerPath(ticker)}`)
+
 /** State S1 최신 관찰값 일괄 조회 (최대 100종목). */
 export const getHerdObservations = (tickers) => api.get('/api/observations', {
   params: {

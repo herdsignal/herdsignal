@@ -55,7 +55,9 @@ from scheduler.run_lock import SchedulerRunLock                                #
 from scheduler.ticker_job import collect_ticker_frames, execute_tickers         # noqa: E402
 from scheduler.realtime_portfolio import calculate_current_portfolio as value_portfolio  # noqa: E402
 from scheduler.observation_s1 import (                                      # noqa: E402
+    DAILY_DEFAULT_OUTPUT,
     apply_operational_identity_window,
+    build_daily_observation_bundle,
     build_observation_bundle,
     load_operational_identity_starts,
     required_collection_tickers,
@@ -355,6 +357,26 @@ def _build_and_write_observation(
     return bundle
 
 
+def _build_and_write_daily_observation(
+    observation_frames: dict,
+    success_list: list[str],
+) -> dict:
+    """확정 S1과 분리된 최신 완료 세션 기준 일간 잠정 관찰을 저장한다."""
+    bundle = build_daily_observation_bundle(
+        observation_frames,
+        target_tickers=set(success_list),
+        sector_overrides=_fetch_sector_overrides(),
+    )
+    write_observation_bundle(bundle, DAILY_DEFAULT_OUTPUT)
+    save_result = save_observation_bundle(bundle, _get_session_factory())
+    logger.info(
+        "[Tier1] Daily D1 잠정 관찰 DB 저장 — 신규 %s, 갱신 %s",
+        save_result["inserted"],
+        save_result["updated"],
+    )
+    return bundle
+
+
 def _run_herd_job_unlocked(trigger_type: str) -> dict:
     """
     Tier 1 전체 HERD 계산·저장 잡.
@@ -431,6 +453,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
 
     # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────
     observation_error: str | None = None
+    daily_observation_error: str | None = None
     prospective_error: str | None = None
     observation_count: int | None = None
     prospective_result: dict | None = None
@@ -453,6 +476,22 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         publish_status = "FAILED"
         logger.error(
             "[Tier1] State S1 관찰 번들 생성 실패: %s",
+            exc,
+            exc_info=True,
+        )
+    try:
+        daily_bundle = _build_and_write_daily_observation(
+            observation_frames, sorted(observation_frames)
+        )
+        logger.info(
+            "[Tier1] Daily D1 잠정 관찰 번들 생성 완료 — %s종목, 기준 %s",
+            len(daily_bundle["records"]),
+            daily_bundle["records"]["SPY"]["asOfDate"],
+        )
+    except Exception as exc:
+        daily_observation_error = str(exc)
+        logger.error(
+            "[Tier1] Daily D1 잠정 관찰 번들 생성 실패: %s",
             exc,
             exc_info=True,
         )
@@ -505,7 +544,12 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
 
     combined_error = "; ".join(
         item
-        for item in (observation_error, prospective_error, snapshot_error)
+        for item in (
+            observation_error,
+            daily_observation_error,
+            prospective_error,
+            snapshot_error,
+        )
         if item
     ) or None
     if failed_list or combined_error:

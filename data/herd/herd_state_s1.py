@@ -244,6 +244,7 @@ def build_state_panel(
     universe_role: str,
     *,
     peer_mapping: dict[str, str] | None = None,
+    observation_frequency: str = "WEEKLY",
 ) -> pd.DataFrame:
     # 운영 화면에서 포트폴리오 종목이 추가·삭제될 때 참여도 기준까지
     # 흔들리지 않도록 출력 대상과 고정 peer universe를 분리할 수 있다.
@@ -259,15 +260,22 @@ def build_state_panel(
             contract,
         )
         scored["last_observed_session"] = scored.index
-        weekly = scored.resample("W-FRI").last()
-        weekly = weekly.dropna(subset=FAMILY_COLUMNS)
-        weekly["HERD_STATE"] = weekly[FAMILY_COLUMNS].mean(axis=1)
-        weekly["HERD_STAGE"] = _stage(weekly["HERD_STATE"])
-        weekly["ticker"] = ticker
-        weekly["sector_etf"] = sector
-        weekly["universe_role"] = universe_role
-        weekly["signal_date"] = weekly.index
-        parts.append(weekly.reset_index(drop=True))
+        if observation_frequency == "WEEKLY":
+            observations = scored.resample("W-FRI").last()
+        elif observation_frequency == "DAILY":
+            observations = scored
+        else:
+            raise HerdStateS1Error(
+                f"unsupported observation frequency: {observation_frequency}"
+            )
+        observations = observations.dropna(subset=FAMILY_COLUMNS)
+        observations["HERD_STATE"] = observations[FAMILY_COLUMNS].mean(axis=1)
+        observations["HERD_STAGE"] = _stage(observations["HERD_STATE"])
+        observations["ticker"] = ticker
+        observations["sector_etf"] = sector
+        observations["universe_role"] = universe_role
+        observations["signal_date"] = observations.index
+        parts.append(observations.reset_index(drop=True))
     if not parts:
         raise HerdStateS1Error(f"no state rows emitted for {universe_role}")
     return pd.concat(parts, ignore_index=True).sort_values(

@@ -5,6 +5,7 @@ import pandas as pd
 
 from scheduler.observation_s1 import (
     apply_operational_identity_window,
+    build_daily_observation_bundle,
     build_observation_bundle,
     load_operational_identity_starts,
     sector_etf_for_name,
@@ -63,6 +64,32 @@ def test_service_bundle_separates_market_aggregate_and_equity_state() -> None:
     assert bundle["records"]["AAA"]["action"] == "HOLD"
     assert bundle["records"]["AAA"]["actionRatio"] == 0.0
     assert bundle["claimBoundary"]["directionPrediction"] is False
+
+
+def test_daily_bundle_is_provisional_and_uses_latest_completed_session() -> None:
+    service, reference = _contracts()
+    frames = {
+        ticker: _frame(index * 3)
+        for index, ticker in enumerate((*reference, "EXTRA", "XLK", "SPY"))
+    }
+    bundle = build_daily_observation_bundle(
+        frames,
+        target_tickers={"AAA", "EXTRA"},
+        sector_overrides={"EXTRA": "XLK"},
+        service_contract=service,
+        reference_mapping=reference,
+        generated_at=datetime(2026, 7, 29, tzinfo=UTC),
+    )
+
+    assert bundle["stateModelVersion"] == "HERD_DAILY_D1"
+    assert bundle["claimBoundary"]["confirmedState"] is False
+    assert set(bundle["records"]) == {"AAA", "EXTRA", "SPY"}
+    assert bundle["records"]["AAA"]["provisional"] is True
+    assert bundle["records"]["AAA"]["transition"] == "PROVISIONAL"
+    assert bundle["records"]["AAA"]["action"] == "HOLD"
+    assert bundle["records"]["AAA"]["asOfDate"] == str(
+        frames["AAA"]["Date"].iloc[-1].date()
+    )
 
 
 def test_unmapped_target_is_reported_instead_of_falling_back_to_spy() -> None:

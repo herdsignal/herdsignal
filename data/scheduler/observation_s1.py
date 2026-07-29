@@ -24,7 +24,12 @@ from herd.validation_universe import SECTOR_UNIVERSE, TICKER_SECTOR_ETF
 
 CONTRACT_PATH = ROOT / "data/config/observation_s1_service.json"
 DEFAULT_OUTPUT = ROOT / "data/runtime/herd_observation_s1_latest.json"
+DAILY_DEFAULT_OUTPUT = ROOT / "data/runtime/herd_observation_d1_latest.json"
 FORMAT_VERSION = "HERD_OBSERVATION_S1_SERVICE_V1"
+DAILY_FORMAT_VERSION = "HERD_OBSERVATION_D1_SERVICE_V1"
+DAILY_STATE_MODEL_VERSION = "HERD_DAILY_D1"
+DAILY_TRANSITION_MODEL_VERSION = "HERD_DAILY_D1_NONE"
+DAILY_CONTRACT_PATH = ROOT / "data/config/observation_d1_service.json"
 MARKET_TICKER = "SPY"
 BENCHMARK_TICKERS = set(SECTOR_UNIVERSE["benchmark"])
 
@@ -276,6 +281,33 @@ def _market_panel(
     return result.reset_index()
 
 
+def _daily_market_panel(
+    reference_panel: pd.DataFrame,
+    contract: dict[str, Any],
+) -> pd.DataFrame:
+    """고정 reference universe의 일별 중앙값으로 잠정 시장 상태를 만든다."""
+    market = contract["market_observation"]
+    expected = int(contract["reference_universe"]["expected_equities"])
+    minimum = float(market["minimum_weekly_coverage_fraction"])
+    grouped = reference_panel.groupby("signal_date", sort=True)
+    coverage = grouped["ticker"].nunique() / expected
+    family_medians = grouped[FAMILY_COLUMNS].median()
+    result = family_medians.loc[coverage[coverage >= minimum].index].copy()
+    if result.empty:
+        raise ObservationS1Error("daily market aggregate has no covered sessions")
+    result["DOWNSIDE_RISK_CONTEXT"] = grouped[
+        "DOWNSIDE_RISK_CONTEXT"
+    ].median().reindex(result.index)
+    result["HERD_STATE"] = result[FAMILY_COLUMNS].mean(axis=1)
+    result["HERD_STAGE"] = _stage(result["HERD_STATE"])
+    result["ticker"] = market["public_ticker"]
+    result["sector_etf"] = "SPY"
+    result["universe_role"] = "MARKET_AGGREGATE"
+    result["last_observed_session"] = result.index
+    result["reference_coverage_fraction"] = coverage.reindex(result.index)
+    return result.reset_index()
+
+
 def _serialize_record(row: pd.Series, scope: str) -> dict[str, Any]:
     return {
         "ticker": str(row["ticker"]),
@@ -416,6 +448,198 @@ def build_observation_bundle(
             "operationalAction": "HOLD",
             "operationalActionRatio": 0.0,
             "blindHoldoutAccess": False,
+        },
+    }
+
+
+def load_daily_contract(path: Path = DAILY_CONTRACT_PATH) -> dict[str, Any]:
+    contract = json.loads(path.read_text(encoding="utf-8"))
+    boundary = contract.get("claim_boundary", {})
+    if (
+        contract.get("contract_version") != DAILY_FORMAT_VERSION
+        or contract.get("status")
+        != "LOCKED_PROVISIONAL_STATE_ONLY_SERVICE_CONTRACT"
+        or contract.get("source_state_contract") != "HERD_STATE_S1"
+        or contract["observation_contract"].get("future_outcomes_allowed")
+        or boundary.get("confirmed_state")
+        or boundary.get("confirmed_transition")
+        or boundary.get("direction_prediction")
+        or boundary.get("buy_or_profit_take_authority")
+        or boundary.get("operational_action") != "HOLD"
+        or boundary.get("operational_action_ratio") != 0.0
+        or boundary.get("blind_holdout_access")
+    ):
+        raise ObservationS1Error("daily provisional contract boundary is invalid")
+    return contract
+
+
+def _add_daily_changes(
+    panel: pd.DataFrame,
+    daily_contract: dict[str, Any],
+) -> pd.DataFrame:
+    result = panel.sort_values(["ticker", "signal_date"]).copy()
+    grouped = result.groupby("ticker", sort=False)["HERD_STATE"]
+    result["HERD_DELTA_4W"] = grouped.diff(
+        int(daily_contract["observation_contract"]["four_week_session_lag"])
+    )
+    result["HERD_DELTA_13W"] = grouped.diff(
+        int(daily_contract["observation_contract"]["thirteen_week_session_lag"])
+    )
+    return result
+
+
+def _serialize_daily_record(row: pd.Series, scope: str) -> dict[str, Any]:
+    record = {
+        "ticker": str(row["ticker"]),
+        "scope": scope,
+        "asOfDate": pd.Timestamp(row["signal_date"]).date().isoformat(),
+        "lastObservedSession": pd.Timestamp(
+            row["last_observed_session"]
+        ).date().isoformat(),
+        "stateScore": round(float(row["HERD_STATE"]), 4),
+        "stage": str(row["HERD_STAGE"]),
+        "transition": "PROVISIONAL",
+        "rawTransition": "PROVISIONAL",
+        "transitionEvent": False,
+        "delta4w": round(float(row["HERD_DELTA_4W"]), 4),
+        "delta13w": round(float(row["HERD_DELTA_13W"]), 4),
+        "families": {
+            column: round(float(row[column]), 4)
+            for column in FAMILY_COLUMNS
+        },
+        "downsideRiskContext": round(
+            float(row["DOWNSIDE_RISK_CONTEXT"]), 4
+        ),
+        "sectorEtf": str(row["sector_etf"]),
+        "directionPrediction": False,
+        "action": "HOLD",
+        "actionRatio": 0.0,
+        "provisional": True,
+    }
+    if "reference_coverage_fraction" in row.index:
+        record["referenceCoverageFraction"] = round(
+            float(row["reference_coverage_fraction"]), 4
+        )
+    return record
+
+
+def build_daily_observation_bundle(
+    frames: dict[str, pd.DataFrame],
+    *,
+    target_tickers: set[str] | None = None,
+    sector_overrides: dict[str, str] | None = None,
+    service_contract: dict[str, Any] | None = None,
+    reference_mapping: dict[str, str] | None = None,
+    daily_contract: dict[str, Any] | None = None,
+    generated_at: datetime | None = None,
+) -> dict[str, Any]:
+    """잠긴 S1 증거군을 최신 완료 세션까지 계산한 별도 일간 nowcast."""
+    service = service_contract or load_service_contract()
+    state_contract, _ = load_model_contracts(service)
+    provisional = daily_contract or load_daily_contract()
+    reference = reference_mapping or load_reference_mapping(service)
+    normalized: dict[str, pd.DataFrame] = {}
+    rejected_frames: dict[str, str] = {}
+    for ticker, frame in frames.items():
+        try:
+            normalized[ticker] = _normalise_frame(frame, ticker)
+        except ObservationS1Error as exc:
+            rejected_frames[ticker] = str(exc)
+    available_reference = {
+        ticker: sector
+        for ticker, sector in reference.items()
+        if ticker in normalized and sector in normalized
+    }
+    coverage = len(available_reference) / max(1, len(reference))
+    minimum_coverage = float(
+        service["reference_universe"]["minimum_total_coverage_fraction"]
+    )
+    if coverage < minimum_coverage:
+        raise ObservationS1Error(
+            f"reference coverage too low: {coverage:.4f} < {minimum_coverage:.4f}"
+        )
+    sector_counts = pd.Series(available_reference).value_counts().to_dict()
+    minimum_peers = int(
+        service["reference_universe"]["minimum_sector_peer_count"]
+    )
+    requested = set(target_tickers or available_reference)
+    overrides = sector_overrides or {}
+    sector_benchmarks = set(reference.values())
+    target_mapping: dict[str, str] = {}
+    unavailable: dict[str, str] = {}
+    for ticker in sorted(requested):
+        if ticker == MARKET_TICKER or ticker in sector_benchmarks:
+            continue
+        sector = reference.get(ticker) or overrides.get(ticker)
+        if ticker not in normalized:
+            unavailable[ticker] = rejected_frames.get(
+                ticker, "PRICE_FRAME_UNAVAILABLE"
+            )
+        elif sector is None:
+            unavailable[ticker] = "SECTOR_ETF_UNAVAILABLE"
+        elif sector not in normalized:
+            unavailable[ticker] = f"SECTOR_BENCHMARK_UNAVAILABLE:{sector}"
+        elif int(sector_counts.get(sector, 0)) < minimum_peers:
+            unavailable[ticker] = f"INSUFFICIENT_FIXED_SECTOR_PEERS:{sector}"
+        else:
+            target_mapping[ticker] = sector
+    calculation_mapping = dict(available_reference)
+    calculation_mapping.update(target_mapping)
+    daily_panel = build_state_panel(
+        normalized,
+        calculation_mapping,
+        state_contract,
+        "SERVICE_EQUITY",
+        peer_mapping=available_reference,
+        observation_frequency="DAILY",
+    )
+    daily_panel = _add_daily_changes(daily_panel, provisional)
+    eligible = daily_panel.dropna(subset=["HERD_DELTA_4W", "HERD_DELTA_13W"])
+    latest = (
+        eligible.sort_values("signal_date")
+        .groupby("ticker", sort=True)
+        .tail(1)
+    )
+    records = {
+        str(row["ticker"]): _serialize_daily_record(row, "EQUITY")
+        for _, row in latest.iterrows()
+        if row["ticker"] in target_mapping
+    }
+    reference_panel = daily_panel[
+        daily_panel["ticker"].isin(available_reference)
+    ]
+    market_panel = _add_daily_changes(
+        _daily_market_panel(reference_panel, service),
+        provisional,
+    ).dropna(subset=["HERD_DELTA_4W", "HERD_DELTA_13W"])
+    market_latest = market_panel.sort_values("signal_date").iloc[-1]
+    market_record = _serialize_daily_record(
+        market_latest, "MARKET_AGGREGATE"
+    )
+    market_record["label"] = "S&P 500 군중 상태 · 일간 잠정"
+    market_record["claim"] = "PROVISIONAL_CROWD_STATE_NOT_ACTION"
+    records[MARKET_TICKER] = market_record
+    now = generated_at or datetime.now(UTC)
+    return {
+        "schemaVersion": DAILY_FORMAT_VERSION,
+        "stateModelVersion": DAILY_STATE_MODEL_VERSION,
+        "transitionModelVersion": DAILY_TRANSITION_MODEL_VERSION,
+        "generatedAt": now.astimezone(UTC).isoformat(),
+        "referenceUniverse": {
+            "expected": len(reference),
+            "available": len(available_reference),
+            "coverageFraction": round(coverage, 6),
+            "survivorshipSafe": False,
+        },
+        "records": dict(sorted(records.items())),
+        "unavailable": unavailable,
+        "claimBoundary": {
+            "directionPrediction": False,
+            "operationalAction": "HOLD",
+            "operationalActionRatio": 0.0,
+            "blindHoldoutAccess": False,
+            "confirmedState": False,
+            "confirmedTransition": False,
         },
     }
 
