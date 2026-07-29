@@ -6,6 +6,7 @@ import StockDetail from './StockDetail'
 import * as api from '../../api/herdApi'
 
 vi.mock('../../api/herdApi', () => ({
+  getDailyHerdObservation: vi.fn(),
   getHerdObservation: vi.fn(),
   getHerdPriceTimeline: vi.fn(),
   getHerdEpisodeStudy: vi.fn(),
@@ -47,6 +48,16 @@ beforeEach(() => {
       participation: 57,
     },
     downsideRiskContext: 35,
+  }))
+  api.getDailyHerdObservation.mockReturnValue(response({
+    ticker: 'NVDA',
+    availabilityStatus: 'AVAILABLE',
+    freshnessStatus: 'FRESH',
+    stateModelVersion: 'HERD_DAILY_D1',
+    stateScore: 76,
+    stage: 'RUSH',
+    observationDate: '2026-07-28',
+    lastObservedSession: '2026-07-28',
   }))
   api.getSignalJournal.mockReturnValue(response([]))
   api.getHerdEpisodeStudy.mockReturnValue(response({
@@ -134,7 +145,9 @@ describe('StockDetail route', () => {
     )
 
     expect(await screen.findByText('NVIDIA Corp')).toBeInTheDocument()
-    expect(screen.getByText('HERD WEEKLY OBSERVATION')).toBeInTheDocument()
+    expect(screen.getByText('HERD DAILY NOWCAST')).toBeInTheDocument()
+    expect(screen.getByText('2026-07-28 일간 잠정')).toBeInTheDocument()
+    expect(screen.getByText('63 · Drift')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '관찰 요약' })).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: '종목 상세 구역' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '가격 · HERD 이력' })).toHaveAttribute(
@@ -151,7 +164,7 @@ describe('StockDetail route', () => {
     )
     expect(screen.getByText('현재 군중 상태')).toBeInTheDocument()
     expect(await screen.findByText('57 → 63')).toBeInTheDocument()
-    expect(screen.getByText('Drift · 3주째')).toBeInTheDocument()
+    expect(screen.getByText('2026-07-24 · 3주째')).toBeInTheDocument()
     expect(screen.getAllByText('군중 회복')).toHaveLength(2)
     expect(screen.getByRole('list', { name: 'HERD 상태 사건' })).toBeInTheDocument()
     expect(screen.getByText('HERD 구성')).toBeInTheDocument()

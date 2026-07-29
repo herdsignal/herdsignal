@@ -4,6 +4,7 @@ import { useStockDetail } from './useStockDetail'
 import * as api from '../../api/herdApi'
 
 vi.mock('../../api/herdApi', () => ({
+  getDailyHerdObservation: vi.fn(),
   getHerdObservation: vi.fn(),
   getHerdPriceTimeline: vi.fn(),
   getHerdEpisodeStudy: vi.fn(),
@@ -58,6 +59,9 @@ beforeEach(() => {
   api.getSignalJournal.mockReturnValue(response([]))
   api.getHerdObservation.mockImplementation((ticker) =>
     response(observation(ticker)))
+  api.getDailyHerdObservation.mockReturnValue(response({
+    availabilityStatus: 'UNAVAILABLE',
+  }))
   api.getHerdPriceTimeline.mockReturnValue(response({ points: [] }))
   api.getHerdEpisodeStudy.mockReturnValue(response({
     availabilityStatus: 'AVAILABLE',
@@ -98,6 +102,25 @@ describe('useStockDetail', () => {
       aapl.resolve({ data: { data: observation('AAPL', 20) } })
     })
     expect(result.current.observation?.ticker).toBe('NVDA')
+  })
+
+  it('uses the daily observation only for the current display state', async () => {
+    api.getDailyHerdObservation.mockReturnValue(response({
+      ...observation('NVDA', 76),
+      stateModelVersion: 'HERD_DAILY_D1',
+      stage: 'RUSH',
+      observationDate: '2026-07-28',
+      lastObservedSession: '2026-07-28',
+    }))
+
+    const { result } = renderHook(() => useStockDetail('nvda'))
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    expect(result.current.displayHerdScore).toBe(76)
+    expect(result.current.displayHerdStage).toBe('Rush')
+    expect(result.current.herdScore).toBe(50)
+    expect(result.current.herdStage).toBe('Calm')
+    expect(result.current.stateSummary.currentDate).toBe('2026-07-24')
   })
 
   it('resets action status when the ticker changes', async () => {

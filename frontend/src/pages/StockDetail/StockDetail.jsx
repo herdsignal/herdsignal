@@ -41,6 +41,10 @@ export default function StockDetail() {
     handleAddWatchlist,
     herdScore,
     herdStage,
+    dailyObservation,
+    dailyObservationAvailable,
+    displayHerdScore,
+    displayHerdStage,
     stageDisp,
     color,
     fundamentalGuard,
@@ -177,6 +181,10 @@ export default function StockDetail() {
             <StockDetailHero
               herdScore={herdScore}
               herdStage={herdStage}
+              displayHerdScore={displayHerdScore}
+              displayHerdStage={displayHerdStage}
+              dailyObservation={dailyObservation}
+              dailyObservationAvailable={dailyObservationAvailable}
               stateSummary={stateSummary}
             />
             <StockDetailBrief items={briefItems} />

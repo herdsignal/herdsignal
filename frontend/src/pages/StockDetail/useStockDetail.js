@@ -32,6 +32,7 @@ export function useStockDetail(ticker) {
   })
   const {
     observation,
+    dailyObservation,
     loading,
     error,
     herdHistory,
@@ -52,6 +53,13 @@ export function useStockDetail(ticker) {
   const observationAvailable = isObservationAvailable(observation)
   const herdScore = observationScore(observation)
   const herdStage = observationStage(observation)
+  const dailyObservationAvailable = isObservationAvailable(dailyObservation)
+  const displayHerdScore = dailyObservationAvailable
+    ? observationScore(dailyObservation)
+    : herdScore
+  const displayHerdStage = dailyObservationAvailable
+    ? observationStage(dailyObservation)
+    : herdStage
   const stageDisp = herdStage ? `Herd ${herdStage}` : null
   const color = stageColor(herdStage)
   const fundamentalGuard = useMemo(
@@ -128,6 +136,8 @@ export function useStockDetail(ticker) {
     authenticated,
     observation,
     observationAvailable,
+    dailyObservation,
+    dailyObservationAvailable,
     loading,
     error,
     portfolioStatus: membership.portfolioStatus,
@@ -147,6 +157,8 @@ export function useStockDetail(ticker) {
     handleAddWatchlist: () => membership.handleAddWatchlist(normalizedTicker),
     herdScore,
     herdStage,
+    displayHerdScore,
+    displayHerdStage,
     stageDisp,
     color,
     fundamentalGuard,

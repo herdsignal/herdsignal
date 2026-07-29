@@ -11,18 +11,29 @@ function signed(value) {
 export default function StockDetailHero({
   herdScore,
   herdStage,
+  displayHerdScore,
+  displayHerdStage,
+  dailyObservation,
+  dailyObservationAvailable,
   stateSummary,
 }) {
   const transition = stateSummary.recentTransition
+  const displayDate = dailyObservationAvailable
+    ? dailyObservation?.lastObservedSession
+    : stateSummary.currentDate
 
   return (
     <section id="stock-state" className={styles.stateSection} aria-labelledby="stock-state-title">
       <div className={styles.stateHeader}>
         <div>
-          <span>HERD WEEKLY OBSERVATION</span>
+          <span>
+            {dailyObservationAvailable
+              ? 'HERD DAILY NOWCAST'
+              : 'HERD WEEKLY CONFIRMED'}
+          </span>
           <h2 id="stock-state-title">현재 군중 상태</h2>
           <small className={styles.observationDate}>
-            {stateSummary.currentDate ?? '—'} 관찰
+            {displayDate ?? '—'} {dailyObservationAvailable ? '일간 잠정' : '주간 확정'}
           </small>
         </div>
         <dl className={styles.stateMeta}>
@@ -35,8 +46,11 @@ export default function StockDetailHero({
             <dd>{signed(stateSummary.fourWeekDelta)}</dd>
           </div>
           <div>
-            <dt>현재 단계</dt>
-            <dd>{stateSummary.stageLabel} · {stateSummary.stageDurationLabel}</dd>
+            <dt>주간 확정</dt>
+            <dd>{Math.round(herdScore)} · {herdStage}</dd>
+            <small>
+              {stateSummary.currentDate ?? '—'} · {stateSummary.stageDurationLabel}
+            </small>
           </div>
           <div>
             <dt>최근 전환</dt>
@@ -45,7 +59,11 @@ export default function StockDetailHero({
           </div>
         </dl>
       </div>
-      <MarketField compact score={herdScore} stage={herdStage} />
+      <MarketField
+        compact
+        score={displayHerdScore}
+        stage={displayHerdStage}
+      />
     </section>
   )
 }

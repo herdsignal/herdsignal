@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  getDailyHerdObservation,
   getHerdObservation,
   getHerdEpisodeStudy,
   getHistoricalS1Context,
@@ -15,6 +16,7 @@ import { API_HOST } from './stockDetailModel'
 
 export function useStockDetailResources(normalizedTicker, displayTicker) {
   const [observation, setObservation] = useState(null)
+  const [dailyObservation, setDailyObservation] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [herdTimeline, setHerdTimeline] = useState([])
@@ -31,6 +33,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
 
   useEffect(() => {
     setObservation(null)
+    setDailyObservation(null)
     setError(null)
   }, [normalizedTicker])
 
@@ -77,10 +80,21 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
     setLoading(true)
     setError(null)
     try {
-      const observationResult = await getHerdObservation(normalizedTicker)
+      const [observationResult, dailyResult] = await Promise.allSettled([
+        getHerdObservation(normalizedTicker),
+        getDailyHerdObservation(normalizedTicker),
+      ])
       if (requestId !== herdRequest.current) return
-      const observationData = observationResult.data?.data ?? null
+      if (observationResult.status === 'rejected') {
+        throw observationResult.reason
+      }
+      const observationData = observationResult.value.data?.data ?? null
       setObservation(observationData)
+      setDailyObservation(
+        dailyResult.status === 'fulfilled'
+          ? dailyResult.value.data?.data ?? null
+          : null,
+      )
     } catch (requestError) {
       if (requestId === herdRequest.current) {
         const unavailable = requestError.response?.status
@@ -150,6 +164,7 @@ export function useStockDetailResources(normalizedTicker, displayTicker) {
 
   return {
     observation,
+    dailyObservation,
     loading,
     error,
     herdHistory,
