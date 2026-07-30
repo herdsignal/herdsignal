@@ -21,6 +21,12 @@ public record DataFreshnessResponse(
         int freshScoreTickerCount,
         int missingPriceTickerCount,
         int missingScoreTickerCount,
+        LocalDate latestDailyObservationDate,
+        Integer dailyObservationBusinessDaysOld,
+        int expectedDailyObservationTickerCount,
+        int freshDailyObservationTickerCount,
+        int missingDailyObservationTickerCount,
+        String dailyObservationStatus,
         SchedulerCadence schedulerCadence,
         SchedulerRunSummary latestRun,
         SchedulerRunSummary latestSuccessfulRun

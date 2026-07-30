@@ -61,6 +61,7 @@ class DataFreshnessServiceTest {
         assertThat(response.latestSuccessfulRun().status()).isEqualTo("SUCCESS");
         assertThat(response.latestSuccessfulRun().publishStatus()).isEqualTo("SUCCESS");
         assertThat(response.latestSuccessfulRun().universeSha256()).hasSize(64);
+        assertThat(response.dailyObservationStatus()).isEqualTo("NOT_AVAILABLE");
         assertThat(response.schedulerCadence().automationMode()).isEqualTo("EXTERNAL_DAEMON");
         assertThat(response.schedulerCadence().requiresExternalProcess()).isTrue();
         assertThat(response.schedulerCadence().timezone()).isEqualTo("America/New_York");

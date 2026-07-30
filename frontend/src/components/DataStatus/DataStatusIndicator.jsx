@@ -140,6 +140,14 @@ export default function DataStatusIndicator() {
               <dd>{view.scoreDate}</dd>
               <p>완료된 금요일 기준</p>
             </div>
+            <div>
+              <dt>
+                <span>Daily D1</span>
+                <small>잠정</small>
+              </dt>
+              <dd>{view.dailyScoreDate}</dd>
+              <p>{view.dailyStatusLabel} · {view.dailyCoverageLabel}</p>
+            </div>
           </dl>
 
           <div className={styles.run}>

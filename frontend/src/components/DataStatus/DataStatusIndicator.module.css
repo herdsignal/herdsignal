@@ -134,7 +134,7 @@
 
 .dates {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   margin: 0;
   padding: 14px 0;
   border-bottom: 1px solid var(--hs-line);
@@ -149,6 +149,20 @@
 .dates div + div {
   padding-left: 16px;
   border-left: 1px solid var(--hs-line);
+}
+
+@media (max-width: 560px) {
+  .dates {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .dates div + div {
+    padding-top: 12px;
+    padding-left: 0;
+    border-top: 1px solid var(--hs-line);
+    border-left: 0;
+  }
 }
 
 .run span {

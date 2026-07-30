@@ -17,6 +17,10 @@ beforeEach(() => {
         status: 'FRESH',
         latestPriceDate: '2026-07-24',
         latestObservationDate: '2026-07-24',
+        latestDailyObservationDate: '2026-07-24',
+        dailyObservationStatus: 'FRESH',
+        expectedDailyObservationTickerCount: 55,
+        freshDailyObservationTickerCount: 55,
         expectedTickerCount: 55,
         schedulerCadence: {
           automationMode: 'EXTERNAL_DAEMON',
@@ -47,11 +51,14 @@ describe('DataStatusIndicator', () => {
 
     fireEvent.click(trigger)
     expect(screen.getByRole('dialog', { name: '데이터 수집 상태' })).toBeInTheDocument()
-    expect(screen.getAllByText('2026.07.24')).toHaveLength(2)
+    expect(screen.getAllByText('2026.07.24')).toHaveLength(3)
     expect(screen.getByText('가격 데이터')).toBeInTheDocument()
     expect(screen.getByText('거래일마다')).toBeInTheDocument()
     expect(screen.getByText('State S1')).toBeInTheDocument()
     expect(screen.getByText('주 1회')).toBeInTheDocument()
+    expect(screen.getByText('Daily D1')).toBeInTheDocument()
+    expect(screen.getByText('잠정')).toBeInTheDocument()
+    expect(screen.getByText('최신 · 55/55 종목')).toBeInTheDocument()
     expect(screen.getByText('미국장 마감 후 반영')).toBeInTheDocument()
     expect(screen.getByText('완료된 금요일 기준')).toBeInTheDocument()
     expect(screen.getByText('55/55 종목')).toBeInTheDocument()

@@ -26,6 +26,7 @@ import java.util.List;
 public class DataFreshnessService {
     private static final String JOB_NAME = "HERD_TIER1_DAILY";
     private static final String STATE_MODEL_VERSION = "HERD_STATE_S1";
+    private static final String DAILY_STATE_MODEL_VERSION = "HERD_DAILY_D1";
     private static final int MAX_RUNNING_HOURS = 2;
     private static final int PRICE_WARNING_AFTER_BUSINESS_DAYS = 1;
     private static final int PRICE_STALE_AFTER_BUSINESS_DAYS = 2;
@@ -71,6 +72,9 @@ public class DataFreshnessService {
         LocalDate latestObservationDate = herdObservationRepository
                 .findLatestObservationDate(STATE_MODEL_VERSION)
                 .orElse(null);
+        LocalDate latestDailyObservationDate = herdObservationRepository
+                .findLatestObservationDate(DAILY_STATE_MODEL_VERSION)
+                .orElse(null);
         SchedulerRun latestRun = schedulerRunRepository
                 .findTopByJobNameOrderByStartedAtDesc(JOB_NAME)
                 .orElse(null);
@@ -81,6 +85,7 @@ public class DataFreshnessService {
 
         Integer priceAge = businessDaysBetween(latestPriceDate, today);
         Integer observationAge = businessDaysBetween(latestObservationDate, today);
+        Integer dailyObservationAge = businessDaysBetween(latestDailyObservationDate, today);
         int expectedTickerCount = latestRun != null ? valueOrZero(latestRun.getTotalCount()) : 0;
         int freshPriceTickerCount = freshPriceTickerCount(latestRun, latestPriceDate);
         int freshObservationTickerCount = countObservationTickers(latestObservationDate);
@@ -90,6 +95,11 @@ public class DataFreshnessService {
                 latestRun, expectedTickerCount, freshPriceTickerCount);
         int missingObservationTickerCount = missingCount(
                 expectedObservationTickerCount, freshObservationTickerCount);
+        int freshDailyObservationTickerCount = countObservationTickers(
+                latestDailyObservationDate, DAILY_STATE_MODEL_VERSION);
+        int expectedDailyObservationTickerCount = expectedTickerCount;
+        int missingDailyObservationTickerCount = missingCount(
+                expectedDailyObservationTickerCount, freshDailyObservationTickerCount);
         String status = determineStatus(
                 latestRun,
                 priceAge,
@@ -115,6 +125,15 @@ public class DataFreshnessService {
                 freshObservationTickerCount,
                 missingPriceTickerCount,
                 missingObservationTickerCount,
+                latestDailyObservationDate,
+                dailyObservationAge,
+                expectedDailyObservationTickerCount,
+                freshDailyObservationTickerCount,
+                missingDailyObservationTickerCount,
+                dailyObservationStatus(
+                        dailyObservationAge,
+                        latestDailyObservationDate,
+                        missingDailyObservationTickerCount),
                 schedulerCadence(),
                 toSummary(latestRun),
                 toSummary(latestSuccessfulRun)
@@ -233,12 +252,29 @@ public class DataFreshnessService {
         return missingCount(expected, actual);
     }
 
+    private String dailyObservationStatus(
+            Integer age,
+            LocalDate date,
+            int missingTickerCount) {
+        if (date == null) return "NOT_AVAILABLE";
+        if (age != null && age > PRICE_STALE_AFTER_BUSINESS_DAYS) return "STALE";
+        if (age != null && age > PRICE_WARNING_AFTER_BUSINESS_DAYS
+                || missingTickerCount > 0) return "WARNING";
+        return "FRESH";
+    }
+
     private int countObservationTickers(LocalDate latestObservationDate) {
+        return countObservationTickers(latestObservationDate, STATE_MODEL_VERSION);
+    }
+
+    private int countObservationTickers(
+            LocalDate latestObservationDate,
+            String stateModelVersion) {
         return latestObservationDate == null
                 ? 0
                 : Math.toIntExact(herdObservationRepository
                         .countDistinctTickersByObservationDate(
-                                STATE_MODEL_VERSION, latestObservationDate));
+                                stateModelVersion, latestObservationDate));
     }
 
     private int expectedObservationCount(SchedulerRun run, int actual) {

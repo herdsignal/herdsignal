@@ -7,6 +7,13 @@ const STATUS_META = {
   NO_DATA: { label: '수집 전', tone: 'muted' },
 }
 
+const DAILY_STATUS_META = {
+  FRESH: '최신',
+  WARNING: '일부 확인',
+  STALE: '갱신 필요',
+  NOT_AVAILABLE: '미생성',
+}
+
 export function dataStatusViewModel(data, { loading = false, error = false } = {}) {
   if (loading && !data) {
     return {
@@ -56,6 +63,12 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
     scoreDate: formatObservedDate(
       data?.latestObservationDate ?? data?.latestScoreDate,
     ),
+    dailyScoreDate: formatObservedDate(data?.latestDailyObservationDate),
+    dailyStatusLabel: DAILY_STATUS_META[data?.dailyObservationStatus]
+      ?? '확인 불가',
+    dailyCoverageLabel: numberOrZero(data?.expectedDailyObservationTickerCount) > 0
+      ? `${numberOrZero(data?.freshDailyObservationTickerCount)}/${numberOrZero(data?.expectedDailyObservationTickerCount)} 종목`
+      : '집계 없음',
     runLabel: schedulerRunLabel(run),
     coverageLabel: expected > 0 ? `${completed}/${expected} 종목` : '집계 없음',
     issueLabel: issues.length > 0 ? issues.join(' · ') : null,
