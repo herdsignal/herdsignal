@@ -1,6 +1,6 @@
 # HERD 연구 현황
 
-기준일: 2026-07-26
+기준일: 2026-08-01
 판정: `STATE_OBSERVATION_MVP_READY` / `NO_ADOPTABLE_ACTION_CANDIDATE`
 
 > 이 문서는 재현성을 위한 누적 연구 일지다. 현재 판정은 이 상단 요약과
@@ -38,6 +38,13 @@
 State S1 관찰 가능 여부, 126거래일 결과 성숙 수, 행동 후보 수,
 생존자 편향 안전성을 분리해 보여주며 어느 하나가 비어 있을 때 행동
 권한을 열지 않는다.
+
+새 행동 가설은 `./scripts/audit-action-research.sh` 게이트를 먼저 통과해야
+한다. 새 PIT 입력의 해시, 결과 확인 전 공식·관측시점·연간 예상 빈도,
+독립 OOS·비용·Buy & Hold 비교, 실패 가설 및 표본 비중복성을 모두 잠근
+후에만 독립 OOS 실행을 허용한다. 이 게이트는 OOS 통과 전 완결 사이클,
+Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보가 등록되지
+않아 `BLOCKED_NO_NEW_INPUT`, 행동은 `HOLD·0%`가 올바른 결과다.
 
 ## Prospective Evidence Ledger V1
 

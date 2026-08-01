@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "HERD_ACTION_RESEARCH_INTAKE_GATE_V1",
+  "status": "LOCKED_BEFORE_NEW_HYPOTHESIS_RESULTS",
+  "serviceObjective": "RARE_PARTIAL_PROFIT_TAKE_AND_EVIDENCE_BACKED_REENTRY_FOR_ALREADY_SELECTED_LONG_TERM_US_EQUITY_HOLDINGS",
+  "pinnedInputs": [
+    {
+      "path": "data/herd/failed_hypothesis_map_v1.json",
+      "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2"
+    },
+    {
+      "path": "data/config/prospective_evidence_v1.json",
+      "sha256": "a62ff19d5e2934d1a5721bb7d2261ee170d2ce320b2f21cea7ed2bea033c9b11"
+    },
+    {
+      "path": "data/herd/research_claim_scope_v1.json",
+      "sha256": "4abcd7aa36b06322304c8a9ee9592101675e2af4589ff1a4ad136ef4bb73daf0"
+    }
+  ],
+  "requiredCandidateFields": [
+    "candidateId",
+    "economicFamily",
+    "sampleId",
+    "target",
+    "newInput",
+    "formula",
+    "observationTiming",
+    "expectedFrequencyPerYear",
+    "oosProtocol",
+    "overlapAudit"
+  ],
+  "minimumProspectiveObservationMonths": 12,
+  "minimumMatured126SessionOutcomes": 30,
+  "minimumDistinctTickers": 10,
+  "hardBlocks": [
+    "SAME_SAMPLE_THRESHOLD_RETUNING",
+    "REJECTED_FEATURE_RECOMBINATION",
+    "LEGACY_FORMULA_REUSE",
+    "OUTCOME_REVIEW_BEFORE_LOCK",
+    "BLIND_HOLDOUT_OPEN",
+    "OPERATIONAL_ACTION_ENABLE"
+  ]
+}
