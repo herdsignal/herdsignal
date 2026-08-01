@@ -2,11 +2,12 @@
 scheduler/herd_scheduler.py — HERD 계산 스케줄러 + on-demand 캐시
 
 ────────────────────────────────────────────────────────
-Tier 1 — 매일 자동 업데이트 (run_herd_job)
+Tier 1 — 거래일 자동 업데이트
   대상: user_portfolio + user_watchlist 전체 (cache 제외) + SPY 고정
   → 유저가 포트폴리오/관심종목에 추가한 모든 종목 자동 포함
-  → 새 종목 추가 시 다음날부터 자동 업데이트 시작
-  → 매일 16:30 ET 자동 실행
+  → 월–목: 가격 + Daily D1 + 전향 결과 성숙
+  → 금요일: 위 작업 + 확정 State S1 관측 archive
+  → 16:30 ET 자동 실행
 
 Tier 2 — 검색 시 실시간 계산 + 캐싱 (calculate_on_demand)
   대상: 검색/조회 요청이 들어온 임의의 티커
@@ -345,6 +346,42 @@ def _record_prospective_evidence(
     return {"archive": archive, "maturity": maturity}
 
 
+def _mature_prospective_evidence(observation_frames: dict) -> dict:
+    """새 S1을 만들지 않고 기존 관측의 만기 결과만 확정한다."""
+    outcome_frames, collection_failed = _complete_prospective_outcome_frames(
+        observation_frames
+    )
+    maturity = mature_outcomes(outcome_frames)
+    logger.info(
+        "[Daily D1] prospective 결과 성숙 — 신규 %s, 대기 %s, 수집 실패 %s",
+        maturity["created"],
+        maturity["pending"],
+        len(collection_failed),
+    )
+    return {
+        "maturity": maturity,
+        "outcomeCollectionFailed": collection_failed,
+    }
+
+
+def _refresh_readiness_reports(context: str) -> tuple[dict, str | None]:
+    """세 런타임 보고서를 함께 갱신하고 scheduler phase로 정규화한다."""
+    try:
+        report_result = refresh_operational_reports()
+        return _phase(
+            "SUCCESS", count=len(report_result["reports"])
+        ), None
+    except Exception as exc:
+        error = str(exc)
+        logger.error(
+            "[%s] 운영 상태 보고서 갱신 실패: %s",
+            context,
+            exc,
+            exc_info=True,
+        )
+        return _phase("FAILED", detail=error), error
+
+
 def _complete_prospective_outcome_frames(
     observation_frames: dict,
 ) -> tuple[dict, list[str]]:
@@ -574,21 +611,9 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             exc_info=True,
         )
         phases["PROSPECTIVE_LEDGER"] = _phase("FAILED", detail=prospective_error)
-    try:
-        report_result = refresh_operational_reports()
-        phases["READINESS_REPORTS"] = _phase(
-            "SUCCESS", count=len(report_result["reports"])
-        )
-    except Exception as exc:
-        operational_report_error = str(exc)
-        logger.error(
-            "[Tier1] 운영 상태 보고서 갱신 실패: %s",
-            exc,
-            exc_info=True,
-        )
-        phases["READINESS_REPORTS"] = _phase(
-            "FAILED", detail=operational_report_error
-        )
+    phases["READINESS_REPORTS"], operational_report_error = (
+        _refresh_readiness_reports("Tier1")
+    )
 
     # ── 4. 전체 결과 요약 ─────────────────────
     logger.info("━" * 60)
@@ -686,7 +711,7 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
 
 
 def _run_daily_observation_job_unlocked(trigger_type: str) -> dict:
-    """가격·Daily D1·포트폴리오만 갱신하는 거래일 경량 작업."""
+    """가격·D1·전향 결과·포트폴리오를 갱신하는 거래일 경량 작업."""
     logger.info("[Daily D1] 경량 관찰 잡 시작")
     run_id = _start_scheduler_run(trigger_type, _DAILY_JOB_NAME)
     phases: dict[str, dict] = {}
@@ -734,6 +759,34 @@ def _run_daily_observation_job_unlocked(trigger_type: str) -> dict:
         daily_error = str(exc)
         phases["DAILY_D1"] = _phase("FAILED", detail=daily_error)
 
+    prospective_error = None
+    prospective_result = None
+    try:
+        prospective_result = _mature_prospective_evidence(frames)
+        outcome_failures = prospective_result["outcomeCollectionFailed"]
+        maturity = prospective_result["maturity"]
+        phases["PROSPECTIVE_OUTCOMES"] = _phase(
+            "PARTIAL_FAILURE" if outcome_failures else "SUCCESS",
+            count=maturity["created"],
+            detail=(
+                f"대기 {maturity['pending']}, 수집 실패 {len(outcome_failures)}"
+            ),
+        )
+    except Exception as exc:
+        prospective_error = str(exc)
+        logger.error(
+            "[Daily D1] prospective 결과 성숙 실패: %s",
+            exc,
+            exc_info=True,
+        )
+        phases["PROSPECTIVE_OUTCOMES"] = _phase(
+            "FAILED", detail=prospective_error
+        )
+
+    phases["READINESS_REPORTS"], operational_report_error = (
+        _refresh_readiness_reports("Daily D1")
+    )
+
     snapshot_error = None
     try:
         snapshot = _snapshot_all_portfolios()
@@ -748,7 +801,14 @@ def _run_daily_observation_job_unlocked(trigger_type: str) -> dict:
         phases["PORTFOLIO_SNAPSHOT"] = _phase("FAILED", detail=snapshot_error)
 
     combined_error = "; ".join(
-        item for item in (daily_error, snapshot_error) if item
+        item
+        for item in (
+            daily_error,
+            prospective_error,
+            operational_report_error,
+            snapshot_error,
+        )
+        if item
     ) or None
     status = "SUCCESS" if not failed and not combined_error else (
         "FAILED" if not frames or daily_error else "PARTIAL_FAILURE"
@@ -774,6 +834,8 @@ def _run_daily_observation_job_unlocked(trigger_type: str) -> dict:
         "universeSha256": universe_sha256,
         "phases": phases,
     }
+    if prospective_result is not None:
+        result["prospectiveEvidence"] = prospective_result
     _notify_scheduler_result(result)
     return result
 

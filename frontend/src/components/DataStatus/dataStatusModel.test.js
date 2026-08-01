@@ -21,6 +21,7 @@ describe('dataStatusViewModel', () => {
         failedCount: 0,
         skippedCount: 0,
         finishedAt: '2026-07-25T01:10:00Z',
+        phases: [{ code: 'PROSPECTIVE_OUTCOMES', status: 'SUCCESS', count: 3 }],
       },
     })
 
@@ -31,6 +32,7 @@ describe('dataStatusViewModel', () => {
     expect(view.coverageLabel).toBe('55/55 종목')
     expect(view.runLabel).toContain('완료')
     expect(view.issueLabel).toBeNull()
+    expect(view.phases[0].label).toBe('전향 결과')
   })
 
   it('surfaces collection and calculation gaps without action language', () => {

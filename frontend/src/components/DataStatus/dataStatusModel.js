@@ -21,6 +21,7 @@ const PHASE_LABELS = {
   WEEKLY_S1: '주간 S1',
   DAILY_D1: '일간 D1',
   PROSPECTIVE_LEDGER: '전향 원장',
+  PROSPECTIVE_OUTCOMES: '전향 결과',
   PORTFOLIO_SNAPSHOT: '자산 스냅샷',
   READINESS_REPORTS: '연구 상태 감사',
 }

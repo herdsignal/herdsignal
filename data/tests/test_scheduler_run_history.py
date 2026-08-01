@@ -7,6 +7,104 @@ from scheduler import herd_scheduler
 
 
 class SchedulerRunHistoryTest(unittest.TestCase):
+    def test_daily_job_matures_outcomes_and_refreshes_readiness_reports(
+        self,
+    ) -> None:
+        frame = object()
+        prospective = {
+            "maturity": {
+                "status": "SUCCESS",
+                "created": 3,
+                "pending": 17,
+            },
+            "outcomeCollectionFailed": [],
+        }
+        with (
+            patch.object(herd_scheduler, "_start_scheduler_run", return_value=12),
+            patch.object(herd_scheduler, "_record_scheduler_universe"),
+            patch.object(herd_scheduler, "_fetch_tier1_tickers", return_value=["AAPL"]),
+            patch.object(herd_scheduler, "load_operational_identity_starts", return_value={}),
+            patch.object(
+                herd_scheduler,
+                "collect_ticker_frames_with_retry",
+                return_value=({"AAPL": frame}, [], []),
+            ),
+            patch.object(
+                herd_scheduler,
+                "_build_and_write_daily_observation",
+                return_value={"records": {"AAPL": {}}},
+            ),
+            patch.object(
+                herd_scheduler,
+                "_mature_prospective_evidence",
+                return_value=prospective,
+            ) as mature,
+            patch.object(
+                herd_scheduler,
+                "refresh_operational_reports",
+                return_value={"reports": ["a", "b", "c"]},
+            ) as refresh_reports,
+            patch.object(
+                herd_scheduler,
+                "_snapshot_all_portfolios",
+                return_value={"requested": [], "saved": [], "errors": []},
+            ),
+            patch.object(herd_scheduler, "_finish_scheduler_run") as finish,
+            patch.object(herd_scheduler, "_notify_scheduler_result"),
+        ):
+            result = herd_scheduler._run_daily_observation_job_unlocked("MANUAL")
+
+        self.assertEqual(result["status"], "SUCCESS")
+        self.assertEqual(result["prospectiveEvidence"], prospective)
+        self.assertEqual(
+            result["phases"]["PROSPECTIVE_OUTCOMES"],
+            {
+                "status": "SUCCESS",
+                "count": 3,
+                "detail": "대기 17, 수집 실패 0",
+            },
+        )
+        self.assertEqual(
+            result["phases"]["READINESS_REPORTS"],
+            {"status": "SUCCESS", "count": 3},
+        )
+        mature.assert_called_once_with({"AAPL": frame})
+        refresh_reports.assert_called_once_with()
+        finish.assert_called_once_with(
+            12,
+            "SUCCESS",
+            total_count=1,
+            success_count=1,
+            failed_tickers=[],
+            publish_status="SUCCESS",
+            observation_count=1,
+            phase_results=result["phases"],
+            error_message=None,
+            job_name=herd_scheduler._DAILY_JOB_NAME,
+        )
+
+    def test_daily_outcome_maturity_keeps_removed_archived_tickers(self) -> None:
+        with (
+            patch.object(
+                herd_scheduler,
+                "_complete_prospective_outcome_frames",
+                return_value=({"AAPL": "current", "REMOVED": "history"}, ["MISS"]),
+            ) as complete,
+            patch.object(
+                herd_scheduler,
+                "mature_outcomes",
+                return_value={"status": "SUCCESS", "created": 1, "pending": 2},
+            ) as mature,
+        ):
+            result = herd_scheduler._mature_prospective_evidence(
+                {"AAPL": "current"}
+            )
+
+        self.assertEqual(result["outcomeCollectionFailed"], ["MISS"])
+        self.assertEqual(result["maturity"]["created"], 1)
+        complete.assert_called_once_with({"AAPL": "current"})
+        mature.assert_called_once_with({"AAPL": "current", "REMOVED": "history"})
+
     def test_outcome_tracking_collects_archived_ticker_removed_from_current_scope(
         self,
     ) -> None:
