@@ -22,6 +22,7 @@ const PHASE_LABELS = {
   DAILY_D1: '일간 D1',
   PROSPECTIVE_LEDGER: '전향 원장',
   PORTFOLIO_SNAPSHOT: '자산 스냅샷',
+  READINESS_REPORTS: '연구 상태 감사',
 }
 
 export function dataStatusViewModel(data, { loading = false, error = false } = {}) {
@@ -87,9 +88,7 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
     isRunning: run?.status === 'RUNNING',
     scheduleLabel: scheduleLabel(cadence),
     scheduleLocalLabel: scheduleLocalLabel(cadence),
-    automationLabel: cadence?.requiresExternalProcess
-      ? '로컬 스케줄러가 실행 중일 때 자동'
-      : '서비스에서 자동 실행',
+    automationLabel: automationLabel(cadence),
     manualRunLabel: '일간 경량 또는 금요일 전체',
     phases: (run?.phases ?? []).map((phase) => ({
       ...phase,
@@ -97,6 +96,19 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
       statusLabel: phaseStatusLabel(phase.status),
     })),
   }
+}
+
+export function automationLabel(cadence) {
+  if (!cadence?.requiresExternalProcess) return '서비스에서 자동 실행'
+  const heartbeat = formatRunTimestamp(cadence?.lastHeartbeatAt)
+  if (cadence?.daemonStatus === 'RUNNING' && cadence?.daemonRunning) {
+    return heartbeat ? `자동 실행 중 · 확인 ${heartbeat}` : '자동 실행 중'
+  }
+  if (cadence?.daemonStatus === 'STALE') {
+    return heartbeat ? `자동 실행 확인 필요 · 마지막 ${heartbeat}` : '자동 실행 확인 필요'
+  }
+  if (cadence?.daemonStatus === 'STOPPED') return '자동 실행 중지됨'
+  return '자동 실행 상태 확인 불가'
 }
 
 function phaseStatusLabel(status) {

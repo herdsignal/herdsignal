@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class DataFreshnessService {
@@ -45,6 +44,7 @@ public class DataFreshnessService {
     private final DailyPriceRepository dailyPriceRepository;
     private final HerdObservationRepository herdObservationRepository;
     private final ObjectMapper objectMapper;
+    private final SchedulerHeartbeatService schedulerHeartbeatService;
     private final Clock clock;
 
     @Autowired
@@ -52,9 +52,10 @@ public class DataFreshnessService {
             SchedulerRunRepository schedulerRunRepository,
             DailyPriceRepository dailyPriceRepository,
             HerdObservationRepository herdObservationRepository,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            SchedulerHeartbeatService schedulerHeartbeatService) {
         this(schedulerRunRepository, dailyPriceRepository, herdObservationRepository, objectMapper,
-                Clock.systemUTC());
+                schedulerHeartbeatService, Clock.systemUTC());
     }
 
     DataFreshnessService(
@@ -63,10 +64,28 @@ public class DataFreshnessService {
             HerdObservationRepository herdObservationRepository,
             ObjectMapper objectMapper,
             Clock clock) {
+        this(
+                schedulerRunRepository,
+                dailyPriceRepository,
+                herdObservationRepository,
+                objectMapper,
+                new SchedulerHeartbeatService(objectMapper, "__test-missing-heartbeat__", clock),
+                clock
+        );
+    }
+
+    DataFreshnessService(
+            SchedulerRunRepository schedulerRunRepository,
+            DailyPriceRepository dailyPriceRepository,
+            HerdObservationRepository herdObservationRepository,
+            ObjectMapper objectMapper,
+            SchedulerHeartbeatService schedulerHeartbeatService,
+            Clock clock) {
         this.schedulerRunRepository = schedulerRunRepository;
         this.dailyPriceRepository = dailyPriceRepository;
         this.herdObservationRepository = herdObservationRepository;
         this.objectMapper = objectMapper;
+        this.schedulerHeartbeatService = schedulerHeartbeatService;
         this.clock = clock;
     }
 
@@ -112,7 +131,11 @@ public class DataFreshnessService {
                 expectedObservationTickerCount, freshObservationTickerCount);
         int freshDailyObservationTickerCount = countObservationTickers(
                 latestDailyObservationDate, DAILY_STATE_MODEL_VERSION);
-        int expectedDailyObservationTickerCount = expectedTickerCount;
+        // Daily D1은 전체 가격 수집 universe가 아니라 실제 계산 적격 universe만
+        // 발행한다. 레버리지 ETF처럼 가격은 수집하지만 D1 계약에서 제외한 종목을
+        // 누락으로 오판하지 않도록 최근 실행의 observation_count를 기준으로 삼는다.
+        int expectedDailyObservationTickerCount = expectedObservationCount(
+                latestRun, freshDailyObservationTickerCount);
         int missingDailyObservationTickerCount = missingCount(
                 expectedDailyObservationTickerCount, freshDailyObservationTickerCount);
         String status = determineStatus(
@@ -156,6 +179,7 @@ public class DataFreshnessService {
     }
 
     private DataFreshnessResponse.SchedulerCadence schedulerCadence() {
+        SchedulerHeartbeatService.Status heartbeat = schedulerHeartbeatService.getStatus();
         ZonedDateTime now = ZonedDateTime.ofInstant(clock.instant(), SCHEDULER_ZONE);
         ZonedDateTime next = now.withHour(SCHEDULER_HOUR)
                 .withMinute(SCHEDULER_MINUTE)
@@ -171,6 +195,10 @@ public class DataFreshnessService {
         return new DataFreshnessResponse.SchedulerCadence(
                 "EXTERNAL_DAEMON",
                 true,
+                heartbeat.status(),
+                heartbeat.running(),
+                heartbeat.lastHeartbeatAt(),
+                heartbeat.ageSeconds(),
                 SCHEDULER_ZONE.getId(),
                 "%02d:%02d".formatted(SCHEDULER_HOUR, SCHEDULER_MINUTE),
                 "FRIDAY",
@@ -247,16 +275,17 @@ public class DataFreshnessService {
         try {
             JsonNode root = objectMapper.readTree(json);
             List<DataFreshnessResponse.SchedulerPhaseSummary> phases = new ArrayList<>();
-            Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> entry = fields.next();
+            Iterator<String> fieldNames = root.fieldNames();
+            while (fieldNames.hasNext()) {
+                String fieldName = fieldNames.next();
+                JsonNode value = root.get(fieldName);
                 phases.add(new DataFreshnessResponse.SchedulerPhaseSummary(
-                            entry.getKey(),
-                            entry.getValue().path("status").asText("UNKNOWN"),
-                            entry.getValue().has("count")
-                                    ? entry.getValue().path("count").asInt()
+                            fieldName,
+                            value.path("status").asText("UNKNOWN"),
+                            value.has("count")
+                                    ? value.path("count").asInt()
                                     : null,
-                            entry.getValue().path("detail").asText(null)
+                            value.path("detail").asText(null)
                     ));
             }
             return phases;

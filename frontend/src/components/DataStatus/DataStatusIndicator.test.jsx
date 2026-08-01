@@ -30,6 +30,9 @@ beforeEach(() => {
         schedulerCadence: {
           automationMode: 'EXTERNAL_DAEMON',
           requiresExternalProcess: true,
+          daemonStatus: 'RUNNING',
+          daemonRunning: true,
+          lastHeartbeatAt: '2026-07-28T01:20:00Z',
           timezone: 'America/New_York',
           dailyTime: '16:30',
           nextScheduledAt: '2026-07-28T16:30:00-04:00',
@@ -74,7 +77,7 @@ describe('DataStatusIndicator', () => {
     expect(screen.getByText('55/55 종목')).toBeInTheDocument()
     expect(screen.getByText('16:30 ET')).toBeInTheDocument()
     expect(screen.getByText(/다음 예정/)).toBeInTheDocument()
-    expect(screen.getByText('로컬 스케줄러가 실행 중일 때 자동')).toBeInTheDocument()
+    expect(screen.getByText(/자동 실행 중 · 확인/)).toBeInTheDocument()
     expect(screen.getByText(/일간 갱신은 가격·D1만/)).toBeInTheDocument()
     expect(screen.getByRole('list', { name: '최근 실행 단계' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '상태 다시 확인' })).toBeInTheDocument()

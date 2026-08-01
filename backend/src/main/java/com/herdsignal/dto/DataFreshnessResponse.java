@@ -34,6 +34,10 @@ public record DataFreshnessResponse(
     public record SchedulerCadence(
             String automationMode,
             boolean requiresExternalProcess,
+            String daemonStatus,
+            boolean daemonRunning,
+            OffsetDateTime lastHeartbeatAt,
+            Long heartbeatAgeSeconds,
             String timezone,
             String dailyTime,
             String weeklyDay,

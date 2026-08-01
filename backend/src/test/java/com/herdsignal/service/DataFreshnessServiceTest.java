@@ -150,6 +150,31 @@ class DataFreshnessServiceTest {
     }
 
     @Test
+    void usesDailyEligibleObservationCountInsteadOfFullPriceUniverse() {
+        SchedulerRun successfulRun = run("SUCCESS");
+        LocalDate latestDate = LocalDate.of(2026, 7, 14);
+        when(successfulRun.getObservationCount()).thenReturn(9);
+        when(dailyPriceRepository.findLatestPriceDate()).thenReturn(Optional.of(latestDate));
+        mockObservationDate(latestDate);
+        when(herdObservationRepository.findLatestObservationDate("HERD_DAILY_D1"))
+                .thenReturn(Optional.of(latestDate));
+        when(herdObservationRepository.countDistinctTickersByObservationDate(
+                "HERD_DAILY_D1", latestDate)).thenReturn(9L);
+        mockCoverage(latestDate, 12);
+        when(schedulerRunRepository.findTopByJobNameOrderByStartedAtDesc("HERD_DAILY_D1"))
+                .thenReturn(Optional.of(successfulRun));
+
+        DataFreshnessResponse response = service.getStatus();
+
+        assertThat(response.status()).isEqualTo("FRESH");
+        assertThat(response.expectedTickerCount()).isEqualTo(12);
+        assertThat(response.expectedDailyObservationTickerCount()).isEqualTo(9);
+        assertThat(response.freshDailyObservationTickerCount()).isEqualTo(9);
+        assertThat(response.missingDailyObservationTickerCount()).isZero();
+        assertThat(response.dailyObservationStatus()).isEqualTo("FRESH");
+    }
+
+    @Test
     void treatsStoredSchedulerTimesAsUtc() {
         SchedulerRun running = run("RUNNING");
         when(running.getStartedAt()).thenReturn(LocalDateTime.of(2026, 7, 15, 2, 30));

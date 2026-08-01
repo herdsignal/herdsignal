@@ -10,6 +10,8 @@ from zoneinfo import ZoneInfo
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from scheduler.heartbeat import SchedulerHeartbeat
+
 logger = logging.getLogger(__name__)
 ET = ZoneInfo("America/New_York")
 RETRYABLE_STATUSES = frozenset({"FAILED", "PARTIAL_FAILURE"})
@@ -141,9 +143,13 @@ def run_tiered_scheduler(
     minute_et: int,
     daily_latest_success_loader: Callable[[], datetime | None] | None = None,
     weekly_latest_success_loader: Callable[[], datetime | None] | None = None,
+    heartbeat: SchedulerHeartbeat | None = None,
     scheduler_factory=BlockingScheduler,
 ) -> None:
     """월–목 경량 D1, 금요일 전체 S1 작업을 서로 다른 잡으로 운영한다."""
+    if heartbeat is not None:
+        heartbeat.start()
+
     now = datetime.now(UTC)
     current_et = now.astimezone(ET)
     try:
@@ -186,6 +192,17 @@ def run_tiered_scheduler(
         name="HERD Daily D1 경량 관찰",
         **common,
     )
+    if heartbeat is not None:
+        scheduler.add_job(
+            func=heartbeat.pulse,
+            trigger="interval",
+            seconds=60,
+            id="herd_scheduler_heartbeat",
+            name="HERD 스케줄러 heartbeat",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
     scheduler.add_job(
         func=run_with_single_retry,
         args=[weekly_job],
@@ -209,3 +226,6 @@ def run_tiered_scheduler(
     except (KeyboardInterrupt, SystemExit):
         logger.info("[Tier1] 스케줄러 종료 요청")
         scheduler.shutdown(wait=False)
+    finally:
+        if heartbeat is not None:
+            heartbeat.stop()

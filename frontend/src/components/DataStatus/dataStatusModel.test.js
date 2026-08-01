@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  automationLabel,
   dataStatusViewModel,
   formatObservedDate,
   scheduleLabel,
@@ -79,5 +80,18 @@ describe('data status formatting', () => {
   it('keeps a running scheduler distinct from completed runs', () => {
     expect(schedulerRunLabel({ status: 'RUNNING' })).toBe('실행 중')
     expect(schedulerRunLabel(null)).toBe('실행 기록 없음')
+  })
+
+  it('fails closed when the external scheduler heartbeat is stale', () => {
+    expect(automationLabel({
+      requiresExternalProcess: true,
+      daemonStatus: 'STALE',
+      daemonRunning: false,
+      lastHeartbeatAt: '2026-08-01T12:00:00Z',
+    })).toContain('자동 실행 확인 필요')
+    expect(automationLabel({
+      requiresExternalProcess: true,
+      daemonStatus: 'UNAVAILABLE',
+    })).toBe('자동 실행 상태 확인 불가')
   })
 })

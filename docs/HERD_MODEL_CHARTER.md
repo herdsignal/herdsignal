@@ -119,7 +119,7 @@ Rush의 익절에는 Exhausted 또는 Breaking 확인이 필요하다.
 
 ## 현재 상태
 
-- HERD v4: 현재 화면에 남은 레거시 상태 점수이자 비교 기준
+- HERD v4: 연구실과 회귀 비교에만 남은 레거시 상태 점수
 - HERD State S1·Transition S1: 개인 관찰 MVP 사용 가능
 - HERD v6.1 Action Layer: 채택되지 않은 레거시 연구 기준
 - 가격·추세·상대강도·위험·기업 상태 가설: 독립 OOS 채택 0개

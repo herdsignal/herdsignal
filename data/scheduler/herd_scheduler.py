@@ -44,6 +44,7 @@ from config.settings import (                                           # noqa: 
     SCHEDULER_MINUTE_ET,
 )
 from scheduler.daemon import run_tiered_scheduler                            # noqa: E402
+from scheduler.heartbeat import SchedulerHeartbeat                          # noqa: E402
 from scheduler.data_quality_gate import validate_operational_price_frame      # noqa: E402
 from scheduler.incident_alerts import IncidentAlertConfig, send_scheduler_alert  # noqa: E402
 from scheduler.on_demand import (                                             # noqa: E402
@@ -75,6 +76,7 @@ from scheduler.prospective_evidence import (                               # noq
     mature_outcomes,
 )
 from scheduler.operation_log import write_operation_event                   # noqa: E402
+from scheduler.operational_reports import refresh_operational_reports       # noqa: E402
 from herd.calculator import run                                         # noqa: E402
 from herd.portfolio_calculator import calculate_portfolio_value         # noqa: E402
 from herd.saver import save_herd_result                                # noqa: E402
@@ -499,6 +501,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
     observation_error: str | None = None
     daily_observation_error: str | None = None
     prospective_error: str | None = None
+    operational_report_error: str | None = None
     observation_count: int | None = None
     prospective_result: dict | None = None
     bundle: dict | None = None
@@ -571,6 +574,21 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             exc_info=True,
         )
         phases["PROSPECTIVE_LEDGER"] = _phase("FAILED", detail=prospective_error)
+    try:
+        report_result = refresh_operational_reports()
+        phases["READINESS_REPORTS"] = _phase(
+            "SUCCESS", count=len(report_result["reports"])
+        )
+    except Exception as exc:
+        operational_report_error = str(exc)
+        logger.error(
+            "[Tier1] 운영 상태 보고서 갱신 실패: %s",
+            exc,
+            exc_info=True,
+        )
+        phases["READINESS_REPORTS"] = _phase(
+            "FAILED", detail=operational_report_error
+        )
 
     # ── 4. 전체 결과 요약 ─────────────────────
     logger.info("━" * 60)
@@ -610,6 +628,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             observation_error,
             daily_observation_error,
             prospective_error,
+            operational_report_error,
             snapshot_error,
         )
         if item
@@ -831,6 +850,7 @@ def run_scheduler() -> None:
         weekly_latest_success_loader=lambda: SchedulerRunRecorder(
             _get_session_factory(), _WEEKLY_JOB_NAME
         ).latest_success_at(),
+        heartbeat=SchedulerHeartbeat(),
     )
 
 

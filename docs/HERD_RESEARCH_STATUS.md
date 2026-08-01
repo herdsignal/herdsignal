@@ -3,9 +3,11 @@
 기준일: 2026-08-01
 판정: `STATE_OBSERVATION_MVP_READY` / `NO_ADOPTABLE_ACTION_CANDIDATE`
 
-> 이 문서는 재현성을 위한 누적 연구 일지다. 현재 판정은 이 상단 요약과
-> `data/herd/research_decision_v2.json`을 기준으로 한다. 아래 날짜별
-> V1~V10 기록은 당시 판단의 이력이며 현재 운영 상태로 해석하지 않는다.
+> 이 문서는 재현성을 위한 누적 연구 일지다. 행동·승격 권한은 불변 판정인
+> `data/herd/research_decision_v2.json`을 기준으로 한다. 현재 관측 축적량과
+> 다음 연구 입력은 `data/runtime/reports/model-readiness-latest.json`과
+> `action-research-intake-latest.json`을 기준으로 한다. 아래 날짜별 V1~V10
+> 기록과 결정 파일의 당시 `nextStage`는 현재 작업 목록으로 해석하지 않는다.
 
 ## 모델 확립 통합 파이프라인 1~9
 
@@ -26,7 +28,8 @@
   아니라 경제적으로 중복되지 않는 새 방향 가설 하나와 새로운 독립 또는
   prospective OOS 표본을 사전 고정하는 것이다.
 
-현재 기계 판독 결정은 `data/herd/research_decision_v2.json`이다. 기존
+현재 행동·승격 경계의 기계 판독 결정은
+`data/herd/research_decision_v2.json`이다. 기존
 `model_establishment_status_v1.json`은 과거 Part J~O 승격 감사의 고정
 해시 입력으로 보존하며 최신 판정 원장으로 수정하지 않는다. V2는 State S1
 관찰 MVP, 최신 Form 4·FINRA·13F·giveback 탈락, 행동 후보 0개와
@@ -38,6 +41,10 @@
 State S1 관찰 가능 여부, 126거래일 결과 성숙 수, 행동 후보 수,
 생존자 편향 안전성을 분리해 보여주며 어느 하나가 비어 있을 때 행동
 권한을 열지 않는다.
+
+주간 스케줄러는 전향 원장 저장을 마친 뒤 준비 상태와 새 행동 연구 입력
+보고서를 함께 원자적으로 갱신한다. 따라서 불변 결정 파일을 덮어쓰지 않고도
+현재 진행 상황과 다음 허용 단계를 화면·운영 도구에서 읽을 수 있다.
 
 새 행동 가설은 `./scripts/audit-action-research.sh` 게이트를 먼저 통과해야
 한다. 새 PIT 입력의 해시, 결과 확인 전 공식·관측시점·연간 예상 빈도,
