@@ -1,0 +1,126 @@
+{
+  "protocolVersion": "HERD_SEC_EARNINGS_SOFT_INFORMATION_FEASIBILITY_V1",
+  "status": "LOCKED_BEFORE_TEXT_MEASUREMENT_OR_PRICE_OUTCOMES",
+  "lockedAt": "2026-08-02",
+  "serviceObjective": "TEST_ONE_ECONOMICALLY_NEW_PIT_INPUT_FOR_RARE_FIVE_PERCENT_PROFIT_TAKE_WITHOUT_PREMATURELY_TRIMMING_HEALTHY_LONG_TERM_WINNERS",
+  "researchQuestion": "Can issuer-relative changes in management soft information from SEC-furnished earnings releases distinguish a future matched-cash rebuy opportunity from healthy continuation while preserving structural-damage separation?",
+  "whyThisIsNew": [
+    "The source is management language released at an auditable SEC acceptance timestamp, not another transformation of weekly price, trend, volume, relative strength, Form 4, 13F, short interest, or numeric guidance revisions.",
+    "The intended measurement is a same-issuer change from the immediately prior comparable earnings release, not an absolute cross-company tone score.",
+    "No rejected input is recombined and no legacy v4 or v6.1 formula is reused."
+  ],
+  "pinnedInputs": [
+    {
+      "path": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721/manifest.json",
+      "sha256": "a20b2c09d7e0d5567ac89784ba7afef468fa8c5f4626cc60afe3feab3bf6fb86"
+    },
+    {
+      "path": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721/index.csv",
+      "sha256": "888fe35358f3b22202d666693a5508e2efaa7fa284709528d85e10f75caa4efb"
+    },
+    {
+      "path": "data/herd/action_cycle_architecture_v2.json",
+      "sha256": "3137b7df48d0e5b146e75dbd142f568e8f88fcd90ccea57c97edc34520c9d576"
+    },
+    {
+      "path": "data/herd/failed_hypothesis_map_v1.json",
+      "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2"
+    },
+    {
+      "path": "data/reports/profit_take_success_label_v2.json",
+      "sha256": "8b7fe9d30e475eb3c9b1f69e4329d2b28a2046277ef4877ebf5274d48ec61c00"
+    }
+  ],
+  "sourceSelection": {
+    "requiredItem": "2.02",
+    "requiredDocumentRole": "TEXT_ATTACHMENT",
+    "oneDocumentPerAccession": true,
+    "documentChoice": "LARGEST_SOURCE_BYTES_THEN_SOURCE_SHA256_ASC",
+    "sameIssuerRequired": true,
+    "minimumPriorGapDays": 30,
+    "maximumPriorGapDays": 550,
+    "availability": "SEC_ACCEPTED_AT",
+    "sourceUse": "FEASIBILITY_DEVELOPMENT_ONLY"
+  },
+  "coverageGates": {
+    "minimumDocuments": 2500,
+    "minimumComparablePairs": 2000,
+    "minimumIssuers": 40,
+    "minimumCalendarYears": 12,
+    "minimumEras": 4,
+    "eraLengthYears": 3,
+    "minimumMedianDocumentsPerIssuer": 12
+  },
+  "measurementDesign": {
+    "stage": "NOT_YET_AUTHORIZED",
+    "unit": "CURRENT_EARNINGS_RELEASE_MINUS_IMMEDIATELY_PRIOR_SAME_ISSUER_RELEASE",
+    "allowedEconomicTopics": [
+      "DEMAND",
+      "BACKLOG_OR_BOOKINGS",
+      "MARGIN",
+      "INVENTORY",
+      "CAPITAL_SPENDING",
+      "LIQUIDITY_OR_FINANCING",
+      "MANAGEMENT_UNCERTAINTY"
+    ],
+    "requiredProperties": [
+      "SOURCE_SENTENCE_TRACEABILITY",
+      "NEGATION_AND_COMPARISON_SCOPE",
+      "NUMERIC_TABLE_EXCLUSION_FROM_SOFT_TONE",
+      "SAME_ISSUER_BASELINE_ONLY",
+      "FIXED_MODEL_OR_LEXICON_HASH",
+      "NO_PRICE_OR_OUTCOME_INPUT"
+    ],
+    "licensePolicy": {
+      "remoteLlmApiAllowed": false,
+      "unpinnedModelAllowed": false,
+      "nonCommercialDictionaryAllowedForProduct": false,
+      "companyExhibitRedistribution": false,
+      "storeDerivedFactsAndSourceHashesOnly": true
+    },
+    "sourceReviewGate": {
+      "minimumRows": 200,
+      "minimumIssuers": 30,
+      "minimumWilson95LowerBound": 0.9,
+      "labels": ["VALID", "INVALID", "AMBIGUOUS"]
+    }
+  },
+  "futureSingleHypothesis": {
+    "status": "BLOCKED_UNTIL_MEASUREMENT_SOURCE_REVIEW_PASSES",
+    "economicFamily": "MANAGEMENT_SOFT_INFORMATION_CHANGE",
+    "primaryTarget": "ECONOMIC_REBUY_OPPORTUNITY_VS_HEALTHY_CONTINUATION",
+    "mandatorySecondaryTarget": "STRUCTURAL_DAMAGE_SEPARATION",
+    "inputTiming": "ONLY_INFORMATION_AVAILABLE_AT_OR_BEFORE_DECISION_TIME",
+    "executionTiming": "NEXT_REGULAR_SESSION_OPEN_AFTER_INFORMATION_CUTOFF",
+    "directionRule": "MUST_BE_LOCKED_BEFORE_JOINING_PRICE_OUTCOMES",
+    "frequencyCap": "INHERIT_ACTION_CYCLE_ARCHITECTURE_V2"
+  },
+  "independencePlan": {
+    "developmentUniverse": "CURRENT_51_ISSUERS_SOURCE_MEASUREMENT_ONLY",
+    "directionOosUniverse": "TICKER_AND_ISSUER_DISJOINT_NEW_CORPUS_REQUIRED",
+    "minimumDirectionOosIssuers": 80,
+    "minimumSequentialReleasesPerOosIssuer": 8,
+    "sameIssuerMayCrossDevelopmentAndOos": false,
+    "currentConstituentPreholdoutIsSurvivorshipSafe": false
+  },
+  "firewall": {
+    "textDirectionScoreComputed": false,
+    "priceOrReturnOutcomesOpened": false,
+    "directionHypothesisPreregistered": false,
+    "sameSampleThresholdSearch": false,
+    "rejectedFeatureRecombination": false,
+    "legacyFormulaReuse": false,
+    "blindHoldoutAccess": false,
+    "herdFormulaChangeAllowed": false,
+    "operationalActionAllowed": false,
+    "operationalAction": "HOLD",
+    "operationalActionRatio": 0.0
+  },
+  "nextGate": "BUILD_PRICE_BLIND_SOFT_INFORMATION_MEASUREMENT_AND_SOURCE_REVIEW",
+  "evidenceBasis": [
+    "https://www.sec.gov/files/form8-k.pdf",
+    "https://www.federalreserve.gov/econres/ifdp/soft-information-in-earnings-announcements-news-or-noise.htm",
+    "https://www.frbsf.org/research-and-insights/publications/system-research-philadelphia-fed/2024/05/pead-txt-post-earnings-announcement-drift-using-text/",
+    "https://www.cambridge.org/core/journals/journal-of-financial-and-quantitative-analysis/article/abs/multifactor-explanation-of-postearnings-announcement-drift/59BBDF0CCAC18EBD491E6511C6EDB705"
+  ]
+}

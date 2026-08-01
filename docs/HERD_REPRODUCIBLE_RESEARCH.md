@@ -756,6 +756,28 @@ PYTHONPATH=. .venv/bin/python -m herd.historical_s1_product_context_v1
 검증한다. 이 자료는 설명 전용이며 `survivorship_safe=false`,
 `direction_prediction=false`, `HOLD·0%`를 유지한다.
 
+## 17. SEC 실적발표 문구 연구 준비
+
+해시가 고정된 SEC 8-K corpus에서 Item 2.02 실적발표 첨부문서를 고르고,
+같은 CIK의 직전 발표와 연결한 가격 비노출 비교 원장을 만든다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_feasibility_v1
+```
+
+실행기는 계약에 고정된 corpus manifest와 index, 행동 사이클 계약, 탈락
+가설 원장과 성공 라벨 보고서의 SHA-256을 먼저 확인한다. accession마다
+가장 큰 `TEXT_ATTACHMENT` 하나만 선택하고 원문 파일 경로가 실제 SHA-256
+주소와 일치하는지 검증한다. 같은 CIK 안에서 30~550일 사이의 직전 발표만
+비교쌍으로 허용한다.
+
+산출물은 `reports/sec_earnings_soft_information_pairs_v1.csv`와
+`reports/sec_earnings_soft_information_feasibility_v1.json`이다. 비교 원장에
+가격·수익률·라벨·HERD·행동 열이 들어오거나 원격 모델, 비상업용 사전,
+고정되지 않은 LLM 호출이 설정되면 fail-closed 한다. 이 단계는 원문
+coverage만 판정하며 문구 방향 점수와 매수·익절 신호를 만들지 않는다.
+
 ## 근거
 
 - scikit-learn `TimeSeriesSplit`: 시간 순서를 보존하고 train과 test 사이
