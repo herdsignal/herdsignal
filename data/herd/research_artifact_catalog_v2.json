@@ -52,6 +52,8 @@
       "data/reports/profit_take_success_label_v2.csv",
       "data/herd/profit_take_contract_gate_v1.json",
       "data/reports/profit_take_contract_gate_v1.json",
+      "data/herd/action_cycle_architecture_v2.json",
+      "data/reports/action_cycle_architecture_v2.json",
       "data/herd/evidence_admission_registry_v10.json",
       "data/reports/evidence_admission_registry_v10.json",
       "data/herd/conditional_reentry_gate_v2.json",

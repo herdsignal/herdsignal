@@ -3,6 +3,10 @@
   "catalog_version": "HERD_RESEARCH_ARTIFACT_CATALOG_V2",
   "artifacts": [
     {
+      "path": "data/herd/action_cycle_architecture_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/action_direction_hypotheses.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -817,6 +821,10 @@
     {
       "path": "data/herd/weekly_rsi_path_measurement_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/action_cycle_architecture_v2.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/action_direction_oos_v1.csv",

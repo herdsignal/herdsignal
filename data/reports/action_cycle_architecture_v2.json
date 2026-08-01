@@ -1,0 +1,25 @@
+{
+  "reportVersion": "HERD_ACTION_CYCLE_ARCHITECTURE_V2",
+  "status": "ACTION_FOUNDATION_READY_DIRECTION_BLOCKED",
+  "checks": {
+    "opportunity_ceiling": true,
+    "label_coverage": true,
+    "target_and_frequency_locked": true,
+    "all_recorded_hypotheses_rejected": true,
+    "profit_take_direction_not_admitted": true,
+    "reentry_direction_not_admitted": true,
+    "operational_action_fail_closed": true
+  },
+  "foundationReady": true,
+  "currentProductLevel": "OBSERVATION",
+  "directionTargetDefined": true,
+  "newCandidateReady": false,
+  "directionResearchReady": false,
+  "profitTakeReviewAllowed": false,
+  "matchedCashReentryReviewAllowed": false,
+  "shadowCycleAllowed": false,
+  "operationalActionAllowed": false,
+  "operationalAction": "HOLD",
+  "operationalActionRatio": 0.0,
+  "nextGate": "ONE_ECONOMICALLY_NEW_INPUT_INDEPENDENT_OOS"
+}

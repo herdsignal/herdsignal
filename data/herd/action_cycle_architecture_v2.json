@@ -1,0 +1,148 @@
+{
+  "contractVersion": "HERD_ACTION_CYCLE_ARCHITECTURE_V2",
+  "status": "LOCKED_BEFORE_NEW_DIRECTION_RESULTS",
+  "lockedAt": "2026-08-02",
+  "serviceObjective": "PRESERVE_A_LONG_TERM_CORE_POSITION_AND_USE_RARE_FIVE_PERCENT_TRIM_TO_MATCHED_CASH_REENTRY_CYCLES_ONLY_WHEN_NET_ECONOMIC_EDGE_IS_VALIDATED",
+  "pinnedInputs": [
+    {
+      "path": "data/reports/profit_take_opportunity_ceiling_v1.json",
+      "sha256": "3386515d8c9f6a57f8541b8be07d89057afabac7352f428123095b08839d3883"
+    },
+    {
+      "path": "data/reports/profit_take_success_label_v2.json",
+      "sha256": "8b7fe9d30e475eb3c9b1f69e4329d2b28a2046277ef4877ebf5274d48ec61c00"
+    },
+    {
+      "path": "data/reports/profit_take_contract_gate_v1.json",
+      "sha256": "44b343c226ba728a9b95b3feadf184a5c272a3b0327e36b65b12d75a4e834b5d"
+    },
+    {
+      "path": "data/herd/failed_hypothesis_map_v1.json",
+      "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2"
+    },
+    {
+      "path": "data/config/action_research_intake_v1.json",
+      "sha256": "c6b7b828d6e5c44e32809d303a7951ef755f6bf0a6017d4e0bab37febb36b821"
+    }
+  ],
+  "productLanes": [
+    {
+      "id": "OBSERVATION_AND_POLICY_REVIEW",
+      "availableBeforeDirectionEvidence": true,
+      "outputs": ["HERD_STATE", "TRANSITION_STATE", "TARGET_WEIGHT_DRIFT", "USER_JOURNAL"],
+      "mayClaimReturnPrediction": false,
+      "mayAuthorizeTrade": false
+    },
+    {
+      "id": "PREDICTIVE_ACTION_CYCLE",
+      "availableBeforeDirectionEvidence": false,
+      "outputs": ["TRIM_5_PERCENT", "MATCHED_CASH_REENTRY"],
+      "mayClaimReturnPrediction": true,
+      "mayAuthorizeTrade": true
+    }
+  ],
+  "actionLanes": {
+    "profitTake": {
+      "target": "AFTER_COST_MATCHED_CASH_REBUY_OPPORTUNITY_WITHOUT_PREMATURELY_TRIMMING_HEALTHY_CONTINUATION",
+      "requiresIndependentDirectionEvidence": true,
+      "requiresPriorSaleCash": false,
+      "maximumFraction": 0.05
+    },
+    "matchedCashReentry": {
+      "target": "INCREASE_SHARE_COUNT_OR_TERMINAL_WEALTH_USING_ONLY_UNSPENT_CASH_FROM_THE_MATCHED_TRIM",
+      "requiresIndependentDirectionEvidence": true,
+      "requiresPriorSaleCash": true,
+      "requiresBusinessGate": "PASS",
+      "unknownBusinessGatePolicy": "BLOCK"
+    },
+    "newEntry": {
+      "target": "SEPARATE_FUTURE_MODEL",
+      "status": "DEFERRED",
+      "mayReuseReentryRule": false
+    }
+  },
+  "cycleStateMachine": {
+    "initial": "HOLD_CORE",
+    "states": [
+      "HOLD_CORE",
+      "TRIM_REVIEW",
+      "CASH_RESERVED",
+      "REENTRY_WATCH",
+      "PARTIAL_REENTRY",
+      "COMPLETED",
+      "EXPIRED"
+    ],
+    "completedRequires": [
+      "EXPLICIT_CYCLE_ID",
+      "SAME_TICKER",
+      "REENTRY_AFTER_TRIM",
+      "REENTRY_COST_NOT_ABOVE_MATCHED_NET_SALE_CASH",
+      "NO_EXTERNAL_CASH",
+      "NO_UNMATCHED_BUY"
+    ],
+    "expiredCycleCountsAsSuccess": false
+  },
+  "riskPolicy": {
+    "defaultAction": "HOLD",
+    "initialTrimFraction": 0.05,
+    "maximumCumulativeTrimFraction": 0.15,
+    "maximumProfitTakeCandidatesPerTickerYear": 2,
+    "maximumCompletedActionsPerTickerYear": 5,
+    "minimumCooldownWeeks": 8,
+    "maximumReentryWaitSessions": 126,
+    "fullExitAllowed": false,
+    "leverageAllowed": false
+  },
+  "promotionLevels": [
+    {
+      "id": "OBSERVATION",
+      "requirement": "STATE_AND_TRANSITION_READY",
+      "tradeAuthority": false
+    },
+    {
+      "id": "REVIEW",
+      "requirement": "INDEPENDENT_OOS_DIRECTION_AND_CALIBRATION_PASSED",
+      "tradeAuthority": false
+    },
+    {
+      "id": "SHADOW",
+      "requirement": "FROZEN_COMPLETE_CYCLE_RULE_AND_PREHOLDOUT_GATES_PASSED",
+      "tradeAuthority": false
+    },
+    {
+      "id": "OPERATIONAL",
+      "requirement": "PROSPECTIVE_BLIND_COMPLETE_CYCLES_AND_HUMAN_PROMOTION_PASSED",
+      "tradeAuthority": true
+    }
+  ],
+  "currentBoundary": {
+    "level": "OBSERVATION",
+    "opportunityCeilingRequiredStatus": "ECONOMIC_OPPORTUNITY_CEILING_PASSED",
+    "labelCoverageRequiredStatus": "SUCCESS_LABEL_V2_COVERAGE_PASSED",
+    "contractGateRequiredStatus": "PROFIT_TAKE_TARGET_AND_FREQUENCY_LOCKED",
+    "admittedProfitTakeDirectionEvidence": 0,
+    "admittedReentryDirectionEvidence": 0,
+    "operationalAction": "HOLD",
+    "operationalActionRatio": 0.0,
+    "blindHoldoutAccess": false,
+    "survivorshipSafe": false
+  },
+  "nextGate": {
+    "id": "ONE_ECONOMICALLY_NEW_INPUT_INDEPENDENT_OOS",
+    "mustBeat": "EXPANDING_PRIOR_PREVALENCE_IN_BOTH_UNIVERSES",
+    "mustPreserve": ["HEALTHY_CONTINUATION", "STRUCTURAL_DAMAGE", "NO_ECONOMIC_EDGE"],
+    "mustNot": [
+      "RETUNE_REJECTED_THRESHOLD",
+      "RECOMBINE_REJECTED_FEATURES",
+      "USE_ORACLE_REENTRY_AS_FEATURE_OR_EXECUTION",
+      "ENABLE_ACTION_BEFORE_PROMOTION"
+    ]
+  },
+  "researchBasis": [
+    "https://www.nber.org/papers/w5375",
+    "https://www.nber.org/papers/w20439",
+    "https://www.nber.org/papers/w20660",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253",
+    "https://investor.vanguard.com/investor-resources-education/portfolio-management/rebalancing-your-portfolio"
+  ]
+}
