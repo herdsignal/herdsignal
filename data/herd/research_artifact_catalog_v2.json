@@ -56,6 +56,9 @@
       "data/reports/action_cycle_architecture_v2.json",
       "data/herd/sec_earnings_soft_information_feasibility_v1.json",
       "data/reports/sec_earnings_soft_information_feasibility_v1.json",
+      "data/herd/sec_earnings_soft_information_measurement_v1.json",
+      "data/reports/sec_earnings_soft_information_measurement_v1.json",
+      "data/reports/sec_earnings_soft_information_source_review_gate_v1.json",
       "data/herd/evidence_admission_registry_v10.json",
       "data/reports/evidence_admission_registry_v10.json",
       "data/herd/conditional_reentry_gate_v2.json",
@@ -102,6 +105,8 @@
     ],
     "DATA_PIPELINE": [
       "data/reports/sec_earnings_soft_information_pairs_v1.csv",
+      "data/reports/sec_earnings_soft_information_candidates_v1.csv",
+      "data/reports/sec_earnings_soft_information_source_review_v1.csv",
       "data/reports/sec_13f_bulk_v1.json",
       "data/reports/sec_13f_target_identities_v1.csv",
       "data/reports/sec_13f_security_intervals_v1.csv",

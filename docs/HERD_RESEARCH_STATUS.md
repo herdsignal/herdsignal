@@ -2541,3 +2541,24 @@ PASS 19건으로 표본 기준에 미달했고 예상 하방 방향도 충족하
   HERD 가중치와 5% 행동을 열지 않는다.
 - 운영 경계는 계속 `OBSERVATION`, `HOLD·0%`다. 다음 게이트는
   `BUILD_PRICE_BLIND_SOFT_INFORMATION_MEASUREMENT_AND_SOURCE_REVIEW`다.
+
+## SEC 실적발표 문구 원자 측정 V1
+
+- 원문 정확도 검수 전에 3,081개 대상 문서를 전수 점수화하지 않았다.
+  ticker·시대·원문 해시만으로 먼저 720개 문서를 고정해 결과를 보지 않은
+  개발 표본을 만들었다. 검수 통과 전 전수 corpus 계산은 차단한다.
+- HTML 표와 수치 밀집 문장, Forward-looking·Risk Factors·Non-GAAP 정의
+  문구를 제외하고 문장형 블록만 처리한다. 경제 주제와 변화 표현은 120자
+  안에서 연결하며 부정 범위와 비교 표현을 별도 사실로 보존한다.
+- 720개 문서에서 882개 원자 사실을 추출했다. 주제별 건수는 margin 240,
+  demand 199, capital spending 111, management uncertainty 98, inventory 91,
+  liquidity/financing 81, backlog/bookings 62다.
+- 검수 큐는 240건·30개 issuer·7개 주제·5개 3년 구간으로 잠갔다. CSV에는
+  원문 문장 대신 source SHA-256, block 위치, sentence index와 sentence
+  SHA-256만 저장한다. 로컬 워크벤치가 이 주소로 원문 문장을 재구성한다.
+- 자동 `VALID` 판정은 금지했다. 모든 행은 현재 `PENDING`이며 검수자,
+  검수시각, 원문 검수방법을 필수로 남긴다. `INVALID`와 `AMBIGUOUS`에는
+  근거 메모가 없으면 병합을 거부한다.
+- 200건·30개 issuer 이상을 전부 판정하고 `VALID / 전체 판정`의 Wilson
+  95% 하한이 90% 이상이어야 다음 단일 방향 가설을 등록할 수 있다.
+  현재는 `SOURCE_REVIEW_PENDING`, 가격·수익률 미개방, `HOLD·0%`다.

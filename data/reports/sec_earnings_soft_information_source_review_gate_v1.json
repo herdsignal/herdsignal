@@ -1,0 +1,22 @@
+{
+  "reportVersion": "HERD_SEC_EARNINGS_SOFT_INFORMATION_SOURCE_REVIEW_V1",
+  "status": "SOURCE_REVIEW_PENDING",
+  "reviewRows": 240,
+  "reviewedRows": 0,
+  "issuers": 30,
+  "topics": 7,
+  "eras": 5,
+  "validRows": 0,
+  "invalidRows": 0,
+  "ambiguousRows": 0,
+  "sourcePrecision": null,
+  "wilson95LowerBound": null,
+  "reviewComplete": false,
+  "reviewGatePassed": false,
+  "priceOrReturnOutcomesOpened": false,
+  "directionHypothesisPreregistered": false,
+  "operationalAction": "HOLD",
+  "operationalActionRatio": 0.0,
+  "nextGate": "COMPLETE_PRIMARY_SOURCE_REVIEW",
+  "lockedQueueSha256": "cab454ed74cd4770ff8bef1b4021e7407420bc602c5a70e6cb48eeaa3f6b64cc"
+}

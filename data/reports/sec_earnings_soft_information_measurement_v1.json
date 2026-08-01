@@ -1,0 +1,38 @@
+{
+  "reportVersion": "HERD_SEC_EARNINGS_SOFT_INFORMATION_MEASUREMENT_V1",
+  "status": "SOURCE_REVIEW_PENDING",
+  "eligibleSourceDocuments": 3081,
+  "sourceReviewDocuments": 720,
+  "atomicFacts": 882,
+  "reviewRows": 240,
+  "reviewIssuers": 30,
+  "reviewTopics": 7,
+  "reviewEras": 5,
+  "topicCounts": {
+    "BACKLOG_OR_BOOKINGS": 62,
+    "CAPITAL_SPENDING": 111,
+    "DEMAND": 199,
+    "INVENTORY": 91,
+    "LIQUIDITY_OR_FINANCING": 81,
+    "MANAGEMENT_UNCERTAINTY": 98,
+    "MARGIN": 240
+  },
+  "checks": {
+    "minimum_rows": true,
+    "minimum_issuers": true,
+    "minimum_topics": true,
+    "minimum_eras": true,
+    "all_pending": true
+  },
+  "candidatesSha256": "f7a035bc0c1b0b7229d9638c831bf6c5889e9b0a9d94a994656452161748c7a0",
+  "reviewQueueSha256": "cab454ed74cd4770ff8bef1b4021e7407420bc602c5a70e6cb48eeaa3f6b64cc",
+  "sentenceTextStoredInCommittedLedger": false,
+  "aggregateDirectionScoreComputed": false,
+  "currentPriorDirectionCompared": false,
+  "priceOrReturnOutcomesOpened": false,
+  "directionHypothesisPreregistered": false,
+  "automaticValidLabelsCreated": false,
+  "operationalAction": "HOLD",
+  "operationalActionRatio": 0.0,
+  "nextGate": "COMPLETE_PRIMARY_SOURCE_REVIEW"
+}

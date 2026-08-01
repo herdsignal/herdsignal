@@ -1,0 +1,152 @@
+{
+  "protocolVersion": "HERD_SEC_EARNINGS_SOFT_INFORMATION_MEASUREMENT_V1",
+  "status": "LOCKED_BEFORE_SOURCE_REVIEW_OR_PRICE_OUTCOMES",
+  "lockedAt": "2026-08-02",
+  "scope": "PRICE_BLIND_ATOMIC_SOURCE_MEASUREMENT_ONLY",
+  "pinnedInputs": [
+    {
+      "path": "data/herd/sec_earnings_soft_information_feasibility_v1.json",
+      "sha256": "47403b9b9877d4141a1f2bb54684e80808c076ae7d1067d7ef68bdf75af29ca2"
+    },
+    {
+      "path": "data/reports/sec_earnings_soft_information_feasibility_v1.json",
+      "sha256": "19521b65a2450db53f6f9e3f4f684d178bac558da8fec360cb03a8ec9c2796b6"
+    },
+    {
+      "path": "data/reports/sec_earnings_soft_information_pairs_v1.csv",
+      "sha256": "7db60dd32c5047bce37cddd28d2bce0ca747efb76cf158552848f527d5cee357"
+    },
+    {
+      "path": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721/manifest.json",
+      "sha256": "a20b2c09d7e0d5567ac89784ba7afef468fa8c5f4626cc60afe3feab3bf6fb86"
+    },
+    {
+      "path": "data/reference/sec/sec-8k-guidance-51-v3-20120103-20260717-20260721/index.csv",
+      "sha256": "888fe35358f3b22202d666693a5508e2efaa7fa284709528d85e10f75caa4efb"
+    }
+  ],
+  "sourceReviewSelection": {
+    "maximumDocuments": 720,
+    "minimumDocuments": 500,
+    "onePerIssuerEraFirst": true,
+    "eraLengthYears": 3,
+    "selectionSalt": "HERD_SOFT_INFO_SOURCE_DOCUMENTS_V1_PRICE_BLIND",
+    "fullCorpusMeasurementAllowedOnlyAfterSourceReviewPass": true
+  },
+  "sentenceRules": {
+    "minimumCharacters": 40,
+    "maximumCharacters": 900,
+    "maximumDigitShare": 0.18,
+    "minimumAlphabeticWords": 6,
+    "excludedBoilerplatePhrases": [
+      "forward-looking statements",
+      "actual results may differ",
+      "risks and uncertainties",
+      "documents filed with the securities and exchange commission",
+      "undertakes no obligation to update",
+      "non-gaap financial measures",
+      "non-gaap and defined financial measures",
+      "conference call will be",
+      "not statements of historical fact",
+      "see risk factors",
+      "for information about some of the risks",
+      "for definitions of",
+      "is defined as",
+      "mark-to-market gain or loss"
+    ],
+    "excludedBoilerplatePatterns": [
+      "\\b(?:is|are|was|were)\\s+defined\\s+as\\b",
+      "\\b(?:means|represents|consists of|refers to)\\b",
+      "\\bwe determined\\b.{0,160}\\bto be\\b",
+      "\\bnot reflected in (?:ffo|adjusted)\\b"
+    ]
+  },
+  "economicTopics": {
+    "DEMAND": [
+      "demand", "customer activity", "customer spending", "order activity",
+      "end-market demand"
+    ],
+    "BACKLOG_OR_BOOKINGS": [
+      "backlog", "bookings", "book-to-bill", "remaining performance obligations",
+      "remaining performance obligation", "orders"
+    ],
+    "MARGIN": [
+      "gross margin", "operating margin", "ebitda margin", "profit margin",
+      "profitability", "margin"
+    ],
+    "INVENTORY": ["inventory", "inventories", "channel inventory"],
+    "CAPITAL_SPENDING": [
+      "capital expenditures", "capital expenditure", "capital spending", "capex"
+    ],
+    "LIQUIDITY_OR_FINANCING": [
+      "liquidity", "free cash flow", "operating cash flow", "cash generation",
+      "credit facility", "debt financing", "borrowing capacity"
+    ],
+    "MANAGEMENT_UNCERTAINTY": [
+      "uncertainty", "visibility", "volatile", "volatility", "headwind",
+      "headwinds", "challenging environment", "macroeconomic conditions"
+    ]
+  },
+  "cueFamilies": {
+    "EXPECTATION": [
+      "expect", "expects", "expected", "anticipate", "anticipates", "forecast",
+      "outlook", "guidance", "project", "projects", "plan", "plans"
+    ],
+    "EXPANSION": [
+      "increase", "increased", "increasing", "improve", "improved", "improving",
+      "expand", "expanded", "expanding", "strengthen", "strengthened", "accelerate",
+      "accelerated", "higher", "grew", "growth"
+    ],
+    "CONTRACTION": [
+      "decrease", "decreased", "decreasing", "decline", "declined", "declining",
+      "contract", "weaken", "weakened", "slow", "slowed", "lower",
+      "pressure", "pressured", "reduce", "reduced"
+    ],
+    "STABILITY": [
+      "stable", "stabilized", "unchanged", "maintain", "maintained", "consistent"
+    ],
+    "UNCERTAINTY": [
+      "uncertain", "uncertainty", "volatile", "volatility", "limited visibility",
+      "challenging", "headwind", "headwinds"
+    ]
+  },
+  "scopeRules": {
+    "negationTokens": ["not", "no", "never", "neither", "without"],
+    "negationLookbackTokens": 4,
+    "maximumTopicCueDistanceCharacters": 120,
+    "comparisonPhrases": [
+      "compared with", "compared to", "versus", "year over year", "year-over-year",
+      "sequentially", "from", "than", "prior year", "previous quarter"
+    ]
+  },
+  "reviewGate": {
+    "sampleRows": 240,
+    "minimumRows": 200,
+    "minimumIssuers": 30,
+    "minimumTopics": 7,
+    "minimumEras": 4,
+    "eraLengthYears": 3,
+    "minimumWilson95LowerBound": 0.9,
+    "allowedDecisions": ["PENDING", "VALID", "INVALID", "AMBIGUOUS"],
+    "allowedReviewMethods": [
+      "PRIMARY_SOURCE_DIRECT",
+      "AI_ASSISTED_PRIMARY_SOURCE_DIRECT"
+    ],
+    "selectionSalt": "HERD_SOFT_INFO_REVIEW_V1_PRICE_BLIND"
+  },
+  "firewall": {
+    "sentenceTextStoredInCommittedLedger": false,
+    "aggregateDirectionScoreComputed": false,
+    "currentPriorDirectionCompared": false,
+    "priceOrReturnOutcomesOpened": false,
+    "directionHypothesisPreregistered": false,
+    "automaticValidLabelsAllowed": false,
+    "remoteModelAllowed": false,
+    "herdFormulaChangeAllowed": false,
+    "operationalActionAllowed": false,
+    "operationalAction": "HOLD",
+    "operationalActionRatio": 0.0
+  },
+  "nextGateOnReviewPass": "PREREGISTER_ONE_ISSUER_RELATIVE_SOFT_INFORMATION_DIRECTION_HYPOTHESIS",
+  "nextGateWhilePending": "COMPLETE_PRIMARY_SOURCE_REVIEW"
+}

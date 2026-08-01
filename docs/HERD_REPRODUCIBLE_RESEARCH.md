@@ -778,6 +778,42 @@ PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_feasibility_
 고정되지 않은 LLM 호출이 설정되면 fail-closed 한다. 이 단계는 원문
 coverage만 판정하며 문구 방향 점수와 매수·익절 신호를 만들지 않는다.
 
+원문 검수용 원자 사실과 잠긴 표본은 다음으로 만든다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_measurement_v1
+PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_source_review_v1
+```
+
+첫 명령은 issuer·3년 구간을 먼저 층화한 720개 문서만 처리한다. 생성하는
+candidate와 review CSV에는 원문 문장을 저장하지 않는다. 두 번째 명령은
+240건이 모두 `PENDING`인지 확인하고 미완료 게이트 영수증을 만든다.
+
+원문 검수 화면은 커밋 대상이 아닌 로컬 임시 파일로 생성한다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_review_workbench_v1 \
+  reports/sec_earnings_soft_information_source_review_v1.csv \
+  --output /tmp/herdsignal-sec-soft-info-review.html
+```
+
+워크벤치에서 내보낸 판정은 잠긴 queue와 동일성 검증 후에만 병합한다.
+
+```bash
+cd data
+PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_source_review_v1 \
+  --queue reports/sec_earnings_soft_information_source_review_v1.csv \
+  --decisions /path/to/sec_earnings_soft_information_decisions_v1.csv \
+  --output reports/sec_earnings_soft_information_source_review_adjudicated_v1.csv \
+  --report reports/sec_earnings_soft_information_source_review_gate_v1.json
+```
+
+검수 화면에만 원문 문장이 포함되고 저장소에는 문장 해시와 파생 사실만
+남는다. 원문 정확도 게이트 통과 전에는 현재·직전 발표 비교, 방향 점수,
+가격 결과와 HERD 행동을 계산하지 않는다.
+
 ## 근거
 
 - scikit-learn `TimeSeriesSplit`: 시간 순서를 보존하고 train과 test 사이
