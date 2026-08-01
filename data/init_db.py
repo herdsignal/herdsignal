@@ -237,6 +237,7 @@ class SchedulerRun(Base):
     universe_sha256 = Column(String(64), nullable=True)
     publish_status = Column(String(30), nullable=True)
     observation_count = Column(Integer, nullable=True)
+    phase_results_json = Column(Text, nullable=True)
     error_message  = Column(Text, nullable=True)
 
 
