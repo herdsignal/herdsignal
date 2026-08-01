@@ -17,6 +17,11 @@ import {
   trackingScopeLabel,
 } from './observationChangesModel'
 import styles from './ObservationChanges.module.css'
+import {
+  enableObservationNotifications,
+  notificationStatus,
+  notifyConfirmedObservationChanges,
+} from './observationNotifications'
 
 function dispatchChangesRead() {
   window.dispatchEvent(new Event(OBSERVATION_CHANGES_REFRESH_EVENT))
@@ -29,12 +34,17 @@ export default function ObservationChanges() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [markingAll, setMarkingAll] = useState(false)
+  const [notification, setNotification] = useState(notificationStatus)
 
   const fetchChanges = useCallback(() => {
     setLoading(true)
     setError(null)
     getObservationChanges(100)
-      .then((response) => setData(response.data?.data ?? null))
+      .then((response) => {
+        const next = response.data?.data ?? null
+        setData(next)
+        notifyConfirmedObservationChanges(next?.events)
+      })
       .catch(() => setError('관찰 변화를 불러오지 못했습니다.'))
       .finally(() => setLoading(false))
   }, [])
@@ -49,6 +59,16 @@ export default function ObservationChanges() {
       ? sorted.filter((event) => event.unread)
       : sorted
   }, [data?.events, filter])
+  const provisionalAttention = useMemo(() => (
+    [...(data?.provisionalAttention ?? [])].sort((left, right) => (
+      Math.abs(Number(right.provisionalScore) - Number(right.confirmedScore))
+      - Math.abs(Number(left.provisionalScore) - Number(left.confirmedScore))
+    ))
+  ), [data?.provisionalAttention])
+
+  async function enableNotifications() {
+    setNotification(await enableObservationNotifications())
+  }
 
   async function openEvent(event) {
     if (event.unread) {
@@ -101,6 +121,19 @@ export default function ObservationChanges() {
         </div>
         <div className={styles.headerMeta}>
           <span>{data?.generatedThrough ?? '—'} 기준</span>
+          {notification !== 'unsupported' && (
+            <button
+              type="button"
+              onClick={enableNotifications}
+              disabled={notification === 'enabled' || notification === 'denied'}
+            >
+              {notification === 'enabled'
+                ? '브라우저 알림 켜짐'
+                : notification === 'denied'
+                  ? '알림 차단됨'
+                  : '브라우저 알림 켜기'}
+            </button>
+          )}
           <button
             type="button"
             onClick={markAllSeen}
@@ -111,27 +144,6 @@ export default function ObservationChanges() {
         </div>
       </header>
 
-      <section className={styles.summary} aria-label="관찰 변화 요약">
-        <div><span>미확인</span><strong>{data?.unreadCount ?? '—'}</strong></div>
-        <div><span>추적 종목</span><strong>{data?.trackedTickerCount ?? '—'}</strong></div>
-        <div className={styles.filters} aria-label="변화 필터">
-          <button
-            type="button"
-            aria-pressed={filter === 'unread'}
-            onClick={() => setFilter('unread')}
-          >
-            미확인
-          </button>
-          <button
-            type="button"
-            aria-pressed={filter === 'all'}
-            onClick={() => setFilter('all')}
-          >
-            전체
-          </button>
-        </div>
-      </section>
-
       {loading && <div className={styles.statePanel} role="status">변화 확인 중…</div>}
       {!loading && error && (
         <div className={styles.statePanel} role="alert">
@@ -139,7 +151,7 @@ export default function ObservationChanges() {
           <button type="button" onClick={fetchChanges}>다시 시도</button>
         </div>
       )}
-      {!loading && !error && (data?.provisionalAttention?.length ?? 0) > 0 && (
+      {!loading && !error && provisionalAttention.length > 0 && (
         <section className={styles.attention} aria-label="일간 잠정 관찰 차이">
           <header>
             <div>
@@ -148,7 +160,7 @@ export default function ObservationChanges() {
             </div>
             <small>확정 사건·행동 신호 아님</small>
           </header>
-          {data.provisionalAttention.map((item) => (
+          {provisionalAttention.map((item) => (
             <button
               type="button"
               key={`${item.ticker}:${item.provisionalDate}`}
@@ -164,11 +176,25 @@ export default function ObservationChanges() {
                 주간 {Math.round(Number(item.confirmedScore))}
                 {' · '}
                 잠정 {Math.round(Number(item.provisionalScore))}
+                {' · 차이 '}
+                {formatObservationDelta(
+                  Number(item.provisionalScore) - Number(item.confirmedScore),
+                )}
                 {' · '}
                 {item.provisionalDate}
               </small>
             </button>
           ))}
+        </section>
+      )}
+      {!loading && !error && (
+        <section className={styles.summary} aria-label="관찰 변화 요약">
+          <div><span>미확인</span><strong>{data?.unreadCount ?? '—'}</strong></div>
+          <div><span>추적 종목</span><strong>{data?.trackedTickerCount ?? '—'}</strong></div>
+          <div className={styles.filters} aria-label="변화 필터">
+            <button type="button" aria-pressed={filter === 'unread'} onClick={() => setFilter('unread')}>미확인</button>
+            <button type="button" aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>전체</button>
+          </div>
         </section>
       )}
       {!loading && !error && events.length === 0 && (

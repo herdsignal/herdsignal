@@ -64,6 +64,7 @@ describe('ObservationChanges', () => {
     expect(screen.getByText(/보유 · Drift · 상태 전환/)).toBeInTheDocument()
     expect(screen.getByText('주간 확정과 다른 단계')).toBeInTheDocument()
     expect(screen.getByText('Calm → Scatter')).toBeInTheDocument()
+    expect(screen.getByText(/차이 -4/)).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/매수|매도|익절|추천/)
 
     fireEvent.click(screen.getByRole('button', {

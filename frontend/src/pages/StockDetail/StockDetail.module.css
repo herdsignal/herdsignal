@@ -293,7 +293,7 @@
 
 .stateMeta {
   display: grid;
-  grid-template-columns: repeat(4, minmax(76px, auto));
+  grid-template-columns: repeat(5, minmax(70px, auto));
   gap: 0;
   margin: 0;
 }

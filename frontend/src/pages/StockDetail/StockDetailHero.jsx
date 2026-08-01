@@ -21,6 +21,9 @@ export default function StockDetailHero({
   const displayDate = dailyObservationAvailable
     ? dailyObservation?.lastObservedSession
     : stateSummary.currentDate
+  const nowcastDelta = dailyObservationAvailable
+    ? Number(displayHerdScore) - Number(herdScore)
+    : null
 
   return (
     <section id="stock-state" className={styles.stateSection} aria-labelledby="stock-state-title">
@@ -37,6 +40,11 @@ export default function StockDetailHero({
           </small>
         </div>
         <dl className={styles.stateMeta}>
+          <div>
+            <dt>일간–주간</dt>
+            <dd>{nowcastDelta == null ? '—' : signed(nowcastDelta)}</dd>
+            <small>{dailyObservationAvailable ? '잠정 편차' : '일간 관찰 없음'}</small>
+          </div>
           <div>
             <dt>4주 비교</dt>
             <dd>{stateSummary.fourWeekComparison}</dd>
