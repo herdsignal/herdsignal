@@ -68,7 +68,8 @@ class DataFreshnessServiceTest {
         assertThat(response.schedulerCadence().dailyTime()).isEqualTo("16:30");
         assertThat(response.schedulerCadence().nextScheduledAt())
                 .isEqualTo("2026-07-15T16:30-04:00");
-        assertThat(response.schedulerCadence().manualRunScope()).isEqualTo("FULL_TIER1");
+        assertThat(response.schedulerCadence().weeklyDay()).isEqualTo("FRIDAY");
+        assertThat(response.schedulerCadence().manualRunScope()).isEqualTo("DAILY_OR_FULL");
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.herdsignal.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herdsignal.domain.SchedulerRun;
 import com.herdsignal.dto.DataFreshnessResponse;
@@ -20,11 +21,15 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DataFreshnessService {
     private static final String JOB_NAME = "HERD_TIER1_DAILY";
+    private static final String DAILY_JOB_NAME = "HERD_DAILY_D1";
     private static final String STATE_MODEL_VERSION = "HERD_STATE_S1";
     private static final String DAILY_STATE_MODEL_VERSION = "HERD_DAILY_D1";
     private static final int MAX_RUNNING_HOURS = 2;
@@ -75,13 +80,23 @@ public class DataFreshnessService {
         LocalDate latestDailyObservationDate = herdObservationRepository
                 .findLatestObservationDate(DAILY_STATE_MODEL_VERSION)
                 .orElse(null);
-        SchedulerRun latestRun = schedulerRunRepository
+        SchedulerRun latestWeeklyRun = schedulerRunRepository
                 .findTopByJobNameOrderByStartedAtDesc(JOB_NAME)
                 .orElse(null);
-        SchedulerRun latestSuccessfulRun = schedulerRunRepository
+        SchedulerRun latestDailyRun = schedulerRunRepository
+                .findTopByJobNameOrderByStartedAtDesc(DAILY_JOB_NAME)
+                .orElse(null);
+        SchedulerRun latestRun = laterRun(latestWeeklyRun, latestDailyRun);
+        SchedulerRun latestSuccessfulWeeklyRun = schedulerRunRepository
                 .findTopByJobNameAndStatusOrderByFinishedAtDesc(
                         JOB_NAME, "SUCCESS")
                 .orElse(null);
+        SchedulerRun latestSuccessfulDailyRun = schedulerRunRepository
+                .findTopByJobNameAndStatusOrderByFinishedAtDesc(
+                        DAILY_JOB_NAME, "SUCCESS")
+                .orElse(null);
+        SchedulerRun latestSuccessfulRun = laterFinishedRun(
+                latestSuccessfulWeeklyRun, latestSuccessfulDailyRun);
 
         Integer priceAge = businessDaysBetween(latestPriceDate, today);
         Integer observationAge = businessDaysBetween(latestObservationDate, today);
@@ -149,13 +164,18 @@ public class DataFreshnessService {
         if (!next.isAfter(now)) {
             next = next.plusDays(1);
         }
+        while (next.getDayOfWeek() == DayOfWeek.SATURDAY
+                || next.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            next = next.plusDays(1);
+        }
         return new DataFreshnessResponse.SchedulerCadence(
                 "EXTERNAL_DAEMON",
                 true,
                 SCHEDULER_ZONE.getId(),
                 "%02d:%02d".formatted(SCHEDULER_HOUR, SCHEDULER_MINUTE),
+                "FRIDAY",
                 next.toOffsetDateTime(),
-                "FULL_TIER1"
+                "DAILY_OR_FULL"
         );
     }
 
@@ -217,8 +237,46 @@ public class DataFreshnessService {
                 run.getUniverseSha256(),
                 run.getPublishStatus(),
                 valueOrZero(run.getObservationCount()),
+                parsePhases(run.getPhaseResultsJson()),
                 run.getErrorMessage()
         );
+    }
+
+    private List<DataFreshnessResponse.SchedulerPhaseSummary> parsePhases(String json) {
+        if (json == null || json.isBlank()) return Collections.emptyList();
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            List<DataFreshnessResponse.SchedulerPhaseSummary> phases = new ArrayList<>();
+            Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> entry = fields.next();
+                phases.add(new DataFreshnessResponse.SchedulerPhaseSummary(
+                            entry.getKey(),
+                            entry.getValue().path("status").asText("UNKNOWN"),
+                            entry.getValue().has("count")
+                                    ? entry.getValue().path("count").asInt()
+                                    : null,
+                            entry.getValue().path("detail").asText(null)
+                    ));
+            }
+            return phases;
+        } catch (Exception ignored) {
+            return Collections.emptyList();
+        }
+    }
+
+    private SchedulerRun laterRun(SchedulerRun first, SchedulerRun second) {
+        if (first == null) return second;
+        if (second == null) return first;
+        return second.getStartedAt().isAfter(first.getStartedAt()) ? second : first;
+    }
+
+    private SchedulerRun laterFinishedRun(SchedulerRun first, SchedulerRun second) {
+        if (first == null) return second;
+        if (second == null) return first;
+        if (first.getFinishedAt() == null) return second;
+        if (second.getFinishedAt() == null) return first;
+        return second.getFinishedAt().isAfter(first.getFinishedAt()) ? second : first;
     }
 
     private List<String> parseFailedTickers(String json) {

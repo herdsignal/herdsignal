@@ -104,3 +104,108 @@ def run_scheduler(
     except (KeyboardInterrupt, SystemExit):
         logger.info("[Tier1] 스케줄러 종료 요청")
         scheduler.shutdown(wait=False)
+
+
+def _run_startup_catchup(
+    job: Callable,
+    latest_success_loader: Callable[[], datetime | None] | None,
+    *,
+    now: datetime,
+    hour_et: int,
+    minute_et: int,
+) -> None:
+    if latest_success_loader is None:
+        return
+    if startup_catchup_due(
+        latest_success_loader(),
+        now=now,
+        hour_et=hour_et,
+        minute_et=minute_et,
+    ):
+        run_with_single_retry(
+            lambda trigger_type: job(
+                trigger_type=(
+                    "STARTUP_CATCHUP"
+                    if trigger_type == "SCHEDULED"
+                    else trigger_type
+                )
+            )
+        )
+
+
+def run_tiered_scheduler(
+    *,
+    daily_job: Callable,
+    weekly_job: Callable,
+    hour_et: int,
+    minute_et: int,
+    daily_latest_success_loader: Callable[[], datetime | None] | None = None,
+    weekly_latest_success_loader: Callable[[], datetime | None] | None = None,
+    scheduler_factory=BlockingScheduler,
+) -> None:
+    """월–목 경량 D1, 금요일 전체 S1 작업을 서로 다른 잡으로 운영한다."""
+    now = datetime.now(UTC)
+    current_et = now.astimezone(ET)
+    try:
+        if current_et.weekday() == 4:
+            _run_startup_catchup(
+                weekly_job,
+                weekly_latest_success_loader,
+                now=now,
+                hour_et=hour_et,
+                minute_et=minute_et,
+            )
+        elif current_et.weekday() < 4:
+            _run_startup_catchup(
+                daily_job,
+                daily_latest_success_loader,
+                now=now,
+                hour_et=hour_et,
+                minute_et=minute_et,
+            )
+    except Exception:
+        logger.exception("[Tier1] 기동 보충 실행 판정 실패 — 예약 데몬은 계속 시작합니다.")
+
+    scheduler = scheduler_factory(timezone=ET)
+    common = {
+        "replace_existing": True,
+        "max_instances": 1,
+        "misfire_grace_time": 30 * 60,
+        "coalesce": True,
+    }
+    scheduler.add_job(
+        func=run_with_single_retry,
+        args=[daily_job],
+        trigger=CronTrigger(
+            day_of_week="mon-thu",
+            hour=hour_et,
+            minute=minute_et,
+            timezone=ET,
+        ),
+        id="herd_daily_d1_job",
+        name="HERD Daily D1 경량 관찰",
+        **common,
+    )
+    scheduler.add_job(
+        func=run_with_single_retry,
+        args=[weekly_job],
+        trigger=CronTrigger(
+            day_of_week="fri",
+            hour=hour_et,
+            minute=minute_et,
+            timezone=ET,
+        ),
+        id="herd_weekly_s1_job",
+        name="HERD Weekly S1 전체 확정",
+        **common,
+    )
+    logger.info(
+        "[Tier1] 스케줄러 시작 — 월–목 D1 / 금요일 S1, %02d:%02d ET",
+        hour_et,
+        minute_et,
+    )
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("[Tier1] 스케줄러 종료 요청")
+        scheduler.shutdown(wait=False)

@@ -68,8 +68,8 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             ),
             patch.object(
                 herd_scheduler,
-                "collect_ticker_frames",
-                return_value=({"AAPL": object()}, ["SNDK"]),
+                "collect_ticker_frames_with_retry",
+                return_value=({"AAPL": object()}, ["SNDK"], []),
             ),
             patch.object(
                 herd_scheduler,
@@ -131,7 +131,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
         ):
             result = herd_scheduler.run_herd_job(trigger_type="MANUAL")
 
-        self.assertEqual(result, {
+        self.assertEqual({key: value for key, value in result.items() if key != "phases"}, {
             "status": "PARTIAL_FAILURE",
             "total": 2,
             "success": ["AAPL"],
@@ -166,6 +166,7 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             publish_status="SUCCESS",
             observation_count=1,
             error_message=None,
+            phase_results=result["phases"],
         )
         notify.assert_called_once_with(result)
 
@@ -210,5 +211,12 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             result = herd_scheduler.run_herd_job(trigger_type="SCHEDULED")
 
         self.assertEqual(result["status"], "FAILED")
-        finish.assert_called_once_with(9, "FAILED", error_message="db unavailable")
+        finish.assert_called_once_with(
+            9,
+            "FAILED",
+            phase_results={
+                "UNIVERSE": {"status": "FAILED", "detail": "db unavailable"}
+            },
+            error_message="db unavailable",
+        )
         notify.assert_called_once_with(result)

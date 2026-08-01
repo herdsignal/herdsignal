@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Callable
 
 from init_db import SchedulerRun
@@ -21,6 +21,22 @@ class SchedulerRunRecorder:
         """실행 시작을 별도 트랜잭션으로 기록한다."""
         try:
             with self._session_factory() as session:
+                stale_boundary = (
+                    datetime.now(UTC).replace(tzinfo=None) - timedelta(hours=2)
+                )
+                stale_rows = (
+                    session.query(SchedulerRun)
+                    .filter(
+                        SchedulerRun.job_name == self._job_name,
+                        SchedulerRun.status == "RUNNING",
+                        SchedulerRun.started_at < stale_boundary,
+                    )
+                    .all()
+                )
+                for stale in stale_rows:
+                    stale.status = "FAILED"
+                    stale.finished_at = datetime.now(UTC).replace(tzinfo=None)
+                    stale.error_message = "stale RUNNING execution recovered on next start"
                 row = SchedulerRun(
                     job_name=self._job_name,
                     trigger_type=trigger_type,
@@ -63,6 +79,7 @@ class SchedulerRunRecorder:
         skipped_tickers: list[str] | None = None,
         publish_status: str | None = None,
         observation_count: int | None = None,
+        phase_results: dict | None = None,
         error_message: str | None = None,
     ) -> None:
         """실행 결과를 저장하되 기록 장애를 본 작업 실패로 전파하지 않는다."""
@@ -86,6 +103,10 @@ class SchedulerRunRecorder:
                 row.skipped_tickers = json.dumps(skipped) if skipped else None
                 row.publish_status = publish_status
                 row.observation_count = observation_count
+                row.phase_results_json = (
+                    json.dumps(phase_results, ensure_ascii=False, sort_keys=True)
+                    if phase_results else None
+                )
                 row.error_message = error_message[:2000] if error_message else None
                 session.commit()
         except Exception as exc:

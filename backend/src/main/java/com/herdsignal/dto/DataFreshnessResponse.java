@@ -36,6 +36,7 @@ public record DataFreshnessResponse(
             boolean requiresExternalProcess,
             String timezone,
             String dailyTime,
+            String weeklyDay,
             OffsetDateTime nextScheduledAt,
             String manualRunScope
     ) {}
@@ -54,6 +55,14 @@ public record DataFreshnessResponse(
             String universeSha256,
             String publishStatus,
             int observationCount,
+            List<SchedulerPhaseSummary> phases,
             String errorMessage
+    ) {}
+
+    public record SchedulerPhaseSummary(
+            String code,
+            String status,
+            Integer count,
+            String detail
     ) {}
 }

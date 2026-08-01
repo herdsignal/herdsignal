@@ -14,6 +14,16 @@ const DAILY_STATUS_META = {
   NOT_AVAILABLE: '미생성',
 }
 
+const PHASE_LABELS = {
+  UNIVERSE: '대상 종목',
+  PRICE_COLLECTION: '가격 수집',
+  LEGACY_V4: 'v4 호환',
+  WEEKLY_S1: '주간 S1',
+  DAILY_D1: '일간 D1',
+  PROSPECTIVE_LEDGER: '전향 원장',
+  PORTFOLIO_SNAPSHOT: '자산 스냅샷',
+}
+
 export function dataStatusViewModel(data, { loading = false, error = false } = {}) {
   if (loading && !data) {
     return {
@@ -25,6 +35,7 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
       coverageLabel: '—',
       issueLabel: null,
       isRunning: false,
+      phases: [],
     }
   }
 
@@ -38,6 +49,7 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
       coverageLabel: '—',
       issueLabel: null,
       isRunning: false,
+      phases: [],
     }
   }
 
@@ -78,10 +90,21 @@ export function dataStatusViewModel(data, { loading = false, error = false } = {
     automationLabel: cadence?.requiresExternalProcess
       ? '로컬 스케줄러가 실행 중일 때 자동'
       : '서비스에서 자동 실행',
-    manualRunLabel: cadence?.manualRunScope === 'FULL_TIER1'
-      ? '가격·State S1·전향 관찰 전체'
-      : '전체 데이터',
+    manualRunLabel: '일간 경량 또는 금요일 전체',
+    phases: (run?.phases ?? []).map((phase) => ({
+      ...phase,
+      label: PHASE_LABELS[phase.code] ?? phase.code,
+      statusLabel: phaseStatusLabel(phase.status),
+    })),
   }
+}
+
+function phaseStatusLabel(status) {
+  if (status === 'SUCCESS') return '완료'
+  if (status === 'PARTIAL_FAILURE') return '일부 실패'
+  if (status === 'FAILED') return '실패'
+  if (status === 'SKIPPED') return '생략'
+  return status ?? '확인 불가'
 }
 
 export function scheduleLabel(cadence) {

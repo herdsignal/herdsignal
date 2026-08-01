@@ -41,6 +41,34 @@ def collect_ticker_frames(
     return frames, failed
 
 
+def collect_ticker_frames_with_retry(
+    tickers: list[str],
+    collect: Callable,
+    *,
+    validate: Callable | None = None,
+    transform: Callable | None = None,
+) -> tuple[dict[str, object], list[str], list[str]]:
+    """일시 장애 종목만 한 번 재수집하고 성공 프레임은 그대로 보존한다."""
+    frames, failed = collect_ticker_frames(
+        tickers,
+        collect,
+        validate=validate,
+        transform=transform,
+    )
+    if not failed:
+        return frames, [], []
+    logger.warning("[Tier1] 가격 수집 실패 %s종목 선택 재시도", len(failed))
+    recovered, remaining = collect_ticker_frames(
+        failed,
+        collect,
+        validate=validate,
+        transform=transform,
+    )
+    frames.update(recovered)
+    recovered_tickers = sorted(set(failed) - set(remaining))
+    return frames, sorted(remaining), recovered_tickers
+
+
 def execute_tickers(
     tickers: list[str],
     collect: Callable,

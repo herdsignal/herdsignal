@@ -43,7 +43,7 @@ from config.settings import (                                           # noqa: 
     SCHEDULER_HOUR_ET,
     SCHEDULER_MINUTE_ET,
 )
-from scheduler.daemon import run_scheduler as start_scheduler                 # noqa: E402
+from scheduler.daemon import run_tiered_scheduler                            # noqa: E402
 from scheduler.data_quality_gate import validate_operational_price_frame      # noqa: E402
 from scheduler.incident_alerts import IncidentAlertConfig, send_scheduler_alert  # noqa: E402
 from scheduler.on_demand import (                                             # noqa: E402
@@ -52,7 +52,11 @@ from scheduler.on_demand import (                                             # 
 )
 from scheduler.run_history import SchedulerRunRecorder                          # noqa: E402
 from scheduler.run_lock import SchedulerRunLock                                # noqa: E402
-from scheduler.ticker_job import collect_ticker_frames, execute_tickers         # noqa: E402
+from scheduler.ticker_job import (                                            # noqa: E402
+    collect_ticker_frames,
+    collect_ticker_frames_with_retry,
+    execute_tickers,
+)
 from scheduler.realtime_portfolio import calculate_current_portfolio as value_portfolio  # noqa: E402
 from scheduler.observation_s1 import (                                      # noqa: E402
     DAILY_DEFAULT_OUTPUT,
@@ -94,7 +98,8 @@ def _get_session_factory():
 
 # on-demand 캐시를 식별하는 user_id
 _CACHE_USER_ID = "cache"
-_TIER1_JOB_NAME = "HERD_TIER1_DAILY"
+_WEEKLY_JOB_NAME = "HERD_TIER1_DAILY"
+_DAILY_JOB_NAME = "HERD_DAILY_D1"
 _RUN_LOCK_PATH = _DATA_DIR / "runtime" / "herd-tier1.lock"
 _OPERATION_LOG_DIR = _DATA_DIR / "runtime" / "operations"
 _ALERT_CONFIG = IncidentAlertConfig(
@@ -225,13 +230,20 @@ def _snapshot_all_portfolios() -> dict:
     return {"requested": user_ids, "saved": saved, "errors": errors}
 
 
-def _start_scheduler_run(trigger_type: str) -> int | None:
-    return SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).start(trigger_type)
+def _start_scheduler_run(
+    trigger_type: str,
+    job_name: str = _WEEKLY_JOB_NAME,
+) -> int | None:
+    return SchedulerRunRecorder(_get_session_factory(), job_name).start(trigger_type)
 
 
-def _record_scheduler_universe(run_id: int | None, universe_sha256: str) -> None:
+def _record_scheduler_universe(
+    run_id: int | None,
+    universe_sha256: str,
+    job_name: str = _WEEKLY_JOB_NAME,
+) -> None:
     SchedulerRunRecorder(
-        _get_session_factory(), _TIER1_JOB_NAME
+        _get_session_factory(), job_name
     ).record_universe(run_id, universe_sha256)
 
 
@@ -244,19 +256,31 @@ def _finish_scheduler_run(
     skipped_tickers: list[str] | None = None,
     publish_status: str | None = None,
     observation_count: int | None = None,
+    phase_results: dict | None = None,
     error_message: str | None = None,
+    job_name: str = _WEEKLY_JOB_NAME,
 ) -> None:
-    SchedulerRunRecorder(_get_session_factory(), _TIER1_JOB_NAME).finish(
-        run_id,
-        status,
-        total_count,
-        success_count,
-        failed_tickers,
-        skipped_tickers,
-        publish_status,
-        observation_count,
-        error_message,
+    SchedulerRunRecorder(_get_session_factory(), job_name).finish(
+        run_id=run_id,
+        status=status,
+        total_count=total_count,
+        success_count=success_count,
+        failed_tickers=failed_tickers,
+        skipped_tickers=skipped_tickers,
+        publish_status=publish_status,
+        observation_count=observation_count,
+        phase_results=phase_results,
+        error_message=error_message,
     )
+
+
+def _phase(status: str, *, count: int | None = None, detail: str | None = None) -> dict:
+    result = {"status": status}
+    if count is not None:
+        result["count"] = count
+    if detail:
+        result["detail"] = detail[:500]
+    return result
 
 
 def _fetch_sector_overrides() -> dict[str, str]:
@@ -386,14 +410,18 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
     logger.info("━" * 60)
     logger.info("[Tier1] HERD 자동 계산 잡 시작")
     logger.info("━" * 60)
-    run_id = _start_scheduler_run(trigger_type)
+    run_id = _start_scheduler_run(trigger_type, _WEEKLY_JOB_NAME)
+    phases: dict[str, dict] = {}
 
     # ── 1. 티커 목록 조회 ──────────────────────
     try:
         tickers = _fetch_tier1_tickers()
     except Exception as e:
         logger.error(f"[Tier1] 티커 목록 조회 실패 — 잡 중단: {e}", exc_info=True)
-        _finish_scheduler_run(run_id, "FAILED", error_message=str(e))
+        phases["UNIVERSE"] = _phase("FAILED", detail=str(e))
+        _finish_scheduler_run(
+            run_id, "FAILED", phase_results=phases, error_message=str(e)
+        )
         result = {"status": "FAILED", "total": 0, "success": [], "failed": []}
         _notify_scheduler_result(result)
         return result
@@ -403,7 +431,8 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             "[Tier1] 처리할 종목이 없습니다. "
             "user_portfolio 또는 user_watchlist에 종목을 추가하세요."
         )
-        _finish_scheduler_run(run_id, "SUCCESS")
+        phases["UNIVERSE"] = _phase("SUCCESS", count=0)
+        _finish_scheduler_run(run_id, "SUCCESS", phase_results=phases)
         result = {"status": "SUCCESS", "total": 0, "success": [], "failed": []}
         _notify_scheduler_result(result)
         return result
@@ -411,19 +440,29 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
     universe_sha256 = hashlib.sha256(
         ("\n".join(tickers) + "\n").encode("utf-8")
     ).hexdigest()
-    _record_scheduler_universe(run_id, universe_sha256)
+    _record_scheduler_universe(run_id, universe_sha256, _WEEKLY_JOB_NAME)
+    phases["UNIVERSE"] = _phase("SUCCESS", count=len(tickers))
 
     # ── 2. S1 가격 수집과 구형 v4 운영 계산을 분리 ────────────────
     total = len(tickers)
     identity_starts = load_operational_identity_starts()
-    observation_frames, collection_failed = collect_ticker_frames(
-        tickers,
-        collect,
-        validate=validate_operational_price_frame,
-        transform=lambda ticker, frame: apply_operational_identity_window(
-            ticker,
-            frame,
-            starts=identity_starts,
+    observation_frames, collection_failed, collection_recovered = (
+        collect_ticker_frames_with_retry(
+            tickers,
+            collect,
+            validate=validate_operational_price_frame,
+            transform=lambda ticker, frame: apply_operational_identity_window(
+                ticker,
+                frame,
+                starts=identity_starts,
+            ),
+        )
+    )
+    phases["PRICE_COLLECTION"] = _phase(
+        "SUCCESS" if not collection_failed else "PARTIAL_FAILURE",
+        count=len(observation_frames),
+        detail=(
+            f"재시도 복구 {len(collection_recovered)}, 최종 실패 {len(collection_failed)}"
         ),
     )
     try:
@@ -450,6 +489,11 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         set(observation_frames) - set(legacy_failed) - set(skipped_list)
     )
     failed_list = sorted(set(collection_failed) | set(legacy_failed))
+    phases["LEGACY_V4"] = _phase(
+        "SUCCESS" if not legacy_failed else "PARTIAL_FAILURE",
+        count=len(operational_tickers) - len(legacy_failed) - len(skipped_list),
+        detail=f"적격성 제외 {len(skipped_list)}",
+    )
 
     # ── 3. State S1·Transition S1 관찰 번들 생성 ─────────────────
     observation_error: str | None = None
@@ -471,6 +515,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             len(bundle["records"]),
             bundle["records"]["SPY"]["asOfDate"],
         )
+        phases["WEEKLY_S1"] = _phase("SUCCESS", count=observation_count)
     except Exception as exc:
         observation_error = str(exc)
         publish_status = "FAILED"
@@ -479,6 +524,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             exc,
             exc_info=True,
         )
+        phases["WEEKLY_S1"] = _phase("FAILED", detail=observation_error)
     try:
         daily_bundle = _build_and_write_daily_observation(
             observation_frames, sorted(observation_frames)
@@ -488,6 +534,9 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             len(daily_bundle["records"]),
             daily_bundle["records"]["SPY"]["asOfDate"],
         )
+        phases["DAILY_D1"] = _phase(
+            "SUCCESS", count=len(daily_bundle["records"])
+        )
     except Exception as exc:
         daily_observation_error = str(exc)
         logger.error(
@@ -495,6 +544,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             exc,
             exc_info=True,
         )
+        phases["DAILY_D1"] = _phase("FAILED", detail=daily_observation_error)
     try:
         # 새 S1 발행이 차단된 날에도 이전 관측의 21·63·126일 결과는
         # 가능한 종목부터 성숙시킨다. 새 관측 생성과 결과 성숙의 장애
@@ -508,6 +558,11 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         prospective_result["outcomeCollectionFailed"] = outcome_collection_failed
         if prospective_result["archive"]["status"] == "CONFLICT_REJECTED":
             prospective_error = prospective_result["archive"]["reason"]
+        phases["PROSPECTIVE_LEDGER"] = _phase(
+            "FAILED" if prospective_error else "SUCCESS",
+            count=prospective_result["archive"].get("recordCount", 0),
+            detail=prospective_error,
+        )
     except Exception as exc:
         prospective_error = str(exc)
         logger.error(
@@ -515,6 +570,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             exc,
             exc_info=True,
         )
+        phases["PROSPECTIVE_LEDGER"] = _phase("FAILED", detail=prospective_error)
 
     # ── 4. 전체 결과 요약 ─────────────────────
     logger.info("━" * 60)
@@ -537,10 +593,16 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         snapshot_result = _snapshot_all_portfolios()
         if snapshot_result["errors"]:
             snapshot_error = "; ".join(snapshot_result["errors"])
+        phases["PORTFOLIO_SNAPSHOT"] = _phase(
+            "PARTIAL_FAILURE" if snapshot_error else "SUCCESS",
+            count=len(snapshot_result["saved"]),
+            detail=snapshot_error,
+        )
     except Exception as e:
         # 포트폴리오 저장 실패가 HERD 잡 전체를 중단시키지 않도록 예외 격리
         logger.error(f"[Tier1] 포트폴리오 스냅샷 저장 실패: {e}", exc_info=True)
         snapshot_error = str(e)
+        phases["PORTFOLIO_SNAPSHOT"] = _phase("FAILED", detail=snapshot_error)
 
     combined_error = "; ".join(
         item
@@ -565,6 +627,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
         skipped_tickers=skipped_list,
         publish_status=publish_status,
         observation_count=observation_count,
+        phase_results=phases,
         error_message=combined_error,
     )
     result = {
@@ -577,6 +640,7 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             publish_status
         ),
         "universeSha256": universe_sha256,
+        "phases": phases,
     }
     if prospective_result is not None:
         result["prospectiveEvidence"] = prospective_result
@@ -598,6 +662,109 @@ def run_herd_job(trigger_type: str = "SCHEDULED") -> dict:
         }
     try:
         return _run_herd_job_unlocked(trigger_type)
+    finally:
+        lock.release()
+
+
+def _run_daily_observation_job_unlocked(trigger_type: str) -> dict:
+    """가격·Daily D1·포트폴리오만 갱신하는 거래일 경량 작업."""
+    logger.info("[Daily D1] 경량 관찰 잡 시작")
+    run_id = _start_scheduler_run(trigger_type, _DAILY_JOB_NAME)
+    phases: dict[str, dict] = {}
+    try:
+        tickers = _fetch_tier1_tickers()
+    except Exception as exc:
+        phases["UNIVERSE"] = _phase("FAILED", detail=str(exc))
+        _finish_scheduler_run(
+            run_id,
+            "FAILED",
+            phase_results=phases,
+            error_message=str(exc),
+            job_name=_DAILY_JOB_NAME,
+        )
+        result = {"status": "FAILED", "total": 0, "failed": [], "phases": phases}
+        _notify_scheduler_result(result)
+        return result
+
+    universe_sha256 = hashlib.sha256(
+        ("\n".join(tickers) + "\n").encode("utf-8")
+    ).hexdigest()
+    _record_scheduler_universe(run_id, universe_sha256, _DAILY_JOB_NAME)
+    phases["UNIVERSE"] = _phase("SUCCESS", count=len(tickers))
+    identity_starts = load_operational_identity_starts()
+    frames, failed, recovered = collect_ticker_frames_with_retry(
+        tickers,
+        collect,
+        validate=validate_operational_price_frame,
+        transform=lambda ticker, frame: apply_operational_identity_window(
+            ticker, frame, starts=identity_starts
+        ),
+    )
+    phases["PRICE_COLLECTION"] = _phase(
+        "SUCCESS" if not failed else "PARTIAL_FAILURE",
+        count=len(frames),
+        detail=f"재시도 복구 {len(recovered)}, 최종 실패 {len(failed)}",
+    )
+    daily_error = None
+    daily_count = 0
+    try:
+        daily = _build_and_write_daily_observation(frames, sorted(frames))
+        daily_count = len(daily["records"])
+        phases["DAILY_D1"] = _phase("SUCCESS", count=daily_count)
+    except Exception as exc:
+        daily_error = str(exc)
+        phases["DAILY_D1"] = _phase("FAILED", detail=daily_error)
+
+    snapshot_error = None
+    try:
+        snapshot = _snapshot_all_portfolios()
+        snapshot_error = "; ".join(snapshot["errors"]) or None
+        phases["PORTFOLIO_SNAPSHOT"] = _phase(
+            "PARTIAL_FAILURE" if snapshot_error else "SUCCESS",
+            count=len(snapshot["saved"]),
+            detail=snapshot_error,
+        )
+    except Exception as exc:
+        snapshot_error = str(exc)
+        phases["PORTFOLIO_SNAPSHOT"] = _phase("FAILED", detail=snapshot_error)
+
+    combined_error = "; ".join(
+        item for item in (daily_error, snapshot_error) if item
+    ) or None
+    status = "SUCCESS" if not failed and not combined_error else (
+        "FAILED" if not frames or daily_error else "PARTIAL_FAILURE"
+    )
+    _finish_scheduler_run(
+        run_id,
+        status,
+        total_count=len(tickers),
+        success_count=len(frames),
+        failed_tickers=failed,
+        publish_status="SUCCESS" if not daily_error else "FAILED",
+        observation_count=daily_count,
+        phase_results=phases,
+        error_message=combined_error,
+        job_name=_DAILY_JOB_NAME,
+    )
+    result = {
+        "status": status,
+        "total": len(tickers),
+        "success": sorted(frames),
+        "failed": failed,
+        "observation": "SUCCESS" if not daily_error else "FAILED",
+        "universeSha256": universe_sha256,
+        "phases": phases,
+    }
+    _notify_scheduler_result(result)
+    return result
+
+
+def run_daily_observation_job(trigger_type: str = "SCHEDULED") -> dict:
+    lock = SchedulerRunLock.try_acquire(_RUN_LOCK_PATH)
+    if lock is None:
+        return {"status": "DUPLICATE_SKIPPED", "total": 0, "failed": []}
+    try:
+        return _run_daily_observation_job_unlocked(trigger_type)
     finally:
         lock.release()
 
@@ -653,13 +820,16 @@ def calculate_current_portfolio(user_id: str) -> dict:
 
 def run_scheduler() -> None:
     """호환 진입점: 데몬 구성은 daemon 모듈에 위임한다."""
-    start_scheduler(
-        run_herd_job,
+    run_tiered_scheduler(
+        daily_job=run_daily_observation_job,
+        weekly_job=run_herd_job,
         hour_et=SCHEDULER_HOUR_ET,
         minute_et=SCHEDULER_MINUTE_ET,
-        latest_success_loader=lambda: SchedulerRunRecorder(
-            _get_session_factory(),
-            _TIER1_JOB_NAME,
+        daily_latest_success_loader=lambda: SchedulerRunRecorder(
+            _get_session_factory(), _DAILY_JOB_NAME
+        ).latest_success_at(),
+        weekly_latest_success_loader=lambda: SchedulerRunRecorder(
+            _get_session_factory(), _WEEKLY_JOB_NAME
         ).latest_success_at(),
     )
 
@@ -675,8 +845,14 @@ if __name__ == "__main__":
 사용 예:
   python scheduler/herd_scheduler.py             Tier1 스케줄러 데몬으로 실행
   python scheduler/herd_scheduler.py --run-now   Tier1 즉시 1회 실행 후 종료
+  python scheduler/herd_scheduler.py --daily-now 가격·Daily D1 경량 실행
   python scheduler/herd_scheduler.py --retry-now 실패 후 전체 원자 재시도
 """,
+    )
+    parser.add_argument(
+        "--daily-now",
+        action="store_true",
+        help="가격·Daily D1·포트폴리오 스냅샷만 즉시 갱신",
     )
     parser.add_argument(
         "--run-now",
@@ -690,7 +866,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.run_now or args.retry_now:
+    if args.daily_now:
+        result = run_daily_observation_job(trigger_type="MANUAL_DAILY")
+        print(json.dumps(result, ensure_ascii=False))
+    elif args.run_now or args.retry_now:
         logger.info("[--run-now] Tier1 즉시 실행 모드")
         result = run_herd_job(trigger_type="RETRY" if args.retry_now else "MANUAL")
         print(json.dumps(result, ensure_ascii=False))

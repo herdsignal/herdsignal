@@ -57,6 +57,9 @@ public class SchedulerRun {
     @Column(name = "observation_count")
     private Integer observationCount;
 
+    @Column(name = "phase_results_json", columnDefinition = "TEXT")
+    private String phaseResultsJson;
+
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 }

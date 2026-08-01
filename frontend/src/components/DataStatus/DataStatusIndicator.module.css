@@ -229,6 +229,38 @@
   font-size: var(--hs-type-label);
 }
 
+.phases {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--hs-line);
+  list-style: none;
+}
+
+.phases li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.phases strong {
+  color: var(--hs-positive);
+  font-weight: 680;
+}
+
+.phases strong[data-status='FAILED'],
+.phases strong[data-status='PARTIAL_FAILURE'] {
+  color: var(--hs-loss);
+}
+
+.phases small {
+  grid-column: 1 / -1;
+  color: var(--hs-text-subtle);
+}
+
 .manual {
   margin-top: 12px;
   padding-top: 12px;

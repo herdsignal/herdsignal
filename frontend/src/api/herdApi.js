@@ -52,6 +52,8 @@ export const googleLoginUrl = () => `${AUTH_BASE_URL}/oauth2/authorization/googl
 export const getDataStatus = () => api.get('/api/system/data-status')
 export const requestSchedulerRun = () =>
   api.post('/api/system/scheduler/run', null, { timeout: 10_000 })
+export const requestDailySchedulerRun = () =>
+  api.post('/api/system/scheduler/daily/run', null, { timeout: 10_000 })
 
 /* ── 포트폴리오 ─────────────────────────────── */
 

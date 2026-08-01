@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { getDataStatus, requestSchedulerRun } from '../../api/herdApi'
+import {
+  getDataStatus,
+  requestDailySchedulerRun,
+  requestSchedulerRun,
+} from '../../api/herdApi'
 import { dataStatusViewModel } from './dataStatusModel'
 import styles from './DataStatusIndicator.module.css'
 
@@ -26,12 +30,15 @@ export default function DataStatusIndicator() {
     }
   }, [])
 
-  const runNow = useCallback(async () => {
+  const runNow = useCallback(async (scope = 'daily') => {
     setRequesting(true)
     setRequestMessage(null)
     try {
-      await requestSchedulerRun()
-      setRequestMessage('갱신을 시작했습니다.')
+      if (scope === 'full') await requestSchedulerRun()
+      else await requestDailySchedulerRun()
+      setRequestMessage(scope === 'full'
+        ? '주간 전체 갱신을 시작했습니다.'
+        : '일간 잠정 갱신을 시작했습니다.')
       window.setTimeout(load, 1_000)
     } catch (requestError) {
       setRequestMessage(
@@ -155,16 +162,29 @@ export default function DataStatusIndicator() {
             <strong>{view.runLabel}</strong>
             <small>{view.coverageLabel}</small>
           </div>
+          {view.phases.length > 0 && (
+            <ul className={styles.phases} aria-label="최근 실행 단계">
+              {view.phases.map((phase) => (
+                <li key={phase.code}>
+                  <span>{phase.label}</span>
+                  <strong data-status={phase.status}>{phase.statusLabel}</strong>
+                  {phase.detail && <small>{phase.detail}</small>}
+                </li>
+              ))}
+            </ul>
+          )}
           {view.issueLabel && <p className={styles.issue}>{view.issueLabel}</p>}
           <details className={styles.manual}>
             <summary>수동 실행</summary>
             <p>
-              자동 수집을 놓쳤을 때만 실행합니다.
-              범위: {view.manualRunLabel}
+              일간 갱신은 가격·D1만, 주간 전체는 S1과 연구 원장까지 다시 계산합니다.
             </p>
             <div className={styles.actions}>
-              <button type="button" onClick={runNow} disabled={requesting || view.isRunning}>
-                {requesting ? '요청 중' : view.isRunning ? '갱신 중' : '전체 데이터 다시 계산'}
+              <button type="button" onClick={() => runNow('daily')} disabled={requesting || view.isRunning}>
+                {requesting ? '요청 중' : view.isRunning ? '갱신 중' : '일간 잠정 갱신'}
+              </button>
+              <button type="button" onClick={() => runNow('full')} disabled={requesting || view.isRunning}>
+                주간 전체 갱신
               </button>
               {requestMessage && <span role="status">{requestMessage}</span>}
             </div>

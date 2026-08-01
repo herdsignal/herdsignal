@@ -30,6 +30,22 @@ class SchedulerOperationsServiceTest {
     }
 
     @Test
+    void acceptsDailyRequestAndRunsLightweightCommand() throws Exception {
+        PythonProcessGateway gateway = mock(PythonProcessGateway.class);
+        SchedulerOperationsService service =
+                new SchedulerOperationsService(gateway, Runnable::run);
+
+        assertThat(service.requestDailyRun()).isTrue();
+
+        verify(gateway).executeScript(
+                "Daily D1 수동 갱신",
+                "data/scheduler/herd_scheduler.py",
+                List.of("--daily-now"),
+                Duration.ofHours(2)
+        );
+    }
+
+    @Test
     void releasesRequestFlagWhenExecutorRejectsTask() {
         PythonProcessGateway gateway = mock(PythonProcessGateway.class);
         Executor rejectingExecutor = command -> {

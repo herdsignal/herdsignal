@@ -1,10 +1,15 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { getDataStatus, requestSchedulerRun } from '../../api/herdApi'
+import {
+  getDataStatus,
+  requestDailySchedulerRun,
+  requestSchedulerRun,
+} from '../../api/herdApi'
 import DataStatusIndicator from './DataStatusIndicator'
 
 vi.mock('../../api/herdApi', () => ({
   getDataStatus: vi.fn(),
+  requestDailySchedulerRun: vi.fn(),
   requestSchedulerRun: vi.fn(),
 }))
 
@@ -35,11 +40,16 @@ beforeEach(() => {
           successCount: 55,
           failedCount: 0,
           skippedCount: 0,
+          phases: [
+            { code: 'PRICE_COLLECTION', status: 'SUCCESS', count: 55 },
+            { code: 'DAILY_D1', status: 'SUCCESS', count: 55 },
+          ],
         },
       },
     },
   })
   requestSchedulerRun.mockResolvedValue({ status: 202 })
+  requestDailySchedulerRun.mockResolvedValue({ status: 202 })
 })
 
 describe('DataStatusIndicator', () => {
@@ -65,7 +75,8 @@ describe('DataStatusIndicator', () => {
     expect(screen.getByText('16:30 ET')).toBeInTheDocument()
     expect(screen.getByText(/다음 예정/)).toBeInTheDocument()
     expect(screen.getByText('로컬 스케줄러가 실행 중일 때 자동')).toBeInTheDocument()
-    expect(screen.getByText(/가격·State S1·전향 관찰 전체/)).toBeInTheDocument()
+    expect(screen.getByText(/일간 갱신은 가격·D1만/)).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: '최근 실행 단계' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '상태 다시 확인' })).toBeInTheDocument()
 
     fireEvent.keyDown(document, { key: 'Escape' })
@@ -75,13 +86,13 @@ describe('DataStatusIndicator', () => {
     expect(trigger).toHaveFocus()
   })
 
-  it('requests a full scheduler run explicitly', async () => {
+  it('requests a lightweight daily scheduler run explicitly', async () => {
     render(<DataStatusIndicator />)
     fireEvent.click(await screen.findByRole('button', { name: '데이터 상태: 데이터 최신' }))
     fireEvent.click(screen.getByText('수동 실행'))
-    fireEvent.click(screen.getByRole('button', { name: '전체 데이터 다시 계산' }))
+    fireEvent.click(screen.getByRole('button', { name: '일간 잠정 갱신' }))
 
-    await waitFor(() => expect(requestSchedulerRun).toHaveBeenCalledOnce())
-    expect(await screen.findByRole('status')).toHaveTextContent('갱신을 시작했습니다.')
+    await waitFor(() => expect(requestDailySchedulerRun).toHaveBeenCalledOnce())
+    expect(await screen.findByRole('status')).toHaveTextContent('일간 잠정 갱신을 시작했습니다.')
   })
 })

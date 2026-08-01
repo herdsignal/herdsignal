@@ -19,7 +19,7 @@ class FlywayMigrationTest {
                 .locations("classpath:db/migration")
                 .load();
 
-        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(13);
+        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(14);
 
         try (var connection = DriverManager.getConnection(url, "sa", "");
              var tables = connection.getMetaData().getTables(null, "PUBLIC", "%", new String[]{"TABLE"})) {
@@ -46,7 +46,7 @@ class FlywayMigrationTest {
 
             assertThat(names).contains("skipped_count", "skipped_tickers");
             assertThat(names).contains("universe_sha256", "publish_status");
-            assertThat(names).contains("observation_count");
+            assertThat(names).contains("observation_count", "phase_results_json");
         }
 
         try (var connection = DriverManager.getConnection(url, "sa", "");
