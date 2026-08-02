@@ -155,7 +155,9 @@
       "data/reports/sec_form4_nonroutine_sale_feasibility_v1.json",
       "data/herd/profit_giveback_policy_v1.json",
       "data/reports/profit_giveback_policy_v1.json",
-      "data/reports/profit_giveback_policy_v1_events.csv"
+      "data/reports/profit_giveback_policy_v1_events.csv",
+      "data/herd/distinct_public_pit_information_feasibility_v1.json",
+      "data/reports/distinct_public_pit_information_feasibility_v1.json"
     ],
     "REJECTED": [
       "data/herd/rush_margin_cash_divergence_preregistration_v1.json",

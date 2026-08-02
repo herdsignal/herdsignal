@@ -82,6 +82,11 @@ SEC guidance, FINRA 최신 source fact를 합친 통합 패널도 가격·수익
 방향 라벨 없이 shadow 관측만 수행한다. 이들은 예측력이나 HERD 반영을
 증명하지 않는다.
 
+새 구조화 SEC 훼손 사건 feasibility는 Form 8-K의 2.04·2.05·2.06·4.02
+947건을 확인해 source coverage만 통과했다. 이 계약과 보고서는 아직
+예측 증거가 아니므로 `DATA_PIPELINE`에 둔다. 불변 corpus와 원문 정확도
+검수를 통과하기 전에는 `ACTIVE` 방향 증거로 승격하지 않는다.
+
 SEC 13F는 공식 bulk 53개와 대표 보통주 식별 원장을 거쳐 PIT 보유
 원장으로 정규화했다. 로컬 SQLite에는 269,600개 filing, 원시 보유
 22,870,933행, amendment 적용 후 유효 상태 22,993,808행이 있다.

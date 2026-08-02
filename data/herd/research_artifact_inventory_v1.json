@@ -71,6 +71,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/distinct_public_pit_information_feasibility_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/herd/entry_add_buy_policy.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -985,6 +989,10 @@
     {
       "path": "data/reports/decision_architecture_v1.json",
       "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/distinct_public_pit_information_feasibility_v1.json",
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/evidence_admission_registry_v10.json",

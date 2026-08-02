@@ -15,6 +15,18 @@ V2 이하 결정 파일은 기존 해시 계약의 재현 입력으로 그대로
 최신 Rush 이익률–현금흐름 가설 탈락, 행동 후보 0개, `HOLD·0%`, Blind
 holdout 미개방을 현재 단일 판정으로 검증한다.
 
+## 구조화 SEC 훼손 사건 feasibility V1
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.distinct_public_pit_information_feasibility_v1
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_distinct_public_pit_information_feasibility_v1.py
+```
+
+고정한 SEC submissions와 시점 유효 CIK 원장만 읽어 Form 8-K
+2.04·2.05·2.06·4.02의 기간·기업·접수시각 coverage를 계산한다. 가격,
+수익률, Rush 결과는 읽지 않는다. coverage 통과는 원문 corpus 구축만
+허용하며 방향 가설과 행동 권한은 계속 차단한다.
+
 ## Rush 이익률–현금흐름 괴리 사전등록
 
 ```bash

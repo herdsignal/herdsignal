@@ -157,6 +157,24 @@ State S1 관찰 가능 여부, 126거래일 결과 성숙 수, 행동 후보 수
 Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보가 등록되지
 않아 `BLOCKED_NO_NEW_INPUT`, 행동은 `HOLD·0%`가 올바른 결과다.
 
+## 구조화 SEC 훼손 사건 feasibility V1
+
+- 가격·가이던스 문장·내부자 거래를 다시 변형하지 않고 Form 8-K의
+  2.04·2.05·2.06·4.02 항목만 새 공개 PIT 후보로 고정했다.
+- 시점 유효 CIK 502개 중 468개(93.23%)의 SEC submissions 원장을
+  연결했다. 2004-09-08~2026-07-07에 947건·263개 기업이 확인됐고,
+  접수시각 완성률은 100%다.
+- 자료 커버리지 게이트는 통과했지만 예측력은 전혀 검사하지 않았다.
+  이 사건은 익절 신호가 아니라 기업 훼손 시 추가매수를 막을 수 있는
+  veto 연구 후보일 뿐이다.
+- 다음 단계는 947건을 불변 corpus로 고정하고 원문 정확도를 검수하는
+  것이다. corpus·검수 게이트 전에는 가격 결과, 방향 가설, HERD 가중치,
+  Blind holdout과 운영 행동을 열지 않는다.
+
+계약과 결과는
+`data/herd/distinct_public_pit_information_feasibility_v1.json`,
+`data/reports/distinct_public_pit_information_feasibility_v1.json`이다.
+
 ## Prospective Evidence Ledger V1
 
 - State S1 스케줄러가 생성한 동일 번들을 관측일별 불변 JSON envelope로

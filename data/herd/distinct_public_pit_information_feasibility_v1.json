@@ -1,0 +1,136 @@
+{
+  "protocol_version": "DISTINCT_PUBLIC_PIT_INFORMATION_FEASIBILITY_V1",
+  "status": "LOCKED_BEFORE_COVERAGE_AUDIT",
+  "as_of": "2026-08-02",
+  "objective": "Determine whether structured hard-adverse Form 8-K item metadata is sufficiently available as a public point-in-time corporate-damage veto candidate without opening price outcomes.",
+  "service_objective": "Protect a long-term holder from averaging down into newly disclosed corporate damage; this source cannot authorize profit-taking or re-entry by itself.",
+  "candidate": {
+    "id": "SEC_8K_HARD_ADVERSE_EVENT_ITEMS",
+    "provider": "SEC_EDGAR",
+    "forms": [
+      "8-K",
+      "8-K/A"
+    ],
+    "items": {
+      "2.04": "TRIGGERING_EVENT_ACCELERATES_OR_INCREASES_FINANCIAL_OBLIGATION",
+      "2.05": "COSTS_ASSOCIATED_WITH_EXIT_OR_DISPOSAL_ACTIVITIES",
+      "2.06": "MATERIAL_IMPAIRMENTS",
+      "4.02": "NON_RELIANCE_ON_PREVIOUSLY_ISSUED_FINANCIAL_STATEMENTS"
+    },
+    "economic_role": "CORPORATE_DAMAGE_VETO_RESEARCH_ONLY",
+    "economically_distinct_from_price": true,
+    "text_parser_required": false,
+    "official_sources": [
+      {
+        "url": "https://www.sec.gov/files/form8-k.pdf",
+        "checked_on": "2026-08-02",
+        "fact": "Form 8-K defines the selected hard-adverse item categories and generally requires event reporting within four business days."
+      },
+      {
+        "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+        "checked_on": "2026-08-02",
+        "fact": "The public submissions API exposes filing history metadata and is updated as submissions are disseminated."
+      },
+      {
+        "url": "https://www.sec.gov/rules-regulations/staff-guidance/compliance-disclosure-interpretations/exchange-act-form-8-k",
+        "checked_on": "2026-08-02",
+        "fact": "Item 4.02 events must be reported on Form 8-K even when another periodic report is filed nearby."
+      }
+    ]
+  },
+  "locked_inputs": [
+    {
+      "role": "CURRENT_DECISION",
+      "path": "data/herd/research_decision_v3.json",
+      "sha256": "6738c13019ccd6a78b548163a73616a55cb6ded168c18123f0784b016798e9b6"
+    },
+    {
+      "role": "PUBLIC_RESEARCH_CONTRACT",
+      "path": "data/herd/public_research_contract.json",
+      "sha256": "989d3922c5a9aeb0ee1f46be40a4b32bc88deb4c43c58590aa29e9da71f93a12"
+    },
+    {
+      "role": "TIME_VALID_CIK_LEDGER_REPORT",
+      "path": "data/reports/sec_time_valid_ticker_cik_ledger_v5.json",
+      "sha256": "8f399c79b9a21a148184e4973d436f7fe9871e32caff367564631c0aae32c37a"
+    },
+    {
+      "role": "TIME_VALID_CIK_LEDGER",
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v5.csv",
+      "sha256": "4b10a272f1e5145cc1d73bdf6f91aace99502766d0a2d2c57cb30a206d6b9eed"
+    }
+  ],
+  "submission_sources": [
+    {
+      "path": "data/reference/sec/sec-pit-157cik-20160718-20260717-20260719",
+      "manifest_sha256": "5d87637c0b17a60b0a95a8462bc6edf3432a1aec5ac4b8c7d38428d534ea5c92"
+    },
+    {
+      "path": "data/reference/sec/sec-guidance-v7-independent-meta-201-20260722",
+      "manifest_sha256": "9186660acd8a1e1375b8e24bef3c576517daa5fe3bd631cbc1c4c9950399ebd9"
+    },
+    {
+      "path": "data/reference/sec/sec-guidance-v5-broad-meta-120-20260722",
+      "manifest_sha256": "eaf5b546f453b71ea3fa9c69ad2398170afd5eb58402a4ae9c3f0f0fc12245e4"
+    },
+    {
+      "path": "data/reference/sec/sec-guidance-v10-final-meta-120-20260723",
+      "manifest_sha256": "d8681f4ba90b23cc90bd00c6eeb98d946330736cd20477a488aaf3af00626230"
+    },
+    {
+      "path": "data/reference/sec/sec-pit-price51-20160718-20260717-20260721",
+      "manifest_sha256": "709687dd74bbbc8b26b0f7343ce27b9bbda13d984fb0557b3661d365c18695a3"
+    },
+    {
+      "path": "data/reference/sec/sec-pit-price50-20120103-20260717-20260721",
+      "manifest_sha256": "8eb580a62147523025d3828e6db8561392699e517e0b2d4d83472c4b19aef5ec"
+    },
+    {
+      "path": "data/reference/sec/sec-guidance-v6-third-wave-meta-30-20260722",
+      "manifest_sha256": "89151b4b76057e57dd074aa419317753039068aab2e1bda40b1ebf042d03ca6c"
+    },
+    {
+      "path": "data/reference/sec/sec-pit-long-predecessors-20120103-20260717-20260721",
+      "manifest_sha256": "bb5adb0413d2164ca2afd6453cb6ffd4d356fcdd6984e2b125335657396aa64a"
+    }
+  ],
+  "audit_period": {
+    "start": "2004-08-23",
+    "end": "2026-07-17"
+  },
+  "coverage_gate": {
+    "minimum_submission_cik_coverage_ratio": 0.8,
+    "minimum_event_history_years": 10.0,
+    "minimum_event_year_count": 10,
+    "minimum_event_filings": 100,
+    "minimum_event_issuers": 40,
+    "required_acceptance_timestamp_ratio": 1.0,
+    "all_required": true
+  },
+  "promotion_if_coverage_passes": {
+    "next_stage": "SEC_8K_HARD_ADVERSE_EVENT_CORPUS_V1",
+    "manual_source_precision_gate_required": true,
+    "minimum_manual_precision_wilson_lower_bound": 0.9,
+    "direction_hypothesis_allowed": false,
+    "price_outcomes_allowed": false,
+    "allowed_role": "CORPORATE_DAMAGE_VETO_RESEARCH_ONLY"
+  },
+  "forbidden": [
+    "TREAT_ANY_8K_AS_ADVERSE",
+    "USE_ITEM_5_02_AS_UNCONDITIONALLY_NEGATIVE",
+    "TREAT_DISCLOSURE_AS_PRE_EVENT_INFORMATION",
+    "AUTHORIZE_PROFIT_TAKE",
+    "AUTHORIZE_REENTRY",
+    "OPEN_PRICE_OUTCOMES_BEFORE_CORPUS_AND_REVIEW_GATES",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "ENABLE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
