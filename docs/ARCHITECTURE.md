@@ -26,6 +26,17 @@
 - `HerdResponseAssembler`: 미리 조회한 데이터의 응답 DTO 조립
 - `HerdQualityEvaluator`: 산출물 완성도·최신성 평가
 - `HerdSignalDurationCalculator`: 신호·단계 연속 기간 계산
+
+### 장기 운용 검토
+
+- `ObjectiveEvidenceService`: State S1을 근거 패킷으로 변환하고 미연결 영역을 `NO_VIEW`로 유지
+- `EvidenceGate`: 필수 사실의 출처·시점·최신성·PIT 계약 검사
+- `LongTermOperatingReviewService`: 사용자 운용 조건과 실제 포트폴리오 비중 연결
+- `DecisionSynthesisPolicy`: 데이터·위험·기업 훼손 우선순위의 결정론적 종합
+- `OperatingReviewSnapshotService`: 명시적 판단 JSON·해시·기준 가격 append-only 기록
+
+객관 조회 `GET /api/operating-reviews/{ticker}/objective`만 공개한다. 개인
+검토와 기록 원장은 인증이 필요하며 GET 요청은 스냅샷을 자동 생성하지 않는다.
 - `ActionDecisionService`: 레거시 v6.1 연구 행동 재현. 운영 HERD 조회에서는
   실행하지 않으며 회귀 테스트와 명시적 연구 경로에서만 사용
 - `UserActionBoundary`: 기본 사용자 응답·저널의 행동을 HOLD·0%로 잠그는
@@ -68,6 +79,8 @@ HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이�
 - `StockDetailAnalysis`: 네 증거군과 하방 위험 맥락
 - `StockDetailHistory`: 기간별 State S1 차트
 - `StockDetailRecords`: 기업 상태와 사용자 판단 기록
+- `StockOperatingReview`: 장기 운용 영역, 제한, veto와 명시적 원장 기록
+- `useOperatingReview`: 공개 객관 근거와 인증 개인 검토의 실패 경계 분리
 - `WatchlistQueue`: 낮은 HERD부터 높은 HERD까지 관찰 목록
 - `Watchlist`: 조회·삭제 상태와 페이지 조합
 
@@ -116,6 +129,6 @@ npm run test:bundle
 4. 줄 수만 줄이는 래퍼, 한 번만 쓰는 추상화, 이름만 다른 중복 계층은 만들지 않는다.
 5. 백엔드 전체 테스트, 프론트 테스트·lint·build, 관련 Python 테스트가 모두 통과해야 한다.
 
-현재 남은 큰 경계는 `useStockDetail`의 비동기 상태 조합과 레거시 호환
-`HerdScoreResponse` DTO의 과도한 필드 수다. 화면 회귀 기준과 API 호환 테스트를
+현재 남은 큰 경계는 레거시 호환 `HerdScoreResponse` DTO의 과도한 필드 수와
+운영 PIT 기업·기대 데이터의 부재다. 화면 회귀 기준과 API 호환 테스트를
 유지하면서 작은 변경 단위로 처리한다.

@@ -1,6 +1,6 @@
 # HerdSignal 장기 운용 판단 체계
 
-상태: `APPROVED_DESIGN_PENDING_IMPLEMENTATION`  
+상태: `IMPLEMENTED_OBSERVATION_ONLY`
 기준일: 2026-08-03
 
 이 문서는 HerdSignal이 무엇을 만들고, 어떤 순서와 권한으로 장기 운용
@@ -297,16 +297,18 @@ HerdSignal의 핵심 타이밍 계층이다.
 - 행동 모델이 없다면 서비스가 정직하게 `OBSERVE·0%`를 유지한다.
 - 행동 모델이 생기면 Buy & Hold 대비 완결 주기 우위를 재현할 수 있다.
 
-## 10. 현재 출발점
+## 10. 구현 결과와 현재 경계
 
-- State S1·Transition S1: 관찰 제품 사용 가능
-- 기업 체력: 제한된 현재 조회 요약과 연구용 SEC PIT 자료 존재
-- 기대·가격: 독립 운용 영역 미구현
-- 시장·섹터: 일부 State S1 입력에 포함, 독립 출력 미구현
-- 정보 변화: 여러 공개 데이터 연구가 있으나 운영 방향 권한 없음
-- 포트폴리오: 보유·현금·비중 기능 존재, 판단 체계 연결 미완성
-- 독립 리스크: AI 연구 관점은 있으나 결정 veto 계약 미구현
-- 행동 모델: 채택 후보 없음, 운영 `OBSERVE·0%`
+- Part A: `LONG_TERM_EVIDENCE_PACKET_V1`과 출처·PIT·최신성 gate 구현
+- Part B: State S1을 차트·군중 영역으로 연결하고 미연결 영역은 `NO_VIEW` 유지
+- Part C: 개인 운용 조건과 실제 포트폴리오 비중 연결, 행동 권한 독립 차단
+- Part D: 데이터 → 독립 위험 → 기업 훼손 순의 고정 종합 규칙 구현
+- Part E: 판단 JSON·SHA-256·기준 종가 append-only 기록과 1·3·6개월 경로 연결
+- Part F: 종목 상세에 객관·개인 검토, 제한, veto, 명시적 기록 기능 연결
 
-따라서 다음 구현 시작점은 Part A다. 기존 지표를 다시 섞기 전에 판단 영역,
-권한과 Evidence Packet을 먼저 고정한다.
+현재 사용 가능한 결과는 `INSUFFICIENT_DATA`, `OBSERVE`, 검증된 기업 훼손
+입력이 생긴 뒤의 `THESIS_RISK`다. `REVIEW_ADD`와 `REVIEW_TRIM` 코드는 미래
+계약에만 존재하며 채택된 방향 증거가 없으므로 생성되지 않는다. 기업 체력,
+기대·가격, 독립 시장·섹터와 정보 변화는 운영 PIT 소스가 연결될 때까지
+`NO_VIEW`다. 따라서 행동 모델은 여전히 `OBSERVE·0%`이며, 다음 연구는 이
+계약을 우회하지 않고 독립 OOS 채택 증거를 만드는 일이다.

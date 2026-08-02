@@ -6,7 +6,7 @@
 판정: `STATE_OBSERVATION_MVP_READY` / `NO_ADOPTABLE_ACTION_CANDIDATE`
 
 > 이 문서는 재현성을 위한 누적 연구 일지다. 행동·승격 권한은 불변 판정인
-> `data/herd/research_decision_v4.json`을 기준으로 한다. 현재 관측 축적량과
+> `data/herd/research_decision_v5.json`을 기준으로 한다. 현재 관측 축적량과
 > 다음 연구 입력은 `data/runtime/reports/model-readiness-latest.json`과
 > `action-research-intake-latest.json`을 기준으로 한다. 아래 날짜별 V1~V10
 > 기록과 결정 파일의 당시 `nextStage`는 현재 작업 목록으로 해석하지 않는다.
