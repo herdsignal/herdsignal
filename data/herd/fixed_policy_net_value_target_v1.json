@@ -1,0 +1,132 @@
+{
+  "contract_version": "HERD_FIXED_POLICY_NET_VALUE_TARGET_V1",
+  "status": "LOCKED_BEFORE_POLICY_BASELINE_RESULTS",
+  "locked_at": "2026-08-02",
+  "objective": "MEASURE_INCREMENTAL_ECONOMIC_VALUE_OF_A_PREREGISTERED_FIXED_POLICY_VERSUS_MATCHED_HOLD",
+  "inputs": [
+    {
+      "path": "data/herd/decision_architecture_v1.json",
+      "sha256": "fa23035769d762a18906b9aeaa2fbf16fa243dafc772b14912252024ebacbda9"
+    },
+    {
+      "path": "data/herd/profit_giveback_policy_v1.json",
+      "sha256": "2048b98e1bf482d6c50a90b9fd3a27881a61d507645ff03f309e99a5e77ba9f2"
+    },
+    {
+      "path": "data/herd/cycle_value_protocol_v1.json",
+      "sha256": "c841de65a2f141d702fa7e64c909a26aabdb04d4fd6c94c9217fd0f999fd45d3"
+    }
+  ],
+  "observation_unit": {
+    "unit": "TICKER_POLICY_EVENT",
+    "signal_information_cutoff": "SESSION_CLOSE",
+    "execution_earliest": "NEXT_AVAILABLE_SESSION_OPEN",
+    "fixed_horizon_sessions": 126,
+    "minimum_mature_horizon_sessions": 126,
+    "right_censored_events": "EXCLUDE_FROM_PRIMARY_TARGET_AND_REPORT_SEPARATELY",
+    "maximum_events_per_ticker_year": 2
+  },
+  "matched_hold_benchmark": {
+    "same_ticker": true,
+    "same_initial_shares": true,
+    "same_initial_cash": true,
+    "same_start_and_end_sessions": true,
+    "same_external_cashflows": true,
+    "same_split_and_dividend_treatment": true,
+    "same_execution_price_source": true,
+    "policy_costs_applied_only_when_traded": true
+  },
+  "policy_tracks": {
+    "SAME_TICKER_COMPLETED_CYCLE": {
+      "initial_trim_fraction": 0.05,
+      "reentry_rule": null,
+      "incomplete_cycle_counts_as_success": false,
+      "policy_registration_required": true
+    },
+    "RELATIVE_REBALANCE_REVIEW": {
+      "initial_reallocation_fraction": 0.05,
+      "destination_rule": null,
+      "same_ticker_reentry_required": false,
+      "policy_registration_required": true
+    }
+  },
+  "primary_target": {
+    "name": "NET_TERMINAL_WEALTH_DELTA_VERSUS_MATCHED_HOLD",
+    "formula": "POLICY_TERMINAL_WEALTH_MINUS_MATCHED_HOLD_TERMINAL_WEALTH",
+    "normalization": "DIVIDE_BY_EVENT_START_TOTAL_WEALTH",
+    "positive_direction": "GREATER_THAN_ZERO_AFTER_ALL_COSTS"
+  },
+  "required_secondary_targets": [
+    "TERMINAL_SHARE_DELTA",
+    "MISSED_UPSIDE_COST",
+    "DOWNSIDE_AVOIDED",
+    "COMPLETED_POLICY",
+    "AVERAGE_EQUITY_EXPOSURE",
+    "ONE_WAY_TURNOVER",
+    "BASE_COST_NET_VALUE",
+    "STRESS_COST_NET_VALUE"
+  ],
+  "diagnostic_labels_only": [
+    "TEMPORARY_PULLBACK",
+    "LARGE_CORRECTION",
+    "STRUCTURAL_DAMAGE",
+    "UPTREND_RESUMPTION"
+  ],
+  "cost_contract": {
+    "base_one_way_bps": 10,
+    "stress_one_way_bps": [25, 50],
+    "taxes": "REPORT_SEPARATELY_NOT_ASSUMED_ZERO_IN_PRODUCT_TRANSLATION",
+    "cash_yield": "MATCHED_BY_POLICY_AND_BENCHMARK_WHEN_APPLICABLE"
+  },
+  "policy_registration": {
+    "required_before_target_generation": true,
+    "must_lock": [
+      "ELIGIBILITY_FORMULA",
+      "ACTION_DATE",
+      "EXECUTION_DATE",
+      "EXIT_OR_REALLOCATION_RULE",
+      "REENTRY_OR_DESTINATION_RULE",
+      "COOLDOWN",
+      "ACTION_BUDGET",
+      "COST_ASSUMPTIONS",
+      "OOS_SPLITS"
+    ],
+    "result_dependent_rule_selection_forbidden": true,
+    "oracle_reentry_forbidden": true,
+    "current_registered_policy": null
+  },
+  "evaluation": {
+    "primary_aggregation": "MEDIAN_NORMALIZED_NET_TERMINAL_WEALTH_DELTA",
+    "required_rates": [
+      "POSITIVE_NET_VALUE_RATE",
+      "COMPLETED_POLICY_RATE",
+      "POSITIVE_SHARE_DELTA_RATE"
+    ],
+    "required_slices": [
+      "OOS_FOLD",
+      "TICKER",
+      "CALENDAR_ERA",
+      "INSTRUMENT_CLASS",
+      "MARKET_REGIME"
+    ],
+    "uncertainty": "TICKER_BLOCK_BOOTSTRAP_INTERVAL",
+    "buy_and_hold_is_primary_benchmark": true,
+    "classification_score_is_not_primary_gate": true
+  },
+  "forbidden": [
+    "USE_GENERIC_PATH_LABEL_AS_PRIMARY_TARGET",
+    "USE_FUTURE_LOW_AS_EXECUTABLE_REENTRY",
+    "COUNT_OPEN_TRIM_AS_COMPLETED_CYCLE",
+    "TREAT_ABSTENTION_AS_PROFITABLE_ACTION",
+    "SELECT_POLICY_RULE_AFTER_VIEWING_TARGET_RESULTS",
+    "ACTIVATE_USER_ACTION_FROM_THIS_TARGET_CONTRACT",
+    "OPEN_BLIND_HOLDOUT"
+  ],
+  "firewall": {
+    "target_generation_allowed": false,
+    "reason": "NO_FIXED_POLICY_REGISTERED",
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false
+  }
+}

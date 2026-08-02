@@ -187,6 +187,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/fixed_policy_net_value_target_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/herd_candidate_protocol_v2.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1073,6 +1077,10 @@
     {
       "path": "data/reports/finra_short_interest_ticker_coverage_v4.csv",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/fixed_policy_net_value_target_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/herd_candidate_features_v2.csv",

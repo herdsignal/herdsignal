@@ -46,6 +46,8 @@
       "data/herd/research_decision_v2.json",
       "data/herd/decision_architecture_v1.json",
       "data/reports/decision_architecture_v1.json",
+      "data/herd/fixed_policy_net_value_target_v1.json",
+      "data/reports/fixed_policy_net_value_target_v1.json",
       "data/herd/profit_take_opportunity_ceiling_v1.json",
       "data/reports/profit_take_opportunity_ceiling_v1.json",
       "data/reports/profit_take_opportunity_ceiling_v1.csv",

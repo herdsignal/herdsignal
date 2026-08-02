@@ -1,0 +1,29 @@
+{
+  "report_version": "HERD_FIXED_POLICY_NET_VALUE_TARGET_V1",
+  "status": "TARGET_LOCKED_POLICY_BASELINES_NOT_BUILT",
+  "primary_target": "NET_TERMINAL_WEALTH_DELTA_VERSUS_MATCHED_HOLD",
+  "policy_tracks": [
+    "SAME_TICKER_COMPLETED_CYCLE",
+    "RELATIVE_REBALANCE_REVIEW"
+  ],
+  "target_generation_allowed": false,
+  "blocked_reason": "NO_FIXED_POLICY_REGISTERED",
+  "next_stage": "SIMPLE_FIXED_POLICY_BASELINES_V1",
+  "input_hashes": [
+    {
+      "path": "data/herd/decision_architecture_v1.json",
+      "sha256": "fa23035769d762a18906b9aeaa2fbf16fa243dafc772b14912252024ebacbda9"
+    },
+    {
+      "path": "data/herd/profit_giveback_policy_v1.json",
+      "sha256": "2048b98e1bf482d6c50a90b9fd3a27881a61d507645ff03f309e99a5e77ba9f2"
+    },
+    {
+      "path": "data/herd/cycle_value_protocol_v1.json",
+      "sha256": "c841de65a2f141d702fa7e64c909a26aabdb04d4fd6c94c9217fd0f999fd45d3"
+    }
+  ],
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}
