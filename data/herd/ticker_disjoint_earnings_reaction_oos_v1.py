@@ -60,6 +60,18 @@ def load_contract(path: Path = CONTRACT_PATH) -> dict[str, Any]:
     return contract
 
 
+def locked_input_path(contract: dict[str, Any], role: str, fallback_suffix: str) -> Path:
+    matches = [
+        ROOT / item["path"]
+        for item in contract["inputs"]
+        if item.get("role") == role or item["path"].endswith(fallback_suffix)
+    ]
+    unique = list(dict.fromkeys(matches))
+    if len(unique) != 1:
+        raise TickerDisjointEarningsOosError(f"expected one locked {role} input")
+    return unique[0]
+
+
 def collapse_quarterly_disclosures(events: pd.DataFrame) -> pd.DataFrame:
     """Keep the first filing that makes one ticker-quarter's results public."""
     rows = events.copy()
@@ -153,19 +165,20 @@ def _outcome_label(frame: pd.DataFrame, confirmation: pd.Timestamp) -> str:
 
 
 def build_panel(contract: dict[str, Any]) -> tuple[pd.DataFrame, dict[str, int]]:
-    paths = {Path(item["path"]).name: ROOT / item["path"] for item in contract["inputs"]}
     events = collapse_quarterly_disclosures(
-        pd.read_csv(paths["ticker_disjoint_sec_earnings_census_v1.csv"])
+        pd.read_csv(locked_input_path(contract, "SEC_EVENT_CATALOG", "ticker_disjoint_sec_earnings_census_v1.csv"))
     )
     states = pd.read_csv(
-        paths["ticker_disjoint_earnings_oos_state_s1.csv.gz"],
+        locked_input_path(contract, "STATE_PANEL", "ticker_disjoint_earnings_oos_state_s1.csv.gz"),
         compression="gzip",
         parse_dates=["signal_date", "last_observed_session"],
     ).sort_values(["ticker", "last_observed_session"])
-    universe = pd.read_csv(paths["ticker_disjoint_earnings_oos_universe_v1.csv"])
+    universe = pd.read_csv(locked_input_path(contract, "UNIVERSE", "ticker_disjoint_earnings_oos_universe_v1.csv"))
     sector_by_ticker = universe.set_index("ticker")["sector_etf"].to_dict()
-    manifest_path = paths["manifest.json"]
-    parent = json.loads(paths["rush_negative_earnings_reaction_preregistration_v1.json"].read_text())
+    manifest_path = locked_input_path(contract, "PRICE_MANIFEST", "manifest.json")
+    parent = json.loads(locked_input_path(
+        contract, "PARENT_HYPOTHESIS", "rush_negative_earnings_reaction_preregistration_v1.json"
+    ).read_text())
     rules = contract["event_binding"]
     policy = contract["economic_policy"]
     prices: dict[str, pd.DataFrame] = {}
@@ -336,10 +349,8 @@ def run(
         "calendar_years": 0,
     }
     passed = bool(result["passed"])
-    event_input = next(
-        ROOT / item["path"]
-        for item in contract["inputs"]
-        if item["path"].endswith("ticker_disjoint_sec_earnings_census_v1.csv")
+    event_input = locked_input_path(
+        contract, "SEC_EVENT_CATALOG", "ticker_disjoint_sec_earnings_census_v1.csv"
     )
     result.update({
         "report_version": "TICKER_DISJOINT_EARNINGS_REACTION_OOS_V1",

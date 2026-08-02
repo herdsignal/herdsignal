@@ -1,0 +1,30 @@
+{
+  "protocol_version": "TICKER_DISJOINT_EARNINGS_REACTION_OOS_V2",
+  "status": "LOCKED_BEFORE_EXPANSION_REACTION_RESULTS",
+  "parent_hypothesis": "RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION",
+  "role": "FORMER_CONSTITUENT_TICKER_DISJOINT_INDEPENDENT_OOS",
+  "formula_source": {
+    "path": "data/herd/ticker_disjoint_earnings_reaction_oos_v1.json",
+    "sha256": "914f455e111935d942974641c3417ec16eb531122ba8ee16089acf773da30368",
+    "reuse_exact_fields": ["event_binding", "economic_policy", "outcome_label", "gate"]
+  },
+  "inputs": [
+    {"role": "SEC_EVENT_CATALOG", "path": "data/reports/ticker_disjoint_sec_earnings_census_v2.csv", "sha256": "0591ef98c28feb96b066af59624272a3b64b6eb85e7e0887e161470a99b1b9ef"},
+    {"role": "STATE_PANEL", "path": "data/reports/ticker_disjoint_earnings_oos_expansion_v2_state_s1.csv.gz", "sha256": "dcfed90498ab1438f326b0fa485342b854f1cbfdb7402f022fd64b5ff8d7971f"},
+    {"role": "UNIVERSE", "path": "data/reports/ticker_disjoint_earnings_oos_expansion_v2.csv", "sha256": "373e0f03e5c5cb04b4ec260b3a1d4d1991d6dc12a304333fa8e2a9f05e02fc8d"},
+    {"role": "PRICE_MANIFEST", "path": "data/snapshots/yf-ticker-disjoint-expansion-v2-20260803/manifest.json", "sha256": "f0b0d187762f8f32d07cdcc41c5b01e98431f8e58c13bc51f139ece13dced031"},
+    {"role": "PARENT_HYPOTHESIS", "path": "data/herd/rush_negative_earnings_reaction_preregistration_v1.json", "sha256": "1a7374771ae545f4725743a4d7c04108ac6ba61487f393e3991652fc7fe46a65"},
+    {"role": "OPPORTUNITY_LABEL", "path": "data/herd/profit_take_opportunity_ceiling_v1.json", "sha256": "a009e826d14ac72a0b655fa62019ce2c41b53b02c4c0d40b05d899de3b05e8fe"},
+    {"role": "PATH_LABEL", "path": "data/herd/vnext_competing_path_economic_label_v1.json", "sha256": "9d78a297852379be5b5058616047893d67f5385acebaa1b9a7c99a46bc279f8e"}
+  ],
+  "sample_policy": {
+    "combine_with_v1_for_gate": false,
+    "threshold_retuning": false,
+    "replacement_after_outcomes": false,
+    "first_eligible_event_date": "2012-01-01"
+  },
+  "promotion": "an independent pass permits prospective confirmation only; it never activates operational action",
+  "survivorship_safe": false,
+  "blind_holdout": false,
+  "operational_action_ratio": 0.0
+}
