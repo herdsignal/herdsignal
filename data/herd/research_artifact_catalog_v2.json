@@ -113,6 +113,9 @@
       "data/herd/vnext_prospective_shadow_protocol_v1.json",
       "data/herd/rush_negative_earnings_reaction_preregistration_v1.json",
       "data/reports/rush_negative_earnings_reaction_oos_v1.json",
+      "data/herd/ticker_disjoint_earnings_oos_expansion_v2.json",
+      "data/reports/ticker_disjoint_earnings_oos_expansion_v2.csv",
+      "data/reports/ticker_disjoint_earnings_oos_expansion_v2.json",
       "data/herd/product_scope_contract_v1.json",
       "backend/src/main/resources/research/historical_s1_product_context_v1.json",
       "docs/CURRENT_STATE.md",
@@ -176,7 +179,9 @@
       "data/reports/sec_8k_identity_primary_document_collection_v1.json",
       "data/herd/sec_8k_identity_source_review_v1.json",
       "data/reports/sec_8k_identity_source_review_v1.csv",
-      "data/reports/sec_8k_identity_source_review_v1.json"
+      "data/reports/sec_8k_identity_source_review_v1.json",
+      "data/reports/ticker_disjoint_earnings_oos_expansion_v2_candidates.csv",
+      "data/reports/ticker_disjoint_earnings_oos_expansion_v2_lock.json"
     ],
     "REJECTED": [
       "data/herd/rush_margin_cash_divergence_preregistration_v1.json",

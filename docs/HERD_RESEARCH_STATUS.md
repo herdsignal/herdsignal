@@ -33,6 +33,21 @@
 계약과 결과는 `data/herd/ticker_disjoint_earnings_reaction_oos_v1.json`,
 `data/reports/ticker_disjoint_earnings_reaction_oos_v1.json`이다.
 
+## Rush·SEC 실적 반응 ticker-disjoint 편출 종목 확장 V2
+
+- 기존 439종목과 V1 54종목을 제외하고, 검증된 공식 S&P 편출 사건에서
+  당시 CIK와 공식 S&P 표의 GICS 섹터가 동시에 확인되는 25종목을 가격
+  결과 없이 고정했다.
+- CMA·FRC·GPS는 Yahoo 원본 수집 실패, SBNY는 과거 은행과 무관한 ticker
+  재사용 가격 491행만 반환돼 제외했다. 실패를 다른 ticker로 대체하지 않았다.
+- 최종 21종목의 2013-10-18~2026-07-31 주간 State S1 12,541행을 불변
+  입력으로 고정했고, 사전 최소 종목 수 20개를 통과했다.
+- 현재 상태는 `EXPANSION_INPUT_READY`다. 이 단계에서는 SEC 실적 사건,
+  반응 수익률, 미래 126거래일 결과를 읽지 않았다. 다음 단계는 이 21종목의
+  SEC 사건 원장을 별도 해시 체인으로 수집하는 것이다.
+- 현재 구성 복원은 여전히 완전하지 않으므로 `survivorship_safe=false`,
+  운영 행동은 `HOLD·0%`다.
+
 2026-08-02 의사결정 구조 감사에서 검증 절차는 유지하고 예측 문제를
 `State S1 → Action Edge → Portfolio Policy`로 분리했다. 운영 State 조회의
 레거시 v6.1 행동 계산은 제거했다. 새 행동 연구의 기본 표적은 경로 분류가

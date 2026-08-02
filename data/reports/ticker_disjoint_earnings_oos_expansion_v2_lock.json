@@ -1,0 +1,11 @@
+{
+  "lock_version": "TICKER_DISJOINT_EARNINGS_OOS_EXPANSION_V2_INPUT_LOCK",
+  "status": "LOCKED_BEFORE_EARNINGS_REACTION_OUTCOMES",
+  "universe_path": "data/reports/ticker_disjoint_earnings_oos_expansion_v2.csv",
+  "universe_sha256": "290097af130199ae0107d84267c05bed6031c77a96e244cb65516f0200061a6e",
+  "state_path": "data/reports/ticker_disjoint_earnings_oos_expansion_v2_state_s1.csv.gz",
+  "state_sha256": "dcfed90498ab1438f326b0fa485342b854f1cbfdb7402f022fd64b5ff8d7971f",
+  "price_manifest_path": "data/snapshots/yf-ticker-disjoint-expansion-v2-20260803/manifest.json",
+  "price_manifest_sha256": "f0b0d187762f8f32d07cdcc41c5b01e98431f8e58c13bc51f139ece13dced031",
+  "future_earnings_reaction_outcomes_read": false
+}

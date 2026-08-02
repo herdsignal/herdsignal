@@ -64,3 +64,18 @@ API에서 확인한다. 이 원장 수집은 행동 신호가 아니며 가격 �
 ```
 
 현재 조건부 게이트가 닫혀 있으므로 전향 결과 판정은 실행하지 않는다.
+
+## ticker-disjoint 편출 종목 확장 V2
+
+- 검증된 S&P 500 편출 사건 중 기존 439종목과 V1 54종목에 없는 기업만
+  결과 비관측 상태에서 선별했다.
+- 공식 사건 원장의 당시 CIK와 공식 S&P 표의 GICS 섹터가 모두 확인된
+  25종목을 가격 수집 대기열로 고정했다.
+- Yahoo 가격 실패 CMA·FRC·GPS와 재사용 ticker로 판정된 SBNY를 제외해
+  최소 4년 가격을 가진 21종목·주간 State S1 12,541행을 해시 고정했다.
+- 이 통과는 입력 준비 상태다. SEC 실적 사건과 3거래일 반응을 아직 열지
+  않았으며 V1의 22건과 합쳐 표본 기준을 맞추지 않는다.
+
+입력 계약과 결과는
+`data/herd/ticker_disjoint_earnings_oos_expansion_v2.json`,
+`data/reports/ticker_disjoint_earnings_oos_expansion_v2.json`에 보존한다.

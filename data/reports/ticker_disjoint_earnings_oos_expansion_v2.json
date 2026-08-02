@@ -1,0 +1,27 @@
+{
+  "report_version": "TICKER_DISJOINT_EARNINGS_OOS_EXPANSION_V2",
+  "status": "EXPANSION_INPUT_READY",
+  "candidate_tickers": 25,
+  "eligible_tickers": 21,
+  "state_rows": 12541,
+  "first_state_date": "2013-10-18",
+  "last_state_date": "2026-07-31",
+  "minimum_ticker_gate": 20,
+  "minimum_ticker_gate_passed": true,
+  "price_exclusions": {
+    "CMA": "PRICE_COLLECTION_FAILED",
+    "FRC": "PRICE_COLLECTION_FAILED",
+    "GPS": "PRICE_COLLECTION_FAILED",
+    "SBNY": "INSUFFICIENT_PRICE_SESSIONS_OR_REUSED_TICKER"
+  },
+  "snapshot_collection_failures": {
+    "CMA": "LongPriceSnapshotError: CMA: missing columns ['Dividends', 'Stock Splits']",
+    "FRC": "LongPriceSnapshotError: FRC: missing columns ['Dividends', 'Stock Splits']",
+    "GPS": "LongPriceSnapshotError: GPS: missing columns ['Dividends', 'Stock Splits']"
+  },
+  "survivorship_safe": false,
+  "blind_holdout": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "input_lock_path": "data/reports/ticker_disjoint_earnings_oos_expansion_v2_lock.json"
+}

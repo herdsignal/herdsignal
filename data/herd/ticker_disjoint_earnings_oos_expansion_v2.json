@@ -1,0 +1,44 @@
+{
+  "contract_version": "TICKER_DISJOINT_EARNINGS_OOS_EXPANSION_V2",
+  "status": "LOCKED_BEFORE_PRICE_AND_EARNINGS_OUTCOMES",
+  "purpose": "Expand the locked earnings-reaction falsification sample with verified former S&P 500 constituents",
+  "selection": {
+    "membership_action": "REMOVE",
+    "membership_status": "VERIFIED_OFFICIAL_EVENT",
+    "require_event_time_cik": true,
+    "require_official_sp_release_sector_row": true,
+    "exclude_locked_439": true,
+    "exclude_v1_disjoint_tickers": true,
+    "minimum_price_sessions": 1008,
+    "future_return_selection_forbidden": true
+  },
+  "price_period": {
+    "start_inclusive": "2012-01-03",
+    "end_exclusive": "2026-08-02"
+  },
+  "inputs": [
+    {
+      "path": "data/reference/point_in_time/constituent-pipeline-v11-20260720/integrated_event_ledger.csv",
+      "sha256": "b51cd88c05b086ad4e43f11c5aff521b1eef696d506e4cb1980a7196f4280c85"
+    },
+    {
+      "path": "data/reports/herd_transition_s1_latest.csv",
+      "sha256": "9fa1c554256a0c88b004334070e387ecb6c3031c9119d76dc50ba0f2cb12b6fb"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_oos_universe_v1.csv",
+      "sha256": "21a17ba1111465e39c71508f1ca5459e7f8f309e124e3e4645ac357bed31b527"
+    },
+    {
+      "path": "data/reference/point_in_time/spglobal-releases-merged-v4-20160718-20260717/manifest.json",
+      "sha256": "1baad0f3e047d5b08ca7df20fd0bbfff9c5bb4e8c4efbff8c562ce82bfe9c2ff"
+    }
+  ],
+  "limitations": {
+    "community_baseline_used_for_membership_replay": true,
+    "survivorship_safe": false,
+    "blind_holdout": false,
+    "claim": "candidate elimination only",
+    "operational_action_ratio": 0.0
+  }
+}
