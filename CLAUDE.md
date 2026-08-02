@@ -13,7 +13,8 @@ HerdSignal은 미국 주식을 장기 보유하는 사용자가 군중의 분산
 - 검증된 행동 모델이 생기기 전 사용자 출력은 `HOLD·0%`다.
 - v4와 v6.1은 레거시 비교·재현 자료이며 새 모델의 운영 근거가 아니다.
 
-제품·모델 경계는 `docs/HERD_MODEL_CHARTER.md`, 채택 조건은
+제품 목적과 장기 운용 판단 구조는 `docs/HERD_LONG_TERM_OPERATING_SYSTEM.md`,
+모델 경계는 `docs/HERD_MODEL_CHARTER.md`, 채택 조건은
 `docs/HERD_ADOPTION_POLICY.md`, 최신 연구 판정은
 `docs/HERD_RESEARCH_STATUS.md`를 따른다.
 

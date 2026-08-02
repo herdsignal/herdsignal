@@ -1,5 +1,7 @@
 # HERD S1 제품화 계획
 
+상태: `COMPLETED`
+
 기준일: 2026-07-25
 
 목표는 연구 산출물 `HERD_STATE_S1`과 `HERD_TRANSITION_S1`을 개인용
