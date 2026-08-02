@@ -33,9 +33,10 @@ class LongTermOperatingReviewServiceTest {
                 .thenReturn(Map.of("NVDA", new PortfolioActionContext(true, 0.20, 0.75, 0.70)));
 
         PersonalOperatingReviewResponse response = new LongTermOperatingReviewService(
-                objectiveService, currentUser, profileService, portfolioService).review("NVDA");
+                objectiveService, currentUser, profileService, portfolioService,
+                new DecisionSynthesisPolicy()).review("NVDA");
 
-        assertThat(response.status()).isEqualTo("OBSERVATION_ONLY");
+        assertThat(response.status()).isEqualTo("OBSERVE");
         assertThat(response.portfolioFit().held()).isTrue();
         assertThat(response.portfolioFit().currentTickerWeight()).isEqualTo(0.20);
         assertThat(response.mandate().userMaximumActionRatio()).isEqualByComparingTo("0.15");
@@ -60,7 +61,8 @@ class LongTermOperatingReviewServiceTest {
         when(portfolioService.getContexts("user-1", List.of("NVDA"), profile)).thenReturn(Map.of());
 
         PersonalOperatingReviewResponse response = new LongTermOperatingReviewService(
-                objectiveService, currentUser, profileService, portfolioService).review("NVDA");
+                objectiveService, currentUser, profileService, portfolioService,
+                new DecisionSynthesisPolicy()).review("NVDA");
 
         assertThat(response.status()).isEqualTo("INSUFFICIENT_DATA");
         assertThat(response.riskVeto().codes()).contains("DATA_GATE_BLOCKED");

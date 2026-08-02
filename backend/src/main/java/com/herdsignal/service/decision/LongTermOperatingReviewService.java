@@ -20,6 +20,7 @@ public class LongTermOperatingReviewService {
     private final CurrentUserService currentUserService;
     private final InvestorProfileService investorProfileService;
     private final PortfolioActionContextService portfolioActionContextService;
+    private final DecisionSynthesisPolicy synthesisPolicy;
 
     public PersonalOperatingReviewResponse review(String ticker) {
         ObjectiveReviewResponse objective = objectiveEvidenceService.review(ticker);
@@ -29,17 +30,20 @@ public class LongTermOperatingReviewService {
                         userId, List.of(objective.ticker()), profile)
                 .getOrDefault(objective.ticker(), PortfolioActionContext.unavailable());
         RiskVeto veto = riskVeto(objective);
+        PortfolioFitAssessment portfolioFit = portfolioFit(context);
+        DecisionSynthesis synthesis = synthesisPolicy.synthesize(objective, portfolioFit, veto);
 
         return new PersonalOperatingReviewResponse(
-                objective.dataGate().open() ? "OBSERVATION_ONLY" : "INSUFFICIENT_DATA",
+                synthesis.decision().name(),
                 objective.ticker(),
                 objective,
                 OperatingMandate.from(profile),
-                portfolioFit(context),
+                portfolioFit,
                 veto,
-                false,
-                "OBSERVE",
-                0.0
+                synthesis,
+                synthesis.actionAuthorized(),
+                synthesis.operationalAction(),
+                synthesis.operationalActionRatio()
         );
     }
 

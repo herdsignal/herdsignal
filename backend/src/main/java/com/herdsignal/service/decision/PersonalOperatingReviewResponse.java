@@ -8,6 +8,7 @@ public record PersonalOperatingReviewResponse(
         OperatingMandate mandate,
         PortfolioFitAssessment portfolioFit,
         RiskVeto riskVeto,
+        DecisionSynthesis synthesis,
         boolean directionPrediction,
         String operationalAction,
         double operationalActionRatio
