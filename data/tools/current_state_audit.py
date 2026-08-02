@@ -14,6 +14,8 @@ ACTION_HYPOTHESIS = ROOT / "data" / "herd" / "rush_negative_earnings_reaction_pr
 ACTION_HYPOTHESIS_REPORT = ROOT / "data" / "reports" / "rush_negative_earnings_reaction_oos_v1.json"
 HISTORICAL_SCREEN_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_earnings_reaction_oos_v1.json"
 PROSPECTIVE_GATE_REPORT = ROOT / "data" / "reports" / "rush_earnings_prospective_confirmation_gate_v1.json"
+EXPANSION_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_earnings_oos_expansion_v2.json"
+EXPANSION_SEC_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_sec_earnings_census_v2.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -29,6 +31,8 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     hypothesis_report = _load(root / ACTION_HYPOTHESIS_REPORT.relative_to(ROOT))
     historical_screen = _load(root / HISTORICAL_SCREEN_REPORT.relative_to(ROOT))
     prospective_gate = _load(root / PROSPECTIVE_GATE_REPORT.relative_to(ROOT))
+    expansion = _load(root / EXPANSION_REPORT.relative_to(ROOT))
+    expansion_sec = _load(root / EXPANSION_SEC_REPORT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -77,6 +81,14 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("prospective outcomes opened after a failed historical screen")
     if prospective_gate["operational_action_ratio"] != 0.0:
         contradictions.append("prospective gate unexpectedly has operational authority")
+    if expansion["status"] != "EXPANSION_INPUT_READY":
+        contradictions.append("former-constituent expansion input is not ready")
+    if expansion_sec["status"] != "SEC_HISTORY_READY":
+        contradictions.append("former-constituent SEC history is incomplete")
+    if expansion_sec["covered_tickers"] != expansion["eligible_tickers"]:
+        contradictions.append("former-constituent universe and SEC coverage disagree")
+    if expansion_sec["operational_action_ratio"] != 0.0:
+        contradictions.append("former-constituent SEC census unexpectedly has action authority")
 
     pending_source_review = decision["new_source_candidate"]["pending_source_decisions"]
     return {
@@ -123,6 +135,16 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "prospective_mature_events": hypothesis_report["mature_events"],
             "direction_evidence_admitted": historical_screen["direction_evidence_admitted"],
             "operational_action_ratio": prospective_gate["operational_action_ratio"],
+        },
+        "independent_expansion": {
+            "status": expansion_sec["status"],
+            "eligible_tickers": expansion["eligible_tickers"],
+            "sec_covered_tickers": expansion_sec["covered_tickers"],
+            "sec_events": expansion_sec["events"],
+            "first_acceptance": expansion_sec["first_acceptance"],
+            "last_acceptance": expansion_sec["last_acceptance"],
+            "identity_corrections": expansion["sec_identity_corrections"],
+            "outcomes_open": False,
         },
         "contradictions": contradictions,
     }

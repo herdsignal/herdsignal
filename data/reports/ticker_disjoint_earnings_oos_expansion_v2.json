@@ -14,6 +14,11 @@
     "GPS": "PRICE_COLLECTION_FAILED",
     "SBNY": "INSUFFICIENT_PRICE_SESSIONS_OR_REUSED_TICKER"
   },
+  "sec_identity_corrections": 2,
+  "sec_identity_corrected_tickers": [
+    "WHR",
+    "ZION"
+  ],
   "snapshot_collection_failures": {
     "CMA": "LongPriceSnapshotError: CMA: missing columns ['Dividends', 'Stock Splits']",
     "FRC": "LongPriceSnapshotError: FRC: missing columns ['Dividends', 'Stock Splits']",

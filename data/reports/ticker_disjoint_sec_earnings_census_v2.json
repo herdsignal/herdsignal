@@ -1,0 +1,18 @@
+{
+  "report_version": "TICKER_DISJOINT_SEC_EARNINGS_CENSUS_V2",
+  "status": "SEC_HISTORY_READY",
+  "universe_tickers": 21,
+  "covered_tickers": 21,
+  "events": 2070,
+  "first_acceptance": "2012-01-11T16:29:53Z",
+  "last_acceptance": "2026-07-31T20:12:04Z",
+  "catalog_path": "data/reports/ticker_disjoint_sec_earnings_census_v2.csv",
+  "catalog_sha256": "0591ef98c28feb96b066af59624272a3b64b6eb85e7e0887e161470a99b1b9ef",
+  "ledger_sha256": "faf210dd60e0f14ca961c14bd111f4a05a5a62db838e4f55d59f2f7c14de3061",
+  "collection": null,
+  "future_price_outcomes_read": false,
+  "survivorship_safe": false,
+  "blind_holdout": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

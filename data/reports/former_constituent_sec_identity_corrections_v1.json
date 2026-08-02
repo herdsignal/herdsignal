@@ -1,0 +1,16 @@
+{
+  "report_version": "FORMER_CONSTITUENT_SEC_IDENTITY_CORRECTIONS_V1",
+  "status": "SEC_PRIMARY_IDENTITY_CORRECTIONS_READY",
+  "disagreements": 2,
+  "verified_corrections": 2,
+  "tickers": [
+    "WHR",
+    "ZION"
+  ],
+  "corrections_path": "data/reports/former_constituent_sec_identity_corrections_v1.csv",
+  "corrections_sha256": "d8114190880f661bd15383411170ff9cc49e599360018beec5fe34168512cca0",
+  "snapshot_manifest_sha256": "6669447a17c7da2de2e65fc15e65bd79e4353b83a510759d6bc5376be57583a9",
+  "future_price_outcomes_read": false,
+  "future_earnings_outcomes_read": false,
+  "operational_action_ratio": 0.0
+}

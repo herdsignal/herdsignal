@@ -232,6 +232,14 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                     },
                 },
             ) as record_prospective,
+            patch.object(
+                herd_scheduler,
+                "_collect_sec_earnings_phase",
+                return_value=(
+                    {"status": "SUCCESS", "count": 0},
+                    {"status": "SEC_EARNINGS_LEDGER_UPDATED", "appended": 0},
+                ),
+            ),
             patch.object(herd_scheduler, "_finish_scheduler_run") as finish,
             patch.object(herd_scheduler, "_notify_scheduler_result") as notify,
         ):
@@ -256,6 +264,10 @@ class SchedulerRunHistoryTest(unittest.TestCase):
                     "pending": 0,
                 },
                 "outcomeCollectionFailed": [],
+            },
+            "secEarningsIntake": {
+                "status": "SEC_EARNINGS_LEDGER_UPDATED",
+                "appended": 0,
             },
         })
         build_observation.assert_called_once_with({"AAPL": ANY}, ["AAPL"])

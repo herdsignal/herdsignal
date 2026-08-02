@@ -4,6 +4,7 @@ from pathlib import Path
 import pandas as pd
 
 from herd.ticker_disjoint_earnings_oos_expansion_v2 import (
+    apply_identity_corrections,
     extract_official_sector,
     select_former_constituents,
 )
@@ -43,3 +44,20 @@ def test_rejects_tampered_official_evidence(tmp_path: Path):
     path.write_text("changed")
 
     assert extract_official_sector(path, "X") is None
+
+
+def test_applies_only_sec_primary_cover_identity_correction():
+    candidates = pd.DataFrame([{
+        "ticker": "WHR", "cik": "0001170279", "verified_removal_date": "2024-03-18",
+        "identity_basis": "VERIFIED_S&P_REMOVAL_EVENT_CIK",
+    }])
+    corrections = pd.DataFrame([{
+        "ticker": "WHR", "event_candidate_cik": "0001170279", "verified_cik": "0000106640",
+        "verified_removal_date": "2024-03-18", "before_accession": "before",
+        "after_accession": "after", "identity_basis": "SEC_PRIMARY_COVER_TAGGED_SYMBOL_CONTINUITY",
+    }])
+
+    corrected = apply_identity_corrections(candidates, corrections)
+
+    assert corrected.iloc[0]["cik"] == "0000106640"
+    assert corrected.iloc[0]["identity_basis"] == "SEC_PRIMARY_COVER_TAGGED_SYMBOL_CONTINUITY"

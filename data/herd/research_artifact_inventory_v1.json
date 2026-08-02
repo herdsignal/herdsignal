@@ -199,6 +199,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/former_constituent_sec_identity_corrections_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/herd/herd_candidate_protocol_v2.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -871,6 +875,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/ticker_disjoint_sec_earnings_census_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/timing_hypothesis_registry.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1161,6 +1169,14 @@
     {
       "path": "data/reports/fixed_policy_net_value_target_v1.json",
       "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/former_constituent_sec_identity_corrections_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/former_constituent_sec_identity_corrections_v1.json",
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/herd_candidate_features_v2.csv",
@@ -2657,6 +2673,14 @@
     {
       "path": "data/reports/ticker_disjoint_sec_earnings_census_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_sec_earnings_census_v2.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_sec_earnings_census_v2.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/timing_evidence_oos_v2.csv",

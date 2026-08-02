@@ -1,0 +1,21 @@
+{
+  "contract_version": "TICKER_DISJOINT_SEC_EARNINGS_CENSUS_V2",
+  "status": "LOCKED_BEFORE_REACTION_OUTCOMES",
+  "universe": {
+    "path": "data/reports/ticker_disjoint_earnings_oos_expansion_v2.csv",
+    "sha256": "373e0f03e5c5cb04b4ec260b3a1d4d1991d6dc12a304333fa8e2a9f05e02fc8d"
+  },
+  "input_lock": {
+    "path": "data/reports/ticker_disjoint_earnings_oos_expansion_v2_lock.json",
+    "sha256": "c7f6db706e7705dd5b30a5c596517f20c10d251a2c2f687cd123287bb420973b"
+  },
+  "accepted_on_or_after": "2012-01-01",
+  "source": "SEC EDGAR submissions API including issuer historical submission files",
+  "eligible_forms": ["8-K Item 2.02", "8-K/A Item 2.02", "10-Q", "10-Q/A"],
+  "information_time": "SEC acceptanceDateTime",
+  "storage": "hash-chained append-only JSONL keyed by ticker plus CIK plus accession, followed by deterministic CSV materialization",
+  "future_price_outcomes_read": false,
+  "survivorship_safe": false,
+  "blind_holdout": false,
+  "operational_action_ratio": 0.0
+}

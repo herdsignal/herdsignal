@@ -5,7 +5,8 @@
   "selection": {
     "membership_action": "REMOVE",
     "membership_status": "VERIFIED_OFFICIAL_EVENT",
-    "require_event_time_cik": true,
+    "require_event_time_cik_candidate": true,
+    "apply_sec_primary_cover_identity_corrections": true,
     "require_official_sp_release_sector_row": true,
     "exclude_locked_439": true,
     "exclude_v1_disjoint_tickers": true,
@@ -32,6 +33,14 @@
     {
       "path": "data/reference/point_in_time/spglobal-releases-merged-v4-20160718-20260717/manifest.json",
       "sha256": "1baad0f3e047d5b08ca7df20fd0bbfff9c5bb4e8c4efbff8c562ce82bfe9c2ff"
+    },
+    {
+      "path": "data/reports/former_constituent_sec_identity_corrections_v1.csv",
+      "sha256": "d8114190880f661bd15383411170ff9cc49e599360018beec5fe34168512cca0"
+    },
+    {
+      "path": "data/reports/former_constituent_sec_identity_corrections_v1.json",
+      "sha256": "95c398735c6edd211a1581ccf61c1c5f3bec7bc55728752f018ca13d1cf9badb"
     }
   ],
   "limitations": {

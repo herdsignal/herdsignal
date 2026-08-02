@@ -161,6 +161,40 @@ def build_candidates(output: Path = CANDIDATE_OUTPUT) -> dict[str, Any]:
     }
 
 
+def apply_identity_corrections(candidates: pd.DataFrame, corrections: pd.DataFrame) -> pd.DataFrame:
+    """Replace only CIKs backed by locked SEC tagged-cover continuity evidence."""
+    corrected = candidates.copy()
+    if corrections.empty:
+        return corrected
+    required = {
+        "ticker", "event_candidate_cik", "verified_cik", "verified_removal_date",
+        "before_accession", "after_accession", "identity_basis",
+    }
+    if not required.issubset(corrections.columns):
+        raise ExpansionUniverseError("identity correction ledger schema is incomplete")
+    if corrections["ticker"].duplicated().any() or corrections["verified_cik"].duplicated().any():
+        raise ExpansionUniverseError("identity correction ledger is ambiguous")
+    corrected["cik"] = corrected["cik"].astype(str).str.zfill(10)
+    for row in corrections.itertuples(index=False):
+        matches = corrected["ticker"].eq(row.ticker)
+        if matches.sum() != 1:
+            raise ExpansionUniverseError(f"identity correction target missing: {row.ticker}")
+        current = corrected.loc[matches].iloc[0]
+        if (
+            current["cik"] != str(row.event_candidate_cik).zfill(10)
+            or str(current["verified_removal_date"]) != str(row.verified_removal_date)
+            or row.identity_basis != "SEC_PRIMARY_COVER_TAGGED_SYMBOL_CONTINUITY"
+            or not row.before_accession
+            or not row.after_accession
+        ):
+            raise ExpansionUniverseError(f"identity correction lineage mismatch: {row.ticker}")
+        corrected.loc[matches, "cik"] = str(row.verified_cik).zfill(10)
+        corrected.loc[matches, "identity_basis"] = row.identity_basis
+    if corrected["cik"].duplicated().any():
+        raise ExpansionUniverseError("corrected CIK identity is not unique")
+    return corrected
+
+
 def collect_prices(snapshot_id: str, snapshot_root: Path) -> Path:
     contract = load_expansion_contract()
     candidates = pd.read_csv(CANDIDATE_OUTPUT)
@@ -182,6 +216,11 @@ def finalize_snapshot(snapshot: Path) -> dict[str, Any]:
         raise ExpansionUniverseError("snapshot must be inside the repository")
     manifest = verify_snapshot(snapshot)
     candidates = pd.read_csv(CANDIDATE_OUTPUT, dtype={"cik": str})
+    corrections = pd.read_csv(
+        ROOT / "data/reports/former_constituent_sec_identity_corrections_v1.csv",
+        dtype={"event_candidate_cik": str, "verified_cik": str},
+    )
+    candidates = apply_identity_corrections(candidates, corrections)
     minimum = int(contract["selection"]["minimum_price_sessions"])
     records = []
     price_exclusions: dict[str, str] = {}
@@ -261,6 +300,8 @@ def finalize_snapshot(snapshot: Path) -> dict[str, Any]:
         "minimum_ticker_gate": 20,
         "minimum_ticker_gate_passed": len(selected) >= 20,
         "price_exclusions": dict(sorted(price_exclusions.items())),
+        "sec_identity_corrections": len(corrections),
+        "sec_identity_corrected_tickers": sorted(corrections["ticker"].tolist()),
         "snapshot_collection_failures": manifest["failures"],
         "survivorship_safe": False,
         "blind_holdout": False,

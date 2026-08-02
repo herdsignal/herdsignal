@@ -1,0 +1,30 @@
+{
+  "protocol_version": "FORMER_CONSTITUENT_SEC_IDENTITY_CORRECTIONS_V1",
+  "status": "LOCKED_BEFORE_SEC_PRIMARY_COLLECTION",
+  "purpose": "Resolve ticker-to-CIK disagreements in the former-constituent expansion without reading price or earnings outcomes",
+  "candidate_input": {
+    "path": "data/reports/ticker_disjoint_earnings_oos_expansion_v2_candidates.csv",
+    "sha256": "7aee8f3967965a2dba7a2553a83a650b81ef092bc8f01b708ce443d08f6443b5"
+  },
+  "current_sec_mapping": {
+    "path": "data/reference/sec/sec-current-20260719/ticker_cik_current.csv",
+    "sha256": "0b2da960851af7d672cbd8e9b4bda8523ee587dbc05b1ed45186efe157063993",
+    "role": "CANDIDATE_DISCOVERY_ONLY"
+  },
+  "official_sources": {
+    "submissions": "https://data.sec.gov/submissions/CIK{cik}.json",
+    "submission_history": "https://data.sec.gov/submissions/{name}",
+    "primary_document": "https://www.sec.gov/Archives/edgar/data/{cik}/{accession}/{document}"
+  },
+  "verification": {
+    "eligible_forms": ["10-K", "10-K/A", "10-Q", "10-Q/A"],
+    "window_days": 370,
+    "require_tagged_symbol_before_removal": true,
+    "require_tagged_symbol_after_removal": true,
+    "plain_text_symbol_forbidden": true,
+    "current_mapping_alone_is_not_proof": true
+  },
+  "future_price_outcomes_read": false,
+  "future_earnings_outcomes_read": false,
+  "operational_action_ratio": 0.0
+}
