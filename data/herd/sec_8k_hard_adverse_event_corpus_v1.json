@@ -1,0 +1,70 @@
+{
+  "protocol_version": "SEC_8K_HARD_ADVERSE_EVENT_CORPUS_V1",
+  "status": "LOCKED_AFTER_SOURCE_COVERAGE_BEFORE_PRICE_OUTCOMES",
+  "as_of": "2026-08-02",
+  "objective": "Freeze the eligible SEC Form 8-K hard-adverse event metadata into one deterministic point-in-time ledger and audit time-valid ticker linkage.",
+  "locked_inputs": [
+    {
+      "role": "FEASIBILITY_PROTOCOL",
+      "path": "data/herd/distinct_public_pit_information_feasibility_v1.json",
+      "sha256": "bbc30e5a600a4190e14fd497e81d3931749ba235d6939775045db27fdf8db98b"
+    },
+    {
+      "role": "FEASIBILITY_REPORT",
+      "path": "data/reports/distinct_public_pit_information_feasibility_v1.json",
+      "sha256": "dd6d8ea5abb40ca43a2ecf2fb38a684f8597e54795c425d15d4d2adf99b885dc"
+    },
+    {
+      "role": "TIME_VALID_CIK_LEDGER",
+      "path": "data/reports/sec_time_valid_ticker_cik_intervals_v5.csv",
+      "sha256": "4b10a272f1e5145cc1d73bdf6f91aace99502766d0a2d2c57cb30a206d6b9eed"
+    }
+  ],
+  "expected_source_inventory": {
+    "event_filings": 947,
+    "event_issuers": 263,
+    "first_event_date": "2004-09-08",
+    "last_event_date": "2026-07-07",
+    "acceptance_timestamp_ratio": 1.0
+  },
+  "identity_linkage_gate": {
+    "minimum_time_valid_mapped_events": 100,
+    "minimum_time_valid_mapped_issuers": 40,
+    "minimum_time_valid_history_years": 10.0,
+    "maximum_ambiguous_event_count": 0,
+    "all_required": true
+  },
+  "output": {
+    "ledger": "data/reports/sec_8k_hard_adverse_event_corpus_v1.csv",
+    "report": "data/reports/sec_8k_hard_adverse_event_corpus_v1.json"
+  },
+  "event_time_policy": {
+    "point_in_time": "SEC_ACCEPTANCE_DATETIME",
+    "same_session_use": false,
+    "earliest_research_use": "NEXT_TRADING_SESSION",
+    "amendment_policy": "PRESERVE_8K_A_AS_SEPARATE_DISCLOSURE_WITH_SHARED_ITEM_SEMANTICS",
+    "multi_item_policy": "PRESERVE_ALL_MATCHED_ITEMS_ON_ONE_ACCESSION"
+  },
+  "next_gate": {
+    "if_identity_linkage_passes": "SEC_8K_HARD_ADVERSE_EVENT_SOURCE_REVIEW_V1",
+    "if_identity_linkage_fails": "TIME_VALID_TICKER_CIK_LEDGER_EXTENSION_REQUIRED",
+    "manual_source_precision_required": true,
+    "minimum_wilson_95_lower_bound": 0.9
+  },
+  "forbidden": [
+    "READ_PRICE_OR_RETURN_OUTCOMES",
+    "LABEL_DIRECTION",
+    "TREAT_EVENT_AS_PROFIT_TAKE_SIGNAL",
+    "TREAT_EVENT_AS_REENTRY_SIGNAL",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "ENABLE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

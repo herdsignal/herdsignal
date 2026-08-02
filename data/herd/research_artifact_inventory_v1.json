@@ -539,6 +539,14 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/sec_8k_hard_adverse_event_corpus_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/sec_8k_identity_extension_queue_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/herd/sec_auxiliary_veto_authority_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1689,6 +1697,22 @@
     {
       "path": "data/reports/sec_8k_guidance_ticker_year_coverage_v1.csv",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_identity_extension_queue_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_identity_extension_queue_v1.json",
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/sec_auxiliary_veto_authority_v1.json",

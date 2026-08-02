@@ -157,7 +157,13 @@
       "data/reports/profit_giveback_policy_v1.json",
       "data/reports/profit_giveback_policy_v1_events.csv",
       "data/herd/distinct_public_pit_information_feasibility_v1.json",
-      "data/reports/distinct_public_pit_information_feasibility_v1.json"
+      "data/reports/distinct_public_pit_information_feasibility_v1.json",
+      "data/herd/sec_8k_hard_adverse_event_corpus_v1.json",
+      "data/reports/sec_8k_hard_adverse_event_corpus_v1.csv",
+      "data/reports/sec_8k_hard_adverse_event_corpus_v1.json",
+      "data/herd/sec_8k_identity_extension_queue_v1.json",
+      "data/reports/sec_8k_identity_extension_queue_v1.csv",
+      "data/reports/sec_8k_identity_extension_queue_v1.json"
     ],
     "REJECTED": [
       "data/herd/rush_margin_cash_divergence_preregistration_v1.json",

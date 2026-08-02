@@ -27,6 +27,24 @@ PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_distinct_public_pit_inf
 수익률, Rush 결과는 읽지 않는다. coverage 통과는 원문 corpus 구축만
 허용하며 방향 가설과 행동 권한은 계속 차단한다.
 
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_8k_hard_adverse_event_corpus_v1
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_8k_hard_adverse_event_corpus_v1.py
+```
+
+동일 source inventory를 accession 기준으로 고정하고 filing date가 시점 유효
+ticker–CIK 구간 안에 들어갈 때만 ticker를 연결한다. 현재 ticker 소급이나
+회사명 fuzzy match는 하지 않는다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_8k_identity_extension_queue_v1
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_8k_identity_extension_queue_v1.py
+```
+
+원장의 `UNMAPPED`·`AMBIGUOUS` 762건만 대상으로 SEC primary document URL을
+결정적으로 생성한다. 큐는 모두 `PENDING`이며 원문 수집 전 symbol을 임의로
+채우지 않는다.
+
 ## Rush 이익률–현금흐름 괴리 사전등록
 
 ```bash

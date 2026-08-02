@@ -77,7 +77,13 @@ def _columns(payload: dict[str, Any]) -> dict[str, list[Any]]:
 
 def _filing_rows(payload: dict[str, Any]) -> Iterable[dict[str, str]]:
     columns = _columns(payload)
-    required = ("accessionNumber", "filingDate", "acceptanceDateTime", "form")
+    required = (
+        "accessionNumber",
+        "filingDate",
+        "acceptanceDateTime",
+        "form",
+        "primaryDocument",
+    )
     count = len(columns.get("accessionNumber", []))
     if count == 0:
         return
@@ -93,34 +99,19 @@ def _filing_rows(payload: dict[str, Any]) -> Iterable[dict[str, str]]:
             "accepted_at": str(columns["acceptanceDateTime"][index]),
             "form": str(columns["form"][index]),
             "items": str(items[index]),
+            "primary_document": str(columns["primaryDocument"][index]),
         }
 
 
-def audit(protocol: dict[str, Any]) -> dict[str, Any]:
-    if (
-        protocol.get("protocol_version") != VERSION
-        or protocol.get("status") != "LOCKED_BEFORE_COVERAGE_AUDIT"
-        or protocol.get("candidate", {}).get("economic_role")
-        != "CORPORATE_DAMAGE_VETO_RESEARCH_ONLY"
-    ):
-        raise DistinctPublicPitFeasibilityError("feasibility protocol is not locked")
-    authority = protocol.get("authority", {})
-    if authority != {
-        "price_outcomes_opened": False,
-        "direction_hypothesis_allowed": False,
-        "herd_formula_change_allowed": False,
-        "blind_holdout_access": False,
-        "operational_action_ratio": 0.0,
-    }:
-        raise DistinctPublicPitFeasibilityError("unsupported research authority granted")
-
-    _validate_locked_inputs(protocol)
+def collect_candidate_events(
+    protocol: dict[str, Any],
+) -> tuple[set[str], set[str], list[dict[str, Any]]]:
+    """Return the deterministic event inventory used by later corpus stages."""
     ledger_ciks = _ledger_ciks(protocol)
     eligible_forms = set(protocol["candidate"]["forms"])
     eligible_items = set(protocol["candidate"]["items"])
     start = protocol["audit_period"]["start"]
     end = protocol["audit_period"]["end"]
-
     submission_ciks: set[str] = set()
     events: dict[str, dict[str, Any]] = {}
     for path in _submission_paths(protocol):
@@ -148,8 +139,30 @@ def audit(protocol: dict[str, Any]) -> dict[str, Any]:
                     "matched_items": matched,
                 },
             )
-
     rows = sorted(events.values(), key=lambda row: (row["accepted_at"], row["accession_number"]))
+    return ledger_ciks, submission_ciks, rows
+
+
+def audit(protocol: dict[str, Any]) -> dict[str, Any]:
+    if (
+        protocol.get("protocol_version") != VERSION
+        or protocol.get("status") != "LOCKED_BEFORE_COVERAGE_AUDIT"
+        or protocol.get("candidate", {}).get("economic_role")
+        != "CORPORATE_DAMAGE_VETO_RESEARCH_ONLY"
+    ):
+        raise DistinctPublicPitFeasibilityError("feasibility protocol is not locked")
+    authority = protocol.get("authority", {})
+    if authority != {
+        "price_outcomes_opened": False,
+        "direction_hypothesis_allowed": False,
+        "herd_formula_change_allowed": False,
+        "blind_holdout_access": False,
+        "operational_action_ratio": 0.0,
+    }:
+        raise DistinctPublicPitFeasibilityError("unsupported research authority granted")
+
+    _validate_locked_inputs(protocol)
+    ledger_ciks, submission_ciks, rows = collect_candidate_events(protocol)
     accepted_rows = [row for row in rows if row["accepted_at"]]
     event_dates = [date.fromisoformat(row["filing_date"]) for row in rows]
     event_years = sorted({value.year for value in event_dates})

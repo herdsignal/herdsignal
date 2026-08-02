@@ -63,6 +63,8 @@ tests/        운영 및 연구 계약 회귀
   `docs/HERD_RESEARCH_STATUS.md` 상단을 기준으로 한다.
 - Form 8-K 2.04·2.05·2.06·4.02는 source coverage만 통과한 기업 훼손
   veto 후보다. corpus·원문 검수·독립 OOS 전에는 행동 근거로 사용하지 않는다.
+- 사건 원장 947건 중 시점 유효 ticker 미연결·모호 762건은 SEC primary
+  document 보강 큐로 고정했다. 현재 ticker를 과거 사건에 소급하지 않는다.
 
 상세 계약:
 

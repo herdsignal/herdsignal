@@ -1,0 +1,28 @@
+{
+  "report_version": "SEC_8K_HARD_ADVERSE_EVENT_CORPUS_V1",
+  "status": "IMMUTABLE_CORPUS_READY_IDENTITY_EXTENSION_REQUIRED",
+  "protocol_sha256": "8db99d5c2549712a030588e2b3014d101de5dc4b0c6e4315bed79d7e4ee794d2",
+  "source_event_count": 947,
+  "source_issuer_count": 263,
+  "time_valid_mapped_events": 185,
+  "time_valid_mapped_issuers": 101,
+  "time_valid_mapping_ratio": 0.19535374868004224,
+  "time_valid_history_years": 4.996680287754026,
+  "ambiguous_event_count": 2,
+  "unmapped_event_count": 760,
+  "checks": {
+    "minimum_time_valid_mapped_events": true,
+    "minimum_time_valid_mapped_issuers": true,
+    "minimum_time_valid_history_years": false,
+    "maximum_ambiguous_event_count": false
+  },
+  "identity_linkage_passed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "herd_formula_change_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "TIME_VALID_TICKER_CIK_LEDGER_EXTENSION_REQUIRED",
+  "ledger_path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.csv",
+  "ledger_sha256": "2d1a9a1570a78df09427cc26448841bf14aa5f0384f44dc8a64873419e392688"
+}

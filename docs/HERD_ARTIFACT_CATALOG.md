@@ -87,6 +87,14 @@ SEC guidance, FINRA 최신 source fact를 합친 통합 패널도 가격·수익
 예측 증거가 아니므로 `DATA_PIPELINE`에 둔다. 불변 corpus와 원문 정확도
 검수를 통과하기 전에는 `ACTIVE` 방향 증거로 승격하지 않는다.
 
+후속 불변 원장 947건도 `DATA_PIPELINE`이다. 사건 메타데이터는 재현되지만
+시점 유효 ticker 연결이 185건·약 5년에 그쳐 장기 OOS 입력으로는 아직
+부적격이다.
+
+이 연결 공백을 해소하기 위한 SEC 원문 수집 큐 762건도 `DATA_PIPELINE`에
+둔다. 원문 해시와 trading symbol 판정이 끝나기 전에는 ticker–CIK 원장을
+갱신하거나 연구 방향을 열 수 없다.
+
 SEC 13F는 공식 bulk 53개와 대표 보통주 식별 원장을 거쳐 PIT 보유
 원장으로 정규화했다. 로컬 SQLite에는 269,600개 filing, 원시 보유
 22,870,933행, amendment 적용 후 유효 상태 22,993,808행이 있다.

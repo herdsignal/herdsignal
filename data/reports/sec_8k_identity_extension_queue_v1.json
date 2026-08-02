@@ -1,0 +1,21 @@
+{
+  "report_version": "SEC_8K_IDENTITY_EXTENSION_QUEUE_V1",
+  "status": "IDENTITY_EXTENSION_QUEUE_READY_NO_PRICE_OUTCOMES",
+  "protocol_sha256": "e34f72f23932402268c55e49fb48698622fdf561fbe1f06fabc447916852d9ed",
+  "queue_events": 762,
+  "queue_issuers": 223,
+  "priority_counts": {
+    "P0_AMBIGUOUS": 2,
+    "P1_TEN_YEAR_WINDOW": 273,
+    "P2_LONG_HISTORY": 487
+  },
+  "first_filing_date": "2004-09-08",
+  "last_filing_date": "2026-07-07",
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "SEC_8K_IDENTITY_PRIMARY_DOCUMENT_COLLECTION_V1",
+  "queue_path": "data/reports/sec_8k_identity_extension_queue_v1.csv",
+  "queue_sha256": "de167823ccdf7d2fe2bc9579e8c15b1fc873379d3207742cbaad05daa485657c"
+}

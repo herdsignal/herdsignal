@@ -175,6 +175,33 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 `data/herd/distinct_public_pit_information_feasibility_v1.json`,
 `data/reports/distinct_public_pit_information_feasibility_v1.json`이다.
 
+### 불변 사건 원장 V1
+
+- 947건을 accession 기준으로 중복 제거하고 CIK·접수시각·해당 항목·SEC
+  원문 URL을 한 행에 고정했다. 가격·수익률·방향 라벨 열은 없다.
+- 기존 시점 유효 ticker–CIK 원장으로 연결된 사건은 185건·101개 기업뿐이며
+  기간도 2021-06~2026-06 약 5년이다. 760건은 미연결, 2건은 복수 ticker
+  구간이 겹쳐 모호하다.
+- 따라서 원장은 재현 가능하지만 장기 OOS 연결 게이트는 실패했다. 현재
+  ticker를 과거에 소급하지 않고 당시 8-K 표지의 trading symbol을 직접
+  복원해야 한다.
+
+계약과 결과는 `data/herd/sec_8k_hard_adverse_event_corpus_v1.json`,
+`data/reports/sec_8k_hard_adverse_event_corpus_v1.json`이다.
+
+### ticker–CIK 보강 큐 V1
+
+- 미연결 760건과 모호 2건을 빠짐없이 SEC 8-K primary document 수집 큐로
+  고정했다. 223개 CIK, 총 762건이다.
+- 모호한 2건을 P0, 2016년 이후 10년 창 273건을 P1, 더 오래된 장기 이력
+  487건을 P2로 분리했다. 모든 행은 SEC 원문 URL만 사용하며 현재 ticker
+  보정과 fuzzy match는 금지한다.
+- 다음 단계는 이 큐의 원문 bytes와 SHA-256을 고정하고 표지 trading symbol만
+  추출하는 것이다. 가격 결과와 방향 라벨은 계속 닫혀 있다.
+
+계약과 큐는 `data/herd/sec_8k_identity_extension_queue_v1.json`,
+`data/reports/sec_8k_identity_extension_queue_v1.csv`다.
+
 ## Prospective Evidence Ledger V1
 
 - State S1 스케줄러가 생성한 동일 번들을 관측일별 불변 JSON envelope로

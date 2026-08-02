@@ -1,0 +1,69 @@
+{
+  "protocol_version": "SEC_8K_IDENTITY_EXTENSION_QUEUE_V1",
+  "status": "LOCKED_AFTER_CORPUS_IDENTITY_FAILURE",
+  "as_of": "2026-08-02",
+  "objective": "Create a complete result-blind collection queue for SEC primary documents needed to recover the trading symbol valid on each unmapped hard-adverse 8-K event date.",
+  "locked_inputs": [
+    {
+      "role": "CORPUS_PROTOCOL",
+      "path": "data/herd/sec_8k_hard_adverse_event_corpus_v1.json",
+      "sha256": "8db99d5c2549712a030588e2b3014d101de5dc4b0c6e4315bed79d7e4ee794d2"
+    },
+    {
+      "role": "CORPUS_REPORT",
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.json",
+      "sha256": "0e5b574c7c73dd79e4bc85f42a175e4bd24706b7aafd2797dd4e25acf2efe140"
+    },
+    {
+      "role": "CORPUS_LEDGER",
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.csv",
+      "sha256": "2d1a9a1570a78df09427cc26448841bf14aa5f0384f44dc8a64873419e392688"
+    }
+  ],
+  "expected_queue": {
+    "unmapped_events": 760,
+    "ambiguous_events": 2,
+    "total_events": 762
+  },
+  "priority_policy": [
+    {
+      "priority": "P0_AMBIGUOUS",
+      "rule": "IDENTITY_STATUS_AMBIGUOUS"
+    },
+    {
+      "priority": "P1_TEN_YEAR_WINDOW",
+      "rule": "UNMAPPED_AND_FILING_DATE_ON_OR_AFTER_2016_01_01"
+    },
+    {
+      "priority": "P2_LONG_HISTORY",
+      "rule": "UNMAPPED_AND_FILING_DATE_BEFORE_2016_01_01"
+    }
+  ],
+  "collection_policy": {
+    "allowed_host": "www.sec.gov",
+    "document": "PRIMARY_8K_DOCUMENT",
+    "preserve_bytes_and_sha256": true,
+    "extract_only_cover_trading_symbols": true,
+    "fuzzy_company_name_mapping": false,
+    "current_ticker_backfill": false
+  },
+  "output": {
+    "queue": "data/reports/sec_8k_identity_extension_queue_v1.csv",
+    "report": "data/reports/sec_8k_identity_extension_queue_v1.json"
+  },
+  "next_stage": "SEC_8K_IDENTITY_PRIMARY_DOCUMENT_COLLECTION_V1",
+  "forbidden": [
+    "READ_PRICE_OR_RETURN_OUTCOMES",
+    "USE_CURRENT_TICKER_AS_HISTORICAL_TICKER",
+    "FUZZY_MATCH_COMPANY_NAME",
+    "LABEL_EVENT_DIRECTION",
+    "AUTHORIZE_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ],
+  "authority": {
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
