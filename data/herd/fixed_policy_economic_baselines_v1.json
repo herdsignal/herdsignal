@@ -1,0 +1,125 @@
+{
+  "contract_version": "HERD_FIXED_POLICY_ECONOMIC_BASELINES_V1",
+  "status": "LOCKED_BEFORE_BASELINE_RESULTS",
+  "locked_at": "2026-08-02",
+  "objective": "ESTABLISH_NON_PREDICTIVE_ECONOMIC_FLOORS_FOR_FIXED_FIVE_PERCENT_POLICIES",
+  "inputs": [
+    {
+      "path": "data/herd/fixed_policy_net_value_target_v1.json",
+      "sha256": "4ec8ee4ba61efacbf63853b97c88aa2cc2e00755693d8b17e511becf80e09e4d"
+    },
+    {
+      "path": "data/reports/profit_take_success_label_v2.csv",
+      "sha256": "f17637313909580ee2b54c07653bcc6293eae38752b89aa6876d3d5f2f0a4ce4"
+    },
+    {
+      "path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json",
+      "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b",
+      "universe_role": "PRIMARY"
+    },
+    {
+      "path": "data/snapshots/yf-independent-current-sp500-20260721/manifest.json",
+      "sha256": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781",
+      "universe_role": "INDEPENDENT_CURRENT_CONSTITUENTS"
+    },
+    {
+      "path": "data/walk_forward/long-oos-v2-20260721/price_timing_6m.csv",
+      "sha256": "18d82f2edd3e9be0d0d5882dedc88c6763203f24c042a2e65909c6ffbee9b831"
+    }
+  ],
+  "event_population": {
+    "source": "SPARSE_STATE_S1_RUSH_ENTRIES",
+    "allowed_input_columns": [
+      "ticker",
+      "universe_role",
+      "signal_date",
+      "outcome_end",
+      "fold_id"
+    ],
+    "future_label_columns_forbidden_as_policy_inputs": true,
+    "maximum_events_per_ticker_year": 2,
+    "outcome_must_end_inside_fold": true,
+    "right_censored": "EXCLUDE_AND_REPORT"
+  },
+  "execution": {
+    "starting_ticker_shares": 1.0,
+    "starting_cash": 0.0,
+    "trim_fraction": 0.05,
+    "observation_session": "LAST_AVAILABLE_SESSION_ON_OR_BEFORE_SIGNAL_DATE",
+    "sale": "NEXT_SESSION_ADJUSTED_OPEN",
+    "terminal_session": "LOCKED_OUTCOME_END_126_SESSIONS",
+    "base_one_way_cost_bps": 10,
+    "stress_one_way_cost_bps": [25, 50],
+    "cash_yield": 0.0,
+    "full_exit_forbidden": true,
+    "leverage_forbidden": true
+  },
+  "policies": [
+    {
+      "id": "MATCHED_HOLD",
+      "track": "CONTROL",
+      "action": "NONE"
+    },
+    {
+      "id": "TRIM_KEEP_CASH",
+      "track": "SAME_TICKER_COMPLETED_CYCLE",
+      "action": "TRIM_FIVE_PERCENT_AND_HOLD_NET_CASH",
+      "completed_cycle": false
+    },
+    {
+      "id": "TRIM_REENTER_21",
+      "track": "SAME_TICKER_COMPLETED_CYCLE",
+      "action": "TRIM_FIVE_PERCENT_AND_REENTER_ALL_MATCHED_CASH",
+      "reentry_sessions_after_sale": 21,
+      "completed_cycle": true
+    },
+    {
+      "id": "TRIM_REENTER_63",
+      "track": "SAME_TICKER_COMPLETED_CYCLE",
+      "action": "TRIM_FIVE_PERCENT_AND_REENTER_ALL_MATCHED_CASH",
+      "reentry_sessions_after_sale": 63,
+      "completed_cycle": true
+    },
+    {
+      "id": "TRIM_TO_SPY_HORIZON",
+      "track": "RELATIVE_REBALANCE_REVIEW",
+      "action": "REALLOCATE_FIVE_PERCENT_NET_PROCEEDS_TO_SPY_AT_SAME_NEXT_OPEN",
+      "destination": "SPY",
+      "completed_cycle": true
+    }
+  ],
+  "target_formulas": {
+    "normalized_net_terminal_wealth_delta": "POLICY_TERMINAL_WEALTH_MINUS_HOLD_TERMINAL_WEALTH_DIVIDED_BY_EVENT_START_WEALTH",
+    "terminal_share_delta": "POLICY_TICKER_SHARES_MINUS_ONE",
+    "missed_upside_cost": "MAX_ZERO_NEGATIVE_NORMALIZED_NET_TERMINAL_WEALTH_DELTA",
+    "downside_avoided": "MAX_ZERO_ABS_HOLD_MAX_DRAWDOWN_MINUS_ABS_POLICY_MAX_DRAWDOWN",
+    "average_equity_exposure": "MEAN_EQUITY_MARKET_VALUE_DIVIDED_BY_POLICY_WEALTH",
+    "one_way_turnover": "SUM_ABSOLUTE_TRADED_NOTIONAL_DIVIDED_BY_EVENT_START_WEALTH"
+  },
+  "reporting": {
+    "report_every_policy": true,
+    "report_every_cost": true,
+    "report_universes_separately": true,
+    "report_folds_separately": true,
+    "baseline_selection": "NONE",
+    "candidate_must_be_compared_against_all_baselines": true
+  },
+  "forbidden": [
+    "USE_SUCCESS_LABEL_TO_SELECT_OR_EXECUTE_POLICY",
+    "SELECT_BEST_BASELINE_AS_ACTION_CANDIDATE",
+    "CHANGE_REENTRY_WAIT_AFTER_RESULTS",
+    "USE_FUTURE_LOW_OR_OUTCOME_PATH_FOR_EXECUTION",
+    "COUNT_KEEP_CASH_AS_COMPLETED_CYCLE",
+    "POOL_PRIMARY_AND_INDEPENDENT_FOR_ADMISSION",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ],
+  "firewall": {
+    "baseline_results_are_direction_evidence": false,
+    "baseline_results_authorize_action": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "survivorship_safe": false,
+    "blind_holdout_access": false
+  }
+}

@@ -187,6 +187,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/fixed_policy_economic_baselines_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/fixed_policy_net_value_target_v1.json",
       "status": "ACTIVE"
     },
@@ -784,7 +788,7 @@
     },
     {
       "path": "data/herd/simple_action_baselines_v1.json",
-      "status": "ACTIVE"
+      "status": "DIAGNOSTIC"
     },
     {
       "path": "data/herd/sparse_action_protocol_v1.json",
@@ -1077,6 +1081,10 @@
     {
       "path": "data/reports/finra_short_interest_ticker_coverage_v4.csv",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/fixed_policy_economic_baselines_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/fixed_policy_net_value_target_v1.json",
@@ -2452,11 +2460,11 @@
     },
     {
       "path": "data/reports/simple_action_baselines_v1.csv",
-      "status": "ACTIVE"
+      "status": "DIAGNOSTIC"
     },
     {
       "path": "data/reports/simple_action_baselines_v1.json",
-      "status": "ACTIVE"
+      "status": "DIAGNOSTIC"
     },
     {
       "path": "data/reports/survivorship_readiness_v1.json",
