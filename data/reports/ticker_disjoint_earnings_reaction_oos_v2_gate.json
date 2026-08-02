@@ -1,0 +1,10 @@
+{
+  "report_version": "TICKER_DISJOINT_EARNINGS_REACTION_OOS_V2_GATE",
+  "status": "HYPOTHESIS_REJECTED_NO_PROSPECTIVE_PROMOTION",
+  "independent_historical_oos_passed": false,
+  "prospective_confirmation_allowed": false,
+  "direction_evidence_admitted": false,
+  "candidate_action_enabled": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

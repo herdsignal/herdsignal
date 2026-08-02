@@ -16,6 +16,8 @@ HISTORICAL_SCREEN_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_earnings
 PROSPECTIVE_GATE_REPORT = ROOT / "data" / "reports" / "rush_earnings_prospective_confirmation_gate_v1.json"
 EXPANSION_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_earnings_oos_expansion_v2.json"
 EXPANSION_SEC_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_sec_earnings_census_v2.json"
+EXPANSION_OOS_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_earnings_reaction_oos_v2.json"
+EXPANSION_OOS_GATE = ROOT / "data" / "reports" / "ticker_disjoint_earnings_reaction_oos_v2_gate.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -33,6 +35,8 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     prospective_gate = _load(root / PROSPECTIVE_GATE_REPORT.relative_to(ROOT))
     expansion = _load(root / EXPANSION_REPORT.relative_to(ROOT))
     expansion_sec = _load(root / EXPANSION_SEC_REPORT.relative_to(ROOT))
+    expansion_oos = _load(root / EXPANSION_OOS_REPORT.relative_to(ROOT))
+    expansion_gate = _load(root / EXPANSION_OOS_GATE.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -89,6 +93,16 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("former-constituent universe and SEC coverage disagree")
     if expansion_sec["operational_action_ratio"] != 0.0:
         contradictions.append("former-constituent SEC census unexpectedly has action authority")
+    if expansion_oos["passed"] != expansion_gate["independent_historical_oos_passed"]:
+        contradictions.append("former-constituent OOS result and gate disagree")
+    if expansion_oos["combined_with_v1_for_gate"]:
+        contradictions.append("independent former-constituent OOS was combined with V1")
+    if expansion_oos["thresholds_retuned"]:
+        contradictions.append("failed formula was retuned on the independent OOS")
+    if expansion_gate["prospective_confirmation_allowed"]:
+        contradictions.append("failed independent OOS unexpectedly opened prospective confirmation")
+    if expansion_gate["operational_action_ratio"] != 0.0:
+        contradictions.append("failed independent OOS unexpectedly has action authority")
 
     pending_source_review = decision["new_source_candidate"]["pending_source_decisions"]
     return {
@@ -144,7 +158,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "first_acceptance": expansion_sec["first_acceptance"],
             "last_acceptance": expansion_sec["last_acceptance"],
             "identity_corrections": expansion["sec_identity_corrections"],
-            "outcomes_open": False,
+            "historical_reaction_outcomes_opened": True,
+            "oos_status": expansion_oos["status"],
+            "mature_events": expansion_oos["mature_events"],
+            "distinct_tickers": expansion_oos["distinct_tickers"],
+            "median_terminal_wealth_delta": expansion_oos["median_terminal_wealth_delta"],
+            "prospective_confirmation_allowed": expansion_gate["prospective_confirmation_allowed"],
         },
         "contradictions": contradictions,
     }

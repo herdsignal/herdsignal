@@ -51,6 +51,10 @@
   공식으로 V1과 합치지 않은 독립 OOS 사건을 생성하는 것이다.
 - 현재 구성 복원은 여전히 완전하지 않으므로 `survivorship_safe=false`,
   운영 행동은 `HOLD·0%`다.
+- 동일 공식을 편출 종목 표본에 독립 적용한 결과 후보는 15건·9종목이었다.
+  adverse precision 53.3%, 기본 비용 HOLD 대비 순최종자산 중앙값 -10.66%p,
+  스트레스 비용 -11.25%p로 표본 수·방향성·경제성 기준을 모두 충족하지
+  못했다. V1과 합치지 않고 `INDEPENDENT_HISTORICAL_OOS_FAILED`로 종료한다.
 
 2026-08-02 의사결정 구조 감사에서 검증 절차는 유지하고 예측 문제를
 `State S1 → Action Edge → Portfolio Policy`로 분리했다. 운영 State 조회의

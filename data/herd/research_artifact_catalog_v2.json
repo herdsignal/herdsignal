@@ -190,6 +190,10 @@
       "data/reports/ticker_disjoint_sec_earnings_census_v2.csv"
     ],
     "REJECTED": [
+      "data/herd/ticker_disjoint_earnings_reaction_oos_v2.json",
+      "data/reports/ticker_disjoint_earnings_reaction_oos_v2.csv",
+      "data/reports/ticker_disjoint_earnings_reaction_oos_v2.json",
+      "data/reports/ticker_disjoint_earnings_reaction_oos_v2_gate.json",
       "data/herd/rush_margin_cash_divergence_preregistration_v1.json",
       "data/reports/rush_margin_cash_divergence_preregistration_v1.json",
       "data/herd/rush_margin_cash_divergence_oos_v1.json",

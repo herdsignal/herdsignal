@@ -35,6 +35,11 @@ def test_current_state_contracts_are_consistent() -> None:
         "first_acceptance": "2012-01-11T16:29:53Z",
         "last_acceptance": "2026-07-31T20:12:04Z",
         "identity_corrections": 2,
-        "outcomes_open": False,
+        "historical_reaction_outcomes_opened": True,
+        "oos_status": "INDEPENDENT_HISTORICAL_OOS_FAILED",
+        "mature_events": 15,
+        "distinct_tickers": 9,
+        "median_terminal_wealth_delta": -0.10662074675472155,
+        "prospective_confirmation_allowed": False,
     }
     assert state["contradictions"] == []

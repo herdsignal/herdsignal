@@ -82,3 +82,14 @@ API에서 확인한다. 이 원장 수집은 행동 신호가 아니며 가격 �
 `data/herd/ticker_disjoint_earnings_oos_expansion_v2.json`,
 `data/reports/ticker_disjoint_earnings_oos_expansion_v2.json`,
 `data/herd/ticker_disjoint_sec_earnings_census_v2.json`에 보존한다.
+
+## 편출 종목 독립 OOS 판정
+
+- V1과 표본을 합치지 않고 동일한 Rush, 3거래일 섹터 잔차 -5%, 연 2회,
+  63세션 cooldown, 5% 익절·63세션 재진입 공식을 그대로 적용했다.
+- 후보는 15건·9종목·7개 연도였다. 사전 기준 40건·20종목에 미달했다.
+- adverse precision은 53.3%, 기본 비용 HOLD 대비 순최종자산 중앙값은
+  -10.66%p, 스트레스 비용에서는 -11.25%p였다.
+- 표본 수뿐 아니라 방향성과 경제성도 반복되지 않았으므로
+  `INDEPENDENT_HISTORICAL_OOS_FAILED`로 종료한다. 임계값 조정, V1 합산,
+  전향 확인, 행동 권한 부여는 모두 금지한다.

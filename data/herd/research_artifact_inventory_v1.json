@@ -871,6 +871,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/ticker_disjoint_earnings_reaction_oos_v2.json",
+      "status": "REJECTED"
+    },
+    {
       "path": "data/herd/ticker_disjoint_sec_earnings_census_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -2665,6 +2669,18 @@
     {
       "path": "data/reports/ticker_disjoint_earnings_reaction_oos_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_reaction_oos_v2.csv",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_reaction_oos_v2.json",
+      "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_reaction_oos_v2_gate.json",
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/ticker_disjoint_sec_earnings_census_v1.csv",

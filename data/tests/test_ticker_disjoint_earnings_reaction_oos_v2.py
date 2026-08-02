@@ -26,3 +26,16 @@ def test_v2_universe_is_ticker_disjoint_from_v1():
 
     assert len(current) == 21
     assert current.isdisjoint(v1)
+
+
+def test_published_v2_failure_remains_fail_closed():
+    report = json.loads((ROOT / "data/reports/ticker_disjoint_earnings_reaction_oos_v2.json").read_text())
+    gate = json.loads((ROOT / "data/reports/ticker_disjoint_earnings_reaction_oos_v2_gate.json").read_text())
+
+    assert report["status"] == "INDEPENDENT_HISTORICAL_OOS_FAILED"
+    assert report["passed"] is False
+    assert report["combined_with_v1_for_gate"] is False
+    assert report["thresholds_retuned"] is False
+    assert report["median_terminal_wealth_delta"] < 0
+    assert gate["prospective_confirmation_allowed"] is False
+    assert gate["operational_action_ratio"] == 0.0
