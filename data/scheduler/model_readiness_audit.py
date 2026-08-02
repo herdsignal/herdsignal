@@ -13,7 +13,7 @@ _DATA_DIR = Path(__file__).resolve().parent.parent
 if str(_DATA_DIR) not in sys.path:
     sys.path.insert(0, str(_DATA_DIR))
 
-from herd.research_decision_v3 import load_and_validate  # noqa: E402
+from herd.research_decision_v4 import load_and_validate  # noqa: E402
 from scheduler.prospective_evidence import (  # noqa: E402
     DEFAULT_ARCHIVE_DIR,
     audit_archive,
@@ -58,6 +58,8 @@ def build_readiness(
     survivorship_safe = (
         survivorship.get("decision", {}).get("survivorship_safe") is True
     )
+    pending_source_decisions = int(decision.get("pending_source_decisions", 0))
+    decision_next_stage = decision.get("next_stage")
 
     return {
         "schemaVersion": "HERD_MODEL_READINESS_AUDIT_V1",
@@ -77,6 +79,7 @@ def build_readiness(
             "prospectiveObservationMonths": months,
             "matured126SessionOutcomes": int(horizon_126.get("matured", 0)),
             "survivorshipSafe": survivorship_safe,
+            "pendingSourceDecisions": pending_source_decisions,
         },
         "gates": {
             "personalProspectivePolicyReviewReady": prospective_review_ready,
@@ -85,8 +88,14 @@ def build_readiness(
             "operationalActionAllowed": False,
         },
         "nextWork": {
-            "primary": "ACCUMULATE_PROSPECTIVE_OBSERVATIONS_AND_OUTCOMES",
-            "research": "PREREGISTER_ONE_ECONOMICALLY_NON_DUPLICATIVE_HYPOTHESIS_ONLY_WHEN_A_NEW_INPUT_EXISTS",
+            "primary": decision_next_stage
+            or "ACCUMULATE_PROSPECTIVE_OBSERVATIONS_AND_OUTCOMES",
+            "prospective": "ACCUMULATE_PROSPECTIVE_OBSERVATIONS_AND_OUTCOMES",
+            "research": (
+                "COMPLETE_LOCKED_SOURCE_REVIEW_BEFORE_DIRECTION_RESEARCH"
+                if pending_source_decisions
+                else "PREREGISTER_ONE_ECONOMICALLY_NON_DUPLICATIVE_HYPOTHESIS_ONLY_WHEN_A_NEW_INPUT_EXISTS"
+            ),
             "forbidden": [
                 "RETUNE_REJECTED_THRESHOLDS",
                 "COMBINE_REJECTED_FEATURES",

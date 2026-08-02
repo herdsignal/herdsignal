@@ -1,0 +1,16 @@
+{
+  "decision_version": "HERD_RESEARCH_DECISION_V4",
+  "status": "STATE_OBSERVATION_MVP_READY_ACTION_RESEARCH_SOURCE_REVIEW_BLOCKED",
+  "product_scope": "STATE_AND_TRANSITION_OBSERVATION",
+  "evaluated_candidates": 5,
+  "adoptable_action_candidates": 0,
+  "new_source_candidate": "SEC_8K_HARD_ADVERSE_EVENT_ITEMS",
+  "source_coverage_passed": true,
+  "identity_linkage_passed": false,
+  "pending_source_decisions": 110,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "next_stage": "COMPLETE_110_SEC_IDENTITY_SOURCE_DECISIONS"
+}

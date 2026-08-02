@@ -44,7 +44,7 @@ def test_v2_catalog_has_no_conflicting_statuses() -> None:
     assert catalog["current_decision"]["transition_display_ready"] is True
     assert (
         catalog["current_decision"]["canonical_decision"]
-        == "data/herd/research_decision_v3.json"
+        == "data/herd/research_decision_v4.json"
     )
     assert catalog["current_decision"]["personal_policy_candidate"] == "HERD_GIVEBACK_S1"
     assert catalog["current_decision"]["personal_policy_events_ready"] is True

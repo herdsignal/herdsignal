@@ -12,13 +12,14 @@ from herd.research_decision_v3 import (
 
 
 def _inputs():
-    return (
-        json.loads(DECISION_PATH.read_text(encoding="utf-8")),
-        json.loads(CATALOG_PATH.read_text(encoding="utf-8")),
+    catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    catalog["current_decision"]["canonical_decision"] = (
+        "data/herd/research_decision_v3.json"
     )
+    return json.loads(DECISION_PATH.read_text(encoding="utf-8")), catalog
 
 
-def test_v3_is_current_and_records_latest_rejection():
+def test_v3_reproduces_its_historical_latest_rejection():
     decision, catalog = _inputs()
     result = validate_decision(decision, catalog)
 

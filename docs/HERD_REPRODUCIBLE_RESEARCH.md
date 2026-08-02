@@ -4,16 +4,17 @@ HERD 후보는 같은 데이터와 같은 시간 분할로 다시 실행했을 �
 나와야 비교 대상이 된다. 이 문서는 데이터 스냅샷과 Walk-forward 산출물의
 고정 규칙이다.
 
-## 현재 연구 결정 V3
+## 현재 연구 결정 V4
 
 ```bash
-PYTHONPATH=data data/.venv/bin/python -m herd.research_decision_v3
-PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_research_decision_v3.py
+PYTHONPATH=data data/.venv/bin/python -m herd.research_decision_v4
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_research_decision_v4.py
 ```
 
-V2 이하 결정 파일은 기존 해시 계약의 재현 입력으로 그대로 둔다. V3는
-최신 Rush 이익률–현금흐름 가설 탈락, 행동 후보 0개, `HOLD·0%`, Blind
-holdout 미개방을 현재 단일 판정으로 검증한다.
+V3 이하 결정 파일은 기존 해시 계약의 재현 입력으로 그대로 둔다. V4는
+행동 후보 0개, SEC 훼손 사건의 source coverage 통과와 ticker 연결 실패,
+110건 원문 판정 대기, `HOLD·0%`, Blind holdout 미개방을 현재 단일 판정으로
+검증한다.
 
 ## 구조화 SEC 훼손 사건 feasibility V1
 

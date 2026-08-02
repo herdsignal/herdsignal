@@ -59,7 +59,7 @@ tests/        운영 및 연구 계약 회귀
 - 누락값은 통과로 간주하지 않는다.
 - `*_vN.py`, 고정 JSON·CSV, 원문 해시는 재현 이력이다. 단순 중복처럼
   보여도 후속 버전이 완전히 대체한다는 증거 없이 삭제하거나 덮어쓰지 않는다.
-- 현재 판정은 `herd/research_decision_v3.json`과
+- 현재 판정은 `herd/research_decision_v4.json`과
   `docs/HERD_RESEARCH_STATUS.md` 상단을 기준으로 한다.
 - Form 8-K 2.04·2.05·2.06·4.02는 source coverage만 통과한 기업 훼손
   veto 후보다. corpus·원문 검수·독립 OOS 전에는 행동 근거로 사용하지 않는다.

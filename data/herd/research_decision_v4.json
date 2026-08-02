@@ -1,0 +1,85 @@
+{
+  "decision_version": "HERD_RESEARCH_DECISION_V4",
+  "as_of": "2026-08-02",
+  "status": "STATE_OBSERVATION_MVP_READY_ACTION_RESEARCH_SOURCE_REVIEW_BLOCKED",
+  "supersedes_for_current_status": "data/herd/research_decision_v3.json",
+  "preserves_prior_decisions_as_reproducibility_inputs": true,
+  "inputs": [
+    {
+      "path": "data/herd/research_decision_v3.json",
+      "sha256": "6738c13019ccd6a78b548163a73616a55cb6ded168c18123f0784b016798e9b6"
+    },
+    {
+      "path": "data/reports/distinct_public_pit_information_feasibility_v1.json",
+      "sha256": "dd6d8ea5abb40ca43a2ecf2fb38a684f8597e54795c425d15d4d2adf99b885dc"
+    },
+    {
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.json",
+      "sha256": "0e5b574c7c73dd79e4bc85f42a175e4bd24706b7aafd2797dd4e25acf2efe140"
+    },
+    {
+      "path": "data/reports/sec_8k_identity_primary_document_collection_v1.json",
+      "sha256": "824ae2a26008e233ebff4a727971fdb6014c3b0d33c68b269cf2692c0f4ded87"
+    },
+    {
+      "path": "data/reports/sec_8k_identity_source_review_v1.json",
+      "sha256": "ac2fd4acdd83e1abeebb36cf7c82d80634e57de7dae3c0e2bf90ca1f6f81dc14"
+    }
+  ],
+  "product_scope": {
+    "observation_model": "HERD_STATE_S1",
+    "transition_model": "HERD_TRANSITION_S1",
+    "observation_display_ready": true,
+    "portfolio_and_journal_mvp_ready": true,
+    "default_user_action": "HOLD",
+    "operational_action_ratio": 0.0
+  },
+  "action_research": {
+    "evaluated_candidate_count": 5,
+    "admitted_profit_take_evidence_count": 0,
+    "admitted_reentry_evidence_count": 0,
+    "adoptable_action_candidate": null,
+    "blind_holdout_access_count": 0,
+    "prospective_action_shadow_enabled": false
+  },
+  "new_source_candidate": {
+    "candidate": "SEC_8K_HARD_ADVERSE_EVENT_ITEMS",
+    "allowed_role": "CORPORATE_DAMAGE_VETO_RESEARCH_ONLY",
+    "coverage_passed": true,
+    "source_event_count": 947,
+    "time_valid_mapped_events": 185,
+    "unmapped_events": 760,
+    "ambiguous_events": 2,
+    "identity_linkage_passed": false,
+    "first_wave_documents_collected": 275,
+    "source_review_candidate_rows": 110,
+    "pending_source_decisions": 110,
+    "approved_identity_rows": 0,
+    "direction_hypothesis_allowed": false
+  },
+  "data_boundaries": {
+    "survivorship_safe": false,
+    "current_constituent_preholdout_research_allowed": true,
+    "prospective_observation_collection_enabled": true,
+    "prospective_action_shadow_enabled": false,
+    "blind_holdout_eligible": false
+  },
+  "next_stage": {
+    "id": "COMPLETE_110_SEC_IDENTITY_SOURCE_DECISIONS",
+    "objective": "Adjudicate the locked SEC primary-document candidates before promoting any historical ticker-CIK interval or opening price outcomes.",
+    "promotion_checks": {
+      "minimum_reviewed_rows": 100,
+      "minimum_wilson_95_lower_bound": 0.9,
+      "maximum_ambiguous_ratio": 0.1,
+      "all_candidate_rows_adjudicated": true
+    },
+    "forbidden": [
+      "AUTO_APPROVE_EXTRACTED_SYMBOLS",
+      "BACKFILL_CURRENT_TICKER_INTO_HISTORY",
+      "USE_EVENT_AS_DIRECT_BUY_OR_SELL_SIGNAL",
+      "OPEN_PRICE_OUTCOMES_BEFORE_IDENTITY_GATE",
+      "OPEN_BLIND_HOLDOUT",
+      "ENABLE_OPERATIONAL_ACTION"
+    ]
+  }
+}

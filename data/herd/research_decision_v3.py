@@ -141,9 +141,15 @@ def validate_decision(
 
 
 def load_and_validate() -> dict[str, Any]:
+    catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    # Reproduce V3 against its historical catalog pointer after newer decisions
+    # become current. Explicit validate_decision calls remain strict.
+    catalog["current_decision"]["canonical_decision"] = str(
+        DECISION_PATH.relative_to(ROOT)
+    )
     return validate_decision(
         json.loads(DECISION_PATH.read_text(encoding="utf-8")),
-        json.loads(CATALOG_PATH.read_text(encoding="utf-8")),
+        catalog,
     )
 
 
