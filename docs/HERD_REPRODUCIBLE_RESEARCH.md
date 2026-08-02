@@ -15,6 +15,20 @@ PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_rush_margin_cash_diverg
 10% 선, 정책 수익과 미래 경로는 열지 않는다. 계약 또는 고정 입력 해시가
 바뀌면 실패하고, 같은 날 접수된 공시는 다음 관찰일부터 사용한다.
 
+OOS 실행은 별도의 잠긴 실행 계약으로 재현한다.
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.rush_margin_cash_divergence_oos_v1
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_rush_margin_cash_divergence_oos_v1.py
+```
+
+각 테스트 사건은 그보다 앞서 target이 완성된 사건만 학습에 사용하고,
+동일 ticker의 과거 사건은 학습 표본에서 제외한다. 20시장세션 embargo와
+126세션 purge를 적용한 뒤 학습 자료만으로 winsorization·중앙값·IQR·상위
+10% 선을 계산한다. 결과는 7개 후보에서 HOLD 대비 중앙 -1.524%p로
+사전 고정 게이트를 통과하지 못했다. 계약 변경 없이 같은 명령을 실행하면
+동일 gzip 해시와 탈락 판정이 생성되어야 한다.
+
 ## SEC 13F 군중 맥락 계약 검증
 
 ```bash

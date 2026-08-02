@@ -87,9 +87,30 @@
 
 계약과 준비도 결과는
 `data/herd/rush_margin_cash_divergence_preregistration_v1.json`,
-`data/reports/rush_margin_cash_divergence_preregistration_v1.json`이다. 다음
-단계는 학습구간에서만 표준화·후보선을 계산하는 ticker·time blocked OOS
-평가기 구현이다. 현재 행동은 계속 `HOLD·0%`다.
+`data/reports/rush_margin_cash_divergence_preregistration_v1.json`이다.
+
+## Rush 이익률–현금흐름 괴리 OOS V1
+
+- 결과를 열기 전에 expanding window, 동일 ticker 과거 제외, 126세션
+  target maturity, 20시장세션 embargo, 10,000회 ticker block bootstrap을
+  실행 계약으로 추가 고정했다.
+- F01은 이전 성숙 사건이 없고 F02는 최소 학습 사건 15건에 미달해
+  fail-closed 했다. F03~F09의 138건만 학습구간 기준으로 점수를 계산했다.
+- 상위 10% 원시 후보 8건 중 cooldown을 통과한 후보는 7건·5종목·3개
+  fold였다. 사전 기준은 최소 15건·10종목·6개 방향 fold였다.
+- 5%를 SPY로 이동한 정책의 10bp 비용 후 HOLD 대비 최종자산 차이 중앙값은
+  -1.524%p, 양수 비율은 28.6%였다. 후보가 있던 3개 fold의 중앙값은 모두
+  음수였고 ticker bootstrap 단측 p값은 0.780이었다.
+- 50bp 비용 중앙값은 -1.566%p, 놓친 상승 비용의 95백분위는 4.175%p였다.
+  경제성과 위험 기준을 포함한 9개 게이트 중 동일 후보 기준선 비교 하나만
+  충족했다.
+- 이 가설은 `PREHOLDOUT_REJECTED_NO_ACTION_AUTHORITY`로 종료한다. 같은
+  표본에서 상위 백분위·가중치·기간을 바꿔 다시 시도하지 않는다.
+
+실행 계약과 결과는 `data/herd/rush_margin_cash_divergence_oos_v1.json`,
+`data/reports/rush_margin_cash_divergence_oos_v1.json`이다. 이 실패는
+“현금흐름보다 이익률이 강한 Rush 종목을 줄인다”는 방향이 장기 승자 보유
+목표와 맞지 않았음을 뜻한다. 현재 행동은 계속 `HOLD·0%`다.
 
 ## 모델 확립 통합 파이프라인 1~9
 

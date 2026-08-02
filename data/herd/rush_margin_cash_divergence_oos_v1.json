@@ -1,0 +1,65 @@
+{
+  "contract_version": "HERD_RUSH_MARGIN_CASH_DIVERGENCE_OOS_V1",
+  "status": "LOCKED_BEFORE_OOS_TARGET_ACCESS",
+  "locked_at": "2026-08-02",
+  "hypothesis_id": "RUSH_MARGIN_CASH_DIVERGENCE_RELATIVE_REBALANCE_V1",
+  "inputs": [
+    {"path": "data/herd/rush_margin_cash_divergence_preregistration_v1.json", "sha256": "e217b03c6ccb8d4b297a220111827bd9e89b78efe2ee7f9fdb391024f24492cd"},
+    {"path": "data/herd/instrument_class_ledger_v1.json", "sha256": "f416cb4c5524b5086c37273cf01ba99850db92041e41aaba9ed70098949413e2"},
+    {"path": "data/reports/instrument_class_event_ledger_v1.csv.gz", "sha256": "a675c5872794a8cab35716f82781f28ebfab92382dcc710f624d09f12692f472"},
+    {"path": "data/reports/business_state_features_v2.csv", "sha256": "515a0708594b3e5064e5edf7b46dbcb7d161d2682acfe4af42d22a773f1fb7f1"},
+    {"path": "data/reports/fixed_policy_economic_baselines_v1.csv.gz", "sha256": "0308546fb2dd79372a4032202dda792bf4fc779226c2786bf8bd49fa83f14122"},
+    {"path": "data/reports/fixed_policy_economic_baselines_v1.json", "sha256": "48676103a814fc80feadfd60edd9f1e5d06afe01a0e4e01c0ebdf01e5c8a751b"},
+    {"path": "data/walk_forward/long-oos-v2-20260721/price_timing_6m.csv", "sha256": "18d82f2edd3e9be0d0d5882dedc88c6763203f24c042a2e65909c6ffbee9b831"},
+    {"path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json", "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b"}
+  ],
+  "training_boundary": {
+    "method": "EXPANDING_WINDOW_LEAVE_ONE_TEST_TICKER_OUT",
+    "same_ticker_history_excluded": true,
+    "training_target_must_mature_before_embargo": true,
+    "embargo_sessions": 20,
+    "purge_is_locked_target_horizon_sessions": 126,
+    "minimum_training_events": 15,
+    "minimum_training_tickers": 8,
+    "first_fold_without_prior_mature_events": "FAIL_FOLD_CLOSED"
+  },
+  "score_execution": {
+    "features": ["net_margin_yoy_change", "operating_cash_flow_yoy"],
+    "winsorization_quantiles": [0.01, 0.99],
+    "scaler": "MEDIAN_AND_IQR",
+    "zero_iqr": "FAIL_EVENT_CLOSED",
+    "score": "Z_NET_MARGIN_YOY_CHANGE_MINUS_Z_OPERATING_CASH_FLOW_YOY",
+    "candidate_quantile": 0.9,
+    "quantile_method": "LINEAR",
+    "test_values_clipped_to_training_WINSOR_BOUNDS": true,
+    "missing_values": "NOT_ELIGIBLE_NO_IMPUTATION"
+  },
+  "candidate_budget": {
+    "maximum_per_ticker_calendar_year": 2,
+    "cooldown_market_sessions": 63,
+    "selection_order": "TICKER_THEN_OBSERVATION_SESSION_ASCENDING",
+    "later_conflict": "REJECT"
+  },
+  "evaluation": {
+    "candidate_policy": "TRIM_TO_SPY_HORIZON",
+    "costs_bps": [10, 25, 50],
+    "same_candidate_keys_for_all_locked_baselines": true,
+    "directional_fold": "FOLD_HAS_CANDIDATE_AND_MEDIAN_10BPS_DELTA_ABOVE_ZERO",
+    "ticker_block_bootstrap": {
+      "samples": 10000,
+      "seed": 20260802,
+      "statistic": "EVENT_MEDIAN_NORMALIZED_NET_TERMINAL_WEALTH_DELTA",
+      "one_sided_p_value": "ADD_ONE_FRACTION_OF_BOOTSTRAP_STATISTICS_LESS_THAN_OR_EQUAL_TO_ZERO"
+    },
+    "gate_source": "data/herd/rush_margin_cash_divergence_preregistration_v1.json",
+    "all_gates_required": true
+  },
+  "firewall": {
+    "preholdout_only": true,
+    "prospective_confirmation_required": true,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "survivorship_safe": false,
+    "blind_holdout_access": false
+  }
+}

@@ -475,8 +475,12 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/rush_margin_cash_divergence_oos_v1.json",
+      "status": "REJECTED"
+    },
+    {
       "path": "data/herd/rush_margin_cash_divergence_preregistration_v1.json",
-      "status": "ACTIVE"
+      "status": "REJECTED"
     },
     {
       "path": "data/herd/rush_path_comparison_v2.json",
@@ -1511,8 +1515,12 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/reports/rush_margin_cash_divergence_oos_v1.json",
+      "status": "REJECTED"
+    },
+    {
       "path": "data/reports/rush_margin_cash_divergence_preregistration_v1.json",
-      "status": "ACTIVE"
+      "status": "REJECTED"
     },
     {
       "path": "data/reports/rush_path_comparison_v2.csv",

@@ -1,0 +1,270 @@
+{
+  "report_version": "HERD_RUSH_MARGIN_CASH_DIVERGENCE_OOS_V1",
+  "contract_sha256": "34dfcf3cd824c5d6ef0216a94108a2ae06a3d6df7cfb91d83bbd9977c7496f6d",
+  "hypothesis_id": "RUSH_MARGIN_CASH_DIVERGENCE_RELATIVE_REBALANCE_V1",
+  "status": "PREHOLDOUT_REJECTED_NO_ACTION_AUTHORITY",
+  "feature_ready_events": 176,
+  "scored_events": 138,
+  "raw_candidates": 8,
+  "candidates": 7,
+  "candidate_tickers": 5,
+  "candidate_folds": 3,
+  "directional_folds": 0,
+  "fold_median_10bps_delta": {
+    "F05": -0.00313544280412135,
+    "F06": -0.0110547412884834,
+    "F08": -0.03907086189574055
+  },
+  "median_10bps_net_terminal_wealth_delta": -0.0152425095325065,
+  "mean_10bps_net_terminal_wealth_delta": -0.013157932257266901,
+  "positive_10bps_net_value_rate": 0.2857142857142857,
+  "median_50bps_net_terminal_wealth_delta": -0.0156604403733636,
+  "missed_upside_cost_10bps_p95": 0.04174605344751568,
+  "ticker_block_bootstrap": {
+    "unit": "TICKER",
+    "samples": 10000,
+    "seed": 20260802,
+    "one_sided_p_value": 0.7796220377962204,
+    "median_interval_95": [
+      -0.0323828830163027,
+      0.015167017186598351
+    ]
+  },
+  "fold_audit": [
+    {
+      "fold_id": "F01",
+      "feature_ready_events": 21,
+      "base_training_events": 0,
+      "scored_events": 0,
+      "failed_closed_events": 21,
+      "embargo_start": "2016-07-05"
+    },
+    {
+      "fold_id": "F02",
+      "feature_ready_events": 17,
+      "base_training_events": 14,
+      "scored_events": 0,
+      "failed_closed_events": 17,
+      "embargo_start": "2017-07-05"
+    },
+    {
+      "fold_id": "F03",
+      "feature_ready_events": 12,
+      "base_training_events": 31,
+      "scored_events": 12,
+      "failed_closed_events": 0,
+      "embargo_start": "2018-07-05"
+    },
+    {
+      "fold_id": "F04",
+      "feature_ready_events": 23,
+      "base_training_events": 50,
+      "scored_events": 23,
+      "failed_closed_events": 0,
+      "embargo_start": "2019-07-05"
+    },
+    {
+      "fold_id": "F05",
+      "feature_ready_events": 19,
+      "base_training_events": 65,
+      "scored_events": 19,
+      "failed_closed_events": 0,
+      "embargo_start": "2020-07-06"
+    },
+    {
+      "fold_id": "F06",
+      "feature_ready_events": 31,
+      "base_training_events": 88,
+      "scored_events": 31,
+      "failed_closed_events": 0,
+      "embargo_start": "2021-07-06"
+    },
+    {
+      "fold_id": "F07",
+      "feature_ready_events": 11,
+      "base_training_events": 117,
+      "scored_events": 11,
+      "failed_closed_events": 0,
+      "embargo_start": "2022-07-06"
+    },
+    {
+      "fold_id": "F08",
+      "feature_ready_events": 18,
+      "base_training_events": 132,
+      "scored_events": 18,
+      "failed_closed_events": 0,
+      "embargo_start": "2023-07-06"
+    },
+    {
+      "fold_id": "F09",
+      "feature_ready_events": 24,
+      "base_training_events": 146,
+      "scored_events": 24,
+      "failed_closed_events": 0,
+      "embargo_start": "2024-07-08"
+    }
+  ],
+  "gate_results": {
+    "minimum_candidates": false,
+    "minimum_candidate_tickers": false,
+    "minimum_directional_folds": false,
+    "median_net_terminal_wealth_delta": false,
+    "minimum_positive_net_value_rate": false,
+    "maximum_one_sided_ticker_block_bootstrap_p_value": false,
+    "stress_50bps_median": false,
+    "maximum_95pct_missed_upside_cost": false,
+    "all_locked_fixed_baselines_compared": true
+  },
+  "all_adoption_gates_passed": false,
+  "locked_baseline_summaries": [
+    {
+      "policy_id": "MATCHED_HOLD",
+      "one_way_cost_bps": 10,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": 0.0,
+      "mean_net_terminal_wealth_delta": 0.0,
+      "positive_net_value_rate": 0.0,
+      "missed_upside_cost_p95": 0.0
+    },
+    {
+      "policy_id": "MATCHED_HOLD",
+      "one_way_cost_bps": 25,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": 0.0,
+      "mean_net_terminal_wealth_delta": 0.0,
+      "positive_net_value_rate": 0.0,
+      "missed_upside_cost_p95": 0.0
+    },
+    {
+      "policy_id": "MATCHED_HOLD",
+      "one_way_cost_bps": 50,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": 0.0,
+      "mean_net_terminal_wealth_delta": 0.0,
+      "positive_net_value_rate": 0.0,
+      "missed_upside_cost_p95": 0.0
+    },
+    {
+      "policy_id": "TRIM_KEEP_CASH",
+      "one_way_cost_bps": 10,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0167490008274512,
+      "mean_net_terminal_wealth_delta": -0.0162926753688095,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.04908898073196758
+    },
+    {
+      "policy_id": "TRIM_KEEP_CASH",
+      "one_way_cost_bps": 25,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0168254263292272,
+      "mean_net_terminal_wealth_delta": -0.016367949036567356,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.049164274575783
+    },
+    {
+      "policy_id": "TRIM_KEEP_CASH",
+      "one_way_cost_bps": 50,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0169526746781326,
+      "mean_net_terminal_wealth_delta": -0.016493279583513855,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.04928963871583607
+    },
+    {
+      "policy_id": "TRIM_REENTER_21",
+      "one_way_cost_bps": 10,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0016003920303854,
+      "mean_net_terminal_wealth_delta": -0.0018357243432404141,
+      "positive_net_value_rate": 0.42857142857142855,
+      "missed_upside_cost_p95": 0.010614088054947157
+    },
+    {
+      "policy_id": "TRIM_REENTER_21",
+      "one_way_cost_bps": 25,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0016807322424421,
+      "mean_net_terminal_wealth_delta": -0.002029333333220557,
+      "positive_net_value_rate": 0.42857142857142855,
+      "missed_upside_cost_p95": 0.010847232816491786
+    },
+    {
+      "policy_id": "TRIM_REENTER_21",
+      "one_way_cost_bps": 50,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0018140985296372,
+      "mean_net_terminal_wealth_delta": -0.002350727956165157,
+      "positive_net_value_rate": 0.42857142857142855,
+      "missed_upside_cost_p95": 0.011234257575703196
+    },
+    {
+      "policy_id": "TRIM_REENTER_63",
+      "one_way_cost_bps": 10,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0055756641574505,
+      "mean_net_terminal_wealth_delta": -0.007887144931067657,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.022299747623643455
+    },
+    {
+      "policy_id": "TRIM_REENTER_63",
+      "one_way_cost_bps": 25,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0057617369885331,
+      "mean_net_terminal_wealth_delta": -0.008062626848759772,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.022519321690601366
+    },
+    {
+      "policy_id": "TRIM_REENTER_63",
+      "one_way_cost_bps": 50,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0060706214437035,
+      "mean_net_terminal_wealth_delta": -0.008353930185325228,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.022883818837483114
+    },
+    {
+      "policy_id": "TRIM_TO_SPY_HORIZON",
+      "one_way_cost_bps": 10,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0152425095325065,
+      "mean_net_terminal_wealth_delta": -0.013157932257266901,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.04174605344751568
+    },
+    {
+      "policy_id": "TRIM_TO_SPY_HORIZON",
+      "one_way_cost_bps": 25,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0153996252613076,
+      "mean_net_terminal_wealth_delta": -0.013317625495013585,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.04191839261675116
+    },
+    {
+      "policy_id": "TRIM_TO_SPY_HORIZON",
+      "one_way_cost_bps": 50,
+      "candidates": 7,
+      "median_net_terminal_wealth_delta": -0.0156604403733636,
+      "mean_net_terminal_wealth_delta": -0.013582719321171543,
+      "positive_net_value_rate": 0.2857142857142857,
+      "missed_upside_cost_p95": 0.04220447893082544
+    }
+  ],
+  "rows": {
+    "path": "data/reports/rush_margin_cash_divergence_oos_v1.csv.gz",
+    "sha256": "502e02042b93b4f8519cb1b94f198bb5925fbf2f0e4d6ba1cd4bc375d042432b"
+  },
+  "oos_target_accessed": true,
+  "same_oos_retuned": false,
+  "direction_evidence_admitted": false,
+  "policy_promoted": false,
+  "prospective_confirmation_required": true,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "next_stage": "REJECT_HYPOTHESIS_AND_RETURN_TO_DISTINCT_ECONOMIC_INFORMATION"
+}
