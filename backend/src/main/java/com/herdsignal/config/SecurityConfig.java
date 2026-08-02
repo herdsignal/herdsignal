@@ -81,6 +81,7 @@ public class SecurityConfig {
                                     "/api/stocks/search",
                                     "/api/stocks/*/financials",
                                     "/api/observations/**",
+                                    "/api/operating-reviews/*/objective",
                                     "/api/system/data-status").permitAll()
                             .anyRequest().authenticated())
                     .oauth2Login(login -> login
