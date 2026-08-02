@@ -11,7 +11,7 @@
   "scheduled_scope": "latest locked weekly S1 issuers whose HERD_STAGE is RUSH",
   "storage": {
     "format": "hash-chained append-only JSONL",
-    "identity": "CIK plus accession number",
+    "identity": "mapped ticker plus CIK plus accession number",
     "conflicting_identity_policy": "reject"
   },
   "request_policy": {

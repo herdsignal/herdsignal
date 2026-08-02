@@ -127,7 +127,9 @@ def extract_events(
             if not accession:
                 raise SecEarningsEventError("SEC event is missing accession number")
             events.append({
-                "event_id": f"SEC-EARNINGS-{cik}-{accession}",
+                # One issuer filing can apply to multiple listed share classes.
+                # Keep the source accession and the security mapping in the identity.
+                "event_id": f"SEC-EARNINGS-{ticker}-{cik}-{accession}",
                 "ticker": ticker,
                 "cik": cik,
                 "accession_number": accession,

@@ -1,0 +1,27 @@
+{
+  "report_version": "TICKER_DISJOINT_SEC_EARNINGS_CENSUS_V1",
+  "status": "SEC_HISTORY_READY",
+  "universe_tickers": 54,
+  "covered_tickers": 54,
+  "events": 3978,
+  "first_acceptance": "2012-01-09T22:15:21Z",
+  "last_acceptance": "2026-07-31T21:20:04Z",
+  "catalog_path": "data/reports/ticker_disjoint_sec_earnings_census_v1.csv",
+  "catalog_sha256": "ce60772793e2f72c9ec9e6270bd830e2f75466d9c7f544ab25d9b3ead2d35a0a",
+  "ledger_sha256": "158c24c236a49e1445d3dc51a7e23beb2692f6df7315448ecf62ee56be7c2b8c",
+  "collection": {
+    "status": "SEC_EARNINGS_LEDGER_UPDATED",
+    "issuers_scanned": 54,
+    "events_discovered": 3978,
+    "appended": 3978,
+    "duplicates": 0,
+    "total": 3978,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0
+  },
+  "future_price_outcomes_read": false,
+  "survivorship_safe": false,
+  "blind_holdout": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}
