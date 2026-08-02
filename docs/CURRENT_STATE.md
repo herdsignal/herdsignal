@@ -44,6 +44,16 @@ SEC 8-K 훼손 사건의 ticker–CIK 원문 판정 110건이 남아 있다. 이
 4. 동일 조건 HOLD와 비용 차감 후 최종자산 비교
 5. 실패 시 같은 표본에서 임계값 재조정 금지
 
+## 새 단일 가설
+
+`RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION`을 2026-08-02에 결과
+확인 전 고정했다. SEC 실적 공시 뒤 3거래일의 종목–섹터 잔차 반응이
+-5% 이하이고 최근 주간 상태가 Rush일 때만 5% 익절 연구 후보로 기록한다.
+
+과거 탈락 표본을 새 OOS로 재사용하지 않기 때문에 현재 성숙 사건은 0건,
+상태는 `WAITING_FOR_PROSPECTIVE_OOS`다. 방향 증거와 운영 권한은 여전히
+0개이며 자세한 계약은 `HERD_ACTION_HYPOTHESIS_V1.md`를 따른다.
+
 ## 개발 순서
 
 1. State S1 관찰 제품을 안정적으로 유지한다.

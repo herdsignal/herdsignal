@@ -13,6 +13,7 @@
 6. [HERD_RESEARCH_STATUS.md](HERD_RESEARCH_STATUS.md) — 누적 연구 판정 일지
 7. [ARCHITECTURE.md](ARCHITECTURE.md) — 현재 코드 구조와 변경 원칙
 8. [HERD_AI_EVIDENCE_REVIEW.md](HERD_AI_EVIDENCE_REVIEW.md) — 출처 제한 AI 연구 프로토타입
+9. [HERD_ACTION_HYPOTHESIS_V1.md](HERD_ACTION_HYPOTHESIS_V1.md) — 잠긴 단일 전향 행동 가설
 
 ## 데이터와 재현 계약
 

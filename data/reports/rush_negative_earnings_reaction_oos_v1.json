@@ -1,0 +1,13 @@
+{
+  "report_version": "RUSH_NEGATIVE_EARNINGS_REACTION_OOS_V1",
+  "status": "WAITING_FOR_PROSPECTIVE_OOS",
+  "hypothesis_id": "RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION",
+  "input_path": "data/runtime/action-research/rush-negative-earnings-reaction-v1.csv",
+  "mature_events": 0,
+  "passed": false,
+  "direction_evidence_admitted": false,
+  "candidate_action_enabled": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false
+}

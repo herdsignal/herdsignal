@@ -15,4 +15,6 @@ def test_current_state_contracts_are_consistent() -> None:
     assert state["action_research"]["operational_action_ratio"] == 0.0
     assert state["action_research"]["blind_holdout_open"] is False
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
+    assert state["new_action_hypothesis"]["status"] == "WAITING_FOR_PROSPECTIVE_OOS"
+    assert state["new_action_hypothesis"]["direction_evidence_admitted"] is False
     assert state["contradictions"] == []

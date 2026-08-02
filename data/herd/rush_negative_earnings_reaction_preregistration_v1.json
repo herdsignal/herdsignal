@@ -1,0 +1,90 @@
+{
+  "protocol_version": "RUSH_NEGATIVE_EARNINGS_REACTION_PREREGISTRATION_V1",
+  "status": "LOCKED_BEFORE_PROSPECTIVE_OUTCOMES",
+  "locked_at": "2026-08-02T23:00:00+09:00",
+  "service_objective": "이미 선택한 장기 보유 종목에서 드문 5% 부분 익절 후보를 찾고 Buy & Hold의 복리 훼손을 최소화한다.",
+  "single_hypothesis": {
+    "id": "RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION",
+    "economic_rationale": "군중 밀집이 유지되는 동안 새 실적 정보에 대한 종목 반응이 시장과 섹터보다 뚜렷하게 약하면, 과열 수준 자체보다 기대 변화와 군중 상태의 충돌을 포착할 수 있다.",
+    "required_state": "RUSH",
+    "information_event": "SEC_ACCEPTED_QUARTERLY_EARNINGS_DISCLOSURE",
+    "reaction_window_sessions": 3,
+    "reaction_measure": "STOCK_TOTAL_RETURN_MINUS_SECTOR_ETF_TOTAL_RETURN",
+    "negative_reaction_maximum": -0.05,
+    "state_maximum_age_sessions": 5,
+    "candidate_action": "TRIM_5_PERCENT",
+    "maximum_actions_per_ticker_year": 2,
+    "cooldown_sessions": 63
+  },
+  "timing": {
+    "sec_information_time": "EDGAR_ACCEPTANCE_DATETIME",
+    "same_day_trading_forbidden": true,
+    "reaction_confirmation": "THIRD_COMPLETE_TRADING_SESSION_AFTER_ACCEPTANCE",
+    "action_execution": "NEXT_TRADING_SESSION_OPEN_AFTER_REACTION_CONFIRMATION_AND_WEEKLY_RUSH_CONFIRMATION",
+    "outcome_horizon_sessions": 126,
+    "outcome_opening_before_maturity": false
+  },
+  "sample_contract": {
+    "allowed_role": "PROSPECTIVE_ONLY",
+    "first_eligible_event_date": "2026-08-03",
+    "historical_backfill_allowed": false,
+    "reuse_prior_1998_or_2161_labels": false,
+    "ticker_selection_by_future_outcome": false,
+    "append_only": true,
+    "survivorship_safe": false,
+    "claim_boundary": "PERSONAL_MONITORED_UNIVERSE_MODEL_ELIMINATION_ONLY"
+  },
+  "evaluation_gate": {
+    "minimum_mature_events": 40,
+    "minimum_distinct_tickers": 20,
+    "minimum_calendar_years": 3,
+    "minimum_positive_years": 3,
+    "minimum_adverse_path_precision": 0.55,
+    "minimum_median_terminal_wealth_delta": 0.0,
+    "minimum_median_stress_terminal_wealth_delta": 0.0,
+    "minimum_positive_completed_cycle_rate": 0.55,
+    "required_round_trip_cost_bps": 30,
+    "stress_round_trip_cost_bps": 70,
+    "all_required": true
+  },
+  "outcome_contract": {
+    "adverse_labels": ["ECONOMIC_REBUY_OPPORTUNITY", "STRUCTURAL_BREAK"],
+    "benign_labels": ["HEALTHY_CONTINUATION", "NO_ECONOMIC_EDGE"],
+    "primary_economic_metric": "CANDIDATE_TERMINAL_VALUE_BASE_MINUS_HOLD_TERMINAL_VALUE",
+    "stress_economic_metric": "CANDIDATE_TERMINAL_VALUE_STRESS_MINUS_HOLD_TERMINAL_VALUE",
+    "completed_cycle_required": true,
+    "unresolved_is_failure": false
+  },
+  "research_basis": [
+    {
+      "title": "SEC EDGAR application programming interfaces",
+      "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces"
+    },
+    {
+      "title": "Post-Earnings-Announcement Drift: Delayed Price Response or Risk Premium?",
+      "doi": "10.2307/2491062"
+    },
+    {
+      "title": "PEAD.txt: Post-Earnings-Announcement Drift Using Text",
+      "url": "https://www.frbsf.org/research-and-insights/publications/system-research-philadelphia-fed/2024/05/pead-txt-post-earnings-announcement-drift-using-text/"
+    }
+  ],
+  "forbidden": [
+    "TREAT_RUSH_ALONE_AS_SELL",
+    "USE_SEC_FACT_BEFORE_ACCEPTANCE",
+    "USE_PARTIAL_REACTION_WINDOW",
+    "RETUNE_REACTION_THRESHOLD_ON_PROSPECTIVE_SAMPLE",
+    "REUSE_PRIOR_OUTCOME_LABELS_AS_NEW_OOS",
+    "COMBINE_WITH_REJECTED_PRICE_FORM4_GUIDANCE_FINRA_OR_13F_FEATURES",
+    "USE_AI_REVIEW_TEXT_AS_MODEL_EVIDENCE",
+    "OPEN_BLIND_HOLDOUT",
+    "ENABLE_OPERATIONAL_ACTION_BEFORE_ALL_GATES_PASS"
+  ],
+  "authority": {
+    "direction_evidence_admitted": false,
+    "candidate_action_enabled": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false
+  }
+}

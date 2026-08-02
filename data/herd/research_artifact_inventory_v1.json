@@ -495,6 +495,10 @@
       "status": "REJECTED"
     },
     {
+      "path": "data/herd/rush_negative_earnings_reaction_preregistration_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/rush_path_comparison_v2.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1561,6 +1565,10 @@
     {
       "path": "data/reports/rush_margin_cash_divergence_preregistration_v1.json",
       "status": "REJECTED"
+    },
+    {
+      "path": "data/reports/rush_negative_earnings_reaction_oos_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/rush_path_comparison_v2.csv",
@@ -2676,6 +2684,10 @@
     },
     {
       "path": "docs/CURRENT_STATE.md",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "docs/HERD_ACTION_HYPOTHESIS_V1.md",
       "status": "ACTIVE"
     },
     {

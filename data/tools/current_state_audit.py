@@ -10,6 +10,8 @@ PRODUCT_SCOPE = ROOT / "data" / "herd" / "product_scope_contract_v1.json"
 RESEARCH_DECISION = ROOT / "data" / "herd" / "research_decision_v4.json"
 MODEL_STATUS = ROOT / "data" / "herd" / "model_establishment_status_v1.json"
 ARTIFACT_CATALOG = ROOT / "data" / "herd" / "research_artifact_catalog_v2.json"
+ACTION_HYPOTHESIS = ROOT / "data" / "herd" / "rush_negative_earnings_reaction_preregistration_v1.json"
+ACTION_HYPOTHESIS_REPORT = ROOT / "data" / "reports" / "rush_negative_earnings_reaction_oos_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -21,6 +23,8 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     decision = _load(root / RESEARCH_DECISION.relative_to(ROOT))
     model = _load(root / MODEL_STATUS.relative_to(ROOT))
     catalog = _load(root / ARTIFACT_CATALOG.relative_to(ROOT))
+    hypothesis = _load(root / ACTION_HYPOTHESIS.relative_to(ROOT))
+    hypothesis_report = _load(root / ACTION_HYPOTHESIS_REPORT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -53,6 +57,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             contradictions.append("AI evidence review unexpectedly has action authority")
         if authority.get("ai_review_can_create_evidence") is not False:
             contradictions.append("AI evidence review unexpectedly creates model evidence")
+    if hypothesis["authority"]["operational_action_ratio"] != 0.0:
+        contradictions.append("new action hypothesis unexpectedly has operational authority")
+    if hypothesis_report["candidate_action_enabled"]:
+        contradictions.append("waiting action hypothesis unexpectedly enabled an action")
+    if hypothesis_report["direction_evidence_admitted"]:
+        contradictions.append("waiting action hypothesis unexpectedly admitted direction evidence")
 
     pending_source_review = decision["new_source_candidate"]["pending_source_decisions"]
     return {
@@ -83,6 +93,13 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "sec_identity_work_unlocks_action_direction": False,
             "next_allowed": model["next_research"]["allowed"],
             "forbidden": model["next_research"]["forbidden"],
+        },
+        "new_action_hypothesis": {
+            "id": hypothesis["single_hypothesis"]["id"],
+            "status": hypothesis_report["status"],
+            "mature_events": hypothesis_report["mature_events"],
+            "direction_evidence_admitted": hypothesis_report["direction_evidence_admitted"],
+            "operational_action_ratio": hypothesis_report["operational_action_ratio"],
         },
         "contradictions": contradictions,
     }
