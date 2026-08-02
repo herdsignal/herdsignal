@@ -5,12 +5,13 @@
 
 ## 현재 기준
 
-1. [PRODUCT_SCOPE.md](PRODUCT_SCOPE.md) — 사용자, 핵심 흐름, 제공·비제공 범위
-2. [HERD_MODEL_CHARTER.md](HERD_MODEL_CHARTER.md) — 모델 목표와 경계
-3. [HERD_DECISION_ARCHITECTURE.md](HERD_DECISION_ARCHITECTURE.md) — 상태·행동 우위·포트폴리오 정책 분리
-4. [HERD_ADOPTION_POLICY.md](HERD_ADOPTION_POLICY.md) — 행동 모델 채택 기준
-5. [HERD_RESEARCH_STATUS.md](HERD_RESEARCH_STATUS.md) — 상단의 최신 연구 판정
-6. [ARCHITECTURE.md](ARCHITECTURE.md) — 현재 코드 구조와 변경 원칙
+1. [CURRENT_STATE.md](CURRENT_STATE.md) — 현재 제품·연구 판정과 다음 허용 작업
+2. [PRODUCT_SCOPE.md](PRODUCT_SCOPE.md) — 사용자, 핵심 흐름, 제공·비제공 범위
+3. [HERD_MODEL_CHARTER.md](HERD_MODEL_CHARTER.md) — 모델 목표와 경계
+4. [HERD_DECISION_ARCHITECTURE.md](HERD_DECISION_ARCHITECTURE.md) — 상태·행동 우위·포트폴리오 정책 분리
+5. [HERD_ADOPTION_POLICY.md](HERD_ADOPTION_POLICY.md) — 행동 모델 채택 기준
+6. [HERD_RESEARCH_STATUS.md](HERD_RESEARCH_STATUS.md) — 누적 연구 판정 일지
+7. [ARCHITECTURE.md](ARCHITECTURE.md) — 현재 코드 구조와 변경 원칙
 
 ## 데이터와 재현 계약
 

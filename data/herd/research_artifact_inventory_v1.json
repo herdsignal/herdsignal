@@ -2675,6 +2675,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "docs/CURRENT_STATE.md",
+      "status": "ACTIVE"
+    },
+    {
       "path": "docs/HERD_ADOPTION_POLICY.md",
       "status": "REVIEW_REQUIRED"
     },

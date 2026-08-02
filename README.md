@@ -119,6 +119,7 @@ scripts/    실행, 검증, 백업 도구
 
 모델 목표와 현재 연구 결과는 아래 문서에서 확인할 수 있습니다.
 
+- [현재 상태](docs/CURRENT_STATE.md)
 - [문서 안내](docs/README.md)
 - [모델 목표](docs/HERD_MODEL_CHARTER.md)
 - [현재 연구 상태](docs/HERD_RESEARCH_STATUS.md)

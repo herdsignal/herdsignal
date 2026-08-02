@@ -4,9 +4,6 @@ import com.herdsignal.domain.HerdIndicator;
 import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.InvestorProfile;
 import com.herdsignal.dto.ActionDecision;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -17,7 +14,6 @@ import java.util.List;
  * 레거시 HERD v6.1 Action Layer를 연구 비교용으로 재현한다.
  * 운영 승격 게이트를 통과하기 전에는 계산 결과와 별개로 행동 비율을 0%로 제한한다.
  */
-@Service
 public class ActionDecisionService {
 
     private static final String ACTION_MODEL_VERSION = "HERD_v6.1";
@@ -37,7 +33,6 @@ public class ActionDecisionService {
     private final ActionAuthorityPolicy authorityPolicy;
     private final boolean exposeResearchRatio;
 
-    @Autowired
     public ActionDecisionService(PersonalActionTranslator personalActionTranslator) {
         this(personalActionTranslator, false);
     }
