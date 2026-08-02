@@ -12,6 +12,8 @@ MODEL_STATUS = ROOT / "data" / "herd" / "model_establishment_status_v1.json"
 ARTIFACT_CATALOG = ROOT / "data" / "herd" / "research_artifact_catalog_v2.json"
 ACTION_HYPOTHESIS = ROOT / "data" / "herd" / "rush_negative_earnings_reaction_preregistration_v1.json"
 ACTION_HYPOTHESIS_REPORT = ROOT / "data" / "reports" / "rush_negative_earnings_reaction_oos_v1.json"
+HISTORICAL_SCREEN_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_earnings_reaction_oos_v1.json"
+PROSPECTIVE_GATE_REPORT = ROOT / "data" / "reports" / "rush_earnings_prospective_confirmation_gate_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -25,6 +27,8 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     catalog = _load(root / ARTIFACT_CATALOG.relative_to(ROOT))
     hypothesis = _load(root / ACTION_HYPOTHESIS.relative_to(ROOT))
     hypothesis_report = _load(root / ACTION_HYPOTHESIS_REPORT.relative_to(ROOT))
+    historical_screen = _load(root / HISTORICAL_SCREEN_REPORT.relative_to(ROOT))
+    prospective_gate = _load(root / PROSPECTIVE_GATE_REPORT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -63,6 +67,16 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("waiting action hypothesis unexpectedly enabled an action")
     if hypothesis_report["direction_evidence_admitted"]:
         contradictions.append("waiting action hypothesis unexpectedly admitted direction evidence")
+    if historical_screen["candidate_action_enabled"]:
+        contradictions.append("failed historical screen unexpectedly enabled an action")
+    if historical_screen["direction_evidence_admitted"]:
+        contradictions.append("historical screen unexpectedly admitted direction evidence")
+    if historical_screen["passed"] != prospective_gate["historical_screen_passed"]:
+        contradictions.append("historical result and prospective gate disagree")
+    if not historical_screen["passed"] and prospective_gate["prospective_outcomes_may_be_opened_when_mature"]:
+        contradictions.append("prospective outcomes opened after a failed historical screen")
+    if prospective_gate["operational_action_ratio"] != 0.0:
+        contradictions.append("prospective gate unexpectedly has operational authority")
 
     pending_source_review = decision["new_source_candidate"]["pending_source_decisions"]
     return {
@@ -96,10 +110,19 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         },
         "new_action_hypothesis": {
             "id": hypothesis["single_hypothesis"]["id"],
-            "status": hypothesis_report["status"],
-            "mature_events": hypothesis_report["mature_events"],
-            "direction_evidence_admitted": hypothesis_report["direction_evidence_admitted"],
-            "operational_action_ratio": hypothesis_report["operational_action_ratio"],
+            "status": historical_screen["status"],
+            "historical_screen": {
+                "passed": historical_screen["passed"],
+                "mature_events": historical_screen["mature_events"],
+                "distinct_tickers": historical_screen["distinct_tickers"],
+                "calendar_years": historical_screen["calendar_years"],
+            },
+            "prospective_status": prospective_gate["status"],
+            "sec_collection_active": prospective_gate["sec_append_only_collection_active"],
+            "prospective_outcomes_open": prospective_gate["prospective_outcomes_may_be_opened_when_mature"],
+            "prospective_mature_events": hypothesis_report["mature_events"],
+            "direction_evidence_admitted": historical_screen["direction_evidence_admitted"],
+            "operational_action_ratio": prospective_gate["operational_action_ratio"],
         },
         "contradictions": contradictions,
     }
