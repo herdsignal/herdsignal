@@ -1,0 +1,40 @@
+{
+  "report_version": "HERD_DECISION_ARCHITECTURE_V1",
+  "status": "ARCHITECTURE_READY_ACTION_EDGE_NOT_TRAINED",
+  "layers": {
+    "state": "OBSERVATION_READY",
+    "action_edge": "NO_ADOPTABLE_CANDIDATE",
+    "portfolio_policy": "BLOCKED_UNTIL_ACTION_EDGE_ADMISSION"
+  },
+  "policy_tracks": [
+    "SAME_TICKER_COMPLETED_CYCLE",
+    "RELATIVE_REBALANCE_REVIEW"
+  ],
+  "next_stage": "FIXED_POLICY_NET_VALUE_TARGET_V1",
+  "input_hashes": [
+    {
+      "path": "data/herd/research_decision_v2.json",
+      "sha256": "96606cd3cf313fbae835f4b7034134c9aaebc926a85a4d703dd0bb2f4663d1c3"
+    },
+    {
+      "path": "data/reports/profit_take_success_label_v2.json",
+      "sha256": "8b7fe9d30e475eb3c9b1f69e4329d2b28a2046277ef4877ebf5274d48ec61c00"
+    },
+    {
+      "path": "data/reports/profit_giveback_economic_v1.json",
+      "sha256": "6190d677a1b21fc482397c5f7ce4f0000306b4da2d5bde21bb51742d19b69124"
+    },
+    {
+      "path": "data/reports/vnext_preholdout_evaluation_v1.json",
+      "sha256": "1bf604eb91e2f12af874f68a92066dcba3269868a24bf5f15072f2499030a88e"
+    },
+    {
+      "path": "data/reports/evidence_admission_registry_v10.json",
+      "sha256": "af27d4cbf3f6762a63c8617becf43eaafcbe1b0d702a3da09932bb774eb8e21a"
+    }
+  ],
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "blind_holdout_access": false,
+  "survivorship_safe": false
+}

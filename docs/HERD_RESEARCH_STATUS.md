@@ -9,6 +9,14 @@
 > `action-research-intake-latest.json`을 기준으로 한다. 아래 날짜별 V1~V10
 > 기록과 결정 파일의 당시 `nextStage`는 현재 작업 목록으로 해석하지 않는다.
 
+2026-08-02 의사결정 구조 감사에서 검증 절차는 유지하고 예측 문제를
+`State S1 → Action Edge → Portfolio Policy`로 분리했다. 운영 State 조회의
+레거시 v6.1 행동 계산은 제거했다. 새 행동 연구의 기본 표적은 경로 분류가
+아니라 결과 확인 전에 고정한 5% 정책의 HOLD 대비 순최종자산 차이다.
+같은 종목 완결 사이클과 상대 리밸런싱을 별도 정책으로 비교하며, 둘 다
+현재 행동 권한은 없다. 계약과 순서는 `HERD_DECISION_ARCHITECTURE.md`와
+`data/herd/decision_architecture_v1.json`을 따른다.
+
 ## 모델 확립 통합 파이프라인 1~9
 
 - 장기 보유 핵심 물량을 유지하면서 희소한 5% 부분 익절과 검증된

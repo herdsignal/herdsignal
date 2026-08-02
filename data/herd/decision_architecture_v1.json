@@ -1,0 +1,163 @@
+{
+  "contract_version": "HERD_DECISION_ARCHITECTURE_V1",
+  "status": "LOCKED_BEFORE_ACTION_EDGE_RESEARCH",
+  "locked_at": "2026-08-02",
+  "mission": {
+    "population": "ALREADY_SELECTED_LONG_TERM_US_EQUITY_HOLDINGS",
+    "objective": "IMPROVE_TERMINAL_WEALTH_OR_SHARE_COUNT_VERSUS_MATCHED_BUY_AND_HOLD",
+    "default_action": "HOLD",
+    "initial_action_fraction": 0.05,
+    "full_exit_forbidden": true,
+    "leverage_forbidden": true
+  },
+  "inputs": [
+    {
+      "path": "data/herd/research_decision_v2.json",
+      "sha256": "96606cd3cf313fbae835f4b7034134c9aaebc926a85a4d703dd0bb2f4663d1c3"
+    },
+    {
+      "path": "data/reports/profit_take_success_label_v2.json",
+      "sha256": "8b7fe9d30e475eb3c9b1f69e4329d2b28a2046277ef4877ebf5274d48ec61c00"
+    },
+    {
+      "path": "data/reports/profit_giveback_economic_v1.json",
+      "sha256": "6190d677a1b21fc482397c5f7ce4f0000306b4da2d5bde21bb51742d19b69124"
+    },
+    {
+      "path": "data/reports/vnext_preholdout_evaluation_v1.json",
+      "sha256": "1bf604eb91e2f12af874f68a92066dcba3269868a24bf5f15072f2499030a88e"
+    },
+    {
+      "path": "data/reports/evidence_admission_registry_v10.json",
+      "sha256": "af27d4cbf3f6762a63c8617becf43eaafcbe1b0d702a3da09932bb774eb8e21a"
+    }
+  ],
+  "layers": {
+    "state": {
+      "model": "HERD_STATE_S1",
+      "role": "DESCRIBE_CROWD_CONCENTRATION_AND_TRANSITION",
+      "operational_status": "OBSERVATION_READY",
+      "allowed_outputs": ["HERD_SCORE", "HERD_STAGE", "TRANSITION", "DATA_FRESHNESS"],
+      "forbidden_outputs": ["BUY", "REDUCE", "ACTION_RATIO"]
+    },
+    "action_edge": {
+      "model": null,
+      "role": "ESTIMATE_INCREMENTAL_VALUE_OF_A_FIXED_CAUSAL_POLICY_VERSUS_HOLD",
+      "operational_status": "NO_ADOPTABLE_CANDIDATE",
+      "primary_target": "NET_TERMINAL_WEALTH_DELTA_VERSUS_MATCHED_HOLD",
+      "secondary_targets": [
+        "TERMINAL_SHARE_DELTA",
+        "MISSED_UPSIDE_COST",
+        "DOWNSIDE_AVOIDED",
+        "COMPLETED_POLICY_RATE"
+      ],
+      "oracle_reentry_for_execution": false,
+      "generic_path_label_as_primary_target": false,
+      "high_herd_as_action": false
+    },
+    "portfolio_policy": {
+      "model": null,
+      "role": "TRANSLATE_ONLY_AN_ADMITTED_ACTION_EDGE_WITH_USER_CONSTRAINTS",
+      "operational_status": "BLOCKED_UNTIL_ACTION_EDGE_ADMISSION",
+      "may_change_herd_state": false,
+      "requires_investor_profile": true,
+      "requires_cost_and_tax_disclosure": true,
+      "maximum_initial_fraction": 0.05
+    }
+  },
+  "policy_tracks": [
+    {
+      "id": "SAME_TICKER_COMPLETED_CYCLE",
+      "description": "Five-percent trim followed by a fully observable fixed reentry rule",
+      "incomplete_cycle_is_success": false
+    },
+    {
+      "id": "RELATIVE_REBALANCE_REVIEW",
+      "description": "Five-percent concentration reduction into SPY or a qualified underweight existing holding",
+      "same_ticker_reentry_required": false
+    }
+  ],
+  "research_design": {
+    "fixed_policy_before_outcomes": true,
+    "next_session_open_execution": true,
+    "cost_stress_required": true,
+    "external_cashflows_equalized": true,
+    "ticker_and_time_blocked_oos": true,
+    "minimum_oos_years": 5,
+    "maximum_candidates_per_ticker_year": 2,
+    "small_interaction_hypothesis_allowed": true,
+    "maximum_feature_families_per_hypothesis": 3,
+    "standalone_family_profitability_required": false,
+    "incremental_group_ablation_required": true,
+    "same_oos_retuning_forbidden": true
+  },
+  "evaluation": {
+    "primary_metrics": [
+      "MEDIAN_TERMINAL_WEALTH_DELTA",
+      "POSITIVE_TERMINAL_WEALTH_RATE",
+      "MEDIAN_TERMINAL_SHARE_DELTA",
+      "UPSIDECAPTURE",
+      "DOWNSIDECAPTURE",
+      "AVERAGE_EQUITY_EXPOSURE"
+    ],
+    "rare_action_metrics": [
+      "TOP_BUDGET_POLICY_VALUE",
+      "POSITIVE_NET_VALUE_PRECISION",
+      "COMPLETED_POLICY_RATE",
+      "MISSED_UPSIDE_TAIL"
+    ],
+    "diagnostic_metrics": ["LOG_LOSS", "BRIER", "CALIBRATION", "BLOCK_BOOTSTRAP_INTERVAL"],
+    "log_loss_is_sole_admission_gate": false,
+    "buy_and_hold_is_primary_benchmark": true
+  },
+  "instrument_classes": {
+    "PROFITABLE_LARGE_CAP_GROWTH": "POOLED_EQUITY_RESEARCH",
+    "UNPROFITABLE_HIGH_GROWTH": "SEPARATE_CALIBRATION_REQUIRED",
+    "CYCLICAL_SEMICONDUCTOR": "SEPARATE_CALIBRATION_REQUIRED",
+    "BROAD_MARKET_ETF": "SEPARATE_BASELINE",
+    "LEVERAGED_ETF": "EXCLUDED_FROM_EQUITY_ACTION_MODEL"
+  },
+  "keep": [
+    "STATE_S1_AND_TRANSITION_S1",
+    "PROSPECTIVE_IMMUTABLE_LEDGER",
+    "POINT_IN_TIME_AND_NEXT_OPEN_EXECUTION",
+    "WALK_FORWARD_PURGE_EMBARGO",
+    "COST_STRESS_AND_BUY_HOLD_BENCHMARK",
+    "FIVE_PERCENT_INITIAL_ACTION_CAP",
+    "FAIL_CLOSED_PROMOTION_AND_HUMAN_REVIEW"
+  ],
+  "change": [
+    "SEPARATE_STATE_ACTION_EDGE_AND_PORTFOLIO_POLICY",
+    "REPLACE_GENERIC_PATH_PRIMARY_TARGET_WITH_FIXED_POLICY_NET_VALUE",
+    "EVALUATE_RARE_TOP_BUDGET_ECONOMIC_VALUE",
+    "ALLOW_ONLY_PREREGISTERED_SMALL_ECONOMIC_INTERACTIONS",
+    "SEGMENT_INSTRUMENT_CLASSES",
+    "COMPARE_SAME_TICKER_CYCLE_WITH_RELATIVE_REBALANCE"
+  ],
+  "stop": [
+    "RUN_LEGACY_V61_ACTION_CALCULATION_ON_OPERATIONAL_STATE_READ",
+    "RETUNE_REJECTED_THRESHOLDS_ON_THE_SAME_OOS",
+    "ADD_DATA_PARSER_WITHOUT_A_LOCKED_ECONOMIC_HYPOTHESIS",
+    "MAP_HIGH_HERD_DIRECTLY_TO_PROFIT_TAKE",
+    "RECOMBINE_REJECTED_FEATURES_WITHOUT_A_NEW_INTERACTION_HYPOTHESIS",
+    "OPEN_BLIND_HOLDOUT_BEFORE_PREHOLDOUT_PASS",
+    "ENABLE_ANY_USER_ACTION_RATIO_BEFORE_PROMOTION"
+  ],
+  "implementation_order": [
+    "REMOVE_LEGACY_ACTION_FROM_OPERATIONAL_STATE_READ",
+    "LOCK_FIXED_POLICY_NET_VALUE_TARGET",
+    "BUILD_SIMPLE_POLICY_BASELINES",
+    "BUILD_INSTRUMENT_CLASS_LEDGER",
+    "PREREGISTER_ONE_SMALL_INTERACTION_HYPOTHESIS",
+    "RUN_TICKER_AND_TIME_BLOCKED_OOS",
+    "COMPARE_POLICY_TRACKS_UNDER_COST_STRESS",
+    "START_PROSPECTIVE_SHADOW_ONLY_AFTER_PREHOLDOUT_PASS"
+  ],
+  "firewall": {
+    "adoptable_action_candidate": null,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "blind_holdout_access": false,
+    "survivorship_safe": false
+  }
+}

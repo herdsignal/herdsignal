@@ -46,7 +46,7 @@ class HerdV4BoundaryContractTest {
                 HerdScoreResponse response = new HerdScoreResponseMapper(
                         new UserActionBoundary()
                 ).map(
-                        score, indicator, quality, null, null, null
+                        score, indicator, quality, null, null
                 );
 
                 assertThat(response.getOperationalModelVersion()).isEqualTo("HERD_v4");
@@ -71,19 +71,9 @@ class HerdV4BoundaryContractTest {
                 .herdStage("Rush")
                 .signal("SELL")
                 .build();
-        ActionDecision researchDecision = ActionDecision.builder()
-                .actionModelVersion("HERD_v6.1")
-                .actionModelStatus("RESEARCH_VALIDATION")
-                .actionLabel("일부 익절")
-                .actionGrade("ACTION")
-                .actionRatio(new BigDecimal("0.15"))
-                .researchActionRatio(new BigDecimal("0.15"))
-                .researchActionLabel("일부 익절")
-                .build();
-
         HerdScoreResponse response = new HerdScoreResponseMapper(
                 new UserActionBoundary()
-        ).map(score, null, null, researchDecision, null, null);
+        ).map(score, null, null, null, null);
 
         assertThat(response.getSignal()).isEqualTo("HOLD");
         assertThat(response.getOperationalAction()).isEqualTo("HOLD");
@@ -95,5 +85,7 @@ class HerdV4BoundaryContractTest {
         assertThat(response.getResearchActionLabel()).isNull();
         assertThat(response.getActionRegime()).isNull();
         assertThat(response.getLegacySignal()).isEqualTo("SELL");
+        assertThat(response.getActionModelVersion()).isEqualTo("HERD_v6.1");
+        assertThat(response.getActionModelStatus()).isEqualTo("RESEARCH_VALIDATION");
     }
 }

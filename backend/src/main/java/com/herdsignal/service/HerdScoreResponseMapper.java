@@ -3,7 +3,6 @@ package com.herdsignal.service;
 import com.herdsignal.domain.HerdIndicator;
 import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.Stock;
-import com.herdsignal.dto.ActionDecision;
 import com.herdsignal.dto.HerdScoreResponse;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +12,11 @@ import java.util.List;
 /** 영속 모델과 계산 결과를 공개 HERD API 계약으로만 변환한다. */
 @Component
 public class HerdScoreResponseMapper {
+
+    private static final String LEGACY_ACTION_MODEL_VERSION = "HERD_v6.1";
+    private static final String LEGACY_ACTION_MODEL_NAME =
+            "Validated Progressive Action Layer";
+    private static final String LEGACY_ACTION_MODEL_STATUS = "RESEARCH_VALIDATION";
 
     private final UserActionBoundary actionBoundary;
 
@@ -24,7 +28,6 @@ public class HerdScoreResponseMapper {
             HerdScore score,
             HerdIndicator indicator,
             HerdQualityEvaluator.HerdQuality quality,
-            ActionDecision decision,
             Stock stock,
             HerdScoreResponse.SignalDuration duration
     ) {
@@ -60,26 +63,18 @@ public class HerdScoreResponseMapper {
                 .qualityFlags(quality != null ? quality.flags() : List.of())
                 .qualityReasons(quality != null ? quality.reasons() : List.of())
                 .operationalModelVersion("HERD_v4")
+                .actionModelVersion(LEGACY_ACTION_MODEL_VERSION)
+                .actionModelName(LEGACY_ACTION_MODEL_NAME)
+                .baseModelVersion("HERD_v4")
+                .actionModelStatus(LEGACY_ACTION_MODEL_STATUS)
                 .actionDisclaimer("검증되지 않은 Action Layer의 운영 비율은 0%이며 연구 결과만 별도로 제공합니다.")
                 .oosValidationSummary("최신 전체 OOS 수치와 채택 게이트 결과는 HERD Lab에서 확인할 수 있습니다.")
                 .actionRatio(action.ratio())
                 .actionGrade("NO_ACTION")
                 .actionLabel("상태 관찰");
 
-        mapResearchMetadata(builder, decision);
         mapIndicator(builder, score, indicator);
         return builder.build();
-    }
-
-    private void mapResearchMetadata(
-            HerdScoreResponse.HerdScoreResponseBuilder builder,
-            ActionDecision decision
-    ) {
-        if (decision == null) return;
-        builder.actionModelVersion(decision.getActionModelVersion())
-                .actionModelName(decision.getActionModelName())
-                .baseModelVersion(decision.getBaseModelVersion())
-                .actionModelStatus(decision.getActionModelStatus());
     }
 
     private void mapIndicator(

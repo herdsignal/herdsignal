@@ -39,7 +39,8 @@ exception/    일관된 API 오류
 
 - 기본 사용자 상태는 State S1이다.
 - v4·v6.1 응답은 호환·연구 재현용이다.
-- `ActionDecisionService`는 레거시 연구 계산기이며 운영 권한을 발급하지 않는다.
+- `ActionDecisionService`는 레거시 연구 계산기이며 운영 HERD 조회에서 실행하지
+  않고 운영 권한도 발급하지 않는다.
 - 승인된 증거·완결 사이클·PIT·holdout 조건이 없으면 행동은 `HOLD·0%`다.
 - 누락된 승인 값이나 감사 저장 실패는 반드시 차단한다.
 

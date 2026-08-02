@@ -44,6 +44,8 @@
       "data/herd/model_establishment_protocol_v1.json",
       "data/herd/model_establishment_status_v1.json",
       "data/herd/research_decision_v2.json",
+      "data/herd/decision_architecture_v1.json",
+      "data/reports/decision_architecture_v1.json",
       "data/herd/profit_take_opportunity_ceiling_v1.json",
       "data/reports/profit_take_opportunity_ceiling_v1.json",
       "data/reports/profit_take_opportunity_ceiling_v1.csv",
@@ -103,6 +105,7 @@
       "docs/HERD_S1_PRODUCTIZATION_PLAN.md",
       "docs/PRODUCT_SCOPE.md",
       "docs/HERD_RESEARCH_STATUS.md",
+      "docs/HERD_DECISION_ARCHITECTURE.md",
       "docs/HERD_REPRODUCIBLE_RESEARCH.md"
     ],
     "DATA_PIPELINE": [

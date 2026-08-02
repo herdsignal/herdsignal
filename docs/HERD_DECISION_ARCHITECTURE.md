@@ -1,0 +1,130 @@
+# HERD 의사결정 구조
+
+상태: `LOCKED_BEFORE_ACTION_EDGE_RESEARCH`  
+기준일: 2026-08-02
+
+기계 판독 계약은 `data/herd/decision_architecture_v1.json`, 검증 결과는
+`data/reports/decision_architecture_v1.json`이다.
+
+## 결론
+
+기존 검증·승격 안전장치는 유지한다. 바꾸는 대상은 검증 강도가 아니라
+예측 문제의 구조다. State S1은 군중 상태를 설명하고, Action Edge는 고정된
+행동 정책이 HOLD보다 나은지를 추정하며, Portfolio Policy는 검증된 Edge를
+사용자 제약에 맞게 번역한다. 세 계층은 서로의 값을 수정하지 않는다.
+
+현재 운영 범위는 State S1·Transition S1 관찰뿐이다. Action Edge와
+Portfolio Policy 후보는 없고 사용자 행동은 `HOLD·0%`다.
+
+## 실패에서 확인한 사실
+
+- 439종목 2,161건의 라벨에서 경제적 재매수 기회는 1,121건이었다. 사후
+  기회가 부족한 문제는 아니다.
+- 가격 확장·추세·상대 위치·참여·하방 위험 중 독립 채택 증거는 0개다.
+- vNext 결합 모델 OOS AUC는 0.508이고 단순 양성률 기준선보다 log loss가
+  나빴다.
+- 실제 HERD giveback 정책은 77개 활성 코호트 중 완결 사이클이 11개였고,
+  주식 수 증가 사이클은 27.3%, 중앙 초과 CAGR은 -0.44%p였다.
+
+따라서 문제는 조정 기회의 존재가 아니라 행동 시점 이전의 구분력과
+완결 정책의 경제성이다.
+
+## 유지
+
+| 대상 | 유지 이유 | 코드 경계 |
+| --- | --- | --- |
+| State S1·Transition S1 | 상태 관찰 기능은 제품 가치가 있고 행동과 분리 가능 | `data/herd/herd_state_s1.*`, `herd_transition_s1.*` |
+| 불변 전향 원장 | 같은 시점의 관측과 미래 결과를 분리 | `data/scheduler/prospective_evidence.py` |
+| PIT·다음 시가 체결 | 미래 누수와 비현실 체결 방지 | 연구 manifest·execution 계약 |
+| Walk-forward·purge·embargo | 시간 중첩과 결과 누수 방지 | `data/walk_forward/` |
+| 비용·Buy & Hold 비교 | 행동의 실제 기회비용 평가 | 채택 정책·완결 사이클 |
+| 최초 5%·전량 금지·레버리지 금지 | 오류 비용 제한 | 운영 승격 계약 |
+| fail-closed·사람 승인 | 연구 결과의 무단 운영 연결 방지 | `UserActionBoundary`, 승격 포트 |
+| 탈락 산출물 보존 | 같은 가설의 이름 변경·재조정 방지 | artifact catalog |
+
+## 변경
+
+### 상태와 행동 분리
+
+운영 상태 조회에서 레거시 v6.1 행동 계산을 실행하지 않는다. 호환 필드는
+정적 연구 메타데이터로만 보존하고 행동 근거·비율은 응답에 넣지 않는다.
+
+### 예측 표적
+
+`향후 조정 발생`, `더 낮은 가격 존재`, `경로 분류`는 보조 라벨로만 둔다.
+기본 표적은 결과 확인 전에 고정한 정책의
+`HOLD 대비 순최종자산 차이`다. 주식 수 변화, 놓친 상승, 회피한 하락,
+완결률을 함께 저장한다. 미래 최저가는 체결 규칙으로 사용하지 않는다.
+
+### 평가
+
+log loss는 확률 진단으로 남기되 단독 채택 기준으로 쓰지 않는다. 종목당
+연 2개 이하 후보의 상위 행동 예산 경제가치, 양의 순가치 정밀도, 완결률,
+놓친 상승 꼬리를 우선 평가한다. 종목·시간 block OOS와 비용 스트레스는
+그대로 유지한다.
+
+### 증거 조합
+
+각 증거군의 단독 수익성을 필수로 두지 않는다. 대신 경제적 이유가 고정된
+최대 3개 증거군의 작은 상호작용 하나만 사전등록한다. 모든 블록은 group
+ablation으로 증분 기여를 확인한다. 탈락 지표를 임의로 다시 섞는 것은
+계속 금지한다.
+
+### 정책 비교
+
+다음 두 정책을 같은 자본·기간·비용으로 비교한다.
+
+1. `SAME_TICKER_COMPLETED_CYCLE`: 5% 익절 후 관측 가능한 고정 규칙으로
+   같은 종목에 재진입한다.
+2. `RELATIVE_REBALANCE_REVIEW`: 집중 종목 5%를 SPY 또는 기존 보유 중
+   검증된 저비중 종목으로 이동한다. 정확한 동일 종목 저점을 맞혀야 하는
+   두 번째 타이밍을 요구하지 않는다.
+
+두 번째 정책도 아직 추천이 아니라 비교 연구 대상이다.
+
+### 자산 유형
+
+수익성 대형 성장주, 적자 고성장주, 경기민감 반도체, 광범위 ETF를 같은
+임계값으로 평가하지 않는다. 레버리지 ETF는 일반 주식 행동 모델에서
+제외한다. State 관찰 가능 여부와 행동 모델 편입 여부는 별개다.
+
+## 중단
+
+- 운영 상태 조회에서 레거시 v6.1 행동 계산 실행
+- 같은 OOS에서 탈락 임계값·기간 재조정
+- 고정 경제 가설 없는 SEC·FINRA 파서 확장
+- 높은 HERD를 바로 익절로 변환
+- 새 상호작용 가설 없이 탈락 피처 재결합
+- pre-holdout 통과 전 Blind holdout 개방
+- 승인 전 사용자 행동 비율 활성화
+
+중단은 파일 삭제를 뜻하지 않는다. 고정 연구 파일은 재현 자료로 보존하고
+운영 import와 다음 후보 입력에서 제외한다.
+
+## 구현 순서
+
+1. 운영 State 조회에서 레거시 ActionDecision 계산을 제거한다.
+2. 고정 정책 순가치 표적 V1을 결과 확인 전에 잠근다.
+3. HOLD·현금 유지·정기 리밸런싱·동일 종목 사이클의 단순 기준선을 만든다.
+4. 종목 유형 원장을 만들고 레버리지 ETF를 행동 연구에서 차단한다.
+5. 최대 3개 증거군의 단일 경제 상호작용 가설을 사전등록한다.
+6. 종목·시간 block OOS와 상위 행동 예산 경제성 평가를 실행한다.
+7. 동일 종목 사이클과 상대 리밸런싱을 비용 스트레스에서 비교한다.
+8. pre-holdout을 통과한 정책만 prospective shadow로 이동한다.
+9. prospective·PIT·holdout·사람 승인 후에만 최대 5% 행동 후보로 승격한다.
+
+현재 다음 단계는 2번 `FIXED_POLICY_NET_VALUE_TARGET_V1`이다.
+
+## 외부 방법론과의 차이
+
+Danelfin은 향후 3개월 시장 초과확률을, Seeking Alpha는 섹터 내 종목
+매력도를 평가한다. 같은 종목의 익절과 재진입을 연속해서 맞히는 문제와는
+다르다. Simply Wall St는 시각 점수를 매수·매도 추천이 아닌 특성 요약으로
+제한한다.
+
+- https://support.danelfin.com/hc/en-us/articles/4404382038545-What-is-the-AI-Score-How-it-rates-stocks-and-ETFs
+- https://help.seekingalpha.com/premium/quant-ratings-and-factor-grades-faq
+- https://support.simplywall.st/hc/en-us/articles/360001740916-How-does-the-Snowflake-work
+
+HerdSignal은 이들과 같은 입력 개수를 흉내 내지 않고, 장기 보유자의 희소한
+비중 조절이 실제 HOLD보다 나았는지를 직접 검증한다.

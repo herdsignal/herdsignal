@@ -67,6 +67,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/decision_architecture_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/entry_add_buy_policy.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -953,6 +957,10 @@
     {
       "path": "data/reports/data_quality_audit_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/decision_architecture_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/evidence_admission_registry_v10.json",
@@ -2561,6 +2569,10 @@
     {
       "path": "docs/HERD_CONSTITUENT_EVENT_RESOLUTION.md",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "docs/HERD_DECISION_ARCHITECTURE.md",
+      "status": "ACTIVE"
     },
     {
       "path": "docs/HERD_MODEL_CHARTER.md",

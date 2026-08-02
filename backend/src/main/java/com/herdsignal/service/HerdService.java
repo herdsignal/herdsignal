@@ -4,7 +4,6 @@ import com.herdsignal.domain.HerdIndicator;
 import com.herdsignal.domain.HerdScore;
 import com.herdsignal.domain.Stock;
 import com.herdsignal.domain.UserPortfolio;
-import com.herdsignal.domain.InvestorProfile;
 import com.herdsignal.dto.HerdHistoryPoint;
 import com.herdsignal.dto.HerdHistoryResponse;
 import com.herdsignal.dto.HerdScoreResponse;
@@ -47,9 +46,6 @@ public class HerdService {
     private final HerdIndicatorRepository herdIndicatorRepository;
     private final StockRepository stockRepository;
     private final HerdResponseAssembler responseAssembler;
-    private final ActionCooldownService actionCooldownService;
-    private final PortfolioActionContextService portfolioActionContextService;
-    private final InvestorProfileService investorProfileService;
     private final HerdOnDemandRunner onDemandRunner;
     private final UsMarketSessionClock marketSessionClock;
 
@@ -187,18 +183,6 @@ public class HerdService {
         Map<String, Stock> stockByTicker = stockRepository.findByTickerIn(normalizedTickers)
                 .stream()
                 .collect(Collectors.toMap(Stock::getTicker, stock -> stock));
-        InvestorProfile profile = userId == null ? null : investorProfileService.forDecision(userId);
-        var heldTickers = userId == null ? java.util.Set.<String>of() : portfolioRepository.findByUserId(userId).stream()
-                .map(UserPortfolio::getTicker)
-                .collect(Collectors.toSet());
-        Map<String, LocalDate> scoreDates = historyByTicker.entrySet().stream()
-                .filter(entry -> !entry.getValue().isEmpty())
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0).getScoreDate()));
-        Map<String, ActionCooldownContext> cooldownByTicker = actionCooldownService.getContexts(
-                userId, normalizedTickers, scoreDates);
-        Map<String, PortfolioActionContext> portfolioContextByTicker =
-                portfolioActionContextService.getContexts(userId, normalizedTickers, profile);
-
         return normalizedTickers.stream()
                 .map(ticker -> {
                     List<HerdScore> history = historyByTicker.get(ticker);
@@ -209,12 +193,7 @@ public class HerdService {
                             history.get(0),
                             indicatorByTicker.get(ticker),
                             history,
-                            stockByTicker.get(ticker),
-                            profile,
-                            heldTickers.contains(ticker),
-                            cooldownByTicker.getOrDefault(ticker, ActionCooldownContext.none()),
-                            portfolioContextByTicker.getOrDefault(
-                                    ticker, PortfolioActionContext.unavailable())
+                            stockByTicker.get(ticker)
                     );
                 })
                 .filter(Objects::nonNull)
@@ -248,16 +227,7 @@ public class HerdService {
                 score.getTicker(),
                 marketSessionClock.currentSessionDate().minusMonths(ACTION_CONTEXT_MONTHS));
         Stock stock = stockRepository.findByTicker(score.getTicker()).orElse(null);
-        InvestorProfile profile = userId == null ? null : investorProfileService.forDecision(userId);
-        boolean currentlyHeld = userId != null && portfolioRepository.existsByUserIdAndTicker(
-                userId, score.getTicker());
-        ActionCooldownContext cooldown = actionCooldownService.getContext(
-                userId, score.getTicker(), score.getScoreDate());
-        PortfolioActionContext portfolioContext = portfolioActionContextService.getContexts(
-                userId, List.of(score.getTicker()), profile)
-                .getOrDefault(score.getTicker(), PortfolioActionContext.unavailable());
-        return buildResponse(
-                score, indicator, history, stock, profile, currentlyHeld, cooldown, portfolioContext);
+        return buildResponse(score, indicator, history, stock);
     }
 
     /** 이미 일괄 조회한 데이터로 응답을 만들어 목록 API의 N+1 쿼리를 피한다. */
@@ -265,21 +235,8 @@ public class HerdService {
             HerdScore score,
             HerdIndicator indicator,
             List<HerdScore> history,
-            Stock stock,
-            InvestorProfile profile,
-            boolean currentlyHeld,
-            ActionCooldownContext cooldown,
-            PortfolioActionContext portfolioContext
+            Stock stock
     ) {
-        return responseAssembler.assemble(
-                score,
-                indicator,
-                history,
-                stock,
-                profile,
-                currentlyHeld,
-                cooldown,
-                portfolioContext
-        );
+        return responseAssembler.assemble(score, indicator, history, stock);
     }
 }

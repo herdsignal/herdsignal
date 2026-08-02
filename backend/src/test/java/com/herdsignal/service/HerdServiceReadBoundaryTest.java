@@ -26,9 +26,6 @@ class HerdServiceReadBoundaryTest {
                 mock(HerdIndicatorRepository.class),
                 mock(StockRepository.class),
                 mock(HerdResponseAssembler.class),
-                mock(ActionCooldownService.class),
-                mock(PortfolioActionContextService.class),
-                mock(InvestorProfileService.class),
                 runner,
                 new UsMarketSessionClock()
         );

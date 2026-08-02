@@ -24,7 +24,8 @@
 - `HerdResponseAssembler`: 미리 조회한 데이터의 응답 DTO 조립
 - `HerdQualityEvaluator`: 산출물 완성도·최신성 평가
 - `HerdSignalDurationCalculator`: 신호·단계 연속 기간 계산
-- `ActionDecisionService`: 레거시 v6.1 연구 행동 재현
+- `ActionDecisionService`: 레거시 v6.1 연구 행동 재현. 운영 HERD 조회에서는
+  실행하지 않으며 회귀 테스트와 명시적 연구 경로에서만 사용
 - `UserActionBoundary`: 기본 사용자 응답·저널의 행동을 HOLD·0%로 잠그는
   단일 fail-closed 정책
 - `OperationalActionPromotionPort`: 향후 통과 모델이 들어오는 유일한 포트
@@ -34,6 +35,10 @@
 
 HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이다. 한 계산식으로 합치지 않는다.
 연구용 `ActionDecision`을 사용자 응답에 직접 매핑하지 않는다.
+
+차세대 의사결정 연구는 `HERD State → Action Edge → Portfolio Policy`의
+단방향 계층을 따른다. Action Edge가 채택되지 않으면 Portfolio Policy는
+비율을 계산하지 않는다. 상세 계약은 `HERD_DECISION_ARCHITECTURE.md`다.
 
 ## 프론트엔드
 
