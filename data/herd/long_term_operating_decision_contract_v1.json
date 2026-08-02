@@ -1,0 +1,46 @@
+{
+  "schema_version": "LONG_TERM_OPERATING_DECISION_V1",
+  "status": "LOCKED_BEFORE_IMPLEMENTATION_RESULTS",
+  "as_of": "2026-08-03",
+  "default_decision": "OBSERVE",
+  "default_action_ratio": 0.0,
+  "areas": [
+    {"code": "MANDATE", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": false},
+    {"code": "DATA_GATE", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": true},
+    {"code": "BUSINESS_HEALTH", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": true},
+    {"code": "EXPECTATION_VALUATION", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": false},
+    {"code": "MARKET_SECTOR", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": false},
+    {"code": "CHART_CROWD", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": false},
+    {"code": "INFORMATION_CHANGE", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": false},
+    {"code": "PORTFOLIO_FIT", "may_describe": true, "may_support_direction": false, "may_set_ratio": true, "may_veto": true},
+    {"code": "INDEPENDENT_RISK", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": true},
+    {"code": "SYNTHESIS", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": false},
+    {"code": "ATTRIBUTION", "may_describe": true, "may_support_direction": false, "may_set_ratio": false, "may_veto": false}
+  ],
+  "operational_decisions": [
+    "INSUFFICIENT_DATA",
+    "OBSERVE",
+    "REVIEW_ADD",
+    "REVIEW_TRIM",
+    "THESIS_RISK",
+    "RISK_VETO"
+  ],
+  "locked_authority": {
+    "directional_evidence_adopted": false,
+    "review_add_enabled": false,
+    "review_trim_enabled": false,
+    "generative_ai_may_create_facts": false,
+    "generative_ai_may_set_action": false,
+    "maximum_operational_action_ratio": 0.0
+  },
+  "evidence_requirements": {
+    "unique_evidence_id": true,
+    "source_required": true,
+    "source_version_required": true,
+    "as_of_date_required": true,
+    "observed_at_required": true,
+    "asset_type_required": true,
+    "required_pit_must_be_time_valid": true,
+    "required_stale_or_missing_fact_blocks_decision": true
+  }
+}
