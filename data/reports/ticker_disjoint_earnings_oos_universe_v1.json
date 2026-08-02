@@ -1,0 +1,17 @@
+{
+  "report_version": "TICKER_DISJOINT_EARNINGS_OOS_UNIVERSE_V1",
+  "status": "HISTORICAL_FALSIFICATION_INPUT_READY",
+  "ticker_count": 54,
+  "state_rows": 22267,
+  "first_state_date": "2014-01-31",
+  "last_state_date": "2026-07-17",
+  "locked_439_overlap": 0,
+  "universe_path": "data/reports/ticker_disjoint_earnings_oos_universe_v1.csv",
+  "universe_sha256": "21a17ba1111465e39c71508f1ca5459e7f8f309e124e3e4645ac357bed31b527",
+  "state_path": "data/reports/ticker_disjoint_earnings_oos_state_s1.csv.gz",
+  "state_sha256": "83d40c000317690727ba803afc7e1e76930cb87d8d6abf9be7d9318479c59ccc",
+  "survivorship_safe": false,
+  "blind_holdout": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

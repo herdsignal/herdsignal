@@ -1,0 +1,44 @@
+{
+  "contract_version": "TICKER_DISJOINT_EARNINGS_OOS_UNIVERSE_V1",
+  "status": "LOCKED_BEFORE_EARNINGS_OUTCOMES",
+  "purpose": "Fast historical falsification sample for the locked earnings-reaction hypothesis",
+  "selection": {
+    "exclude_every_ticker_in_locked_439": true,
+    "required_manifest_role": "EQUITY",
+    "exclude_benchmark_etfs": true,
+    "minimum_price_sessions": 1008,
+    "sector_mapping_required": true,
+    "cik_required": true,
+    "future_return_selection_forbidden": true
+  },
+  "state_formula": "HERD_STATE_S1 unchanged, with the locked INDEPENDENT_CURRENT_CONSTITUENTS lane as peer breadth universe",
+  "role": "FAST_TICKER_DISJOINT_HISTORICAL_FALSIFICATION",
+  "inputs": [
+    {
+      "path": "data/reports/herd_transition_s1_latest.csv",
+      "sha256": "9fa1c554256a0c88b004334070e387ecb6c3031c9119d76dc50ba0f2cb12b6fb"
+    },
+    {
+      "path": "data/reports/independent_universe_v1.csv",
+      "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8"
+    },
+    {
+      "path": "data/snapshots/yf-independent-current-sp500-20260721/manifest.json",
+      "sha256": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781"
+    },
+    {
+      "path": "data/herd/herd_state_s1.json",
+      "sha256": "76c6e9a37d76f964f423f88957cfff75df54b31b5604df978f4f8c545bae2489"
+    },
+    {
+      "path": "data/herd/rush_negative_earnings_reaction_preregistration_v1.json",
+      "sha256": "1a7374771ae545f4725743a4d7c04108ac6ba61487f393e3991652fc7fe46a65"
+    }
+  ],
+  "limitations": {
+    "survivorship_safe": false,
+    "blind_holdout": false,
+    "claim": "candidate elimination only",
+    "operational_action_ratio": 0.0
+  }
+}
