@@ -54,6 +54,15 @@ PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_8k_identity_primary
 manifest의 파일 크기·SHA-256을 전부 검증하고 기존 원문을 덮어쓰지 않는다.
 추출 symbol은 `PENDING_SOURCE_REVIEW`이며 자동 ticker 승격은 0건이다.
 
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_8k_identity_source_review_v1
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_8k_identity_source_review_v1.py
+```
+
+검수자는 CSV의 `decision`, `approved_symbol`, `review_note`만 편집한다.
+`VALID`은 원문에서 추출된 후보 하나를 지정해야 한다. 다른 source 열 변경,
+미검수 행, Wilson 하한 미달은 ticker 원장 승격을 차단한다.
+
 ## Rush 이익률–현금흐름 괴리 사전등록
 
 ```bash

@@ -1,0 +1,68 @@
+{
+  "protocol_version": "SEC_8K_IDENTITY_SOURCE_REVIEW_V1",
+  "status": "LOCKED_BEFORE_HUMAN_SOURCE_DECISIONS",
+  "as_of": "2026-08-02",
+  "objective": "Review every extracted trading-symbol candidate against the hashed SEC primary document before any historical ticker interval is promoted.",
+  "locked_inputs": [
+    {
+      "role": "COLLECTION_PROTOCOL",
+      "path": "data/herd/sec_8k_identity_primary_document_collection_v1.json",
+      "sha256": "3c4effdcce300931daf441ba46c2084384ef96fa98178c83fb54a127396c680d"
+    },
+    {
+      "role": "COLLECTION_REPORT",
+      "path": "data/reports/sec_8k_identity_primary_document_collection_v1.json",
+      "sha256": "824ae2a26008e233ebff4a727971fdb6014c3b0d33c68b269cf2692c0f4ded87"
+    },
+    {
+      "role": "COLLECTION_INDEX",
+      "path": "data/reports/sec_8k_identity_primary_document_collection_v1.csv",
+      "sha256": "07b4e599fd6eac398d6bec26e96fb1135455bb8ddab4d8f13e8502986e0408f2"
+    },
+    {
+      "role": "LOCAL_SNAPSHOT_MANIFEST",
+      "path": "data/reference/sec/sec-8k-identity-primary-v1-p0p1-20260802/manifest.json",
+      "sha256": "cd21863a03eeaf0eed2ace76dff12e56d9b5c834996f951b92e3a9f31c91c117"
+    }
+  ],
+  "review_scope": {
+    "candidate_rows": 110,
+    "review_all_candidates": true,
+    "allowed_decisions": [
+      "PENDING",
+      "VALID",
+      "INVALID",
+      "AMBIGUOUS"
+    ],
+    "valid_requires_approved_symbol_from_candidates": true
+  },
+  "precision_gate": {
+    "minimum_reviewed_rows": 100,
+    "minimum_wilson_95_lower_bound": 0.9,
+    "maximum_ambiguous_ratio": 0.1,
+    "all_rows_must_be_adjudicated": true,
+    "all_required": true
+  },
+  "output": {
+    "labels": "data/reports/sec_8k_identity_source_review_v1.csv",
+    "report": "data/reports/sec_8k_identity_source_review_v1.json"
+  },
+  "next_stage_if_passed": "SEC_8K_TIME_VALID_IDENTITY_PROMOTION_V1",
+  "next_stage_if_pending": "COMPLETE_110_SEC_IDENTITY_SOURCE_DECISIONS",
+  "forbidden": [
+    "AUTO_LABEL_XBRL_TAG_AS_VALID",
+    "APPROVE_SYMBOL_NOT_PRESENT_IN_SOURCE_CANDIDATES",
+    "READ_PRICE_OR_RETURN_OUTCOMES",
+    "USE_CURRENT_TICKER_FALLBACK",
+    "PROMOTE_IDENTITY_BEFORE_GATE_PASS",
+    "OPEN_BLIND_HOLDOUT",
+    "ENABLE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "price_outcomes_opened": false,
+    "identity_promotion_allowed": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

@@ -99,6 +99,9 @@ P0·P1 SEC primary document 275건의 수집 index와 보고서도
 `DATA_PIPELINE`이다. 원문 bytes는 `.gitignore`된 로컬 snapshot에 두고,
 Git에는 snapshot manifest 해시·추출 후보·검수 대기 상태만 남긴다.
 
+후보 110건의 원문 검수 계약·CSV·보고서도 `DATA_PIPELINE`이다. 모두
+`PENDING`이므로 아직 ticker 연결 증거나 방향 증거가 아니다.
+
 SEC 13F는 공식 bulk 53개와 대표 보통주 식별 원장을 거쳐 PIT 보유
 원장으로 정규화했다. 로컬 SQLite에는 269,600개 filing, 원시 보유
 22,870,933행, amendment 적용 후 유효 상태 22,993,808행이 있다.

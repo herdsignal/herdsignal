@@ -67,6 +67,8 @@ tests/        운영 및 연구 계약 회귀
   document 보강 큐로 고정했다. 현재 ticker를 과거 사건에 소급하지 않는다.
 - P0·P1 SEC 원문 275건은 로컬 해시 snapshot으로 수집했다. 자동 symbol
   후보 110건도 원문 검수 전에는 ticker–CIK 원장에 반영하지 않는다.
+- ticker 원문 검수 CSV에서는 `decision`, `approved_symbol`, `review_note`만
+  수정한다. 현재 110건 전부 PENDING이며 자동 승인하지 않는다.
 
 상세 계약:
 

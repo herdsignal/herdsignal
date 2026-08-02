@@ -216,6 +216,19 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 `data/herd/sec_8k_identity_primary_document_collection_v1.json`,
 `data/reports/sec_8k_identity_primary_document_collection_v1.json`이다.
 
+### ticker 원문 검수 V1
+
+- 자동 후보가 있는 110건 전부를 원문 검수 원장에 고정했다. SEC tagged
+  XBRL 후보 100건과 visible-label 후보 10건이며 각 행의 원문 SHA-256을
+  다시 검증한다.
+- 현재 110건은 모두 `PENDING`, 승인 ticker는 0건이다. `VALID` 판정은
+  원문 후보 중 하나를 명시해야 하며 source 열을 바꾸면 검증이 실패한다.
+- 110건 전체 판정, 최소 100건 검수, Wilson 95% 하한 90%, 모호 비율 10%
+  이하를 모두 충족해야만 시점 유효 ticker 원장 승격 단계로 갈 수 있다.
+
+계약과 검수 원장은 `data/herd/sec_8k_identity_source_review_v1.json`,
+`data/reports/sec_8k_identity_source_review_v1.csv`다.
+
 ## Prospective Evidence Ledger V1
 
 - State S1 스케줄러가 생성한 동일 번들을 관측일별 불변 JSON envelope로
