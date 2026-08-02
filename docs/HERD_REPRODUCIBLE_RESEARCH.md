@@ -4,6 +4,17 @@ HERD 후보는 같은 데이터와 같은 시간 분할로 다시 실행했을 �
 나와야 비교 대상이 된다. 이 문서는 데이터 스냅샷과 Walk-forward 산출물의
 고정 규칙이다.
 
+## Rush 이익률–현금흐름 괴리 사전등록
+
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.rush_margin_cash_divergence_preregistration_v1
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_rush_margin_cash_divergence_preregistration_v1.py
+```
+
+이 단계는 SEC PIT 입력 커버리지만 검사한다. 점수 표준화, 학습분포 상위
+10% 선, 정책 수익과 미래 경로는 열지 않는다. 계약 또는 고정 입력 해시가
+바뀌면 실패하고, 같은 날 접수된 공시는 다음 관찰일부터 사용한다.
+
 ## SEC 13F 군중 맥락 계약 검증
 
 ```bash

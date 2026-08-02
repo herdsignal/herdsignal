@@ -15,8 +15,8 @@ from herd.instrument_class_ledger_v1 import (
     TICKER_LEDGER_PATH,
     InstrumentClassLedgerError,
     _company_style,
-    _latest_pit_feature,
     classify_security_structure,
+    latest_pit_feature,
     load_contract,
 )
 from scheduler.prospective_evidence import LEVERAGED_ETFS
@@ -95,8 +95,8 @@ def test_same_day_after_close_filing_is_deferred_to_next_observation():
         ]
     )
 
-    assert _latest_pit_feature(features, "TEST", pd.Timestamp("2026-08-01")) is None
-    assert _latest_pit_feature(features, "TEST", pd.Timestamp("2026-08-02")) is not None
+    assert latest_pit_feature(features, "TEST", pd.Timestamp("2026-08-01")) is None
+    assert latest_pit_feature(features, "TEST", pd.Timestamp("2026-08-02")) is not None
 
 
 def test_committed_ledgers_are_complete_and_do_not_select_a_policy():

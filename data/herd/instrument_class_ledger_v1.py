@@ -219,7 +219,7 @@ def build_ticker_ledger(contract: dict[str, Any]) -> pd.DataFrame:
     return pd.DataFrame(output)
 
 
-def _latest_pit_feature(features: pd.DataFrame, ticker: str, observation: pd.Timestamp) -> pd.Series | None:
+def latest_pit_feature(features: pd.DataFrame, ticker: str, observation: pd.Timestamp) -> pd.Series | None:
     # A filing accepted after the US close must not enter that session's signal.
     # Requiring it before the observation calendar day is conservative across
     # daylight-saving changes and makes same-day filings available next session.
@@ -280,7 +280,7 @@ def build_event_ledger(contract: dict[str, Any], ticker_ledger: pd.DataFrame) ->
         feature = None
         style, style_reason = ("NOT_APPLICABLE", "NON_OPERATING_COMPANY")
         if structure == "OPERATING_COMPANY_EQUITY":
-            feature = _latest_pit_feature(features, event.ticker, event.observation_session)
+            feature = latest_pit_feature(features, event.ticker, event.observation_session)
             style, style_reason = _company_style(feature, contract)
         if structure == "LEVERAGED_OR_INVERSE_ETP":
             segment = "LEVERAGED_OR_INVERSE_ETP"

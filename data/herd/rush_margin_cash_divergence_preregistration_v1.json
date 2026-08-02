@@ -1,0 +1,126 @@
+{
+  "contract_version": "HERD_RUSH_MARGIN_CASH_DIVERGENCE_PREREGISTRATION_V1",
+  "status": "LOCKED_BEFORE_OOS_TARGET_ACCESS",
+  "locked_at": "2026-08-02",
+  "hypothesis_id": "RUSH_MARGIN_CASH_DIVERGENCE_RELATIVE_REBALANCE_V1",
+  "objective": "TEST_WHETHER_POINT_IN_TIME_MARGIN_STRENGTH_DIVERGING_FROM_OPERATING_CASH_FLOW_IDENTIFIES_RARE_RUSH_EVENTS_WHERE_A_FIXED_FIVE_PERCENT_REALLOCATION_TO_SPY_BEATS_MATCHED_HOLD",
+  "inputs": [
+    {"path": "data/herd/decision_architecture_v1.json", "sha256": "fa23035769d762a18906b9aeaa2fbf16fa243dafc772b14912252024ebacbda9"},
+    {"path": "data/herd/instrument_class_ledger_v1.json", "sha256": "f416cb4c5524b5086c37273cf01ba99850db92041e41aaba9ed70098949413e2"},
+    {"path": "data/reports/instrument_class_ledger_v1.json", "sha256": "5b5918f02e379c6fb95874e0f13cbb3a7d7d9bdd38628e800d289afc971cb864"},
+    {"path": "data/reports/instrument_class_event_ledger_v1.csv.gz", "sha256": "a675c5872794a8cab35716f82781f28ebfab92382dcc710f624d09f12692f472"},
+    {"path": "data/reports/business_state_features_v2.csv", "sha256": "515a0708594b3e5064e5edf7b46dbcb7d161d2682acfe4af42d22a773f1fb7f1"},
+    {"path": "data/herd/fixed_policy_net_value_target_v1.json", "sha256": "4ec8ee4ba61efacbf63853b97c88aa2cc2e00755693d8b17e511becf80e09e4d"},
+    {"path": "data/herd/failed_hypothesis_map_v1.json", "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2"},
+    {"path": "data/walk_forward/long-oos-v2-20260721/price_timing_6m.csv", "sha256": "18d82f2edd3e9be0d0d5882dedc88c6763203f24c042a2e65909c6ffbee9b831"}
+  ],
+  "economic_hypothesis": {
+    "statement": "Within pre-existing Rush observations, unusually resilient reported margin change relative to contemporaneous operating-cash-flow growth may indicate lower earnings quality and make a small idiosyncratic-risk reallocation economically preferable to matched hold.",
+    "state_is_population_filter_not_direction_evidence": true,
+    "feature_families": ["PIT_MARGIN_TREND", "PIT_OPERATING_CASH_FLOW_TREND"],
+    "feature_family_count": 2,
+    "novelty": "The rejected business guard tested broad deterioration as an add-buy veto. This contract fixes a margin-versus-cash divergence for a Rush relative-rebalance policy and does not reuse price-direction features.",
+    "prior_failures_do_not_authorize_direction": true
+  },
+  "population": {
+    "source": "data/reports/instrument_class_event_ledger_v1.csv.gz",
+    "required_security_structure_class": "OPERATING_COMPANY_EQUITY",
+    "required_universe_role": "PRIMARY",
+    "leveraged_or_inverse_etp_excluded": true,
+    "etfs_excluded": true,
+    "maximum_events_per_ticker_year": 2,
+    "current_gics_not_used": true,
+    "minimum_feature_ready_events": 120,
+    "minimum_feature_ready_tickers": 30,
+    "minimum_nonempty_folds": 8
+  },
+  "point_in_time_features": {
+    "source": "data/reports/business_state_features_v2.csv",
+    "required_corpus_status": "PIT_FACTS_READY",
+    "availability": "LATEST_ACCEPTED_FEATURE_STRICTLY_BEFORE_OBSERVATION_CALENDAR_DAY",
+    "same_day_filing_available_next_observation": true,
+    "restatement_backfill_forbidden": true,
+    "inputs": ["net_margin_yoy_change", "operating_cash_flow_yoy"],
+    "missing_policy": "NOT_ELIGIBLE_NO_IMPUTATION"
+  },
+  "score": {
+    "training_winsorization": [0.01, 0.99],
+    "training_scaler": "MEDIAN_AND_IQR",
+    "zero_iqr_policy": "FAIL_FOLD_CLOSED",
+    "formula": "Z_TRAIN_WINSORIZED_NET_MARGIN_YOY_CHANGE_MINUS_Z_TRAIN_WINSORIZED_OPERATING_CASH_FLOW_YOY",
+    "higher_score_direction": "MORE_LIKELY_REALLOCATION_OUTPERFORMS_HOLD",
+    "candidate_cutoff": "TRAINING_SCORE_90TH_PERCENTILE",
+    "fixed_weights": {"net_margin_yoy_change": 1.0, "operating_cash_flow_yoy": -1.0},
+    "fit_model": false,
+    "hyperparameter_search": false
+  },
+  "policy": {
+    "track": "RELATIVE_REBALANCE_REVIEW",
+    "policy_id": "TRIM_TO_SPY_HORIZON",
+    "initial_ticker_shares": 1.0,
+    "initial_cash": 0.0,
+    "reallocation_fraction": 0.05,
+    "source_sale": "NEXT_AVAILABLE_SESSION_ADJUSTED_OPEN",
+    "destination": "SPY",
+    "destination_purchase": "SAME_SESSION_ADJUSTED_OPEN",
+    "terminal_horizon_sessions": 126,
+    "maximum_events_per_ticker_year": 2,
+    "cooldown_sessions": 63,
+    "base_one_way_cost_bps": 10,
+    "stress_one_way_cost_bps": [25, 50],
+    "full_exit_forbidden": true,
+    "leverage_forbidden": true
+  },
+  "oos_design": {
+    "fold_source": "data/walk_forward/long-oos-v2-20260721/price_timing_6m.csv",
+    "test_folds": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08", "F09"],
+    "training_observations_must_precede_test_start": true,
+    "purge_sessions": 126,
+    "embargo_sessions": 20,
+    "outcome_must_end_inside_test_fold": true,
+    "scaling_and_cutoff_fit_on_training_only": true,
+    "same_oos_retuning_forbidden": true,
+    "current_sample_role": "PREHOLDOUT_FALSIFICATION_ONLY",
+    "prospective_confirmation_required_for_user_action": true
+  },
+  "target_and_gates": {
+    "primary_target": "NORMALIZED_NET_TERMINAL_WEALTH_DELTA_VERSUS_MATCHED_HOLD",
+    "primary_cost_bps": 10,
+    "minimum_candidates": 15,
+    "minimum_candidate_tickers": 10,
+    "minimum_directional_folds": 6,
+    "median_net_terminal_wealth_delta_must_exceed": 0.0,
+    "minimum_positive_net_value_rate": 0.6,
+    "maximum_one_sided_ticker_block_bootstrap_p_value": 0.1,
+    "stress_50bps_median_must_not_be_below": 0.0,
+    "maximum_95pct_missed_upside_cost": 0.02,
+    "compare_all_locked_fixed_baselines_on_same_candidates": true,
+    "classification_metrics_are_diagnostic_only": true,
+    "all_gates_required": true
+  },
+  "research_basis": [
+    {"url": "https://www.nber.org/papers/w8308", "claim": "Earnings accompanied by weaker cash-flow quality can contain information missed by bottom-line earnings alone."},
+    {"url": "https://www.sciencedirect.com/science/article/pii/S0304405X14002323", "claim": "Profitability and investment are established dimensions of average equity returns but do not by themselves define a timing rule."},
+    {"url": "https://www.nber.org/papers/w20439", "claim": "Momentum generally persists but crash risk is state dependent, so Rush alone must not become a sell trigger."}
+  ],
+  "forbidden": [
+    "USE_PRICE_EXTENSION_OR_RSI_AS_AN_ADDITIONAL_FEATURE",
+    "ADD_DEBT_GUIDANCE_FORM4_FINRA_OR_13F_AFTER_RESULTS",
+    "CHANGE_SCORE_WEIGHTS_OR_PERCENTILE_AFTER_RESULTS",
+    "FIT_SCALER_OR_CUTOFF_ON_TEST_DATA",
+    "IMPUTE_MISSING_PIT_FEATURES",
+    "USE_CURRENT_GICS_AS_POINT_IN_TIME_EVIDENCE",
+    "SELECT_ANOTHER_FIXED_POLICY_AFTER_RESULTS",
+    "CLAIM_SURVIVORSHIP_SAFE",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ],
+  "firewall": {
+    "oos_target_accessed": false,
+    "direction_evidence_admitted": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "survivorship_safe": false,
+    "blind_holdout_access": false
+  }
+}

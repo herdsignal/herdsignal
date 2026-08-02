@@ -56,6 +56,8 @@
       "data/reports/instrument_class_ledger_v1.csv",
       "data/reports/instrument_class_event_ledger_v1.csv.gz",
       "data/reports/fixed_policy_by_instrument_class_v1.csv",
+      "data/herd/rush_margin_cash_divergence_preregistration_v1.json",
+      "data/reports/rush_margin_cash_divergence_preregistration_v1.json",
       "data/herd/profit_take_opportunity_ceiling_v1.json",
       "data/reports/profit_take_opportunity_ceiling_v1.json",
       "data/reports/profit_take_opportunity_ceiling_v1.csv",

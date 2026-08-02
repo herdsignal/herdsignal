@@ -1,0 +1,38 @@
+{
+  "report_version": "HERD_RUSH_MARGIN_CASH_DIVERGENCE_PREREGISTRATION_V1",
+  "contract_sha256": "e217b03c6ccb8d4b297a220111827bd9e89b78efe2ee7f9fdb391024f24492cd",
+  "hypothesis_id": "RUSH_MARGIN_CASH_DIVERGENCE_RELATIVE_REBALANCE_V1",
+  "status": "PREREGISTERED_READY_FOR_PREHOLDOUT_OOS",
+  "population_events": 230,
+  "feature_ready_events": 176,
+  "feature_ready_tickers": 42,
+  "feature_ready_fold_counts": {
+    "F01": 21,
+    "F02": 17,
+    "F03": 12,
+    "F04": 23,
+    "F05": 19,
+    "F06": 31,
+    "F07": 11,
+    "F08": 18,
+    "F09": 24
+  },
+  "coverage_rate": 0.7652173913043478,
+  "readiness_checks": {
+    "minimum_feature_ready_events": true,
+    "minimum_feature_ready_tickers": true,
+    "minimum_nonempty_folds": true
+  },
+  "all_readiness_checks_passed": true,
+  "score_values_generated": false,
+  "candidate_cutoff_fitted": false,
+  "oos_target_accessed": false,
+  "oos_execution_allowed": true,
+  "direction_evidence_admitted": false,
+  "policy_promoted": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "next_stage": "IMPLEMENT_TRAIN_ONLY_SCALING_AND_TICKER_TIME_BLOCKED_OOS_EVALUATOR"
+}

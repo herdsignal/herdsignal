@@ -475,6 +475,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/rush_margin_cash_divergence_preregistration_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/rush_path_comparison_v2.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1505,6 +1509,10 @@
     {
       "path": "data/reports/rush_hypothesis_preregistration_v1.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_margin_cash_divergence_preregistration_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/rush_path_comparison_v2.csv",
