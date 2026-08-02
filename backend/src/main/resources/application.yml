@@ -80,6 +80,13 @@ herdsignal:
   shadow:
     enabled: ${HERD_SHADOW_ENABLED:false}
     candidate-id: ${HERD_SHADOW_CANDIDATE_ID:}
+  ai:
+    evidence-review:
+      # 연구용 근거 요약만 허용한다. 기본값은 비활성화이며 행동 권한은 항상 HOLD·0%다.
+      enabled: ${HERD_AI_EVIDENCE_REVIEW_ENABLED:false}
+      api-key: ${OPENAI_API_KEY:}
+      model: ${OPENAI_EVIDENCE_MODEL:gpt-5.6-terra}
+      timeout: ${OPENAI_EVIDENCE_TIMEOUT:30s}
   auth:
     enabled: ${AUTH_ENABLED:false}
     frontend-url: ${FRONTEND_URL:http://localhost:5173}

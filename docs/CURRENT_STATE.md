@@ -62,3 +62,7 @@ SEC 8-K 훼손 사건의 ticker–CIK 원문 판정 110건이 남아 있다. 이
 
 누적 연구 이력은 `HERD_RESEARCH_STATUS.md`, 재현 방법은
 `HERD_REPRODUCIBLE_RESEARCH.md`에 보존한다.
+
+AI 프로토타입의 입력·출력 경계는
+`HERD_AI_EVIDENCE_REVIEW.md`에 고정했다. 기본 비활성화이며 모델 연구
+증거와 운영 행동에 연결하지 않는다.

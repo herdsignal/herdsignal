@@ -48,6 +48,11 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("blind holdout must remain closed")
     if catalog_decision["canonical_decision"] != "data/herd/research_decision_v4.json":
         contradictions.append("artifact catalog points at a stale canonical decision")
+    if product.get("research_prototypes") == ["SOURCE_GROUNDED_AI_EVIDENCE_REVIEW"]:
+        if authority.get("ai_review_can_set_action") is not False:
+            contradictions.append("AI evidence review unexpectedly has action authority")
+        if authority.get("ai_review_can_create_evidence") is not False:
+            contradictions.append("AI evidence review unexpectedly creates model evidence")
 
     pending_source_review = decision["new_source_candidate"]["pending_source_decisions"]
     return {
@@ -59,6 +64,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "state_model": authority["state_model"],
             "state_observation_ready": product_decision["observation_display_ready"],
             "portfolio_and_journal_ready": product_decision["portfolio_and_journal_mvp_ready"],
+            "research_prototypes": product.get("research_prototypes", []),
         },
         "action_research": {
             "decision": model["overall_decision"],

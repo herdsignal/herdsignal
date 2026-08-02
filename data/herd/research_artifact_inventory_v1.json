@@ -2683,6 +2683,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "docs/HERD_AI_EVIDENCE_REVIEW.md",
+      "status": "ACTIVE"
+    },
+    {
       "path": "docs/HERD_ARTIFACT_CATALOG.md",
       "status": "REVIEW_REQUIRED"
     },

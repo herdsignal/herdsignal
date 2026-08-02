@@ -114,6 +114,7 @@
       "data/herd/product_scope_contract_v1.json",
       "backend/src/main/resources/research/historical_s1_product_context_v1.json",
       "docs/CURRENT_STATE.md",
+      "docs/HERD_AI_EVIDENCE_REVIEW.md",
       "docs/HERD_S1_PRODUCTIZATION_PLAN.md",
       "docs/PRODUCT_SCOPE.md",
       "docs/HERD_RESEARCH_STATUS.md",

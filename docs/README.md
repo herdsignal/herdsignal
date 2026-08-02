@@ -12,6 +12,7 @@
 5. [HERD_ADOPTION_POLICY.md](HERD_ADOPTION_POLICY.md) — 행동 모델 채택 기준
 6. [HERD_RESEARCH_STATUS.md](HERD_RESEARCH_STATUS.md) — 누적 연구 판정 일지
 7. [ARCHITECTURE.md](ARCHITECTURE.md) — 현재 코드 구조와 변경 원칙
+8. [HERD_AI_EVIDENCE_REVIEW.md](HERD_AI_EVIDENCE_REVIEW.md) — 출처 제한 AI 연구 프로토타입
 
 ## 데이터와 재현 계약
 

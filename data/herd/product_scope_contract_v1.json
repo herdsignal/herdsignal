@@ -30,6 +30,9 @@
     "PERSONAL_JUDGMENT_RECORD",
     "LOCAL_DATA_FRESHNESS"
   ],
+  "research_prototypes": [
+    "SOURCE_GROUNDED_AI_EVIDENCE_REVIEW"
+  ],
   "excluded_until_separately_approved": [
     "ACTION_RECOMMENDATION",
     "AUTOMATIC_ORDER_EXECUTION",
@@ -45,6 +48,8 @@
     "default_action": "HOLD",
     "operational_action_ratio": 0.0,
     "state_is_not_action": true,
-    "asset_values_private_by_default": true
+    "asset_values_private_by_default": true,
+    "ai_review_can_set_action": false,
+    "ai_review_can_create_evidence": false
   }
 }
