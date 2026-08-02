@@ -3,6 +3,8 @@ package com.herdsignal.controller;
 import com.herdsignal.dto.ApiResponse;
 import com.herdsignal.service.decision.ObjectiveEvidenceService;
 import com.herdsignal.service.decision.ObjectiveReviewResponse;
+import com.herdsignal.service.decision.LongTermOperatingReviewService;
+import com.herdsignal.service.decision.PersonalOperatingReviewResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OperatingReviewController {
     private final ObjectiveEvidenceService objectiveEvidenceService;
+    private final LongTermOperatingReviewService operatingReviewService;
 
     @GetMapping("/{ticker}/objective")
     public ResponseEntity<ApiResponse<ObjectiveReviewResponse>> objective(
             @PathVariable String ticker
     ) {
         return ResponseEntity.ok(ApiResponse.success(objectiveEvidenceService.review(ticker)));
+    }
+
+    @GetMapping("/{ticker}")
+    public ResponseEntity<ApiResponse<PersonalOperatingReviewResponse>> personal(
+            @PathVariable String ticker
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(operatingReviewService.review(ticker)));
     }
 }
