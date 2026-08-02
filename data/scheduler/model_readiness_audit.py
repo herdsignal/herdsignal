@@ -13,7 +13,7 @@ _DATA_DIR = Path(__file__).resolve().parent.parent
 if str(_DATA_DIR) not in sys.path:
     sys.path.insert(0, str(_DATA_DIR))
 
-from herd.research_decision_v2 import load_and_validate  # noqa: E402
+from herd.research_decision_v3 import load_and_validate  # noqa: E402
 from scheduler.prospective_evidence import (  # noqa: E402
     DEFAULT_ARCHIVE_DIR,
     audit_archive,

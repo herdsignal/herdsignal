@@ -1,6 +1,6 @@
 # HERD 연구 산출물 분류
 
-기준일: 2026-07-25
+기준일: 2026-08-02
 
 연구 파일이 많다는 이유만으로 삭제하지 않는다. 탈락 실험도 임계값을 바꿔
 다시 시도하는 일을 막고 과거 판정을 재현하는 근거다. 기계 판독 원장은
@@ -20,7 +20,8 @@ V2는 파일을 상태별 명시적 chain에 한 번만 넣는다. 같은 파일
 들어가거나 v4·v6.1이 `LEGACY_REFERENCE_ONLY`가 아니면 검증이 실패한다.
 
 현재 행동·승격 권한의 단일 진입점은 불변 원장인
-`data/herd/research_decision_v2.json`이다. 카탈로그는 산출물의 보존 상태를,
+`data/herd/research_decision_v3.json`이다. V2 이하는 과거 계약의 해시
+입력으로 보존한다. 카탈로그는 산출물의 보존 상태를,
 결정 원장은 검증을 마친 후보 판정과 행동 경계를 담당한다. 현재 관측 축적량과
 다음 연구 입력은 Git 밖의 `data/runtime/reports/model-readiness-latest.json`과
 `action-research-intake-latest.json`에서 읽는다. 경제성 게이트에서 탈락한

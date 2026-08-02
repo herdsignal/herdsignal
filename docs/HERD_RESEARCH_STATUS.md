@@ -4,7 +4,7 @@
 판정: `STATE_OBSERVATION_MVP_READY` / `NO_ADOPTABLE_ACTION_CANDIDATE`
 
 > 이 문서는 재현성을 위한 누적 연구 일지다. 행동·승격 권한은 불변 판정인
-> `data/herd/research_decision_v2.json`을 기준으로 한다. 현재 관측 축적량과
+> `data/herd/research_decision_v3.json`을 기준으로 한다. 현재 관측 축적량과
 > 다음 연구 입력은 `data/runtime/reports/model-readiness-latest.json`과
 > `action-research-intake-latest.json`을 기준으로 한다. 아래 날짜별 V1~V10
 > 기록과 결정 파일의 당시 `nextStage`는 현재 작업 목록으로 해석하지 않는다.
@@ -132,11 +132,12 @@
   prospective OOS 표본을 사전 고정하는 것이다.
 
 현재 행동·승격 경계의 기계 판독 결정은
-`data/herd/research_decision_v2.json`이다. 기존
-`model_establishment_status_v1.json`은 과거 Part J~O 승격 감사의 고정
+`data/herd/research_decision_v3.json`이다. V3는 최신 Rush 이익률–현금흐름
+괴리 가설까지 총 5개 행동 후보가 모두 탈락했음을 고정한다. 기존 V2와
+`model_establishment_status_v1.json`은 과거 승격 감사의 고정
 해시 입력으로 보존하며 최신 판정 원장으로 수정하지 않는다. V2는 State S1
-관찰 MVP, 최신 Form 4·FINRA·13F·giveback 탈락, 행동 후보 0개와
-`survivorship_safe=false`를 한 번에 검증한다.
+관찰 MVP와 당시 Form 4·FINRA·13F·giveback 탈락을 보존하고, V3가 현재
+행동 후보 0개와 `survivorship_safe=false`를 검증한다.
 
 운영 중인 전향 원장과 현재 연구 계약을 함께 보는 최신 준비 상태는
 `./scripts/audit-model-readiness.sh`로 검사한다. 결과는 Git에 넣지 않는

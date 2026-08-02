@@ -1,0 +1,69 @@
+{
+  "decision_version": "HERD_RESEARCH_DECISION_V3",
+  "as_of": "2026-08-02",
+  "status": "STATE_OBSERVATION_MVP_READY_NO_ACTION_CANDIDATE",
+  "supersedes_for_current_status": "data/herd/research_decision_v2.json",
+  "preserves_prior_decisions_as_reproducibility_inputs": true,
+  "inputs": [
+    {"path": "data/herd/research_decision_v2.json", "sha256": "96606cd3cf313fbae835f4b7034134c9aaebc926a85a4d703dd0bb2f4663d1c3"},
+    {"path": "data/herd/decision_architecture_v1.json", "sha256": "fa23035769d762a18906b9aeaa2fbf16fa243dafc772b14912252024ebacbda9"},
+    {"path": "data/reports/decision_architecture_v1.json", "sha256": "f59ca6b558097a1c389cb74e11dde9b07f51759fc13168be1c9b8c892a725705"},
+    {"path": "data/reports/fixed_policy_economic_baselines_v1.json", "sha256": "48676103a814fc80feadfd60edd9f1e5d06afe01a0e4e01c0ebdf01e5c8a751b"},
+    {"path": "data/reports/instrument_class_ledger_v1.json", "sha256": "5b5918f02e379c6fb95874e0f13cbb3a7d7d9bdd38628e800d289afc971cb864"},
+    {"path": "data/herd/rush_margin_cash_divergence_oos_v1.json", "sha256": "34dfcf3cd824c5d6ef0216a94108a2ae06a3d6df7cfb91d83bbd9977c7496f6d"},
+    {"path": "data/reports/rush_margin_cash_divergence_oos_v1.json", "sha256": "6be3201b2a3d543b9b02c5d907de5d4b473e09ec4527ff5e05b067c812bae457"}
+  ],
+  "product_scope": {
+    "observation_model": "HERD_STATE_S1",
+    "transition_model": "HERD_TRANSITION_S1",
+    "observation_display_ready": true,
+    "portfolio_and_journal_mvp_ready": true,
+    "default_user_action": "HOLD",
+    "operational_action_ratio": 0.0
+  },
+  "action_research": {
+    "evaluated_candidate_count": 5,
+    "admitted_profit_take_evidence_count": 0,
+    "admitted_reentry_evidence_count": 0,
+    "adoptable_action_candidate": null,
+    "blind_holdout_access_count": 0,
+    "prospective_action_shadow_enabled": false
+  },
+  "latest_candidate": {
+    "candidate": "RUSH_MARGIN_CASH_DIVERGENCE_RELATIVE_REBALANCE_V1",
+    "role": "PROFIT_TAKE_RELATIVE_REBALANCE",
+    "decision": "REJECTED_PREHOLDOUT_OOS",
+    "report": "data/reports/rush_margin_cash_divergence_oos_v1.json",
+    "candidate_events": 7,
+    "candidate_tickers": 5,
+    "median_10bps_net_terminal_wealth_delta": -0.0152425095325065,
+    "positive_10bps_net_value_rate": 0.2857142857142857,
+    "all_adoption_gates_passed": false
+  },
+  "data_boundaries": {
+    "survivorship_safe": false,
+    "current_constituent_preholdout_research_allowed": true,
+    "prospective_observation_collection_enabled": true,
+    "prospective_action_shadow_enabled": false,
+    "blind_holdout_eligible": false
+  },
+  "next_stage": {
+    "id": "DISTINCT_PUBLIC_PIT_INFORMATION_FEASIBILITY_V1",
+    "objective": "Admit at most one economically distinct public point-in-time input only after coverage, timing, licensing, and non-duplication checks pass without opening price outcomes.",
+    "required_checks": [
+      "ECONOMICALLY_DISTINCT_FROM_REJECTED_PRICE_AND_ACCOUNTING_INTERACTIONS",
+      "PUBLIC_COMMERCIAL_USE_COMPATIBLE",
+      "POINT_IN_TIME_PUBLICATION_TIMESTAMP_AVAILABLE",
+      "MINIMUM_TEN_YEAR_OR_EXPLICIT_PROSPECTIVE_ONLY_COVERAGE",
+      "TICKER_OR_CIK_TIME_VALID_LINKAGE_AVAILABLE",
+      "NO_PRICE_OUTCOME_ACCESS_DURING_FEASIBILITY"
+    ],
+    "forbidden": [
+      "RETUNE_RUSH_MARGIN_CASH_DIVERGENCE",
+      "COMBINE_REJECTED_FEATURES",
+      "REGISTER_DIRECTION_HYPOTHESIS_BEFORE_COVERAGE_PASS",
+      "OPEN_BLIND_HOLDOUT",
+      "ENABLE_OPERATIONAL_ACTION"
+    ]
+  }
+}

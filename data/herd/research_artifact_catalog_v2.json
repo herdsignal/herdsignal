@@ -16,7 +16,7 @@
     "personal_mvp_scope": "HERD_STATE_AND_TRANSITION_OBSERVATION_ONLY",
     "blind_holdout_access": false,
     "operational_action_ratio": 0.0,
-    "canonical_decision": "data/herd/research_decision_v2.json"
+    "canonical_decision": "data/herd/research_decision_v3.json"
   },
   "statuses": {
     "ACTIVE": "현재 연구 경계와 다음 모델 판정에 직접 사용되는 계약",
@@ -44,6 +44,8 @@
       "data/herd/model_establishment_protocol_v1.json",
       "data/herd/model_establishment_status_v1.json",
       "data/herd/research_decision_v2.json",
+      "data/herd/research_decision_v3.json",
+      "data/reports/research_decision_v3.json",
       "data/herd/decision_architecture_v1.json",
       "data/reports/decision_architecture_v1.json",
       "data/herd/fixed_policy_net_value_target_v1.json",

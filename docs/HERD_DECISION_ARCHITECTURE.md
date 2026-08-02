@@ -14,7 +14,8 @@
 사용자 제약에 맞게 번역한다. 세 계층은 서로의 값을 수정하지 않는다.
 
 현재 운영 범위는 State S1·Transition S1 관찰뿐이다. Action Edge와
-Portfolio Policy 후보는 없고 사용자 행동은 `HOLD·0%`다.
+Portfolio Policy 후보는 없고 사용자 행동은 `HOLD·0%`다. 최신 기계 판독
+경계는 `data/herd/research_decision_v3.json`이다.
 
 ## 실패에서 확인한 사실
 

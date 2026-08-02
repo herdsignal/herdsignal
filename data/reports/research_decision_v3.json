@@ -1,0 +1,13 @@
+{
+  "decision_version": "HERD_RESEARCH_DECISION_V3",
+  "status": "STATE_OBSERVATION_MVP_READY_NO_ACTION_CANDIDATE",
+  "product_scope": "STATE_AND_TRANSITION_OBSERVATION",
+  "evaluated_candidates": 5,
+  "adoptable_action_candidates": 0,
+  "latest_candidate_decision": "REJECTED_PREHOLDOUT_OOS",
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "next_stage": "DISTINCT_PUBLIC_PIT_INFORMATION_FEASIBILITY_V1"
+}

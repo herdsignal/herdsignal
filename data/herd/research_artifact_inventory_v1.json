@@ -443,6 +443,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/research_decision_v3.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/research_input_contract.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1436,6 +1440,10 @@
     },
     {
       "path": "data/reports/research_claim_scope_v1.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/research_decision_v3.json",
       "status": "ACTIVE"
     },
     {
