@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -44,6 +45,7 @@ class OperatingReviewSnapshotServiceTest {
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.payloadSha256()).hasSize(64);
         assertThat(result.decisionCode()).isEqualTo("OBSERVE");
+        assertThat(result.observationDate()).isEqualTo(LocalDate.of(2026, 8, 1));
         assertThat(result.referencePrice()).isNull();
         assertThat(result.outcomes()).allMatch(outcome -> "PENDING".equals(outcome.status()));
     }
@@ -62,7 +64,13 @@ class OperatingReviewSnapshotServiceTest {
     private PersonalOperatingReviewResponse review() {
         EvidencePacket packet = new EvidencePacket(
                 EvidencePacket.SCHEMA_VERSION, "NVDA", "UNCLASSIFIED_US_LISTED",
-                OffsetDateTime.parse("2026-08-03T12:00:00Z"), List.of());
+                OffsetDateTime.parse("2026-08-03T12:00:00Z"), List.of(
+                        new EvidenceFact(
+                                "OBS.STATE_SCORE", DecisionArea.CHART_CROWD, "HERD 상태 점수", "72",
+                                LocalDate.of(2026, 8, 1), OffsetDateTime.parse("2026-08-02T02:00:00Z"),
+                                "HERD_OBSERVATION", "HERD_STATE_S1", "UNCLASSIFIED_US_LISTED",
+                                EvidenceQuality.AVAILABLE, true, false, true, 10)
+                ));
         ObjectiveReviewResponse objective = new ObjectiveReviewResponse(
                 "AVAILABLE", "NVDA", packet,
                 new EvidenceGateResult(EvidenceGateResult.Status.OPEN, List.of()),

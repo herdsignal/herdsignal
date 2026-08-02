@@ -41,7 +41,7 @@ public class LongTermOperatingReviewService {
                 portfolioFit,
                 veto,
                 synthesis,
-                synthesis.actionAuthorized(),
+                objective.directionPrediction(),
                 synthesis.operationalAction(),
                 synthesis.operationalActionRatio()
         );
@@ -78,8 +78,12 @@ public class LongTermOperatingReviewService {
         if (hasNoView(objective, DecisionArea.INFORMATION_CHANGE)) {
             codes.add("DIRECTIONAL_EVIDENCE_NOT_ADOPTED");
         }
+        if (!objective.directionPrediction()
+                && !codes.contains("DIRECTIONAL_EVIDENCE_NOT_ADOPTED")) {
+            codes.add("DIRECTIONAL_EVIDENCE_NOT_ADOPTED");
+        }
         return new RiskVeto(
-                true,
+                !codes.isEmpty(),
                 codes,
                 "운영 행동 권한 없음"
         );

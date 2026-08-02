@@ -74,8 +74,7 @@ public class OperatingReviewSnapshotService {
                 .userId(currentUserService.requireUserId())
                 .ticker(review.ticker())
                 .reviewedAt(LocalDateTime.now(clock))
-                .observationDate(review.objective().evidencePacket() == null
-                        ? null : review.objective().evidencePacket().generatedAt().toLocalDate())
+                .observationDate(observationDate(review.objective().evidencePacket()))
                 .referencePriceDate(reference == null ? null : reference.getPriceDate())
                 .referencePrice(reference == null ? null : reference.getClosePrice())
                 .decisionCode(review.synthesis().decision().name())
@@ -105,6 +104,17 @@ public class OperatingReviewSnapshotService {
                 row.getReferencePriceDate(), row.getReferencePrice(), row.getDecisionCode(),
                 row.isActionAuthorized(), row.getActionRatio(), row.getEvidenceSchemaVersion(),
                 row.getDecisionModelVersion(), row.getPayloadSha256(), outcomes(row));
+    }
+
+    private LocalDate observationDate(EvidencePacket packet) {
+        if (packet == null) {
+            return null;
+        }
+        return packet.facts().stream()
+                .filter(fact -> "OBS.STATE_SCORE".equals(fact.id()))
+                .map(EvidenceFact::asOfDate)
+                .findFirst()
+                .orElse(packet.generatedAt() == null ? null : packet.generatedAt().toLocalDate());
     }
 
     private List<OperatingReviewOutcome> outcomes(OperatingReviewSnapshot row) {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   getObjectiveOperatingReview,
   getOperatingReviewRecords,
@@ -12,9 +12,12 @@ export function useOperatingReview(ticker, authenticated) {
   const [loading, setLoading] = useState(true)
   const [recording, setRecording] = useState(false)
   const [error, setError] = useState(null)
+  const requestRef = useRef(0)
 
   const load = useCallback(async () => {
+    const requestId = ++requestRef.current
     setLoading(true)
+    setRecording(false)
     setError(null)
     try {
       let response
@@ -28,24 +31,29 @@ export function useOperatingReview(ticker, authenticated) {
         response = await getObjectiveOperatingReview(ticker)
       }
       const activeReview = response.data?.data ?? null
+      if (requestId !== requestRef.current) return null
       setReview(activeReview)
       if (authenticated) {
         try {
           const history = await getOperatingReviewRecords(ticker)
-          setRecords(history.data?.data ?? [])
+          if (requestId === requestRef.current) {
+            setRecords(history.data?.data ?? [])
+          }
         } catch {
-          setRecords([])
+          if (requestId === requestRef.current) setRecords([])
         }
       } else {
         setRecords([])
       }
       return activeReview
     } catch {
-      setReview(null)
-      setRecords([])
-      setError('장기 운용 검토를 불러오지 못했습니다.')
+      if (requestId === requestRef.current) {
+        setReview(null)
+        setRecords([])
+        setError('장기 운용 검토를 불러오지 못했습니다.')
+      }
     } finally {
-      setLoading(false)
+      if (requestId === requestRef.current) setLoading(false)
     }
     return null
   }, [authenticated, ticker])
@@ -56,16 +64,21 @@ export function useOperatingReview(ticker, authenticated) {
 
   const record = useCallback(async () => {
     if (!authenticated || recording) return
+    const requestId = requestRef.current
     setRecording(true)
     setError(null)
     try {
       const response = await recordOperatingReview(ticker)
       const saved = response.data?.data
-      if (saved) setRecords((current) => [saved, ...current])
+      if (saved && requestId === requestRef.current) {
+        setRecords((current) => [saved, ...current])
+      }
     } catch {
-      setError('판단 기록을 저장하지 못했습니다.')
+      if (requestId === requestRef.current) {
+        setError('판단 기록을 저장하지 못했습니다.')
+      }
     } finally {
-      setRecording(false)
+      if (requestId === requestRef.current) setRecording(false)
     }
   }, [authenticated, recording, ticker])
 
