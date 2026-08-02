@@ -41,6 +41,14 @@ class SchedulerRunHistoryTest(unittest.TestCase):
             ) as mature,
             patch.object(
                 herd_scheduler,
+                "_collect_sec_earnings_phase",
+                return_value=(
+                    {"status": "SUCCESS", "count": 0},
+                    {"status": "SEC_EARNINGS_LEDGER_UPDATED", "appended": 0},
+                ),
+            ),
+            patch.object(
+                herd_scheduler,
                 "refresh_operational_reports",
                 return_value={"reports": ["a", "b", "c"]},
             ) as refresh_reports,

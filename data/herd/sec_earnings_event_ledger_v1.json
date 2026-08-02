@@ -1,0 +1,25 @@
+{
+  "contract_id": "SEC_EARNINGS_EVENT_LEDGER_V1",
+  "purpose": "RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION prospective source intake",
+  "source": "SEC EDGAR submissions API",
+  "information_time": "EDGAR acceptanceDateTime converted to UTC",
+  "eligible_events": [
+    "8-K or 8-K/A containing Item 2.02",
+    "10-Q or 10-Q/A"
+  ],
+  "prospective_start": "2026-08-03",
+  "scheduled_scope": "latest locked weekly S1 issuers whose HERD_STAGE is RUSH",
+  "storage": {
+    "format": "hash-chained append-only JSONL",
+    "identity": "CIK plus accession number",
+    "conflicting_identity_policy": "reject"
+  },
+  "request_policy": {
+    "declared_user_agent_required": true,
+    "minimum_delay_seconds": 0.11,
+    "historical_auxiliary_files_in_daily_job": false
+  },
+  "claim_boundary": "collection only; no event creates a trading recommendation",
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

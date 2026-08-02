@@ -45,6 +45,9 @@ from config.settings import (                                           # noqa: 
     SCHEDULER_MINUTE_ET,
 )
 from scheduler.daemon import run_tiered_scheduler                            # noqa: E402
+from scheduler.earnings_event_intake import (                                # noqa: E402
+    collect_current_rush_earnings_events,
+)
 from scheduler.heartbeat import SchedulerHeartbeat                          # noqa: E402
 from scheduler.data_quality_gate import validate_operational_price_frame      # noqa: E402
 from scheduler.incident_alerts import IncidentAlertConfig, send_scheduler_alert  # noqa: E402
@@ -284,6 +287,22 @@ def _phase(status: str, *, count: int | None = None, detail: str | None = None) 
     if detail:
         result["detail"] = detail[:500]
     return result
+
+
+def _collect_sec_earnings_phase() -> tuple[dict, dict | None]:
+    """Run optional research intake without failing operational price jobs."""
+    try:
+        result = collect_current_rush_earnings_events()
+        status = result.get("status", "UNKNOWN")
+        phase_status = "SKIPPED" if status.startswith(("SKIPPED", "NO_")) else "SUCCESS"
+        return _phase(
+            phase_status,
+            count=int(result.get("appended", 0)),
+            detail=f"{status} · issuer {result.get('issuers_scanned', 0)}",
+        ), result
+    except Exception as exc:
+        logger.error("[SEC Earnings] 연구 사건 수집 실패: %s", exc, exc_info=True)
+        return _phase("FAILED", detail=str(exc)), None
 
 
 def _fetch_sector_overrides() -> dict[str, str]:
@@ -611,6 +630,9 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
             exc_info=True,
         )
         phases["PROSPECTIVE_LEDGER"] = _phase("FAILED", detail=prospective_error)
+    phases["SEC_EARNINGS_INTAKE"], sec_earnings_result = (
+        _collect_sec_earnings_phase()
+    )
     phases["READINESS_REPORTS"], operational_report_error = (
         _refresh_readiness_reports("Tier1")
     )
@@ -688,6 +710,8 @@ def _run_herd_job_unlocked(trigger_type: str) -> dict:
     }
     if prospective_result is not None:
         result["prospectiveEvidence"] = prospective_result
+    if sec_earnings_result is not None:
+        result["secEarningsIntake"] = sec_earnings_result
     _notify_scheduler_result(result)
     return result
 
@@ -783,6 +807,10 @@ def _run_daily_observation_job_unlocked(trigger_type: str) -> dict:
             "FAILED", detail=prospective_error
         )
 
+    phases["SEC_EARNINGS_INTAKE"], sec_earnings_result = (
+        _collect_sec_earnings_phase()
+    )
+
     phases["READINESS_REPORTS"], operational_report_error = (
         _refresh_readiness_reports("Daily D1")
     )
@@ -836,6 +864,8 @@ def _run_daily_observation_job_unlocked(trigger_type: str) -> dict:
     }
     if prospective_result is not None:
         result["prospectiveEvidence"] = prospective_result
+    if sec_earnings_result is not None:
+        result["secEarningsIntake"] = sec_earnings_result
     _notify_scheduler_result(result)
     return result
 
