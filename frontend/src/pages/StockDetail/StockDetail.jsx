@@ -11,6 +11,7 @@ import StockDetailHero from './StockDetailHero'
 import StockDetailHistory from './StockDetailHistory'
 import StockDetailBrief from './StockDetailBrief'
 import StockDetailRecords from './StockDetailRecords'
+import StockOperatingReview from './StockOperatingReview'
 import { BTN_LABELS, badgeColors } from './stockDetailModel'
 import { useStockDetail } from './useStockDetail'
 
@@ -59,6 +60,7 @@ export default function StockDetail() {
     stateSummary,
     handleJournalAction,
     handleJournalDelete,
+    operatingReview,
   } = detail
   const records = (
     <StockDetailRecords
@@ -175,6 +177,7 @@ export default function StockDetail() {
               <a href="#stock-state">현재 상태</a>
               <a href="#stock-history">가격 · HERD 이력</a>
               <a href="#stock-evidence">HERD 근거</a>
+              <a href="#stock-operating-review">장기 운용 검토</a>
               <a href="#stock-records">기업 정보</a>
               {authenticated && <a href="#stock-journal">판단 기록</a>}
             </nav>
@@ -205,6 +208,7 @@ export default function StockDetail() {
               observation={observation}
               color={color}
             />
+            <StockOperatingReview state={operatingReview} />
             {records}
           </div>
         </div>

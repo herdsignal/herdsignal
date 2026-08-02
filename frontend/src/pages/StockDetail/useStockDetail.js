@@ -16,6 +16,7 @@ import {
 import { useStockDetailResources } from './useStockDetailResources'
 import { useStockSignalJournal } from './useStockSignalJournal'
 import { buildStockBrief } from './stockBriefModel'
+import { useOperatingReview } from './useOperatingReview'
 
 export function useStockDetail(ticker) {
   const { user } = useAuth()
@@ -30,6 +31,7 @@ export function useStockDetail(ticker) {
     userId: user?.id,
     enabled: authenticated,
   })
+  const operatingReview = useOperatingReview(normalizedTicker, authenticated)
   const {
     observation,
     dailyObservation,
@@ -173,5 +175,6 @@ export function useStockDetail(ticker) {
     stateSummary,
     handleJournalAction,
     handleJournalDelete: journal.removeSignalLog,
+    operatingReview: { ...operatingReview, authenticated },
   }
 }

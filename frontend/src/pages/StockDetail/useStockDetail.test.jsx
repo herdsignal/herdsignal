@@ -17,6 +17,10 @@ vi.mock('../../api/herdApi', () => ({
   getSignalJournal: vi.fn(),
   createSignalJournal: vi.fn(),
   deleteSignalJournal: vi.fn(),
+  getObjectiveOperatingReview: vi.fn(),
+  getPersonalOperatingReview: vi.fn(),
+  getOperatingReviewRecords: vi.fn(),
+  recordOperatingReview: vi.fn(),
 }))
 
 vi.mock('../../auth/AuthContext', () => ({
@@ -76,6 +80,9 @@ beforeEach(() => {
     summaries: [],
   }))
   api.getStockFinancials.mockReturnValue(response(null))
+  api.getPersonalOperatingReview.mockReturnValue(response(null))
+  api.getObjectiveOperatingReview.mockReturnValue(response(null))
+  api.getOperatingReviewRecords.mockReturnValue(response([]))
 })
 
 describe('useStockDetail', () => {

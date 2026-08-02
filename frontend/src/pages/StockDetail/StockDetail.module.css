@@ -187,9 +187,148 @@
 :global(#stock-state),
 :global(#stock-history),
 :global(#stock-evidence),
+:global(#stock-operating-review),
 :global(#stock-records),
 :global(#stock-journal) {
   scroll-margin-top: calc(var(--hs-header-height) + 66px);
+}
+
+.operatingSection {
+  margin-top: 44px;
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.operatingHeader,
+.operatingFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.operatingHeader {
+  min-height: 82px;
+}
+
+.operatingHeader span,
+.operatingContext dt,
+.operatingFooter,
+.operatingDecision small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.operatingHeader > div:first-child > span {
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+
+.operatingHeader h2 {
+  margin: 6px 0 0;
+  font-size: var(--hs-type-subtitle);
+}
+
+.operatingDecision {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.operatingDecision strong {
+  font-size: var(--hs-type-body);
+  letter-spacing: .04em;
+}
+
+.operatingAreas {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.operatingAreas > div {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+  padding: 16px;
+  border-right: 1px solid var(--hs-line);
+}
+
+.operatingAreas > div:last-child {
+  border-right: 0;
+}
+
+.operatingAreas span,
+.operatingAreas small {
+  overflow: hidden;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operatingAreas strong {
+  font-size: var(--hs-type-body);
+}
+
+.operatingContext {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.operatingContext > div {
+  padding: 14px 16px;
+  border-right: 1px solid var(--hs-line);
+}
+
+.operatingContext > div:last-child {
+  border-right: 0;
+}
+
+.operatingContext dd {
+  margin: 6px 0 0;
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-label);
+  font-weight: 680;
+}
+
+.operatingLimits {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 16px 16px 16px 34px;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
+}
+
+.operatingFooter {
+  min-height: 66px;
+}
+
+.operatingFooter button {
+  padding: 8px 11px;
+  border: 1px solid var(--hs-line-strong);
+  border-radius: var(--hs-radius-sm);
+  background: transparent;
+  color: var(--hs-text-subtle);
+  cursor: pointer;
+}
+
+.operatingFooter button:disabled {
+  cursor: default;
+  opacity: .5;
+}
+
+.operatingEmpty {
+  min-height: 100px;
+  margin: 0;
+  padding: 30px 0;
+  border-top: 1px solid var(--hs-line);
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-label);
 }
 
 .stateSection,
@@ -556,6 +695,13 @@
 }
 
 @media (max-width: 680px) {
+  .operatingAreas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .operatingContext {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .briefGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

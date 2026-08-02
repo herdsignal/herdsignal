@@ -19,6 +19,10 @@ vi.mock('../../api/herdApi', () => ({
   getSignalJournal: vi.fn(),
   createSignalJournal: vi.fn(),
   deleteSignalJournal: vi.fn(),
+  getObjectiveOperatingReview: vi.fn(),
+  getPersonalOperatingReview: vi.fn(),
+  getOperatingReviewRecords: vi.fn(),
+  recordOperatingReview: vi.fn(),
 }))
 
 vi.mock('../../auth/AuthContext', () => ({
@@ -130,6 +134,25 @@ beforeEach(() => {
     marketCap: 5_000_000_000_000, trailingPe: 32, eps: 6.5,
     operatingMargin: 65, totalRevenue: 250_000_000_000,
   }))
+  api.getPersonalOperatingReview.mockReturnValue(response({
+    status: 'OBSERVE',
+    objective: {
+      assessments: [
+        { area: 'BUSINESS_HEALTH', status: 'NO_VIEW', headline: 'PIT 기업 체력 연결 전' },
+        { area: 'CHART_CROWD', status: 'AVAILABLE', headline: 'DRIFT · NEUTRAL' },
+      ],
+    },
+    mandate: { timeHorizonYears: 10, effectiveActionRatioCap: 0 },
+    portfolioFit: { currentTickerWeight: 0.2 },
+    riskVeto: { actionBlocked: true },
+    synthesis: {
+      decision: 'OBSERVE',
+      headline: '상태 관찰',
+      limitations: ['채택된 방향성 정보 근거가 없습니다.'],
+    },
+  }))
+  api.getOperatingReviewRecords.mockReturnValue(response([]))
+  api.getObjectiveOperatingReview.mockReturnValue(response(null))
 })
 
 afterEach(cleanup)
@@ -158,6 +181,13 @@ describe('StockDetail route', () => {
       'href',
       '#stock-records',
     )
+    expect(screen.getByRole('link', { name: '장기 운용 검토' })).toHaveAttribute(
+      'href',
+      '#stock-operating-review',
+    )
+    expect(await screen.findByRole('heading', { name: '장기 운용 검토' })).toBeInTheDocument()
+    expect(screen.getByText('행동 가능 비율')).toBeInTheDocument()
+    expect(screen.getByText('채택된 방향성 정보 근거가 없습니다.')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '판단 기록' })).toHaveAttribute(
       'href',
       '#stock-journal',

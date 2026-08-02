@@ -206,6 +206,21 @@ export const searchStocks = (query) =>
 export const getStockFinancials = (ticker) =>
   api.get(`/api/stocks/${tickerPath(ticker)}/financials`, { timeout: 40_000 })
 
+/** 로그인 없이 확인 가능한 객관적 장기 운용 근거. */
+export const getObjectiveOperatingReview = (ticker) =>
+  api.get(`/api/operating-reviews/${tickerPath(ticker)}/objective`)
+
+/** 객관적 근거에 내 운용 조건과 포트폴리오 맥락을 결합한 검토. */
+export const getPersonalOperatingReview = (ticker) =>
+  api.get(`/api/operating-reviews/${tickerPath(ticker)}`)
+
+/** 현재 판단을 해시가 포함된 append-only 원장에 명시적으로 기록. */
+export const recordOperatingReview = (ticker) =>
+  api.post(`/api/operating-reviews/${tickerPath(ticker)}/records`)
+
+export const getOperatingReviewRecords = (ticker) =>
+  api.get(`/api/operating-reviews/${tickerPath(ticker)}/records`)
+
 /** 특정 종목 HERD 히스토리 조회 (기본 3y) */
 export const getStockHerdHistory = (ticker, period = '3y') =>
   api.get(`/api/stocks/${tickerPath(ticker)}/herd/history`, { params: { period } })
