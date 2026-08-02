@@ -56,6 +56,15 @@ class SecurityConfigTest {
 
         mockMvc.perform(get("/api/stocks/search").param("q", "NVDA"))
                 .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/operating-reviews/NVDA/objective"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/operating-reviews/NVDA"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/operating-reviews/NVDA/records"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
