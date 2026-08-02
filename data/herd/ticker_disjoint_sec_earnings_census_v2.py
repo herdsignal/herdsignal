@@ -52,6 +52,12 @@ def load_contract(path: Path = CONTRACT_PATH) -> dict[str, Any]:
     return contract
 
 
+def preserve_collection_receipt(collection: dict | None, report_path: Path) -> dict | None:
+    if collection is not None or not report_path.is_file():
+        return collection
+    return json.loads(report_path.read_text(encoding="utf-8")).get("collection")
+
+
 def run(
     *,
     collect: bool,
@@ -73,6 +79,7 @@ def run(
         )
     catalog = materialize_catalog(ledger_path, universe, catalog_path)
     covered = int(catalog["ticker"].nunique()) if len(catalog) else 0
+    collection = preserve_collection_receipt(collection, report_path)
     report = {
         "report_version": "TICKER_DISJOINT_SEC_EARNINGS_CENSUS_V2",
         "status": "SEC_HISTORY_READY" if covered == len(universe) else "SEC_HISTORY_PARTIAL",
