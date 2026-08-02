@@ -567,6 +567,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/sec_earnings_event_ledger_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
       "path": "data/herd/sec_earnings_soft_information_feasibility_v1.json",
       "status": "ACTIVE"
     },
@@ -848,6 +852,18 @@
     },
     {
       "path": "data/herd/systematic_healthy_pullback_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/ticker_disjoint_earnings_oos_universe_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/ticker_disjoint_earnings_reaction_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/herd/ticker_disjoint_sec_earnings_census_v1.json",
       "status": "REVIEW_REQUIRED"
     },
     {
@@ -1524,6 +1540,10 @@
     },
     {
       "path": "data/reports/rush_downside_asymmetry_universe_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/rush_earnings_prospective_confirmation_gate_v1.json",
       "status": "REVIEW_REQUIRED"
     },
     {
@@ -2592,6 +2612,30 @@
     },
     {
       "path": "data/reports/systematic_healthy_pullback_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_oos_universe_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_oos_universe_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_reaction_oos_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_reaction_oos_v1.json",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_sec_earnings_census_v1.csv",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_sec_earnings_census_v1.json",
       "status": "REVIEW_REQUIRED"
     },
     {

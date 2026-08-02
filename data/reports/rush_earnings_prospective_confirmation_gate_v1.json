@@ -1,0 +1,10 @@
+{
+  "report_version": "RUSH_EARNINGS_PROSPECTIVE_CONFIRMATION_GATE_V1",
+  "status": "PROSPECTIVE_COLLECTION_ONLY_CONFIRMATION_BLOCKED",
+  "historical_screen_passed": false,
+  "sec_append_only_collection_active": true,
+  "prospective_outcomes_may_be_opened_when_mature": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "reason": "locked ticker-disjoint historical gate did not pass"
+}

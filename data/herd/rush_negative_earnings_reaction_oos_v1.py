@@ -112,11 +112,18 @@ def evaluate(frame: pd.DataFrame, protocol: dict) -> dict:
         raise ProspectiveHypothesisError("reaction was confirmed before SEC acceptance")
     if rows["outcome_maturity_date"].le(rows["reaction_confirmation_session"]).any():
         raise ProspectiveHypothesisError("outcome maturity does not follow confirmation")
-    age = (
-        rows["reaction_confirmation_session"].dt.normalize()
-        - rows["state_observation_date"].dt.normalize()
-    ).dt.days
-    if age.gt(hypothesis["state_maximum_age_sessions"] + 2).any():
+    if "state_age_sessions" in rows:
+        age = pd.to_numeric(rows["state_age_sessions"], errors="coerce")
+        maximum_age = hypothesis["state_maximum_age_sessions"]
+    else:
+        # Backward-compatible fallback for early prospective fixtures that did not
+        # persist the exchange-session distance explicitly.
+        age = (
+            rows["reaction_confirmation_session"].dt.normalize()
+            - rows["state_observation_date"].dt.normalize()
+        ).dt.days
+        maximum_age = hypothesis["state_maximum_age_sessions"] + 2
+    if age.isna().any() or age.gt(maximum_age).any():
         raise ProspectiveHypothesisError("Rush state is too old for the event")
 
     numeric = (

@@ -1,0 +1,48 @@
+{
+  "protocol_version": "TICKER_DISJOINT_EARNINGS_REACTION_OOS_V1",
+  "status": "LOCKED_BEFORE_HISTORICAL_REACTION_RESULTS",
+  "parent_hypothesis": "RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION",
+  "role": "FAST_TICKER_DISJOINT_HISTORICAL_FALSIFICATION",
+  "inputs": [
+    {"path": "data/reports/ticker_disjoint_sec_earnings_census_v1.csv", "sha256": "ce60772793e2f72c9ec9e6270bd830e2f75466d9c7f544ab25d9b3ead2d35a0a"},
+    {"path": "data/reports/ticker_disjoint_earnings_oos_state_s1.csv.gz", "sha256": "83d40c000317690727ba803afc7e1e76930cb87d8d6abf9be7d9318479c59ccc"},
+    {"path": "data/reports/ticker_disjoint_earnings_oos_universe_v1.csv", "sha256": "21a17ba1111465e39c71508f1ca5459e7f8f309e124e3e4645ac357bed31b527"},
+    {"path": "data/snapshots/yf-independent-current-sp500-20260721/manifest.json", "sha256": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781"},
+    {"path": "data/herd/rush_negative_earnings_reaction_preregistration_v1.json", "sha256": "1a7374771ae545f4725743a4d7c04108ac6ba61487f393e3991652fc7fe46a65"},
+    {"path": "data/herd/profit_take_opportunity_ceiling_v1.json", "sha256": "a009e826d14ac72a0b655fa62019ce2c41b53b02c4c0d40b05d899de3b05e8fe"},
+    {"path": "data/herd/vnext_competing_path_economic_label_v1.json", "sha256": "9d78a297852379be5b5058616047893d67f5385acebaa1b9a7c99a46bc279f8e"}
+  ],
+  "event_binding": {
+    "quarterly_duplicate_key": "ticker plus non-empty report_date",
+    "duplicate_window_calendar_days": 7,
+    "duplicate_choice": "earliest SEC acceptance",
+    "premarket_cutoff_et": "09:30:00",
+    "first_complete_session": "same session when accepted before cutoff, otherwise next session",
+    "reaction_confirmation": "third complete stock session",
+    "reaction_measure": "stock adjusted-close return minus sector ETF adjusted-close return",
+    "maximum_residual_reaction": -0.05,
+    "state": "latest weekly S1 RUSH known by confirmation",
+    "maximum_state_age_stock_sessions": 5,
+    "maximum_events_per_ticker_year": 2,
+    "cooldown_stock_sessions": 63
+  },
+  "economic_policy": {
+    "policy": "TRIM_REENTER_63",
+    "trim_fraction": 0.05,
+    "execution": "next session adjusted open",
+    "fixed_reentry": "63 stock sessions after sale",
+    "outcome_horizon_stock_sessions": 126,
+    "base_round_trip_cost_bps": 30,
+    "stress_round_trip_cost_bps": 70
+  },
+  "outcome_label": {
+    "priority": ["STRUCTURAL_BREAK", "ECONOMIC_REBUY_OPPORTUNITY", "HEALTHY_CONTINUATION", "NO_ECONOMIC_EDGE"],
+    "source": "previously locked competing-path and stress constrained opportunity contracts",
+    "future_fields_are_labels_only": true
+  },
+  "gate": "exact evaluation_gate from parent preregistration",
+  "promotion": "historical pass only activates prospective confirmation; it never activates operational action",
+  "survivorship_safe": false,
+  "blind_holdout": false,
+  "operational_action_ratio": 0.0
+}

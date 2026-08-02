@@ -9,6 +9,30 @@
 > `action-research-intake-latest.json`을 기준으로 한다. 아래 날짜별 V1~V10
 > 기록과 결정 파일의 당시 `nextStage`는 현재 작업 목록으로 해석하지 않는다.
 
+## Rush·SEC 실적 반응 ticker-disjoint 사전 평가 V1
+
+- SEC submissions API의 접수시각을 보존하는 해시 체인 append-only 원장을
+  만들고 거래일 스케줄러에 `SEC_EARNINGS_INTAKE` 독립 단계로 연결했다.
+  최신 주간 S1이 Rush인 종목만 조회하며 수집 장애는 가격·포트폴리오 갱신을
+  실패시키지 않는다.
+- 기존 439종목과 중복 0인 54종목을 결과 비의존 규칙으로 고정했다. 같은
+  S1 네 가족·동일 가중치·동일 정규화를 사용해 2014-01-31~2026-07-17
+  주간 상태 22,267행을 생성했다.
+- 54종목 전부에서 2012-01-09~2026-07-31 SEC 실적 사건 3,978건을 확보했다.
+  8-K Item 2.02와 10-Q의 같은 분기 중복은 최초 접수만 남겼다.
+- 결과를 열기 전에 Rush, 3개 완전 세션, 섹터 대비 -5%p, 연 2회,
+  63세션 cooldown, 5% 익절, 63세션 고정 재진입, 126세션 만기,
+  왕복 30/70bp를 잠갔다.
+- 완결 후보는 22건·16종목·6개 연도였다. adverse precision 59.1%와
+  경제성 관련 기준은 통과했지만 최소 40건·20종목에 미달해 전체 판정은
+  `HISTORICAL_FALSIFICATION_FAILED`다.
+- SEC 전향 사건 수집은 계속한다. 그러나 전향 결과 확인, 방향 증거 인정,
+  행동 후보, Blind holdout, 운영 매매는 모두 차단하며 `HOLD·0%`를 유지한다.
+  현재 표본은 현존 종목 중심이므로 `survivorship_safe=false`다.
+
+계약과 결과는 `data/herd/ticker_disjoint_earnings_reaction_oos_v1.json`,
+`data/reports/ticker_disjoint_earnings_reaction_oos_v1.json`이다.
+
 2026-08-02 의사결정 구조 감사에서 검증 절차는 유지하고 예측 문제를
 `State S1 → Action Edge → Portfolio Policy`로 분리했다. 운영 State 조회의
 레거시 v6.1 행동 계산은 제거했다. 새 행동 연구의 기본 표적은 경로 분류가

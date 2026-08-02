@@ -1,6 +1,6 @@
 # 신규 행동 가설 V1
 
-상태: `WAITING_FOR_PROSPECTIVE_OOS`  
+상태: `HISTORICAL_FALSIFICATION_FAILED` / `PROSPECTIVE_COLLECTION_ONLY`
 운영 행동: `HOLD·0%`
 
 ## 가설
@@ -19,10 +19,12 @@
 2. 접수 뒤 3개 거래일이 완전히 끝나야 반응을 확정한다.
 3. 해당 시점에 5거래 세션 이내의 주간 `RUSH` 관찰이 있어야 한다.
 4. 후보 체결은 모든 확인 뒤 다음 거래일 시가다.
-5. 결과는 126거래일과 재진입 사이클이 끝나기 전에 열지 않는다.
+5. 익절한 5%는 매도 뒤 63거래 세션에 고정 재진입한다.
+6. 결과는 126거래일과 재진입 사이클이 끝나기 전에 열지 않는다.
 
-2026-08-03 이전 사건과 기존 1,998·2,161개 라벨은 새 OOS로 소급하지
-않는다. 따라서 현재 0건인 것은 구현 실패가 아니라 독립성 계약의 결과다.
+정식 전향 OOS에는 2026-08-03 이전 사건과 기존 1,998·2,161개 라벨을
+소급하지 않는다. 별도로 기존 439종목과 겹치지 않는 54종목 역사 표본은
+전향 연구를 시작할 가치가 있는지 빠르게 탈락시키는 용도로만 사용했다.
 
 ## 채택 게이트
 
@@ -35,15 +37,30 @@
 통과해도 연구 방향 증거만 인정한다. 바로 서비스 행동을 켜지 않으며,
 생존자 편향·포트폴리오 완결 검증과 사람 승인은 별도로 남는다.
 
-## 평가 입력
+## ticker-disjoint 역사 사전 평가
 
-기본 입력은 버전 관리 밖의 append-only 원장
-`data/runtime/action-research/rush-negative-earnings-reaction-v1.csv`다.
-필수 열과 검증 규칙은
-`data/herd/rush_negative_earnings_reaction_oos_v1.py`에 고정돼 있다.
+- 결과를 보기 전에 54종목·동일 S1 공식·SEC 접수시각·63세션 재진입·
+  30/70bp 비용을 고정했다.
+- SEC 실적 사건은 3,978건, 최종 조건을 충족한 완결 사건은 22건·16종목이다.
+- adverse precision, 비용 후 중앙 자산 차이, 연도 방향, 양의 사이클 비율은
+  기준을 충족했다.
+- 그러나 사전 최소치인 40건·20종목을 충족하지 못해 전체 판정은 실패다.
+- 임계값을 완화하지 않는다. SEC 사건 수집은 계속하지만, 전향 결과 확인은
+  더 많은 독립 사건이 쌓이기 전까지 차단한다.
+
+결과는 `data/reports/ticker_disjoint_earnings_reaction_oos_v1.json`, 조건부
+전향 게이트는 `data/reports/rush_earnings_prospective_confirmation_gate_v1.json`이다.
+
+## 전향 입력
+
+SEC 원문 사건은 버전 관리 밖의 해시 체인 append-only 원장
+`data/runtime/action-research/sec-earnings-events-v1.jsonl`에 저장한다.
+매 거래일 스케줄러는 최신 주간 S1이 Rush인 종목만 공식 SEC submissions
+API에서 확인한다. 이 원장 수집은 행동 신호가 아니며 가격 갱신 실패 여부와
+분리된다.
 
 ```bash
 ./scripts/evaluate-action-hypothesis.sh
 ```
 
-원장이 없으면 정상적으로 `WAITING_FOR_PROSPECTIVE_OOS`를 반환한다.
+현재 조건부 게이트가 닫혀 있으므로 전향 결과 판정은 실행하지 않는다.
