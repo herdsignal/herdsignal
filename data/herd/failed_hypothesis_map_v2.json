@@ -1,0 +1,45 @@
+{
+  "map_version": "HERD_FAILED_HYPOTHESIS_MAP_V2",
+  "status": "LOCKED_APPEND_ONLY_POST_RESEARCH_AUDIT",
+  "as_of": "2026-08-03",
+  "parent": {
+    "path": "data/herd/failed_hypothesis_map_v1.json",
+    "sha256": "c702e488caa2f70013ec6e32a014fad3516306129528d1f51258dd38b637e2d2",
+    "experiment_count": 10
+  },
+  "appended_experiments": [
+    {
+      "id": "RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION_V1",
+      "economic_family": "EARNINGS_ANNOUNCEMENT_PRICE_REACTION",
+      "sample_id": "FORMER_CONSTITUENT_TICKER_DISJOINT_OOS_15",
+      "target": "PROFIT_TAKE_DIRECTION",
+      "source": {
+        "path": "data/reports/ticker_disjoint_earnings_reaction_oos_v2.json",
+        "sha256": "280799fa3d98c71631f1e8b80037e5d489f71b002dff0161ac66f75591d72bf6"
+      },
+      "assertions": {
+        "status": "INDEPENDENT_HISTORICAL_OOS_FAILED",
+        "passed": false,
+        "direction_evidence_admitted": false,
+        "operational_action_ratio": 0.0
+      },
+      "decision": "REJECTED",
+      "failure": "SAMPLE_COVERAGE_PRECISION_AND_NET_TERMINAL_WEALTH_GATES_FAILED",
+      "retry_policy": "NO_REACTION_THRESHOLD_RETUNING_OR_V1_V2_POOLING"
+    }
+  ],
+  "global_rules": {
+    "same_sample_threshold_retuning_forbidden": true,
+    "same_sample_horizon_retuning_forbidden": true,
+    "rejected_feature_recombination_forbidden": true,
+    "legacy_formula_reuse_forbidden": true,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  },
+  "audit_summary": {
+    "experiment_count": 11,
+    "rejected_count": 11,
+    "adoptable_direction_count": 0,
+    "duplicate_experiment_ids": 0
+  }
+}

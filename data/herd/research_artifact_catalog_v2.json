@@ -1,6 +1,6 @@
 {
   "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V2",
-  "as_of": "2026-08-02",
+  "as_of": "2026-08-03",
   "current_decision": {
     "status": "STATE_OBSERVATION_MVP_READY",
     "new_model_name": "UNASSIGNED_UNTIL_PROMOTION",
@@ -16,7 +16,7 @@
     "personal_mvp_scope": "HERD_STATE_AND_TRANSITION_OBSERVATION_ONLY",
     "blind_holdout_access": false,
     "operational_action_ratio": 0.0,
-    "canonical_decision": "data/herd/research_decision_v4.json"
+    "canonical_decision": "data/herd/research_decision_v5.json"
   },
   "statuses": {
     "ACTIVE": "현재 연구 경계와 다음 모델 판정에 직접 사용되는 계약",
@@ -48,6 +48,8 @@
       "data/reports/research_decision_v3.json",
       "data/herd/research_decision_v4.json",
       "data/reports/research_decision_v4.json",
+      "data/herd/research_decision_v5.json",
+      "data/reports/research_decision_v5.json",
       "data/herd/decision_architecture_v1.json",
       "data/reports/decision_architecture_v1.json",
       "data/herd/fixed_policy_net_value_target_v1.json",
@@ -93,6 +95,7 @@
       "data/reports/research_claim_scope_v1.json",
       "data/herd/profit_take_family_oos_v1.json",
       "data/herd/failed_hypothesis_map_v1.json",
+      "data/herd/failed_hypothesis_map_v2.json",
       "data/herd/survivorship_readiness_v2.json",
       "data/herd/rush_event_dataset_v2.json",
       "data/herd/leading_information_feasibility_v2.json",

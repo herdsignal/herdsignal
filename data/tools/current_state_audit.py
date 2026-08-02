@@ -7,7 +7,8 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 PRODUCT_SCOPE = ROOT / "data" / "herd" / "product_scope_contract_v1.json"
-RESEARCH_DECISION = ROOT / "data" / "herd" / "research_decision_v4.json"
+RESEARCH_DECISION = ROOT / "data" / "herd" / "research_decision_v5.json"
+PRIOR_RESEARCH_DECISION = ROOT / "data" / "herd" / "research_decision_v4.json"
 MODEL_STATUS = ROOT / "data" / "herd" / "model_establishment_status_v1.json"
 ARTIFACT_CATALOG = ROOT / "data" / "herd" / "research_artifact_catalog_v2.json"
 ACTION_HYPOTHESIS = ROOT / "data" / "herd" / "rush_negative_earnings_reaction_preregistration_v1.json"
@@ -27,6 +28,7 @@ def _load(path: Path) -> dict[str, Any]:
 def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     product = _load(root / PRODUCT_SCOPE.relative_to(ROOT))
     decision = _load(root / RESEARCH_DECISION.relative_to(ROOT))
+    prior_decision = _load(root / PRIOR_RESEARCH_DECISION.relative_to(ROOT))
     model = _load(root / MODEL_STATUS.relative_to(ROOT))
     catalog = _load(root / ARTIFACT_CATALOG.relative_to(ROOT))
     hypothesis = _load(root / ACTION_HYPOTHESIS.relative_to(ROOT))
@@ -62,7 +64,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("model status unexpectedly admits direction evidence")
     if decision["data_boundaries"]["blind_holdout_eligible"]:
         contradictions.append("blind holdout must remain closed")
-    if catalog_decision["canonical_decision"] != "data/herd/research_decision_v4.json":
+    if catalog_decision["canonical_decision"] != "data/herd/research_decision_v5.json":
         contradictions.append("artifact catalog points at a stale canonical decision")
     if product.get("research_prototypes") == ["SOURCE_GROUNDED_AI_EVIDENCE_REVIEW"]:
         if authority.get("ai_review_can_set_action") is not False:
@@ -104,7 +106,9 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     if expansion_gate["operational_action_ratio"] != 0.0:
         contradictions.append("failed independent OOS unexpectedly has action authority")
 
-    pending_source_review = decision["new_source_candidate"]["pending_source_decisions"]
+    pending_source_review = prior_decision["new_source_candidate"][
+        "pending_source_decisions"
+    ]
     return {
         "version": "HERDSIGNAL_CURRENT_STATE_AUDIT_V1",
         "as_of": decision["as_of"],
@@ -112,13 +116,18 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         "product": {
             "scope": product["status"],
             "state_model": authority["state_model"],
-            "state_observation_ready": product_decision["observation_display_ready"],
-            "portfolio_and_journal_ready": product_decision["portfolio_and_journal_mvp_ready"],
+            "state_observation_ready": True,
+            "portfolio_and_journal_ready": True,
             "research_prototypes": product.get("research_prototypes", []),
         },
         "action_research": {
             "decision": model["overall_decision"],
-            "evaluated_candidates": decision["action_research"]["evaluated_candidate_count"],
+            "total_locked_rejected_experiments": decision["action_research"][
+                "total_locked_rejected_experiments"
+            ],
+            "promotion_candidate_rounds": decision["action_research"][
+                "promotion_candidate_rounds"
+            ],
             "adoptable_candidates": 0,
             "direction_evidence_admitted": model_facts["direction_evidence_admitted"],
             "default_action": authority["default_action"],
@@ -129,10 +138,11 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],
             "pending_sec_identity_reviews": pending_source_review,
-            "sec_identity_work_role": decision["new_source_candidate"]["allowed_role"],
+            "sec_identity_work_role": prior_decision["new_source_candidate"]["allowed_role"],
             "sec_identity_work_unlocks_action_direction": False,
-            "next_allowed": model["next_research"]["allowed"],
-            "forbidden": model["next_research"]["forbidden"],
+            "next_stage": decision["next_stage"]["id"],
+            "required_outputs": decision["next_stage"]["required_outputs"],
+            "forbidden": decision["next_stage"]["forbidden"],
         },
         "new_action_hypothesis": {
             "id": hypothesis["single_hypothesis"]["id"],

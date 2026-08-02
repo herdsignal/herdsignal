@@ -1,0 +1,66 @@
+{
+  "decision_version": "HERD_RESEARCH_DECISION_V5",
+  "as_of": "2026-08-03",
+  "status": "STATE_OBSERVATION_MVP_READY_ACTION_EVIDENCE_EXHAUSTED",
+  "supersedes_for_current_status": "data/herd/research_decision_v4.json",
+  "preserves_prior_decisions_as_reproducibility_inputs": true,
+  "inputs": [
+    {
+      "path": "data/herd/research_decision_v4.json",
+      "sha256": "43ce36351afac05763bdecf1dc6634fc5f0238a855edabb4f823efc5f92592fb"
+    },
+    {
+      "path": "data/herd/failed_hypothesis_map_v2.json",
+      "sha256": "f4e6f0bf6252f76496e7eb3ca31c69d25bf76436dd23d738d6cced54d470ed14"
+    },
+    {
+      "path": "data/reports/ticker_disjoint_earnings_reaction_oos_v2_gate.json",
+      "sha256": "353ba11113c1e1763b3c6d586d0272cbee1d0b49f0646a950ae1969bdbb80034"
+    }
+  ],
+  "product_scope": {
+    "observation_model": "HERD_STATE_S1",
+    "transition_model": "HERD_TRANSITION_S1",
+    "default_user_action": "HOLD",
+    "operational_action_ratio": 0.0
+  },
+  "action_research": {
+    "total_locked_rejected_experiments": 11,
+    "promotion_candidate_rounds": 6,
+    "admitted_profit_take_evidence_count": 0,
+    "admitted_reentry_evidence_count": 0,
+    "adoptable_action_candidate": null,
+    "blind_holdout_access_count": 0,
+    "prospective_action_shadow_enabled": false
+  },
+  "latest_hypothesis": {
+    "id": "RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION",
+    "status": "INDEPENDENT_HISTORICAL_OOS_FAILED",
+    "same_sample_retuning_allowed": false,
+    "sample_pooling_allowed": false,
+    "prospective_confirmation_allowed": false
+  },
+  "data_boundaries": {
+    "survivorship_safe": false,
+    "blind_holdout_eligible": false,
+    "operational_action_enabled": false
+  },
+  "next_stage": {
+    "id": "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH",
+    "objective": "Audit target validity, economic-family overlap, opportunity cost, and missing information before allowing one new hypothesis.",
+    "required_outputs": [
+      "TARGET_VALIDITY_AUDIT",
+      "ECONOMIC_FAMILY_REDUNDANCY_AUDIT",
+      "POLICY_OPPORTUNITY_COST_AUDIT",
+      "DISTINCT_INFORMATION_AVAILABILITY_DECISION"
+    ],
+    "forbidden": [
+      "RETUNE_REJECTED_THRESHOLDS",
+      "POOL_FAILED_OOS_SAMPLES",
+      "RECOMBINE_REJECTED_FEATURES",
+      "REGISTER_MULTIPLE_NEW_HYPOTHESES",
+      "OPEN_BLIND_HOLDOUT",
+      "ENABLE_OPERATIONAL_ACTION"
+    ]
+  }
+}

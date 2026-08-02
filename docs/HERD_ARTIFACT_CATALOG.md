@@ -20,7 +20,7 @@ V2는 파일을 상태별 명시적 chain에 한 번만 넣는다. 같은 파일
 들어가거나 v4·v6.1이 `LEGACY_REFERENCE_ONLY`가 아니면 검증이 실패한다.
 
 현재 행동·승격 권한의 단일 진입점은 불변 원장인
-`data/herd/research_decision_v4.json`이다. V3 이하는 과거 계약의 해시
+`data/herd/research_decision_v5.json`이다. V4 이하는 과거 계약의 해시
 입력으로 보존한다. 카탈로그는 산출물의 보존 상태를,
 결정 원장은 검증을 마친 후보 판정과 행동 경계를 담당한다. 현재 관측 축적량과
 다음 연구 입력은 Git 밖의 `data/runtime/reports/model-readiness-latest.json`과

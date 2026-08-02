@@ -1,0 +1,13 @@
+{
+  "decision_version": "HERD_RESEARCH_DECISION_V5",
+  "status": "STATE_OBSERVATION_MVP_READY_ACTION_EVIDENCE_EXHAUSTED",
+  "product_scope": "STATE_AND_TRANSITION_OBSERVATION",
+  "total_locked_rejected_experiments": 11,
+  "promotion_candidate_rounds": 6,
+  "adoptable_action_candidates": 0,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "next_stage": "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH"
+}

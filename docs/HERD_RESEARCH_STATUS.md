@@ -179,7 +179,8 @@
   prospective OOS 표본을 사전 고정하는 것이다.
 
 현재 행동·승격 경계의 기계 판독 결정은
-`data/herd/research_decision_v4.json`이다. V4는 총 5개 행동 후보가 모두
+현재 기준은 `data/herd/research_decision_v5.json`이다. V4 시점의 5개 승격
+후보와 이후 실적 반응 후보를 합친 최근 승격 심사는 6개가 모두
 탈락한 상태와 SEC 훼손 사건의 원문 검수 대기를 함께 고정한다. 기존 V2·V3와
 `model_establishment_status_v1.json`은 과거 승격 감사의 고정
 해시 입력으로 보존하며 최신 판정 원장으로 수정하지 않는다. V4에서도 행동
@@ -286,8 +287,8 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 - 다음 작업은 `COMPLETE_110_SEC_IDENTITY_SOURCE_DECISIONS` 하나다. 자동 승인,
   현재 ticker의 과거 소급, Blind holdout 개방과 운영 행동 활성화는 금지한다.
 
-기계 판독 계약과 결과는 `data/herd/research_decision_v4.json`,
-`data/reports/research_decision_v4.json`이다.
+현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
+`data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.
 
 ## Prospective Evidence Ledger V1
 

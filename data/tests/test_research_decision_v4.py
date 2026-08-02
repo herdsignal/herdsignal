@@ -12,10 +12,13 @@ from herd.research_decision_v4 import (
 
 
 def _inputs():
-    return (
-        json.loads(DECISION_PATH.read_text(encoding="utf-8")),
-        json.loads(CATALOG_PATH.read_text(encoding="utf-8")),
+    decision = json.loads(DECISION_PATH.read_text(encoding="utf-8"))
+    catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    # V4 remains reproducible after V5 becomes the current decision.
+    catalog["current_decision"]["canonical_decision"] = (
+        "data/herd/research_decision_v4.json"
     )
+    return decision, catalog
 
 
 def test_v4_preserves_observation_scope_and_blocks_action():

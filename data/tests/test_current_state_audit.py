@@ -12,9 +12,15 @@ def test_current_state_contracts_are_consistent() -> None:
     assert state["status"] == "PASS"
     assert state["product"]["state_model"] == "HERD_STATE_S1"
     assert state["action_research"]["adoptable_candidates"] == 0
+    assert state["action_research"]["total_locked_rejected_experiments"] == 11
+    assert state["action_research"]["promotion_candidate_rounds"] == 6
     assert state["action_research"]["operational_action_ratio"] == 0.0
     assert state["action_research"]["blind_holdout_open"] is False
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
+    assert (
+        state["research_boundary"]["next_stage"]
+        == "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH"
+    )
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"
     assert hypothesis["historical_screen"] == {

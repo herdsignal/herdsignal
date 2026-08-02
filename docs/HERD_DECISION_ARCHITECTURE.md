@@ -15,7 +15,7 @@
 
 현재 운영 범위는 State S1·Transition S1 관찰뿐이다. Action Edge와
 Portfolio Policy 후보는 없고 사용자 행동은 `HOLD·0%`다. 최신 기계 판독
-경계는 `data/herd/research_decision_v4.json`이다.
+경계는 `data/herd/research_decision_v5.json`이다.
 
 ## 실패에서 확인한 사실
 

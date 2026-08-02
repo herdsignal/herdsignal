@@ -9,6 +9,8 @@ HERD 후보는 같은 데이터와 같은 시간 분할로 다시 실행했을 �
 ```bash
 PYTHONPATH=data data/.venv/bin/python -m herd.research_decision_v4
 PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_research_decision_v4.py
+PYTHONPATH=data data/.venv/bin/python -m herd.research_decision_v5
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_research_decision_v5.py
 ```
 
 V3 이하 결정 파일은 기존 해시 계약의 재현 입력으로 그대로 둔다. V4는

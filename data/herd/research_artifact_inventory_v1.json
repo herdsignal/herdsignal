@@ -151,6 +151,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/failed_hypothesis_map_v2.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/failed_price_information_audit_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -456,6 +460,10 @@
     },
     {
       "path": "data/herd/research_decision_v4.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/research_decision_v5.json",
       "status": "ACTIVE"
     },
     {
@@ -1520,6 +1528,10 @@
     },
     {
       "path": "data/reports/research_decision_v4.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/research_decision_v5.json",
       "status": "ACTIVE"
     },
     {
