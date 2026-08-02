@@ -1,22 +1,82 @@
 {
   "reportVersion": "HERD_SEC_EARNINGS_SOFT_INFORMATION_SOURCE_REVIEW_V1",
-  "status": "SOURCE_REVIEW_PENDING",
+  "status": "SOURCE_REVIEW_FAILED",
   "reviewRows": 240,
-  "reviewedRows": 0,
+  "reviewedRows": 240,
   "issuers": 30,
   "topics": 7,
   "eras": 5,
-  "validRows": 0,
-  "invalidRows": 0,
-  "ambiguousRows": 0,
-  "sourcePrecision": null,
-  "wilson95LowerBound": null,
-  "reviewComplete": false,
+  "validRows": 183,
+  "invalidRows": 55,
+  "ambiguousRows": 2,
+  "sourcePrecision": 0.7625,
+  "wilson95LowerBound": 0.7047918603605975,
+  "reviewComplete": true,
   "reviewGatePassed": false,
+  "minimumWilson95LowerBound": 0.9,
+  "wilsonGapToPass": 0.19520813963940253,
+  "errorReasonCounts": {
+    "DEFINITION_OR_DISCLOSURE_BOILERPLATE": 19,
+    "SOURCE_LAYOUT_CORRUPTION": 2,
+    "TOPIC_CUE_SCOPE_MISMATCH": 36
+  },
+  "topicReview": {
+    "BACKLOG_OR_BOOKINGS": {
+      "rows": 17,
+      "validRows": 10,
+      "invalidRows": 7,
+      "ambiguousRows": 0,
+      "precision": 0.5882352941176471
+    },
+    "CAPITAL_SPENDING": {
+      "rows": 33,
+      "validRows": 22,
+      "invalidRows": 11,
+      "ambiguousRows": 0,
+      "precision": 0.6666666666666666
+    },
+    "DEMAND": {
+      "rows": 63,
+      "validRows": 58,
+      "invalidRows": 3,
+      "ambiguousRows": 2,
+      "precision": 0.9206349206349206
+    },
+    "INVENTORY": {
+      "rows": 26,
+      "validRows": 17,
+      "invalidRows": 9,
+      "ambiguousRows": 0,
+      "precision": 0.6538461538461539
+    },
+    "LIQUIDITY_OR_FINANCING": {
+      "rows": 15,
+      "validRows": 11,
+      "invalidRows": 4,
+      "ambiguousRows": 0,
+      "precision": 0.7333333333333333
+    },
+    "MANAGEMENT_UNCERTAINTY": {
+      "rows": 27,
+      "validRows": 14,
+      "invalidRows": 13,
+      "ambiguousRows": 0,
+      "precision": 0.5185185185185185
+    },
+    "MARGIN": {
+      "rows": 59,
+      "validRows": 51,
+      "invalidRows": 8,
+      "ambiguousRows": 0,
+      "precision": 0.864406779661017
+    }
+  },
   "priceOrReturnOutcomesOpened": false,
   "directionHypothesisPreregistered": false,
   "operationalAction": "HOLD",
   "operationalActionRatio": 0.0,
-  "nextGate": "COMPLETE_PRIMARY_SOURCE_REVIEW",
-  "lockedQueueSha256": "cab454ed74cd4770ff8bef1b4021e7407420bc602c5a70e6cb48eeaa3f6b64cc"
+  "nextGate": "BUILD_STRUCTURAL_TOPIC_CUE_BINDING_V2_AND_LOCK_NEW_SOURCE_REVIEW",
+  "lockedQueueSha256": "cab454ed74cd4770ff8bef1b4021e7407420bc602c5a70e6cb48eeaa3f6b64cc",
+  "submittedDecisionsSha256": "d40cf94f9ebd753d8a6c50725234149dae057208ac24a87665e5cd52677ac526",
+  "adjudicatedSha256": "d40cf94f9ebd753d8a6c50725234149dae057208ac24a87665e5cd52677ac526"
 }

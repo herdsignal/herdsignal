@@ -114,6 +114,34 @@ def evaluate(review: pd.DataFrame, protocol: dict[str, Any]) -> dict[str, Any]:
     passed = bool(
         complete and lower is not None and lower >= gate["minimumWilson95LowerBound"]
     )
+    decided_with_reason = decided.assign(
+        error_reason=decided["review_notes"].str.split(":", n=1).str[0]
+    )
+    error_reason_counts = (
+        decided_with_reason.loc[
+            decided_with_reason["review_decision"].ne("VALID"), "error_reason"
+        ]
+        .replace("", "UNCLASSIFIED")
+        .value_counts()
+        .sort_index()
+        .to_dict()
+    )
+    topic_review: dict[str, dict[str, Any]] = {}
+    for topic, rows in decided.groupby("topic", sort=True):
+        topic_valid = int(rows["review_decision"].eq("VALID").sum())
+        topic_review[str(topic)] = {
+            "rows": len(rows),
+            "validRows": topic_valid,
+            "invalidRows": int(rows["review_decision"].eq("INVALID").sum()),
+            "ambiguousRows": int(rows["review_decision"].eq("AMBIGUOUS").sum()),
+            "precision": topic_valid / len(rows),
+        }
+    if passed:
+        next_gate = protocol["nextGateOnReviewPass"]
+    elif complete:
+        next_gate = protocol["nextGateOnReviewFailure"]
+    else:
+        next_gate = protocol["nextGateWhilePending"]
     return {
         "reportVersion": VERSION,
         "status": "SOURCE_REVIEW_PASSED" if passed else (
@@ -131,14 +159,18 @@ def evaluate(review: pd.DataFrame, protocol: dict[str, Any]) -> dict[str, Any]:
         "wilson95LowerBound": lower,
         "reviewComplete": complete,
         "reviewGatePassed": passed,
+        "minimumWilson95LowerBound": gate["minimumWilson95LowerBound"],
+        "wilsonGapToPass": (
+            max(0.0, gate["minimumWilson95LowerBound"] - lower)
+            if lower is not None else None
+        ),
+        "errorReasonCounts": error_reason_counts,
+        "topicReview": topic_review,
         "priceOrReturnOutcomesOpened": False,
         "directionHypothesisPreregistered": False,
         "operationalAction": "HOLD",
         "operationalActionRatio": 0.0,
-        "nextGate": (
-            protocol["nextGateOnReviewPass"]
-            if passed else protocol["nextGateWhilePending"]
-        ),
+        "nextGate": next_gate,
     }
 
 

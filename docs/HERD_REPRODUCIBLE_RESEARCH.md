@@ -799,20 +799,29 @@ PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_review_workb
   --output /tmp/herdsignal-sec-soft-info-review.html
 ```
 
-워크벤치에서 내보낸 판정은 잠긴 queue와 동일성 검증 후에만 병합한다.
+워크벤치에서 원문과 직접 대조한 명시 판정은 다음 명령으로 잠긴 queue와
+동일성 검증 후 CSV로 만든다. `VALID`는 자동 보완하지 않으며 240개 ID가
+판정 원장에 모두 명시되지 않으면 실행을 중단한다.
 
 ```bash
 cd data
+PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_review_decisions_v1
 PYTHONPATH=. .venv/bin/python -m herd.sec_earnings_soft_information_source_review_v1 \
   --queue reports/sec_earnings_soft_information_source_review_v1.csv \
-  --decisions /path/to/sec_earnings_soft_information_decisions_v1.csv \
+  --decisions reports/sec_earnings_soft_information_review_decisions_v1.csv \
   --output reports/sec_earnings_soft_information_source_review_adjudicated_v1.csv \
   --report reports/sec_earnings_soft_information_source_review_gate_v1.json
 ```
 
 검수 화면에만 원문 문장이 포함되고 저장소에는 문장 해시와 파생 사실만
-남는다. 원문 정확도 게이트 통과 전에는 현재·직전 발표 비교, 방향 점수,
-가격 결과와 HERD 행동을 계산하지 않는다.
+남는다. V1 검수 결과는 240건 중 VALID 183건, INVALID 55건, AMBIGUOUS
+2건이다. 정확도 76.25%, Wilson 95% 하한 70.48%로 90% 게이트에
+실패했다. 가장 큰 오류는 같은 문장 안의 다른 항목 변화를 대상 주제에
+잘못 연결한 36건이며 정의·면책·위험요인 문구가 19건, 레이아웃 결합
+오류가 2건이다. 따라서 현재·직전 발표 비교, 방향 점수, 가격 결과와 HERD
+행동은 계속 닫혀 있다. 다음 단계는 같은 표본 임계값 조정이 아니라 구조적
+주제–변화 표현 결합 V2를 만들고, 이번 accession과 겹치지 않는 새 원문
+표본을 다시 잠그는 것이다.
 
 ## 근거
 

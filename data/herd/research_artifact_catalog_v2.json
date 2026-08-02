@@ -1,6 +1,6 @@
 {
   "version": "HERD_RESEARCH_ARTIFACT_CATALOG_V2",
-  "as_of": "2026-07-29",
+  "as_of": "2026-08-02",
   "current_decision": {
     "status": "STATE_OBSERVATION_MVP_READY",
     "new_model_name": "UNASSIGNED_UNTIL_PROMOTION",
@@ -57,8 +57,10 @@
       "data/herd/sec_earnings_soft_information_feasibility_v1.json",
       "data/reports/sec_earnings_soft_information_feasibility_v1.json",
       "data/herd/sec_earnings_soft_information_measurement_v1.json",
+      "data/herd/sec_earnings_soft_information_review_decisions_v1.json",
       "data/reports/sec_earnings_soft_information_measurement_v1.json",
       "data/reports/sec_earnings_soft_information_source_review_gate_v1.json",
+      "data/reports/sec_earnings_soft_information_source_review_adjudicated_v1.csv",
       "data/herd/evidence_admission_registry_v10.json",
       "data/reports/evidence_admission_registry_v10.json",
       "data/herd/conditional_reentry_gate_v2.json",
@@ -107,6 +109,7 @@
       "data/reports/sec_earnings_soft_information_pairs_v1.csv",
       "data/reports/sec_earnings_soft_information_candidates_v1.csv",
       "data/reports/sec_earnings_soft_information_source_review_v1.csv",
+      "data/reports/sec_earnings_soft_information_review_decisions_v1.csv",
       "data/reports/sec_13f_bulk_v1.json",
       "data/reports/sec_13f_target_identities_v1.csv",
       "data/reports/sec_13f_security_intervals_v1.csv",

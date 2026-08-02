@@ -519,6 +519,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/sec_earnings_soft_information_review_decisions_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/sec_form4_corpus_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1633,6 +1637,14 @@
     {
       "path": "data/reports/sec_earnings_soft_information_pairs_v1.csv",
       "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_earnings_soft_information_review_decisions_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_earnings_soft_information_source_review_adjudicated_v1.csv",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/sec_earnings_soft_information_source_review_gate_v1.json",

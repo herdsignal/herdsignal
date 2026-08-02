@@ -16,8 +16,14 @@ from herd.sec_earnings_soft_information_measurement_v1 import (
     soft_text_blocks,
 )
 from herd.sec_earnings_soft_information_review_workbench_v1 import build_payload
+from herd.sec_earnings_soft_information_review_decisions_v1 import (
+    MANIFEST_PATH as REVIEW_DECISION_MANIFEST_PATH,
+    ReviewDecisionManifestError,
+    materialize,
+)
 from herd.sec_earnings_soft_information_source_review_v1 import (
     SoftInformationReviewError,
+    adjudicate,
     evaluate,
     merge_decisions,
 )
@@ -120,3 +126,51 @@ def test_local_workbench_reconstructs_source_sentence_without_outcomes(tmp_path)
     assert manifest["sentenceTextPersistedOnlyInLocalWorkbench"] is True
     assert manifest["priceOrReturnOutcomesOpened"] is False
     assert manifest["automaticValidLabelsCreated"] is False
+
+
+def test_explicit_review_manifest_covers_locked_queue_without_outcomes(tmp_path):
+    output = tmp_path / "decisions.csv"
+    decisions = materialize(output_path=output)
+    assert len(decisions) == 240
+    assert decisions["review_decision"].value_counts().to_dict() == {
+        "VALID": 183,
+        "INVALID": 55,
+        "AMBIGUOUS": 2,
+    }
+    manifest = json.loads(REVIEW_DECISION_MANIFEST_PATH.read_text())
+    assert manifest["priceOrReturnOutcomesOpened"] is False
+    assert manifest["automaticValidLabelsCreated"] is False
+
+
+def test_explicit_review_manifest_rejects_queue_identity_change(tmp_path):
+    queue = pd.read_csv(REVIEW_PATH, dtype=str, keep_default_na=False)
+    queue.loc[0, "review_hash"] = "changed"
+    changed_queue = tmp_path / "changed.csv"
+    queue.to_csv(changed_queue, index=False)
+    with pytest.raises(ReviewDecisionManifestError):
+        materialize(queue_path=changed_queue, output_path=tmp_path / "out.csv")
+
+
+def test_completed_primary_source_review_fails_closed_with_error_breakdown(tmp_path):
+    decisions_path = tmp_path / "decisions.csv"
+    materialize(output_path=decisions_path)
+    report = adjudicate(
+        REVIEW_PATH,
+        decisions_path,
+        tmp_path / "adjudicated.csv",
+        tmp_path / "gate.json",
+    )
+    assert report["status"] == "SOURCE_REVIEW_FAILED"
+    assert report["sourcePrecision"] == 183 / 240
+    assert report["wilson95LowerBound"] < 0.9
+    assert report["reviewGatePassed"] is False
+    assert report["errorReasonCounts"] == {
+        "DEFINITION_OR_DISCLOSURE_BOILERPLATE": 19,
+        "SOURCE_LAYOUT_CORRUPTION": 2,
+        "TOPIC_CUE_SCOPE_MISMATCH": 36,
+    }
+    assert report["nextGate"] == (
+        "BUILD_STRUCTURAL_TOPIC_CUE_BINDING_V2_AND_LOCK_NEW_SOURCE_REVIEW"
+    )
+    assert report["priceOrReturnOutcomesOpened"] is False
+    assert report["operationalActionRatio"] == 0.0
