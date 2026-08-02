@@ -1,0 +1,27 @@
+{
+  "report_version": "SEC_8K_IDENTITY_PRIMARY_DOCUMENT_COLLECTION_V1",
+  "status": "FIRST_WAVE_COLLECTED_SOURCE_REVIEW_REQUIRED",
+  "protocol_sha256": "3c4effdcce300931daf441ba46c2084384ef96fa98178c83fb54a127396c680d",
+  "snapshot_id": "sec-8k-identity-primary-v1-p0p1-20260802",
+  "snapshot_manifest_sha256": "cd21863a03eeaf0eed2ace76dff12e56d9b5c834996f951b92e3a9f31c91c117",
+  "collected_documents": 275,
+  "collected_issuers": 132,
+  "priority_counts": {
+    "P0_AMBIGUOUS": 2,
+    "P1_TEN_YEAR_WINDOW": 273
+  },
+  "extraction_counts": {
+    "CANDIDATE_FOUND": 110,
+    "NO_CANDIDATE_FOUND": 165
+  },
+  "candidate_symbol_rows": 110,
+  "candidate_symbols_promoted": 0,
+  "source_review_required": true,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "SEC_8K_IDENTITY_SOURCE_REVIEW_V1",
+  "index_path": "data/reports/sec_8k_identity_primary_document_collection_v1.csv",
+  "index_sha256": "07b4e599fd6eac398d6bec26e96fb1135455bb8ddab4d8f13e8502986e0408f2"
+}

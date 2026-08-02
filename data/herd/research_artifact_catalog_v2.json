@@ -163,7 +163,10 @@
       "data/reports/sec_8k_hard_adverse_event_corpus_v1.json",
       "data/herd/sec_8k_identity_extension_queue_v1.json",
       "data/reports/sec_8k_identity_extension_queue_v1.csv",
-      "data/reports/sec_8k_identity_extension_queue_v1.json"
+      "data/reports/sec_8k_identity_extension_queue_v1.json",
+      "data/herd/sec_8k_identity_primary_document_collection_v1.json",
+      "data/reports/sec_8k_identity_primary_document_collection_v1.csv",
+      "data/reports/sec_8k_identity_primary_document_collection_v1.json"
     ],
     "REJECTED": [
       "data/herd/rush_margin_cash_divergence_preregistration_v1.json",

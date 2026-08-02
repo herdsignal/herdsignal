@@ -65,6 +65,8 @@ tests/        운영 및 연구 계약 회귀
   veto 후보다. corpus·원문 검수·독립 OOS 전에는 행동 근거로 사용하지 않는다.
 - 사건 원장 947건 중 시점 유효 ticker 미연결·모호 762건은 SEC primary
   document 보강 큐로 고정했다. 현재 ticker를 과거 사건에 소급하지 않는다.
+- P0·P1 SEC 원문 275건은 로컬 해시 snapshot으로 수집했다. 자동 symbol
+  후보 110건도 원문 검수 전에는 ticker–CIK 원장에 반영하지 않는다.
 
 상세 계약:
 

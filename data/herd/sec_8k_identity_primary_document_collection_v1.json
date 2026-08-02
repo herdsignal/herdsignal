@@ -1,0 +1,66 @@
+{
+  "protocol_version": "SEC_8K_IDENTITY_PRIMARY_DOCUMENT_COLLECTION_V1",
+  "status": "LOCKED_FIRST_WAVE_BEFORE_COLLECTION",
+  "as_of": "2026-08-02",
+  "objective": "Collect and hash the unresolved hard-adverse 8-K primary documents in the ambiguous and ten-year-window priorities before any price outcome or direction label is opened.",
+  "locked_inputs": [
+    {
+      "role": "IDENTITY_QUEUE_PROTOCOL",
+      "path": "data/herd/sec_8k_identity_extension_queue_v1.json",
+      "sha256": "e34f72f23932402268c55e49fb48698622fdf561fbe1f06fabc447916852d9ed"
+    },
+    {
+      "role": "IDENTITY_QUEUE_REPORT",
+      "path": "data/reports/sec_8k_identity_extension_queue_v1.json",
+      "sha256": "a63dd0fddc4c1e594056c203a4a10d46c34da45866863e97c76eaf91b2715d44"
+    },
+    {
+      "role": "IDENTITY_QUEUE",
+      "path": "data/reports/sec_8k_identity_extension_queue_v1.csv",
+      "sha256": "de167823ccdf7d2fe2bc9579e8c15b1fc873379d3207742cbaad05daa485657c"
+    }
+  ],
+  "selection": {
+    "priorities": [
+      "P0_AMBIGUOUS",
+      "P1_TEN_YEAR_WINDOW"
+    ],
+    "expected_documents": 275,
+    "result_blind": true
+  },
+  "collection": {
+    "snapshot_id": "sec-8k-identity-primary-v1-p0p1-20260802",
+    "output_root": "data/reference/sec",
+    "timeout_seconds": 60,
+    "delay_seconds": 0.12,
+    "maximum_attempts": 4,
+    "allowed_host": "www.sec.gov",
+    "maximum_document_bytes": 10000000
+  },
+  "extraction": {
+    "method": "SEC_COVER_TRADING_SYMBOL_TAG_AND_LABEL_CANDIDATES",
+    "automatic_identity_promotion": false,
+    "candidate_status": "REQUIRES_SOURCE_REVIEW"
+  },
+  "output": {
+    "index": "data/reports/sec_8k_identity_primary_document_collection_v1.csv",
+    "report": "data/reports/sec_8k_identity_primary_document_collection_v1.json"
+  },
+  "next_stage_if_complete": "SEC_8K_IDENTITY_SOURCE_REVIEW_V1",
+  "forbidden": [
+    "READ_PRICE_OR_RETURN_OUTCOMES",
+    "AUTO_PROMOTE_EXTRACTED_SYMBOL",
+    "USE_CURRENT_TICKER_FALLBACK",
+    "LABEL_EVENT_DIRECTION",
+    "CHANGE_HERD_WEIGHTS",
+    "OPEN_BLIND_HOLDOUT",
+    "ENABLE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "price_outcomes_opened": false,
+    "identity_promotion_allowed": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

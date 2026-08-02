@@ -95,6 +95,10 @@ SEC guidance, FINRA 최신 source fact를 합친 통합 패널도 가격·수익
 둔다. 원문 해시와 trading symbol 판정이 끝나기 전에는 ticker–CIK 원장을
 갱신하거나 연구 방향을 열 수 없다.
 
+P0·P1 SEC primary document 275건의 수집 index와 보고서도
+`DATA_PIPELINE`이다. 원문 bytes는 `.gitignore`된 로컬 snapshot에 두고,
+Git에는 snapshot manifest 해시·추출 후보·검수 대기 상태만 남긴다.
+
 SEC 13F는 공식 bulk 53개와 대표 보통주 식별 원장을 거쳐 PIT 보유
 원장으로 정규화했다. 로컬 SQLite에는 269,600개 filing, 원시 보유
 22,870,933행, amendment 적용 후 유효 상태 22,993,808행이 있다.

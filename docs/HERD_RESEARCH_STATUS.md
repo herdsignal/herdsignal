@@ -202,6 +202,20 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 계약과 큐는 `data/herd/sec_8k_identity_extension_queue_v1.json`,
 `data/reports/sec_8k_identity_extension_queue_v1.csv`다.
 
+### ticker 표지 원문 1차 수집 V1
+
+- P0·P1 275건·132개 CIK의 SEC 8-K primary document를 실패 없이 내려받아
+  bytes와 SHA-256을 로컬 불변 snapshot에 고정했다.
+- 표지 trading symbol 후보가 추출된 행은 110건, 자동 후보가 없는 행은
+  165건이다. 후보가 있다는 사실만으로 ticker 연결을 승인하지 않았다.
+- 자동 승격은 0건이며 110건은 원문 검수, 나머지는 구형 표지 구조를 위한
+  별도 보조 추출 또는 수동 근거가 필요하다. 가격 결과와 방향 가설은
+  계속 닫혀 있다.
+
+계약과 결과는
+`data/herd/sec_8k_identity_primary_document_collection_v1.json`,
+`data/reports/sec_8k_identity_primary_document_collection_v1.json`이다.
+
 ## Prospective Evidence Ledger V1
 
 - State S1 스케줄러가 생성한 동일 번들을 관측일별 불변 JSON envelope로

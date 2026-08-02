@@ -45,6 +45,15 @@ PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_8k_identity_extensi
 결정적으로 생성한다. 큐는 모두 `PENDING`이며 원문 수집 전 symbol을 임의로
 채우지 않는다.
 
+```bash
+PYTHONPATH=data data/.venv/bin/python -m herd.sec_8k_identity_primary_document_collection_v1
+PYTHONPATH=data data/.venv/bin/pytest -q data/tests/test_sec_8k_identity_primary_document_collection_v1.py
+```
+
+첫 실행은 P0·P1 SEC 문서 275건을 로컬 snapshot에 저장한다. 재실행은
+manifest의 파일 크기·SHA-256을 전부 검증하고 기존 원문을 덮어쓰지 않는다.
+추출 symbol은 `PENDING_SOURCE_REVIEW`이며 자동 ticker 승격은 0건이다.
+
 ## Rush 이익률–현금흐름 괴리 사전등록
 
 ```bash
