@@ -1,0 +1,72 @@
+{
+  "contract_version": "HERD_INSTRUMENT_CLASS_LEDGER_V1",
+  "status": "LOCKED_BEFORE_CLASS_SEGMENT_RESULTS",
+  "locked_at": "2026-08-02",
+  "objective": "SEPARATE_SECURITY_STRUCTURE_FROM_POINT_IN_TIME_COMPANY_STYLE_BEFORE_ACTION_EDGE_RESEARCH",
+  "inputs": [
+    {"path": "data/herd/decision_architecture_v1.json", "sha256": "fa23035769d762a18906b9aeaa2fbf16fa243dafc772b14912252024ebacbda9"},
+    {"path": "data/snapshots/yf-long14-actions-sector-20260721/manifest.json", "sha256": "21cfb16db1e117778bdd6a56e54d3a207bbad29ab0edd676dbdd122e225aa44b", "universe_role": "PRIMARY"},
+    {"path": "data/snapshots/yf-independent-current-sp500-20260721/manifest.json", "sha256": "dfc70664176b0fe4d04233164c877a5020ccacd653887eadbf5c4c0c38af9781", "universe_role": "INDEPENDENT_CURRENT_CONSTITUENTS"},
+    {"path": "data/herd/sources/sp500_constituents_20260721.csv", "sha256": "e1c9bf1929fc3425b0b84875848283372c49caf68b9663d1d5134ea6c8e9cecd"},
+    {"path": "data/herd/sources/sp500_constituents_20260721.manifest.json", "sha256": "018ac9eadee5397b734da54005900eb758a56913025a755762e8aa21faf0dcf1"},
+    {"path": "data/reports/independent_universe_v1.csv", "sha256": "b9f0a68465f43626010c95635094838f57e5310dc1f6fad65200c19a638f80a8"},
+    {"path": "data/reports/business_state_features_v2.csv", "sha256": "515a0708594b3e5064e5edf7b46dbcb7d161d2682acfe4af42d22a773f1fb7f1"},
+    {"path": "data/reports/fixed_policy_economic_baselines_v1.csv.gz", "sha256": "0308546fb2dd79372a4032202dda792bf4fc779226c2786bf8bd49fa83f14122"},
+    {"path": "data/reports/fixed_policy_economic_baselines_v1.json", "sha256": "48676103a814fc80feadfd60edd9f1e5d06afe01a0e4e01c0ebdf01e5c8a751b"}
+  ],
+  "security_structure": {
+    "market_etfs": ["DIA", "IWM", "QQQ", "SPY"],
+    "sector_etfs": ["XLB", "XLC", "XLE", "XLF", "XLI", "XLK", "XLP", "XLU", "XLV", "XLY"],
+    "leveraged_or_inverse_etps": ["BITX", "BOIL", "FNGU", "LABU", "NVDL", "SOXL", "SOXS", "SPXL", "SPXS", "SQQQ", "TQQQ", "TSLL", "UPRO", "YINN"],
+    "unknown_etp_default": "UNKNOWN_OR_OTHER_ETP"
+  },
+  "economic_company_style": {
+    "semiconductor_gics_sub_industries": ["Semiconductor Materials & Equipment", "Semiconductors"],
+    "semiconductor_source_is_point_in_time": false,
+    "unprofitable_high_growth": {
+      "minimum_revenue_yoy": 0.2,
+      "maximum_net_margin": 0.0,
+      "requires_corpus_status": "PIT_FACTS_READY",
+      "feature_month_end_must_not_exceed_observation_session": true,
+      "accepted_at_must_not_exceed_observation_session": true
+    },
+    "profitable_large_cap_growth": {
+      "minimum_revenue_yoy": 0.1,
+      "minimum_net_margin": 0.0,
+      "requires_point_in_time_market_cap": true,
+      "missing_market_cap_result": "UNRESOLVED_MISSING_PIT_MARKET_CAP"
+    }
+  },
+  "research_eligibility": {
+    "LEVERAGED_OR_INVERSE_ETP": "EXCLUDED_FROM_EQUITY_ACTION_MODEL",
+    "BROAD_MARKET_ETF": "SEPARATE_BASELINE_ONLY",
+    "SECTOR_ETF": "CONTEXT_ONLY",
+    "CYCLICAL_SEMICONDUCTOR": "SEPARATE_CALIBRATION_REQUIRED",
+    "UNPROFITABLE_HIGH_GROWTH": "SEPARATE_CALIBRATION_REQUIRED",
+    "PROFITABLE_LARGE_CAP_GROWTH": "POOLED_EQUITY_RESEARCH",
+    "OTHER_OR_UNRESOLVED_OPERATING_COMPANY": "DIAGNOSTIC_ONLY_UNTIL_PIT_STYLE_RESOLVED"
+  },
+  "reporting": {
+    "reaggregate_existing_fixed_policies_only": true,
+    "select_policy_from_class_results": false,
+    "minimum_events_for_descriptive_summary": 30,
+    "current_gics_is_admission_evidence": false,
+    "missing_class_may_not_be_imputed": true
+  },
+  "forbidden": [
+    "TREAT_CURRENT_INDEX_MEMBERSHIP_AS_HISTORICAL_LARGE_CAP_EVIDENCE",
+    "TREAT_CURRENT_GICS_AS_POINT_IN_TIME_CLASSIFICATION",
+    "POOL_LEVERAGED_OR_INVERSE_ETPS_WITH_OPERATING_COMPANIES",
+    "IMPUTE_MISSING_PIT_PROFITABILITY_OR_MARKET_CAP",
+    "SELECT_ACTION_POLICY_FROM_DESCRIPTIVE_CLASS_RESULTS",
+    "AUTHORIZE_OPERATIONAL_ACTION",
+    "OPEN_BLIND_HOLDOUT"
+  ],
+  "firewall": {
+    "direction_evidence_admitted": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0,
+    "survivorship_safe": false,
+    "blind_holdout_access": false
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "report_version": "HERD_INSTRUMENT_CLASS_LEDGER_V1",
+  "contract_sha256": "f416cb4c5524b5086c37273cf01ba99850db92041e41aaba9ed70098949413e2",
+  "complete": true,
+  "ticker_count": 531,
+  "event_count": 2161,
+  "classified_event_count": 2161,
+  "security_structure_counts": {
+    "BROAD_MARKET_ETF": 4,
+    "LEVERAGED_OR_INVERSE_ETP": 14,
+    "OPERATING_COMPANY_EQUITY": 503,
+    "SECTOR_ETF": 10
+  },
+  "event_segment_counts": {
+    "CYCLICAL_SEMICONDUCTOR_CURRENT_GICS": 109,
+    "OTHER_OPERATING_COMPANY": 104,
+    "OTHER_OR_UNRESOLVED_OPERATING_COMPANY": 1945,
+    "UNPROFITABLE_HIGH_GROWTH": 3
+  },
+  "style_resolution_reason_counts": {
+    "MISSING_PIT_REVENUE_GROWTH_OR_MARGIN": 13,
+    "NO_TIME_VALID_PIT_COMPANY_FEATURE": 1972,
+    "PIT_FEATURES_DO_NOT_MATCH_LOCKED_STYLE": 105,
+    "PIT_REVENUE_GROWTH_AND_NEGATIVE_MARGIN": 3,
+    "UNRESOLVED_MISSING_PIT_MARKET_CAP": 68
+  },
+  "pit_style_resolved_events": 108,
+  "profitable_large_cap_growth_events": 0,
+  "leveraged_events_in_fixed_baseline": 0,
+  "class_segment_summary_rows": 90,
+  "class_results_selected_policy": null,
+  "direction_evidence_admitted": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0,
+  "survivorship_safe": false,
+  "blind_holdout_access": false,
+  "limitations": [
+    "CURRENT_GICS_IS_NOT_POINT_IN_TIME_AND_IS_DIAGNOSTIC_ONLY",
+    "POINT_IN_TIME_MARKET_CAP_IS_UNAVAILABLE",
+    "SEC_PIT_STYLE_COVERAGE_IS_CONCENTRATED_IN_PRIMARY_UNIVERSE",
+    "CURRENT_CONSTITUENT_UNIVERSE_IS_NOT_SURVIVORSHIP_SAFE"
+  ],
+  "artifacts": {
+    "ticker_ledger": {
+      "path": "data/reports/instrument_class_ledger_v1.csv",
+      "sha256": "d129ea6381fed415a3caccda63debed564a5f474cf4a6c921950735ff25097f4"
+    },
+    "event_ledger": {
+      "path": "data/reports/instrument_class_event_ledger_v1.csv.gz",
+      "sha256": "a675c5872794a8cab35716f82781f28ebfab92382dcc710f624d09f12692f472"
+    },
+    "class_segment_summary": {
+      "path": "data/reports/fixed_policy_by_instrument_class_v1.csv",
+      "sha256": "68fb8bf906183f9d759f1acd97b300fa73982619bd406a49c3c635b18fd94d47"
+    }
+  }
+}

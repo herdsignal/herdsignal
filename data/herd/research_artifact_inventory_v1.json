@@ -259,6 +259,10 @@
       "status": "DIAGNOSTIC"
     },
     {
+      "path": "data/herd/instrument_class_ledger_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/leading_information_feasibility_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1083,6 +1087,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/reports/fixed_policy_by_instrument_class_v1.csv",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/reports/fixed_policy_economic_baselines_v1.json",
       "status": "ACTIVE"
     },
@@ -1229,6 +1237,14 @@
     {
       "path": "data/reports/indicator_inventory_v2.json",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "path": "data/reports/instrument_class_ledger_v1.csv",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/instrument_class_ledger_v1.json",
+      "status": "ACTIVE"
     },
     {
       "path": "data/reports/leading_information_feasibility_v1.json",
