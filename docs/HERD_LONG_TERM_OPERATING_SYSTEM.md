@@ -308,6 +308,9 @@ HerdSignal의 핵심 타이밍 계층이다.
 - Part G: SEC 접수시각 기준 원시 재무 사실을 51종목 범위에서 읽기 전용으로
   연결. 기존 기업 상태 방향·veto 가설은 OOS 탈락 상태이므로 영역은
   `PARTIAL`, 행동 권한은 0%로 유지
+- Part H: State S1의 섹터 ETF 참조를 차트·군중 계산 메타데이터로 고정하고,
+  같은 가격·참여 입력이 독립 시장·섹터 근거로 중복 유입되면 gate에서 차단.
+  별도 채택 소스가 없으므로 시장·섹터 영역은 `NO_VIEW` 유지
 
 현재 사용 가능한 결과는 `INSUFFICIENT_DATA`, `OBSERVE`, 검증된 기업 훼손
 입력이 별도 검증을 통과한 뒤의 `THESIS_RISK`다. `REVIEW_ADD`와

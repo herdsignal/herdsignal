@@ -63,6 +63,21 @@ class EvidenceGateTest {
         assertThat(gate.evaluate(packet(noView)).open()).isTrue();
     }
 
+    @Test
+    void blocksHerdObservationFromMasqueradingAsIndependentMarketEvidence() {
+        EvidenceFact duplicate = new EvidenceFact(
+                "OBS.SECTOR_REFERENCE", DecisionArea.MARKET_SECTOR, "참조 ETF", "SMH",
+                LocalDate.of(2026, 8, 1), generatedAt.minusDays(2),
+                "HERD_OBSERVATION", "HERD_STATE_S1", "COMMON_STOCK",
+                EvidenceQuality.AVAILABLE, false, false, true, 7);
+
+        EvidenceGateResult result = gate.evaluate(packet(duplicate));
+
+        assertThat(result.open()).isFalse();
+        assertThat(result.reasons())
+                .contains("OBS.SECTOR_REFERENCE:MARKET_SECTOR_NOT_INDEPENDENT");
+    }
+
     private EvidencePacket packet(EvidenceFact... facts) {
         return new EvidencePacket(
                 EvidencePacket.SCHEMA_VERSION, "NVDA", "COMMON_STOCK",

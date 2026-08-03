@@ -1,0 +1,37 @@
+{
+  "schema_version": "HERD_OPERATING_MARKET_SECTOR_EVIDENCE_V1",
+  "status": "NO_INDEPENDENT_SOURCE_CONNECTED",
+  "purpose": "Separate market and sector context from HERD State S1 inputs.",
+  "state_s1_inputs_excluded_from_independent_area": [
+    "PRICE_EXTENSION",
+    "TREND_POSITION",
+    "RELATIVE_POSITION",
+    "PARTICIPATION",
+    "DOWNSIDE_RISK",
+    "SECTOR_REFERENCE"
+  ],
+  "rejected_or_diagnostic_only_candidates": [
+    "SPY_63D_REALIZED_VOLATILITY",
+    "SPY_63D_DRAWDOWN",
+    "SPY_21D_REBOUND_AFTER_STRESS",
+    "SECTOR_MINUS_SPY_63D_RETURN"
+  ],
+  "runtime_result": "NO_VIEW",
+  "authority": {
+    "state_description": false,
+    "direction_prediction": false,
+    "action_ratio": 0.0
+  },
+  "future_source_requirements": [
+    "SOURCE_DIFFERENT_FROM_HERD_OBSERVATION",
+    "POINT_IN_TIME_TIMESTAMP",
+    "NO_STATE_S1_FEATURE_REUSE",
+    "SEPARATE_OOS_AUTHORITY_TEST"
+  ],
+  "forbidden": [
+    "COUNT_SECTOR_REFERENCE_AS_MARKET_EVIDENCE",
+    "COUNT_STATE_S1_INPUT_TWICE",
+    "PROMOTE_FAILED_MARKET_PRICE_FEATURES",
+    "AUTHORIZE_ACTION"
+  ]
+}

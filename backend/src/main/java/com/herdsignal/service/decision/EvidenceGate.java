@@ -56,6 +56,10 @@ public class EvidenceGate {
             reasons.add(prefix + ":ID_DUPLICATED");
         }
         if (fact.area() == null) reasons.add(prefix + ":AREA_MISSING");
+        if (fact.area() == DecisionArea.MARKET_SECTOR
+                && ("HERD_OBSERVATION".equals(fact.source()) || prefix.startsWith("OBS."))) {
+            reasons.add(prefix + ":MARKET_SECTOR_NOT_INDEPENDENT");
+        }
         requiredText(fact.label(), prefix + ":LABEL_MISSING", reasons);
         requiredText(fact.source(), prefix + ":SOURCE_MISSING", reasons);
         requiredText(fact.sourceVersion(), prefix + ":SOURCE_VERSION_MISSING", reasons);

@@ -98,6 +98,27 @@ class ObjectiveEvidenceServiceTest {
         assertThat(response.operationalActionRatio()).isZero();
     }
 
+    @Test
+    void keepsSectorReferenceInsideChartCrowdAndMarketAreaAsNoView() {
+        HerdObservationService observations = mock(HerdObservationService.class);
+        when(observations.getLatest("NVDA")).thenReturn(available());
+        ObjectiveEvidenceService service = new ObjectiveEvidenceService(
+                observations, new EvidenceGate(), CLOCK);
+
+        ObjectiveReviewResponse response = service.review("NVDA");
+
+        assertThat(response.evidencePacket().facts())
+                .filteredOn(item -> item.id().equals("OBS.SECTOR_REFERENCE"))
+                .singleElement()
+                .extracting(EvidenceFact::area)
+                .isEqualTo(DecisionArea.CHART_CROWD);
+        assertThat(response.assessments())
+                .filteredOn(item -> item.area() == DecisionArea.MARKET_SECTOR)
+                .singleElement()
+                .extracting(DecisionAreaAssessment::status)
+                .isEqualTo(AssessmentStatus.NO_VIEW);
+    }
+
     private HerdObservationResponse available() {
         return new HerdObservationResponse(
                 "AVAILABLE", "FRESH", 1, "NVDA", "NVIDIA", "NVIDIA Corp",

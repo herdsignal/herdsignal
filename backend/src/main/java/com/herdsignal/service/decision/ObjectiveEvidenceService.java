@@ -120,7 +120,7 @@ public class ObjectiveEvidenceService {
         }
         addOptional(facts, "OBS.DOWNSIDE_RISK", DecisionArea.CHART_CROWD, "하방 위험 맥락",
                 row.downsideRiskContext(), asOf, observedAt, row.stateModelVersion(), stateQuality);
-        addOptional(facts, "OBS.SECTOR_REFERENCE", DecisionArea.MARKET_SECTOR, "참조 섹터 ETF",
+        addOptional(facts, "OBS.SECTOR_REFERENCE", DecisionArea.CHART_CROWD, "State 계산 참조 섹터 ETF",
                 row.sectorEtf(), asOf, observedAt, row.stateModelVersion(), stateQuality);
 
         if (business.filter(BusinessEvidenceSnapshot::usablePointInTimeFacts).isPresent()) {
