@@ -137,8 +137,22 @@ beforeEach(() => {
   api.getPersonalOperatingReview.mockReturnValue(response({
     status: 'OBSERVE',
     objective: {
+      evidencePacket: {
+        facts: [
+          {
+            id: 'BUSINESS.PIT.REVENUE_YOY', area: 'BUSINESS_HEALTH',
+            label: '매출 전년 대비', value: '0.25', quality: 'AVAILABLE',
+            asOfDate: '2026-05-20',
+          },
+          {
+            id: 'BUSINESS.PIT.NET_MARGIN', area: 'BUSINESS_HEALTH',
+            label: '순이익률', value: '0.42', quality: 'AVAILABLE',
+            asOfDate: '2026-05-20',
+          },
+        ],
+      },
       assessments: [
-        { area: 'BUSINESS_HEALTH', status: 'NO_VIEW', headline: 'PIT 기업 체력 연결 전' },
+        { area: 'BUSINESS_HEALTH', status: 'PARTIAL', headline: 'SEC PIT 재무 사실 확인' },
         { area: 'CHART_CROWD', status: 'AVAILABLE', headline: 'DRIFT · NEUTRAL' },
       ],
     },
@@ -188,6 +202,9 @@ describe('StockDetail route', () => {
     expect(await screen.findByRole('heading', { name: '장기 운용 검토' })).toBeInTheDocument()
     expect(screen.getByText('행동 가능 비율')).toBeInTheDocument()
     expect(screen.getByText('채택된 방향성 정보 근거가 없습니다.')).toBeInTheDocument()
+    expect(screen.getByText('매출 전년 대비')).toBeInTheDocument()
+    expect(screen.getByText('25.0%')).toBeInTheDocument()
+    expect(screen.getByText('2026-05-20 접수 기준')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '판단 기록' })).toHaveAttribute(
       'href',
       '#stock-journal',

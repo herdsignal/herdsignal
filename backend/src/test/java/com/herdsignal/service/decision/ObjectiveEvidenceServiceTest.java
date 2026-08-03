@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -57,6 +58,44 @@ class ObjectiveEvidenceServiceTest {
         assertThat(response.status()).isEqualTo("INSUFFICIENT_DATA");
         assertThat(response.dataGate().reasons())
                 .contains("OBS.STATE_SCORE:REQUIRED_FACT_UNAVAILABLE");
+    }
+
+    @Test
+    void exposesVerifiedSecFactsWithoutPromotingRejectedBusinessDirection() {
+        HerdObservationService observations = mock(HerdObservationService.class);
+        when(observations.getLatest("NVDA")).thenReturn(available());
+        PitBusinessEvidenceProvider business = (ticker, date) -> Optional.of(
+                new BusinessEvidenceSnapshot(
+                        "NVDA", "0001045810", LocalDate.of(2026, 6, 30),
+                        "PIT_FACTS_READY", OffsetDateTime.parse("2026-05-20T20:35:52Z"),
+                        "GENERAL", "HERD_SEC_PIT_BUSINESS_FACTS_V1:testhash",
+                        new BigDecimal("0.85"), new BigDecimal("0.71"),
+                        new BigDecimal("0.28"), new BigDecimal("0.60"),
+                        new BigDecimal("102718000000"), new BigDecimal("0.24"),
+                        new BigDecimal("-0.08")));
+        ObjectiveEvidenceService service = new ObjectiveEvidenceService(
+                observations, new EvidenceGate(), business, CLOCK);
+
+        ObjectiveReviewResponse response = service.review("NVDA");
+
+        assertThat(response.assessments())
+                .filteredOn(item -> item.area() == DecisionArea.BUSINESS_HEALTH)
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.status()).isEqualTo(AssessmentStatus.PARTIAL);
+                    assertThat(item.limitations()).anyMatch(value -> value.contains("OOS"));
+                });
+        assertThat(response.evidencePacket().facts())
+                .filteredOn(item -> item.id().equals("BUSINESS.PIT.REVENUE_YOY"))
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.value()).isEqualTo("0.85");
+                    assertThat(item.pointInTimeRequired()).isTrue();
+                    assertThat(item.source()).isEqualTo("SEC_COMPANY_FACTS");
+                    assertThat(item.sourceVersion()).endsWith(":testhash");
+                });
+        assertThat(response.directionPrediction()).isFalse();
+        assertThat(response.operationalActionRatio()).isZero();
     }
 
     private HerdObservationResponse available() {

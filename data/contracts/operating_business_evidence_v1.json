@@ -1,0 +1,33 @@
+{
+  "schema_version": "HERD_OPERATING_BUSINESS_EVIDENCE_V1",
+  "status": "OBSERVATION_ONLY",
+  "source": "SEC_COMPANY_FACTS",
+  "point_in_time_rule": "LATEST_FACT_ACCEPTED_AT_OR_BEFORE_HERD_OBSERVATION_DATE",
+  "supported_entity_type": "GENERAL",
+  "maximum_fact_age_days": 550,
+  "facts": [
+    "REVENUE_YOY",
+    "NET_MARGIN",
+    "NET_MARGIN_YOY_CHANGE",
+    "OPERATING_CASH_FLOW_YOY",
+    "LIABILITIES_TO_ASSETS",
+    "LIABILITIES_TO_ASSETS_YOY_CHANGE"
+  ],
+  "unsupported_result": "NO_VIEW",
+  "assessment_status_when_available": "PARTIAL",
+  "authority": {
+    "state_description": true,
+    "direction_prediction": false,
+    "add_buy_veto": false,
+    "sell_signal": false,
+    "action_ratio": 0.0
+  },
+  "forbidden": [
+    "EXPOSE_REJECTED_PASS_VETO_CLASSIFICATION",
+    "BACKFILL_RESTATEMENTS_BEFORE_ACCEPTANCE",
+    "GENERALIZE_TO_BANK_OR_REIT",
+    "AUTHORIZE_ACTION_FROM_BUSINESS_FACTS",
+    "REPLACE_MISSING_FACTS_WITH_PRICE_DATA"
+  ],
+  "research_decision": "REJECT_BUSINESS_GUARD_PREDICTIVE_EVIDENCE"
+}

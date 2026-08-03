@@ -15,6 +15,13 @@ const STATUS_LABELS = {
   BLOCKED: '차단',
 }
 
+const BUSINESS_FACT_IDS = new Set([
+  'BUSINESS.PIT.REVENUE_YOY',
+  'BUSINESS.PIT.NET_MARGIN',
+  'BUSINESS.PIT.OPERATING_CASH_FLOW_YOY',
+  'BUSINESS.PIT.LIABILITIES_TO_ASSETS',
+])
+
 function normalized(review) {
   if (!review) return null
   if (review.objective) {
@@ -44,8 +51,18 @@ function pct(value) {
   return `${(Number(value) * 100).toFixed(1)}%`
 }
 
+function businessFacts(objective) {
+  return (objective?.evidencePacket?.facts ?? [])
+    .filter((fact) => fact.quality === 'AVAILABLE' && BUSINESS_FACT_IDS.has(fact.id))
+    .map((fact) => ({
+      ...fact,
+      displayValue: pct(fact.value),
+    }))
+}
+
 export default function StockOperatingReview({ state }) {
   const view = normalized(state.review)
+  const verifiedBusinessFacts = businessFacts(view?.objective)
 
   return (
     <section id="stock-operating-review" className={styles.operatingSection}>
@@ -77,6 +94,21 @@ export default function StockOperatingReview({ state }) {
               </div>
             ))}
           </div>
+
+          {verifiedBusinessFacts.length > 0 && (
+            <div className={styles.operatingBusinessFacts}>
+              <div>
+                <span>SEC PIT</span>
+                <small>{verifiedBusinessFacts[0].asOfDate} 접수 기준</small>
+              </div>
+              {verifiedBusinessFacts.map((fact) => (
+                <dl key={fact.id}>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.displayValue}</dd>
+                </dl>
+              ))}
+            </div>
+          )}
 
           {(view.mandate || view.portfolioFit) && (
             <dl className={styles.operatingContext}>
