@@ -202,7 +202,9 @@ export default function StockOperatingReview({ state }) {
             <div className={styles.operatingGuidanceFacts}>
               <div>
                 <span>SEC GUIDANCE</span>
-                <small>{verifiedGuidanceFacts[0].asOfDate} 접수 · 방향 판정 아님</small>
+                <small>
+                  {verifiedGuidanceFacts[0].asOfDate} 접수 · 방향 판정 아님 · 컨센서스/PIT 밸류 미연결
+                </small>
               </div>
               {verifiedGuidanceFacts.map((fact) => (
                 <dl key={fact.id}>

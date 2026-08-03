@@ -5,12 +5,10 @@ import com.herdsignal.service.HerdObservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +18,6 @@ import java.util.Optional;
 public class ObjectiveEvidenceService {
     private static final String ASSET_TYPE = "UNCLASSIFIED_US_LISTED";
     private static final int STATE_MAXIMUM_AGE_DAYS = 10;
-    private static final int GUIDANCE_MAXIMUM_AGE_DAYS = 550;
 
     private final HerdObservationService observationService;
     private final EvidenceGate evidenceGate;
@@ -29,6 +26,8 @@ public class ObjectiveEvidenceService {
     private final MarketSectorEvidenceProvider marketSectorEvidenceProvider;
     private final BusinessHealthEvidenceAssembler businessHealthEvidenceAssembler =
             new BusinessHealthEvidenceAssembler();
+    private final ExpectationValuationEvidenceAssembler expectationValuationEvidenceAssembler =
+            new ExpectationValuationEvidenceAssembler();
     private final Clock clock;
 
     @Autowired
@@ -99,12 +98,16 @@ public class ObjectiveEvidenceService {
                 observation.ticker(), observationDate);
         BusinessHealthEvidenceBundle businessHealth = businessHealthEvidenceAssembler.assemble(
                 business, observationDate, generatedAt);
-        List<GuidanceEvidenceFactSnapshot> guidance = recentGuidance(
-                guidanceEvidenceProvider.latestAccessionAsOf(observation.ticker(), observationDate),
-                generatedAt.toLocalDate());
+        ExpectationValuationEvidenceBundle expectationValuation =
+                expectationValuationEvidenceAssembler.assemble(
+                        guidanceEvidenceProvider.latestAccessionAsOf(
+                                observation.ticker(), observationDate),
+                        observationDate,
+                        generatedAt);
         Optional<MarketSectorEvidenceSnapshot> marketSector = marketSectorEvidenceProvider.contextAsOf(
                 observation.ticker(), observation.sectorEtf(), observationDate);
-        List<EvidenceFact> facts = facts(observation, businessHealth, guidance, marketSector, generatedAt);
+        List<EvidenceFact> facts = facts(
+                observation, businessHealth, expectationValuation, marketSector, generatedAt);
         EvidencePacket packet = new EvidencePacket(
                 EvidencePacket.SCHEMA_VERSION,
                 observation.ticker(),
@@ -118,7 +121,13 @@ public class ObjectiveEvidenceService {
                 observation.ticker(),
                 packet,
                 gate,
-                assessments(observation, businessHealth.assessment(), guidance, marketSector, facts, gate),
+                assessments(
+                        observation,
+                        businessHealth.assessment(),
+                        expectationValuation.assessment(),
+                        marketSector,
+                        facts,
+                        gate),
                 false,
                 "OBSERVE",
                 0.0
@@ -128,7 +137,7 @@ public class ObjectiveEvidenceService {
     private List<EvidenceFact> facts(
             HerdObservationResponse row,
             BusinessHealthEvidenceBundle businessHealth,
-            List<GuidanceEvidenceFactSnapshot> guidance,
+            ExpectationValuationEvidenceBundle expectationValuation,
             Optional<MarketSectorEvidenceSnapshot> marketSector,
             OffsetDateTime generatedAt
     ) {
@@ -167,13 +176,7 @@ public class ObjectiveEvidenceService {
                 row.sectorEtf(), asOf, observedAt, row.stateModelVersion(), stateQuality);
 
         facts.addAll(businessHealth.facts());
-        if (guidance.isEmpty()) {
-            noView(facts, "EXPECTATION.GUIDANCE.PIT", DecisionArea.EXPECTATION_VALUATION,
-                    "SEC 경영진 가이던스", asOf, generatedAt,
-                    "최근 550일 안의 검수 완료 가이던스 원문 사실이 없습니다.");
-        } else {
-            guidance.forEach(item -> addGuidanceFact(facts, item));
-        }
+        facts.addAll(expectationValuation.facts());
         if (marketSector.filter(MarketSectorEvidenceSnapshot::hasMarketContext).isPresent()) {
             addMarketSectorFacts(facts, marketSector.orElseThrow());
         } else {
@@ -190,29 +193,16 @@ public class ObjectiveEvidenceService {
     private List<DecisionAreaAssessment> assessments(
             HerdObservationResponse row,
             DecisionAreaAssessment businessAssessment,
-            List<GuidanceEvidenceFactSnapshot> guidance,
+            DecisionAreaAssessment expectationAssessment,
             Optional<MarketSectorEvidenceSnapshot> marketSector,
             List<EvidenceFact> facts,
             EvidenceGateResult gate
     ) {
         List<String> chartIds = ids(facts, DecisionArea.CHART_CROWD, EvidenceQuality.AVAILABLE);
         List<String> marketIds = ids(facts, DecisionArea.MARKET_SECTOR, EvidenceQuality.AVAILABLE);
-        List<String> expectationIds = ids(
-                facts, DecisionArea.EXPECTATION_VALUATION, EvidenceQuality.AVAILABLE);
         return List.of(
                 businessAssessment,
-                guidance.isEmpty()
-                        ? noViewAssessment(DecisionArea.EXPECTATION_VALUATION,
-                                "최근 검수 가이던스 없음")
-                        : new DecisionAreaAssessment(
-                                DecisionArea.EXPECTATION_VALUATION,
-                                AssessmentStatus.PARTIAL,
-                                "경영진 가이던스 원문 사실 확인",
-                                expectationIds,
-                                List.of(
-                                        "상향·유지·하향 판정이 아닙니다.",
-                                        "애널리스트 컨센서스와 밸류에이션은 연결되지 않았습니다.",
-                                        "기대 변화 가설은 OOS에서 탈락해 행동에 사용하지 않습니다.")),
+                expectationAssessment,
                 new DecisionAreaAssessment(
                         DecisionArea.MARKET_SECTOR,
                         marketIds.isEmpty() ? AssessmentStatus.NO_VIEW : AssessmentStatus.PARTIAL,
@@ -319,27 +309,6 @@ public class ObjectiveEvidenceService {
                 false, false, true, null));
     }
 
-    private void addGuidanceFact(
-            List<EvidenceFact> facts,
-            GuidanceEvidenceFactSnapshot row
-    ) {
-        facts.add(new EvidenceFact(
-                "EXPECTATION.GUIDANCE." + row.bindingId(),
-                DecisionArea.EXPECTATION_VALUATION,
-                guidanceLabel(row),
-                guidanceValue(row),
-                row.acceptedAt().toLocalDate(),
-                row.acceptedAt(),
-                "SEC_8K_EXHIBIT",
-                row.sourceVersion() + ":" + row.sourceSha256(),
-                ASSET_TYPE,
-                EvidenceQuality.AVAILABLE,
-                false,
-                true,
-                true,
-                GUIDANCE_MAXIMUM_AGE_DAYS));
-    }
-
     private void addMarketSectorFacts(
             List<EvidenceFact> facts,
             MarketSectorEvidenceSnapshot row
@@ -392,37 +361,6 @@ public class ObjectiveEvidenceService {
                 true,
                 true,
                 STATE_MAXIMUM_AGE_DAYS));
-    }
-
-    private String guidanceLabel(GuidanceEvidenceFactSnapshot row) {
-        return row.metric() + " · " + row.fiscalPeriod() + " · " + row.accountingBasis();
-    }
-
-    private String guidanceValue(GuidanceEvidenceFactSnapshot row) {
-        String lower = plain(row.lowerBound());
-        String upper = plain(row.upperBound());
-        String range = lower.equals(upper) ? lower : lower + "–" + upper;
-        return range + " " + row.unit();
-    }
-
-    private String plain(BigDecimal value) {
-        return value == null ? "—" : value.stripTrailingZeros().toPlainString();
-    }
-
-    private List<GuidanceEvidenceFactSnapshot> recentGuidance(
-            List<GuidanceEvidenceFactSnapshot> rows,
-            LocalDate generatedDate
-    ) {
-        if (rows == null || rows.isEmpty()) return List.of();
-        return rows.stream()
-                .filter(row -> row.acceptedAt() != null)
-                .filter(row -> {
-                    long age = ChronoUnit.DAYS.between(
-                            row.acceptedAt().toLocalDate(), generatedDate);
-                    return age >= 0 && age <= GUIDANCE_MAXIMUM_AGE_DAYS;
-                })
-                .limit(8)
-                .toList();
     }
 
     private String defaultVersion(String version) {

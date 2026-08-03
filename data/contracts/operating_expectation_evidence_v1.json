@@ -6,12 +6,18 @@
   "point_in_time_rule": "LATEST_ACCESSION_ACCEPTED_AT_OR_BEFORE_HERD_OBSERVATION_DATE",
   "accession_rule": "DO_NOT_MIX_FACTS_ACROSS_ACCESSIONS",
   "maximum_fact_age_days": 550,
+  "connected_dimensions": ["MANAGEMENT_GUIDANCE_ATOMIC_FACT"],
+  "explicit_no_view_dimensions": [
+    "ANALYST_CONSENSUS",
+    "POINT_IN_TIME_VALUATION"
+  ],
   "assessment_status_when_available": "PARTIAL",
   "authority": {
     "show_management_guidance_fact": true,
     "guidance_direction": false,
     "consensus_surprise": false,
     "valuation_judgment": false,
+    "current_snapshot_valuation_as_pit": false,
     "direction_prediction": false,
     "action_veto": false,
     "action_ratio": 0.0

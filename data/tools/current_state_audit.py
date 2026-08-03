@@ -24,6 +24,7 @@ BUSINESS_VETO_GATE = ROOT / "data" / "contracts" / "business_veto_prospective_ga
 ACTION_AUTHORIZATION = ROOT / "data" / "contracts" / "operational_action_authorization_v1.json"
 MARKET_SECTOR_CONTEXT = ROOT / "data" / "contracts" / "market_sector_context_v1.json"
 BUSINESS_CONTEXT = ROOT / "data" / "contracts" / "operating_business_evidence_v1.json"
+EXPECTATION_CONTEXT = ROOT / "data" / "contracts" / "operating_expectation_evidence_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -49,6 +50,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     action_authorization = _load(root / ACTION_AUTHORIZATION.relative_to(ROOT))
     market_sector_context = _load(root / MARKET_SECTOR_CONTEXT.relative_to(ROOT))
     business_context = _load(root / BUSINESS_CONTEXT.relative_to(ROOT))
+    expectation_context = _load(root / EXPECTATION_CONTEXT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -149,6 +151,16 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("rejected business veto unexpectedly became operational")
     if business_context["authority"]["action_ratio"] != 0.0:
         contradictions.append("business context unexpectedly has action ratio")
+    if expectation_context["authority"]["guidance_direction"]:
+        contradictions.append("expectation context unexpectedly classifies guidance direction")
+    if expectation_context["authority"]["consensus_surprise"]:
+        contradictions.append("expectation context unexpectedly infers consensus surprise")
+    if expectation_context["authority"]["valuation_judgment"]:
+        contradictions.append("expectation context unexpectedly judges valuation")
+    if expectation_context["authority"]["current_snapshot_valuation_as_pit"]:
+        contradictions.append("current valuation snapshot unexpectedly became PIT evidence")
+    if expectation_context["authority"]["action_ratio"] != 0.0:
+        contradictions.append("expectation context unexpectedly has action ratio")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -216,6 +228,18 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "direction_prediction": business_context["authority"]["direction_prediction"],
             "add_buy_veto": business_context["authority"]["add_buy_veto"],
             "operational_action_ratio": business_context["authority"]["action_ratio"],
+        },
+        "expectation_valuation_context": {
+            "schema_version": expectation_context["schema_version"],
+            "status": expectation_context["status"],
+            "connected_dimensions": expectation_context["connected_dimensions"],
+            "explicit_no_view_dimensions": expectation_context[
+                "explicit_no_view_dimensions"
+            ],
+            "guidance_direction": expectation_context["authority"]["guidance_direction"],
+            "consensus_surprise": expectation_context["authority"]["consensus_surprise"],
+            "valuation_judgment": expectation_context["authority"]["valuation_judgment"],
+            "operational_action_ratio": expectation_context["authority"]["action_ratio"],
         },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],

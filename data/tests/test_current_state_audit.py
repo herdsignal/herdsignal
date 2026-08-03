@@ -47,6 +47,19 @@ def test_current_state_contracts_are_consistent() -> None:
         "add_buy_veto": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["expectation_valuation_context"] == {
+        "schema_version": "HERD_OPERATING_EXPECTATION_EVIDENCE_V1",
+        "status": "OBSERVATION_ONLY",
+        "connected_dimensions": ["MANAGEMENT_GUIDANCE_ATOMIC_FACT"],
+        "explicit_no_view_dimensions": [
+            "ANALYST_CONSENSUS",
+            "POINT_IN_TIME_VALUATION",
+        ],
+        "guidance_direction": False,
+        "consensus_surprise": False,
+        "valuation_judgment": False,
+        "operational_action_ratio": 0.0,
+    }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
     assert (
         state["research_boundary"]["next_stage"]
