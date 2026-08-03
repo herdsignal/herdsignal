@@ -52,6 +52,11 @@ SEC PIT 사실만 `PARTIAL`로 표시하며 기존 기업 상태 방향·veto �
 - 생존자 편향 안전성: `false`
 - 운영 매수·익절 권한: 없음
 
+런타임은 `model_evidence_admission_v1.json`뿐 아니라 그 원장이 참조하는 모든
+OOS 결과의 SHA-256도 확인한다. 현재 추가매수·재진입 방향 증거와 기업 veto
+증거가 모두 0개이므로 기업 veto 전향 시험 자체가 `BLOCKED_PREREQUISITES`다.
+`OBSERVE` 기록을 ‘veto가 막은 매수’로 세지 않는다.
+
 레거시 v4·v6.1은 비교와 실패 원인 분석에만 사용한다. 같은 OOS 표본에서
 탈락 임계값을 조정하거나 탈락 변수를 다시 조합하지 않는다.
 

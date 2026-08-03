@@ -1,0 +1,24 @@
+{
+  "schema_version": "HERD_BUSINESS_VETO_PROSPECTIVE_GATE_V1",
+  "status": "BLOCKED_PREREQUISITES",
+  "required_before_collection": [
+    "HASH_VERIFIED_EVIDENCE_ADMISSION_REGISTRY",
+    "ADMITTED_ADD_OR_REENTRY_DIRECTION_EVIDENCE",
+    "ADMITTED_BUSINESS_STATE_VETO_EVIDENCE"
+  ],
+  "current": {
+    "add_direction_evidence_admitted": 0,
+    "business_veto_evidence_admitted": 0,
+    "collection_allowed": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0
+  },
+  "future_evaluation_unit": "SAME_ADD_CANDIDATE_WITH_AND_WITHOUT_BUSINESS_VETO",
+  "future_horizons_months": [1, 3, 6],
+  "forbidden": [
+    "COLLECT_VETO_SUCCESS_WITHOUT_ADD_CANDIDATE",
+    "USE_REJECTED_BUSINESS_GUARD_AS_VETO",
+    "COUNT_OBSERVE_AS_PREVENTED_BUY",
+    "ENABLE_ACTION_BEFORE_INDEPENDENT_ADMISSION"
+  ]
+}

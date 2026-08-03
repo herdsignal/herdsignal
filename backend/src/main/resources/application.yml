@@ -74,6 +74,8 @@ herdsignal:
     business-state-path: ${HERD_BUSINESS_STATE_PATH:../data/reports/business_state_features_v2.csv}
     # 원문 검수 atomic fact만 읽으며 상향·하향이나 행동 방향을 만들지 않는다.
     guidance-bindings-path: ${HERD_GUIDANCE_BINDINGS_PATH:../data/reports/sec_guidance_atomic_bindings_v2.csv}
+    # 참조 결과 해시까지 검증된 채택 원장만 런타임 권한으로 읽는다.
+    admission-registry-path: ${HERD_EVIDENCE_ADMISSION_REGISTRY_PATH:../data/herd/model_evidence_admission_v1.json}
   python:
     executable: ${HERD_PYTHON_EXECUTABLE:}
   validation-report-path: ${MODEL_VALIDATION_REPORT_PATH:../data/reports/validation_v2/validation_v2.json}
