@@ -20,7 +20,6 @@ import java.util.Optional;
 public class ObjectiveEvidenceService {
     private static final String ASSET_TYPE = "UNCLASSIFIED_US_LISTED";
     private static final int STATE_MAXIMUM_AGE_DAYS = 10;
-    private static final int BUSINESS_MAXIMUM_AGE_DAYS = 550;
     private static final int GUIDANCE_MAXIMUM_AGE_DAYS = 550;
 
     private final HerdObservationService observationService;
@@ -28,6 +27,8 @@ public class ObjectiveEvidenceService {
     private final PitBusinessEvidenceProvider businessEvidenceProvider;
     private final PitGuidanceEvidenceProvider guidanceEvidenceProvider;
     private final MarketSectorEvidenceProvider marketSectorEvidenceProvider;
+    private final BusinessHealthEvidenceAssembler businessHealthEvidenceAssembler =
+            new BusinessHealthEvidenceAssembler();
     private final Clock clock;
 
     @Autowired
@@ -96,12 +97,14 @@ public class ObjectiveEvidenceService {
                 : observation.observationDate();
         Optional<BusinessEvidenceSnapshot> business = businessEvidenceProvider.latestAsOf(
                 observation.ticker(), observationDate);
+        BusinessHealthEvidenceBundle businessHealth = businessHealthEvidenceAssembler.assemble(
+                business, observationDate, generatedAt);
         List<GuidanceEvidenceFactSnapshot> guidance = recentGuidance(
                 guidanceEvidenceProvider.latestAccessionAsOf(observation.ticker(), observationDate),
                 generatedAt.toLocalDate());
         Optional<MarketSectorEvidenceSnapshot> marketSector = marketSectorEvidenceProvider.contextAsOf(
                 observation.ticker(), observation.sectorEtf(), observationDate);
-        List<EvidenceFact> facts = facts(observation, business, guidance, marketSector, generatedAt);
+        List<EvidenceFact> facts = facts(observation, businessHealth, guidance, marketSector, generatedAt);
         EvidencePacket packet = new EvidencePacket(
                 EvidencePacket.SCHEMA_VERSION,
                 observation.ticker(),
@@ -115,7 +118,7 @@ public class ObjectiveEvidenceService {
                 observation.ticker(),
                 packet,
                 gate,
-                assessments(observation, business, guidance, marketSector, facts, gate),
+                assessments(observation, businessHealth.assessment(), guidance, marketSector, facts, gate),
                 false,
                 "OBSERVE",
                 0.0
@@ -124,7 +127,7 @@ public class ObjectiveEvidenceService {
 
     private List<EvidenceFact> facts(
             HerdObservationResponse row,
-            Optional<BusinessEvidenceSnapshot> business,
+            BusinessHealthEvidenceBundle businessHealth,
             List<GuidanceEvidenceFactSnapshot> guidance,
             Optional<MarketSectorEvidenceSnapshot> marketSector,
             OffsetDateTime generatedAt
@@ -163,14 +166,7 @@ public class ObjectiveEvidenceService {
         addOptional(facts, "OBS.SECTOR_REFERENCE", DecisionArea.CHART_CROWD, "State 계산 참조 섹터 ETF",
                 row.sectorEtf(), asOf, observedAt, row.stateModelVersion(), stateQuality);
 
-        if (business.filter(BusinessEvidenceSnapshot::usablePointInTimeFacts).isPresent()) {
-            addBusinessFacts(facts, business.orElseThrow());
-        } else {
-            noView(facts, "BUSINESS.PIT", DecisionArea.BUSINESS_HEALTH,
-                    "SEC PIT 기업 사실", asOf, generatedAt,
-                    business.map(this::businessUnavailableReason)
-                            .orElse("검증된 ticker-CIK 기업 사실 범위에 포함되지 않습니다."));
-        }
+        facts.addAll(businessHealth.facts());
         if (guidance.isEmpty()) {
             noView(facts, "EXPECTATION.GUIDANCE.PIT", DecisionArea.EXPECTATION_VALUATION,
                     "SEC 경영진 가이던스", asOf, generatedAt,
@@ -193,7 +189,7 @@ public class ObjectiveEvidenceService {
 
     private List<DecisionAreaAssessment> assessments(
             HerdObservationResponse row,
-            Optional<BusinessEvidenceSnapshot> business,
+            DecisionAreaAssessment businessAssessment,
             List<GuidanceEvidenceFactSnapshot> guidance,
             Optional<MarketSectorEvidenceSnapshot> marketSector,
             List<EvidenceFact> facts,
@@ -201,23 +197,8 @@ public class ObjectiveEvidenceService {
     ) {
         List<String> chartIds = ids(facts, DecisionArea.CHART_CROWD, EvidenceQuality.AVAILABLE);
         List<String> marketIds = ids(facts, DecisionArea.MARKET_SECTOR, EvidenceQuality.AVAILABLE);
-        List<String> businessIds = ids(facts, DecisionArea.BUSINESS_HEALTH, EvidenceQuality.AVAILABLE);
         List<String> expectationIds = ids(
                 facts, DecisionArea.EXPECTATION_VALUATION, EvidenceQuality.AVAILABLE);
-        DecisionAreaAssessment businessAssessment = business
-                .filter(BusinessEvidenceSnapshot::usablePointInTimeFacts)
-                .map(snapshot -> new DecisionAreaAssessment(
-                        DecisionArea.BUSINESS_HEALTH,
-                        AssessmentStatus.PARTIAL,
-                        "SEC PIT 재무 사실 확인",
-                        businessIds,
-                        List.of(
-                                "기업 상태 방향·veto 가설은 OOS에서 탈락해 행동에 사용하지 않습니다.",
-                                "마지막 SEC 접수: " + snapshot.latestFactAcceptedAt().toLocalDate())))
-                .orElseGet(() -> noViewAssessment(
-                        DecisionArea.BUSINESS_HEALTH,
-                        business.map(this::businessUnavailableHeadline)
-                                .orElse("SEC PIT 기업 사실 미연결")));
         return List.of(
                 businessAssessment,
                 guidance.isEmpty()
@@ -338,68 +319,6 @@ public class ObjectiveEvidenceService {
                 false, false, true, null));
     }
 
-    private void addBusinessFacts(
-            List<EvidenceFact> facts,
-            BusinessEvidenceSnapshot row
-    ) {
-        OffsetDateTime acceptedAt = row.latestFactAcceptedAt();
-        LocalDate asOf = acceptedAt.toLocalDate();
-        String sourceVersion = row.sourceVersion();
-        addBusinessFact(facts, "BUSINESS.PIT.CIK", "SEC CIK", row.cik(), asOf, acceptedAt, sourceVersion);
-        addBusinessFact(facts, "BUSINESS.PIT.FEATURE_MONTH", "재무 관찰 월",
-                row.featureMonthEnd(), asOf, acceptedAt, sourceVersion);
-        addBusinessMetric(facts, "BUSINESS.PIT.REVENUE_YOY", "매출 전년 대비",
-                row.revenueYoy(), asOf, acceptedAt, sourceVersion);
-        addBusinessMetric(facts, "BUSINESS.PIT.NET_MARGIN", "순이익률",
-                row.netMargin(), asOf, acceptedAt, sourceVersion);
-        addBusinessMetric(facts, "BUSINESS.PIT.NET_MARGIN_YOY_CHANGE", "순이익률 전년 대비 변화",
-                row.netMarginYoyChange(), asOf, acceptedAt, sourceVersion);
-        addBusinessMetric(facts, "BUSINESS.PIT.OPERATING_CASH_FLOW_YOY", "영업현금흐름 전년 대비",
-                row.operatingCashFlowYoy(), asOf, acceptedAt, sourceVersion);
-        addBusinessMetric(facts, "BUSINESS.PIT.LIABILITIES_TO_ASSETS", "부채/자산",
-                row.liabilitiesToAssets(), asOf, acceptedAt, sourceVersion);
-        addBusinessMetric(facts, "BUSINESS.PIT.LIABILITIES_TO_ASSETS_YOY_CHANGE", "부채/자산 전년 대비 변화",
-                row.liabilitiesToAssetsYoyChange(), asOf, acceptedAt, sourceVersion);
-    }
-
-    private void addBusinessMetric(
-            List<EvidenceFact> facts,
-            String id,
-            String label,
-            BigDecimal value,
-            LocalDate asOf,
-            OffsetDateTime acceptedAt,
-            String sourceVersion
-    ) {
-        addBusinessFact(facts, id, label, value, asOf, acceptedAt, sourceVersion);
-    }
-
-    private void addBusinessFact(
-            List<EvidenceFact> facts,
-            String id,
-            String label,
-            Object value,
-            LocalDate asOf,
-            OffsetDateTime acceptedAt,
-            String sourceVersion
-    ) {
-        facts.add(new EvidenceFact(
-                id,
-                DecisionArea.BUSINESS_HEALTH,
-                label,
-                value == null ? null : value.toString(),
-                asOf,
-                acceptedAt,
-                "SEC_COMPANY_FACTS",
-                sourceVersion,
-                ASSET_TYPE,
-                value == null ? EvidenceQuality.NO_VIEW : EvidenceQuality.AVAILABLE,
-                false,
-                true,
-                true,
-                BUSINESS_MAXIMUM_AGE_DAYS));
-    }
-
     private void addGuidanceFact(
             List<EvidenceFact> facts,
             GuidanceEvidenceFactSnapshot row
@@ -504,21 +423,6 @@ public class ObjectiveEvidenceService {
                 })
                 .limit(8)
                 .toList();
-    }
-
-    private String businessUnavailableHeadline(BusinessEvidenceSnapshot row) {
-        if (!"GENERAL".equals(row.entityType())) return row.entityType() + " 측정법 미지원";
-        return "SEC PIT 기업 사실 사용 불가";
-    }
-
-    private String businessUnavailableReason(BusinessEvidenceSnapshot row) {
-        if (!"GENERAL".equals(row.entityType())) {
-            return row.entityType() + " 전용 측정법이 검증되지 않았습니다.";
-        }
-        if (!"PIT_FACTS_READY".equals(row.corpusStatus())) {
-            return "SEC 접수시각 연결이 완전하지 않습니다.";
-        }
-        return "사용 가능한 SEC 접수시각이 없습니다.";
     }
 
     private String defaultVersion(String version) {

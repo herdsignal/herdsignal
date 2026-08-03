@@ -15,12 +15,36 @@ const STATUS_LABELS = {
   BLOCKED: '차단',
 }
 
-const BUSINESS_FACT_IDS = new Set([
-  'BUSINESS.PIT.REVENUE_YOY',
-  'BUSINESS.PIT.NET_MARGIN',
-  'BUSINESS.PIT.OPERATING_CASH_FLOW_YOY',
-  'BUSINESS.PIT.LIABILITIES_TO_ASSETS',
-])
+const BUSINESS_GROUPS = [
+  {
+    id: 'growth',
+    label: '성장',
+    primaryId: 'BUSINESS.PIT.REVENUE_YOY',
+    primaryLabel: '매출 전년 대비',
+  },
+  {
+    id: 'profitability',
+    label: '수익성',
+    primaryId: 'BUSINESS.PIT.NET_MARGIN',
+    primaryLabel: '순이익률',
+    secondaryId: 'BUSINESS.PIT.NET_MARGIN_YOY_CHANGE',
+    secondaryLabel: '전년 대비',
+  },
+  {
+    id: 'cash',
+    label: '현금창출',
+    primaryId: 'BUSINESS.PIT.OPERATING_CASH_FLOW_YOY',
+    primaryLabel: '영업현금흐름 전년 대비',
+  },
+  {
+    id: 'balance',
+    label: '재무구조',
+    primaryId: 'BUSINESS.PIT.LIABILITIES_TO_ASSETS',
+    primaryLabel: '부채/자산',
+    secondaryId: 'BUSINESS.PIT.LIABILITIES_TO_ASSETS_YOY_CHANGE',
+    secondaryLabel: '전년 대비',
+  },
+]
 
 function normalized(review) {
   if (!review) return null
@@ -52,12 +76,22 @@ function pct(value) {
 }
 
 function businessFacts(objective) {
-  return (objective?.evidencePacket?.facts ?? [])
-    .filter((fact) => fact.quality === 'AVAILABLE' && BUSINESS_FACT_IDS.has(fact.id))
-    .map((fact) => ({
-      ...fact,
-      displayValue: pct(fact.value),
-    }))
+  const available = new Map(
+    (objective?.evidencePacket?.facts ?? [])
+      .filter((fact) => fact.quality === 'AVAILABLE')
+      .map((fact) => [fact.id, fact]),
+  )
+  return BUSINESS_GROUPS.flatMap((group) => {
+    const primary = available.get(group.primaryId)
+    const secondary = available.get(group.secondaryId)
+    if (!primary && !secondary) return []
+    return [{
+      ...group,
+      asOfDate: primary?.asOfDate ?? secondary?.asOfDate,
+      primaryValue: primary ? pct(primary.value) : '—',
+      secondaryValue: secondary ? pct(secondary.value) : null,
+    }]
+  })
 }
 
 function guidanceFacts(objective) {
@@ -153,7 +187,11 @@ export default function StockOperatingReview({ state }) {
               {verifiedBusinessFacts.map((fact) => (
                 <dl key={fact.id}>
                   <dt>{fact.label}</dt>
-                  <dd>{fact.displayValue}</dd>
+                  <dd>{fact.primaryValue}</dd>
+                  <small>
+                    {fact.primaryLabel}
+                    {fact.secondaryValue ? ` · ${fact.secondaryLabel} ${fact.secondaryValue}` : ''}
+                  </small>
                 </dl>
               ))}
             </div>

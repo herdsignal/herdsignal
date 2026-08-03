@@ -150,6 +150,26 @@ beforeEach(() => {
             asOfDate: '2026-05-20',
           },
           {
+            id: 'BUSINESS.PIT.NET_MARGIN_YOY_CHANGE', area: 'BUSINESS_HEALTH',
+            label: '순이익률 전년 대비 변화', value: '0.03', quality: 'AVAILABLE',
+            asOfDate: '2026-05-20',
+          },
+          {
+            id: 'BUSINESS.PIT.OPERATING_CASH_FLOW_YOY', area: 'BUSINESS_HEALTH',
+            label: '영업현금흐름 전년 대비', value: '0.18', quality: 'AVAILABLE',
+            asOfDate: '2026-05-20',
+          },
+          {
+            id: 'BUSINESS.PIT.LIABILITIES_TO_ASSETS', area: 'BUSINESS_HEALTH',
+            label: '부채/자산', value: '0.25', quality: 'AVAILABLE',
+            asOfDate: '2026-05-20',
+          },
+          {
+            id: 'BUSINESS.PIT.LIABILITIES_TO_ASSETS_YOY_CHANGE', area: 'BUSINESS_HEALTH',
+            label: '부채/자산 전년 대비 변화', value: '-0.02', quality: 'AVAILABLE',
+            asOfDate: '2026-05-20',
+          },
+          {
             id: 'MARKET.SPY.RETURN_63', area: 'MARKET_SECTOR',
             label: 'SPY 63세션 수익률', value: '-0.08', quality: 'AVAILABLE',
             asOfDate: '2026-07-24',
@@ -232,7 +252,11 @@ describe('StockDetail route', () => {
     expect(screen.getByText('행동 가능 비율')).toBeInTheDocument()
     expect(screen.getByText('채택된 방향성 정보 근거가 없습니다.')).toBeInTheDocument()
     expect(screen.getByText('매출 전년 대비')).toBeInTheDocument()
-    expect(screen.getByText('25.0%')).toBeInTheDocument()
+    expect(screen.getAllByText('25.0%')).toHaveLength(2)
+    expect(screen.getByText('현금창출')).toBeInTheDocument()
+    expect(screen.getByText('재무구조')).toBeInTheDocument()
+    expect(screen.getByText('순이익률 · 전년 대비 3.0%')).toBeInTheDocument()
+    expect(screen.getByText('부채/자산 · 전년 대비 -2.0%')).toBeInTheDocument()
     expect(screen.getByText('2026-05-20 접수 기준')).toBeInTheDocument()
     expect(screen.getByText('MARKET CONTEXT')).toBeInTheDocument()
     expect(screen.getByText('시장 공통')).toBeInTheDocument()

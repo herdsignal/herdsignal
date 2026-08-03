@@ -23,6 +23,7 @@ EVIDENCE_ADMISSION = ROOT / "data" / "herd" / "model_evidence_admission_v1.json"
 BUSINESS_VETO_GATE = ROOT / "data" / "contracts" / "business_veto_prospective_gate_v1.json"
 ACTION_AUTHORIZATION = ROOT / "data" / "contracts" / "operational_action_authorization_v1.json"
 MARKET_SECTOR_CONTEXT = ROOT / "data" / "contracts" / "market_sector_context_v1.json"
+BUSINESS_CONTEXT = ROOT / "data" / "contracts" / "operating_business_evidence_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -47,6 +48,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     business_veto_gate = _load(root / BUSINESS_VETO_GATE.relative_to(ROOT))
     action_authorization = _load(root / ACTION_AUTHORIZATION.relative_to(ROOT))
     market_sector_context = _load(root / MARKET_SECTOR_CONTEXT.relative_to(ROOT))
+    business_context = _load(root / BUSINESS_CONTEXT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -139,6 +141,14 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("market-sector context unexpectedly changes HERD state")
     if market_sector_context["authority"]["operational_action_ratio"] != 0.0:
         contradictions.append("market-sector context unexpectedly has action ratio")
+    if business_context["authority"]["health_score"]:
+        contradictions.append("business context unexpectedly creates a health score")
+    if business_context["authority"]["direction_prediction"]:
+        contradictions.append("business context unexpectedly predicts direction")
+    if business_context["authority"]["add_buy_veto"]:
+        contradictions.append("rejected business veto unexpectedly became operational")
+    if business_context["authority"]["action_ratio"] != 0.0:
+        contradictions.append("business context unexpectedly has action ratio")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -197,6 +207,15 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "operational_action_ratio": market_sector_context["authority"][
                 "operational_action_ratio"
             ],
+        },
+        "business_health_context": {
+            "schema_version": business_context["schema_version"],
+            "status": business_context["status"],
+            "presentation_groups": list(business_context["presentation_groups"].keys()),
+            "health_score": business_context["authority"]["health_score"],
+            "direction_prediction": business_context["authority"]["direction_prediction"],
+            "add_buy_veto": business_context["authority"]["add_buy_veto"],
+            "operational_action_ratio": business_context["authority"]["action_ratio"],
         },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],

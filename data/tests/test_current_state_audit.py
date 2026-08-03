@@ -33,6 +33,20 @@ def test_current_state_contracts_are_consistent() -> None:
         "changes_herd_state": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["business_health_context"] == {
+        "schema_version": "HERD_OPERATING_BUSINESS_EVIDENCE_V1",
+        "status": "OBSERVATION_ONLY",
+        "presentation_groups": [
+            "GROWTH",
+            "PROFITABILITY",
+            "CASH_GENERATION",
+            "FINANCIAL_STRUCTURE",
+        ],
+        "health_score": False,
+        "direction_prediction": False,
+        "add_buy_veto": False,
+        "operational_action_ratio": 0.0,
+    }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
     assert (
         state["research_boundary"]["next_stage"]

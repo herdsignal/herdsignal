@@ -13,10 +13,17 @@
     "LIABILITIES_TO_ASSETS",
     "LIABILITIES_TO_ASSETS_YOY_CHANGE"
   ],
+  "presentation_groups": {
+    "GROWTH": ["REVENUE_YOY"],
+    "PROFITABILITY": ["NET_MARGIN", "NET_MARGIN_YOY_CHANGE"],
+    "CASH_GENERATION": ["OPERATING_CASH_FLOW_YOY"],
+    "FINANCIAL_STRUCTURE": ["LIABILITIES_TO_ASSETS", "LIABILITIES_TO_ASSETS_YOY_CHANGE"]
+  },
   "unsupported_result": "NO_VIEW",
   "assessment_status_when_available": "PARTIAL",
   "authority": {
     "state_description": true,
+    "health_score": false,
     "direction_prediction": false,
     "add_buy_veto": false,
     "sell_signal": false,
