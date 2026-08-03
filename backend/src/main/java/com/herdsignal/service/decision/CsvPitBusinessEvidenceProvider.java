@@ -9,14 +9,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,13 +64,13 @@ public class CsvPitBusinessEvidenceProvider implements PitBusinessEvidenceProvid
         }
         Map<String, List<BusinessEvidenceSnapshot>> result = new HashMap<>();
         try (var lines = Files.lines(path)) {
-            String sourceVersion = SOURCE_VERSION + ":" + sha256(path);
+            String sourceVersion = SOURCE_VERSION + ":" + EvidenceCsvSupport.sha256(path);
             var iterator = lines.iterator();
             if (!iterator.hasNext()) return Map.of();
-            List<String> header = parseCsvLine(iterator.next());
+            List<String> header = EvidenceCsvSupport.parseLine(iterator.next());
             Map<String, Integer> columns = columns(header);
             while (iterator.hasNext()) {
-                List<String> row = parseCsvLine(iterator.next());
+                List<String> row = EvidenceCsvSupport.parseLine(iterator.next());
                 BusinessEvidenceSnapshot snapshot = snapshot(row, columns, sourceVersion);
                 result.computeIfAbsent(snapshot.ticker(), ignored -> new ArrayList<>()).add(snapshot);
             }
@@ -136,45 +133,6 @@ public class CsvPitBusinessEvidenceProvider implements PitBusinessEvidenceProvid
     private OffsetDateTime offsetDateTime(List<String> row, Map<String, Integer> columns, String name) {
         String value = text(row, columns, name);
         return value.isBlank() ? null : OffsetDateTime.parse(value);
-    }
-
-    static List<String> parseCsvLine(String line) {
-        List<String> values = new ArrayList<>();
-        StringBuilder value = new StringBuilder();
-        boolean quoted = false;
-        for (int index = 0; index < line.length(); index++) {
-            char current = line.charAt(index);
-            if (current == '"') {
-                if (quoted && index + 1 < line.length() && line.charAt(index + 1) == '"') {
-                    value.append('"');
-                    index++;
-                } else {
-                    quoted = !quoted;
-                }
-            } else if (current == ',' && !quoted) {
-                values.add(value.toString());
-                value.setLength(0);
-            } else {
-                value.append(current);
-            }
-        }
-        values.add(value.toString());
-        if (quoted) throw new IllegalArgumentException("unterminated quoted CSV field");
-        return values;
-    }
-
-    private String sha256(Path path) throws IOException {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            try (var input = Files.newInputStream(path)) {
-                byte[] buffer = new byte[8192];
-                int read;
-                while ((read = input.read(buffer)) >= 0) digest.update(buffer, 0, read);
-            }
-            return HexFormat.of().formatHex(digest.digest());
-        } catch (NoSuchAlgorithmException impossible) {
-            throw new IllegalStateException("SHA-256 unavailable", impossible);
-        }
     }
 
     private static Path resolvePath(String configuredPath) {

@@ -10,6 +10,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,19 +21,23 @@ public class ObjectiveEvidenceService {
     private static final String ASSET_TYPE = "UNCLASSIFIED_US_LISTED";
     private static final int STATE_MAXIMUM_AGE_DAYS = 10;
     private static final int BUSINESS_MAXIMUM_AGE_DAYS = 550;
+    private static final int GUIDANCE_MAXIMUM_AGE_DAYS = 550;
 
     private final HerdObservationService observationService;
     private final EvidenceGate evidenceGate;
     private final PitBusinessEvidenceProvider businessEvidenceProvider;
+    private final PitGuidanceEvidenceProvider guidanceEvidenceProvider;
     private final Clock clock;
 
     @Autowired
     public ObjectiveEvidenceService(
             HerdObservationService observationService,
             EvidenceGate evidenceGate,
-            PitBusinessEvidenceProvider businessEvidenceProvider
+            PitBusinessEvidenceProvider businessEvidenceProvider,
+            PitGuidanceEvidenceProvider guidanceEvidenceProvider
     ) {
-        this(observationService, evidenceGate, businessEvidenceProvider, Clock.systemUTC());
+        this(observationService, evidenceGate, businessEvidenceProvider,
+                guidanceEvidenceProvider, Clock.systemUTC());
     }
 
     ObjectiveEvidenceService(
@@ -40,7 +45,8 @@ public class ObjectiveEvidenceService {
             EvidenceGate evidenceGate,
             Clock clock
     ) {
-        this(observationService, evidenceGate, (ticker, date) -> Optional.empty(), clock);
+        this(observationService, evidenceGate, (ticker, date) -> Optional.empty(),
+                (ticker, date) -> List.of(), clock);
     }
 
     ObjectiveEvidenceService(
@@ -49,9 +55,21 @@ public class ObjectiveEvidenceService {
             PitBusinessEvidenceProvider businessEvidenceProvider,
             Clock clock
     ) {
+        this(observationService, evidenceGate, businessEvidenceProvider,
+                (ticker, date) -> List.of(), clock);
+    }
+
+    ObjectiveEvidenceService(
+            HerdObservationService observationService,
+            EvidenceGate evidenceGate,
+            PitBusinessEvidenceProvider businessEvidenceProvider,
+            PitGuidanceEvidenceProvider guidanceEvidenceProvider,
+            Clock clock
+    ) {
         this.observationService = observationService;
         this.evidenceGate = evidenceGate;
         this.businessEvidenceProvider = businessEvidenceProvider;
+        this.guidanceEvidenceProvider = guidanceEvidenceProvider;
         this.clock = clock;
     }
 
@@ -63,7 +81,10 @@ public class ObjectiveEvidenceService {
                 : observation.observationDate();
         Optional<BusinessEvidenceSnapshot> business = businessEvidenceProvider.latestAsOf(
                 observation.ticker(), observationDate);
-        List<EvidenceFact> facts = facts(observation, business, generatedAt);
+        List<GuidanceEvidenceFactSnapshot> guidance = recentGuidance(
+                guidanceEvidenceProvider.latestAccessionAsOf(observation.ticker(), observationDate),
+                generatedAt.toLocalDate());
+        List<EvidenceFact> facts = facts(observation, business, guidance, generatedAt);
         EvidencePacket packet = new EvidencePacket(
                 EvidencePacket.SCHEMA_VERSION,
                 observation.ticker(),
@@ -77,7 +98,7 @@ public class ObjectiveEvidenceService {
                 observation.ticker(),
                 packet,
                 gate,
-                assessments(observation, business, facts, gate),
+                assessments(observation, business, guidance, facts, gate),
                 false,
                 "OBSERVE",
                 0.0
@@ -87,6 +108,7 @@ public class ObjectiveEvidenceService {
     private List<EvidenceFact> facts(
             HerdObservationResponse row,
             Optional<BusinessEvidenceSnapshot> business,
+            List<GuidanceEvidenceFactSnapshot> guidance,
             OffsetDateTime generatedAt
     ) {
         LocalDate asOf = row.observationDate() == null
@@ -131,9 +153,13 @@ public class ObjectiveEvidenceService {
                     business.map(this::businessUnavailableReason)
                             .orElse("검증된 ticker-CIK 기업 사실 범위에 포함되지 않습니다."));
         }
-        noView(facts, "VALUATION.PIT", DecisionArea.EXPECTATION_VALUATION,
-                "PIT 기대·가격", asOf, generatedAt,
-                "검증된 기대·가격 근거가 아직 연결되지 않았습니다.");
+        if (guidance.isEmpty()) {
+            noView(facts, "EXPECTATION.GUIDANCE.PIT", DecisionArea.EXPECTATION_VALUATION,
+                    "SEC 경영진 가이던스", asOf, generatedAt,
+                    "최근 550일 안의 검수 완료 가이던스 원문 사실이 없습니다.");
+        } else {
+            guidance.forEach(item -> addGuidanceFact(facts, item));
+        }
         noView(facts, "MARKET.REGIME", DecisionArea.MARKET_SECTOR,
                 "독립 시장·섹터 국면", asOf, generatedAt,
                 "State S1 입력과 중복되지 않는 독립 국면 출력이 아직 없습니다.");
@@ -146,12 +172,15 @@ public class ObjectiveEvidenceService {
     private List<DecisionAreaAssessment> assessments(
             HerdObservationResponse row,
             Optional<BusinessEvidenceSnapshot> business,
+            List<GuidanceEvidenceFactSnapshot> guidance,
             List<EvidenceFact> facts,
             EvidenceGateResult gate
     ) {
         List<String> chartIds = ids(facts, DecisionArea.CHART_CROWD, EvidenceQuality.AVAILABLE);
         List<String> marketIds = ids(facts, DecisionArea.MARKET_SECTOR, EvidenceQuality.AVAILABLE);
         List<String> businessIds = ids(facts, DecisionArea.BUSINESS_HEALTH, EvidenceQuality.AVAILABLE);
+        List<String> expectationIds = ids(
+                facts, DecisionArea.EXPECTATION_VALUATION, EvidenceQuality.AVAILABLE);
         DecisionAreaAssessment businessAssessment = business
                 .filter(BusinessEvidenceSnapshot::usablePointInTimeFacts)
                 .map(snapshot -> new DecisionAreaAssessment(
@@ -168,7 +197,18 @@ public class ObjectiveEvidenceService {
                                 .orElse("SEC PIT 기업 사실 미연결")));
         return List.of(
                 businessAssessment,
-                noViewAssessment(DecisionArea.EXPECTATION_VALUATION, "기대·가격 모델 연결 전"),
+                guidance.isEmpty()
+                        ? noViewAssessment(DecisionArea.EXPECTATION_VALUATION,
+                                "최근 검수 가이던스 없음")
+                        : new DecisionAreaAssessment(
+                                DecisionArea.EXPECTATION_VALUATION,
+                                AssessmentStatus.PARTIAL,
+                                "경영진 가이던스 원문 사실 확인",
+                                expectationIds,
+                                List.of(
+                                        "상향·유지·하향 판정이 아닙니다.",
+                                        "애널리스트 컨센서스와 밸류에이션은 연결되지 않았습니다.",
+                                        "기대 변화 가설은 OOS에서 탈락해 행동에 사용하지 않습니다.")),
                 new DecisionAreaAssessment(
                         DecisionArea.MARKET_SECTOR,
                         marketIds.isEmpty() ? AssessmentStatus.NO_VIEW : AssessmentStatus.PARTIAL,
@@ -316,6 +356,58 @@ public class ObjectiveEvidenceService {
                 true,
                 true,
                 BUSINESS_MAXIMUM_AGE_DAYS));
+    }
+
+    private void addGuidanceFact(
+            List<EvidenceFact> facts,
+            GuidanceEvidenceFactSnapshot row
+    ) {
+        facts.add(new EvidenceFact(
+                "EXPECTATION.GUIDANCE." + row.bindingId(),
+                DecisionArea.EXPECTATION_VALUATION,
+                guidanceLabel(row),
+                guidanceValue(row),
+                row.acceptedAt().toLocalDate(),
+                row.acceptedAt(),
+                "SEC_8K_EXHIBIT",
+                row.sourceVersion() + ":" + row.sourceSha256(),
+                ASSET_TYPE,
+                EvidenceQuality.AVAILABLE,
+                false,
+                true,
+                true,
+                GUIDANCE_MAXIMUM_AGE_DAYS));
+    }
+
+    private String guidanceLabel(GuidanceEvidenceFactSnapshot row) {
+        return row.metric() + " · " + row.fiscalPeriod() + " · " + row.accountingBasis();
+    }
+
+    private String guidanceValue(GuidanceEvidenceFactSnapshot row) {
+        String lower = plain(row.lowerBound());
+        String upper = plain(row.upperBound());
+        String range = lower.equals(upper) ? lower : lower + "–" + upper;
+        return range + " " + row.unit();
+    }
+
+    private String plain(BigDecimal value) {
+        return value == null ? "—" : value.stripTrailingZeros().toPlainString();
+    }
+
+    private List<GuidanceEvidenceFactSnapshot> recentGuidance(
+            List<GuidanceEvidenceFactSnapshot> rows,
+            LocalDate generatedDate
+    ) {
+        if (rows == null || rows.isEmpty()) return List.of();
+        return rows.stream()
+                .filter(row -> row.acceptedAt() != null)
+                .filter(row -> {
+                    long age = ChronoUnit.DAYS.between(
+                            row.acceptedAt().toLocalDate(), generatedDate);
+                    return age >= 0 && age <= GUIDANCE_MAXIMUM_AGE_DAYS;
+                })
+                .limit(8)
+                .toList();
     }
 
     private String businessUnavailableHeadline(BusinessEvidenceSnapshot row) {

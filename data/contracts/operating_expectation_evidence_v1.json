@@ -1,0 +1,28 @@
+{
+  "schema_version": "HERD_OPERATING_EXPECTATION_EVIDENCE_V1",
+  "status": "OBSERVATION_ONLY",
+  "source": "SEC_8K_EXHIBIT",
+  "input_authority": "SOURCE_REVIEWED_FACT_ONLY",
+  "point_in_time_rule": "LATEST_ACCESSION_ACCEPTED_AT_OR_BEFORE_HERD_OBSERVATION_DATE",
+  "accession_rule": "DO_NOT_MIX_FACTS_ACROSS_ACCESSIONS",
+  "maximum_fact_age_days": 550,
+  "assessment_status_when_available": "PARTIAL",
+  "authority": {
+    "show_management_guidance_fact": true,
+    "guidance_direction": false,
+    "consensus_surprise": false,
+    "valuation_judgment": false,
+    "direction_prediction": false,
+    "action_veto": false,
+    "action_ratio": 0.0
+  },
+  "forbidden": [
+    "LABEL_UP_MAINTAIN_DOWN",
+    "COMPARE_UNPAIRED_PERIODS",
+    "INFER_ANALYST_CONSENSUS",
+    "MIX_ACCESSIONS",
+    "AUTHORIZE_ACTION_FROM_GUIDANCE_FACT",
+    "USE_DIRECTION_OR_VETO_AUTHORITY_FALSE_ROWS_AS_SIGNALS"
+  ],
+  "research_decision": "REJECT_EXPECTATION_DIRECTION_EVIDENCE"
+}

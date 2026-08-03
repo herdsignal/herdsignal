@@ -272,14 +272,17 @@
   font-size: var(--hs-type-body);
 }
 
-.operatingBusinessFacts {
+.operatingBusinessFacts,
+.operatingGuidanceFacts {
   display: grid;
   grid-template-columns: 1.15fr repeat(4, minmax(0, 1fr));
   border-bottom: 1px solid var(--hs-line);
 }
 
 .operatingBusinessFacts > div,
-.operatingBusinessFacts dl {
+.operatingBusinessFacts dl,
+.operatingGuidanceFacts > div,
+.operatingGuidanceFacts dl {
   display: grid;
   align-content: center;
   min-width: 0;
@@ -290,16 +293,31 @@
   border-right: 1px solid var(--hs-line);
 }
 
-.operatingBusinessFacts > :last-child {
+.operatingBusinessFacts > :last-child,
+.operatingGuidanceFacts > :last-child {
   border-right: 0;
 }
 
 .operatingBusinessFacts span,
 .operatingBusinessFacts dt,
-.operatingBusinessFacts small {
+.operatingBusinessFacts small,
+.operatingGuidanceFacts span,
+.operatingGuidanceFacts dt,
+.operatingGuidanceFacts small {
   overflow: hidden;
   color: var(--hs-text-muted);
   font-size: var(--hs-type-micro);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operatingBusinessFacts dd,
+.operatingGuidanceFacts dd {
+  overflow: hidden;
+  margin: 0;
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-label);
+  font-weight: 680;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -310,11 +328,10 @@
   letter-spacing: .12em;
 }
 
-.operatingBusinessFacts dd {
-  margin: 0;
-  color: var(--hs-text-subtle);
-  font-size: var(--hs-type-label);
-  font-weight: 680;
+.operatingGuidanceFacts span {
+  color: var(--hs-drift);
+  font-weight: 750;
+  letter-spacing: .12em;
 }
 
 .operatingContext {
@@ -895,8 +912,14 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .operatingGuidanceFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .operatingBusinessFacts > div,
-  .operatingBusinessFacts dl {
+  .operatingBusinessFacts dl,
+  .operatingGuidanceFacts > div,
+  .operatingGuidanceFacts dl {
     border-bottom: 1px solid var(--hs-line);
   }
 }

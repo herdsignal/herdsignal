@@ -60,9 +60,16 @@ function businessFacts(objective) {
     }))
 }
 
+function guidanceFacts(objective) {
+  return (objective?.evidencePacket?.facts ?? [])
+    .filter((fact) => fact.quality === 'AVAILABLE' && fact.id.startsWith('EXPECTATION.GUIDANCE.'))
+    .slice(0, 4)
+}
+
 export default function StockOperatingReview({ state }) {
   const view = normalized(state.review)
   const verifiedBusinessFacts = businessFacts(view?.objective)
+  const verifiedGuidanceFacts = guidanceFacts(view?.objective)
 
   return (
     <section id="stock-operating-review" className={styles.operatingSection}>
@@ -105,6 +112,22 @@ export default function StockOperatingReview({ state }) {
                 <dl key={fact.id}>
                   <dt>{fact.label}</dt>
                   <dd>{fact.displayValue}</dd>
+                </dl>
+              ))}
+            </div>
+          )}
+
+
+          {verifiedGuidanceFacts.length > 0 && (
+            <div className={styles.operatingGuidanceFacts}>
+              <div>
+                <span>SEC GUIDANCE</span>
+                <small>{verifiedGuidanceFacts[0].asOfDate} 접수 · 방향 판정 아님</small>
+              </div>
+              {verifiedGuidanceFacts.map((fact) => (
+                <dl key={fact.id}>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
                 </dl>
               ))}
             </div>

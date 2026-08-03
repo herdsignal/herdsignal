@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -117,6 +118,68 @@ class ObjectiveEvidenceServiceTest {
                 .singleElement()
                 .extracting(DecisionAreaAssessment::status)
                 .isEqualTo(AssessmentStatus.NO_VIEW);
+    }
+
+    @Test
+    void exposesRecentReviewedGuidanceAsFactWithoutCreatingDirection() {
+        HerdObservationService observations = mock(HerdObservationService.class);
+        when(observations.getLatest("NVDA")).thenReturn(available());
+        PitGuidanceEvidenceProvider guidance = (ticker, date) -> List.of(
+                new GuidanceEvidenceFactSnapshot(
+                        "binding-1", "NVDA", "0001045810", "0001",
+                        OffsetDateTime.parse("2026-05-20T20:00:00Z"),
+                        "https://www.sec.gov/example", "sourcehash", "HTML_TABLE",
+                        "REVENUE", "FY2027", "NON_GAAP", "NOT_APPLICABLE", "USD",
+                        new BigDecimal("100"), new BigDecimal("110"),
+                        new BigDecimal("105"), "bindings:testhash"));
+        ObjectiveEvidenceService service = new ObjectiveEvidenceService(
+                observations, new EvidenceGate(), (ticker, date) -> Optional.empty(),
+                guidance, CLOCK);
+
+        ObjectiveReviewResponse response = service.review("NVDA");
+
+        assertThat(response.assessments())
+                .filteredOn(item -> item.area() == DecisionArea.EXPECTATION_VALUATION)
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.status()).isEqualTo(AssessmentStatus.PARTIAL);
+                    assertThat(item.limitations()).contains("상향·유지·하향 판정이 아닙니다.");
+                });
+        assertThat(response.evidencePacket().facts())
+                .filteredOn(item -> item.id().equals("EXPECTATION.GUIDANCE.binding-1"))
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.value()).isEqualTo("100–110 USD");
+                    assertThat(item.source()).isEqualTo("SEC_8K_EXHIBIT");
+                    assertThat(item.requiredForDecision()).isFalse();
+                });
+        assertThat(response.directionPrediction()).isFalse();
+        assertThat(response.operationalActionRatio()).isZero();
+    }
+
+    @Test
+    void hidesGuidanceOlderThanTheLockedMaximumAge() {
+        HerdObservationService observations = mock(HerdObservationService.class);
+        when(observations.getLatest("NVDA")).thenReturn(available());
+        PitGuidanceEvidenceProvider guidance = (ticker, date) -> List.of(
+                new GuidanceEvidenceFactSnapshot(
+                        "old", "NVDA", "0001045810", "0001",
+                        OffsetDateTime.parse("2024-01-01T12:00:00Z"),
+                        "https://www.sec.gov/example", "sourcehash", "HTML_TABLE",
+                        "REVENUE", "FY2024", "GAAP", "NOT_APPLICABLE", "USD",
+                        BigDecimal.ONE, BigDecimal.TEN, new BigDecimal("5.5"), "v"));
+        ObjectiveEvidenceService service = new ObjectiveEvidenceService(
+                observations, new EvidenceGate(), (ticker, date) -> Optional.empty(),
+                guidance, CLOCK);
+
+        ObjectiveReviewResponse response = service.review("NVDA");
+
+        assertThat(response.assessments())
+                .filteredOn(item -> item.area() == DecisionArea.EXPECTATION_VALUATION)
+                .singleElement()
+                .extracting(DecisionAreaAssessment::status)
+                .isEqualTo(AssessmentStatus.NO_VIEW);
+        assertThat(response.dataGate().open()).isTrue();
     }
 
     private HerdObservationResponse available() {
