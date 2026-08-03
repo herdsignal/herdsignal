@@ -112,6 +112,20 @@ def test_current_state_contracts_are_consistent() -> None:
         "direction_prediction": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["operating_review_ledger"] == {
+        "schema_version": "HERD_OPERATING_REVIEW_LEDGER_V1",
+        "status": "ACTIVE_APPEND_ONLY",
+        "ledger_hash_version": "OPERATING_REVIEW_LEDGER_V1",
+        "integrity_statuses": [
+            "VERIFIED",
+            "LEGACY_UNVERIFIED",
+            "MISMATCH",
+        ],
+        "mismatch_outcome_attribution": False,
+        "legacy_backfilled": False,
+        "creates_direction_evidence": False,
+        "operational_action_ratio": 0.0,
+    }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
     assert (
         state["research_boundary"]["next_stage"]

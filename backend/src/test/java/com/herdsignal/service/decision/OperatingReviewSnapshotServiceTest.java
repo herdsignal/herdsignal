@@ -44,6 +44,8 @@ class OperatingReviewSnapshotServiceTest {
 
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.payloadSha256()).hasSize(64);
+        assertThat(result.recordSha256()).hasSize(64);
+        assertThat(result.integrityStatus()).isEqualTo("VERIFIED");
         assertThat(result.decisionCode()).isEqualTo("OBSERVE");
         assertThat(result.observationDate()).isEqualTo(LocalDate.of(2026, 8, 1));
         assertThat(result.referencePrice()).isNull();
@@ -80,9 +82,43 @@ class OperatingReviewSnapshotServiceTest {
         assertThat(result.outcomes())
                 .extracting(OperatingReviewOutcome::status)
                 .containsExactly("UNAVAILABLE", "PENDING", "PENDING");
+        assertThat(result.integrityStatus()).isEqualTo("LEGACY_UNVERIFIED");
         assertThat(result.outcomes().get(0).targetDate())
                 .isEqualTo(LocalDate.of(2026, 2, 2));
         assertThat(result.outcomes()).allMatch(outcome -> outcome.policyDifferencePct() == null);
+    }
+
+    @Test
+    void blocksOutcomeAttributionWhenLedgerIntegrityFails() {
+        LongTermOperatingReviewService reviewService = mock(LongTermOperatingReviewService.class);
+        CurrentUserService currentUser = mock(CurrentUserService.class);
+        OperatingReviewSnapshotRepository repository = mock(OperatingReviewSnapshotRepository.class);
+        DailyPriceRepository prices = mock(DailyPriceRepository.class);
+        when(currentUser.requireUserId()).thenReturn("user-1");
+        OperatingReviewSnapshot corrupted = OperatingReviewSnapshot.builder()
+                .id(3L).userId("user-1").ticker("NVDA")
+                .reviewedAt(java.time.LocalDateTime.of(2026, 1, 2, 12, 0))
+                .observationDate(LocalDate.of(2026, 1, 2))
+                .referencePriceDate(LocalDate.of(2026, 1, 2))
+                .referencePrice(new BigDecimal("100"))
+                .decisionCode("OBSERVE").actionAuthorized(false).actionRatio(BigDecimal.ZERO)
+                .evidenceSchemaVersion("LONG_TERM_EVIDENCE_PACKET_V1")
+                .decisionModelVersion("LONG_TERM_OPERATING_V1")
+                .payloadJson("{}").payloadSha256("a".repeat(64))
+                .recordSha256("b".repeat(64)).build();
+        when(repository.findByUserIdAndTickerOrderByReviewedAtDesc("user-1", "NVDA"))
+                .thenReturn(List.of(corrupted));
+
+        OperatingReviewSnapshotResponse result = new OperatingReviewSnapshotService(
+                reviewService, currentUser, repository, prices,
+                new ObjectMapper().findAndRegisterModules(),
+                Clock.fixed(Instant.parse("2026-02-15T12:00:00Z"), ZoneOffset.UTC))
+                .history("NVDA").get(0);
+
+        assertThat(result.integrityStatus()).isEqualTo("MISMATCH");
+        assertThat(result.outcomes())
+                .extracting(OperatingReviewOutcome::status)
+                .containsOnly("BLOCKED_INTEGRITY");
     }
 
     private OperatingReviewSnapshot withId(OperatingReviewSnapshot row) {
@@ -93,7 +129,7 @@ class OperatingReviewSnapshotServiceTest {
                 .decisionCode(row.getDecisionCode()).actionAuthorized(row.isActionAuthorized())
                 .actionRatio(row.getActionRatio()).evidenceSchemaVersion(row.getEvidenceSchemaVersion())
                 .decisionModelVersion(row.getDecisionModelVersion()).payloadJson(row.getPayloadJson())
-                .payloadSha256(row.getPayloadSha256()).build();
+                .payloadSha256(row.getPayloadSha256()).recordSha256(row.getRecordSha256()).build();
     }
 
     private PersonalOperatingReviewResponse review() {

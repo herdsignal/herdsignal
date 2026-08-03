@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FlywayMigrationTest {
@@ -19,7 +20,7 @@ class FlywayMigrationTest {
                 .locations("classpath:db/migration")
                 .load();
 
-        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(15);
+        assertThat(flyway.migrate().migrationsExecuted).isEqualTo(16);
 
         try (var connection = DriverManager.getConnection(url, "sa", "");
              var tables = connection.getMetaData().getTables(null, "PUBLIC", "%", new String[]{"TABLE"})) {
@@ -78,6 +79,15 @@ class FlywayMigrationTest {
 
             assertThat(scales.get("avg_price")).isEqualTo(6);
             assertThat(scales.get("quantity")).isEqualTo(6);
+        }
+
+        try (var connection = DriverManager.getConnection(url, "sa", "");
+             var columns = connection.getMetaData().getColumns(
+                     null, "PUBLIC", "OPERATING_REVIEW_SNAPSHOTS", "%")) {
+            Set<String> names = new java.util.HashSet<>();
+            while (columns.next()) names.add(columns.getString("COLUMN_NAME").toLowerCase());
+
+            assertThat(names).contains("payload_sha256", "record_sha256");
         }
     }
 }

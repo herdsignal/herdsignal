@@ -18,6 +18,8 @@ public record OperatingReviewSnapshotResponse(
         String evidenceSchemaVersion,
         String decisionModelVersion,
         String payloadSha256,
+        String recordSha256,
+        String integrityStatus,
         List<OperatingReviewOutcome> outcomes
 ) {
     public OperatingReviewSnapshotResponse {

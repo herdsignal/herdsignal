@@ -350,6 +350,11 @@ HerdSignal의 핵심 타이밍 계층이다.
   변화는 자기 영역의 `AVAILABLE` 근거만 인용하고, 반대 검증만 영역을
   교차한다. 서버가 근거 ID·영역·품질을 재검증하며 사용자 자산은 전송하지
   않고, AI의 증거 생성·방향·veto·행동 권한은 계속 0이다
+- Part S: 새 판단 기록은 JSON 원문 해시뿐 아니라 ticker·관찰일·기준 가격·
+  판단 코드·모델 버전을 포함한 원장 봉투 해시도 함께 저장한다. 조회 시 두
+  해시를 다시 검사하며 불일치는 `MISMATCH`로 표시하고 1·3·6개월 결과 귀속을
+  `BLOCKED_INTEGRITY`로 차단한다. 기존 행은 임의 재서명하지 않고
+  `LEGACY_UNVERIFIED`로 구분한다
 
 현재 사용 가능한 결과는 `INSUFFICIENT_DATA`, `OBSERVE`, 검증된 기업 훼손
 입력이 별도 검증을 통과한 뒤의 `THESIS_RISK`다. `REVIEW_ADD`와

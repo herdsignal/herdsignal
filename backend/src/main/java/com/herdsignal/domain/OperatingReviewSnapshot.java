@@ -69,4 +69,7 @@ public class OperatingReviewSnapshot {
 
     @Column(name = "payload_sha256", nullable = false, length = 64, columnDefinition = "CHAR(64)")
     private String payloadSha256;
+
+    @Column(name = "record_sha256", length = 64, columnDefinition = "CHAR(64)")
+    private String recordSha256;
 }

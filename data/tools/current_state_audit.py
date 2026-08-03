@@ -28,6 +28,7 @@ EXPECTATION_CONTEXT = ROOT / "data" / "contracts" / "operating_expectation_evide
 INFORMATION_CONTEXT = ROOT / "data" / "contracts" / "operating_information_change_evidence_v1.json"
 PORTFOLIO_RISK_CONTEXT = ROOT / "data" / "contracts" / "operating_portfolio_risk_v1.json"
 AI_REVIEW_CONTEXT = ROOT / "data" / "contracts" / "ai_evidence_review_v2.json"
+OPERATING_REVIEW_LEDGER = ROOT / "data" / "contracts" / "operating_review_ledger_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -57,6 +58,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     information_context = _load(root / INFORMATION_CONTEXT.relative_to(ROOT))
     portfolio_risk_context = _load(root / PORTFOLIO_RISK_CONTEXT.relative_to(ROOT))
     ai_review_context = _load(root / AI_REVIEW_CONTEXT.relative_to(ROOT))
+    operating_review_ledger = _load(root / OPERATING_REVIEW_LEDGER.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -195,6 +197,16 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("AI review unexpectedly sets action")
     if ai_review_context["authority"]["operational_action_ratio"] != 0.0:
         contradictions.append("AI review unexpectedly has action ratio")
+    if operating_review_ledger["mismatch_policy"]["outcome_attribution_allowed"]:
+        contradictions.append("corrupted operating records unexpectedly allow attribution")
+    if operating_review_ledger["legacy_policy"]["existing_rows_are_backfilled"]:
+        contradictions.append("legacy operating records were unexpectedly re-signed")
+    if operating_review_ledger["authority"]["creates_direction_evidence"]:
+        contradictions.append("operating review ledger unexpectedly creates direction evidence")
+    if operating_review_ledger["authority"]["authorizes_action"]:
+        contradictions.append("operating review ledger unexpectedly authorizes action")
+    if operating_review_ledger["authority"]["operational_action_ratio"] != 0.0:
+        contradictions.append("operating review ledger unexpectedly has action ratio")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -318,6 +330,24 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "creates_evidence": ai_review_context["authority"]["create_evidence"],
             "direction_prediction": ai_review_context["authority"]["predict_direction"],
             "operational_action_ratio": ai_review_context["authority"][
+                "operational_action_ratio"
+            ],
+        },
+        "operating_review_ledger": {
+            "schema_version": operating_review_ledger["schema_version"],
+            "status": operating_review_ledger["status"],
+            "ledger_hash_version": operating_review_ledger["ledger_hash_version"],
+            "integrity_statuses": operating_review_ledger["integrity_statuses"],
+            "mismatch_outcome_attribution": operating_review_ledger[
+                "mismatch_policy"
+            ]["outcome_attribution_allowed"],
+            "legacy_backfilled": operating_review_ledger["legacy_policy"][
+                "existing_rows_are_backfilled"
+            ],
+            "creates_direction_evidence": operating_review_ledger["authority"][
+                "creates_direction_evidence"
+            ],
+            "operational_action_ratio": operating_review_ledger["authority"][
                 "operational_action_ratio"
             ],
         },

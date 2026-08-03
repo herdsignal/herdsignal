@@ -1,0 +1,37 @@
+{
+  "schema_version": "HERD_OPERATING_REVIEW_LEDGER_V1",
+  "status": "ACTIVE_APPEND_ONLY",
+  "ledger_hash_version": "OPERATING_REVIEW_LEDGER_V1",
+  "protected_fields": [
+    "USER_ID",
+    "TICKER",
+    "REVIEWED_AT",
+    "OBSERVATION_DATE",
+    "REFERENCE_PRICE_DATE",
+    "REFERENCE_PRICE",
+    "DECISION_CODE",
+    "ACTION_AUTHORIZED",
+    "ACTION_RATIO",
+    "EVIDENCE_SCHEMA_VERSION",
+    "DECISION_MODEL_VERSION",
+    "PAYLOAD_SHA256"
+  ],
+  "integrity_statuses": [
+    "VERIFIED",
+    "LEGACY_UNVERIFIED",
+    "MISMATCH"
+  ],
+  "mismatch_policy": {
+    "outcome_attribution_allowed": false,
+    "outcome_status": "BLOCKED_INTEGRITY"
+  },
+  "legacy_policy": {
+    "existing_rows_are_backfilled": false,
+    "status": "LEGACY_UNVERIFIED"
+  },
+  "authority": {
+    "creates_direction_evidence": false,
+    "authorizes_action": false,
+    "operational_action_ratio": 0.0
+  }
+}

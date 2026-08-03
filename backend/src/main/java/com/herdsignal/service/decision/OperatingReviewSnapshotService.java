@@ -13,13 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HexFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /** 판단 원문을 해시와 함께 추가하고 이후 가격 경로를 귀속한다. */
@@ -34,6 +31,7 @@ public class OperatingReviewSnapshotService {
     private final DailyPriceRepository dailyPriceRepository;
     private final ObjectMapper objectMapper;
     private final PricePathAttributionService pricePathAttributionService;
+    private final OperatingReviewLedgerIntegrity ledgerIntegrity;
     private final Clock clock;
 
     @Autowired
@@ -43,10 +41,11 @@ public class OperatingReviewSnapshotService {
             OperatingReviewSnapshotRepository repository,
             DailyPriceRepository dailyPriceRepository,
             ObjectMapper objectMapper,
-            PricePathAttributionService pricePathAttributionService
+            PricePathAttributionService pricePathAttributionService,
+            OperatingReviewLedgerIntegrity ledgerIntegrity
     ) {
         this(reviewService, currentUserService, repository, dailyPriceRepository,
-                objectMapper, pricePathAttributionService, Clock.systemUTC());
+                objectMapper, pricePathAttributionService, ledgerIntegrity, Clock.systemUTC());
     }
 
     OperatingReviewSnapshotService(
@@ -58,7 +57,8 @@ public class OperatingReviewSnapshotService {
             Clock clock
     ) {
         this(reviewService, currentUserService, repository, dailyPriceRepository,
-                objectMapper, new PricePathAttributionService(dailyPriceRepository), clock);
+                objectMapper, new PricePathAttributionService(dailyPriceRepository),
+                new OperatingReviewLedgerIntegrity(), clock);
     }
 
     OperatingReviewSnapshotService(
@@ -68,6 +68,7 @@ public class OperatingReviewSnapshotService {
             DailyPriceRepository dailyPriceRepository,
             ObjectMapper objectMapper,
             PricePathAttributionService pricePathAttributionService,
+            OperatingReviewLedgerIntegrity ledgerIntegrity,
             Clock clock
     ) {
         this.reviewService = reviewService;
@@ -76,6 +77,7 @@ public class OperatingReviewSnapshotService {
         this.dailyPriceRepository = dailyPriceRepository;
         this.objectMapper = objectMapper;
         this.pricePathAttributionService = pricePathAttributionService;
+        this.ledgerIntegrity = ledgerIntegrity;
         this.clock = clock;
     }
 
@@ -86,10 +88,11 @@ public class OperatingReviewSnapshotService {
         DailyPrice reference = dailyPriceRepository
                 .findTopByTickerAndClosePriceIsNotNullOrderByPriceDateDesc(review.ticker())
                 .orElse(null);
-        OperatingReviewSnapshot saved = repository.save(OperatingReviewSnapshot.builder()
+        String payloadSha256 = ledgerIntegrity.payloadHash(payload);
+        OperatingReviewSnapshot pending = OperatingReviewSnapshot.builder()
                 .userId(currentUserService.requireUserId())
                 .ticker(review.ticker())
-                .reviewedAt(LocalDateTime.now(clock))
+                .reviewedAt(LocalDateTime.now(clock).truncatedTo(ChronoUnit.SECONDS))
                 .observationDate(observationDate(review.objective().evidencePacket()))
                 .referencePriceDate(reference == null ? null : reference.getPriceDate())
                 .referencePrice(reference == null ? null : reference.getClosePrice())
@@ -100,8 +103,10 @@ public class OperatingReviewSnapshotService {
                         ? "UNAVAILABLE" : review.objective().evidencePacket().schemaVersion())
                 .decisionModelVersion(DECISION_MODEL_VERSION)
                 .payloadJson(payload)
-                .payloadSha256(sha256(payload))
-                .build());
+                .payloadSha256(payloadSha256)
+                .build();
+        OperatingReviewSnapshot saved = repository.save(withRecordHash(
+                pending, ledgerIntegrity.recordHash(pending)));
         return response(saved);
     }
 
@@ -115,11 +120,13 @@ public class OperatingReviewSnapshotService {
     }
 
     private OperatingReviewSnapshotResponse response(OperatingReviewSnapshot row) {
+        OperatingReviewLedgerIntegrity.Status integrity = ledgerIntegrity.verify(row);
         return new OperatingReviewSnapshotResponse(
                 row.getId(), row.getTicker(), row.getReviewedAt(), row.getObservationDate(),
                 row.getReferencePriceDate(), row.getReferencePrice(), row.getDecisionCode(),
                 row.isActionAuthorized(), row.getActionRatio(), row.getEvidenceSchemaVersion(),
-                row.getDecisionModelVersion(), row.getPayloadSha256(), outcomes(row));
+                row.getDecisionModelVersion(), row.getPayloadSha256(), row.getRecordSha256(),
+                integrity.name(), outcomes(row, integrity));
     }
 
     private LocalDate observationDate(EvidencePacket packet) {
@@ -133,7 +140,19 @@ public class OperatingReviewSnapshotService {
                 .orElse(packet.generatedAt() == null ? null : packet.generatedAt().toLocalDate());
     }
 
-    private List<OperatingReviewOutcome> outcomes(OperatingReviewSnapshot row) {
+    private List<OperatingReviewOutcome> outcomes(
+            OperatingReviewSnapshot row,
+            OperatingReviewLedgerIntegrity.Status integrity
+    ) {
+        if (integrity == OperatingReviewLedgerIntegrity.Status.MISMATCH) {
+            return HORIZONS.stream()
+                    .map(months -> new OperatingReviewOutcome(
+                            months,
+                            row.getReferencePriceDate() == null
+                                    ? null : row.getReferencePriceDate().plusMonths(months),
+                            "BLOCKED_INTEGRITY", null, null, null, null))
+                    .toList();
+        }
         LocalDate latestMarketDate = dailyPriceRepository.findLatestPriceDate().orElse(null);
         return pricePathAttributionService.evaluate(
                         row.getTicker(), row.getReferencePriceDate(), row.getReferencePrice(),
@@ -156,12 +175,18 @@ public class OperatingReviewSnapshotService {
         }
     }
 
-    private String sha256(String value) {
-        try {
-            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
-                    .digest(value.getBytes(StandardCharsets.UTF_8)));
-        } catch (NoSuchAlgorithmException exception) {
-            throw new IllegalStateException("SHA-256을 사용할 수 없습니다.", exception);
-        }
+    private OperatingReviewSnapshot withRecordHash(
+            OperatingReviewSnapshot row,
+            String recordSha256
+    ) {
+        return OperatingReviewSnapshot.builder()
+                .userId(row.getUserId()).ticker(row.getTicker())
+                .reviewedAt(row.getReviewedAt()).observationDate(row.getObservationDate())
+                .referencePriceDate(row.getReferencePriceDate()).referencePrice(row.getReferencePrice())
+                .decisionCode(row.getDecisionCode()).actionAuthorized(row.isActionAuthorized())
+                .actionRatio(row.getActionRatio()).evidenceSchemaVersion(row.getEvidenceSchemaVersion())
+                .decisionModelVersion(row.getDecisionModelVersion()).payloadJson(row.getPayloadJson())
+                .payloadSha256(row.getPayloadSha256()).recordSha256(recordSha256)
+                .build();
     }
 }
