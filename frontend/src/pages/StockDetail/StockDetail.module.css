@@ -410,6 +410,19 @@
   font-size: var(--hs-type-micro);
 }
 
+.operatingPricePath small b {
+  color: var(--hs-text-muted);
+  font-weight: 680;
+}
+
+.operatingPricePath small b[data-integrity='VERIFIED'] {
+  color: var(--hs-positive);
+}
+
+.operatingPricePath small b[data-integrity='MISMATCH'] {
+  color: var(--hs-negative);
+}
+
 .operatingPricePath dd {
   margin: 0;
 }

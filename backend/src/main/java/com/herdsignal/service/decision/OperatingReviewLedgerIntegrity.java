@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HexFormat;
 
 /** 판단 원문의 해시와 원장 핵심 열을 함께 검증한다. */
@@ -70,10 +68,7 @@ public class OperatingReviewLedgerIntegrity {
     }
 
     private String text(Object value) {
-        if (value == null) return "";
-        if (value instanceof LocalDateTime dateTime) return dateTime.toString();
-        if (value instanceof LocalDate date) return date.toString();
-        return value.toString();
+        return value == null ? "" : value.toString();
     }
 
     public enum Status {

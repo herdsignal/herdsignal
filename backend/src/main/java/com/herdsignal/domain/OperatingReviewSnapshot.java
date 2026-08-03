@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
         @Index(name = "ix_operating_review_ticker_observation", columnList = "ticker,observation_date")
 })
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class OperatingReviewSnapshot {

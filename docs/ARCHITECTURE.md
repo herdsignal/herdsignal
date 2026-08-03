@@ -33,7 +33,10 @@
 - `EvidenceGate`: 필수 사실의 출처·시점·최신성·PIT 계약 검사
 - `LongTermOperatingReviewService`: 사용자 운용 조건과 실제 포트폴리오 비중 연결
 - `DecisionSynthesisPolicy`: 데이터·위험·기업 훼손 우선순위의 결정론적 종합
-- `OperatingReviewSnapshotService`: 명시적 판단 JSON·해시·기준 가격 append-only 기록
+- `OperatingReviewSnapshotService`: 명시적 판단 JSON·기준 가격 append-only 기록과
+  1·3·6개월 경로 연결
+- `OperatingReviewLedgerIntegrity`: 판단 원문과 원장 핵심 열의 이중 해시 검증.
+  불일치 기록의 결과 귀속은 차단
 
 객관 조회 `GET /api/operating-reviews/{ticker}/objective`만 공개한다. 개인
 검토와 기록 원장은 인증이 필요하며 GET 요청은 스냅샷을 자동 생성하지 않는다.
@@ -80,6 +83,7 @@ HERD 상태 계산, 산출물 품질, 개인 행동은 서로 다른 개념이�
 - `StockDetailHistory`: 기간별 State S1 차트
 - `StockDetailRecords`: 기업 상태와 사용자 판단 기록
 - `StockOperatingReview`: 장기 운용 영역, 제한, veto와 명시적 원장 기록
+- `stockOperatingReviewModel`: 장기 운용 화면의 근거 선별·숫자·무결성 상태 표시
 - `useOperatingReview`: 공개 객관 근거와 인증 개인 검토의 실패 경계 분리
 - `WatchlistQueue`: 낮은 HERD부터 높은 HERD까지 관찰 목록
 - `Watchlist`: 조회·삭제 상태와 페이지 조합

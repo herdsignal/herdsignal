@@ -30,18 +30,8 @@ class OperatingReviewLedgerIntegrityTest {
         assertThat(integrity.verify(snapshot("{\"changed\":true}", recordHash)))
                 .isEqualTo(OperatingReviewLedgerIntegrity.Status.MISMATCH);
 
-        OperatingReviewSnapshot changedTicker = OperatingReviewSnapshot.builder()
-                .userId(unsigned.getUserId()).ticker("TSLA")
-                .reviewedAt(unsigned.getReviewedAt()).observationDate(unsigned.getObservationDate())
-                .referencePriceDate(unsigned.getReferencePriceDate())
-                .referencePrice(unsigned.getReferencePrice())
-                .decisionCode(unsigned.getDecisionCode())
-                .actionAuthorized(unsigned.isActionAuthorized())
-                .actionRatio(unsigned.getActionRatio())
-                .evidenceSchemaVersion(unsigned.getEvidenceSchemaVersion())
-                .decisionModelVersion(unsigned.getDecisionModelVersion())
-                .payloadJson(unsigned.getPayloadJson()).payloadSha256(unsigned.getPayloadSha256())
-                .recordSha256(recordHash).build();
+        OperatingReviewSnapshot changedTicker = unsigned.toBuilder()
+                .ticker("TSLA").recordSha256(recordHash).build();
         assertThat(integrity.verify(changedTicker))
                 .isEqualTo(OperatingReviewLedgerIntegrity.Status.MISMATCH);
     }

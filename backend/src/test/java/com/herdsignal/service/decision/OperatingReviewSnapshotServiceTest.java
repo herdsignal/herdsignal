@@ -122,14 +122,7 @@ class OperatingReviewSnapshotServiceTest {
     }
 
     private OperatingReviewSnapshot withId(OperatingReviewSnapshot row) {
-        return OperatingReviewSnapshot.builder()
-                .id(1L).userId(row.getUserId()).ticker(row.getTicker())
-                .reviewedAt(row.getReviewedAt()).observationDate(row.getObservationDate())
-                .referencePriceDate(row.getReferencePriceDate()).referencePrice(row.getReferencePrice())
-                .decisionCode(row.getDecisionCode()).actionAuthorized(row.isActionAuthorized())
-                .actionRatio(row.getActionRatio()).evidenceSchemaVersion(row.getEvidenceSchemaVersion())
-                .decisionModelVersion(row.getDecisionModelVersion()).payloadJson(row.getPayloadJson())
-                .payloadSha256(row.getPayloadSha256()).recordSha256(row.getRecordSha256()).build();
+        return row.toBuilder().id(1L).build();
     }
 
     private PersonalOperatingReviewResponse review() {

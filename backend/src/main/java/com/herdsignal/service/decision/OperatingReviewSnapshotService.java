@@ -179,14 +179,6 @@ public class OperatingReviewSnapshotService {
             OperatingReviewSnapshot row,
             String recordSha256
     ) {
-        return OperatingReviewSnapshot.builder()
-                .userId(row.getUserId()).ticker(row.getTicker())
-                .reviewedAt(row.getReviewedAt()).observationDate(row.getObservationDate())
-                .referencePriceDate(row.getReferencePriceDate()).referencePrice(row.getReferencePrice())
-                .decisionCode(row.getDecisionCode()).actionAuthorized(row.isActionAuthorized())
-                .actionRatio(row.getActionRatio()).evidenceSchemaVersion(row.getEvidenceSchemaVersion())
-                .decisionModelVersion(row.getDecisionModelVersion()).payloadJson(row.getPayloadJson())
-                .payloadSha256(row.getPayloadSha256()).recordSha256(recordSha256)
-                .build();
+        return row.toBuilder().recordSha256(recordSha256).build();
     }
 }

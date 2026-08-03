@@ -219,6 +219,7 @@ beforeEach(() => {
     decisionCode: 'OBSERVE',
     actionAuthorized: false,
     actionRatio: 0,
+    integrityStatus: 'VERIFIED',
     outcomes: [
       { horizonMonths: 1, status: 'AVAILABLE', measuredAt: '2026-02-02', priceReturnPct: -5 },
       { horizonMonths: 3, status: 'PENDING' },
@@ -278,6 +279,7 @@ describe('StockDetail route', () => {
     expect(screen.getByText('저장 판단 이후 가격 경로')).toBeInTheDocument()
     expect(screen.getByText('-5.0%')).toBeInTheDocument()
     expect(screen.getByText('성공 판정 아님', { exact: false })).toBeInTheDocument()
+    expect(screen.getByText('원장 검증됨')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '판단 기록' })).toHaveAttribute(
       'href',
       '#stock-journal',
