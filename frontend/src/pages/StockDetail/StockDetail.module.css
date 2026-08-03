@@ -273,7 +273,8 @@
 }
 
 .operatingBusinessFacts,
-.operatingGuidanceFacts {
+.operatingGuidanceFacts,
+.operatingMarketFacts {
   display: grid;
   grid-template-columns: 1.15fr repeat(4, minmax(0, 1fr));
   border-bottom: 1px solid var(--hs-line);
@@ -282,7 +283,9 @@
 .operatingBusinessFacts > div,
 .operatingBusinessFacts dl,
 .operatingGuidanceFacts > div,
-.operatingGuidanceFacts dl {
+.operatingGuidanceFacts dl,
+.operatingMarketFacts > div,
+.operatingMarketFacts dl {
   display: grid;
   align-content: center;
   min-width: 0;
@@ -294,7 +297,8 @@
 }
 
 .operatingBusinessFacts > :last-child,
-.operatingGuidanceFacts > :last-child {
+.operatingGuidanceFacts > :last-child,
+.operatingMarketFacts > :last-child {
   border-right: 0;
 }
 
@@ -303,7 +307,10 @@
 .operatingBusinessFacts small,
 .operatingGuidanceFacts span,
 .operatingGuidanceFacts dt,
-.operatingGuidanceFacts small {
+.operatingGuidanceFacts small,
+.operatingMarketFacts span,
+.operatingMarketFacts dt,
+.operatingMarketFacts small {
   overflow: hidden;
   color: var(--hs-text-muted);
   font-size: var(--hs-type-micro);
@@ -312,7 +319,8 @@
 }
 
 .operatingBusinessFacts dd,
-.operatingGuidanceFacts dd {
+.operatingGuidanceFacts dd,
+.operatingMarketFacts dd {
   overflow: hidden;
   margin: 0;
   color: var(--hs-text-subtle);
@@ -330,6 +338,16 @@
 
 .operatingGuidanceFacts span {
   color: var(--hs-drift);
+  font-weight: 750;
+  letter-spacing: .12em;
+}
+
+.operatingMarketFacts {
+  grid-template-columns: 1.15fr repeat(3, minmax(0, 1fr));
+}
+
+.operatingMarketFacts span {
+  color: var(--hs-calm);
   font-weight: 750;
   letter-spacing: .12em;
 }
@@ -967,10 +985,16 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .operatingMarketFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .operatingBusinessFacts > div,
   .operatingBusinessFacts dl,
   .operatingGuidanceFacts > div,
-  .operatingGuidanceFacts dl {
+  .operatingGuidanceFacts dl,
+  .operatingMarketFacts > div,
+  .operatingMarketFacts dl {
     border-bottom: 1px solid var(--hs-line);
   }
 }

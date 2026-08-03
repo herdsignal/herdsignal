@@ -66,6 +66,31 @@ function guidanceFacts(objective) {
     .slice(0, 4)
 }
 
+const MARKET_FACT_IDS = new Set([
+  'MARKET.SPY.RETURN_63',
+  'MARKET.SECTOR.RELATIVE_63',
+  'MARKET.ATTRIBUTION.CLASS',
+])
+
+const ATTRIBUTION_LABELS = {
+  MARKET_COMMON: '시장 공통',
+  SECTOR_COMMON: '섹터 공통',
+  STOCK_SPECIFIC: '종목 고유',
+  MIXED: '혼합',
+  NO_DOWNSIDE_ATTRIBUTION: '하락 경로 아님',
+}
+
+function marketFacts(objective) {
+  return (objective?.evidencePacket?.facts ?? [])
+    .filter((fact) => fact.quality === 'AVAILABLE' && MARKET_FACT_IDS.has(fact.id))
+    .map((fact) => ({
+      ...fact,
+      displayValue: fact.id === 'MARKET.ATTRIBUTION.CLASS'
+        ? ATTRIBUTION_LABELS[fact.value] ?? fact.value
+        : pct(fact.value),
+    }))
+}
+
 function pricePathValue(outcome) {
   if (!outcome || outcome.status === 'UNAVAILABLE') return '자료 없음'
   if (outcome.status === 'PENDING') return '대기'
@@ -85,6 +110,7 @@ export default function StockOperatingReview({ state }) {
   const view = normalized(state.review)
   const verifiedBusinessFacts = businessFacts(view?.objective)
   const verifiedGuidanceFacts = guidanceFacts(view?.objective)
+  const verifiedMarketFacts = marketFacts(view?.objective)
   const latestRecord = state.records[0] ?? null
 
   return (
@@ -144,6 +170,21 @@ export default function StockOperatingReview({ state }) {
                 <dl key={fact.id}>
                   <dt>{fact.label}</dt>
                   <dd>{fact.value}</dd>
+                </dl>
+              ))}
+            </div>
+          )}
+
+          {verifiedMarketFacts.length > 0 && (
+            <div className={styles.operatingMarketFacts}>
+              <div>
+                <span>MARKET CONTEXT</span>
+                <small>{verifiedMarketFacts[0].asOfDate} 종가 · 설명 전용</small>
+              </div>
+              {verifiedMarketFacts.map((fact) => (
+                <dl key={fact.id}>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.displayValue}</dd>
                 </dl>
               ))}
             </div>

@@ -149,10 +149,26 @@ beforeEach(() => {
             label: '순이익률', value: '0.42', quality: 'AVAILABLE',
             asOfDate: '2026-05-20',
           },
+          {
+            id: 'MARKET.SPY.RETURN_63', area: 'MARKET_SECTOR',
+            label: 'SPY 63세션 수익률', value: '-0.08', quality: 'AVAILABLE',
+            asOfDate: '2026-07-24',
+          },
+          {
+            id: 'MARKET.SECTOR.RELATIVE_63', area: 'MARKET_SECTOR',
+            label: '섹터 ETF 대 SPY 63세션 상대수익', value: '-0.02', quality: 'AVAILABLE',
+            asOfDate: '2026-07-24',
+          },
+          {
+            id: 'MARKET.ATTRIBUTION.CLASS', area: 'MARKET_SECTOR',
+            label: '최근 약세 귀속', value: 'MARKET_COMMON', quality: 'AVAILABLE',
+            asOfDate: '2026-07-24',
+          },
         ],
       },
       assessments: [
         { area: 'BUSINESS_HEALTH', status: 'PARTIAL', headline: 'SEC PIT 재무 사실 확인' },
+        { area: 'MARKET_SECTOR', status: 'PARTIAL', headline: '최근 약세의 시장 공통 기여가 가장 큼' },
         { area: 'CHART_CROWD', status: 'AVAILABLE', headline: 'DRIFT · NEUTRAL' },
       ],
     },
@@ -218,6 +234,9 @@ describe('StockDetail route', () => {
     expect(screen.getByText('매출 전년 대비')).toBeInTheDocument()
     expect(screen.getByText('25.0%')).toBeInTheDocument()
     expect(screen.getByText('2026-05-20 접수 기준')).toBeInTheDocument()
+    expect(screen.getByText('MARKET CONTEXT')).toBeInTheDocument()
+    expect(screen.getByText('시장 공통')).toBeInTheDocument()
+    expect(screen.getByText('2026-07-24 종가 · 설명 전용')).toBeInTheDocument()
     expect(screen.getByText('저장 판단 이후 가격 경로')).toBeInTheDocument()
     expect(screen.getByText('-5.0%')).toBeInTheDocument()
     expect(screen.getByText('성공 판정 아님', { exact: false })).toBeInTheDocument()

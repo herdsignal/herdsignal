@@ -121,6 +121,47 @@ class ObjectiveEvidenceServiceTest {
     }
 
     @Test
+    void exposesIndependentMarketSectorContextWithoutCreatingDirection() {
+        HerdObservationService observations = mock(HerdObservationService.class);
+        when(observations.getLatest("NVDA")).thenReturn(available());
+        MarketSectorEvidenceProvider marketSector = (ticker, sector, date) -> Optional.of(
+                new MarketSectorEvidenceSnapshot(
+                        "NVDA", "SMH", LocalDate.of(2026, 8, 1),
+                        OffsetDateTime.parse("2026-08-02T02:00:00Z"),
+                        "MARKET_SECTOR_CONTEXT_V1",
+                        new BigDecimal("-0.08"), new BigDecimal("-0.12"),
+                        new BigDecimal("0.31"), new BigDecimal("-0.04"),
+                        new BigDecimal("-0.10"), new BigDecimal("-0.02"),
+                        new BigDecimal("-0.06"), new BigDecimal("-0.15"),
+                        new BigDecimal("-0.08"), new BigDecimal("-0.03"),
+                        new BigDecimal("-0.05"), "MARKET_COMMON"));
+        ObjectiveEvidenceService service = new ObjectiveEvidenceService(
+                observations, new EvidenceGate(), (ticker, date) -> Optional.empty(),
+                (ticker, date) -> List.of(), marketSector, CLOCK);
+
+        ObjectiveReviewResponse response = service.review("NVDA");
+
+        assertThat(response.assessments())
+                .filteredOn(item -> item.area() == DecisionArea.MARKET_SECTOR)
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.status()).isEqualTo(AssessmentStatus.PARTIAL);
+                    assertThat(item.headline()).contains("시장 공통");
+                    assertThat(item.limitations()).anyMatch(value -> value.contains("예측이 아닙니다"));
+                });
+        assertThat(response.evidencePacket().facts())
+                .filteredOn(item -> item.id().equals("MARKET.ATTRIBUTION.CLASS"))
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.value()).isEqualTo("MARKET_COMMON");
+                    assertThat(item.source()).isEqualTo("DAILY_PRICE_MARKET_SECTOR_CONTEXT");
+                    assertThat(item.area()).isEqualTo(DecisionArea.MARKET_SECTOR);
+                });
+        assertThat(response.directionPrediction()).isFalse();
+        assertThat(response.operationalActionRatio()).isZero();
+    }
+
+    @Test
     void exposesRecentReviewedGuidanceAsFactWithoutCreatingDirection() {
         HerdObservationService observations = mock(HerdObservationService.class);
         when(observations.getLatest("NVDA")).thenReturn(available());

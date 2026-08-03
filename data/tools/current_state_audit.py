@@ -22,6 +22,7 @@ EXPANSION_OOS_GATE = ROOT / "data" / "reports" / "ticker_disjoint_earnings_react
 EVIDENCE_ADMISSION = ROOT / "data" / "herd" / "model_evidence_admission_v1.json"
 BUSINESS_VETO_GATE = ROOT / "data" / "contracts" / "business_veto_prospective_gate_v1.json"
 ACTION_AUTHORIZATION = ROOT / "data" / "contracts" / "operational_action_authorization_v1.json"
+MARKET_SECTOR_CONTEXT = ROOT / "data" / "contracts" / "market_sector_context_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -45,6 +46,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     admission = _load(root / EVIDENCE_ADMISSION.relative_to(ROOT))
     business_veto_gate = _load(root / BUSINESS_VETO_GATE.relative_to(ROOT))
     action_authorization = _load(root / ACTION_AUTHORIZATION.relative_to(ROOT))
+    market_sector_context = _load(root / MARKET_SECTOR_CONTEXT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -131,6 +133,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("runtime authorization unexpectedly enables add")
     if authorization_current["operational_action_ratio"] != 0.0:
         contradictions.append("runtime authorization unexpectedly has action ratio")
+    if market_sector_context["authority"]["may_predict_direction"]:
+        contradictions.append("market-sector context unexpectedly predicts direction")
+    if market_sector_context["authority"]["may_change_herd_state"]:
+        contradictions.append("market-sector context unexpectedly changes HERD state")
+    if market_sector_context["authority"]["operational_action_ratio"] != 0.0:
+        contradictions.append("market-sector context unexpectedly has action ratio")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -174,6 +182,19 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "review_trim_authorized": authorization_current["review_trim_authorized"],
             "review_add_authorized": authorization_current["review_add_authorized"],
             "operational_action_ratio": authorization_current[
+                "operational_action_ratio"
+            ],
+        },
+        "market_sector_context": {
+            "schema_version": market_sector_context["schema_version"],
+            "status": market_sector_context["status"],
+            "direction_prediction": market_sector_context["authority"][
+                "may_predict_direction"
+            ],
+            "changes_herd_state": market_sector_context["authority"][
+                "may_change_herd_state"
+            ],
+            "operational_action_ratio": market_sector_context["authority"][
                 "operational_action_ratio"
             ],
         },

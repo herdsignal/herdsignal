@@ -26,6 +26,13 @@ def test_current_state_contracts_are_consistent() -> None:
         "review_add_authorized": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["market_sector_context"] == {
+        "schema_version": "HERD_MARKET_SECTOR_CONTEXT_V1",
+        "status": "ACTIVE_CONTEXT_ONLY",
+        "direction_prediction": False,
+        "changes_herd_state": False,
+        "operational_action_ratio": 0.0,
+    }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
     assert (
         state["research_boundary"]["next_stage"]

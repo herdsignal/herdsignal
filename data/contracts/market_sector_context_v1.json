@@ -1,0 +1,51 @@
+{
+  "schema_version": "HERD_MARKET_SECTOR_CONTEXT_V1",
+  "status": "ACTIVE_CONTEXT_ONLY",
+  "as_of": "2026-08-03",
+  "purpose": "SEPARATE_MARKET_SECTOR_AND_STOCK_SPECIFIC_REALIZED_PRICE_PATHS",
+  "source": "POINT_IN_TIME_ADJUSTED_DAILY_CLOSES",
+  "market": {
+    "ticker": "SPY",
+    "return_window_sessions": 63,
+    "drawdown_window_sessions": 63,
+    "realized_volatility_window_sessions": 63,
+    "trend_window_sessions": 200
+  },
+  "sector": {
+    "mapping_source": "HERD_OBSERVATION_SECTOR_ETF_METADATA",
+    "return_window_sessions": 63,
+    "relative_formula": "SECTOR_RETURN_63_MINUS_SPY_RETURN_63",
+    "trend_window_sessions": 200
+  },
+  "stock_path_attribution": {
+    "fit_window_sessions": 126,
+    "fit_window_ends_before_attribution_window": true,
+    "attribution_window_sessions": 21,
+    "formula": "STOCK_LOG_RETURN = BETA_MARKET*SPY_LOG_RETURN + BETA_SECTOR*(SECTOR_LOG_RETURN-SPY_LOG_RETURN) + STOCK_SPECIFIC",
+    "classes": [
+      "MARKET_COMMON",
+      "SECTOR_COMMON",
+      "STOCK_SPECIFIC",
+      "MIXED",
+      "NO_DOWNSIDE_ATTRIBUTION"
+    ]
+  },
+  "authority": {
+    "may_describe": true,
+    "may_predict_direction": false,
+    "may_change_herd_state": false,
+    "may_set_action_ratio": false,
+    "operational_action_ratio": 0.0
+  },
+  "fail_closed": [
+    "NO_FUTURE_PRICE",
+    "NO_SPY_SUBSTITUTION_FOR_MISSING_SECTOR",
+    "NO_DUPLICATE_VOTE_FROM_HERD_STATE",
+    "NO_ACTION_FROM_ATTRIBUTION_CLASS"
+  ],
+  "research_basis": [
+    "https://www.nber.org/papers/w7590",
+    "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library/f-f_factors.html",
+    "https://www.msci.com/indexes/documents/methodology/1_MSCI_Global_Industry_Classification_Standard_GICS_Methodology_20250220.pdf"
+  ]
+}

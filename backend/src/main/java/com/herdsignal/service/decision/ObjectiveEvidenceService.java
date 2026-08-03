@@ -27,6 +27,7 @@ public class ObjectiveEvidenceService {
     private final EvidenceGate evidenceGate;
     private final PitBusinessEvidenceProvider businessEvidenceProvider;
     private final PitGuidanceEvidenceProvider guidanceEvidenceProvider;
+    private final MarketSectorEvidenceProvider marketSectorEvidenceProvider;
     private final Clock clock;
 
     @Autowired
@@ -34,10 +35,11 @@ public class ObjectiveEvidenceService {
             HerdObservationService observationService,
             EvidenceGate evidenceGate,
             PitBusinessEvidenceProvider businessEvidenceProvider,
-            PitGuidanceEvidenceProvider guidanceEvidenceProvider
+            PitGuidanceEvidenceProvider guidanceEvidenceProvider,
+            MarketSectorEvidenceProvider marketSectorEvidenceProvider
     ) {
         this(observationService, evidenceGate, businessEvidenceProvider,
-                guidanceEvidenceProvider, Clock.systemUTC());
+                guidanceEvidenceProvider, marketSectorEvidenceProvider, Clock.systemUTC());
     }
 
     ObjectiveEvidenceService(
@@ -46,7 +48,7 @@ public class ObjectiveEvidenceService {
             Clock clock
     ) {
         this(observationService, evidenceGate, (ticker, date) -> Optional.empty(),
-                (ticker, date) -> List.of(), clock);
+                (ticker, date) -> List.of(), (ticker, sector, date) -> Optional.empty(), clock);
     }
 
     ObjectiveEvidenceService(
@@ -56,7 +58,7 @@ public class ObjectiveEvidenceService {
             Clock clock
     ) {
         this(observationService, evidenceGate, businessEvidenceProvider,
-                (ticker, date) -> List.of(), clock);
+                (ticker, date) -> List.of(), (ticker, sector, date) -> Optional.empty(), clock);
     }
 
     ObjectiveEvidenceService(
@@ -66,10 +68,23 @@ public class ObjectiveEvidenceService {
             PitGuidanceEvidenceProvider guidanceEvidenceProvider,
             Clock clock
     ) {
+        this(observationService, evidenceGate, businessEvidenceProvider,
+                guidanceEvidenceProvider, (ticker, sector, date) -> Optional.empty(), clock);
+    }
+
+    ObjectiveEvidenceService(
+            HerdObservationService observationService,
+            EvidenceGate evidenceGate,
+            PitBusinessEvidenceProvider businessEvidenceProvider,
+            PitGuidanceEvidenceProvider guidanceEvidenceProvider,
+            MarketSectorEvidenceProvider marketSectorEvidenceProvider,
+            Clock clock
+    ) {
         this.observationService = observationService;
         this.evidenceGate = evidenceGate;
         this.businessEvidenceProvider = businessEvidenceProvider;
         this.guidanceEvidenceProvider = guidanceEvidenceProvider;
+        this.marketSectorEvidenceProvider = marketSectorEvidenceProvider;
         this.clock = clock;
     }
 
@@ -84,7 +99,9 @@ public class ObjectiveEvidenceService {
         List<GuidanceEvidenceFactSnapshot> guidance = recentGuidance(
                 guidanceEvidenceProvider.latestAccessionAsOf(observation.ticker(), observationDate),
                 generatedAt.toLocalDate());
-        List<EvidenceFact> facts = facts(observation, business, guidance, generatedAt);
+        Optional<MarketSectorEvidenceSnapshot> marketSector = marketSectorEvidenceProvider.contextAsOf(
+                observation.ticker(), observation.sectorEtf(), observationDate);
+        List<EvidenceFact> facts = facts(observation, business, guidance, marketSector, generatedAt);
         EvidencePacket packet = new EvidencePacket(
                 EvidencePacket.SCHEMA_VERSION,
                 observation.ticker(),
@@ -98,7 +115,7 @@ public class ObjectiveEvidenceService {
                 observation.ticker(),
                 packet,
                 gate,
-                assessments(observation, business, guidance, facts, gate),
+                assessments(observation, business, guidance, marketSector, facts, gate),
                 false,
                 "OBSERVE",
                 0.0
@@ -109,6 +126,7 @@ public class ObjectiveEvidenceService {
             HerdObservationResponse row,
             Optional<BusinessEvidenceSnapshot> business,
             List<GuidanceEvidenceFactSnapshot> guidance,
+            Optional<MarketSectorEvidenceSnapshot> marketSector,
             OffsetDateTime generatedAt
     ) {
         LocalDate asOf = row.observationDate() == null
@@ -160,9 +178,13 @@ public class ObjectiveEvidenceService {
         } else {
             guidance.forEach(item -> addGuidanceFact(facts, item));
         }
-        noView(facts, "MARKET.REGIME", DecisionArea.MARKET_SECTOR,
-                "독립 시장·섹터 국면", asOf, generatedAt,
-                "State S1 입력과 중복되지 않는 독립 국면 출력이 아직 없습니다.");
+        if (marketSector.filter(MarketSectorEvidenceSnapshot::hasMarketContext).isPresent()) {
+            addMarketSectorFacts(facts, marketSector.orElseThrow());
+        } else {
+            noView(facts, "MARKET.CONTEXT", DecisionArea.MARKET_SECTOR,
+                    "시장·섹터 가격 맥락", asOf, generatedAt,
+                    "관찰일 이전의 SPY 일봉이 200세션보다 부족합니다.");
+        }
         noView(facts, "INFO.CHANGE", DecisionArea.INFORMATION_CHANGE,
                 "확인된 정보 변화", asOf, generatedAt,
                 "운영 방향 권한을 가진 비가격 정보가 없습니다.");
@@ -173,6 +195,7 @@ public class ObjectiveEvidenceService {
             HerdObservationResponse row,
             Optional<BusinessEvidenceSnapshot> business,
             List<GuidanceEvidenceFactSnapshot> guidance,
+            Optional<MarketSectorEvidenceSnapshot> marketSector,
             List<EvidenceFact> facts,
             EvidenceGateResult gate
     ) {
@@ -212,9 +235,11 @@ public class ObjectiveEvidenceService {
                 new DecisionAreaAssessment(
                         DecisionArea.MARKET_SECTOR,
                         marketIds.isEmpty() ? AssessmentStatus.NO_VIEW : AssessmentStatus.PARTIAL,
-                        marketIds.isEmpty() ? "독립 시장·섹터 근거 없음" : "섹터 참조만 확인",
+                        marketHeadline(marketSector),
                         marketIds,
-                        List.of("시장 국면과 섹터 방향을 별도 계산하지 않았습니다.")),
+                        List.of(
+                                "원시 일봉의 동시점 귀속이며 미래 방향 예측이 아닙니다.",
+                                "HERD State나 행동 방향에 다시 가중하지 않습니다.")),
                 new DecisionAreaAssessment(
                         DecisionArea.CHART_CROWD,
                         gate.open() ? AssessmentStatus.AVAILABLE : AssessmentStatus.BLOCKED,
@@ -234,6 +259,23 @@ public class ObjectiveEvidenceService {
         String stage = row.stage() == null ? "단계 미확인" : row.stage();
         String transition = row.transition() == null ? "전이 미확인" : row.transition();
         return stage + " · " + transition;
+    }
+
+    private String marketHeadline(Optional<MarketSectorEvidenceSnapshot> snapshot) {
+        if (snapshot.isEmpty() || !snapshot.orElseThrow().hasMarketContext()) {
+            return "시장·섹터 가격 맥락 없음";
+        }
+        MarketSectorEvidenceSnapshot row = snapshot.orElseThrow();
+        if (row.hasStockAttribution()) {
+            return switch (row.downsideAttribution()) {
+                case "MARKET_COMMON" -> "최근 약세의 시장 공통 기여가 가장 큼";
+                case "SECTOR_COMMON" -> "최근 약세의 섹터 공통 기여가 가장 큼";
+                case "STOCK_SPECIFIC" -> "최근 약세의 종목 고유 기여가 가장 큼";
+                case "NO_DOWNSIDE_ATTRIBUTION" -> "최근 21세션 하락 경로 아님";
+                default -> "최근 약세 기여 혼합";
+            };
+        }
+        return row.hasSectorContext() ? "시장·섹터 가격 맥락 확인" : "시장 가격 맥락만 확인";
     }
 
     private List<String> ids(
@@ -377,6 +419,60 @@ public class ObjectiveEvidenceService {
                 true,
                 true,
                 GUIDANCE_MAXIMUM_AGE_DAYS));
+    }
+
+    private void addMarketSectorFacts(
+            List<EvidenceFact> facts,
+            MarketSectorEvidenceSnapshot row
+    ) {
+        addMarketSectorFact(facts, "MARKET.SPY.RETURN_63", "SPY 63세션 수익률",
+                row.marketReturn63(), row);
+        addMarketSectorFact(facts, "MARKET.SPY.DRAWDOWN_63", "SPY 63세션 고점 대비",
+                row.marketDrawdown63(), row);
+        addMarketSectorFact(facts, "MARKET.SPY.REALIZED_VOL_63", "SPY 63세션 실현 변동성",
+                row.marketRealizedVolatility63(), row);
+        addMarketSectorFact(facts, "MARKET.SPY.TREND_VS_SMA200", "SPY 200일 평균 대비",
+                row.marketTrendVsSma200(), row);
+        addMarketSectorFact(facts, "MARKET.SECTOR.RETURN_63", "섹터 ETF 63세션 수익률",
+                row.sectorReturn63(), row);
+        addMarketSectorFact(facts, "MARKET.SECTOR.RELATIVE_63", "섹터 ETF 대 SPY 63세션 상대수익",
+                row.sectorRelativeReturn63(), row);
+        addMarketSectorFact(facts, "MARKET.SECTOR.TREND_VS_SMA200", "섹터 ETF 200일 평균 대비",
+                row.sectorTrendVsSma200(), row);
+        addMarketSectorFact(facts, "MARKET.ATTRIBUTION.STOCK_RETURN_21", "종목 21세션 수익률",
+                row.stockReturn21(), row);
+        addMarketSectorFact(facts, "MARKET.ATTRIBUTION.MARKET_21", "시장 공통 기여 21세션",
+                row.marketContribution21(), row);
+        addMarketSectorFact(facts, "MARKET.ATTRIBUTION.SECTOR_21", "섹터 공통 기여 21세션",
+                row.sectorContribution21(), row);
+        addMarketSectorFact(facts, "MARKET.ATTRIBUTION.STOCK_SPECIFIC_21", "종목 고유 기여 21세션",
+                row.stockSpecificContribution21(), row);
+        addMarketSectorFact(facts, "MARKET.ATTRIBUTION.CLASS", "최근 약세 귀속",
+                row.downsideAttribution(), row);
+    }
+
+    private void addMarketSectorFact(
+            List<EvidenceFact> facts,
+            String id,
+            String label,
+            Object value,
+            MarketSectorEvidenceSnapshot row
+    ) {
+        facts.add(new EvidenceFact(
+                id,
+                DecisionArea.MARKET_SECTOR,
+                label,
+                value == null ? null : value.toString(),
+                row.asOfDate(),
+                row.observedAt(),
+                "DAILY_PRICE_MARKET_SECTOR_CONTEXT",
+                row.sourceVersion(),
+                ASSET_TYPE,
+                value == null ? EvidenceQuality.NO_VIEW : EvidenceQuality.AVAILABLE,
+                false,
+                true,
+                true,
+                STATE_MAXIMUM_AGE_DAYS));
     }
 
     private String guidanceLabel(GuidanceEvidenceFactSnapshot row) {
