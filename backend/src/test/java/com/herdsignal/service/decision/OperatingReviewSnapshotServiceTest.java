@@ -47,7 +47,42 @@ class OperatingReviewSnapshotServiceTest {
         assertThat(result.decisionCode()).isEqualTo("OBSERVE");
         assertThat(result.observationDate()).isEqualTo(LocalDate.of(2026, 8, 1));
         assertThat(result.referencePrice()).isNull();
-        assertThat(result.outcomes()).allMatch(outcome -> "PENDING".equals(outcome.status()));
+        assertThat(result.outcomes()).allMatch(outcome -> "UNAVAILABLE".equals(outcome.status()));
+    }
+
+    @Test
+    void distinguishesFutureHorizonFromMaturedMissingPrice() {
+        LongTermOperatingReviewService reviewService = mock(LongTermOperatingReviewService.class);
+        CurrentUserService currentUser = mock(CurrentUserService.class);
+        OperatingReviewSnapshotRepository repository = mock(OperatingReviewSnapshotRepository.class);
+        DailyPriceRepository prices = mock(DailyPriceRepository.class);
+        when(currentUser.requireUserId()).thenReturn("user-1");
+        OperatingReviewSnapshot snapshot = OperatingReviewSnapshot.builder()
+                .id(2L).userId("user-1").ticker("NVDA")
+                .reviewedAt(java.time.LocalDateTime.of(2026, 1, 2, 12, 0))
+                .observationDate(LocalDate.of(2026, 1, 2))
+                .referencePriceDate(LocalDate.of(2026, 1, 2))
+                .referencePrice(new BigDecimal("100"))
+                .decisionCode("OBSERVE").actionAuthorized(false).actionRatio(BigDecimal.ZERO)
+                .evidenceSchemaVersion("LONG_TERM_EVIDENCE_PACKET_V1")
+                .decisionModelVersion("LONG_TERM_OPERATING_V1")
+                .payloadJson("{}").payloadSha256("a".repeat(64)).build();
+        when(repository.findByUserIdAndTickerOrderByReviewedAtDesc("user-1", "NVDA"))
+                .thenReturn(List.of(snapshot));
+        when(prices.findLatestPriceDate()).thenReturn(Optional.of(LocalDate.of(2026, 2, 15)));
+
+        OperatingReviewSnapshotResponse result = new OperatingReviewSnapshotService(
+                reviewService, currentUser, repository, prices,
+                new ObjectMapper().findAndRegisterModules(),
+                Clock.fixed(Instant.parse("2026-02-15T12:00:00Z"), ZoneOffset.UTC))
+                .history("nvda").get(0);
+
+        assertThat(result.outcomes())
+                .extracting(OperatingReviewOutcome::status)
+                .containsExactly("UNAVAILABLE", "PENDING", "PENDING");
+        assertThat(result.outcomes().get(0).targetDate())
+                .isEqualTo(LocalDate.of(2026, 2, 2));
+        assertThat(result.outcomes()).allMatch(outcome -> outcome.policyDifferencePct() == null);
     }
 
     private OperatingReviewSnapshot withId(OperatingReviewSnapshot row) {

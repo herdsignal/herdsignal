@@ -1,0 +1,27 @@
+{
+  "schema_version": "HERD_OPERATING_REVIEW_OUTCOME_ATTRIBUTION_V1",
+  "status": "ACTIVE_OBSERVATION_ONLY",
+  "horizon_months": [1, 3, 6],
+  "horizon_type": "CALENDAR_MONTH",
+  "target_price_rule": "FIRST_AVAILABLE_CLOSE_ON_OR_WITHIN_7_CALENDAR_DAYS_AFTER_TARGET",
+  "statuses": {
+    "PENDING": "LATEST_MARKET_DATE_HAS_NOT_REACHED_TARGET",
+    "UNAVAILABLE": "REFERENCE_OR_MATURED_TARGET_PRICE_IS_MISSING",
+    "AVAILABLE": "REFERENCE_AND_TARGET_CLOSE_ARE_PRESENT"
+  },
+  "return_formula": "(TARGET_CLOSE / REFERENCE_CLOSE - 1) * 100",
+  "interpretation": "PRICE_PATH_AFTER_EXPLICITLY_SAVED_REVIEW",
+  "authority": {
+    "action_success_label": false,
+    "counterfactual_policy_difference": false,
+    "direction_evidence": false,
+    "action_ratio": 0.0
+  },
+  "forbidden": [
+    "INVERT_RETURN_BY_ACTION_LABEL",
+    "CALL_OBSERVE_RETURN_A_HIT_RATE",
+    "FILL_MISSING_TARGET_WITH_LATER_UNBOUNDED_PRICE",
+    "CHANGE_SAVED_PAYLOAD",
+    "INFER_COUNTERFACTUAL_POLICY_RETURN"
+  ]
+}

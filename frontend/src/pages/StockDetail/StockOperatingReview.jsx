@@ -66,10 +66,26 @@ function guidanceFacts(objective) {
     .slice(0, 4)
 }
 
+function pricePathValue(outcome) {
+  if (!outcome || outcome.status === 'UNAVAILABLE') return '자료 없음'
+  if (outcome.status === 'PENDING') return '대기'
+  const value = Number(outcome.priceReturnPct)
+  if (!Number.isFinite(value)) return '자료 없음'
+  return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`
+}
+
+function recordDate(value) {
+  if (!value) return '기준일 없음'
+  const date = new Date(`${value}T00:00:00`)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'numeric', day: 'numeric' })
+}
+
 export default function StockOperatingReview({ state }) {
   const view = normalized(state.review)
   const verifiedBusinessFacts = businessFacts(view?.objective)
   const verifiedGuidanceFacts = guidanceFacts(view?.objective)
+  const latestRecord = state.records[0] ?? null
 
   return (
     <section id="stock-operating-review" className={styles.operatingSection}>
@@ -158,6 +174,28 @@ export default function StockOperatingReview({ state }) {
             <ul className={styles.operatingLimits} aria-label="판단 제한">
               {view.limitations.slice(0, 4).map((item) => <li key={item}>{item}</li>)}
             </ul>
+          )}
+
+          {latestRecord && (
+            <div className={styles.operatingPricePath}>
+              <div>
+                <span>저장 판단 이후 가격 경로</span>
+                <small>{recordDate(latestRecord.referencePriceDate)} 종가 기준 · 성공 판정 아님</small>
+              </div>
+              {(latestRecord.outcomes ?? []).map((outcome) => (
+                <dl key={outcome.horizonMonths}>
+                  <dt>{outcome.horizonMonths}개월</dt>
+                  <dd className={
+                    outcome.status === 'AVAILABLE' && Number(outcome.priceReturnPct) < 0
+                      ? styles.pathNegative
+                      : outcome.status === 'AVAILABLE' ? styles.pathPositive : ''
+                  }>
+                    {pricePathValue(outcome)}
+                  </dd>
+                  <small>{outcome.status === 'AVAILABLE' ? recordDate(outcome.measuredAt) : ''}</small>
+                </dl>
+              ))}
+            </div>
           )}
 
           <footer className={styles.operatingFooter}>

@@ -357,6 +357,53 @@
   font-weight: 680;
 }
 
+.operatingPricePath {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, minmax(0, .7fr));
+  border-top: 1px solid var(--hs-line);
+  border-bottom: 1px solid var(--hs-line);
+}
+
+.operatingPricePath > div,
+.operatingPricePath dl {
+  display: grid;
+  align-content: center;
+  min-height: 68px;
+  gap: 4px;
+  margin: 0;
+  padding: 12px 16px;
+  border-right: 1px solid var(--hs-line);
+}
+
+.operatingPricePath > :last-child {
+  border-right: 0;
+}
+
+.operatingPricePath span,
+.operatingPricePath dd {
+  color: var(--hs-text-subtle);
+  font-size: var(--hs-type-label);
+  font-weight: 680;
+}
+
+.operatingPricePath dt,
+.operatingPricePath small {
+  color: var(--hs-text-muted);
+  font-size: var(--hs-type-micro);
+}
+
+.operatingPricePath dd {
+  margin: 0;
+}
+
+.operatingPricePath .pathPositive {
+  color: var(--hs-positive);
+}
+
+.operatingPricePath .pathNegative {
+  color: var(--hs-negative);
+}
+
 .operatingLimits {
   display: grid;
   gap: 6px;
@@ -762,6 +809,10 @@
   }
 
   .operatingContext {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .operatingPricePath {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .briefGrid {

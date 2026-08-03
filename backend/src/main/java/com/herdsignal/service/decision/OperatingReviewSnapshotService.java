@@ -7,12 +7,12 @@ import com.herdsignal.domain.OperatingReviewSnapshot;
 import com.herdsignal.repository.DailyPriceRepository;
 import com.herdsignal.repository.OperatingReviewSnapshotRepository;
 import com.herdsignal.service.CurrentUserService;
+import com.herdsignal.service.PricePathAttributionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -33,6 +33,7 @@ public class OperatingReviewSnapshotService {
     private final OperatingReviewSnapshotRepository repository;
     private final DailyPriceRepository dailyPriceRepository;
     private final ObjectMapper objectMapper;
+    private final PricePathAttributionService pricePathAttributionService;
     private final Clock clock;
 
     @Autowired
@@ -41,10 +42,11 @@ public class OperatingReviewSnapshotService {
             CurrentUserService currentUserService,
             OperatingReviewSnapshotRepository repository,
             DailyPriceRepository dailyPriceRepository,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            PricePathAttributionService pricePathAttributionService
     ) {
         this(reviewService, currentUserService, repository, dailyPriceRepository,
-                objectMapper, Clock.systemUTC());
+                objectMapper, pricePathAttributionService, Clock.systemUTC());
     }
 
     OperatingReviewSnapshotService(
@@ -55,11 +57,25 @@ public class OperatingReviewSnapshotService {
             ObjectMapper objectMapper,
             Clock clock
     ) {
+        this(reviewService, currentUserService, repository, dailyPriceRepository,
+                objectMapper, new PricePathAttributionService(dailyPriceRepository), clock);
+    }
+
+    OperatingReviewSnapshotService(
+            LongTermOperatingReviewService reviewService,
+            CurrentUserService currentUserService,
+            OperatingReviewSnapshotRepository repository,
+            DailyPriceRepository dailyPriceRepository,
+            ObjectMapper objectMapper,
+            PricePathAttributionService pricePathAttributionService,
+            Clock clock
+    ) {
         this.reviewService = reviewService;
         this.currentUserService = currentUserService;
         this.repository = repository;
         this.dailyPriceRepository = dailyPriceRepository;
         this.objectMapper = objectMapper;
+        this.pricePathAttributionService = pricePathAttributionService;
         this.clock = clock;
     }
 
@@ -118,36 +134,18 @@ public class OperatingReviewSnapshotService {
     }
 
     private List<OperatingReviewOutcome> outcomes(OperatingReviewSnapshot row) {
-        if (row.getReferencePriceDate() == null || row.getReferencePrice() == null
-                || row.getReferencePrice().compareTo(BigDecimal.ZERO) <= 0) {
-            return HORIZONS.stream().map(months -> pending(months)).toList();
-        }
-        return HORIZONS.stream().map(months -> outcome(row, months)).toList();
+        LocalDate latestMarketDate = dailyPriceRepository.findLatestPriceDate().orElse(null);
+        return pricePathAttributionService.evaluate(
+                        row.getTicker(), row.getReferencePriceDate(), row.getReferencePrice(),
+                        HORIZONS, latestMarketDate).stream()
+                .map(this::outcome)
+                .toList();
     }
 
-    private OperatingReviewOutcome outcome(OperatingReviewSnapshot row, int months) {
-        LocalDate target = row.getReferencePriceDate().plusMonths(months);
-        DailyPrice price = dailyPriceRepository
-                .findTopByTickerAndPriceDateBetweenAndClosePriceIsNotNullOrderByPriceDateAsc(
-                        row.getTicker(), target, target.plusDays(10))
-                .orElse(null);
-        if (price == null) {
-            return pending(months);
-        }
-        BigDecimal returnPct = price.getClosePrice()
-                .divide(row.getReferencePrice(), 10, RoundingMode.HALF_UP)
-                .subtract(BigDecimal.ONE)
-                .multiply(BigDecimal.valueOf(100))
-                .setScale(4, RoundingMode.HALF_UP);
-        BigDecimal policyDifference = row.getActionRatio().compareTo(BigDecimal.ZERO) == 0
-                ? BigDecimal.ZERO.setScale(4)
-                : null;
+    private OperatingReviewOutcome outcome(PricePathAttributionService.Outcome row) {
         return new OperatingReviewOutcome(
-                months, "AVAILABLE", price.getPriceDate(), returnPct, policyDifference);
-    }
-
-    private OperatingReviewOutcome pending(int months) {
-        return new OperatingReviewOutcome(months, "PENDING", null, null, null);
+                row.horizonMonths(), row.targetDate(), row.status(), row.priceDate(),
+                row.closePrice(), row.returnPct(), null);
     }
 
     private String serialize(PersonalOperatingReviewResponse review) {

@@ -165,7 +165,20 @@ beforeEach(() => {
       limitations: ['채택된 방향성 정보 근거가 없습니다.'],
     },
   }))
-  api.getOperatingReviewRecords.mockReturnValue(response([]))
+  api.getOperatingReviewRecords.mockReturnValue(response([{
+    id: 1,
+    ticker: 'NVDA',
+    referencePriceDate: '2026-01-02',
+    referencePrice: 100,
+    decisionCode: 'OBSERVE',
+    actionAuthorized: false,
+    actionRatio: 0,
+    outcomes: [
+      { horizonMonths: 1, status: 'AVAILABLE', measuredAt: '2026-02-02', priceReturnPct: -5 },
+      { horizonMonths: 3, status: 'PENDING' },
+      { horizonMonths: 6, status: 'UNAVAILABLE' },
+    ],
+  }]))
   api.getObjectiveOperatingReview.mockReturnValue(response(null))
 })
 
@@ -205,6 +218,9 @@ describe('StockDetail route', () => {
     expect(screen.getByText('매출 전년 대비')).toBeInTheDocument()
     expect(screen.getByText('25.0%')).toBeInTheDocument()
     expect(screen.getByText('2026-05-20 접수 기준')).toBeInTheDocument()
+    expect(screen.getByText('저장 판단 이후 가격 경로')).toBeInTheDocument()
+    expect(screen.getByText('-5.0%')).toBeInTheDocument()
+    expect(screen.getByText('성공 판정 아님', { exact: false })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '판단 기록' })).toHaveAttribute(
       'href',
       '#stock-journal',

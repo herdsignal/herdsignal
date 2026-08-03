@@ -4,16 +4,14 @@ import com.herdsignal.domain.DailyPrice;
 import com.herdsignal.domain.SignalJournal;
 import com.herdsignal.dto.JournalHorizonOutcomeResponse;
 import com.herdsignal.repository.DailyPriceRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class SignalJournalOutcomeService {
 
     private static final int PRICE_LOOKUP_DAYS = 7;
@@ -24,6 +22,20 @@ public class SignalJournalOutcomeService {
     );
 
     private final DailyPriceRepository dailyPriceRepository;
+    private final PricePathAttributionService pricePathAttributionService;
+
+    @Autowired
+    public SignalJournalOutcomeService(
+            DailyPriceRepository dailyPriceRepository,
+            PricePathAttributionService pricePathAttributionService
+    ) {
+        this.dailyPriceRepository = dailyPriceRepository;
+        this.pricePathAttributionService = pricePathAttributionService;
+    }
+
+    SignalJournalOutcomeService(DailyPriceRepository dailyPriceRepository) {
+        this(dailyPriceRepository, new PricePathAttributionService(dailyPriceRepository));
+    }
 
     public Result evaluate(SignalJournal journal, LocalDate latestMarketDate) {
         LocalDate observationDate = observationDate(journal);
@@ -41,13 +53,10 @@ public class SignalJournalOutcomeService {
             );
         }
 
-        List<JournalHorizonOutcomeResponse> outcomes = HORIZONS.stream()
-                .map(horizon -> evaluateHorizon(
-                        journal.getTicker(),
-                        reference,
-                        horizon,
-                        latestMarketDate
-                ))
+        List<JournalHorizonOutcomeResponse> outcomes = pricePathAttributionService.evaluate(
+                        journal.getTicker(), reference.getPriceDate(), reference.getClosePrice(),
+                        HORIZONS.stream().map(Horizon::months).toList(), latestMarketDate).stream()
+                .map(this::outcome)
                 .toList();
         return new Result(
                 observationDate,
@@ -68,36 +77,6 @@ public class SignalJournalOutcomeService {
                 .orElse(null);
     }
 
-    private JournalHorizonOutcomeResponse evaluateHorizon(
-            String ticker,
-            DailyPrice reference,
-            Horizon horizon,
-            LocalDate latestMarketDate
-    ) {
-        LocalDate targetDate = reference.getPriceDate().plusMonths(horizon.months());
-        if (latestMarketDate == null || targetDate.isAfter(latestMarketDate)) {
-            return outcome(horizon.label(), targetDate, "PENDING", null, null);
-        }
-
-        DailyPrice target = dailyPriceRepository
-                .findTopByTickerAndPriceDateBetweenAndClosePriceIsNotNullOrderByPriceDateAsc(
-                        ticker,
-                        targetDate,
-                        targetDate.plusDays(PRICE_LOOKUP_DAYS)
-                )
-                .orElse(null);
-        if (target == null) {
-            return outcome(horizon.label(), targetDate, "UNAVAILABLE", null, null);
-        }
-
-        BigDecimal returnPct = target.getClosePrice()
-                .subtract(reference.getClosePrice())
-                .divide(reference.getClosePrice(), 8, RoundingMode.HALF_UP)
-                .multiply(BigDecimal.valueOf(100))
-                .setScale(4, RoundingMode.HALF_UP);
-        return outcome(horizon.label(), targetDate, "AVAILABLE", target, returnPct);
-    }
-
     private List<JournalHorizonOutcomeResponse> unavailableOutcomes(LocalDate observationDate) {
         return HORIZONS.stream()
                 .map(horizon -> JournalHorizonOutcomeResponse.builder()
@@ -110,20 +89,16 @@ public class SignalJournalOutcomeService {
                 .toList();
     }
 
-    private JournalHorizonOutcomeResponse outcome(
-            String label,
-            LocalDate targetDate,
-            String status,
-            DailyPrice price,
-            BigDecimal returnPct
-    ) {
+    private JournalHorizonOutcomeResponse outcome(PricePathAttributionService.Outcome row) {
         return JournalHorizonOutcomeResponse.builder()
-                .horizon(label)
-                .targetDate(targetDate)
-                .status(status)
-                .priceDate(price == null ? null : price.getPriceDate())
-                .closePrice(price == null ? null : price.getClosePrice())
-                .returnPct(returnPct)
+                .horizon(HORIZONS.stream()
+                        .filter(item -> item.months() == row.horizonMonths())
+                        .map(Horizon::label).findFirst().orElse(row.horizonMonths() + "M"))
+                .targetDate(row.targetDate())
+                .status(row.status())
+                .priceDate(row.priceDate())
+                .closePrice(row.closePrice())
+                .returnPct(row.returnPct())
                 .build();
     }
 
