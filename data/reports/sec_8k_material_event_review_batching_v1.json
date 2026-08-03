@@ -3,7 +3,7 @@
   "status": "HUMAN_REVIEW_PENDING",
   "protocol_sha256": "6aa85cf51b7aa520e16da2b200b341ffdad8f6c160efc3c0f8281f7ceab65083",
   "source_review_status": "PENDING_SOURCE_DECISIONS",
-  "source_labels_sha256": "7682e51cd8a39f1811a42bda0bc2a79334ba9d8b728de3f721241bd7d9f5021d",
+  "source_labels_sha256": "eac3f73df5ac5465b5303a0a058370213a3ac03d8c8c4007d93e94e09929ad34",
   "rows": 110,
   "batch_size": 10,
   "batch_count": 11,
@@ -11,9 +11,9 @@
     {
       "batch_id": "B001",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0000827052-19-000117",
       "last_review_id": "REVIEW-0001144519-19-000048"
     },
@@ -108,7 +108,7 @@
       "last_review_id": "REVIEW-0001001250-26-000031"
     }
   ],
-  "next_pending_batch": "B001",
+  "next_pending_batch": "B002",
   "canonical_editable_ledger": "data/reports/sec_8k_identity_source_review_v1.csv",
   "plan_is_read_only_projection": true,
   "auto_labels_created": 0,
@@ -116,5 +116,5 @@
   "direction_hypothesis_allowed": false,
   "operational_action_ratio": 0.0,
   "plan_path": "data/reports/sec_8k_material_event_review_batching_v1.csv",
-  "plan_sha256": "a7d8ca769f0db5fd04532b7e45e3c14ab7cbd36c8b93fa57f16136159c52ec01"
+  "plan_sha256": "102fd3c6e770b17b903e3d2240779408beca3448217182b74f73e8bea903b430"
 }

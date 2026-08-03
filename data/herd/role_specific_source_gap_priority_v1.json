@@ -4,7 +4,7 @@
   "as_of": "2026-08-04",
   "objective": "Choose one bounded source-improvement task for the long-term operating review without reopening rejected direction hypotheses or pretending missing roles can vote.",
   "inputs": [
-    {"id": "SEC_8K", "path": "data/reports/sec_8k_identity_source_review_v1.json", "sha256": "ac2fd4acdd83e1abeebb36cf7c82d80634e57de7dae3c0e2bf90ca1f6f81dc14"},
+    {"id": "SEC_8K", "path": "data/reports/sec_8k_identity_source_review_v1.json", "sha256": "28d43516d760a3bb623b04fa8453b1a421c86c09bc3ff671cccdad148511c5d0"},
     {"id": "FORM4", "path": "data/reports/sec_form4_insider_purchase_oos_v1.json", "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"},
     {"id": "FINRA", "path": "data/reports/finra_short_interest_incremental_v2.json", "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f"},
     {"id": "SEC_13F", "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json", "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"},

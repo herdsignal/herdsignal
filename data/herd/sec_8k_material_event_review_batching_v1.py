@@ -127,7 +127,7 @@ def run(protocol_path: Path = PROTOCOL) -> dict[str, Any]:
     plan_path = _rooted(protocol["outputs"]["plan"])
     plan_path.parent.mkdir(parents=True, exist_ok=True)
     with plan_path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(plan[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(plan[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(plan)
     report["plan_path"] = protocol["outputs"]["plan"]

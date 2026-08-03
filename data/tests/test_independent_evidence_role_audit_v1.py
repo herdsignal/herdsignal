@@ -31,7 +31,7 @@ def test_role_audit_exposes_real_information_gaps() -> None:
 
     assert roles["MATERIAL_EVENTS_AND_NEWS"]["coverage"] == {
         "sec_8k_candidates": 110,
-        "sec_8k_reviewed": 0,
+        "sec_8k_reviewed": 10,
         "pit_news_connected": False,
     }
     assert roles["MANAGEMENT_EXPECTATIONS"]["coverage"]["valid_atomic_facts"] == 700

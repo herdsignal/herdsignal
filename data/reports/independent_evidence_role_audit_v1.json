@@ -1,7 +1,7 @@
 {
   "report_version": "HERD_INDEPENDENT_EVIDENCE_ROLE_AUDIT_V1",
   "status": "ROLE_AUDIT_COMPLETE_CONTEXT_ONLY",
-  "protocol_sha256": "12bfc0ff701135988a670a28d9ed9ee35a87780ee17446fb21381d67ac4228dc",
+  "protocol_sha256": "1a771acbc6c2270cc62952ebdd10e3800cb10462ec6fd443dfec116d749d83b2",
   "roles": [
     {
       "id": "MARKET_TAPE",
@@ -55,7 +55,7 @@
       "status": "NO_VIEW_IDENTITY_REVIEW_AND_NEWS_LEDGER_MISSING",
       "coverage": {
         "sec_8k_candidates": 110,
-        "sec_8k_reviewed": 0,
+        "sec_8k_reviewed": 10,
         "pit_news_connected": false
       },
       "claim": "SOURCE_STATUS_ONLY",

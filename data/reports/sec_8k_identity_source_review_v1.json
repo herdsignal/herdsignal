@@ -4,15 +4,17 @@
   "protocol_sha256": "ce5b8e159feaa895a96909e27a038a2678c44db26141d6e5ff11cc545f7e3c03",
   "candidate_rows": 110,
   "decision_counts": {
-    "PENDING": 110
+    "INVALID": 9,
+    "PENDING": 100,
+    "VALID": 1
   },
-  "reviewed_rows": 0,
-  "wilson_95_lower_bound": null,
-  "ambiguous_ratio": null,
+  "reviewed_rows": 10,
+  "wilson_95_lower_bound": 0.01787621309507289,
+  "ambiguous_ratio": 0.0,
   "checks": {
     "minimum_reviewed_rows": false,
     "minimum_wilson_95_lower_bound": false,
-    "maximum_ambiguous_ratio": false,
+    "maximum_ambiguous_ratio": true,
     "all_rows_adjudicated": false
   },
   "source_precision_passed": false,
@@ -24,5 +26,5 @@
   "operational_action_ratio": 0.0,
   "next_stage": "COMPLETE_110_SEC_IDENTITY_SOURCE_DECISIONS",
   "labels_path": "data/reports/sec_8k_identity_source_review_v1.csv",
-  "labels_sha256": "7682e51cd8a39f1811a42bda0bc2a79334ba9d8b728de3f721241bd7d9f5021d"
+  "labels_sha256": "eac3f73df5ac5465b5303a0a058370213a3ac03d8c8c4007d93e94e09929ad34"
 }

@@ -250,9 +250,6 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     if sec_8k_review_batching["operational_action_ratio"] != 0.0:
         contradictions.append("SEC 8-K batching unexpectedly has action authority")
 
-    pending_source_review = prior_decision["new_source_candidate"][
-        "pending_source_decisions"
-    ]
     return {
         "version": "HERDSIGNAL_CURRENT_STATE_AUDIT_V1",
         "as_of": decision["as_of"],
@@ -499,11 +496,14 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],
-            "pending_sec_identity_reviews": pending_source_review,
+            "pending_sec_identity_reviews": sum(
+                batch["pending"] for batch in sec_8k_review_batching["batches"]
+            ),
             "sec_identity_work_role": prior_decision["new_source_candidate"]["allowed_role"],
             "sec_identity_work_unlocks_action_direction": False,
             "completed_stage": decision["next_stage"]["id"],
-            "next_stage": "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_B001",
+            "next_stage": "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
+            + (sec_8k_review_batching["next_pending_batch"] or "COMPLETE"),
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],
         },

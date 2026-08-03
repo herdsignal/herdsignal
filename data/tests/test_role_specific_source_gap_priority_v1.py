@@ -21,7 +21,11 @@ def test_source_gap_priority_selects_one_bounded_next_part() -> None:
         "deferred_sources": 1,
         "stopped_direction_sources": 2,
     }
-    assert decisions["SEC_MATERIAL_EVENT"]["coverage"]["pending_rows"] == 110
+    assert decisions["SEC_MATERIAL_EVENT"]["coverage"] == {
+        "candidate_rows": 110,
+        "reviewed_rows": 10,
+        "pending_rows": 100,
+    }
     assert decisions["FINRA_SHORT_INTEREST"]["decision"] == "CONTINUE_APPEND_ONLY_SHADOW"
     assert decisions["POINT_IN_TIME_NEWS"]["decision"] == (
         "DEFER_UNTIL_SOURCE_RIGHTS_AND_VERSION_CONTRACT"

@@ -21,7 +21,12 @@ def _inputs():
 
 
 def test_batch_plan_covers_every_review_once_without_auto_labels() -> None:
-    plan, report = build_plan(*_inputs())
+    protocol, source_protocol, labels = _inputs()
+    for row in labels:
+        row["decision"] = "PENDING"
+        row["approved_symbol"] = ""
+        row["review_note"] = ""
+    plan, report = build_plan(protocol, source_protocol, labels)
 
     assert len(plan) == 110
     assert len({row["review_id"] for row in plan}) == 110
@@ -35,6 +40,10 @@ def test_batch_plan_covers_every_review_once_without_auto_labels() -> None:
 
 def test_reviewed_first_batch_resumes_at_second_batch() -> None:
     protocol, source_protocol, labels = _inputs()
+    for row in labels:
+        row["decision"] = "PENDING"
+        row["approved_symbol"] = ""
+        row["review_note"] = ""
     for row in labels[:10]:
         row["decision"] = "INVALID"
         row["review_note"] = "source checked"
