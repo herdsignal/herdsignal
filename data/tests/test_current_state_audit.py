@@ -149,13 +149,35 @@ def test_current_state_contracts_are_consistent() -> None:
         "majority_vote_allowed": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["runtime_evidence_roles"] == {
+        "report_version": "HERD_RUNTIME_EVIDENCE_ROLE_MAPPING_V1",
+        "status": "RUNTIME_MAPPING_COMPLETE_FAIL_CLOSED",
+        "role_count": 10,
+        "objective_fact_roles": [
+            "MARKET_TAPE",
+            "CHART_CROWD",
+            "BUSINESS_FUNDAMENTALS",
+            "MANAGEMENT_EXPECTATIONS",
+        ],
+        "status_only_roles": [
+            "MATERIAL_EVENTS_AND_NEWS",
+            "INSIDER_BEHAVIOR",
+            "SHORT_INTEREST",
+            "INSTITUTIONAL_HOLDINGS",
+        ],
+        "private_after_objective_roles": ["PORTFOLIO_FIT"],
+        "directional_vote_roles": 0,
+        "committee_or_agent_label_allowed": False,
+        "portfolio_sent_to_ai": False,
+        "operational_action_ratio": 0.0,
+    }
     assert (
         state["research_boundary"]["completed_stage"]
         == "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH"
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "ROLE_SPECIFIC_SOURCE_GAPS_AND_RUNTIME_PACKET_AUDIT"
+        == "ROLE_SPECIFIC_SOURCE_GAP_PRIORITIZATION"
     )
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"

@@ -487,6 +487,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/runtime_evidence_role_mapping_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/rush_damage_path_audit_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1552,6 +1556,10 @@
     },
     {
       "path": "data/reports/research_decision_v5.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/runtime_evidence_role_mapping_v1.json",
       "status": "ACTIVE"
     },
     {

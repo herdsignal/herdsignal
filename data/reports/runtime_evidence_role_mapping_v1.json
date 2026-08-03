@@ -1,0 +1,67 @@
+{
+  "report_version": "HERD_RUNTIME_EVIDENCE_ROLE_MAPPING_V1",
+  "status": "RUNTIME_MAPPING_COMPLETE_FAIL_CLOSED",
+  "protocol_sha256": "2773e9b40a6f6646a06bd43c146f05efa066e11d5735457c343543b2a4c79040",
+  "role_count": 10,
+  "objective_fact_roles": [
+    "MARKET_TAPE",
+    "CHART_CROWD",
+    "BUSINESS_FUNDAMENTALS",
+    "MANAGEMENT_EXPECTATIONS"
+  ],
+  "status_only_roles": [
+    "MATERIAL_EVENTS_AND_NEWS",
+    "INSIDER_BEHAVIOR",
+    "SHORT_INTEREST",
+    "INSTITUTIONAL_HOLDINGS"
+  ],
+  "private_after_objective_roles": [
+    "PORTFOLIO_FIT"
+  ],
+  "dual_layer_risk_roles": [
+    "INDEPENDENT_RISK_REVIEW"
+  ],
+  "ai_lenses": [
+    "MARKET_SECTOR",
+    "CHART_CROWD",
+    "BUSINESS_HEALTH",
+    "EXPECTATION_VALUATION",
+    "INFORMATION_CHANGE",
+    "RED_TEAM"
+  ],
+  "directional_vote_roles": 0,
+  "runtime_gaps": [
+    {
+      "id": "PIT_INFORMATION_SOURCES_NOT_ADMITTED",
+      "roles": [
+        "MATERIAL_EVENTS_AND_NEWS",
+        "INSIDER_BEHAVIOR",
+        "SHORT_INTEREST",
+        "INSTITUTIONAL_HOLDINGS"
+      ],
+      "severity": "EXPECTED_BLOCK",
+      "action": "Keep NO_VIEW until one source independently passes admission."
+    },
+    {
+      "id": "INFORMATION_CHANGE_AREA_COLLAPSES_FOUR_SOURCE_ROLES",
+      "roles": [
+        "MATERIAL_EVENTS_AND_NEWS",
+        "INSIDER_BEHAVIOR",
+        "SHORT_INTEREST",
+        "INSTITUTIONAL_HOLDINGS"
+      ],
+      "severity": "FUTURE_SPLIT_REQUIRED",
+      "action": "Split the admitted source into its own DecisionArea before it can provide facts or a lens."
+    }
+  ],
+  "architecture_decision": {
+    "current_runtime_name": "LONG_TERM_OPERATING_REVIEW",
+    "committee_or_agent_label_allowed": false,
+    "deterministic_synthesis_remains_authoritative": true,
+    "portfolio_sent_to_ai": false,
+    "next_stage": "ROLE_SPECIFIC_SOURCE_GAP_PRIORITIZATION"
+  },
+  "new_hypothesis_allowed": false,
+  "operational_action": "OBSERVE",
+  "operational_action_ratio": 0.0
+}

@@ -31,6 +31,7 @@ AI_REVIEW_CONTEXT = ROOT / "data" / "contracts" / "ai_evidence_review_v2.json"
 OPERATING_REVIEW_LEDGER = ROOT / "data" / "contracts" / "operating_review_ledger_v1.json"
 FAILED_ACTION_SYNTHESIS = ROOT / "data" / "reports" / "failed_action_research_synthesis_v1.json"
 EVIDENCE_ROLE_AUDIT = ROOT / "data" / "reports" / "independent_evidence_role_audit_v1.json"
+RUNTIME_ROLE_MAPPING = ROOT / "data" / "reports" / "runtime_evidence_role_mapping_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -63,6 +64,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     operating_review_ledger = _load(root / OPERATING_REVIEW_LEDGER.relative_to(ROOT))
     failed_action_synthesis = _load(root / FAILED_ACTION_SYNTHESIS.relative_to(ROOT))
     evidence_role_audit = _load(root / EVIDENCE_ROLE_AUDIT.relative_to(ROOT))
+    runtime_role_mapping = _load(root / RUNTIME_ROLE_MAPPING.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -223,6 +225,14 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("evidence role audit unexpectedly permits majority voting")
     if evidence_role_audit["operational_action_ratio"] != 0.0:
         contradictions.append("evidence role audit unexpectedly has action authority")
+    if runtime_role_mapping["directional_vote_roles"] != 0:
+        contradictions.append("runtime role mapping unexpectedly admits a directional vote")
+    if runtime_role_mapping["architecture_decision"]["portfolio_sent_to_ai"]:
+        contradictions.append("runtime role mapping unexpectedly sends portfolio data to AI")
+    if runtime_role_mapping["architecture_decision"]["committee_or_agent_label_allowed"]:
+        contradictions.append("runtime roles are mislabeled as committee agents")
+    if runtime_role_mapping["operational_action_ratio"] != 0.0:
+        contradictions.append("runtime role mapping unexpectedly has action authority")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -415,13 +425,33 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "operational_action_ratio"
             ],
         },
+        "runtime_evidence_roles": {
+            "report_version": runtime_role_mapping["report_version"],
+            "status": runtime_role_mapping["status"],
+            "role_count": runtime_role_mapping["role_count"],
+            "objective_fact_roles": runtime_role_mapping["objective_fact_roles"],
+            "status_only_roles": runtime_role_mapping["status_only_roles"],
+            "private_after_objective_roles": runtime_role_mapping[
+                "private_after_objective_roles"
+            ],
+            "directional_vote_roles": runtime_role_mapping["directional_vote_roles"],
+            "committee_or_agent_label_allowed": runtime_role_mapping[
+                "architecture_decision"
+            ]["committee_or_agent_label_allowed"],
+            "portfolio_sent_to_ai": runtime_role_mapping[
+                "architecture_decision"
+            ]["portfolio_sent_to_ai"],
+            "operational_action_ratio": runtime_role_mapping[
+                "operational_action_ratio"
+            ],
+        },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],
             "pending_sec_identity_reviews": pending_source_review,
             "sec_identity_work_role": prior_decision["new_source_candidate"]["allowed_role"],
             "sec_identity_work_unlocks_action_direction": False,
             "completed_stage": decision["next_stage"]["id"],
-            "next_stage": evidence_role_audit["architecture_decision"]["next_stage"],
+            "next_stage": runtime_role_mapping["architecture_decision"]["next_stage"],
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],
         },
