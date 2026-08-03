@@ -1,0 +1,84 @@
+{
+  "protocol_version": "HERD_FAILED_ACTION_RESEARCH_SYNTHESIS_V1",
+  "status": "LOCKED_BEFORE_SYNTHESIS",
+  "as_of": "2026-08-04",
+  "objective": "Determine whether the failed action program has a valid target, distinct economic information, and sufficient policy value before permitting one new hypothesis.",
+  "inputs": [
+    {
+      "id": "FAILED_HYPOTHESES",
+      "path": "data/herd/failed_hypothesis_map_v2.json",
+      "sha256": "f4e6f0bf6252f76496e7eb3ca31c69d25bf76436dd23d738d6cced54d470ed14"
+    },
+    {
+      "id": "RUSH_PATH_TARGET",
+      "path": "data/reports/rush_pre_damage_path_audit_v2.json",
+      "sha256": "5617a9a793af132bef064627f5806b25de7a4290f11e8dedd91f181b45bc110c"
+    },
+    {
+      "id": "PRICE_INFORMATION_AUDIT",
+      "path": "data/reports/failed_price_information_audit_v1.json",
+      "sha256": "f7295b11d85e1a836c20da776f4ea2b5c27d709854c6e9d85103ebdd00dec8a0"
+    },
+    {
+      "id": "OPPORTUNITY_CEILING",
+      "path": "data/reports/profit_take_opportunity_ceiling_v1.json",
+      "sha256": "3386515d8c9f6a57f8541b8be07d89057afabac7352f428123095b08839d3883"
+    },
+    {
+      "id": "FIXED_POLICY_BASELINES",
+      "path": "data/reports/fixed_policy_economic_baselines_v1.json",
+      "sha256": "48676103a814fc80feadfd60edd9f1e5d06afe01a0e4e01c0ebdf01e5c8a751b"
+    },
+    {
+      "id": "LEADING_INFORMATION_FEASIBILITY",
+      "path": "data/herd/leading_information_feasibility_v2.json",
+      "sha256": "655fc985339623b36bde40b0243b2b759db73ce290c680900a909903e7a37a62"
+    },
+    {
+      "id": "SEC_8K_IDENTITY_REVIEW",
+      "path": "data/reports/sec_8k_identity_source_review_v1.json",
+      "sha256": "ac2fd4acdd83e1abeebb36cf7c82d80634e57de7dae3c0e2bf90ca1f6f81dc14"
+    }
+  ],
+  "economic_domains": {
+    "PRICE_DERIVED": [
+      "PRICE_EXTENSION",
+      "PRICE_TREND_VOLUME_TRANSITION",
+      "PRICE_DOWNSIDE_ASYMMETRY",
+      "SECTOR_RS_TREND_PARTICIPATION_MARKET_STRESS",
+      "MULTI_FAMILY_COMPOSITE",
+      "EARNINGS_ANNOUNCEMENT_PRICE_REACTION"
+    ],
+    "PUBLIC_CORPORATE_PIT": [
+      "PIT_BUSINESS_STATE",
+      "INSIDER_BEHAVIOR",
+      "MANAGEMENT_EXPECTATION",
+      "INSTITUTIONAL_CROWDING"
+    ],
+    "PERSONAL_POLICY": [
+      "PERSONAL_GIVEBACK_POLICY"
+    ]
+  },
+  "decision_rules": {
+    "target_exists": "The non-executable opportunity ceiling passes in primary and independent samples.",
+    "target_is_currently_separable": "At least one locked experiment admits independent OOS direction evidence.",
+    "fixed_policy_is_economically_safe": "Every non-control policy has non-negative median net terminal wealth delta in both universes at 10 bps.",
+    "distinct_historical_source_ready": "The leading-information feasibility decision permits one new historical direction hypothesis.",
+    "new_hypothesis_allowed": "Target is separable, fixed policy is economically safe, and a distinct historical source is ready. All three are required."
+  },
+  "forbidden": [
+    "RETUNE_REJECTED_THRESHOLDS",
+    "POOL_FAILED_OOS_SAMPLES",
+    "RECOMBINE_REJECTED_FEATURES",
+    "REGISTER_MULTIPLE_NEW_HYPOTHESES",
+    "TREAT_PRICE_FEATURE_DIVERSITY_AS_DIRECTION_EVIDENCE",
+    "OPEN_BLIND_HOLDOUT",
+    "ENABLE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "descriptive_audit_only": true,
+    "herd_formula_change_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

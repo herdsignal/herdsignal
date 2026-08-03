@@ -1,0 +1,153 @@
+{
+  "report_version": "HERD_FAILED_ACTION_RESEARCH_SYNTHESIS_V1",
+  "status": "SYNTHESIS_COMPLETE_NEW_HYPOTHESIS_BLOCKED",
+  "protocol_sha256": "f494f46fb96afe36c62945e209de0d0d6ef3dc5cd482dcce28cb2f1fd4aec55a",
+  "target_validity_audit": {
+    "economic_opportunity_exists": true,
+    "observed_events": 1998,
+    "benign_events": 1507,
+    "benign_fraction": 0.7542542542542543,
+    "adverse_events": 491,
+    "adverse_fraction": 0.24574574574574576,
+    "pre_damage_separators_retained": 0,
+    "independent_direction_experiments_admitted": 0,
+    "target_is_currently_separable": false,
+    "decision": "ECONOMIC_OPPORTUNITY_EXISTS_BUT_PRE_ACTION_CLASSIFICATION_IS_UNPROVEN"
+  },
+  "economic_family_redundancy_audit": {
+    "locked_rejected_experiments": 11,
+    "domains": [
+      {
+        "domain": "PRICE_DERIVED",
+        "experiment_count": 6,
+        "experiment_ids": [
+          "WEEKLY_RSI_OVERBOUGHT_V1",
+          "RUSH_PRE_DAMAGE_PRICE_VOLUME_V2",
+          "RUSH_DOWNSIDE_ASYMMETRY_V1",
+          "INDEPENDENT_RUSH_TRANSITION_FAMILIES_V1",
+          "VNEXT_COMBINED_PATH_MODEL_V1",
+          "RUSH_WITH_NEGATIVE_EARNINGS_ANNOUNCEMENT_REACTION_V1"
+        ]
+      },
+      {
+        "domain": "PUBLIC_CORPORATE_PIT",
+        "experiment_count": 4,
+        "experiment_ids": [
+          "SEC_PIT_BUSINESS_GUARD_V1",
+          "FORM4_INSIDER_PURCHASE_SUPPORT_V1",
+          "MANAGEMENT_GUIDANCE_LOWER_V2",
+          "SEC_13F_SLOW_CROWDING_INCREMENTAL_V1"
+        ]
+      },
+      {
+        "domain": "PERSONAL_POLICY",
+        "experiment_count": 1,
+        "experiment_ids": [
+          "PERSONAL_PROFIT_GIVEBACK_CYCLE_V1"
+        ]
+      }
+    ],
+    "comparable_price_features": 6,
+    "stable_redundant_price_pairs": 0,
+    "high_vif_price_features": 0,
+    "pca_components_for_90_percent": 5,
+    "price_family_compressed": true,
+    "interpretation": "PRICE_FEATURES_ARE_NOT_NEAR_DUPLICATES_BUT_SHARE_A_PRICE_DERIVED_INFORMATION_BOUNDARY_AND_NONE_PROVED_DIRECTION"
+  },
+  "policy_opportunity_cost_audit": {
+    "comparison_cost_bps": 10,
+    "rows": [
+      {
+        "universe_role": "INDEPENDENT_CURRENT_CONSTITUENTS",
+        "policy_id": "TRIM_KEEP_CASH",
+        "events": 1931,
+        "median_net_terminal_wealth_delta": -0.003439896946280742,
+        "positive_net_value_rate": 0.35525634386328325,
+        "median_downside_avoided": 0.0068940532651418085
+      },
+      {
+        "universe_role": "INDEPENDENT_CURRENT_CONSTITUENTS",
+        "policy_id": "TRIM_REENTER_21",
+        "events": 1931,
+        "median_net_terminal_wealth_delta": -0.0004941129836615393,
+        "positive_net_value_rate": 0.41947177628171933,
+        "median_downside_avoided": 0.0
+      },
+      {
+        "universe_role": "INDEPENDENT_CURRENT_CONSTITUENTS",
+        "policy_id": "TRIM_REENTER_63",
+        "events": 1931,
+        "median_net_terminal_wealth_delta": -0.0015569409246302532,
+        "positive_net_value_rate": 0.4137752459865355,
+        "median_downside_avoided": 0.003526347282247322
+      },
+      {
+        "universe_role": "INDEPENDENT_CURRENT_CONSTITUENTS",
+        "policy_id": "TRIM_TO_SPY_HORIZON",
+        "events": 1931,
+        "median_net_terminal_wealth_delta": -4.279785035899041e-05,
+        "positive_net_value_rate": 0.4997410668047644,
+        "median_downside_avoided": 0.0050117360784146525
+      },
+      {
+        "universe_role": "PRIMARY",
+        "policy_id": "TRIM_KEEP_CASH",
+        "events": 230,
+        "median_net_terminal_wealth_delta": -0.002076303919290032,
+        "positive_net_value_rate": 0.391304347826087,
+        "median_downside_avoided": 0.007472631233528315
+      },
+      {
+        "universe_role": "PRIMARY",
+        "policy_id": "TRIM_REENTER_21",
+        "events": 230,
+        "median_net_terminal_wealth_delta": -0.0004880494908166066,
+        "positive_net_value_rate": 0.41304347826086957,
+        "median_downside_avoided": 1.1102230246251565e-16
+      },
+      {
+        "universe_role": "PRIMARY",
+        "policy_id": "TRIM_REENTER_63",
+        "events": 230,
+        "median_net_terminal_wealth_delta": -0.000577298298392844,
+        "positive_net_value_rate": 0.45652173913043476,
+        "median_downside_avoided": 0.004289674914109365
+      },
+      {
+        "universe_role": "PRIMARY",
+        "policy_id": "TRIM_TO_SPY_HORIZON",
+        "events": 230,
+        "median_net_terminal_wealth_delta": 0.00101291529557833,
+        "positive_net_value_rate": 0.5521739130434783,
+        "median_downside_avoided": 0.004837450992709935
+      }
+    ],
+    "all_non_control_medians_non_negative": false,
+    "decision": "UNCONDITIONAL_FIVE_PERCENT_POLICIES_DO_NOT_CLEAR_BUY_AND_HOLD_FLOOR"
+  },
+  "distinct_information_availability_decision": {
+    "historical_direction_source_ready_count": 0,
+    "prospective_shadow_source_count": 1,
+    "source_decisions": {
+      "FORM4": "REJECTED_TESTED_HYPOTHESIS_NEW_DISTINCT_HYPOTHESIS_REQUIRED",
+      "GUIDANCE": "REJECTED_TESTED_HYPOTHESIS_NEW_DISTINCT_HYPOTHESIS_REQUIRED",
+      "SEC_13F": "NON_DIRECTIONAL_CONTEXT_ONLY",
+      "FINRA_SHORT_INTEREST": "RECENT_SENSITIVITY_AND_PROSPECTIVE_SHADOW_ONLY"
+    },
+    "sec_8k_identity_review_status": "PENDING_SOURCE_DECISIONS",
+    "sec_8k_reviewed_rows": 0,
+    "sec_8k_direction_hypothesis_allowed": false,
+    "distinct_historical_source_ready": false,
+    "decision": "NO_DISTINCT_HISTORICAL_DIRECTION_SOURCE_READY"
+  },
+  "next_stage": {
+    "id": "INDEPENDENT_INFORMATION_ROLE_AND_COVERAGE_AUDIT",
+    "new_hypothesis_allowed": false,
+    "purpose": "Decide which evidence roles can be populated without pretending that observation context is direction evidence.",
+    "investment_review_implication": "KEEP_SEPARATE_EVIDENCE_LANES_BUT_NO_VOTE_OR_FINAL_ACTION_SYNTHESIS"
+  },
+  "blind_holdout_access": false,
+  "herd_formula_change_allowed": false,
+  "operational_action": "HOLD",
+  "operational_action_ratio": 0.0
+}

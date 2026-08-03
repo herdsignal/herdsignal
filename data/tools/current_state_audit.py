@@ -29,6 +29,7 @@ INFORMATION_CONTEXT = ROOT / "data" / "contracts" / "operating_information_chang
 PORTFOLIO_RISK_CONTEXT = ROOT / "data" / "contracts" / "operating_portfolio_risk_v1.json"
 AI_REVIEW_CONTEXT = ROOT / "data" / "contracts" / "ai_evidence_review_v2.json"
 OPERATING_REVIEW_LEDGER = ROOT / "data" / "contracts" / "operating_review_ledger_v1.json"
+FAILED_ACTION_SYNTHESIS = ROOT / "data" / "reports" / "failed_action_research_synthesis_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -59,6 +60,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     portfolio_risk_context = _load(root / PORTFOLIO_RISK_CONTEXT.relative_to(ROOT))
     ai_review_context = _load(root / AI_REVIEW_CONTEXT.relative_to(ROOT))
     operating_review_ledger = _load(root / OPERATING_REVIEW_LEDGER.relative_to(ROOT))
+    failed_action_synthesis = _load(root / FAILED_ACTION_SYNTHESIS.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -207,6 +209,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("operating review ledger unexpectedly authorizes action")
     if operating_review_ledger["authority"]["operational_action_ratio"] != 0.0:
         contradictions.append("operating review ledger unexpectedly has action ratio")
+    if failed_action_synthesis["next_stage"]["new_hypothesis_allowed"]:
+        contradictions.append("failure synthesis unexpectedly permits a new hypothesis")
+    if failed_action_synthesis["target_validity_audit"]["target_is_currently_separable"]:
+        contradictions.append("failure synthesis unexpectedly marks the action target separable")
+    if failed_action_synthesis["operational_action_ratio"] != 0.0:
+        contradictions.append("failure synthesis unexpectedly has action authority")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -351,13 +359,39 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "operational_action_ratio"
             ],
         },
+        "failed_action_synthesis": {
+            "report_version": failed_action_synthesis["report_version"],
+            "status": failed_action_synthesis["status"],
+            "economic_opportunity_exists": failed_action_synthesis[
+                "target_validity_audit"
+            ]["economic_opportunity_exists"],
+            "target_is_currently_separable": failed_action_synthesis[
+                "target_validity_audit"
+            ]["target_is_currently_separable"],
+            "locked_rejected_experiments": failed_action_synthesis[
+                "economic_family_redundancy_audit"
+            ]["locked_rejected_experiments"],
+            "fixed_policy_floor_passed": failed_action_synthesis[
+                "policy_opportunity_cost_audit"
+            ]["all_non_control_medians_non_negative"],
+            "historical_direction_source_ready_count": failed_action_synthesis[
+                "distinct_information_availability_decision"
+            ]["historical_direction_source_ready_count"],
+            "new_hypothesis_allowed": failed_action_synthesis["next_stage"][
+                "new_hypothesis_allowed"
+            ],
+            "operational_action_ratio": failed_action_synthesis[
+                "operational_action_ratio"
+            ],
+        },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],
             "pending_sec_identity_reviews": pending_source_review,
             "sec_identity_work_role": prior_decision["new_source_candidate"]["allowed_role"],
             "sec_identity_work_unlocks_action_direction": False,
-            "next_stage": decision["next_stage"]["id"],
-            "required_outputs": decision["next_stage"]["required_outputs"],
+            "completed_stage": decision["next_stage"]["id"],
+            "next_stage": failed_action_synthesis["next_stage"]["id"],
+            "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],
         },
         "new_action_hypothesis": {

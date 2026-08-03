@@ -127,9 +127,24 @@ def test_current_state_contracts_are_consistent() -> None:
         "operational_action_ratio": 0.0,
     }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
+    assert state["failed_action_synthesis"] == {
+        "report_version": "HERD_FAILED_ACTION_RESEARCH_SYNTHESIS_V1",
+        "status": "SYNTHESIS_COMPLETE_NEW_HYPOTHESIS_BLOCKED",
+        "economic_opportunity_exists": True,
+        "target_is_currently_separable": False,
+        "locked_rejected_experiments": 11,
+        "fixed_policy_floor_passed": False,
+        "historical_direction_source_ready_count": 0,
+        "new_hypothesis_allowed": False,
+        "operational_action_ratio": 0.0,
+    }
+    assert (
+        state["research_boundary"]["completed_stage"]
+        == "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH"
+    )
     assert (
         state["research_boundary"]["next_stage"]
-        == "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH"
+        == "INDEPENDENT_INFORMATION_ROLE_AND_COVERAGE_AUDIT"
     )
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"
