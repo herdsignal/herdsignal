@@ -44,6 +44,21 @@ class ObjectiveEvidenceServiceTest {
                 .singleElement()
                 .extracting(DecisionAreaAssessment::status)
                 .isEqualTo(AssessmentStatus.NO_VIEW);
+        assertThat(response.evidencePacket().facts())
+                .filteredOn(item -> item.area() == DecisionArea.INFORMATION_CHANGE)
+                .extracting(EvidenceFact::id)
+                .containsExactly(
+                        "INFO.SEC.MATERIAL_EVENT",
+                        "INFO.SEC.FORM4",
+                        "INFO.POSITIONING",
+                        "INFO.NEWS.PIT");
+        assertThat(response.assessments())
+                .filteredOn(item -> item.area() == DecisionArea.INFORMATION_CHANGE)
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.status()).isEqualTo(AssessmentStatus.NO_VIEW);
+                    assertThat(item.evidenceIds()).isEmpty();
+                });
     }
 
     @Test

@@ -28,6 +28,8 @@ public class ObjectiveEvidenceService {
             new BusinessHealthEvidenceAssembler();
     private final ExpectationValuationEvidenceAssembler expectationValuationEvidenceAssembler =
             new ExpectationValuationEvidenceAssembler();
+    private final InformationChangeEvidenceAssembler informationChangeEvidenceAssembler =
+            new InformationChangeEvidenceAssembler();
     private final Clock clock;
 
     @Autowired
@@ -104,10 +106,13 @@ public class ObjectiveEvidenceService {
                                 observation.ticker(), observationDate),
                         observationDate,
                         generatedAt);
+        InformationChangeEvidenceBundle informationChange =
+                informationChangeEvidenceAssembler.assemble(observationDate, generatedAt);
         Optional<MarketSectorEvidenceSnapshot> marketSector = marketSectorEvidenceProvider.contextAsOf(
                 observation.ticker(), observation.sectorEtf(), observationDate);
         List<EvidenceFact> facts = facts(
-                observation, businessHealth, expectationValuation, marketSector, generatedAt);
+                observation, businessHealth, expectationValuation, informationChange,
+                marketSector, generatedAt);
         EvidencePacket packet = new EvidencePacket(
                 EvidencePacket.SCHEMA_VERSION,
                 observation.ticker(),
@@ -125,6 +130,7 @@ public class ObjectiveEvidenceService {
                         observation,
                         businessHealth.assessment(),
                         expectationValuation.assessment(),
+                        informationChange.assessment(),
                         marketSector,
                         facts,
                         gate),
@@ -138,6 +144,7 @@ public class ObjectiveEvidenceService {
             HerdObservationResponse row,
             BusinessHealthEvidenceBundle businessHealth,
             ExpectationValuationEvidenceBundle expectationValuation,
+            InformationChangeEvidenceBundle informationChange,
             Optional<MarketSectorEvidenceSnapshot> marketSector,
             OffsetDateTime generatedAt
     ) {
@@ -177,6 +184,7 @@ public class ObjectiveEvidenceService {
 
         facts.addAll(businessHealth.facts());
         facts.addAll(expectationValuation.facts());
+        facts.addAll(informationChange.facts());
         if (marketSector.filter(MarketSectorEvidenceSnapshot::hasMarketContext).isPresent()) {
             addMarketSectorFacts(facts, marketSector.orElseThrow());
         } else {
@@ -184,9 +192,6 @@ public class ObjectiveEvidenceService {
                     "시장·섹터 가격 맥락", asOf, generatedAt,
                     "관찰일 이전의 SPY 일봉이 200세션보다 부족합니다.");
         }
-        noView(facts, "INFO.CHANGE", DecisionArea.INFORMATION_CHANGE,
-                "확인된 정보 변화", asOf, generatedAt,
-                "운영 방향 권한을 가진 비가격 정보가 없습니다.");
         return List.copyOf(facts);
     }
 
@@ -194,6 +199,7 @@ public class ObjectiveEvidenceService {
             HerdObservationResponse row,
             DecisionAreaAssessment businessAssessment,
             DecisionAreaAssessment expectationAssessment,
+            DecisionAreaAssessment informationChangeAssessment,
             Optional<MarketSectorEvidenceSnapshot> marketSector,
             List<EvidenceFact> facts,
             EvidenceGateResult gate
@@ -217,7 +223,7 @@ public class ObjectiveEvidenceService {
                         gate.open() ? chartHeadline(row) : "HERD 관찰값 사용 불가",
                         chartIds,
                         gate.open() ? List.of("상태 설명이며 행동 방향 근거가 아닙니다.") : gate.reasons()),
-                noViewAssessment(DecisionArea.INFORMATION_CHANGE, "검증된 운영 정보 변화 없음")
+                informationChangeAssessment
         );
     }
 

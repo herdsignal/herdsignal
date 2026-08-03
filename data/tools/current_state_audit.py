@@ -25,6 +25,7 @@ ACTION_AUTHORIZATION = ROOT / "data" / "contracts" / "operational_action_authori
 MARKET_SECTOR_CONTEXT = ROOT / "data" / "contracts" / "market_sector_context_v1.json"
 BUSINESS_CONTEXT = ROOT / "data" / "contracts" / "operating_business_evidence_v1.json"
 EXPECTATION_CONTEXT = ROOT / "data" / "contracts" / "operating_expectation_evidence_v1.json"
+INFORMATION_CONTEXT = ROOT / "data" / "contracts" / "operating_information_change_evidence_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -51,6 +52,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     market_sector_context = _load(root / MARKET_SECTOR_CONTEXT.relative_to(ROOT))
     business_context = _load(root / BUSINESS_CONTEXT.relative_to(ROOT))
     expectation_context = _load(root / EXPECTATION_CONTEXT.relative_to(ROOT))
+    information_context = _load(root / INFORMATION_CONTEXT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -161,6 +163,14 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("current valuation snapshot unexpectedly became PIT evidence")
     if expectation_context["authority"]["action_ratio"] != 0.0:
         contradictions.append("expectation context unexpectedly has action ratio")
+    if information_context["authority"]["direction_prediction"]:
+        contradictions.append("information context unexpectedly predicts direction")
+    if information_context["authority"]["aggregate_information_score"]:
+        contradictions.append("information context unexpectedly aggregates a score")
+    if information_context["authority"]["action_veto"]:
+        contradictions.append("information context unexpectedly has a veto")
+    if information_context["authority"]["action_ratio"] != 0.0:
+        contradictions.append("information context unexpectedly has action ratio")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -240,6 +250,20 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "consensus_surprise": expectation_context["authority"]["consensus_surprise"],
             "valuation_judgment": expectation_context["authority"]["valuation_judgment"],
             "operational_action_ratio": expectation_context["authority"]["action_ratio"],
+        },
+        "information_change_context": {
+            "schema_version": information_context["schema_version"],
+            "status": information_context["status"],
+            "sources": information_context["sources"],
+            "direction_prediction": information_context["authority"][
+                "direction_prediction"
+            ],
+            "aggregate_information_score": information_context["authority"][
+                "aggregate_information_score"
+            ],
+            "operational_action_ratio": information_context["authority"][
+                "action_ratio"
+            ],
         },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],

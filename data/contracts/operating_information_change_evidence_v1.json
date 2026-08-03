@@ -1,0 +1,27 @@
+{
+  "schema_version": "HERD_OPERATING_INFORMATION_CHANGE_EVIDENCE_V1",
+  "status": "NO_VIEW_FAIL_CLOSED",
+  "area": "INFORMATION_CHANGE",
+  "sources": {
+    "SEC_MATERIAL_EVENT": "IDENTITY_AND_SOURCE_REVIEW_INCOMPLETE",
+    "SEC_FORM4": "DIRECTION_HYPOTHESIS_REJECTED",
+    "FINRA_SHORT_INTEREST": "PROSPECTIVE_SHADOW_ONLY",
+    "SEC_13F": "DELAYED_CONTEXT_ONLY",
+    "POINT_IN_TIME_NEWS": "NOT_CONNECTED"
+  },
+  "authority": {
+    "source_status_visibility": true,
+    "direction_prediction": false,
+    "aggregate_information_score": false,
+    "action_veto": false,
+    "action_ratio": 0.0
+  },
+  "forbidden": [
+    "COUNT_REJECTED_OR_PENDING_SOURCES_AS_VOTES",
+    "INFER_DIRECTION_FROM_FORM_TYPE_ALONE",
+    "SUBSTITUTE_SHORT_VOLUME_FOR_SHORT_INTEREST",
+    "TREAT_DELAYED_13F_AS_CURRENT_POSITION",
+    "GENERATE_NEWS_SENTIMENT_WITHOUT_PIT_SOURCE_LEDGER",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}

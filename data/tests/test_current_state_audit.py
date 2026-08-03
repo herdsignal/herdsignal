@@ -60,6 +60,20 @@ def test_current_state_contracts_are_consistent() -> None:
         "valuation_judgment": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["information_change_context"] == {
+        "schema_version": "HERD_OPERATING_INFORMATION_CHANGE_EVIDENCE_V1",
+        "status": "NO_VIEW_FAIL_CLOSED",
+        "sources": {
+            "SEC_MATERIAL_EVENT": "IDENTITY_AND_SOURCE_REVIEW_INCOMPLETE",
+            "SEC_FORM4": "DIRECTION_HYPOTHESIS_REJECTED",
+            "FINRA_SHORT_INTEREST": "PROSPECTIVE_SHADOW_ONLY",
+            "SEC_13F": "DELAYED_CONTEXT_ONLY",
+            "POINT_IN_TIME_NEWS": "NOT_CONNECTED",
+        },
+        "direction_prediction": False,
+        "aggregate_information_score": False,
+        "operational_action_ratio": 0.0,
+    }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
     assert (
         state["research_boundary"]["next_stage"]
