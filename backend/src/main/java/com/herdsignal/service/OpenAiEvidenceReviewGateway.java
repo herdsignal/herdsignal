@@ -18,9 +18,12 @@ import java.net.http.HttpResponse;
 public class OpenAiEvidenceReviewGateway implements EvidenceReviewGateway {
     private static final URI RESPONSES_URI = URI.create("https://api.openai.com/v1/responses");
     private static final String INSTRUCTIONS = """
-            당신은 HerdSignal의 연구용 근거 검토기다. 제공된 evidence 배열만 사용한다.
+            당신은 HerdSignal의 장기 운용 연구용 근거 검토기다. 제공된 evidence 배열만 사용한다.
             evidence에 없는 사실, 뉴스, 가격 전망, 매수·매도 결론을 만들지 않는다.
-            각 주장에는 evidence ID를 연결하고, 근거가 없으면 missingEvidence에 적는다.
+            BUSINESS_HEALTH, EXPECTATION_VALUATION, MARKET_SECTOR, CHART_CROWD,
+            INFORMATION_CHANGE 관점은 같은 area의 AVAILABLE 근거만 인용한다.
+            RED_TEAM만 여러 영역의 근거를 대조할 수 있다. 각 주장에는 evidence ID를
+            연결하고, AVAILABLE 근거가 없으면 의견을 만들지 말고 missingEvidence에 적는다.
             HERD는 상태 관찰값이며 행동 신호가 아니다. 최종 행동은 반드시 HOLD 0%이고
             directionPrediction은 false다. 짧고 중립적인 한국어로 작성한다.
             """;
@@ -29,10 +32,10 @@ public class OpenAiEvidenceReviewGateway implements EvidenceReviewGateway {
               "type":"object",
               "additionalProperties":false,
               "properties":{
-                "lenses":{"type":"array","minItems":4,"maxItems":4,"items":{
+                "lenses":{"type":"array","minItems":6,"maxItems":6,"items":{
                   "type":"object","additionalProperties":false,
                   "properties":{
-                    "code":{"type":"string","enum":["HERD_STATE","MARKET_CONTEXT","RISK","RED_TEAM"]},
+                    "code":{"type":"string","enum":["BUSINESS_HEALTH","EXPECTATION_VALUATION","MARKET_SECTOR","CHART_CROWD","INFORMATION_CHANGE","RED_TEAM"]},
                     "stance":{"type":"string","enum":["SUPPORTIVE","NEUTRAL","CAUTION","INSUFFICIENT"]},
                     "summary":{"type":"string"},
                     "evidenceIds":{"type":"array","items":{"type":"string"}},

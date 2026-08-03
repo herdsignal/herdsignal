@@ -94,6 +94,24 @@ def test_current_state_contracts_are_consistent() -> None:
         "action_direction": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["ai_evidence_review"] == {
+        "schema_version": "HERD_AI_EVIDENCE_REVIEW_V2",
+        "status": "RESEARCH_ONLY_DISABLED_BY_DEFAULT",
+        "scope": "LONG_TERM_REVIEW_EVIDENCE_ONLY",
+        "lenses": [
+            "BUSINESS_HEALTH",
+            "EXPECTATION_VALUATION",
+            "MARKET_SECTOR",
+            "CHART_CROWD",
+            "INFORMATION_CHANGE",
+            "RED_TEAM",
+        ],
+        "area_isolation": True,
+        "portfolio_data_sent": False,
+        "creates_evidence": False,
+        "direction_prediction": False,
+        "operational_action_ratio": 0.0,
+    }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
     assert (
         state["research_boundary"]["next_stage"]

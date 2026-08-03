@@ -1,0 +1,43 @@
+{
+  "schema_version": "HERD_AI_EVIDENCE_REVIEW_V2",
+  "status": "RESEARCH_ONLY_DISABLED_BY_DEFAULT",
+  "input": "LONG_TERM_EVIDENCE_PACKET_V1",
+  "scope": "LONG_TERM_REVIEW_EVIDENCE_ONLY",
+  "lenses": {
+    "BUSINESS_HEALTH": "BUSINESS_HEALTH",
+    "EXPECTATION_VALUATION": "EXPECTATION_VALUATION",
+    "MARKET_SECTOR": "MARKET_SECTOR",
+    "CHART_CROWD": "CHART_CROWD",
+    "INFORMATION_CHANGE": "INFORMATION_CHANGE",
+    "RED_TEAM": "CROSS_AREA_COUNTER_REVIEW"
+  },
+  "validation": {
+    "strict_json_schema": true,
+    "server_side_evidence_id_check": true,
+    "server_side_area_isolation": true,
+    "available_facts_only": true,
+    "missing_evidence_required_when_no_available_fact": true,
+    "fail_closed": true
+  },
+  "privacy": {
+    "portfolio_data_sent": false,
+    "transaction_history_sent": false,
+    "user_id_sent": false,
+    "provider_storage_requested": false
+  },
+  "authority": {
+    "create_evidence": false,
+    "predict_direction": false,
+    "set_veto": false,
+    "set_action": false,
+    "operational_action": "HOLD",
+    "operational_action_ratio": 0.0
+  },
+  "forbidden": [
+    "CITE_EVIDENCE_FROM_ANOTHER_LENS_AREA",
+    "CITE_NON_AVAILABLE_EVIDENCE_AS_FACT",
+    "INFER_MISSING_EVIDENCE",
+    "SEND_PRIVATE_PORTFOLIO_CONTEXT",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}

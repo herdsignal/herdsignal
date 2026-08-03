@@ -27,6 +27,7 @@ BUSINESS_CONTEXT = ROOT / "data" / "contracts" / "operating_business_evidence_v1
 EXPECTATION_CONTEXT = ROOT / "data" / "contracts" / "operating_expectation_evidence_v1.json"
 INFORMATION_CONTEXT = ROOT / "data" / "contracts" / "operating_information_change_evidence_v1.json"
 PORTFOLIO_RISK_CONTEXT = ROOT / "data" / "contracts" / "operating_portfolio_risk_v1.json"
+AI_REVIEW_CONTEXT = ROOT / "data" / "contracts" / "ai_evidence_review_v2.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -55,6 +56,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     expectation_context = _load(root / EXPECTATION_CONTEXT.relative_to(ROOT))
     information_context = _load(root / INFORMATION_CONTEXT.relative_to(ROOT))
     portfolio_risk_context = _load(root / PORTFOLIO_RISK_CONTEXT.relative_to(ROOT))
+    ai_review_context = _load(root / AI_REVIEW_CONTEXT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -181,6 +183,18 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("portfolio context unexpectedly predicts action direction")
     if portfolio_risk_context["authority"]["operational_action_ratio"] != 0.0:
         contradictions.append("portfolio context unexpectedly has action ratio")
+    if not ai_review_context["validation"]["server_side_area_isolation"]:
+        contradictions.append("AI review does not isolate evidence areas")
+    if ai_review_context["privacy"]["portfolio_data_sent"]:
+        contradictions.append("AI review unexpectedly sends private portfolio data")
+    if ai_review_context["authority"]["create_evidence"]:
+        contradictions.append("AI review unexpectedly creates evidence")
+    if ai_review_context["authority"]["predict_direction"]:
+        contradictions.append("AI review unexpectedly predicts direction")
+    if ai_review_context["authority"]["set_action"]:
+        contradictions.append("AI review unexpectedly sets action")
+    if ai_review_context["authority"]["operational_action_ratio"] != 0.0:
+        contradictions.append("AI review unexpectedly has action ratio")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -287,6 +301,23 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "predict_action_direction"
             ],
             "operational_action_ratio": portfolio_risk_context["authority"][
+                "operational_action_ratio"
+            ],
+        },
+        "ai_evidence_review": {
+            "schema_version": ai_review_context["schema_version"],
+            "status": ai_review_context["status"],
+            "scope": ai_review_context["scope"],
+            "lenses": list(ai_review_context["lenses"].keys()),
+            "area_isolation": ai_review_context["validation"][
+                "server_side_area_isolation"
+            ],
+            "portfolio_data_sent": ai_review_context["privacy"][
+                "portfolio_data_sent"
+            ],
+            "creates_evidence": ai_review_context["authority"]["create_evidence"],
+            "direction_prediction": ai_review_context["authority"]["predict_direction"],
+            "operational_action_ratio": ai_review_context["authority"][
                 "operational_action_ratio"
             ],
         },

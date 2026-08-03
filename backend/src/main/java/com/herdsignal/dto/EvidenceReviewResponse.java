@@ -2,6 +2,7 @@ package com.herdsignal.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public record EvidenceReviewResponse(
@@ -30,9 +31,13 @@ public record EvidenceReviewResponse(
 
     public record EvidenceFact(
             String id,
+            String area,
             String label,
             String value,
             LocalDate asOf,
-            String source
+            OffsetDateTime observedAt,
+            String source,
+            String sourceVersion,
+            String quality
     ) {}
 }
