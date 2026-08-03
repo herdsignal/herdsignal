@@ -182,13 +182,24 @@ def test_current_state_contracts_are_consistent() -> None:
         "selected_next_part": "SEC_8K_MATERIAL_EVENT_REVIEW_BATCHING",
         "operational_action_ratio": 0.0,
     }
+    assert state["sec_8k_review_batches"] == {
+        "report_version": "SEC_8K_MATERIAL_EVENT_REVIEW_BATCHING_V1",
+        "status": "HUMAN_REVIEW_PENDING",
+        "rows": 110,
+        "batch_size": 10,
+        "batch_count": 11,
+        "next_pending_batch": "B001",
+        "auto_labels_created": 0,
+        "identity_promotion_allowed": False,
+        "operational_action_ratio": 0.0,
+    }
     assert (
         state["research_boundary"]["completed_stage"]
         == "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH"
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "SEC_8K_MATERIAL_EVENT_REVIEW_BATCHING"
+        == "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_B001"
     )
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"

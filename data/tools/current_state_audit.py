@@ -33,6 +33,7 @@ FAILED_ACTION_SYNTHESIS = ROOT / "data" / "reports" / "failed_action_research_sy
 EVIDENCE_ROLE_AUDIT = ROOT / "data" / "reports" / "independent_evidence_role_audit_v1.json"
 RUNTIME_ROLE_MAPPING = ROOT / "data" / "reports" / "runtime_evidence_role_mapping_v1.json"
 SOURCE_GAP_PRIORITY = ROOT / "data" / "reports" / "role_specific_source_gap_priority_v1.json"
+SEC_8K_REVIEW_BATCHING = ROOT / "data" / "reports" / "sec_8k_material_event_review_batching_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -67,6 +68,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     evidence_role_audit = _load(root / EVIDENCE_ROLE_AUDIT.relative_to(ROOT))
     runtime_role_mapping = _load(root / RUNTIME_ROLE_MAPPING.relative_to(ROOT))
     source_gap_priority = _load(root / SOURCE_GAP_PRIORITY.relative_to(ROOT))
+    sec_8k_review_batching = _load(root / SEC_8K_REVIEW_BATCHING.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -241,6 +243,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("source gap priority unexpectedly opens a new hypothesis")
     if source_gap_priority["operational_action_ratio"] != 0.0:
         contradictions.append("source gap priority unexpectedly has action authority")
+    if sec_8k_review_batching["auto_labels_created"] != 0:
+        contradictions.append("SEC 8-K batching unexpectedly auto-labels source evidence")
+    if sec_8k_review_batching["identity_promotion_allowed"]:
+        contradictions.append("pending SEC 8-K batches unexpectedly promote identity")
+    if sec_8k_review_batching["operational_action_ratio"] != 0.0:
+        contradictions.append("SEC 8-K batching unexpectedly has action authority")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -474,13 +482,28 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "operational_action_ratio"
             ],
         },
+        "sec_8k_review_batches": {
+            "report_version": sec_8k_review_batching["report_version"],
+            "status": sec_8k_review_batching["status"],
+            "rows": sec_8k_review_batching["rows"],
+            "batch_size": sec_8k_review_batching["batch_size"],
+            "batch_count": sec_8k_review_batching["batch_count"],
+            "next_pending_batch": sec_8k_review_batching["next_pending_batch"],
+            "auto_labels_created": sec_8k_review_batching["auto_labels_created"],
+            "identity_promotion_allowed": sec_8k_review_batching[
+                "identity_promotion_allowed"
+            ],
+            "operational_action_ratio": sec_8k_review_batching[
+                "operational_action_ratio"
+            ],
+        },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],
             "pending_sec_identity_reviews": pending_source_review,
             "sec_identity_work_role": prior_decision["new_source_candidate"]["allowed_role"],
             "sec_identity_work_unlocks_action_direction": False,
             "completed_stage": decision["next_stage"]["id"],
-            "next_stage": source_gap_priority["selected_next_part"]["id"],
+            "next_stage": "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_B001",
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],
         },

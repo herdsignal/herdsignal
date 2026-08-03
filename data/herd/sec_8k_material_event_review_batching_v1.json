@@ -1,0 +1,35 @@
+{
+  "protocol_version": "SEC_8K_MATERIAL_EVENT_REVIEW_BATCHING_V1",
+  "status": "LOCKED_BEFORE_BATCHING",
+  "as_of": "2026-08-04",
+  "objective": "Partition the existing 110-row SEC source-review ledger into deterministic human-review batches without duplicating labels or auto-approving any candidate.",
+  "source_review_protocol": {
+    "path": "data/herd/sec_8k_identity_source_review_v1.json",
+    "sha256": "ce5b8e159feaa895a96909e27a038a2678c44db26141d6e5ff11cc545f7e3c03"
+  },
+  "source_review_labels": "data/reports/sec_8k_identity_source_review_v1.csv",
+  "batching": {
+    "sort": ["filing_date", "review_id"],
+    "batch_size": 10,
+    "expected_rows": 110,
+    "expected_batches": 11,
+    "resume_from_first_pending_batch": true
+  },
+  "outputs": {
+    "plan": "data/reports/sec_8k_material_event_review_batching_v1.csv",
+    "report": "data/reports/sec_8k_material_event_review_batching_v1.json"
+  },
+  "forbidden": [
+    "CREATE_A_SECOND_EDITABLE_LABEL_LEDGER",
+    "AUTO_APPROVE_XBRL_OR_REGEX_CANDIDATES",
+    "CHANGE_IMMUTABLE_SOURCE_FIELDS",
+    "READ_PRICE_OUTCOMES",
+    "PROMOTE_IDENTITY_BEFORE_SOURCE_GATE",
+    "ENABLE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "identity_promotion_allowed": false,
+    "direction_hypothesis_allowed": false,
+    "operational_action_ratio": 0.0
+  }
+}
