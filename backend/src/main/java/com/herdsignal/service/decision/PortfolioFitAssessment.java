@@ -7,7 +7,9 @@ public record PortfolioFitAssessment(
         boolean held,
         double currentTickerWeight,
         double currentEquityRatio,
+        double currentCashRatio,
         double targetEquityRatio,
+        double equityTargetGap,
         String headline,
         String limitation
 ) {

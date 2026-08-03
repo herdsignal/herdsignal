@@ -199,7 +199,11 @@ beforeEach(() => {
       ],
     },
     mandate: { timeHorizonYears: 10, effectiveActionRatioCap: 0 },
-    portfolioFit: { currentTickerWeight: 0.2 },
+    portfolioFit: {
+      currentTickerWeight: 0.2,
+      currentCashRatio: 0.25,
+      equityTargetGap: 0.05,
+    },
     riskVeto: { actionBlocked: true },
     synthesis: {
       decision: 'OBSERVE',
@@ -258,7 +262,10 @@ describe('StockDetail route', () => {
     expect(screen.getByText('행동 가능 비율')).toBeInTheDocument()
     expect(screen.getByText('채택된 방향성 정보 근거가 없습니다.')).toBeInTheDocument()
     expect(screen.getByText('매출 전년 대비')).toBeInTheDocument()
-    expect(screen.getAllByText('25.0%')).toHaveLength(2)
+    expect(screen.getAllByText('25.0%')).toHaveLength(3)
+    expect(screen.getByText('현금 비중')).toBeInTheDocument()
+    expect(screen.getByText('주식 목표 차이')).toBeInTheDocument()
+    expect(screen.getByText('+5.0%p')).toBeInTheDocument()
     expect(screen.getByText('현금창출')).toBeInTheDocument()
     expect(screen.getByText('재무구조')).toBeInTheDocument()
     expect(screen.getByText('순이익률 · 전년 대비 3.0%')).toBeInTheDocument()

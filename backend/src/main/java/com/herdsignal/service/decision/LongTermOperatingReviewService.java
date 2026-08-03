@@ -8,9 +8,7 @@ import com.herdsignal.service.PortfolioActionContextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /** 객관적 관찰과 개인 맥락을 결합하되 행동 권한은 별도로 잠근다. */
 @Service
@@ -21,6 +19,8 @@ public class LongTermOperatingReviewService {
     private final PortfolioActionContextService portfolioActionContextService;
     private final DecisionSynthesisPolicy synthesisPolicy;
     private final OperatingActionAuthorizationGate actionAuthorizationGate;
+    private final PortfolioFitCalculator portfolioFitCalculator = new PortfolioFitCalculator();
+    private final IndependentRiskVetoPolicy riskVetoPolicy = new IndependentRiskVetoPolicy();
 
     @Autowired
     public LongTermOperatingReviewService(
@@ -58,8 +58,8 @@ public class LongTermOperatingReviewService {
         PortfolioActionContext context = portfolioActionContextService.getContexts(
                         userId, List.of(objective.ticker()), profile)
                 .getOrDefault(objective.ticker(), PortfolioActionContext.unavailable());
-        RiskVeto veto = riskVeto(objective);
-        PortfolioFitAssessment portfolioFit = portfolioFit(context);
+        PortfolioFitAssessment portfolioFit = portfolioFitCalculator.assess(context);
+        RiskVeto veto = riskVetoPolicy.evaluate(objective, portfolioFit);
         DecisionSynthesis synthesis = actionAuthorizationGate.enforce(
                 synthesisPolicy.synthesize(objective, portfolioFit, veto));
 
@@ -77,50 +77,4 @@ public class LongTermOperatingReviewService {
         );
     }
 
-    private PortfolioFitAssessment portfolioFit(PortfolioActionContext context) {
-        if (!context.available()) {
-            return new PortfolioFitAssessment(
-                    AssessmentStatus.NO_VIEW, false, false, 0.0, 0.0, 0.0,
-                    "포트폴리오 비중 없음",
-                    "보유 수량·시세·현금이 모두 확인돼야 개인 비중을 계산합니다.");
-        }
-        boolean held = context.currentTickerWeight() > 0.0;
-        return new PortfolioFitAssessment(
-                AssessmentStatus.AVAILABLE,
-                true,
-                held,
-                context.currentTickerWeight(),
-                context.currentEquityRatio(),
-                context.targetEquityRatio(),
-                held ? "현재 보유 비중 확인" : "현재 미보유",
-                "개별 종목 목표 비중이 없으므로 과대·과소 비중을 추정하지 않습니다."
-        );
-    }
-
-    private RiskVeto riskVeto(ObjectiveReviewResponse objective) {
-        List<String> codes = new ArrayList<>();
-        if (!objective.dataGate().open()) {
-            codes.add("DATA_GATE_BLOCKED");
-        }
-        if (hasNoView(objective, DecisionArea.BUSINESS_HEALTH)) {
-            codes.add("BUSINESS_HEALTH_NOT_CONNECTED");
-        }
-        if (hasNoView(objective, DecisionArea.INFORMATION_CHANGE)) {
-            codes.add("DIRECTIONAL_EVIDENCE_NOT_ADOPTED");
-        }
-        if (!objective.directionPrediction()
-                && !codes.contains("DIRECTIONAL_EVIDENCE_NOT_ADOPTED")) {
-            codes.add("DIRECTIONAL_EVIDENCE_NOT_ADOPTED");
-        }
-        return new RiskVeto(
-                !codes.isEmpty(),
-                codes,
-                "운영 행동 권한 없음"
-        );
-    }
-
-    private boolean hasNoView(ObjectiveReviewResponse objective, DecisionArea area) {
-        return objective.assessments().stream()
-                .anyMatch(item -> item.area() == area && item.status() == AssessmentStatus.NO_VIEW);
-    }
 }

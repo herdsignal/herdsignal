@@ -64,6 +64,8 @@ class DecisionSynthesisPolicyTest {
 
     private PortfolioFitAssessment portfolio() {
         return new PortfolioFitAssessment(
-                AssessmentStatus.AVAILABLE, true, true, 0.2, 0.7, 0.7, "확인", "제한");
+                AssessmentStatus.AVAILABLE, true, true,
+                0.2, 0.7, 0.3, 0.7, 0.0,
+                "확인", "제한");
     }
 }

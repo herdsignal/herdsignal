@@ -74,6 +74,26 @@ def test_current_state_contracts_are_consistent() -> None:
         "aggregate_information_score": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["portfolio_risk_context"] == {
+        "schema_version": "HERD_OPERATING_PORTFOLIO_RISK_V1",
+        "status": "OBSERVATION_ONLY_FAIL_CLOSED",
+        "portfolio_facts": [
+            "CURRENT_TICKER_WEIGHT",
+            "CURRENT_EQUITY_RATIO",
+            "CURRENT_CASH_RATIO",
+            "TARGET_EQUITY_RATIO",
+            "EQUITY_TARGET_GAP",
+        ],
+        "risk_veto_sources": [
+            "DATA_GATE",
+            "BUSINESS_EVIDENCE_AVAILABILITY",
+            "DIRECTION_EVIDENCE_ADMISSION",
+            "PORTFOLIO_CONTEXT_AVAILABILITY",
+        ],
+        "ticker_target_inferred": False,
+        "action_direction": False,
+        "operational_action_ratio": 0.0,
+    }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
     assert (
         state["research_boundary"]["next_stage"]

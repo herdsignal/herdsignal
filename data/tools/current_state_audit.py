@@ -26,6 +26,7 @@ MARKET_SECTOR_CONTEXT = ROOT / "data" / "contracts" / "market_sector_context_v1.
 BUSINESS_CONTEXT = ROOT / "data" / "contracts" / "operating_business_evidence_v1.json"
 EXPECTATION_CONTEXT = ROOT / "data" / "contracts" / "operating_expectation_evidence_v1.json"
 INFORMATION_CONTEXT = ROOT / "data" / "contracts" / "operating_information_change_evidence_v1.json"
+PORTFOLIO_RISK_CONTEXT = ROOT / "data" / "contracts" / "operating_portfolio_risk_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -53,6 +54,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     business_context = _load(root / BUSINESS_CONTEXT.relative_to(ROOT))
     expectation_context = _load(root / EXPECTATION_CONTEXT.relative_to(ROOT))
     information_context = _load(root / INFORMATION_CONTEXT.relative_to(ROOT))
+    portfolio_risk_context = _load(root / PORTFOLIO_RISK_CONTEXT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -171,6 +173,14 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("information context unexpectedly has a veto")
     if information_context["authority"]["action_ratio"] != 0.0:
         contradictions.append("information context unexpectedly has action ratio")
+    if portfolio_risk_context["authority"]["infer_ticker_target_weight"]:
+        contradictions.append("portfolio context unexpectedly infers a ticker target")
+    if portfolio_risk_context["authority"]["classify_ticker_overweight_or_underweight"]:
+        contradictions.append("portfolio context unexpectedly classifies ticker concentration")
+    if portfolio_risk_context["authority"]["predict_action_direction"]:
+        contradictions.append("portfolio context unexpectedly predicts action direction")
+    if portfolio_risk_context["authority"]["operational_action_ratio"] != 0.0:
+        contradictions.append("portfolio context unexpectedly has action ratio")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -263,6 +273,21 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             ],
             "operational_action_ratio": information_context["authority"][
                 "action_ratio"
+            ],
+        },
+        "portfolio_risk_context": {
+            "schema_version": portfolio_risk_context["schema_version"],
+            "status": portfolio_risk_context["status"],
+            "portfolio_facts": portfolio_risk_context["portfolio_facts"],
+            "risk_veto_sources": portfolio_risk_context["risk_veto_sources"],
+            "ticker_target_inferred": portfolio_risk_context["authority"][
+                "infer_ticker_target_weight"
+            ],
+            "action_direction": portfolio_risk_context["authority"][
+                "predict_action_direction"
+            ],
+            "operational_action_ratio": portfolio_risk_context["authority"][
+                "operational_action_ratio"
             ],
         },
         "research_boundary": {

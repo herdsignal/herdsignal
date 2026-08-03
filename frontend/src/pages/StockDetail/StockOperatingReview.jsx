@@ -75,6 +75,12 @@ function pct(value) {
   return `${(Number(value) * 100).toFixed(1)}%`
 }
 
+function signedPercentagePoint(value) {
+  if (!Number.isFinite(Number(value))) return '—'
+  const percentagePoint = Number(value) * 100
+  return `${percentagePoint > 0 ? '+' : ''}${percentagePoint.toFixed(1)}%p`
+}
+
 function businessFacts(objective) {
   const available = new Map(
     (objective?.evidencePacket?.facts ?? [])
@@ -239,6 +245,14 @@ export default function StockOperatingReview({ state }) {
               <div>
                 <dt>현재 종목 비중</dt>
                 <dd>{pct(view.portfolioFit?.currentTickerWeight)}</dd>
+              </div>
+              <div>
+                <dt>현금 비중</dt>
+                <dd>{pct(view.portfolioFit?.currentCashRatio)}</dd>
+              </div>
+              <div>
+                <dt>주식 목표 차이</dt>
+                <dd>{signedPercentagePoint(view.portfolioFit?.equityTargetGap)}</dd>
               </div>
               <div>
                 <dt>행동 가능 비율</dt>

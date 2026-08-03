@@ -1,0 +1,31 @@
+{
+  "schema_version": "HERD_OPERATING_PORTFOLIO_RISK_V1",
+  "status": "OBSERVATION_ONLY_FAIL_CLOSED",
+  "portfolio_facts": [
+    "CURRENT_TICKER_WEIGHT",
+    "CURRENT_EQUITY_RATIO",
+    "CURRENT_CASH_RATIO",
+    "TARGET_EQUITY_RATIO",
+    "EQUITY_TARGET_GAP"
+  ],
+  "target_gap_formula": "CURRENT_EQUITY_RATIO - TARGET_EQUITY_RATIO",
+  "risk_veto_sources": [
+    "DATA_GATE",
+    "BUSINESS_EVIDENCE_AVAILABILITY",
+    "DIRECTION_EVIDENCE_ADMISSION",
+    "PORTFOLIO_CONTEXT_AVAILABILITY"
+  ],
+  "authority": {
+    "show_raw_portfolio_facts": true,
+    "infer_ticker_target_weight": false,
+    "classify_ticker_overweight_or_underweight": false,
+    "predict_action_direction": false,
+    "operational_action_ratio": 0.0
+  },
+  "forbidden": [
+    "INFER_TICKER_TARGET_FROM_TOTAL_EQUITY_TARGET",
+    "TRANSLATE_EQUITY_TARGET_GAP_TO_BUY_OR_TRIM",
+    "OFFSET_AN_INDEPENDENT_VETO_WITH_ANOTHER_AREA",
+    "AUTHORIZE_OPERATIONAL_ACTION"
+  ]
+}

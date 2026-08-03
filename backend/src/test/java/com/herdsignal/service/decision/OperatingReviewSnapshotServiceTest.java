@@ -119,7 +119,7 @@ class OperatingReviewSnapshotServiceTest {
                         new BigDecimal("0.15"), new BigDecimal("0.70"),
                         5, 30, false, BigDecimal.ZERO),
                 new PortfolioFitAssessment(AssessmentStatus.NO_VIEW, false, false,
-                        0, 0, 0, "없음", "없음"),
+                        0, 0, 0, 0, 0, "없음", "없음"),
                 new RiskVeto(true, List.of("DIRECTIONAL_EVIDENCE_NOT_ADOPTED"), "차단"),
                 synthesis, false, "OBSERVE", 0.0);
     }
