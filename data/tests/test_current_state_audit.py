@@ -16,6 +16,16 @@ def test_current_state_contracts_are_consistent() -> None:
     assert state["action_research"]["promotion_candidate_rounds"] == 6
     assert state["action_research"]["operational_action_ratio"] == 0.0
     assert state["action_research"]["blind_holdout_open"] is False
+    assert state["runtime_action_authority"] == {
+        "registry_version": "HERD_MODEL_EVIDENCE_ADMISSION_V1",
+        "profit_take_direction_admitted": 0,
+        "reentry_support_admitted": 0,
+        "business_veto_admitted": 0,
+        "business_veto_collection_allowed": False,
+        "review_trim_authorized": False,
+        "review_add_authorized": False,
+        "operational_action_ratio": 0.0,
+    }
     assert state["research_boundary"]["sec_identity_work_unlocks_action_direction"] is False
     assert (
         state["research_boundary"]["next_stage"]

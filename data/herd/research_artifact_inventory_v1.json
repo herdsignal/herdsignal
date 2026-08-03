@@ -287,6 +287,10 @@
       "status": "REVIEW_REQUIRED"
     },
     {
+      "path": "data/herd/long_term_operating_decision_contract_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/market_generalization_readiness_v3.json",
       "status": "ACTIVE"
     },
@@ -2828,6 +2832,10 @@
     },
     {
       "path": "docs/HERD_DECISION_ARCHITECTURE.md",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "docs/HERD_LONG_TERM_OPERATING_SYSTEM.md",
       "status": "ACTIVE"
     },
     {

@@ -5,7 +5,7 @@ import com.herdsignal.service.CurrentUserService;
 import com.herdsignal.service.InvestorProfileService;
 import com.herdsignal.service.PortfolioActionContext;
 import com.herdsignal.service.PortfolioActionContextService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,13 +14,42 @@ import java.util.Map;
 
 /** 객관적 관찰과 개인 맥락을 결합하되 행동 권한은 별도로 잠근다. */
 @Service
-@RequiredArgsConstructor
 public class LongTermOperatingReviewService {
     private final ObjectiveEvidenceService objectiveEvidenceService;
     private final CurrentUserService currentUserService;
     private final InvestorProfileService investorProfileService;
     private final PortfolioActionContextService portfolioActionContextService;
     private final DecisionSynthesisPolicy synthesisPolicy;
+    private final OperatingActionAuthorizationGate actionAuthorizationGate;
+
+    @Autowired
+    public LongTermOperatingReviewService(
+            ObjectiveEvidenceService objectiveEvidenceService,
+            CurrentUserService currentUserService,
+            InvestorProfileService investorProfileService,
+            PortfolioActionContextService portfolioActionContextService,
+            DecisionSynthesisPolicy synthesisPolicy,
+            OperatingActionAuthorizationGate actionAuthorizationGate
+    ) {
+        this.objectiveEvidenceService = objectiveEvidenceService;
+        this.currentUserService = currentUserService;
+        this.investorProfileService = investorProfileService;
+        this.portfolioActionContextService = portfolioActionContextService;
+        this.synthesisPolicy = synthesisPolicy;
+        this.actionAuthorizationGate = actionAuthorizationGate;
+    }
+
+    LongTermOperatingReviewService(
+            ObjectiveEvidenceService objectiveEvidenceService,
+            CurrentUserService currentUserService,
+            InvestorProfileService investorProfileService,
+            PortfolioActionContextService portfolioActionContextService,
+            DecisionSynthesisPolicy synthesisPolicy
+    ) {
+        this(objectiveEvidenceService, currentUserService, investorProfileService,
+                portfolioActionContextService, synthesisPolicy,
+                OperatingActionAuthorizationGate.failClosed());
+    }
 
     public PersonalOperatingReviewResponse review(String ticker) {
         ObjectiveReviewResponse objective = objectiveEvidenceService.review(ticker);
@@ -31,7 +60,8 @@ public class LongTermOperatingReviewService {
                 .getOrDefault(objective.ticker(), PortfolioActionContext.unavailable());
         RiskVeto veto = riskVeto(objective);
         PortfolioFitAssessment portfolioFit = portfolioFit(context);
-        DecisionSynthesis synthesis = synthesisPolicy.synthesize(objective, portfolioFit, veto);
+        DecisionSynthesis synthesis = actionAuthorizationGate.enforce(
+                synthesisPolicy.synthesize(objective, portfolioFit, veto));
 
         return new PersonalOperatingReviewResponse(
                 synthesis.decision().name(),

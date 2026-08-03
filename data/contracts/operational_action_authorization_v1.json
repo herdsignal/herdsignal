@@ -1,0 +1,34 @@
+{
+  "schema_version": "HERD_OPERATIONAL_ACTION_AUTHORIZATION_V1",
+  "status": "ACTIVE_FAIL_CLOSED",
+  "default": {
+    "decision": "OBSERVE",
+    "operational_action": "OBSERVE",
+    "operational_action_ratio": 0.0
+  },
+  "review_trim_requires": [
+    "HASH_VERIFIED_ADMISSION_REGISTRY",
+    "ADMITTED_PROFIT_TAKE_DIRECTION",
+    "OPERATIONAL_ACTION_PROMOTED",
+    "REQUESTED_RATIO_WITHIN_REGISTRY_CAP"
+  ],
+  "review_add_requires": [
+    "HASH_VERIFIED_ADMISSION_REGISTRY",
+    "ADMITTED_REENTRY_SUPPORT",
+    "ADMITTED_BUSINESS_STATE_VETO",
+    "OPERATIONAL_ACTION_PROMOTED",
+    "REQUESTED_RATIO_WITHIN_REGISTRY_CAP"
+  ],
+  "current": {
+    "review_trim_authorized": false,
+    "review_add_authorized": false,
+    "operational_action_ratio": 0.0
+  },
+  "forbidden": [
+    "AUTHORIZE_FROM_UI_OR_SYNTHESIS_ALONE",
+    "AUTHORIZE_REJECTED_EVIDENCE",
+    "EXCEED_REGISTRY_RATIO_CAP",
+    "ADD_WITHOUT_BUSINESS_VETO",
+    "BYPASS_HASH_VALIDATION"
+  ]
+}

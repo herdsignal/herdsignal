@@ -19,6 +19,9 @@ EXPANSION_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_earnings_oos_exp
 EXPANSION_SEC_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_sec_earnings_census_v2.json"
 EXPANSION_OOS_REPORT = ROOT / "data" / "reports" / "ticker_disjoint_earnings_reaction_oos_v2.json"
 EXPANSION_OOS_GATE = ROOT / "data" / "reports" / "ticker_disjoint_earnings_reaction_oos_v2_gate.json"
+EVIDENCE_ADMISSION = ROOT / "data" / "herd" / "model_evidence_admission_v1.json"
+BUSINESS_VETO_GATE = ROOT / "data" / "contracts" / "business_veto_prospective_gate_v1.json"
+ACTION_AUTHORIZATION = ROOT / "data" / "contracts" / "operational_action_authorization_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -39,6 +42,9 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     expansion_sec = _load(root / EXPANSION_SEC_REPORT.relative_to(ROOT))
     expansion_oos = _load(root / EXPANSION_OOS_REPORT.relative_to(ROOT))
     expansion_gate = _load(root / EXPANSION_OOS_GATE.relative_to(ROOT))
+    admission = _load(root / EVIDENCE_ADMISSION.relative_to(ROOT))
+    business_veto_gate = _load(root / BUSINESS_VETO_GATE.relative_to(ROOT))
+    action_authorization = _load(root / ACTION_AUTHORIZATION.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -105,6 +111,26 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("failed independent OOS unexpectedly opened prospective confirmation")
     if expansion_gate["operational_action_ratio"] != 0.0:
         contradictions.append("failed independent OOS unexpectedly has action authority")
+    admission_summary = admission["admission_summary"]
+    if admission_summary["direction_evidence_admitted"] != 0:
+        contradictions.append("runtime admission registry unexpectedly admits trim direction")
+    if admission_summary["reentry_support_admitted"] != 0:
+        contradictions.append("runtime admission registry unexpectedly admits add direction")
+    if admission_summary["business_veto_admitted"] != 0:
+        contradictions.append("runtime admission registry unexpectedly admits business veto")
+    if admission["claim_boundary"]["operational_action_ratio"] != 0.0:
+        contradictions.append("runtime admission registry unexpectedly has action ratio")
+    if business_veto_gate["current"]["collection_allowed"]:
+        contradictions.append("business veto collection opened without prerequisites")
+    if business_veto_gate["current"]["operational_action_ratio"] != 0.0:
+        contradictions.append("business veto gate unexpectedly has action ratio")
+    authorization_current = action_authorization["current"]
+    if authorization_current["review_trim_authorized"]:
+        contradictions.append("runtime authorization unexpectedly enables trim")
+    if authorization_current["review_add_authorized"]:
+        contradictions.append("runtime authorization unexpectedly enables add")
+    if authorization_current["operational_action_ratio"] != 0.0:
+        contradictions.append("runtime authorization unexpectedly has action ratio")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -134,6 +160,22 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "operational_action_ratio": authority["operational_action_ratio"],
             "blind_holdout_open": False,
             "survivorship_safe": decision["data_boundaries"]["survivorship_safe"],
+        },
+        "runtime_action_authority": {
+            "registry_version": admission["registry_version"],
+            "profit_take_direction_admitted": admission_summary[
+                "direction_evidence_admitted"
+            ],
+            "reentry_support_admitted": admission_summary["reentry_support_admitted"],
+            "business_veto_admitted": admission_summary["business_veto_admitted"],
+            "business_veto_collection_allowed": business_veto_gate["current"][
+                "collection_allowed"
+            ],
+            "review_trim_authorized": authorization_current["review_trim_authorized"],
+            "review_add_authorized": authorization_current["review_add_authorized"],
+            "operational_action_ratio": authorization_current[
+                "operational_action_ratio"
+            ],
         },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],

@@ -320,6 +320,9 @@ HerdSignal의 핵심 타이밍 계층이다.
 - Part K: 채택 원장과 참조 OOS 결과의 SHA-256을 런타임에서 검증하고,
   독립 추가매수 방향과 기업 veto가 모두 채택된 경우에만 전향 veto 수집을
   허용. 현재 두 권한이 0개이므로 `BLOCKED_PREREQUISITES`, `HOLD·0%` 유지
+- Part L: 판단 합성 뒤 최종 행동 권한 게이트를 추가. `REVIEW_TRIM`은 채택된
+  익절 방향, `REVIEW_ADD`는 채택된 재진입 방향과 기업 veto를 요구하고,
+  해시 원장·운영 승격·비율 cap 중 하나라도 실패하면 `OBSERVE·0%`로 강등
 
 현재 사용 가능한 결과는 `INSUFFICIENT_DATA`, `OBSERVE`, 검증된 기업 훼손
 입력이 별도 검증을 통과한 뒤의 `THESIS_RISK`다. `REVIEW_ADD`와
