@@ -138,13 +138,24 @@ def test_current_state_contracts_are_consistent() -> None:
         "new_hypothesis_allowed": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["independent_evidence_roles"] == {
+        "report_version": "HERD_INDEPENDENT_EVIDENCE_ROLE_AUDIT_V1",
+        "status": "ROLE_AUDIT_COMPLETE_CONTEXT_ONLY",
+        "role_count": 10,
+        "directional_vote_roles": 0,
+        "price_domain_roles": ["MARKET_TAPE", "CHART_CROWD"],
+        "pit_news_connected": False,
+        "call_roles_ai_agents": False,
+        "majority_vote_allowed": False,
+        "operational_action_ratio": 0.0,
+    }
     assert (
         state["research_boundary"]["completed_stage"]
         == "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH"
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "INDEPENDENT_INFORMATION_ROLE_AND_COVERAGE_AUDIT"
+        == "ROLE_SPECIFIC_SOURCE_GAPS_AND_RUNTIME_PACKET_AUDIT"
     )
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"

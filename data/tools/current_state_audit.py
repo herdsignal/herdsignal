@@ -30,6 +30,7 @@ PORTFOLIO_RISK_CONTEXT = ROOT / "data" / "contracts" / "operating_portfolio_risk
 AI_REVIEW_CONTEXT = ROOT / "data" / "contracts" / "ai_evidence_review_v2.json"
 OPERATING_REVIEW_LEDGER = ROOT / "data" / "contracts" / "operating_review_ledger_v1.json"
 FAILED_ACTION_SYNTHESIS = ROOT / "data" / "reports" / "failed_action_research_synthesis_v1.json"
+EVIDENCE_ROLE_AUDIT = ROOT / "data" / "reports" / "independent_evidence_role_audit_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -61,6 +62,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     ai_review_context = _load(root / AI_REVIEW_CONTEXT.relative_to(ROOT))
     operating_review_ledger = _load(root / OPERATING_REVIEW_LEDGER.relative_to(ROOT))
     failed_action_synthesis = _load(root / FAILED_ACTION_SYNTHESIS.relative_to(ROOT))
+    evidence_role_audit = _load(root / EVIDENCE_ROLE_AUDIT.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -215,6 +217,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("failure synthesis unexpectedly marks the action target separable")
     if failed_action_synthesis["operational_action_ratio"] != 0.0:
         contradictions.append("failure synthesis unexpectedly has action authority")
+    if evidence_role_audit["summary"]["directional_vote_roles"] != 0:
+        contradictions.append("evidence role audit unexpectedly admits a directional vote")
+    if evidence_role_audit["architecture_decision"]["majority_vote_allowed"]:
+        contradictions.append("evidence role audit unexpectedly permits majority voting")
+    if evidence_role_audit["operational_action_ratio"] != 0.0:
+        contradictions.append("evidence role audit unexpectedly has action authority")
 
     pending_source_review = prior_decision["new_source_candidate"][
         "pending_source_decisions"
@@ -384,13 +392,36 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "operational_action_ratio"
             ],
         },
+        "independent_evidence_roles": {
+            "report_version": evidence_role_audit["report_version"],
+            "status": evidence_role_audit["status"],
+            "role_count": evidence_role_audit["summary"]["role_count"],
+            "directional_vote_roles": evidence_role_audit["summary"][
+                "directional_vote_roles"
+            ],
+            "price_domain_roles": evidence_role_audit["summary"][
+                "price_domain_roles"
+            ],
+            "pit_news_connected": evidence_role_audit["summary"][
+                "pit_news_connected"
+            ],
+            "call_roles_ai_agents": evidence_role_audit["architecture_decision"][
+                "call_roles_ai_agents"
+            ],
+            "majority_vote_allowed": evidence_role_audit["architecture_decision"][
+                "majority_vote_allowed"
+            ],
+            "operational_action_ratio": evidence_role_audit[
+                "operational_action_ratio"
+            ],
+        },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],
             "pending_sec_identity_reviews": pending_source_review,
             "sec_identity_work_role": prior_decision["new_source_candidate"]["allowed_role"],
             "sec_identity_work_unlocks_action_direction": False,
             "completed_stage": decision["next_stage"]["id"],
-            "next_stage": failed_action_synthesis["next_stage"]["id"],
+            "next_stage": evidence_role_audit["architecture_decision"]["next_stage"],
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],
         },

@@ -1,0 +1,83 @@
+{
+  "protocol_version": "HERD_INDEPENDENT_EVIDENCE_ROLE_AUDIT_V1",
+  "status": "LOCKED_BEFORE_ROLE_AUDIT",
+  "as_of": "2026-08-04",
+  "objective": "Assign every long-term review lane a source, cadence, information domain, claim boundary, and authority without turning unavailable or rejected evidence into votes.",
+  "inputs": [
+    {"id": "MARKET_CONTEXT", "path": "data/contracts/market_sector_context_v1.json", "sha256": "ba2bd16d2461a22277316496743089aced53a18fdcf39d77961d3553cbd441f5"},
+    {"id": "BUSINESS_CONTEXT", "path": "data/contracts/operating_business_evidence_v1.json", "sha256": "84e819a5cfc082612883c7fa836e52184c1113b67ab4bab6fe22a09ca1e0f9d1"},
+    {"id": "EXPECTATION_CONTEXT", "path": "data/contracts/operating_expectation_evidence_v1.json", "sha256": "4a40e67643ba0cb4b7571bbfe7aadcddfd93f42748b8f4f125a358dc73178e97"},
+    {"id": "INFORMATION_CONTEXT", "path": "data/contracts/operating_information_change_evidence_v1.json", "sha256": "d0308552f4e30cc9542540203d2a765fd89e21566328a48f22aec0c7e599c859"},
+    {"id": "PORTFOLIO_CONTEXT", "path": "data/contracts/operating_portfolio_risk_v1.json", "sha256": "0228be7bd4993d2a1dccb217516723d1b7a63e8e840fcbf572f36969f1e91a21"},
+    {"id": "AI_REVIEW", "path": "data/contracts/ai_evidence_review_v2.json", "sha256": "f601718e4713810226dc4965f8e138753cd832f829d236402d51ca43d5b2f55e"},
+    {"id": "CHART_CROWD", "path": "data/reports/herd_state_s1.json", "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"},
+    {"id": "FORM4_OOS", "path": "data/reports/sec_form4_insider_purchase_oos_v1.json", "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"},
+    {"id": "GUIDANCE_BINDINGS", "path": "data/reports/sec_guidance_atomic_bindings_v2.json", "sha256": "cce0ad8b539b36841f8c5c48499264d8e97e1ca03024533560bdd23e1a8c04c6"},
+    {"id": "GUIDANCE_OOS", "path": "data/reports/sec_guidance_lower_oos_v2.json", "sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d"},
+    {"id": "SEC_13F_OOS", "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json", "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"},
+    {"id": "FINRA_INCREMENTAL", "path": "data/reports/finra_short_interest_incremental_v2.json", "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f"},
+    {"id": "SEC_8K_REVIEW", "path": "data/reports/sec_8k_identity_source_review_v1.json", "sha256": "ac2fd4acdd83e1abeebb36cf7c82d80634e57de7dae3c0e2bf90ca1f6f81dc14"},
+    {"id": "FAILURE_SYNTHESIS", "path": "data/reports/failed_action_research_synthesis_v1.json", "sha256": "3c82f496cde6e7006e4615a69e32234c572f1325014dcbdb745aee8c4f242b72"}
+  ],
+  "official_source_facts": [
+    {
+      "source": "SEC_EDGAR_API",
+      "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+      "checked_on": "2026-08-04",
+      "fact": "Submissions are updated throughout the day; XBRL company facts are available without an API key, while official filings remain the source record."
+    },
+    {
+      "source": "SEC_FORM4",
+      "url": "https://www.sec.gov/resources-small-businesses/going-public/officers-directors-10-shareholders",
+      "checked_on": "2026-08-04",
+      "fact": "Most covered insider transactions are reported within two business days, but filing speed does not establish investment direction."
+    },
+    {
+      "source": "SEC_13F",
+      "url": "https://www.sec.gov/rules-regulations/staff-guidance/division-investment-management-frequently-asked-questions/frequently-asked-questions-about-form-13f",
+      "checked_on": "2026-08-04",
+      "fact": "Form 13F is filed quarterly and may be due up to 45 days after quarter end, so it cannot represent a current position."
+    },
+    {
+      "source": "FINRA_SHORT_INTEREST",
+      "url": "https://www.finra.org/filing-reporting/regulatory-filing-systems/short-interest",
+      "checked_on": "2026-08-04",
+      "fact": "Short interest is reported twice monthly and released on a later publication date."
+    }
+  ],
+  "roles": [
+    {"id": "MARKET_TAPE", "information_domain": "REALIZED_PRICE", "cadence": "DAILY_CLOSE", "source_input": "MARKET_CONTEXT"},
+    {"id": "CHART_CROWD", "information_domain": "REALIZED_PRICE", "cadence": "WEEKLY_STATE", "source_input": "CHART_CROWD"},
+    {"id": "BUSINESS_FUNDAMENTALS", "information_domain": "SEC_FINANCIAL_FACT", "cadence": "FILING_EVENT", "source_input": "BUSINESS_CONTEXT"},
+    {"id": "MANAGEMENT_EXPECTATIONS", "information_domain": "SEC_GUIDANCE_FACT", "cadence": "FILING_EVENT", "source_input": "GUIDANCE_BINDINGS"},
+    {"id": "MATERIAL_EVENTS_AND_NEWS", "information_domain": "PIT_INFORMATION_EVENT", "cadence": "EVENT", "source_input": "SEC_8K_REVIEW"},
+    {"id": "INSIDER_BEHAVIOR", "information_domain": "SEC_OWNERSHIP", "cadence": "FILING_EVENT_WITH_REPORTING_LAG", "source_input": "FORM4_OOS"},
+    {"id": "SHORT_INTEREST", "information_domain": "POSITIONING", "cadence": "TWICE_MONTHLY_WITH_PUBLICATION_LAG", "source_input": "FINRA_INCREMENTAL"},
+    {"id": "INSTITUTIONAL_HOLDINGS", "information_domain": "POSITIONING", "cadence": "QUARTERLY_UP_TO_45_DAY_LAG", "source_input": "SEC_13F_OOS"},
+    {"id": "PORTFOLIO_FIT", "information_domain": "PRIVATE_PORTFOLIO", "cadence": "USER_CHANGE", "source_input": "PORTFOLIO_CONTEXT"},
+    {"id": "INDEPENDENT_RISK_REVIEW", "information_domain": "CROSS_AREA_CHALLENGE", "cadence": "ON_REVIEW", "source_input": "AI_REVIEW"}
+  ],
+  "authority_rules": {
+    "directional_vote_requires_admitted_independent_oos": true,
+    "same_information_domain_cannot_cast_multiple_votes": true,
+    "missing_or_rejected_source_status": "NO_VOTE",
+    "context_may_be_displayed_without_vote": true,
+    "generative_ai_may_summarize_only": true,
+    "generative_ai_may_create_facts": false,
+    "generative_ai_may_set_action": false
+  },
+  "forbidden": [
+    "CALL_ROLES_AGENTS_WITHOUT_INDEPENDENT_DATA",
+    "COUNT_MARKET_TAPE_AND_CHART_CROWD_AS_TWO_DIRECTION_VOTES",
+    "COUNT_REJECTED_FORM4_GUIDANCE_OR_13F_RESULTS_AS_VOTES",
+    "COUNT_PENDING_SEC_8K_OR_FINRA_SHADOW_AS_VOTES",
+    "INFER_NEWS_SENTIMENT_WITHOUT_PIT_NEWS_LEDGER",
+    "MAJORITY_VOTE_WITH_MISSING_ROLES",
+    "ENABLE_OPERATIONAL_ACTION"
+  ],
+  "authority": {
+    "directional_vote_count": 0,
+    "final_action_synthesis_enabled": false,
+    "operational_action_ratio": 0.0
+  }
+}
