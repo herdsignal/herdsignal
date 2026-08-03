@@ -487,6 +487,10 @@
       "status": "ACTIVE"
     },
     {
+      "path": "data/herd/role_specific_source_gap_priority_v1.json",
+      "status": "ACTIVE"
+    },
+    {
       "path": "data/herd/runtime_evidence_role_mapping_v1.json",
       "status": "ACTIVE"
     },
@@ -1556,6 +1560,10 @@
     },
     {
       "path": "data/reports/research_decision_v5.json",
+      "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/role_specific_source_gap_priority_v1.json",
       "status": "ACTIVE"
     },
     {

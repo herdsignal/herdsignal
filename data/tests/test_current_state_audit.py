@@ -171,13 +171,24 @@ def test_current_state_contracts_are_consistent() -> None:
         "portfolio_sent_to_ai": False,
         "operational_action_ratio": 0.0,
     }
+    assert state["source_gap_priority"] == {
+        "report_version": "HERD_ROLE_SPECIFIC_SOURCE_GAP_PRIORITY_V1",
+        "status": "SOURCE_GAPS_PRIORITIZED_NO_DIRECTION_SOURCE_READY",
+        "direction_ready_sources": 0,
+        "bounded_manual_review_sources": 1,
+        "prospective_collection_only_sources": 1,
+        "deferred_sources": 1,
+        "stopped_direction_sources": 2,
+        "selected_next_part": "SEC_8K_MATERIAL_EVENT_REVIEW_BATCHING",
+        "operational_action_ratio": 0.0,
+    }
     assert (
         state["research_boundary"]["completed_stage"]
         == "SYNTHESIZE_FAILED_HYPOTHESES_BEFORE_NEW_DIRECTION_RESEARCH"
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "ROLE_SPECIFIC_SOURCE_GAP_PRIORITIZATION"
+        == "SEC_8K_MATERIAL_EVENT_REVIEW_BATCHING"
     )
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"
