@@ -116,6 +116,14 @@ heartbeat를 각각 확인할 수 있습니다.
 
 ## 테스트
 
+일상적인 작은 변경은 핵심 경계만 빠르게 확인합니다.
+
+```bash
+./scripts/verify-fast.sh
+```
+
+배포 전이나 여러 영역을 수정한 뒤에는 전체 검증을 실행합니다.
+
 ```bash
 ./scripts/verify.sh
 ```
