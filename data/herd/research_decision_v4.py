@@ -67,7 +67,10 @@ def validate_decision(
     collection = loaded[
         "data/reports/sec_8k_identity_primary_document_collection_v1.json"
     ]
-    review = loaded["data/reports/sec_8k_identity_source_review_v1.json"]
+    review = loaded[
+        "data/reports/research_decision_inputs/"
+        "sec_8k_identity_source_review_v1_initial.json"
+    ]
     source = decision.get("new_source_candidate", {})
     if (
         feasibility.get("coverage_passed") is not True

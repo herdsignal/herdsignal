@@ -16,8 +16,8 @@
     {"id": "GUIDANCE_OOS", "path": "data/reports/sec_guidance_lower_oos_v2.json", "sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d"},
     {"id": "SEC_13F_OOS", "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json", "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"},
     {"id": "FINRA_INCREMENTAL", "path": "data/reports/finra_short_interest_incremental_v2.json", "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f"},
-    {"id": "SEC_8K_REVIEW", "path": "data/reports/sec_8k_identity_source_review_v1.json", "sha256": "28d43516d760a3bb623b04fa8453b1a421c86c09bc3ff671cccdad148511c5d0"},
-    {"id": "FAILURE_SYNTHESIS", "path": "data/reports/failed_action_research_synthesis_v1.json", "sha256": "6cc457b6a871c00a8315eab324fd0e8724396833604c98a5485c037081a92464"}
+    {"id": "SEC_8K_REVIEW", "path": "data/reports/sec_8k_identity_source_review_v1.json", "sha256": "9766ffdc909018e3c02659e05b32b04d0f435c61bb89b8a6c268aae95d70fe23"},
+    {"id": "FAILURE_SYNTHESIS", "path": "data/reports/failed_action_research_synthesis_v1.json", "sha256": "85df82fcef29d1c3498ec200c0fc3f6b79db05a84089b23a1a1480467708079a"}
   ],
   "official_source_facts": [
     {

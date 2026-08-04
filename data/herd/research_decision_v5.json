@@ -7,7 +7,7 @@
   "inputs": [
     {
       "path": "data/herd/research_decision_v4.json",
-      "sha256": "43ce36351afac05763bdecf1dc6634fc5f0238a855edabb4f823efc5f92592fb"
+      "sha256": "3ea87f4f242c14543f565a8f9080151730d5487c0d9a33e5d52d94ee7ababe65"
     },
     {
       "path": "data/herd/failed_hypothesis_map_v2.json",

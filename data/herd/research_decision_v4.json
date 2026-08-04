@@ -22,7 +22,7 @@
       "sha256": "824ae2a26008e233ebff4a727971fdb6014c3b0d33c68b269cf2692c0f4ded87"
     },
     {
-      "path": "data/reports/sec_8k_identity_source_review_v1.json",
+      "path": "data/reports/research_decision_inputs/sec_8k_identity_source_review_v1_initial.json",
       "sha256": "ac2fd4acdd83e1abeebb36cf7c82d80634e57de7dae3c0e2bf90ca1f6f81dc14"
     }
   ],

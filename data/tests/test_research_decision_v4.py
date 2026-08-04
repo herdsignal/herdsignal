@@ -25,6 +25,10 @@ def test_v4_preserves_observation_scope_and_blocks_action():
     decision, catalog = _inputs()
     result = validate_decision(decision, catalog)
 
+    assert decision["inputs"][-1]["path"] == (
+        "data/reports/research_decision_inputs/"
+        "sec_8k_identity_source_review_v1_initial.json"
+    )
     assert result["product_scope"] == "STATE_AND_TRANSITION_OBSERVATION"
     assert result["adoptable_action_candidates"] == 0
     assert result["source_coverage_passed"] is True

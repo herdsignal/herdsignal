@@ -1,7 +1,7 @@
 {
   "report_version": "HERD_ROLE_SPECIFIC_SOURCE_GAP_PRIORITY_V1",
   "status": "SOURCE_GAPS_PRIORITIZED_NO_DIRECTION_SOURCE_READY",
-  "protocol_sha256": "5b3d34513b8e98257b185075c7381657c4f562ec92a840523c5a6a1546e08ce9",
+  "protocol_sha256": "14c94e66f869929d17d527c2c63b2e5f5d08150920f765c08044006f02a9dfe5",
   "decisions": [
     {
       "source": "SEC_MATERIAL_EVENT",
@@ -9,8 +9,8 @@
       "product_role": "FUTURE_CORPORATE_DAMAGE_VETO_INPUT",
       "coverage": {
         "candidate_rows": 110,
-        "reviewed_rows": 10,
-        "pending_rows": 100
+        "reviewed_rows": 20,
+        "pending_rows": 90
       },
       "direction_vote": false,
       "reason": "Official filing evidence and a finite review queue exist; completion improves identity safety but does not predict profit-taking."

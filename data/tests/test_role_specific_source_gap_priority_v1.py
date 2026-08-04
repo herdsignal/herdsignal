@@ -23,8 +23,8 @@ def test_source_gap_priority_selects_one_bounded_next_part() -> None:
     }
     assert decisions["SEC_MATERIAL_EVENT"]["coverage"] == {
         "candidate_rows": 110,
-        "reviewed_rows": 10,
-        "pending_rows": 100,
+        "reviewed_rows": 20,
+        "pending_rows": 90,
     }
     assert decisions["FINRA_SHORT_INTEREST"]["decision"] == "CONTINUE_APPEND_ONLY_SHADOW"
     assert decisions["POINT_IN_TIME_NEWS"]["decision"] == (
