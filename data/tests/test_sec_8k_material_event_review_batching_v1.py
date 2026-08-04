@@ -9,6 +9,7 @@ from herd.sec_8k_material_event_review_batching_v1 import (
     PROTOCOL,
     Sec8KReviewBatchingError,
     build_plan,
+    build_worklist,
 )
 
 
@@ -60,3 +61,25 @@ def test_batching_rejects_action_authority() -> None:
 
     with pytest.raises(Sec8KReviewBatchingError, match="authorize an action"):
         build_plan(changed, source_protocol, labels)
+
+
+def test_worklist_exposes_sources_without_creating_labels() -> None:
+    protocol, source_protocol, labels = _inputs()
+    plan, _ = build_plan(protocol, source_protocol, labels)
+
+    worklist = build_worklist(plan, "B003")
+
+    assert worklist["rows"] == 10
+    assert worklist["pending"] == 10
+    assert worklist["read_only"] is True
+    assert worklist["items"][0]["review_id"].startswith("REVIEW-")
+    assert worklist["items"][0]["source_url"].startswith("https://www.sec.gov/")
+    assert len(worklist["items"][0]["source_sha256"]) == 64
+
+
+def test_worklist_rejects_unknown_batch() -> None:
+    protocol, source_protocol, labels = _inputs()
+    plan, _ = build_plan(protocol, source_protocol, labels)
+
+    with pytest.raises(Sec8KReviewBatchingError, match="unknown batch"):
+        build_worklist(plan, "B999")

@@ -108,6 +108,12 @@ heartbeat를 각각 확인할 수 있습니다.
 ./scripts/research-status.sh
 ```
 
+다음 SEC 원문 검수 배치의 읽기 전용 작업 목록은 다음처럼 확인합니다.
+
+```bash
+./scripts/next-sec-review-batch.sh
+```
+
 ## 테스트
 
 ```bash

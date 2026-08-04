@@ -110,6 +110,33 @@ def build_plan(
     }
 
 
+def build_worklist(
+    plan: list[dict[str, str]], batch_id: str
+) -> dict[str, Any]:
+    rows = [row for row in plan if row["batch_id"] == batch_id]
+    if not rows:
+        raise Sec8KReviewBatchingError(f"unknown batch: {batch_id}")
+    return {
+        "batch_id": batch_id,
+        "rows": len(rows),
+        "pending": sum(row["decision"] == "PENDING" for row in rows),
+        "read_only": True,
+        "items": [
+            {
+                "order": int(row["batch_order"]),
+                "review_id": row["review_id"],
+                "cik": row["cik"],
+                "filing_date": row["filing_date"],
+                "candidate_symbols": row["candidate_symbols"],
+                "source_url": row["source_url"],
+                "source_sha256": row["source_sha256"],
+                "decision": row["decision"],
+            }
+            for row in rows
+        ],
+    }
+
+
 def run(protocol_path: Path = PROTOCOL) -> dict[str, Any]:
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
     source_protocol_path = _rooted(protocol["source_review_protocol"]["path"])
@@ -141,10 +168,23 @@ def run(protocol_path: Path = PROTOCOL) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--batch", help="Print a single batch summary after refresh")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--batch", help="Print a single batch summary after refresh")
+    selection.add_argument(
+        "--next",
+        action="store_true",
+        help="Print the next pending batch's read-only source worklist",
+    )
     args = parser.parse_args()
     report = run()
-    if args.batch:
+    if args.next:
+        batch_id = report["next_pending_batch"]
+        if batch_id is None:
+            print(json.dumps({"status": "ALL_BATCHES_REVIEWED"}, ensure_ascii=False))
+            return
+        plan = _read_csv(_rooted(report["plan_path"]))
+        print(json.dumps(build_worklist(plan, batch_id), ensure_ascii=False, indent=2))
+    elif args.batch:
         selected = next(
             (row for row in report["batches"] if row["batch_id"] == args.batch), None
         )
