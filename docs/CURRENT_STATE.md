@@ -206,6 +206,11 @@ anchor를 열린 ticker 기간으로 확장하거나 현재 ticker를 소급 입
 확인하고, anchor가 없는 120개 issuer는 공식 historical listing identity와
 경계를 함께 수집한다. 현재 ticker·이름 유사도·근거 없는 vendor mapping은
 승격 증거로 받지 않는다. 다음 실행 단위는 B001이다.
+
+B001 10개 issuer·70개 사건의 SEC submissions metadata를 24개 원본 파일로
+수집하고 해시 snapshot을 고정했다. 사건 범위와 검수 anchor 사이의 10-K·10-Q
+후보는 769건이다. submissions metadata는 filing 원문 선택용 인덱스일 뿐
+식별 증거가 아니며, 다음은 issuer별 최소 원문을 선택하는 단계다.
 이후에도 새 정보가 남는 경우에만 다음 조건을 갖춘 단일 가설 하나를 허용한다.
 
 1. 기존 실패 변수와 중복되지 않는 경제적 이유
@@ -271,6 +276,7 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 ./scripts/audit-sec-8k-remaining-identities-v2.sh
 ./scripts/promote-sec-8k-modern-exception-v3.sh
 ./scripts/build-sec-8k-pre-2019-identity-plan.sh
+./scripts/collect-sec-8k-pre-2019-b001.sh
 ./scripts/audit-current-state.sh
 ./scripts/verify.sh
 ```

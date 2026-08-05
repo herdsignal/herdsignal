@@ -344,6 +344,10 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
   경계 증거를 수집하고, 120개는 공식 역사 상장 식별부터 수집한다. anchor는
   검색 힌트일 뿐 기간 증거가 아니며 자동 승격은 0건이다. 다음 단계는
   `COLLECT_PRE_2019_IDENTITY_EVIDENCE_BATCH_B001`이다.
+- B001의 10개 issuer·70개 사건에 대해 SEC submissions metadata 24개 파일을
+  불변 snapshot으로 수집했다. 사건 범위 안 periodic filing 후보는 769건이다.
+  metadata 자체는 identity proof가 아니며 자동 승격은 금지한다. 다음 단계는
+  `SELECT_B001_PERIODIC_PRIMARY_DOCUMENTS_FOR_IDENTITY_REVIEW`다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.

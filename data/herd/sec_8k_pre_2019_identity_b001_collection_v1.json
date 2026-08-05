@@ -1,0 +1,14 @@
+{
+  "protocol_version": "SEC_8K_PRE_2019_IDENTITY_B001_COLLECTION_V1",
+  "status": "LOCKED_BATCH_BEFORE_SEC_SUBMISSIONS_COLLECTION",
+  "as_of": "2026-08-05",
+  "objective": "Collect immutable SEC submissions metadata for B001 issuers before selecting historical filings that can prove ticker boundaries.",
+  "locked_inputs": [
+    {"role": "ISSUER_QUEUE", "path": "data/reports/sec_8k_pre_2019_identity_evidence_plan_v1.csv", "sha256": "a0461c62291c8f0da11dec9c5c9cc65fc5d8d76f1fa0a9b3eedfeedb712fde9d"},
+    {"role": "QUEUE_REPORT", "path": "data/reports/sec_8k_pre_2019_identity_evidence_plan_v1.json", "sha256": "c4581a6b70bdda01237c8fdf7da2dc083d9b03bc9b3058aaadb095cf7fb4c58f"}
+  ],
+  "selection": {"batch_id": "B001", "issuers": 10, "events": 70},
+  "collection": {"snapshot_id": "sec-pre2019-identity-b001-submissions-20260805", "output_root": "data/reference/sec", "allowed_host": "data.sec.gov", "timeout_seconds": 60, "delay_seconds": 0.12, "maximum_attempts": 4, "maximum_document_bytes": 20000000},
+  "outputs": {"index": "data/reports/sec_8k_pre_2019_identity_b001_collection_v1.csv", "report": "data/reports/sec_8k_pre_2019_identity_b001_collection_v1.json"},
+  "authority": {"metadata_is_identity_proof": false, "automatic_identity_promotion": false, "price_outcomes_opened": false, "direction_hypothesis_allowed": false, "blind_holdout_access": false, "operational_action_ratio": 0.0}
+}

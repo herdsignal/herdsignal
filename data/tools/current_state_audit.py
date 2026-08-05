@@ -47,6 +47,7 @@ SEC_8K_REMAINING_IDENTITY_AUDIT_V2 = ROOT / "data" / "reports" / "sec_8k_remaini
 SEC_8K_HARD_ADVERSE_CORPUS_V3 = ROOT / "data" / "reports" / "sec_8k_hard_adverse_event_corpus_v3.json"
 SEC_8K_IDENTITY_PROMOTION_V3 = ROOT / "data" / "reports" / "sec_8k_time_valid_identity_promotion_v3.json"
 SEC_8K_PRE_2019_IDENTITY_PLAN = ROOT / "data" / "reports" / "sec_8k_pre_2019_identity_evidence_plan_v1.json"
+SEC_8K_PRE_2019_B001_COLLECTION = ROOT / "data" / "reports" / "sec_8k_pre_2019_identity_b001_collection_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -99,6 +100,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     sec_8k_hard_adverse_corpus_v3 = _load(root / SEC_8K_HARD_ADVERSE_CORPUS_V3.relative_to(ROOT))
     sec_8k_identity_promotion_v3 = _load(root / SEC_8K_IDENTITY_PROMOTION_V3.relative_to(ROOT))
     sec_8k_pre_2019_identity_plan = _load(root / SEC_8K_PRE_2019_IDENTITY_PLAN.relative_to(ROOT))
+    sec_8k_pre_2019_b001_collection = _load(root / SEC_8K_PRE_2019_B001_COLLECTION.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -349,6 +351,10 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("SEC 8-K pre-2019 plan automatically promotes identity")
     if sec_8k_pre_2019_identity_plan["operational_action_ratio"] != 0.0:
         contradictions.append("SEC 8-K pre-2019 plan has action authority")
+    if sec_8k_pre_2019_b001_collection["metadata_is_identity_proof"]:
+        contradictions.append("SEC submissions metadata is treated as identity proof")
+    if sec_8k_pre_2019_b001_collection["operational_action_ratio"] != 0.0:
+        contradictions.append("SEC 8-K B001 collection has action authority")
 
     return {
         "version": "HERDSIGNAL_CURRENT_STATE_AUDIT_V1",
@@ -673,6 +679,10 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "pre_2019_identity_queue_issuers": sec_8k_pre_2019_identity_plan["issuers"],
             "pre_2019_identity_queue_batches": sec_8k_pre_2019_identity_plan["batch_count"],
             "pre_2019_identity_pending_issuers": sec_8k_pre_2019_identity_plan["pending_issuers"],
+            "pre_2019_b001_collected_issuers": sec_8k_pre_2019_b001_collection["issuers"],
+            "pre_2019_b001_candidate_periodic_filings": sec_8k_pre_2019_b001_collection[
+                "candidate_periodic_filings"
+            ],
             "identity_promotion_allowed": sec_8k_structural_extractor[
                 "identity_promotion_allowed"
             ],
@@ -692,7 +702,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
                 + sec_8k_review_batching["next_pending_batch"]
                 if sec_8k_review_batching["next_pending_batch"]
-                else sec_8k_pre_2019_identity_plan["next_stage"]
+                else sec_8k_pre_2019_b001_collection["next_stage"]
             ),
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],
