@@ -16,7 +16,7 @@ def _state():
         },
         "research_boundary": {
             "pending_sec_identity_reviews": 0,
-            "next_stage": "BATCH_REVIEW_SEC_8K_STRUCTURAL_EVALUATION_CANDIDATES_V1",
+            "next_stage": "COMPLETE_SEC_8K_INDEPENDENT_REVIEW_BATCH_B001",
         },
         "contradictions": [],
     }

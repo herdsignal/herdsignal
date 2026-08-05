@@ -623,6 +623,10 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/herd/sec_8k_structural_evaluation_review_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/herd/sec_auxiliary_veto_authority_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1924,6 +1928,18 @@
     },
     {
       "path": "data/reports/sec_8k_structural_evaluation_extraction_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_structural_evaluation_review_batches_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_structural_evaluation_review_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_structural_evaluation_review_v1.json",
       "status": "DATA_PIPELINE"
     },
     {

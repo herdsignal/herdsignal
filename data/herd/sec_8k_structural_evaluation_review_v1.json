@@ -1,0 +1,60 @@
+{
+  "protocol_version": "SEC_8K_STRUCTURAL_EVALUATION_REVIEW_V1",
+  "status": "LOCKED_BEFORE_INDEPENDENT_HUMAN_REVIEW",
+  "as_of": "2026-08-05",
+  "objective": "Human-review every independent structural ticker candidate against its hashed SEC primary document without using known ticker labels.",
+  "locked_inputs": [
+    {
+      "role": "EXTRACTION_PROTOCOL",
+      "path": "data/herd/sec_8k_structural_evaluation_extraction_v1.json",
+      "sha256": "13a89ffffddd943c8919c903a5a160f62e91b9d1b12bcc92f9e04446b372aa6a"
+    },
+    {
+      "role": "EXTRACTION_REPORT",
+      "path": "data/reports/sec_8k_structural_evaluation_extraction_v1.json",
+      "sha256": "4ddfa06e32309eabde2b7945c2ec698d192ab8bd76bf1d3d51aee6a1d9d65566"
+    },
+    {
+      "role": "EXTRACTION_CANDIDATES",
+      "path": "data/reports/sec_8k_structural_evaluation_extraction_v1.csv",
+      "sha256": "b9cf93cba802e4a9b56915ed02bd2ec026e95e6ff498acfbcb8cefd0d2e2cc0d"
+    },
+    {
+      "role": "SNAPSHOT_MANIFEST",
+      "path": "data/reference/sec/sec-8k-structural-evaluation-v1-20260805/manifest.json",
+      "sha256": "fa566306a57dee9060656d4821e1ebb4a654b93845fd1c7ff23d887f4d687318"
+    }
+  ],
+  "review_scope": {
+    "expected_candidate_rows": 182,
+    "allowed_decisions": ["PENDING", "VALID", "INVALID", "AMBIGUOUS"],
+    "known_identity_labels_allowed": false,
+    "valid_requires_candidate_symbol": true
+  },
+  "batching": {
+    "sort": ["filing_date", "review_id"],
+    "batch_size": 10,
+    "expected_batches": 19,
+    "last_batch_rows": 2
+  },
+  "precision_gate": {
+    "minimum_reviewed_rows": 100,
+    "minimum_wilson_95_lower_bound": 0.9,
+    "maximum_ambiguous_ratio": 0.1,
+    "all_rows_must_be_adjudicated": true
+  },
+  "outputs": {
+    "labels": "data/reports/sec_8k_structural_evaluation_review_v1.csv",
+    "batch_plan": "data/reports/sec_8k_structural_evaluation_review_batches_v1.csv",
+    "report": "data/reports/sec_8k_structural_evaluation_review_v1.json"
+  },
+  "next_stage_if_passed": "SEC_8K_TIME_VALID_IDENTITY_PROMOTION_V2",
+  "next_stage_if_failed": "STOP_SEC_8K_IDENTITY_PROMOTION_INDEPENDENT_PRECISION_FAILED",
+  "authority": {
+    "identity_promotion_allowed": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
