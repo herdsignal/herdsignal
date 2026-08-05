@@ -1,0 +1,14 @@
+{
+  "report_version": "SEC_8K_TIME_VALID_IDENTITY_PROMOTION_V3",
+  "status": "MODERN_EXCEPTION_IDENTITY_PROMOTED",
+  "promoted_rows": 116,
+  "newly_promoted_rows": 1,
+  "identity_scope": "EXACT_FILING_DATE_EVENT_ONLY",
+  "open_ended_intervals_inferred": 0,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "ledger_path": "data/reports/sec_8k_time_valid_identity_promotion_v3.csv",
+  "ledger_sha256": "410e33267d3b611afc1c9f3a90d779cc1d3045de26393eba1bdc6e183e9d3b36"
+}

@@ -334,6 +334,11 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
   나머지 303건은 독립 historical security master가 필요하다. 현재 ticker
   소급 입력과 가격 결과는 계속 금지하며 다음 단계는
   `COLLECT_TIME_VALID_IDENTITY_EVIDENCE_BY_ROUTE_V1`이다.
+- 2019년 이후 구조적 무후보 1건은 SEC 원문 표지의 `BAX (NYSE)`를 직접
+  확인했다. 상장채권 기호 3개를 보통주와 분리하고 exact filing date로만
+  승격했다. 파서를 독립 평가 뒤 바꾸지 않았으며 corpus V3는 연결 301/947,
+  미연결 646건이다. 다음 단계는
+  `COLLECT_PRE_2019_TIME_VALID_IDENTITY_EVIDENCE_V1`이다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.

@@ -195,6 +195,11 @@ Evidence Packet의 연결 감사는 완료했다.
 사건 중 343건은 같은 CIK의 검수된 날짜 한정 anchor가 있어 기업행위 경계를
 추가 검수할 수 있고, 303건은 별도 historical security master가 필요하다.
 anchor를 열린 ticker 기간으로 확장하거나 현재 ticker를 소급 입력하지 않는다.
+
+2019년 이후 유일한 무후보 1건은 SEC 원문 표지에서 `BAX (NYSE)`를 직접
+검수했다. 보통주 BAX와 상장채권 BAX 25·BAX 29·BAX 24를 분리해 filing 날짜
+한정으로 승격했다. corpus V3 연결은 301/947, 미연결은 646건이다. 파서 규칙은
+독립 평가 이후 변경하지 않았고 다음은 2019년 이전 식별 증거 수집이다.
 이후에도 새 정보가 남는 경우에만 다음 조건을 갖춘 단일 가설 하나를 허용한다.
 
 1. 기존 실패 변수와 중복되지 않는 경제적 이유
@@ -258,6 +263,7 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 ./scripts/run-sec-structural-independent-extraction.sh
 ./scripts/review-sec-structural-evaluation.sh --next
 ./scripts/audit-sec-8k-remaining-identities-v2.sh
+./scripts/promote-sec-8k-modern-exception-v3.sh
 ./scripts/audit-current-state.sh
 ./scripts/verify.sh
 ```

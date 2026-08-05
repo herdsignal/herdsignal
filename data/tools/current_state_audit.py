@@ -44,6 +44,8 @@ SEC_8K_STRUCTURAL_INDEPENDENT_REVIEW = ROOT / "data" / "reports" / "sec_8k_struc
 SEC_8K_IDENTITY_PROMOTION_V2 = ROOT / "data" / "reports" / "sec_8k_time_valid_identity_promotion_v2.json"
 SEC_8K_HARD_ADVERSE_CORPUS_V2 = ROOT / "data" / "reports" / "sec_8k_hard_adverse_event_corpus_v2.json"
 SEC_8K_REMAINING_IDENTITY_AUDIT_V2 = ROOT / "data" / "reports" / "sec_8k_remaining_identity_coverage_audit_v2.json"
+SEC_8K_HARD_ADVERSE_CORPUS_V3 = ROOT / "data" / "reports" / "sec_8k_hard_adverse_event_corpus_v3.json"
+SEC_8K_IDENTITY_PROMOTION_V3 = ROOT / "data" / "reports" / "sec_8k_time_valid_identity_promotion_v3.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -93,6 +95,8 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     sec_8k_remaining_identity_audit_v2 = _load(
         root / SEC_8K_REMAINING_IDENTITY_AUDIT_V2.relative_to(ROOT)
     )
+    sec_8k_hard_adverse_corpus_v3 = _load(root / SEC_8K_HARD_ADVERSE_CORPUS_V3.relative_to(ROOT))
+    sec_8k_identity_promotion_v3 = _load(root / SEC_8K_IDENTITY_PROMOTION_V3.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -333,6 +337,10 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("SEC 8-K remaining identity audit infers ticker intervals")
     if sec_8k_remaining_identity_audit_v2["operational_action_ratio"] != 0.0:
         contradictions.append("SEC 8-K remaining identity audit has action authority")
+    if sec_8k_hard_adverse_corpus_v3["mapped_events"] != sec_8k_hard_adverse_corpus_v2["mapped_events"] + 1:
+        contradictions.append("SEC 8-K modern exception promotion changes unexpected coverage")
+    if sec_8k_hard_adverse_corpus_v3["operational_action_ratio"] != 0.0:
+        contradictions.append("SEC 8-K corpus V3 has action authority")
 
     return {
         "version": "HERDSIGNAL_CURRENT_STATE_AUDIT_V1",
@@ -640,9 +648,9 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "independent_review_next_batch": sec_8k_structural_independent_review[
                 "next_pending_batch"
             ],
-            "promoted_event_identities": sec_8k_identity_promotion_v2["promoted_rows"],
-            "hard_adverse_mapped_events": sec_8k_hard_adverse_corpus_v2["mapped_events"],
-            "hard_adverse_unmapped_events": sec_8k_hard_adverse_corpus_v2["unmapped_events"],
+            "promoted_event_identities": sec_8k_identity_promotion_v3["promoted_rows"],
+            "hard_adverse_mapped_events": sec_8k_hard_adverse_corpus_v3["mapped_events"],
+            "hard_adverse_unmapped_events": sec_8k_hard_adverse_corpus_v3["unmapped_events"],
             "remaining_identity_audit_status": sec_8k_remaining_identity_audit_v2["status"],
             "legacy_identity_gaps": sec_8k_remaining_identity_audit_v2["legacy_events"],
             "same_cik_anchor_review_events": sec_8k_remaining_identity_audit_v2[
@@ -673,7 +681,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
                 + sec_8k_review_batching["next_pending_batch"]
                 if sec_8k_review_batching["next_pending_batch"]
-                else sec_8k_remaining_identity_audit_v2["next_stage"]
+                else sec_8k_hard_adverse_corpus_v3["next_stage"]
             ),
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],

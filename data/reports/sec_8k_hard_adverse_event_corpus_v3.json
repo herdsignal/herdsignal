@@ -1,0 +1,21 @@
+{
+  "report_version": "SEC_8K_HARD_ADVERSE_EVENT_CORPUS_V3",
+  "status": "MODERN_EXCEPTION_COVERAGE_UPDATED",
+  "events": 947,
+  "newly_mapped_events": 1,
+  "mapped_events": 301,
+  "unmapped_events": 646,
+  "ambiguous_events": 0,
+  "identity_status_counts": {
+    "SEC_PRIMARY_DOCUMENT_REVIEWED": 116,
+    "TIME_VALID_MAPPED": 185,
+    "UNMAPPED": 646
+  },
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "COLLECT_PRE_2019_TIME_VALID_IDENTITY_EVIDENCE_V1",
+  "ledger_path": "data/reports/sec_8k_hard_adverse_event_corpus_v3.csv",
+  "ledger_sha256": "89d9a0ea6e186881763279294648778928009cf39268e9d8461285d37627b702"
+}

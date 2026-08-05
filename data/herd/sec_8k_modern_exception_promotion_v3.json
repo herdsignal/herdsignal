@@ -1,0 +1,21 @@
+{
+  "protocol_version": "SEC_8K_MODERN_EXCEPTION_PROMOTION_V3",
+  "status": "LOCKED_SINGLE_MODERN_EXCEPTION_REVIEW",
+  "as_of": "2026-08-05",
+  "objective": "Promote the one manually reviewed modern-cover exception at its exact filing date and rebuild coverage without changing the frozen structural parser.",
+  "locked_inputs": [
+    {"role": "GAP_AUDIT", "path": "data/reports/sec_8k_remaining_identity_coverage_audit_v2.csv", "sha256": "c484a1977b47d4b1f4426ffc2370a12a6463dd36a56c5bc497d7d2d46fef4659"},
+    {"role": "SOURCE_COLLECTION", "path": "data/reports/sec_8k_identity_primary_document_collection_v1.csv", "sha256": "07b4e599fd6eac398d6bec26e96fb1135455bb8ddab4d8f13e8502986e0408f2"},
+    {"role": "MANUAL_REVIEW", "path": "data/reports/sec_8k_modern_exception_review_v1.csv", "sha256": "d56d32f835ccaee345f4fbaaaa5855eecc501c3132aa1e7e89eb85fb2920240b"},
+    {"role": "V2_PROMOTIONS", "path": "data/reports/sec_8k_time_valid_identity_promotion_v2.csv", "sha256": "0bc6797ae35a157a978195cfd622560a28577654905c0633116dd72bfb7879b9"},
+    {"role": "V2_CORPUS", "path": "data/reports/sec_8k_hard_adverse_event_corpus_v2.csv", "sha256": "b9b6e893fe0507cfb7b63b55f445f2043a33ad0da88ed5d98a6f501ccd031839"}
+  ],
+  "expected": {"review_rows": 1, "prior_promotions": 115, "promotions_after_merge": 116, "events": 947, "mapped_after_merge": 301, "unmapped_after_merge": 646},
+  "outputs": {
+    "promotion_ledger": "data/reports/sec_8k_time_valid_identity_promotion_v3.csv",
+    "promotion_report": "data/reports/sec_8k_time_valid_identity_promotion_v3.json",
+    "corpus_ledger": "data/reports/sec_8k_hard_adverse_event_corpus_v3.csv",
+    "corpus_report": "data/reports/sec_8k_hard_adverse_event_corpus_v3.json"
+  },
+  "authority": {"parser_changed": false, "infer_open_ended_ticker_interval": false, "price_outcomes_opened": false, "direction_hypothesis_allowed": false, "blind_holdout_access": false, "operational_action_ratio": 0.0}
+}
