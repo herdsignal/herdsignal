@@ -315,6 +315,9 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 - 평가 모집단 185건의 SEC primary document를 전부 수집해 bytes와 SHA-256을
   불변 snapshot에 고정했다. 실패는 0건이고 정답 ticker와 가격 결과는 열지
   않았다. 다음 단계는 `RUN_SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2_INDEPENDENT`다.
+- 잠긴 V2를 독립 원문에 변경 없이 실행해 XBRL 후보 182건·100개 발행사를
+  확보했고 무후보는 3건이었다. 자동 라벨과 식별 승격은 0건이다.
+- 다음 단계는 `BATCH_REVIEW_SEC_8K_STRUCTURAL_EVALUATION_CANDIDATES_V1`이다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.

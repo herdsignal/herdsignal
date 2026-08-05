@@ -1,0 +1,57 @@
+{
+  "protocol_version": "SEC_8K_STRUCTURAL_EVALUATION_EXTRACTION_V1",
+  "status": "LOCKED_PARSER_BEFORE_INDEPENDENT_EXTRACTION",
+  "as_of": "2026-08-05",
+  "objective": "Run the frozen structural cover parser unchanged on independent SEC primary documents and create source-review candidates without ticker promotion.",
+  "locked_inputs": [
+    {
+      "role": "FROZEN_PARSER_PROTOCOL",
+      "path": "data/herd/sec_8k_structural_cover_extractor_v2.json",
+      "sha256": "2fbec1a752b6a45fdc427c6bc55a79120083bcb17ef28e054b10dd3539756a57"
+    },
+    {
+      "role": "FROZEN_PARSER_CODE",
+      "path": "data/herd/sec_8k_structural_cover_extractor_v2.py",
+      "sha256": "b86a6c98344aecaca4bdee90d1af8be02a8b01308515ee2ddc2ea05461d39248"
+    },
+    {
+      "role": "COLLECTION_PROTOCOL",
+      "path": "data/herd/sec_8k_structural_evaluation_collection_v1.json",
+      "sha256": "a763fb3dd2affd7a2992b6574e798a09a7aa67192d2a36c29673a8075301a800"
+    },
+    {
+      "role": "COLLECTION_REPORT",
+      "path": "data/reports/sec_8k_structural_evaluation_collection_v1.json",
+      "sha256": "d5061072bbd22ba3d018f15fb7c9f3250c82d4e81b49986c3881ffb9d9bf01d0"
+    },
+    {
+      "role": "COLLECTION_INDEX",
+      "path": "data/reports/sec_8k_structural_evaluation_collection_v1.csv",
+      "sha256": "5a0d39408ba6fc2766095859a9359bffd2d61ed10dbb426309da8e757f7fd14d"
+    },
+    {
+      "role": "SNAPSHOT_MANIFEST",
+      "path": "data/reference/sec/sec-8k-structural-evaluation-v1-20260805/manifest.json",
+      "sha256": "fa566306a57dee9060656d4821e1ebb4a654b93845fd1c7ff23d887f4d687318"
+    }
+  ],
+  "parser": {
+    "xbrl_first": true,
+    "fallback": "STRUCTURAL_TRADING_SYMBOL_COLUMN",
+    "maximum_data_rows_after_header": 15,
+    "rejected_markup_tokens": ["DIV", "TD"],
+    "code_changes_allowed_after_lock": false
+  },
+  "outputs": {
+    "candidates": "data/reports/sec_8k_structural_evaluation_extraction_v1.csv",
+    "report": "data/reports/sec_8k_structural_evaluation_extraction_v1.json"
+  },
+  "next_stage": "BATCH_REVIEW_SEC_8K_STRUCTURAL_EVALUATION_CANDIDATES_V1",
+  "authority": {
+    "identity_promotion_allowed": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

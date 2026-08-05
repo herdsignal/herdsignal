@@ -1,0 +1,23 @@
+{
+  "report_version": "SEC_8K_STRUCTURAL_EVALUATION_EXTRACTION_V1",
+  "status": "INDEPENDENT_EXTRACTION_COMPLETE_SOURCE_REVIEW_REQUIRED",
+  "documents": 185,
+  "candidate_rows": 182,
+  "no_candidate_rows": 3,
+  "candidate_issuers": 100,
+  "extraction_method_counts": {
+    "NONE": 3,
+    "XBRL_TAG": 182
+  },
+  "parser_code_sha256": "b86a6c98344aecaca4bdee90d1af8be02a8b01308515ee2ddc2ea05461d39248",
+  "parser_changed_after_lock": false,
+  "human_labels_created": 0,
+  "identity_promotion_allowed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "BATCH_REVIEW_SEC_8K_STRUCTURAL_EVALUATION_CANDIDATES_V1",
+  "candidates_path": "data/reports/sec_8k_structural_evaluation_extraction_v1.csv",
+  "candidates_sha256": "b9cf93cba802e4a9b56915ed02bd2ec026e95e6ff498acfbcb8cefd0d2e2cc0d"
+}

@@ -175,6 +175,10 @@ Evidence Packet의 연결 감사는 완료했다.
 `sec-8k-structural-evaluation-v1-20260805` snapshot에 전부 수집했다. 실패는
 0건이고 정답 ticker·가격 결과는 수집물에 포함하지 않았다. 다음 단계는 잠긴
 구조적 표지 파서 V2를 이 독립 원문에 변경 없이 실행하는 것이다.
+
+잠긴 V2를 독립 원문 185건에 실행한 결과 XBRL 후보 182건·100개 발행사를
+확보했고 무후보는 3건이다. 파서 코드 변경과 자동 사람 라벨 생성은 0건이다.
+다음은 182건을 고정 배치로 나눠 SEC 원문과 직접 대조하는 단계다.
 이후에도 새 정보가 남는 경우에만 다음 조건을 갖춘 단일 가설 하나를 허용한다.
 
 1. 기존 실패 변수와 중복되지 않는 경제적 이유
@@ -217,9 +221,10 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 11. 구조적 표지 파서 V2의 새 후보 5건을 기존 개발 라벨과 분리해 검수했다.
 12. 독립 구조적 평가 모집단 185건·101개 발행사를 결과 확인 전에 고정했다.
 13. 평가 모집단의 SEC primary document 185건을 불변 snapshot으로 수집했다.
-14. 구조적 표지 파서 V2를 규칙 변경 없이 독립 원문에 실행한다.
-15. 독립 방향 정보가 확인될 때만 단일 가설 하나를 결과 전에 고정한다.
-16. 새 가설이 독립 OOS를 통과한 경우에만 전향 확인과 5% 정책 검증으로 이동한다.
+14. 구조적 표지 파서 V2를 규칙 변경 없이 독립 원문에 실행해 후보 182건을 얻었다.
+15. 독립 후보 182건을 고정 배치로 나눠 원문 검수한다.
+16. 독립 방향 정보가 확인될 때만 단일 가설 하나를 결과 전에 고정한다.
+17. 새 가설이 독립 OOS를 통과한 경우에만 전향 확인과 5% 정책 검증으로 이동한다.
 
 ## 확인 명령
 
@@ -230,6 +235,7 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 ./scripts/review-sec-structural-candidates.sh
 ./scripts/build-sec-structural-evaluation-queue.sh
 ./scripts/collect-sec-structural-evaluation.sh
+./scripts/run-sec-structural-independent-extraction.sh
 ./scripts/audit-current-state.sh
 ./scripts/verify.sh
 ```
