@@ -5,7 +5,7 @@
   "objective": "Map every researched long-term review role to the actual backend evidence packet, personal review, AI review, and frontend presentation without inventing facts or votes.",
   "input": {
     "path": "data/reports/independent_evidence_role_audit_v1.json",
-    "sha256": "099932c461e685472d17de0251cb903bc1ad73c1afafef8913beaa540747063d"
+    "sha256": "1aa89f3873aec8d3d28c3d06cb425617b6ac93fef86047d3cf762368e8667db7"
   },
   "runtime_sources": [
     "backend/src/main/java/com/herdsignal/service/decision/ObjectiveEvidenceService.java",
@@ -24,7 +24,10 @@
       "decision_area": "MARKET_SECTOR",
       "ai_lens": "MARKET_SECTOR",
       "frontend_area": "MARKET_SECTOR",
-      "required_markers": ["MARKET.SPY.RETURN_63", "MARKET.ATTRIBUTION.CLASS"]
+      "required_markers": [
+        "MARKET.SPY.RETURN_63",
+        "MARKET.ATTRIBUTION.CLASS"
+      ]
     },
     {
       "id": "CHART_CROWD",
@@ -32,7 +35,10 @@
       "decision_area": "CHART_CROWD",
       "ai_lens": "CHART_CROWD",
       "frontend_area": "CHART_CROWD",
-      "required_markers": ["OBS.STATE_SCORE", "OBS.TRANSITION"]
+      "required_markers": [
+        "OBS.STATE_SCORE",
+        "OBS.TRANSITION"
+      ]
     },
     {
       "id": "BUSINESS_FUNDAMENTALS",
@@ -40,7 +46,9 @@
       "decision_area": "BUSINESS_HEALTH",
       "ai_lens": "BUSINESS_HEALTH",
       "frontend_area": "BUSINESS_HEALTH",
-      "required_markers": ["BusinessHealthEvidenceAssembler"]
+      "required_markers": [
+        "BusinessHealthEvidenceAssembler"
+      ]
     },
     {
       "id": "MANAGEMENT_EXPECTATIONS",
@@ -48,7 +56,9 @@
       "decision_area": "EXPECTATION_VALUATION",
       "ai_lens": "EXPECTATION_VALUATION",
       "frontend_area": "EXPECTATION_VALUATION",
-      "required_markers": ["ExpectationValuationEvidenceAssembler"]
+      "required_markers": [
+        "ExpectationValuationEvidenceAssembler"
+      ]
     },
     {
       "id": "MATERIAL_EVENTS_AND_NEWS",
@@ -56,7 +66,10 @@
       "decision_area": "INFORMATION_CHANGE",
       "ai_lens": "INFORMATION_CHANGE",
       "frontend_area": "INFORMATION_CHANGE",
-      "required_markers": ["INFO.SEC.MATERIAL_EVENT", "INFO.NEWS.PIT"]
+      "required_markers": [
+        "INFO.SEC.MATERIAL_EVENT",
+        "INFO.NEWS.PIT"
+      ]
     },
     {
       "id": "INSIDER_BEHAVIOR",
@@ -64,7 +77,9 @@
       "decision_area": "INFORMATION_CHANGE",
       "ai_lens": "INFORMATION_CHANGE",
       "frontend_area": "INFORMATION_CHANGE",
-      "required_markers": ["INFO.SEC.FORM4"]
+      "required_markers": [
+        "INFO.SEC.FORM4"
+      ]
     },
     {
       "id": "SHORT_INTEREST",
@@ -72,7 +87,9 @@
       "decision_area": "INFORMATION_CHANGE",
       "ai_lens": "INFORMATION_CHANGE",
       "frontend_area": "INFORMATION_CHANGE",
-      "required_markers": ["INFO.POSITIONING"]
+      "required_markers": [
+        "INFO.POSITIONING"
+      ]
     },
     {
       "id": "INSTITUTIONAL_HOLDINGS",
@@ -80,7 +97,9 @@
       "decision_area": "INFORMATION_CHANGE",
       "ai_lens": "INFORMATION_CHANGE",
       "frontend_area": "INFORMATION_CHANGE",
-      "required_markers": ["INFO.POSITIONING"]
+      "required_markers": [
+        "INFO.POSITIONING"
+      ]
     },
     {
       "id": "PORTFOLIO_FIT",
@@ -88,7 +107,10 @@
       "decision_area": "PORTFOLIO_FIT",
       "ai_lens": null,
       "frontend_area": "PERSONAL_OPERATING_REVIEW",
-      "required_markers": ["PortfolioFitCalculator", "portfolioFit"]
+      "required_markers": [
+        "PortfolioFitCalculator",
+        "portfolioFit"
+      ]
     },
     {
       "id": "INDEPENDENT_RISK_REVIEW",
@@ -96,7 +118,10 @@
       "decision_area": "INDEPENDENT_RISK",
       "ai_lens": "RED_TEAM",
       "frontend_area": "PERSONAL_OPERATING_REVIEW",
-      "required_markers": ["IndependentRiskVetoPolicy", "RED_TEAM"]
+      "required_markers": [
+        "IndependentRiskVetoPolicy",
+        "RED_TEAM"
+      ]
     }
   ],
   "invariants": {

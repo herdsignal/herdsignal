@@ -4,11 +4,31 @@
   "as_of": "2026-08-04",
   "objective": "Choose one bounded source-improvement task for the long-term operating review without reopening rejected direction hypotheses or pretending missing roles can vote.",
   "inputs": [
-    {"id": "SEC_8K", "path": "data/reports/sec_8k_identity_source_review_v1.json", "sha256": "9766ffdc909018e3c02659e05b32b04d0f435c61bb89b8a6c268aae95d70fe23"},
-    {"id": "FORM4", "path": "data/reports/sec_form4_insider_purchase_oos_v1.json", "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"},
-    {"id": "FINRA", "path": "data/reports/finra_short_interest_incremental_v2.json", "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f"},
-    {"id": "SEC_13F", "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json", "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"},
-    {"id": "RUNTIME_INFORMATION", "path": "data/contracts/operating_information_change_evidence_v1.json", "sha256": "d0308552f4e30cc9542540203d2a765fd89e21566328a48f22aec0c7e599c859"}
+    {
+      "id": "SEC_8K",
+      "path": "data/reports/sec_8k_identity_source_review_v1.json",
+      "sha256": "cd8b027b19bc29e7c3bca7142890cbac31632f5b51920994baa11178426cf5ab"
+    },
+    {
+      "id": "FORM4",
+      "path": "data/reports/sec_form4_insider_purchase_oos_v1.json",
+      "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"
+    },
+    {
+      "id": "FINRA",
+      "path": "data/reports/finra_short_interest_incremental_v2.json",
+      "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f"
+    },
+    {
+      "id": "SEC_13F",
+      "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json",
+      "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"
+    },
+    {
+      "id": "RUNTIME_INFORMATION",
+      "path": "data/contracts/operating_information_change_evidence_v1.json",
+      "sha256": "d0308552f4e30cc9542540203d2a765fd89e21566328a48f22aec0c7e599c859"
+    }
   ],
   "decision_order": [
     "STOP_REJECTED_DIRECTION_RESEARCH",

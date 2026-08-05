@@ -3,7 +3,7 @@
   "status": "HUMAN_REVIEW_PENDING",
   "protocol_sha256": "6aa85cf51b7aa520e16da2b200b341ffdad8f6c160efc3c0f8281f7ceab65083",
   "source_review_status": "PENDING_SOURCE_DECISIONS",
-  "source_labels_sha256": "a66e4dc030823bd9a83e1e5b7d6944012bc2e4b7e6d01c1b699012d5e704cf1a",
+  "source_labels_sha256": "9ecafb2a0ea62bef2597af4ed76a85441bbc5297c1267880d9ff581051c36874",
   "rows": 110,
   "batch_size": 10,
   "batch_count": 11,
@@ -29,18 +29,18 @@
     {
       "batch_id": "B003",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0001020569-19-000220",
       "last_review_id": "REVIEW-0001140859-20-000006"
     },
     {
       "batch_id": "B004",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0000769397-20-000002",
       "last_review_id": "REVIEW-0001564590-20-018916"
     },
@@ -108,7 +108,7 @@
       "last_review_id": "REVIEW-0001001250-26-000031"
     }
   ],
-  "next_pending_batch": "B003",
+  "next_pending_batch": "B005",
   "canonical_editable_ledger": "data/reports/sec_8k_identity_source_review_v1.csv",
   "plan_is_read_only_projection": true,
   "auto_labels_created": 0,
@@ -116,5 +116,5 @@
   "direction_hypothesis_allowed": false,
   "operational_action_ratio": 0.0,
   "plan_path": "data/reports/sec_8k_material_event_review_batching_v1.csv",
-  "plan_sha256": "eb0d872ca72461b22a4e3c62d9847f4d8c450f90bd6f41c6bc4291db48091934"
+  "plan_sha256": "936d694c739c79d0f941a119bedd92cb43ed9f25b9e65631932432c5beca6266"
 }

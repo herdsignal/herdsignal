@@ -4,20 +4,76 @@
   "as_of": "2026-08-04",
   "objective": "Assign every long-term review lane a source, cadence, information domain, claim boundary, and authority without turning unavailable or rejected evidence into votes.",
   "inputs": [
-    {"id": "MARKET_CONTEXT", "path": "data/contracts/market_sector_context_v1.json", "sha256": "ba2bd16d2461a22277316496743089aced53a18fdcf39d77961d3553cbd441f5"},
-    {"id": "BUSINESS_CONTEXT", "path": "data/contracts/operating_business_evidence_v1.json", "sha256": "84e819a5cfc082612883c7fa836e52184c1113b67ab4bab6fe22a09ca1e0f9d1"},
-    {"id": "EXPECTATION_CONTEXT", "path": "data/contracts/operating_expectation_evidence_v1.json", "sha256": "4a40e67643ba0cb4b7571bbfe7aadcddfd93f42748b8f4f125a358dc73178e97"},
-    {"id": "INFORMATION_CONTEXT", "path": "data/contracts/operating_information_change_evidence_v1.json", "sha256": "d0308552f4e30cc9542540203d2a765fd89e21566328a48f22aec0c7e599c859"},
-    {"id": "PORTFOLIO_CONTEXT", "path": "data/contracts/operating_portfolio_risk_v1.json", "sha256": "0228be7bd4993d2a1dccb217516723d1b7a63e8e840fcbf572f36969f1e91a21"},
-    {"id": "AI_REVIEW", "path": "data/contracts/ai_evidence_review_v2.json", "sha256": "f601718e4713810226dc4965f8e138753cd832f829d236402d51ca43d5b2f55e"},
-    {"id": "CHART_CROWD", "path": "data/reports/herd_state_s1.json", "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"},
-    {"id": "FORM4_OOS", "path": "data/reports/sec_form4_insider_purchase_oos_v1.json", "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"},
-    {"id": "GUIDANCE_BINDINGS", "path": "data/reports/sec_guidance_atomic_bindings_v2.json", "sha256": "cce0ad8b539b36841f8c5c48499264d8e97e1ca03024533560bdd23e1a8c04c6"},
-    {"id": "GUIDANCE_OOS", "path": "data/reports/sec_guidance_lower_oos_v2.json", "sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d"},
-    {"id": "SEC_13F_OOS", "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json", "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"},
-    {"id": "FINRA_INCREMENTAL", "path": "data/reports/finra_short_interest_incremental_v2.json", "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f"},
-    {"id": "SEC_8K_REVIEW", "path": "data/reports/sec_8k_identity_source_review_v1.json", "sha256": "9766ffdc909018e3c02659e05b32b04d0f435c61bb89b8a6c268aae95d70fe23"},
-    {"id": "FAILURE_SYNTHESIS", "path": "data/reports/failed_action_research_synthesis_v1.json", "sha256": "85df82fcef29d1c3498ec200c0fc3f6b79db05a84089b23a1a1480467708079a"}
+    {
+      "id": "MARKET_CONTEXT",
+      "path": "data/contracts/market_sector_context_v1.json",
+      "sha256": "ba2bd16d2461a22277316496743089aced53a18fdcf39d77961d3553cbd441f5"
+    },
+    {
+      "id": "BUSINESS_CONTEXT",
+      "path": "data/contracts/operating_business_evidence_v1.json",
+      "sha256": "84e819a5cfc082612883c7fa836e52184c1113b67ab4bab6fe22a09ca1e0f9d1"
+    },
+    {
+      "id": "EXPECTATION_CONTEXT",
+      "path": "data/contracts/operating_expectation_evidence_v1.json",
+      "sha256": "4a40e67643ba0cb4b7571bbfe7aadcddfd93f42748b8f4f125a358dc73178e97"
+    },
+    {
+      "id": "INFORMATION_CONTEXT",
+      "path": "data/contracts/operating_information_change_evidence_v1.json",
+      "sha256": "d0308552f4e30cc9542540203d2a765fd89e21566328a48f22aec0c7e599c859"
+    },
+    {
+      "id": "PORTFOLIO_CONTEXT",
+      "path": "data/contracts/operating_portfolio_risk_v1.json",
+      "sha256": "0228be7bd4993d2a1dccb217516723d1b7a63e8e840fcbf572f36969f1e91a21"
+    },
+    {
+      "id": "AI_REVIEW",
+      "path": "data/contracts/ai_evidence_review_v2.json",
+      "sha256": "f601718e4713810226dc4965f8e138753cd832f829d236402d51ca43d5b2f55e"
+    },
+    {
+      "id": "CHART_CROWD",
+      "path": "data/reports/herd_state_s1.json",
+      "sha256": "dc154b7f6052bcae1dfd3accbe7f40bbd686f85908062f3800e911fde39b5121"
+    },
+    {
+      "id": "FORM4_OOS",
+      "path": "data/reports/sec_form4_insider_purchase_oos_v1.json",
+      "sha256": "28cb3708100829e7672324c1eadf2f7c6d5063728d2e71aadd3af54d423c0f69"
+    },
+    {
+      "id": "GUIDANCE_BINDINGS",
+      "path": "data/reports/sec_guidance_atomic_bindings_v2.json",
+      "sha256": "cce0ad8b539b36841f8c5c48499264d8e97e1ca03024533560bdd23e1a8c04c6"
+    },
+    {
+      "id": "GUIDANCE_OOS",
+      "path": "data/reports/sec_guidance_lower_oos_v2.json",
+      "sha256": "54949fb4054ac3a76507fa95c970e88c832150ab55a2e49155d1bd1b9f82ef9d"
+    },
+    {
+      "id": "SEC_13F_OOS",
+      "path": "data/reports/sec_13f_crowding_incremental_oos_v1.json",
+      "sha256": "e3dfd9710b1b2fa087e2070469a0e6a4f406162af22d18fe154bed833b51103f"
+    },
+    {
+      "id": "FINRA_INCREMENTAL",
+      "path": "data/reports/finra_short_interest_incremental_v2.json",
+      "sha256": "b359065f70ec6ab49289253c47a29b324b229eef3cab1f2a0123d522b46c4b1f"
+    },
+    {
+      "id": "SEC_8K_REVIEW",
+      "path": "data/reports/sec_8k_identity_source_review_v1.json",
+      "sha256": "cd8b027b19bc29e7c3bca7142890cbac31632f5b51920994baa11178426cf5ab"
+    },
+    {
+      "id": "FAILURE_SYNTHESIS",
+      "path": "data/reports/failed_action_research_synthesis_v1.json",
+      "sha256": "e5bf824bdf83abdce86dd9e18a2655b03719843222a918fa1edbcf350a7f19ea"
+    }
   ],
   "official_source_facts": [
     {
@@ -46,16 +102,66 @@
     }
   ],
   "roles": [
-    {"id": "MARKET_TAPE", "information_domain": "REALIZED_PRICE", "cadence": "DAILY_CLOSE", "source_input": "MARKET_CONTEXT"},
-    {"id": "CHART_CROWD", "information_domain": "REALIZED_PRICE", "cadence": "WEEKLY_STATE", "source_input": "CHART_CROWD"},
-    {"id": "BUSINESS_FUNDAMENTALS", "information_domain": "SEC_FINANCIAL_FACT", "cadence": "FILING_EVENT", "source_input": "BUSINESS_CONTEXT"},
-    {"id": "MANAGEMENT_EXPECTATIONS", "information_domain": "SEC_GUIDANCE_FACT", "cadence": "FILING_EVENT", "source_input": "GUIDANCE_BINDINGS"},
-    {"id": "MATERIAL_EVENTS_AND_NEWS", "information_domain": "PIT_INFORMATION_EVENT", "cadence": "EVENT", "source_input": "SEC_8K_REVIEW"},
-    {"id": "INSIDER_BEHAVIOR", "information_domain": "SEC_OWNERSHIP", "cadence": "FILING_EVENT_WITH_REPORTING_LAG", "source_input": "FORM4_OOS"},
-    {"id": "SHORT_INTEREST", "information_domain": "POSITIONING", "cadence": "TWICE_MONTHLY_WITH_PUBLICATION_LAG", "source_input": "FINRA_INCREMENTAL"},
-    {"id": "INSTITUTIONAL_HOLDINGS", "information_domain": "POSITIONING", "cadence": "QUARTERLY_UP_TO_45_DAY_LAG", "source_input": "SEC_13F_OOS"},
-    {"id": "PORTFOLIO_FIT", "information_domain": "PRIVATE_PORTFOLIO", "cadence": "USER_CHANGE", "source_input": "PORTFOLIO_CONTEXT"},
-    {"id": "INDEPENDENT_RISK_REVIEW", "information_domain": "CROSS_AREA_CHALLENGE", "cadence": "ON_REVIEW", "source_input": "AI_REVIEW"}
+    {
+      "id": "MARKET_TAPE",
+      "information_domain": "REALIZED_PRICE",
+      "cadence": "DAILY_CLOSE",
+      "source_input": "MARKET_CONTEXT"
+    },
+    {
+      "id": "CHART_CROWD",
+      "information_domain": "REALIZED_PRICE",
+      "cadence": "WEEKLY_STATE",
+      "source_input": "CHART_CROWD"
+    },
+    {
+      "id": "BUSINESS_FUNDAMENTALS",
+      "information_domain": "SEC_FINANCIAL_FACT",
+      "cadence": "FILING_EVENT",
+      "source_input": "BUSINESS_CONTEXT"
+    },
+    {
+      "id": "MANAGEMENT_EXPECTATIONS",
+      "information_domain": "SEC_GUIDANCE_FACT",
+      "cadence": "FILING_EVENT",
+      "source_input": "GUIDANCE_BINDINGS"
+    },
+    {
+      "id": "MATERIAL_EVENTS_AND_NEWS",
+      "information_domain": "PIT_INFORMATION_EVENT",
+      "cadence": "EVENT",
+      "source_input": "SEC_8K_REVIEW"
+    },
+    {
+      "id": "INSIDER_BEHAVIOR",
+      "information_domain": "SEC_OWNERSHIP",
+      "cadence": "FILING_EVENT_WITH_REPORTING_LAG",
+      "source_input": "FORM4_OOS"
+    },
+    {
+      "id": "SHORT_INTEREST",
+      "information_domain": "POSITIONING",
+      "cadence": "TWICE_MONTHLY_WITH_PUBLICATION_LAG",
+      "source_input": "FINRA_INCREMENTAL"
+    },
+    {
+      "id": "INSTITUTIONAL_HOLDINGS",
+      "information_domain": "POSITIONING",
+      "cadence": "QUARTERLY_UP_TO_45_DAY_LAG",
+      "source_input": "SEC_13F_OOS"
+    },
+    {
+      "id": "PORTFOLIO_FIT",
+      "information_domain": "PRIVATE_PORTFOLIO",
+      "cadence": "USER_CHANGE",
+      "source_input": "PORTFOLIO_CONTEXT"
+    },
+    {
+      "id": "INDEPENDENT_RISK_REVIEW",
+      "information_domain": "CROSS_AREA_CHALLENGE",
+      "cadence": "ON_REVIEW",
+      "source_input": "AI_REVIEW"
+    }
   ],
   "authority_rules": {
     "directional_vote_requires_admitted_independent_oos": true,
