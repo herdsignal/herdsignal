@@ -59,16 +59,13 @@ tests/        운영 및 연구 계약 회귀
 - 누락값은 통과로 간주하지 않는다.
 - `*_vN.py`, 고정 JSON·CSV, 원문 해시는 재현 이력이다. 단순 중복처럼
   보여도 후속 버전이 완전히 대체한다는 증거 없이 삭제하거나 덮어쓰지 않는다.
-- 현재 판정은 `herd/research_decision_v4.json`과
-  `docs/HERD_RESEARCH_STATUS.md` 상단을 기준으로 한다.
+- 현재 판정은 `herd/research_decision_v5.json`과
+  `docs/CURRENT_STATE.md`와 `data/tools/current_state_audit.py`를 기준으로 한다.
 - Form 8-K 2.04·2.05·2.06·4.02는 source coverage만 통과한 기업 훼손
   veto 후보다. corpus·원문 검수·독립 OOS 전에는 행동 근거로 사용하지 않는다.
-- 사건 원장 947건 중 시점 유효 ticker 미연결·모호 762건은 SEC primary
-  document 보강 큐로 고정했다. 현재 ticker를 과거 사건에 소급하지 않는다.
-- P0·P1 SEC 원문 275건은 로컬 해시 snapshot으로 수집했다. 자동 symbol
-  후보 110건도 원문 검수 전에는 ticker–CIK 원장에 반영하지 않는다.
-- ticker 원문 검수 CSV에서는 `decision`, `approved_symbol`, `review_note`만
-  수정한다. 현재 110건 전부 PENDING이며 자동 승인하지 않는다.
+- 사건 원장 947건 중 301건의 filing-date 식별을 연결했고 646건이 남았다.
+  현재 ticker를 과거 사건에 소급하거나 anchor에서 열린 기간을 추론하지 않는다.
+- SEC 식별 작업의 현재 배치와 다음 단계는 `docs/CURRENT_STATE.md`만 따른다.
 
 상세 계약:
 

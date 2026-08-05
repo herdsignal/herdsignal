@@ -297,7 +297,11 @@ HerdSignal의 핵심 타이밍 계층이다.
 - 행동 모델이 없다면 서비스가 정직하게 `OBSERVE·0%`를 유지한다.
 - 행동 모델이 생기면 Buy & Hold 대비 완결 주기 우위를 재현할 수 있다.
 
-## 10. 구현 결과와 현재 경계
+## 10. 역사적 구현 요약 — 갱신 금지
+
+아래 Part A~T는 장기 운용 골격을 처음 연결한 완료 기록이다. 현재 coverage,
+권한이나 다음 단계를 정의하지 않으며 새 구현 진행률을 이 절에 추가하지 않는다.
+현재 상태는 `CURRENT_STATE.md`만 따른다.
 
 - Part A: `LONG_TERM_EVIDENCE_PACKET_V1`과 출처·PIT·최신성 gate 구현
 - Part B: State S1을 차트·군중 영역으로 연결하고 미연결 영역은 `NO_VIEW` 유지
