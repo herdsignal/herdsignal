@@ -2,16 +2,17 @@
   "report_version": "SEC_8K_STRUCTURAL_EVALUATION_REVIEW_V1",
   "status": "INDEPENDENT_HUMAN_REVIEW_PENDING",
   "rows": 182,
-  "reviewed_rows": 0,
+  "reviewed_rows": 10,
   "decision_counts": {
-    "PENDING": 182
+    "PENDING": 172,
+    "VALID": 10
   },
-  "wilson_95_lower_bound": null,
-  "ambiguous_ratio": null,
+  "wilson_95_lower_bound": 0.7224672001371106,
+  "ambiguous_ratio": 0.0,
   "checks": {
     "minimum_reviewed_rows": false,
     "minimum_wilson_95_lower_bound": false,
-    "maximum_ambiguous_ratio": false,
+    "maximum_ambiguous_ratio": true,
     "all_rows_adjudicated": false
   },
   "batch_size": 10,
@@ -20,9 +21,9 @@
     {
       "batch_id": "B001",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B002",
@@ -151,16 +152,16 @@
       "complete": false
     }
   ],
-  "next_pending_batch": "B001",
+  "next_pending_batch": "B002",
   "known_identity_labels_used": 0,
   "identity_promotion_allowed": false,
   "price_outcomes_opened": false,
   "direction_hypothesis_allowed": false,
   "blind_holdout_access": false,
   "operational_action_ratio": 0.0,
-  "next_stage": "COMPLETE_SEC_8K_INDEPENDENT_REVIEW_BATCH_B001",
+  "next_stage": "COMPLETE_SEC_8K_INDEPENDENT_REVIEW_BATCH_B002",
   "labels_path": "data/reports/sec_8k_structural_evaluation_review_v1.csv",
-  "labels_sha256": "4f8deab286a9ac33f3873d6b95180636e68af885f9f2a439c0b8effad636fae5",
+  "labels_sha256": "49c63758cb01c529cf1b951d19c65e812c6dd4e5050e972fef1f63ea60697224",
   "batch_plan_path": "data/reports/sec_8k_structural_evaluation_review_batches_v1.csv",
-  "batch_plan_sha256": "823e60fddc8d84c142d57a089ab9b609e99fc15af9596036dffd3b0a6a703ae3"
+  "batch_plan_sha256": "2cfd1ce26b2934d39f6346fa197798cec1694a655c1cb99f547e23edb9518ac3"
 }

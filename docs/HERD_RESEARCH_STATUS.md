@@ -320,8 +320,9 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 - 다음 단계는 `BATCH_REVIEW_SEC_8K_STRUCTURAL_EVALUATION_CANDIDATES_V1`이다.
 - 독립 후보 182건을 10건 단위 19개 고정 배치로 나눴다. B001~B018은 10건,
   B019는 2건이며 단일 편집 원장과 읽기 전용 배치 투영을 분리했다.
-- 현재 판정은 0/182이고 다음 단계는
-  `COMPLETE_SEC_8K_INDEPENDENT_REVIEW_BATCH_B001`이다.
+- B001 10건은 모두 `VALID`로 원문 판정했다. 보통주와 채권·corporate unit을
+  직접 분리했으며 현재 판정은 10/182이다. 다음 단계는
+  `COMPLETE_SEC_8K_INDEPENDENT_REVIEW_BATCH_B002`다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.
