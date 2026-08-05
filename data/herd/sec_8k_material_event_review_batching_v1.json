@@ -5,7 +5,7 @@
   "objective": "Partition the existing 110-row SEC source-review ledger into deterministic human-review batches without duplicating labels or auto-approving any candidate.",
   "source_review_protocol": {
     "path": "data/herd/sec_8k_identity_source_review_v1.json",
-    "sha256": "ce5b8e159feaa895a96909e27a038a2678c44db26141d6e5ff11cc545f7e3c03"
+    "sha256": "2da540f7d3896d5a05e98e406256bb8a9b41eb81fc96029c2516694c7ce7e7f4"
   },
   "source_review_labels": "data/reports/sec_8k_identity_source_review_v1.csv",
   "batching": {

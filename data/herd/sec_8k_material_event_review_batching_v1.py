@@ -95,6 +95,7 @@ def build_plan(
         "status": "HUMAN_REVIEW_PENDING" if next_batch else "ALL_BATCHES_REVIEWED",
         "protocol_sha256": _sha256(PROTOCOL),
         "source_review_status": source_report["status"],
+        "source_review_next_stage": source_report["next_stage"],
         "source_labels_sha256": None,
         "rows": len(plan),
         "batch_size": batch_size,

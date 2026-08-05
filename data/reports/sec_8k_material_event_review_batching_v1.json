@@ -1,9 +1,10 @@
 {
   "report_version": "SEC_8K_MATERIAL_EVENT_REVIEW_BATCHING_V1",
-  "status": "HUMAN_REVIEW_PENDING",
-  "protocol_sha256": "6aa85cf51b7aa520e16da2b200b341ffdad8f6c160efc3c0f8281f7ceab65083",
-  "source_review_status": "PENDING_SOURCE_DECISIONS",
-  "source_labels_sha256": "c3f92f5795ea390d23dcebdf8170862a1420014d9001f662311742eb91a40505",
+  "status": "ALL_BATCHES_REVIEWED",
+  "protocol_sha256": "42fc581a4f0128cf15aabedd4dd451f009a2807f38f453357e09e435f27eb750",
+  "source_review_status": "SOURCE_PRECISION_GATE_FAILED",
+  "source_review_next_stage": "STOP_SEC_8K_IDENTITY_PROMOTION_SOURCE_PRECISION_FAILED",
+  "source_labels_sha256": "a340899c16ed7efb7c1d65dae73ea3377aab5f57a6c6412107fe4a747a8b5131",
   "rows": 110,
   "batch_size": 10,
   "batch_count": 11,
@@ -56,59 +57,59 @@
     {
       "batch_id": "B006",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0000874761-20-000044",
       "last_review_id": "REVIEW-0001564590-20-033955"
     },
     {
       "batch_id": "B007",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0000815097-20-000066",
       "last_review_id": "REVIEW-0001552781-20-000463"
     },
     {
       "batch_id": "B008",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0001104659-20-101912",
       "last_review_id": "REVIEW-0001075531-20-000060"
     },
     {
       "batch_id": "B009",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0001104659-20-115651",
       "last_review_id": "REVIEW-0001090727-21-000006"
     },
     {
       "batch_id": "B010",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0001326160-21-000004",
       "last_review_id": "REVIEW-0001193125-21-084755"
     },
     {
       "batch_id": "B011",
       "rows": 10,
-      "pending": 10,
-      "reviewed": 0,
-      "complete": false,
+      "pending": 0,
+      "reviewed": 10,
+      "complete": true,
       "first_review_id": "REVIEW-0001628280-21-007391",
       "last_review_id": "REVIEW-0001001250-26-000031"
     }
   ],
-  "next_pending_batch": "B006",
+  "next_pending_batch": null,
   "canonical_editable_ledger": "data/reports/sec_8k_identity_source_review_v1.csv",
   "plan_is_read_only_projection": true,
   "auto_labels_created": 0,
@@ -116,5 +117,5 @@
   "direction_hypothesis_allowed": false,
   "operational_action_ratio": 0.0,
   "plan_path": "data/reports/sec_8k_material_event_review_batching_v1.csv",
-  "plan_sha256": "7b30795ae6bb957b778f71c49fa1c5989e6c175d1630f67022d5311f3daf4588"
+  "plan_sha256": "5fdafa31945a1b280dc900e0e146b9d246b877d0d35e81cc7aaa7b3c03c08472"
 }

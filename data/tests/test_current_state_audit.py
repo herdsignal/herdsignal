@@ -184,11 +184,11 @@ def test_current_state_contracts_are_consistent() -> None:
     }
     assert state["sec_8k_review_batches"] == {
         "report_version": "SEC_8K_MATERIAL_EVENT_REVIEW_BATCHING_V1",
-        "status": "HUMAN_REVIEW_PENDING",
+        "status": "ALL_BATCHES_REVIEWED",
         "rows": 110,
         "batch_size": 10,
         "batch_count": 11,
-        "next_pending_batch": "B006",
+        "next_pending_batch": None,
         "auto_labels_created": 0,
         "identity_promotion_allowed": False,
         "operational_action_ratio": 0.0,
@@ -199,7 +199,7 @@ def test_current_state_contracts_are_consistent() -> None:
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_B006"
+        == "STOP_SEC_8K_IDENTITY_PROMOTION_SOURCE_PRECISION_FAILED"
     )
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"

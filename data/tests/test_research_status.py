@@ -12,11 +12,11 @@ def _state():
         },
         "sec_8k_review_batches": {
             "rows": 110,
-            "next_pending_batch": "B006",
+            "next_pending_batch": None,
         },
         "research_boundary": {
-            "pending_sec_identity_reviews": 60,
-            "next_stage": "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_B006",
+            "pending_sec_identity_reviews": 0,
+            "next_stage": "STOP_SEC_8K_IDENTITY_PROMOTION_SOURCE_PRECISION_FAILED",
         },
         "contradictions": [],
     }
@@ -28,10 +28,10 @@ def test_research_status_keeps_action_boundary_and_review_progress_visible():
     assert summary["operational_action"] == "HOLD"
     assert summary["operational_action_ratio"] == 0.0
     assert summary["sec_review"] == {
-        "reviewed": 50,
+        "reviewed": 110,
         "total": 110,
-        "pending": 60,
-        "next_batch": "B006",
+        "pending": 0,
+        "next_batch": None,
     }
 
 
@@ -39,5 +39,5 @@ def test_research_status_text_is_short_and_action_safe():
     text = format_text(build_summary(_state()))
 
     assert "운영 행동: HOLD (0%)" in text
-    assert "SEC 원문 검수: 50/110 완료" in text
-    assert "다음 배치: B006" in text
+    assert "SEC 원문 검수: 110/110 완료" in text
+    assert "다음 배치: COMPLETE" in text

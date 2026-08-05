@@ -5,7 +5,7 @@
   "objective": "Map every researched long-term review role to the actual backend evidence packet, personal review, AI review, and frontend presentation without inventing facts or votes.",
   "input": {
     "path": "data/reports/independent_evidence_role_audit_v1.json",
-    "sha256": "63e280047d50d329435032b3725e6bc047a45f5600ff4fa183ad32728f5c751e"
+    "sha256": "07e4fad1a5d3c5f9b122369efbb22b53f031b88301861976c1860e3f1c2a9e86"
   },
   "runtime_sources": [
     "backend/src/main/java/com/herdsignal/service/decision/ObjectiveEvidenceService.java",

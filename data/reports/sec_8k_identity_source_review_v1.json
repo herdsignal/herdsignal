@@ -1,21 +1,20 @@
 {
   "report_version": "SEC_8K_IDENTITY_SOURCE_REVIEW_V1",
-  "status": "PENDING_SOURCE_DECISIONS",
-  "protocol_sha256": "ce5b8e159feaa895a96909e27a038a2678c44db26141d6e5ff11cc545f7e3c03",
+  "status": "SOURCE_PRECISION_GATE_FAILED",
+  "protocol_sha256": "2da540f7d3896d5a05e98e406256bb8a9b41eb81fc96029c2516694c7ce7e7f4",
   "candidate_rows": 110,
   "decision_counts": {
     "INVALID": 10,
-    "PENDING": 60,
-    "VALID": 40
+    "VALID": 100
   },
-  "reviewed_rows": 50,
-  "wilson_95_lower_bound": 0.6696289406777459,
+  "reviewed_rows": 110,
+  "wilson_95_lower_bound": 0.8407034728180641,
   "ambiguous_ratio": 0.0,
   "checks": {
-    "minimum_reviewed_rows": false,
+    "minimum_reviewed_rows": true,
     "minimum_wilson_95_lower_bound": false,
     "maximum_ambiguous_ratio": true,
-    "all_rows_adjudicated": false
+    "all_rows_adjudicated": true
   },
   "source_precision_passed": false,
   "approved_identity_rows": 0,
@@ -24,7 +23,7 @@
   "direction_hypothesis_allowed": false,
   "blind_holdout_access": false,
   "operational_action_ratio": 0.0,
-  "next_stage": "COMPLETE_110_SEC_IDENTITY_SOURCE_DECISIONS",
+  "next_stage": "STOP_SEC_8K_IDENTITY_PROMOTION_SOURCE_PRECISION_FAILED",
   "labels_path": "data/reports/sec_8k_identity_source_review_v1.csv",
-  "labels_sha256": "c3f92f5795ea390d23dcebdf8170862a1420014d9001f662311742eb91a40505"
+  "labels_sha256": "a340899c16ed7efb7c1d65dae73ea3377aab5f57a6c6412107fe4a747a8b5131"
 }

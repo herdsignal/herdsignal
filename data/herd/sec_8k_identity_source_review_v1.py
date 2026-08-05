@@ -192,7 +192,11 @@ def evaluate(protocol: dict[str, Any], labels: list[dict[str, str]]) -> dict[str
         "blind_holdout_access": False,
         "operational_action_ratio": 0.0,
         "next_stage": protocol[
-            "next_stage_if_passed" if passed else "next_stage_if_pending"
+            "next_stage_if_pending"
+            if pending
+            else "next_stage_if_passed"
+            if passed
+            else "next_stage_if_failed"
         ],
     }
 

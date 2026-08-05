@@ -270,11 +270,12 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 - 자동 후보가 있는 110건 전부를 원문 검수 원장에 고정했다. SEC tagged
   XBRL 후보 100건과 visible-label 후보 10건이며 각 행의 원문 SHA-256을
   다시 검증한다.
-- 현재 110건 중 50건을 원문 판정해 `VALID` 40건, `INVALID` 10건이며 60건은
-  `PENDING`이다. 전체 정확도 게이트 통과 전 승인 ticker는 0건이다. `VALID`
+- 110건을 모두 원문 판정해 `VALID` 100건, `INVALID` 10건, `PENDING` 0건이다.
+  전체 정확도 게이트를 통과하지 않아 승인 ticker는 0건이다. `VALID`
   판정은 원문 후보 중 하나를 명시해야 하며 source 열을 바꾸면 검증이 실패한다.
 - 110건 전체 판정, 최소 100건 검수, Wilson 95% 하한 90%, 모호 비율 10%
-  이하를 모두 충족해야만 시점 유효 ticker 원장 승격 단계로 갈 수 있다.
+  이하를 모두 충족해야만 시점 유효 ticker 원장 승격 단계로 갈 수 있다. 실제
+  Wilson 95% 하한은 0.8407로 기준에 미달해 `SOURCE_PRECISION_GATE_FAILED`다.
 
 계약과 검수 원장은 `data/herd/sec_8k_identity_source_review_v1.json`,
 `data/reports/sec_8k_identity_source_review_v1.csv`다.
@@ -284,11 +285,12 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 - SEC 훼손 사건 947건의 source coverage 통과는 기업 상태 veto 연구의
   입력 가능성만 뜻한다. 매수·익절 예측력이나 HERD 가중치 근거가 아니다.
 - 시점 유효 ticker 연결은 185건뿐이고 760건 미연결·2건 모호 상태다.
-  1차 원문 275건 중 추출 후보 110건은 모두 사람 판정 대기다.
+  1차 원문 275건 중 추출 후보 110건은 모두 사람 판정을 마쳤다.
 - 110건 전체 판정, 최소 100건 검수, Wilson 95% 하한 90%, 모호 비율 10%
   이하를 통과하기 전에는 ticker 원장 승격과 가격 결과 열람을 허용하지 않는다.
-- 다음 작업은 `COMPLETE_110_SEC_IDENTITY_SOURCE_DECISIONS` 하나다. 자동 승인,
-  현재 ticker의 과거 소급, Blind holdout 개방과 운영 행동 활성화는 금지한다.
+- 다음 상태는 `STOP_SEC_8K_IDENTITY_PROMOTION_SOURCE_PRECISION_FAILED`다. 자동
+  승인, 현재 ticker의 과거 소급, Blind holdout 개방과 운영 행동 활성화는
+  금지한다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.

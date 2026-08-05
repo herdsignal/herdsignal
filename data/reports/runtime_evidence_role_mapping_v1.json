@@ -1,7 +1,7 @@
 {
   "report_version": "HERD_RUNTIME_EVIDENCE_ROLE_MAPPING_V1",
   "status": "RUNTIME_MAPPING_COMPLETE_FAIL_CLOSED",
-  "protocol_sha256": "d97abe95c990f072f5d2ee043652d052de5f522d02e45b52047471f48267d824",
+  "protocol_sha256": "9c12eb902c3a06cdbe81a216a84bb528225448c3dd172f161f20ffdfb497618f",
   "role_count": 10,
   "objective_fact_roles": [
     "MARKET_TAPE",

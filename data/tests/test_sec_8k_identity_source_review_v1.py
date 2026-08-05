@@ -48,3 +48,18 @@ def test_action_authority_cannot_be_enabled() -> None:
     protocol["authority"]["operational_action_ratio"] = 0.05
     with pytest.raises(Sec8KIdentitySourceReviewError):
         evaluate(protocol, build_review_rows(_protocol()))
+
+
+def test_completed_review_that_misses_precision_gate_stops_promotion() -> None:
+    protocol = _protocol()
+    rows = build_review_rows(protocol)
+    for index, row in enumerate(rows):
+        row["decision"] = "VALID" if index < 100 else "INVALID"
+        row["approved_symbol"] = row["candidate_symbols"].split("|")[0] if index < 100 else ""
+        row["review_note"] = "source checked"
+
+    report = evaluate(protocol, rows)
+
+    assert report["status"] == "SOURCE_PRECISION_GATE_FAILED"
+    assert report["identity_promotion_allowed"] is False
+    assert report["next_stage"] == "STOP_SEC_8K_IDENTITY_PROMOTION_SOURCE_PRECISION_FAILED"

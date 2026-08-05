@@ -502,8 +502,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "sec_identity_work_role": prior_decision["new_source_candidate"]["allowed_role"],
             "sec_identity_work_unlocks_action_direction": False,
             "completed_stage": decision["next_stage"]["id"],
-            "next_stage": "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
-            + (sec_8k_review_batching["next_pending_batch"] or "COMPLETE"),
+            "next_stage": (
+                "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
+                + sec_8k_review_batching["next_pending_batch"]
+                if sec_8k_review_batching["next_pending_batch"]
+                else sec_8k_review_batching["source_review_next_stage"]
+            ),
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],
         },
