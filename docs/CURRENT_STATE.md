@@ -164,6 +164,12 @@ Evidence Packet의 연결 감사는 완료했다.
 검수 대상으로 열었다. 5건은 `F`, `EL`, `PEG`, `TEL`, `FLEX`로 모두 원문과
 일치했지만 Wilson 95% 하한은 0.5655이고 독립 최소 100건에 미달한다. 다음은
 평가 모집단 확장이며 승격 권한은 여전히 0이다.
+
+독립 평가 모집단은 기존 hard-adverse corpus에서 이미 시점 유효 식별이 있는
+8-K·8-K/A 185건, 101개 발행사로 고정했다. 기존 개발 원문 275건과 앞선 독립
+검수 5건의 accession 교집합은 0이며, 정답 ticker는 수집 queue에 노출하지
+않았다. 다음 단계는 SEC primary document 185건을 해시 snapshot으로 수집하는
+것이다.
 이후에도 새 정보가 남는 경우에만 다음 조건을 갖춘 단일 가설 하나를 허용한다.
 
 1. 기존 실패 변수와 중복되지 않는 경제적 이유
@@ -204,9 +210,10 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 9. SEC 8-K 110건의 재현 가능한 수동 검수 배치 구성은 완료했다.
 10. 배치 B001~B011 원문 판정을 완료했고 정밀도 게이트 실패를 기록했다.
 11. 구조적 표지 파서 V2의 새 후보 5건을 기존 개발 라벨과 분리해 검수했다.
-12. 독립 최소 100건을 확보할 구조적 평가 모집단 확장 계약을 설계한다.
-13. 독립 방향 정보가 확인될 때만 단일 가설 하나를 결과 전에 고정한다.
-14. 새 가설이 독립 OOS를 통과한 경우에만 전향 확인과 5% 정책 검증으로 이동한다.
+12. 독립 구조적 평가 모집단 185건·101개 발행사를 결과 확인 전에 고정했다.
+13. 평가 모집단의 SEC primary document를 불변 snapshot으로 수집한다.
+14. 독립 방향 정보가 확인될 때만 단일 가설 하나를 결과 전에 고정한다.
+15. 새 가설이 독립 OOS를 통과한 경우에만 전향 확인과 5% 정책 검증으로 이동한다.
 
 ## 확인 명령
 
@@ -215,6 +222,7 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 ./scripts/audit-sec-identity-failures.sh
 ./scripts/build-sec-structural-cover-v2.sh
 ./scripts/review-sec-structural-candidates.sh
+./scripts/build-sec-structural-evaluation-queue.sh
 ./scripts/audit-current-state.sh
 ./scripts/verify.sh
 ```

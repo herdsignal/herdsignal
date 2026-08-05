@@ -308,6 +308,10 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 - 독립 표본 5건의 Wilson 95% 하한은 0.5655이고 최소 100건 조건에 미달한다.
   개발 110건과 합치지 않으며 다음 단계는
   `EXPAND_SEC_8K_STRUCTURAL_EVALUATION_POPULATION`이다.
+- 기존 947건 hard-adverse corpus에서 시점 유효 식별이 있는 8-K·8-K/A 185건,
+  101개 발행사를 독립 평가 모집단으로 고정했다. 개발 275건과 새 검수 5건의
+  accession 교집합은 0이고 queue에는 기존 정답 ticker를 넣지 않았다.
+- 다음 단계는 `COLLECT_SEC_8K_STRUCTURAL_EVALUATION_PRIMARY_DOCUMENTS_V1`이다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.

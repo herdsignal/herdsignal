@@ -37,6 +37,7 @@ SEC_8K_REVIEW_BATCHING = ROOT / "data" / "reports" / "sec_8k_material_event_revi
 SEC_8K_EXTRACTION_FAILURE_AUDIT = ROOT / "data" / "reports" / "sec_8k_identity_extraction_failure_audit_v1.json"
 SEC_8K_STRUCTURAL_EXTRACTOR = ROOT / "data" / "reports" / "sec_8k_structural_cover_extractor_v2.json"
 SEC_8K_STRUCTURAL_REVIEW = ROOT / "data" / "reports" / "sec_8k_structural_candidate_review_v1.json"
+SEC_8K_STRUCTURAL_EXPANSION = ROOT / "data" / "reports" / "sec_8k_structural_evaluation_expansion_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -75,6 +76,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     sec_8k_failure_audit = _load(root / SEC_8K_EXTRACTION_FAILURE_AUDIT.relative_to(ROOT))
     sec_8k_structural_extractor = _load(root / SEC_8K_STRUCTURAL_EXTRACTOR.relative_to(ROOT))
     sec_8k_structural_review = _load(root / SEC_8K_STRUCTURAL_REVIEW.relative_to(ROOT))
+    sec_8k_structural_expansion = _load(root / SEC_8K_STRUCTURAL_EXPANSION.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -271,6 +273,14 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("undersized SEC 8-K structural review promotes identity")
     if sec_8k_structural_review["operational_action_ratio"] != 0.0:
         contradictions.append("SEC 8-K structural review unexpectedly has action authority")
+    if sec_8k_structural_expansion["development_accession_overlap"] != 0:
+        contradictions.append("SEC 8-K evaluation expansion overlaps development data")
+    if sec_8k_structural_expansion["canonical_symbols_exposed"] != 0:
+        contradictions.append("SEC 8-K evaluation queue exposes known ticker labels")
+    if sec_8k_structural_expansion["identity_promotion_allowed"]:
+        contradictions.append("unreviewed SEC 8-K evaluation queue promotes identity")
+    if sec_8k_structural_expansion["operational_action_ratio"] != 0.0:
+        contradictions.append("SEC 8-K evaluation queue unexpectedly has action authority")
 
     return {
         "version": "HERDSIGNAL_CURRENT_STATE_AUDIT_V1",
@@ -537,6 +547,18 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "unseen_wilson_95_lower_bound": sec_8k_structural_review[
                 "wilson_95_lower_bound"
             ],
+            "independent_evaluation_queue_status": sec_8k_structural_expansion[
+                "status"
+            ],
+            "independent_evaluation_documents": sec_8k_structural_expansion[
+                "documents"
+            ],
+            "independent_evaluation_issuers": sec_8k_structural_expansion[
+                "issuers"
+            ],
+            "development_accession_overlap": sec_8k_structural_expansion[
+                "development_accession_overlap"
+            ],
             "identity_promotion_allowed": sec_8k_structural_extractor[
                 "identity_promotion_allowed"
             ],
@@ -556,7 +578,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
                 + sec_8k_review_batching["next_pending_batch"]
                 if sec_8k_review_batching["next_pending_batch"]
-                else sec_8k_structural_review["next_stage"]
+                else sec_8k_structural_expansion["next_stage"]
             ),
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],

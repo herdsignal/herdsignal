@@ -611,6 +611,10 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/herd/sec_8k_structural_evaluation_expansion_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/herd/sec_auxiliary_veto_authority_v1.json",
       "status": "REVIEW_REQUIRED"
     },
@@ -1888,6 +1892,14 @@
     },
     {
       "path": "data/reports/sec_8k_structural_cover_extractor_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_structural_evaluation_expansion_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_structural_evaluation_expansion_v1.json",
       "status": "DATA_PIPELINE"
     },
     {

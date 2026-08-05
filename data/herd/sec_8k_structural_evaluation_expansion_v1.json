@@ -1,0 +1,68 @@
+{
+  "protocol_version": "SEC_8K_STRUCTURAL_EVALUATION_EXPANSION_V1",
+  "status": "LOCKED_BEFORE_INDEPENDENT_PRIMARY_DOCUMENT_COLLECTION",
+  "as_of": "2026-08-05",
+  "objective": "Freeze an outcome-blind SEC 8-K population large enough to evaluate the structural cover parser without reusing any development or prior source-review accession.",
+  "locked_inputs": [
+    {
+      "role": "CORPUS_PROTOCOL",
+      "path": "data/herd/sec_8k_hard_adverse_event_corpus_v1.json",
+      "sha256": "8db99d5c2549712a030588e2b3014d101de5dc4b0c6e4315bed79d7e4ee794d2"
+    },
+    {
+      "role": "CORPUS_REPORT",
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.json",
+      "sha256": "0e5b574c7c73dd79e4bc85f42a175e4bd24706b7aafd2797dd4e25acf2efe140"
+    },
+    {
+      "role": "CORPUS_LEDGER",
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.csv",
+      "sha256": "2d1a9a1570a78df09427cc26448841bf14aa5f0384f44dc8a64873419e392688"
+    },
+    {
+      "role": "DEVELOPMENT_COLLECTION_INDEX",
+      "path": "data/reports/sec_8k_identity_primary_document_collection_v1.csv",
+      "sha256": "07b4e599fd6eac398d6bec26e96fb1135455bb8ddab4d8f13e8502986e0408f2"
+    },
+    {
+      "role": "PRIOR_UNSEEN_REVIEW_REPORT",
+      "path": "data/reports/sec_8k_structural_candidate_review_v1.json",
+      "sha256": "f9bf672b8138fbfe4b26c63c98de6140516febb50ff52d3248f61fd81773774a"
+    }
+  ],
+  "selection": {
+    "forms": ["8-K", "8-K/A"],
+    "minimum_filing_date": "2019-05-02",
+    "required_identity_status": "TIME_VALID_MAPPED",
+    "include_all_eligible_rows": true,
+    "minimum_expected_documents": 100,
+    "expected_documents": 185,
+    "expected_issuers": 101,
+    "exclude_all_development_accessions": true,
+    "withhold_canonical_symbol_from_queue": true
+  },
+  "independence": {
+    "development_accession_overlap_allowed": false,
+    "prior_unseen_review_overlap_allowed": false,
+    "selection_uses_price_or_return_outcomes": false,
+    "known_identity_used_as_parser_label": false,
+    "canonical_symbol_exposed_to_extractor": false
+  },
+  "collection": {
+    "allowed_host": "www.sec.gov",
+    "document": "PRIMARY_8K_DOCUMENT",
+    "preserve_bytes_and_sha256": true
+  },
+  "outputs": {
+    "queue": "data/reports/sec_8k_structural_evaluation_expansion_v1.csv",
+    "report": "data/reports/sec_8k_structural_evaluation_expansion_v1.json"
+  },
+  "next_stage": "COLLECT_SEC_8K_STRUCTURAL_EVALUATION_PRIMARY_DOCUMENTS_V1",
+  "authority": {
+    "identity_promotion_allowed": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

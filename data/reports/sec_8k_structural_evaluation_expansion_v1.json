@@ -1,0 +1,27 @@
+{
+  "report_version": "SEC_8K_STRUCTURAL_EVALUATION_EXPANSION_V1",
+  "status": "INDEPENDENT_STRUCTURAL_EVALUATION_QUEUE_READY",
+  "documents": 185,
+  "issuers": 101,
+  "first_filing_date": "2021-06-04",
+  "last_filing_date": "2026-06-03",
+  "matched_item_counts": {
+    "2.04": 14,
+    "2.05": 113,
+    "2.05|2.06": 12,
+    "2.06": 40,
+    "4.02": 6
+  },
+  "development_accession_overlap": 0,
+  "prior_unseen_review_overlap": 0,
+  "canonical_symbols_exposed": 0,
+  "selection_uses_price_or_return_outcomes": false,
+  "identity_promotion_allowed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "COLLECT_SEC_8K_STRUCTURAL_EVALUATION_PRIMARY_DOCUMENTS_V1",
+  "queue_path": "data/reports/sec_8k_structural_evaluation_expansion_v1.csv",
+  "queue_sha256": "fd9d42f01d5c4cf4d078db4da9bb3c0865493780b894d882869cfa444f82b77d"
+}
