@@ -1,0 +1,21 @@
+{
+  "report_version": "SEC_8K_STRUCTURAL_CANDIDATE_REVIEW_V1",
+  "status": "UNSEEN_REVIEW_COMPLETE_INSUFFICIENT_FOR_PRECISION_GATE",
+  "rows": 5,
+  "reviewed_rows": 5,
+  "decision_counts": {
+    "VALID": 5
+  },
+  "wilson_95_lower_bound": 0.5655175352168252,
+  "minimum_independent_reviewed_rows_met": false,
+  "minimum_precision_met": false,
+  "development_rows_pooled": 0,
+  "identity_promotion_allowed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "EXPAND_SEC_8K_STRUCTURAL_EVALUATION_POPULATION",
+  "labels_path": "data/reports/sec_8k_structural_candidate_review_v1.csv",
+  "labels_sha256": "3a4b5c3888eb20e4e8cd9ca22d78cdd96186f215def2c503b3232802b5313458"
+}

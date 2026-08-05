@@ -199,7 +199,7 @@ def test_current_state_contracts_are_consistent() -> None:
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "REVIEW_UNSEEN_SEC_8K_STRUCTURAL_CANDIDATES"
+        == "EXPAND_SEC_8K_STRUCTURAL_EVALUATION_POPULATION"
     )
     assert state["sec_8k_structural_extraction"] == {
         "failure_audit_status": "FAILURE_AUDIT_COMPLETE_PARSER_CHANGE_ALLOWED",
@@ -208,6 +208,10 @@ def test_current_state_contracts_are_consistent() -> None:
         "status": "V2_DEVELOPMENT_COMPLETE_UNSEEN_REVIEW_REQUIRED",
         "development_regression_passed": 110,
         "unseen_candidate_rows": 5,
+        "unseen_review_status": "UNSEEN_REVIEW_COMPLETE_INSUFFICIENT_FOR_PRECISION_GATE",
+        "unseen_reviewed_rows": 5,
+        "unseen_valid_rows": 5,
+        "unseen_wilson_95_lower_bound": 0.5655175352168252,
         "identity_promotion_allowed": False,
         "operational_action_ratio": 0.0,
     }

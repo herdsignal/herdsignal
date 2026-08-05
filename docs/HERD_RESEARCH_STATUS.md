@@ -303,6 +303,11 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
   무후보 165건 중 구조적으로 복구된 5건만 새 사람 검수 큐로 넘긴다.
 - 다음 단계는 `REVIEW_UNSEEN_SEC_8K_STRUCTURAL_CANDIDATES`이며 식별 승격, 가격
   결과, 방향 가설과 운영 행동 권한은 계속 닫혀 있다.
+- 새 후보 5건은 SEC 원문에서 `F`, `EL`, `PEG`, `TEL`, `FLEX`로 모두
+  `VALID` 판정했다. `PEG31`은 senior note라 보통주 기호에서 제외했다.
+- 독립 표본 5건의 Wilson 95% 하한은 0.5655이고 최소 100건 조건에 미달한다.
+  개발 110건과 합치지 않으며 다음 단계는
+  `EXPAND_SEC_8K_STRUCTURAL_EVALUATION_POPULATION`이다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.

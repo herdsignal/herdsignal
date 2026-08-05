@@ -36,6 +36,7 @@ SOURCE_GAP_PRIORITY = ROOT / "data" / "reports" / "role_specific_source_gap_prio
 SEC_8K_REVIEW_BATCHING = ROOT / "data" / "reports" / "sec_8k_material_event_review_batching_v1.json"
 SEC_8K_EXTRACTION_FAILURE_AUDIT = ROOT / "data" / "reports" / "sec_8k_identity_extraction_failure_audit_v1.json"
 SEC_8K_STRUCTURAL_EXTRACTOR = ROOT / "data" / "reports" / "sec_8k_structural_cover_extractor_v2.json"
+SEC_8K_STRUCTURAL_REVIEW = ROOT / "data" / "reports" / "sec_8k_structural_candidate_review_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -73,6 +74,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     sec_8k_review_batching = _load(root / SEC_8K_REVIEW_BATCHING.relative_to(ROOT))
     sec_8k_failure_audit = _load(root / SEC_8K_EXTRACTION_FAILURE_AUDIT.relative_to(ROOT))
     sec_8k_structural_extractor = _load(root / SEC_8K_STRUCTURAL_EXTRACTOR.relative_to(ROOT))
+    sec_8k_structural_review = _load(root / SEC_8K_STRUCTURAL_REVIEW.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -263,6 +265,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("SEC 8-K structural extractor unexpectedly promotes identity")
     if sec_8k_structural_extractor["operational_action_ratio"] != 0.0:
         contradictions.append("SEC 8-K structural extractor unexpectedly has action authority")
+    if sec_8k_structural_review["development_rows_pooled"] != 0:
+        contradictions.append("SEC 8-K structural review pools development labels")
+    if sec_8k_structural_review["identity_promotion_allowed"]:
+        contradictions.append("undersized SEC 8-K structural review promotes identity")
+    if sec_8k_structural_review["operational_action_ratio"] != 0.0:
+        contradictions.append("SEC 8-K structural review unexpectedly has action authority")
 
     return {
         "version": "HERDSIGNAL_CURRENT_STATE_AUDIT_V1",
@@ -521,6 +529,14 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "unseen_candidate_rows": sec_8k_structural_extractor[
                 "unseen_candidate_rows"
             ],
+            "unseen_review_status": sec_8k_structural_review["status"],
+            "unseen_reviewed_rows": sec_8k_structural_review["reviewed_rows"],
+            "unseen_valid_rows": sec_8k_structural_review["decision_counts"].get(
+                "VALID", 0
+            ),
+            "unseen_wilson_95_lower_bound": sec_8k_structural_review[
+                "wilson_95_lower_bound"
+            ],
             "identity_promotion_allowed": sec_8k_structural_extractor[
                 "identity_promotion_allowed"
             ],
@@ -540,7 +556,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
                 + sec_8k_review_batching["next_pending_batch"]
                 if sec_8k_review_batching["next_pending_batch"]
-                else sec_8k_structural_extractor["next_stage"]
+                else sec_8k_structural_review["next_stage"]
             ),
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],

@@ -201,6 +201,9 @@
       "data/herd/sec_8k_structural_cover_extractor_v2.json",
       "data/reports/sec_8k_structural_cover_extractor_v2.csv",
       "data/reports/sec_8k_structural_cover_extractor_v2.json",
+      "data/herd/sec_8k_structural_candidate_review_v1.json",
+      "data/reports/sec_8k_structural_candidate_review_v1.csv",
+      "data/reports/sec_8k_structural_candidate_review_v1.json",
       "data/reports/ticker_disjoint_earnings_oos_expansion_v2_candidates.csv",
       "data/reports/ticker_disjoint_earnings_oos_expansion_v2_lock.json",
       "data/herd/former_constituent_sec_identity_corrections_v1.json",
@@ -272,6 +275,7 @@
     "DIAGNOSTIC": [
       "data/herd/sec_8k_identity_extraction_failure_audit_v1.json",
       "data/reports/sec_8k_identity_extraction_failure_audit_v1.json",
+      "docs/REPOSITORY_FILE_AUDIT.md",
       "data/herd/simple_action_baselines_v1.json",
       "data/reports/simple_action_baselines_v1.json",
       "data/reports/simple_action_baselines_v1.csv",

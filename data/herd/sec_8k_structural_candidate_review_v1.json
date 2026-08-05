@@ -1,0 +1,52 @@
+{
+  "protocol_version": "SEC_8K_STRUCTURAL_CANDIDATE_REVIEW_V1",
+  "status": "LOCKED_BEFORE_UNSEEN_SOURCE_REVIEW",
+  "as_of": "2026-08-05",
+  "objective": "Review only the five previously unseen candidates created by the structural SEC cover extractor without pooling development labels.",
+  "locked_inputs": [
+    {
+      "role": "EXTRACTOR_PROTOCOL",
+      "path": "data/herd/sec_8k_structural_cover_extractor_v2.json",
+      "sha256": "2fbec1a752b6a45fdc427c6bc55a79120083bcb17ef28e054b10dd3539756a57"
+    },
+    {
+      "role": "EXTRACTOR_REPORT",
+      "path": "data/reports/sec_8k_structural_cover_extractor_v2.json",
+      "sha256": "77f4a89d29bd09b14ae0d5f506224dc6914eec31700b68f4b4e10c9ae89dbbf7"
+    },
+    {
+      "role": "EXTRACTOR_CANDIDATES",
+      "path": "data/reports/sec_8k_structural_cover_extractor_v2.csv",
+      "sha256": "367c1da44a314c71c8ee967834f4baaf85210ad2adc26b3f90f0bfac7145de85"
+    },
+    {
+      "role": "LOCAL_SNAPSHOT_MANIFEST",
+      "path": "data/reference/sec/sec-8k-identity-primary-v1-p0p1-20260802/manifest.json",
+      "sha256": "cd21863a03eeaf0eed2ace76dff12e56d9b5c834996f951b92e3a9f31c91c117"
+    }
+  ],
+  "review_scope": {
+    "expected_rows": 5,
+    "source_role": "UNSEEN_HUMAN_REVIEW",
+    "allowed_decisions": ["PENDING", "VALID", "INVALID", "AMBIGUOUS"]
+  },
+  "precision_boundary": {
+    "minimum_independent_reviewed_rows": 100,
+    "minimum_wilson_95_lower_bound": 0.9,
+    "pool_with_development_rows": false,
+    "promotion_on_small_sample": false
+  },
+  "outputs": {
+    "labels": "data/reports/sec_8k_structural_candidate_review_v1.csv",
+    "report": "data/reports/sec_8k_structural_candidate_review_v1.json"
+  },
+  "next_stage_if_pending": "COMPLETE_UNSEEN_SEC_8K_STRUCTURAL_CANDIDATE_REVIEW",
+  "next_stage_if_insufficient": "EXPAND_SEC_8K_STRUCTURAL_EVALUATION_POPULATION",
+  "authority": {
+    "identity_promotion_allowed": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}
