@@ -188,7 +188,7 @@ def test_current_state_contracts_are_consistent() -> None:
         "rows": 110,
         "batch_size": 10,
         "batch_count": 11,
-        "next_pending_batch": "B005",
+        "next_pending_batch": "B006",
         "auto_labels_created": 0,
         "identity_promotion_allowed": False,
         "operational_action_ratio": 0.0,
@@ -199,7 +199,7 @@ def test_current_state_contracts_are_consistent() -> None:
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_B005"
+        == "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_B006"
     )
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"

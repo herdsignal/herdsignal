@@ -67,12 +67,12 @@
     {
       "id": "SEC_8K_REVIEW",
       "path": "data/reports/sec_8k_identity_source_review_v1.json",
-      "sha256": "cd8b027b19bc29e7c3bca7142890cbac31632f5b51920994baa11178426cf5ab"
+      "sha256": "cb3c4ef883a17fb44778e9655742bc5b2a401ff8578ff77e4d140c9eef532199"
     },
     {
       "id": "FAILURE_SYNTHESIS",
       "path": "data/reports/failed_action_research_synthesis_v1.json",
-      "sha256": "e5bf824bdf83abdce86dd9e18a2655b03719843222a918fa1edbcf350a7f19ea"
+      "sha256": "a35446741f4d3559f25f3732ae2702aa5e99913d2f7e70297797af4b216e8222"
     }
   ],
   "official_source_facts": [

@@ -5,11 +5,11 @@
   "candidate_rows": 110,
   "decision_counts": {
     "INVALID": 10,
-    "PENDING": 70,
-    "VALID": 30
+    "PENDING": 60,
+    "VALID": 40
   },
-  "reviewed_rows": 40,
-  "wilson_95_lower_bound": 0.5980603857923198,
+  "reviewed_rows": 50,
+  "wilson_95_lower_bound": 0.6696289406777459,
   "ambiguous_ratio": 0.0,
   "checks": {
     "minimum_reviewed_rows": false,
@@ -26,5 +26,5 @@
   "operational_action_ratio": 0.0,
   "next_stage": "COMPLETE_110_SEC_IDENTITY_SOURCE_DECISIONS",
   "labels_path": "data/reports/sec_8k_identity_source_review_v1.csv",
-  "labels_sha256": "9ecafb2a0ea62bef2597af4ed76a85441bbc5297c1267880d9ff581051c36874"
+  "labels_sha256": "c3f92f5795ea390d23dcebdf8170862a1420014d9001f662311742eb91a40505"
 }

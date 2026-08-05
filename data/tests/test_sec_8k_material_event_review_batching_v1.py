@@ -67,7 +67,7 @@ def test_worklist_exposes_sources_without_creating_labels() -> None:
     protocol, source_protocol, labels = _inputs()
     plan, _ = build_plan(protocol, source_protocol, labels)
 
-    worklist = build_worklist(plan, "B005")
+    worklist = build_worklist(plan, "B006")
 
     assert worklist["rows"] == 10
     assert worklist["pending"] == 10

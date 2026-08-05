@@ -1,7 +1,7 @@
 {
   "report_version": "HERD_FAILED_ACTION_RESEARCH_SYNTHESIS_V1",
   "status": "SYNTHESIS_COMPLETE_NEW_HYPOTHESIS_BLOCKED",
-  "protocol_sha256": "f48c01ca074f04cdc3d5e9255a630798dc6d5afab01b66aacae9dabbd5c83bff",
+  "protocol_sha256": "00f9393508c3fb70626985346f2391546233277c4d753cffcad2418f79e989f3",
   "target_validity_audit": {
     "economic_opportunity_exists": true,
     "observed_events": 1998,
@@ -135,7 +135,7 @@
       "FINRA_SHORT_INTEREST": "RECENT_SENSITIVITY_AND_PROSPECTIVE_SHADOW_ONLY"
     },
     "sec_8k_identity_review_status": "PENDING_SOURCE_DECISIONS",
-    "sec_8k_reviewed_rows": 40,
+    "sec_8k_reviewed_rows": 50,
     "sec_8k_direction_hypothesis_allowed": false,
     "distinct_historical_source_ready": false,
     "decision": "NO_DISTINCT_HISTORICAL_DIRECTION_SOURCE_READY"
