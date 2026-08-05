@@ -1,0 +1,45 @@
+{
+  "protocol_version": "SEC_8K_STRUCTURAL_EVALUATION_COLLECTION_V1",
+  "status": "LOCKED_BEFORE_INDEPENDENT_SOURCE_COLLECTION",
+  "as_of": "2026-08-05",
+  "objective": "Collect immutable SEC primary documents for the independent structural-cover evaluation queue without extracting or exposing ticker labels.",
+  "locked_inputs": [
+    {
+      "role": "EVALUATION_QUEUE_PROTOCOL",
+      "path": "data/herd/sec_8k_structural_evaluation_expansion_v1.json",
+      "sha256": "24880c6c9e411191fdf9aac48f89ee0316d407b3fdd56c5106c340ef36eac68e"
+    },
+    {
+      "role": "EVALUATION_QUEUE_REPORT",
+      "path": "data/reports/sec_8k_structural_evaluation_expansion_v1.json",
+      "sha256": "2979ea9de6651383024b1bb8fe56be59897ba36dd33e6ec221f90bbc2344c11f"
+    },
+    {
+      "role": "EVALUATION_QUEUE",
+      "path": "data/reports/sec_8k_structural_evaluation_expansion_v1.csv",
+      "sha256": "fd9d42f01d5c4cf4d078db4da9bb3c0865493780b894d882869cfa444f82b77d"
+    }
+  ],
+  "collection": {
+    "expected_documents": 185,
+    "snapshot_id": "sec-8k-structural-evaluation-v1-20260805",
+    "output_root": "data/reference/sec",
+    "allowed_host": "www.sec.gov",
+    "timeout_seconds": 60,
+    "delay_seconds": 0.12,
+    "maximum_attempts": 4,
+    "maximum_document_bytes": 10000000
+  },
+  "outputs": {
+    "index": "data/reports/sec_8k_structural_evaluation_collection_v1.csv",
+    "report": "data/reports/sec_8k_structural_evaluation_collection_v1.json"
+  },
+  "next_stage": "RUN_SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2_INDEPENDENT",
+  "authority": {
+    "identity_promotion_allowed": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

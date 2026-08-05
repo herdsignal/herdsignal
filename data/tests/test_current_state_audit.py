@@ -199,7 +199,7 @@ def test_current_state_contracts_are_consistent() -> None:
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "COLLECT_SEC_8K_STRUCTURAL_EVALUATION_PRIMARY_DOCUMENTS_V1"
+        == "RUN_SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2_INDEPENDENT"
     )
     assert state["sec_8k_structural_extraction"] == {
         "failure_audit_status": "FAILURE_AUDIT_COMPLETE_PARSER_CHANGE_ALLOWED",
@@ -216,6 +216,9 @@ def test_current_state_contracts_are_consistent() -> None:
         "independent_evaluation_documents": 185,
         "independent_evaluation_issuers": 101,
         "development_accession_overlap": 0,
+        "independent_collection_status": "INDEPENDENT_PRIMARY_DOCUMENTS_COLLECTED",
+        "independent_collected_documents": 185,
+        "independent_collection_failures": 0,
         "identity_promotion_allowed": False,
         "operational_action_ratio": 0.0,
     }

@@ -16,7 +16,7 @@ def _state():
         },
         "research_boundary": {
             "pending_sec_identity_reviews": 0,
-            "next_stage": "COLLECT_SEC_8K_STRUCTURAL_EVALUATION_PRIMARY_DOCUMENTS_V1",
+            "next_stage": "RUN_SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2_INDEPENDENT",
         },
         "contradictions": [],
     }

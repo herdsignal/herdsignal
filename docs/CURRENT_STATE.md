@@ -170,6 +170,11 @@ Evidence Packet의 연결 감사는 완료했다.
 검수 5건의 accession 교집합은 0이며, 정답 ticker는 수집 queue에 노출하지
 않았다. 다음 단계는 SEC primary document 185건을 해시 snapshot으로 수집하는
 것이다.
+
+평가 모집단 185건은 SEC primary document bytes와 SHA-256을
+`sec-8k-structural-evaluation-v1-20260805` snapshot에 전부 수집했다. 실패는
+0건이고 정답 ticker·가격 결과는 수집물에 포함하지 않았다. 다음 단계는 잠긴
+구조적 표지 파서 V2를 이 독립 원문에 변경 없이 실행하는 것이다.
 이후에도 새 정보가 남는 경우에만 다음 조건을 갖춘 단일 가설 하나를 허용한다.
 
 1. 기존 실패 변수와 중복되지 않는 경제적 이유
@@ -211,9 +216,10 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 10. 배치 B001~B011 원문 판정을 완료했고 정밀도 게이트 실패를 기록했다.
 11. 구조적 표지 파서 V2의 새 후보 5건을 기존 개발 라벨과 분리해 검수했다.
 12. 독립 구조적 평가 모집단 185건·101개 발행사를 결과 확인 전에 고정했다.
-13. 평가 모집단의 SEC primary document를 불변 snapshot으로 수집한다.
-14. 독립 방향 정보가 확인될 때만 단일 가설 하나를 결과 전에 고정한다.
-15. 새 가설이 독립 OOS를 통과한 경우에만 전향 확인과 5% 정책 검증으로 이동한다.
+13. 평가 모집단의 SEC primary document 185건을 불변 snapshot으로 수집했다.
+14. 구조적 표지 파서 V2를 규칙 변경 없이 독립 원문에 실행한다.
+15. 독립 방향 정보가 확인될 때만 단일 가설 하나를 결과 전에 고정한다.
+16. 새 가설이 독립 OOS를 통과한 경우에만 전향 확인과 5% 정책 검증으로 이동한다.
 
 ## 확인 명령
 
@@ -223,6 +229,7 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 ./scripts/build-sec-structural-cover-v2.sh
 ./scripts/review-sec-structural-candidates.sh
 ./scripts/build-sec-structural-evaluation-queue.sh
+./scripts/collect-sec-structural-evaluation.sh
 ./scripts/audit-current-state.sh
 ./scripts/verify.sh
 ```

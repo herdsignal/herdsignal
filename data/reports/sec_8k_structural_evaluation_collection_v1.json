@@ -1,0 +1,18 @@
+{
+  "report_version": "SEC_8K_STRUCTURAL_EVALUATION_COLLECTION_V1",
+  "status": "INDEPENDENT_PRIMARY_DOCUMENTS_COLLECTED",
+  "snapshot_id": "sec-8k-structural-evaluation-v1-20260805",
+  "snapshot_manifest_sha256": "fa566306a57dee9060656d4821e1ebb4a654b93845fd1c7ff23d887f4d687318",
+  "collected_documents": 185,
+  "collected_issuers": 101,
+  "failed_documents": 0,
+  "canonical_symbols_exposed": 0,
+  "identity_promotion_allowed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "RUN_SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2_INDEPENDENT",
+  "index_path": "data/reports/sec_8k_structural_evaluation_collection_v1.csv",
+  "index_sha256": "5a0d39408ba6fc2766095859a9359bffd2d61ed10dbb426309da8e757f7fd14d"
+}
