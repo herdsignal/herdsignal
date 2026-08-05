@@ -1,0 +1,46 @@
+{
+  "protocol_version": "SEC_8K_REMAINING_IDENTITY_COVERAGE_AUDIT_V2",
+  "status": "LOCKED_RESULT_BLIND_IDENTITY_GAP_AUDIT",
+  "as_of": "2026-08-05",
+  "objective": "Classify every remaining unmapped hard-adverse event by the filing-time identity evidence path required, without backfilling a current ticker or opening outcomes.",
+  "locked_inputs": [
+    {
+      "role": "V2_CORPUS_LEDGER",
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v2.csv",
+      "sha256": "b9b6e893fe0507cfb7b63b55f445f2043a33ad0da88ed5d98a6f501ccd031839"
+    },
+    {
+      "role": "V2_CORPUS_REPORT",
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v2.json",
+      "sha256": "183a4e1f7b08875751df133065508f92e49c8024c4024d95655621582f52d87e"
+    }
+  ],
+  "classification": {
+    "trading_symbol_cover_field_effective_date": "2019-05-02",
+    "rule_source": "https://www.sec.gov/files/rules/final/2019/33-10618.pdf",
+    "legacy_with_same_cik_anchor": "PRE_SYMBOL_FIELD_SAME_CIK_ANCHOR_REVIEW",
+    "legacy_without_same_cik_anchor": "PRE_SYMBOL_FIELD_HISTORICAL_MASTER_REQUIRED",
+    "modern_without_candidate": "MODERN_COVER_ALTERNATE_DOCUMENT_REVIEW"
+  },
+  "expected": {
+    "events": 947,
+    "mapped_events": 300,
+    "unmapped_events": 647,
+    "legacy_events": 646,
+    "legacy_with_same_cik_anchor": 343,
+    "legacy_without_same_cik_anchor": 303,
+    "modern_without_candidate": 1
+  },
+  "outputs": {
+    "ledger": "data/reports/sec_8k_remaining_identity_coverage_audit_v2.csv",
+    "report": "data/reports/sec_8k_remaining_identity_coverage_audit_v2.json"
+  },
+  "authority": {
+    "current_ticker_backfill_allowed": false,
+    "same_cik_anchor_implies_interval": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

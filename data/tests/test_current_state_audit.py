@@ -199,7 +199,7 @@ def test_current_state_contracts_are_consistent() -> None:
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "AUDIT_REMAINING_SEC_8K_IDENTITY_COVERAGE_V2"
+        == "COLLECT_TIME_VALID_IDENTITY_EVIDENCE_BY_ROUTE_V1"
     )
     assert state["sec_8k_structural_extraction"] == {
         "failure_audit_status": "FAILURE_AUDIT_COMPLETE_PARSER_CHANGE_ALLOWED",
@@ -230,6 +230,11 @@ def test_current_state_contracts_are_consistent() -> None:
         "promoted_event_identities": 115,
         "hard_adverse_mapped_events": 300,
         "hard_adverse_unmapped_events": 647,
+        "remaining_identity_audit_status": "REMAINING_IDENTITY_GAPS_ROUTED",
+        "legacy_identity_gaps": 646,
+        "same_cik_anchor_review_events": 343,
+        "historical_master_required_events": 303,
+        "modern_alternate_document_review_events": 1,
         "identity_promotion_allowed": False,
         "operational_action_ratio": 0.0,
     }

@@ -189,6 +189,12 @@ Evidence Packet의 연결 감사는 완료했다.
 검수된 사건 식별 115건을 filing 날짜 한정으로 승격해 hard-adverse corpus V2에
 결합했다. 연결 사건은 185건에서 300건으로 늘었고 모호 2건은 해소됐다. 아직
 647건은 미연결이며 가격 결과와 방향 권한은 계속 닫혀 있다.
+
+남은 647건을 SEC의 2019-05-02 trading-symbol 표지 필드 효력일 기준으로 감사했다.
+646건은 해당 필드 도입 전 filing이고, 1건만 이후 구조적 무후보다. 도입 전
+사건 중 343건은 같은 CIK의 검수된 날짜 한정 anchor가 있어 기업행위 경계를
+추가 검수할 수 있고, 303건은 별도 historical security master가 필요하다.
+anchor를 열린 ticker 기간으로 확장하거나 현재 ticker를 소급 입력하지 않는다.
 이후에도 새 정보가 남는 경우에만 다음 조건을 갖춘 단일 가설 하나를 허용한다.
 
 1. 기존 실패 변수와 중복되지 않는 경제적 이유
@@ -235,8 +241,10 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 15. 독립 후보 182건을 19개 고정 배치로 구성했다.
 16. B001~B019 원문 검수와 독립 정밀도 게이트를 통과했다.
 17. 검증된 구조적 후보만 시점 유효 식별 확장 원장으로 승격한다.
-18. 독립 방향 정보가 확인될 때만 단일 가설 하나를 결과 전에 고정한다.
-19. 새 가설이 독립 OOS를 통과한 경우에만 전향 확인과 5% 정책 검증으로 이동한다.
+18. 남은 647건의 식별 공백을 filing 시기와 증거 경로별로 감사한다.
+19. 경로별 시점 유효 식별 증거를 수집하되 현재 ticker 소급 입력은 금지한다.
+20. 독립 방향 정보가 확인될 때만 단일 가설 하나를 결과 전에 고정한다.
+21. 새 가설이 독립 OOS를 통과한 경우에만 전향 확인과 5% 정책 검증으로 이동한다.
 
 ## 확인 명령
 
@@ -249,6 +257,7 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 ./scripts/collect-sec-structural-evaluation.sh
 ./scripts/run-sec-structural-independent-extraction.sh
 ./scripts/review-sec-structural-evaluation.sh --next
+./scripts/audit-sec-8k-remaining-identities-v2.sh
 ./scripts/audit-current-state.sh
 ./scripts/verify.sh
 ```

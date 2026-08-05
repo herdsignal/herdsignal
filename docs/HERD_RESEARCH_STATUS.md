@@ -327,6 +327,13 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
 - 원문 검수된 115건을 filing 날짜 한정 식별로 승격했다. 열린 ticker 기간은
   추론하지 않았다. hard-adverse corpus V2의 연결은 300/947, 미연결은 647건,
   모호는 0건이다. 다음 단계는 `AUDIT_REMAINING_SEC_8K_IDENTITY_COVERAGE_V2`다.
+- 남은 647건을 filing 시점의 식별 증거 경로로 전수 감사했다. SEC가 Form 8-K
+  표지에 trading symbol 필드를 추가한 2019-05-02 이전 filing이 646건이고,
+  이후 구조적 무후보는 1건이다. 이전 filing 중 343건은 같은 CIK의 검수된
+  날짜 anchor가 있지만 기업행위 경계 검수 전에는 기간으로 확장하지 않는다.
+  나머지 303건은 독립 historical security master가 필요하다. 현재 ticker
+  소급 입력과 가격 결과는 계속 금지하며 다음 단계는
+  `COLLECT_TIME_VALID_IDENTITY_EVIDENCE_BY_ROUTE_V1`이다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.
