@@ -1,0 +1,135 @@
+{
+  "report_version": "SEC_8K_IDENTITY_EXTRACTION_FAILURE_AUDIT_V1",
+  "status": "FAILURE_AUDIT_COMPLETE_PARSER_CHANGE_ALLOWED",
+  "source_review_status": "SOURCE_PRECISION_GATE_FAILED",
+  "reviewed_rows": 110,
+  "invalid_rows": 10,
+  "error_families": {
+    "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL": 10
+  },
+  "all_invalids_are_markup_tokens": true,
+  "no_candidate_rows": 165,
+  "failures": [
+    {
+      "review_id": "REVIEW-0000827052-19-000117",
+      "accession_number": "0000827052-19-000117",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists EIX and SCE preferred symbols; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0001666700-19-000025",
+      "accession_number": "0001666700-19-000025",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists DWDP; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0000079879-19-000023",
+      "accession_number": "0000079879-19-000023",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists PPG and listed-note symbols; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0001140361-19-010907",
+      "accession_number": "0001140361-19-010907",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists JEC; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0001243786-19-000100",
+      "accession_number": "0001243786-19-000100",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists MOS; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0000947871-19-000528",
+      "accession_number": "0000947871-19-000528",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists BG; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0000072741-19-000031",
+      "accession_number": "0000072741-19-000031",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists ES; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0000721371-19-000061",
+      "accession_number": "0000721371-19-000061",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists CAH; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0001157523-19-001784",
+      "accession_number": "0001157523-19-001784",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "TD"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists SYMC; TD is an HTML table-cell false positive"
+    },
+    {
+      "review_id": "REVIEW-0000047217-19-000052",
+      "accession_number": "0000047217-19-000052",
+      "extraction_method": "VISIBLE_LABEL_REGEX",
+      "candidate_symbols": [
+        "DIV"
+      ],
+      "error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+      "review_note": "SEC cover table lists HPQ; DIV is an HTML element false positive"
+    }
+  ],
+  "development_boundary": {
+    "reviewed_rows_are_development_regression_only": true,
+    "reviewed_rows_may_not_reopen_failed_gate": true,
+    "new_precision_gate_requires_unseen_human_review": true,
+    "price_outcomes_opened": false
+  },
+  "recommended_parser_change": {
+    "id": "STRUCTURAL_COVER_TABLE_CELL_EXTRACTION",
+    "reject_html_element_names": [
+      "DIV",
+      "TD"
+    ],
+    "retain_xbrl_trading_symbol_extraction": true,
+    "development_regression_rows": 110,
+    "independent_precision_claim_allowed": false
+  },
+  "next_stage": "SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2_DEVELOPMENT",
+  "identity_promotion_allowed": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0
+}

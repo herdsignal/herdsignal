@@ -1,0 +1,51 @@
+{
+  "protocol_version": "SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2",
+  "status": "LOCKED_DEVELOPMENT_AFTER_FAILURE_AUDIT",
+  "as_of": "2026-08-05",
+  "objective": "Replace visible-label regex fallback with structural SEC cover-table cell extraction while preserving XBRL-first evidence.",
+  "locked_inputs": [
+    {
+      "role": "FAILURE_AUDIT",
+      "path": "data/reports/sec_8k_identity_extraction_failure_audit_v1.json",
+      "sha256": "a6f6b66127051d645aabd9a72d7e34a9ff75c310f20f885ff4ff6fdd27bda1e8"
+    },
+    {
+      "role": "SOURCE_REVIEW_LABELS",
+      "path": "data/reports/sec_8k_identity_source_review_v1.csv",
+      "sha256": "a340899c16ed7efb7c1d65dae73ea3377aab5f57a6c6412107fe4a747a8b5131"
+    },
+    {
+      "role": "COLLECTION_INDEX",
+      "path": "data/reports/sec_8k_identity_primary_document_collection_v1.csv",
+      "sha256": "07b4e599fd6eac398d6bec26e96fb1135455bb8ddab4d8f13e8502986e0408f2"
+    },
+    {
+      "role": "LOCAL_SNAPSHOT_MANIFEST",
+      "path": "data/reference/sec/sec-8k-identity-primary-v1-p0p1-20260802/manifest.json",
+      "sha256": "cd21863a03eeaf0eed2ace76dff12e56d9b5c834996f951b92e3a9f31c91c117"
+    }
+  ],
+  "parser": {
+    "xbrl_first": true,
+    "visible_fallback": "STRUCTURAL_TRADING_SYMBOL_COLUMN",
+    "maximum_data_rows_after_header": 15,
+    "rejected_markup_tokens": ["DIV", "TD"]
+  },
+  "evaluation": {
+    "reviewed_rows_role": "DEVELOPMENT_REGRESSION_ONLY",
+    "unreviewed_rows_role": "NEW_HUMAN_REVIEW_CANDIDATES_ONLY",
+    "independent_precision_claim_allowed": false
+  },
+  "outputs": {
+    "candidates": "data/reports/sec_8k_structural_cover_extractor_v2.csv",
+    "report": "data/reports/sec_8k_structural_cover_extractor_v2.json"
+  },
+  "next_stage": "REVIEW_UNSEEN_SEC_8K_STRUCTURAL_CANDIDATES",
+  "authority": {
+    "identity_promotion_allowed": false,
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

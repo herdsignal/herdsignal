@@ -34,6 +34,8 @@ EVIDENCE_ROLE_AUDIT = ROOT / "data" / "reports" / "independent_evidence_role_aud
 RUNTIME_ROLE_MAPPING = ROOT / "data" / "reports" / "runtime_evidence_role_mapping_v1.json"
 SOURCE_GAP_PRIORITY = ROOT / "data" / "reports" / "role_specific_source_gap_priority_v1.json"
 SEC_8K_REVIEW_BATCHING = ROOT / "data" / "reports" / "sec_8k_material_event_review_batching_v1.json"
+SEC_8K_EXTRACTION_FAILURE_AUDIT = ROOT / "data" / "reports" / "sec_8k_identity_extraction_failure_audit_v1.json"
+SEC_8K_STRUCTURAL_EXTRACTOR = ROOT / "data" / "reports" / "sec_8k_structural_cover_extractor_v2.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -69,6 +71,8 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     runtime_role_mapping = _load(root / RUNTIME_ROLE_MAPPING.relative_to(ROOT))
     source_gap_priority = _load(root / SOURCE_GAP_PRIORITY.relative_to(ROOT))
     sec_8k_review_batching = _load(root / SEC_8K_REVIEW_BATCHING.relative_to(ROOT))
+    sec_8k_failure_audit = _load(root / SEC_8K_EXTRACTION_FAILURE_AUDIT.relative_to(ROOT))
+    sec_8k_structural_extractor = _load(root / SEC_8K_STRUCTURAL_EXTRACTOR.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -249,6 +253,16 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("pending SEC 8-K batches unexpectedly promote identity")
     if sec_8k_review_batching["operational_action_ratio"] != 0.0:
         contradictions.append("SEC 8-K batching unexpectedly has action authority")
+    if not sec_8k_failure_audit["all_invalids_are_markup_tokens"]:
+        contradictions.append("SEC 8-K extraction failures remain unclassified")
+    if sec_8k_failure_audit["identity_promotion_allowed"]:
+        contradictions.append("SEC 8-K failure audit unexpectedly promotes identity")
+    if sec_8k_structural_extractor["development_regression_passed"] != 110:
+        contradictions.append("SEC 8-K structural extractor regression failed")
+    if sec_8k_structural_extractor["identity_promotion_allowed"]:
+        contradictions.append("SEC 8-K structural extractor unexpectedly promotes identity")
+    if sec_8k_structural_extractor["operational_action_ratio"] != 0.0:
+        contradictions.append("SEC 8-K structural extractor unexpectedly has action authority")
 
     return {
         "version": "HERDSIGNAL_CURRENT_STATE_AUDIT_V1",
@@ -494,6 +508,26 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "operational_action_ratio"
             ],
         },
+        "sec_8k_structural_extraction": {
+            "failure_audit_status": sec_8k_failure_audit["status"],
+            "invalid_rows": sec_8k_failure_audit["invalid_rows"],
+            "markup_false_positive_rows": sec_8k_failure_audit["error_families"].get(
+                "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL", 0
+            ),
+            "status": sec_8k_structural_extractor["status"],
+            "development_regression_passed": sec_8k_structural_extractor[
+                "development_regression_passed"
+            ],
+            "unseen_candidate_rows": sec_8k_structural_extractor[
+                "unseen_candidate_rows"
+            ],
+            "identity_promotion_allowed": sec_8k_structural_extractor[
+                "identity_promotion_allowed"
+            ],
+            "operational_action_ratio": sec_8k_structural_extractor[
+                "operational_action_ratio"
+            ],
+        },
         "research_boundary": {
             "canonical_decision": catalog_decision["canonical_decision"],
             "pending_sec_identity_reviews": sum(
@@ -506,7 +540,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
                 + sec_8k_review_batching["next_pending_batch"]
                 if sec_8k_review_batching["next_pending_batch"]
-                else sec_8k_review_batching["source_review_next_stage"]
+                else sec_8k_structural_extractor["next_stage"]
             ),
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],

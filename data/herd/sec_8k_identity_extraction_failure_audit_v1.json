@@ -1,0 +1,52 @@
+{
+  "protocol_version": "SEC_8K_IDENTITY_EXTRACTION_FAILURE_AUDIT_V1",
+  "status": "LOCKED_AFTER_SOURCE_PRECISION_GATE_FAILURE",
+  "as_of": "2026-08-05",
+  "objective": "Classify reviewed SEC ticker extraction failures before changing the parser, without reusing development rows as an independent precision gate.",
+  "locked_inputs": [
+    {
+      "role": "SOURCE_REVIEW_PROTOCOL",
+      "path": "data/herd/sec_8k_identity_source_review_v1.json",
+      "sha256": "2da540f7d3896d5a05e98e406256bb8a9b41eb81fc96029c2516694c7ce7e7f4"
+    },
+    {
+      "role": "SOURCE_REVIEW_REPORT",
+      "path": "data/reports/sec_8k_identity_source_review_v1.json",
+      "sha256": "994df0ccd7e0fcaa884372852ce729c636d117563097c1574e09391278be6ff7"
+    },
+    {
+      "role": "SOURCE_REVIEW_LABELS",
+      "path": "data/reports/sec_8k_identity_source_review_v1.csv",
+      "sha256": "a340899c16ed7efb7c1d65dae73ea3377aab5f57a6c6412107fe4a747a8b5131"
+    },
+    {
+      "role": "COLLECTION_INDEX",
+      "path": "data/reports/sec_8k_identity_primary_document_collection_v1.csv",
+      "sha256": "07b4e599fd6eac398d6bec26e96fb1135455bb8ddab4d8f13e8502986e0408f2"
+    },
+    {
+      "role": "LOCAL_SNAPSHOT_MANIFEST",
+      "path": "data/reference/sec/sec-8k-identity-primary-v1-p0p1-20260802/manifest.json",
+      "sha256": "cd21863a03eeaf0eed2ace76dff12e56d9b5c834996f951b92e3a9f31c91c117"
+    }
+  ],
+  "classification": {
+    "markup_tokens": ["TD", "DIV"],
+    "markup_error_family": "HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL",
+    "other_error_family": "UNCLASSIFIED_SOURCE_EXTRACTION_FAILURE"
+  },
+  "evaluation_boundary": {
+    "reviewed_rows_are_development_regression_only": true,
+    "reviewed_rows_may_not_reopen_failed_gate": true,
+    "new_precision_gate_requires_unseen_human_review": true,
+    "price_outcomes_opened": false
+  },
+  "next_stage": "SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2_DEVELOPMENT",
+  "output": "data/reports/sec_8k_identity_extraction_failure_audit_v1.json",
+  "authority": {
+    "identity_promotion_allowed": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

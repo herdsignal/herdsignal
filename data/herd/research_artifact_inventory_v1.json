@@ -587,6 +587,10 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/herd/sec_8k_identity_extraction_failure_audit_v1.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
       "path": "data/herd/sec_8k_identity_primary_document_collection_v1.json",
       "status": "DATA_PIPELINE"
     },
@@ -597,6 +601,10 @@
     {
       "path": "data/herd/sec_8k_material_event_review_batching_v1.json",
       "status": "ACTIVE"
+    },
+    {
+      "path": "data/herd/sec_8k_structural_cover_extractor_v2.json",
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/herd/sec_auxiliary_veto_authority_v1.json",
@@ -1835,6 +1843,10 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/reports/sec_8k_identity_extraction_failure_audit_v1.json",
+      "status": "DIAGNOSTIC"
+    },
+    {
       "path": "data/reports/sec_8k_identity_primary_document_collection_v1.csv",
       "status": "DATA_PIPELINE"
     },
@@ -1857,6 +1869,14 @@
     {
       "path": "data/reports/sec_8k_material_event_review_batching_v1.json",
       "status": "ACTIVE"
+    },
+    {
+      "path": "data/reports/sec_8k_structural_cover_extractor_v2.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_structural_cover_extractor_v2.json",
+      "status": "DATA_PIPELINE"
     },
     {
       "path": "data/reports/sec_auxiliary_veto_authority_v1.json",

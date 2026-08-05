@@ -199,8 +199,18 @@ def test_current_state_contracts_are_consistent() -> None:
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "STOP_SEC_8K_IDENTITY_PROMOTION_SOURCE_PRECISION_FAILED"
+        == "REVIEW_UNSEEN_SEC_8K_STRUCTURAL_CANDIDATES"
     )
+    assert state["sec_8k_structural_extraction"] == {
+        "failure_audit_status": "FAILURE_AUDIT_COMPLETE_PARSER_CHANGE_ALLOWED",
+        "invalid_rows": 10,
+        "markup_false_positive_rows": 10,
+        "status": "V2_DEVELOPMENT_COMPLETE_UNSEEN_REVIEW_REQUIRED",
+        "development_regression_passed": 110,
+        "unseen_candidate_rows": 5,
+        "identity_promotion_allowed": False,
+        "operational_action_ratio": 0.0,
+    }
     hypothesis = state["new_action_hypothesis"]
     assert hypothesis["status"] == "HISTORICAL_FALSIFICATION_FAILED"
     assert hypothesis["historical_screen"] == {

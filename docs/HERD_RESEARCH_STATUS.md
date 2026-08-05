@@ -292,6 +292,18 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
   승인, 현재 ticker의 과거 소급, Blind holdout 개방과 운영 행동 활성화는
   금지한다.
 
+### ticker 추출 실패 감사·구조적 표지 파서 V2
+
+- `INVALID` 10건은 모두 구형 HTML의 `TD` 또는 `DIV` 요소명이 ticker로 잡힌
+  `HTML_ELEMENT_NAME_CAPTURED_AS_SYMBOL` 오류로 분류했다.
+- XBRL trading-symbol 태그 우선 경로는 유지하고, fallback은 `Trading Symbol`
+  헤더와 같은 실제 표 열만 읽도록 교체했다. 기존 검수 110건의 개발 회귀는
+  110건 모두 통과했다.
+- 이 110건은 파서 개발에 사용했으므로 독립 정밀도 게이트에 재사용하지 않는다.
+  무후보 165건 중 구조적으로 복구된 5건만 새 사람 검수 큐로 넘긴다.
+- 다음 단계는 `REVIEW_UNSEEN_SEC_8K_STRUCTURAL_CANDIDATES`이며 식별 승격, 가격
+  결과, 방향 가설과 운영 행동 권한은 계속 닫혀 있다.
+
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.
 

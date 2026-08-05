@@ -1,0 +1,26 @@
+{
+  "report_version": "SEC_8K_STRUCTURAL_COVER_EXTRACTOR_V2",
+  "status": "V2_DEVELOPMENT_COMPLETE_UNSEEN_REVIEW_REQUIRED",
+  "documents": 275,
+  "candidate_documents": 115,
+  "development_regression_rows": 110,
+  "development_regression_passed": 110,
+  "unseen_rows": 165,
+  "unseen_candidate_rows": 5,
+  "unseen_candidate_accessions": [
+    "0000037996-19-000049",
+    "0001104659-19-035343",
+    "0001193125-19-178954",
+    "0001104659-19-041508",
+    "0001104659-19-041852"
+  ],
+  "independent_precision_claim_allowed": false,
+  "identity_promotion_allowed": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "REVIEW_UNSEEN_SEC_8K_STRUCTURAL_CANDIDATES",
+  "candidates_path": "data/reports/sec_8k_structural_cover_extractor_v2.csv",
+  "candidates_sha256": "367c1da44a314c71c8ee967834f4baaf85210ad2adc26b3f90f0bfac7145de85"
+}
