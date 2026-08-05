@@ -1,0 +1,21 @@
+{
+  "protocol_version": "SEC_8K_PRE_2019_IDENTITY_EVIDENCE_PLAN_V1",
+  "status": "LOCKED_ISSUER_LEVEL_EVIDENCE_COLLECTION_PLAN",
+  "as_of": "2026-08-05",
+  "objective": "Convert 646 pre-trading-symbol-cover events into a bounded issuer-level evidence collection queue with explicit admissibility and review gates.",
+  "locked_inputs": [
+    {"role": "V3_CORPUS", "path": "data/reports/sec_8k_hard_adverse_event_corpus_v3.csv", "sha256": "89d9a0ea6e186881763279294648778928009cf39268e9d8461285d37627b702"},
+    {"role": "V3_CORPUS_REPORT", "path": "data/reports/sec_8k_hard_adverse_event_corpus_v3.json", "sha256": "a142a84c3265c6101608dcd19f469753ee4166cd5b976330420c865af2fa972e"}
+  ],
+  "population": {"filing_date_before": "2019-05-02", "events": 646, "issuers": 198, "issuers_with_reviewed_anchor": 78, "issuers_without_reviewed_anchor": 120},
+  "batching": {"issuer_batch_size": 10, "expected_batches": 20, "order": ["REVIEWED_ANCHOR_BOUNDARY", "HISTORICAL_MASTER_DISCOVERY", "EARLIEST_EVENT_DATE", "CIK"]},
+  "admissible_sources": [
+    "SEC_PRIMARY_FILING_WITH_EXPLICIT_SYMBOL_OR_RENAME",
+    "EXCHANGE_OR_OFFICIAL_INDEX_HISTORICAL_LISTING_RECORD",
+    "ISSUER_INVESTOR_RELATIONS_CORPORATE_ACTION_RECORD",
+    "REGULATORY_OR_TRANSFER_AGENT_CORPORATE_ACTION_RECORD"
+  ],
+  "non_admissible_sources": ["CURRENT_TICKER_LOOKUP", "UNSOURCED_VENDOR_MAPPING", "FUZZY_COMPANY_NAME_MATCH", "SAME_CIK_ANCHOR_WITHOUT_BOUNDARY_EVIDENCE"],
+  "outputs": {"queue": "data/reports/sec_8k_pre_2019_identity_evidence_plan_v1.csv", "report": "data/reports/sec_8k_pre_2019_identity_evidence_plan_v1.json"},
+  "authority": {"anchor_is_lookup_hint_only": true, "automatic_identity_promotion": false, "price_outcomes_opened": false, "direction_hypothesis_allowed": false, "blind_holdout_access": false, "operational_action_ratio": 0.0}
+}

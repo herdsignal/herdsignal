@@ -339,6 +339,11 @@ Blind holdout, 운영 행동을 계속 차단한다. 현재는 새 입력 후보
   승격했다. 파서를 독립 평가 뒤 바꾸지 않았으며 corpus V3는 연결 301/947,
   미연결 646건이다. 다음 단계는
   `COLLECT_PRE_2019_TIME_VALID_IDENTITY_EVIDENCE_V1`이다.
+- 이전 filing 646건을 CIK 기준 198개 issuer 작업으로 압축하고 20개 고정
+  배치로 구성했다. 78개 issuer는 검수 anchor와 사건 범위 사이 기업행위
+  경계 증거를 수집하고, 120개는 공식 역사 상장 식별부터 수집한다. anchor는
+  검색 힌트일 뿐 기간 증거가 아니며 자동 승격은 0건이다. 다음 단계는
+  `COLLECT_PRE_2019_IDENTITY_EVIDENCE_BATCH_B001`이다.
 
 현재 기계 판독 계약과 결과는 `data/herd/research_decision_v5.json`,
 `data/reports/research_decision_v5.json`이다. V4 이하는 재현성 입력으로 보존한다.

@@ -46,6 +46,7 @@ SEC_8K_HARD_ADVERSE_CORPUS_V2 = ROOT / "data" / "reports" / "sec_8k_hard_adverse
 SEC_8K_REMAINING_IDENTITY_AUDIT_V2 = ROOT / "data" / "reports" / "sec_8k_remaining_identity_coverage_audit_v2.json"
 SEC_8K_HARD_ADVERSE_CORPUS_V3 = ROOT / "data" / "reports" / "sec_8k_hard_adverse_event_corpus_v3.json"
 SEC_8K_IDENTITY_PROMOTION_V3 = ROOT / "data" / "reports" / "sec_8k_time_valid_identity_promotion_v3.json"
+SEC_8K_PRE_2019_IDENTITY_PLAN = ROOT / "data" / "reports" / "sec_8k_pre_2019_identity_evidence_plan_v1.json"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -97,6 +98,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
     )
     sec_8k_hard_adverse_corpus_v3 = _load(root / SEC_8K_HARD_ADVERSE_CORPUS_V3.relative_to(ROOT))
     sec_8k_identity_promotion_v3 = _load(root / SEC_8K_IDENTITY_PROMOTION_V3.relative_to(ROOT))
+    sec_8k_pre_2019_identity_plan = _load(root / SEC_8K_PRE_2019_IDENTITY_PLAN.relative_to(ROOT))
 
     authority = product["authority"]
     product_decision = decision["product_scope"]
@@ -341,6 +343,12 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
         contradictions.append("SEC 8-K modern exception promotion changes unexpected coverage")
     if sec_8k_hard_adverse_corpus_v3["operational_action_ratio"] != 0.0:
         contradictions.append("SEC 8-K corpus V3 has action authority")
+    if sec_8k_pre_2019_identity_plan["events"] != sec_8k_hard_adverse_corpus_v3["unmapped_events"]:
+        contradictions.append("SEC 8-K pre-2019 plan does not cover remaining events")
+    if sec_8k_pre_2019_identity_plan["automatic_identity_promotion"]:
+        contradictions.append("SEC 8-K pre-2019 plan automatically promotes identity")
+    if sec_8k_pre_2019_identity_plan["operational_action_ratio"] != 0.0:
+        contradictions.append("SEC 8-K pre-2019 plan has action authority")
 
     return {
         "version": "HERDSIGNAL_CURRENT_STATE_AUDIT_V1",
@@ -662,6 +670,9 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
             "modern_alternate_document_review_events": sec_8k_remaining_identity_audit_v2[
                 "modern_without_candidate"
             ],
+            "pre_2019_identity_queue_issuers": sec_8k_pre_2019_identity_plan["issuers"],
+            "pre_2019_identity_queue_batches": sec_8k_pre_2019_identity_plan["batch_count"],
+            "pre_2019_identity_pending_issuers": sec_8k_pre_2019_identity_plan["pending_issuers"],
             "identity_promotion_allowed": sec_8k_structural_extractor[
                 "identity_promotion_allowed"
             ],
@@ -681,7 +692,7 @@ def build_current_state(root: Path = ROOT) -> dict[str, Any]:
                 "COMPLETE_SEC_8K_HUMAN_REVIEW_BATCH_"
                 + sec_8k_review_batching["next_pending_batch"]
                 if sec_8k_review_batching["next_pending_batch"]
-                else sec_8k_hard_adverse_corpus_v3["next_stage"]
+                else sec_8k_pre_2019_identity_plan["next_stage"]
             ),
             "required_outputs": [],
             "forbidden": decision["next_stage"]["forbidden"],

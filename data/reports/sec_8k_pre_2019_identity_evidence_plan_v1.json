@@ -1,0 +1,21 @@
+{
+  "report_version": "SEC_8K_PRE_2019_IDENTITY_EVIDENCE_PLAN_V1",
+  "status": "PRE_2019_IDENTITY_EVIDENCE_QUEUE_READY",
+  "events": 646,
+  "issuers": 198,
+  "issuers_with_reviewed_anchor": 78,
+  "issuers_without_reviewed_anchor": 120,
+  "batch_size": 10,
+  "batch_count": 20,
+  "pending_issuers": 198,
+  "reviewed_issuers": 0,
+  "promoted_events": 0,
+  "automatic_identity_promotion": false,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "COLLECT_PRE_2019_IDENTITY_EVIDENCE_BATCH_B001",
+  "queue_path": "data/reports/sec_8k_pre_2019_identity_evidence_plan_v1.csv",
+  "queue_sha256": "a0461c62291c8f0da11dec9c5c9cc65fc5d8d76f1fa0a9b3eedfeedb712fde9d"
+}

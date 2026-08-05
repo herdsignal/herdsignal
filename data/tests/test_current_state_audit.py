@@ -199,7 +199,7 @@ def test_current_state_contracts_are_consistent() -> None:
     )
     assert (
         state["research_boundary"]["next_stage"]
-            == "COLLECT_PRE_2019_TIME_VALID_IDENTITY_EVIDENCE_V1"
+        == "COLLECT_PRE_2019_IDENTITY_EVIDENCE_BATCH_B001"
     )
     assert state["sec_8k_structural_extraction"] == {
         "failure_audit_status": "FAILURE_AUDIT_COMPLETE_PARSER_CHANGE_ALLOWED",
@@ -235,6 +235,9 @@ def test_current_state_contracts_are_consistent() -> None:
         "same_cik_anchor_review_events": 343,
         "historical_master_required_events": 303,
         "modern_alternate_document_review_events": 1,
+        "pre_2019_identity_queue_issuers": 198,
+        "pre_2019_identity_queue_batches": 20,
+        "pre_2019_identity_pending_issuers": 198,
         "identity_promotion_allowed": False,
         "operational_action_ratio": 0.0,
     }

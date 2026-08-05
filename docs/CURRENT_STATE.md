@@ -200,6 +200,12 @@ anchor를 열린 ticker 기간으로 확장하거나 현재 ticker를 소급 입
 검수했다. 보통주 BAX와 상장채권 BAX 25·BAX 29·BAX 24를 분리해 filing 날짜
 한정으로 승격했다. corpus V3 연결은 301/947, 미연결은 646건이다. 파서 규칙은
 독립 평가 이후 변경하지 않았고 다음은 2019년 이전 식별 증거 수집이다.
+
+2019년 이전 미연결 646건은 198개 issuer 작업으로 묶어 10개씩 20개 배치로
+고정했다. 검수 anchor가 있는 78개 issuer는 사건 기간까지 기업행위 경계를
+확인하고, anchor가 없는 120개 issuer는 공식 historical listing identity와
+경계를 함께 수집한다. 현재 ticker·이름 유사도·근거 없는 vendor mapping은
+승격 증거로 받지 않는다. 다음 실행 단위는 B001이다.
 이후에도 새 정보가 남는 경우에만 다음 조건을 갖춘 단일 가설 하나를 허용한다.
 
 1. 기존 실패 변수와 중복되지 않는 경제적 이유
@@ -264,6 +270,7 @@ SEC 원문 사건 수집만 append-only로 계속한다. 이를 방향 증거로
 ./scripts/review-sec-structural-evaluation.sh --next
 ./scripts/audit-sec-8k-remaining-identities-v2.sh
 ./scripts/promote-sec-8k-modern-exception-v3.sh
+./scripts/build-sec-8k-pre-2019-identity-plan.sh
 ./scripts/audit-current-state.sh
 ./scripts/verify.sh
 ```
