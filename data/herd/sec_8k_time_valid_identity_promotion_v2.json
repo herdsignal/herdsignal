@@ -1,0 +1,52 @@
+{
+  "protocol_version": "SEC_8K_TIME_VALID_IDENTITY_PROMOTION_V2",
+  "status": "LOCKED_AFTER_INDEPENDENT_PRECISION_GATE_PASS",
+  "as_of": "2026-08-05",
+  "objective": "Promote only human-reviewed SEC cover identities after the frozen structural parser passes its independent precision gate.",
+  "locked_inputs": [
+    {
+      "role": "INDEPENDENT_REVIEW_REPORT",
+      "path": "data/reports/sec_8k_structural_evaluation_review_v1.json",
+      "sha256": "1432636ddc83cd50096a41c1fc67dd32704f084aa6d849957980b4bd7bbaa54c"
+    },
+    {
+      "role": "V1_SOURCE_REVIEW",
+      "path": "data/reports/sec_8k_identity_source_review_v1.csv",
+      "sha256": "a340899c16ed7efb7c1d65dae73ea3377aab5f57a6c6412107fe4a747a8b5131"
+    },
+    {
+      "role": "V2_UNSEEN_REVIEW",
+      "path": "data/reports/sec_8k_structural_candidate_review_v1.csv",
+      "sha256": "3a4b5c3888eb20e4e8cd9ca22d78cdd96186f215def2c503b3232802b5313458"
+    },
+    {
+      "role": "V2_CORRECTION_REVIEW",
+      "path": "data/reports/sec_8k_structural_correction_review_v1.csv",
+      "sha256": "4843ba8583b8a5f09c0229d15a132b686b666e49b8479ea978a0867f1cda2989"
+    },
+    {
+      "role": "V2_CANDIDATES",
+      "path": "data/reports/sec_8k_structural_cover_extractor_v2.csv",
+      "sha256": "367c1da44a314c71c8ee967834f4baaf85210ad2adc26b3f90f0bfac7145de85"
+    }
+  ],
+  "promotion": {
+    "expected_v1_valid_rows": 100,
+    "expected_v2_unseen_valid_rows": 5,
+    "expected_v2_correction_valid_rows": 10,
+    "expected_promoted_rows": 115,
+    "event_date_only": true,
+    "infer_open_ended_ticker_interval": false
+  },
+  "outputs": {
+    "ledger": "data/reports/sec_8k_time_valid_identity_promotion_v2.csv",
+    "report": "data/reports/sec_8k_time_valid_identity_promotion_v2.json"
+  },
+  "next_stage": "REBUILD_SEC_8K_HARD_ADVERSE_EVENT_CORPUS_V2",
+  "authority": {
+    "price_outcomes_opened": false,
+    "direction_hypothesis_allowed": false,
+    "blind_holdout_access": false,
+    "operational_action_ratio": 0.0
+  }
+}

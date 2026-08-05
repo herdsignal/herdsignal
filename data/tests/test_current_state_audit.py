@@ -199,7 +199,7 @@ def test_current_state_contracts_are_consistent() -> None:
     )
     assert (
         state["research_boundary"]["next_stage"]
-        == "COMPLETE_SEC_8K_INDEPENDENT_REVIEW_BATCH_B002"
+        == "AUDIT_REMAINING_SEC_8K_IDENTITY_COVERAGE_V2"
     )
     assert state["sec_8k_structural_extraction"] == {
         "failure_audit_status": "FAILURE_AUDIT_COMPLETE_PARSER_CHANGE_ALLOWED",
@@ -223,10 +223,13 @@ def test_current_state_contracts_are_consistent() -> None:
         "independent_candidate_rows": 182,
         "independent_no_candidate_rows": 3,
         "independent_human_labels_created": 0,
-        "independent_review_status": "INDEPENDENT_HUMAN_REVIEW_PENDING",
-        "independent_reviewed_rows": 10,
-        "independent_review_pending_rows": 172,
-        "independent_review_next_batch": "B002",
+        "independent_review_status": "INDEPENDENT_SOURCE_PRECISION_GATE_PASSED",
+        "independent_reviewed_rows": 182,
+        "independent_review_pending_rows": 0,
+        "independent_review_next_batch": None,
+        "promoted_event_identities": 115,
+        "hard_adverse_mapped_events": 300,
+        "hard_adverse_unmapped_events": 647,
         "identity_promotion_allowed": False,
         "operational_action_ratio": 0.0,
     }

@@ -583,6 +583,10 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/herd/sec_8k_hard_adverse_event_corpus_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/herd/sec_8k_identity_extension_queue_v1.json",
       "status": "DATA_PIPELINE"
     },
@@ -624,6 +628,10 @@
     },
     {
       "path": "data/herd/sec_8k_structural_evaluation_review_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/herd/sec_8k_time_valid_identity_promotion_v2.json",
       "status": "DATA_PIPELINE"
     },
     {
@@ -1855,6 +1863,14 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v2.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_hard_adverse_event_corpus_v2.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/reports/sec_8k_identity_extension_queue_v1.csv",
       "status": "DATA_PIPELINE"
     },
@@ -1899,6 +1915,10 @@
       "status": "DATA_PIPELINE"
     },
     {
+      "path": "data/reports/sec_8k_structural_correction_review_v1.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
       "path": "data/reports/sec_8k_structural_cover_extractor_v2.csv",
       "status": "DATA_PIPELINE"
     },
@@ -1940,6 +1960,14 @@
     },
     {
       "path": "data/reports/sec_8k_structural_evaluation_review_v1.json",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_time_valid_identity_promotion_v2.csv",
+      "status": "DATA_PIPELINE"
+    },
+    {
+      "path": "data/reports/sec_8k_time_valid_identity_promotion_v2.json",
       "status": "DATA_PIPELINE"
     },
     {

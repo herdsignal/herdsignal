@@ -1,19 +1,18 @@
 {
   "report_version": "SEC_8K_STRUCTURAL_EVALUATION_REVIEW_V1",
-  "status": "INDEPENDENT_HUMAN_REVIEW_PENDING",
+  "status": "INDEPENDENT_SOURCE_PRECISION_GATE_PASSED",
   "rows": 182,
-  "reviewed_rows": 10,
+  "reviewed_rows": 182,
   "decision_counts": {
-    "PENDING": 172,
-    "VALID": 10
+    "VALID": 182
   },
-  "wilson_95_lower_bound": 0.7224672001371106,
+  "wilson_95_lower_bound": 0.979329376528407,
   "ambiguous_ratio": 0.0,
   "checks": {
-    "minimum_reviewed_rows": false,
-    "minimum_wilson_95_lower_bound": false,
+    "minimum_reviewed_rows": true,
+    "minimum_wilson_95_lower_bound": true,
     "maximum_ambiguous_ratio": true,
-    "all_rows_adjudicated": false
+    "all_rows_adjudicated": true
   },
   "batch_size": 10,
   "batch_count": 19,
@@ -28,140 +27,140 @@
     {
       "batch_id": "B002",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B003",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B004",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B005",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B006",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B007",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B008",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B009",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B010",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B011",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B012",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B013",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B014",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B015",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B016",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B017",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B018",
       "rows": 10,
-      "reviewed": 0,
-      "pending": 10,
-      "complete": false
+      "reviewed": 10,
+      "pending": 0,
+      "complete": true
     },
     {
       "batch_id": "B019",
       "rows": 2,
-      "reviewed": 0,
-      "pending": 2,
-      "complete": false
+      "reviewed": 2,
+      "pending": 0,
+      "complete": true
     }
   ],
-  "next_pending_batch": "B002",
+  "next_pending_batch": null,
   "known_identity_labels_used": 0,
-  "identity_promotion_allowed": false,
+  "identity_promotion_allowed": true,
   "price_outcomes_opened": false,
   "direction_hypothesis_allowed": false,
   "blind_holdout_access": false,
   "operational_action_ratio": 0.0,
-  "next_stage": "COMPLETE_SEC_8K_INDEPENDENT_REVIEW_BATCH_B002",
+  "next_stage": "SEC_8K_TIME_VALID_IDENTITY_PROMOTION_V2",
   "labels_path": "data/reports/sec_8k_structural_evaluation_review_v1.csv",
-  "labels_sha256": "49c63758cb01c529cf1b951d19c65e812c6dd4e5050e972fef1f63ea60697224",
+  "labels_sha256": "9e4ceae49e58434d0461a5b745e448ab80b7f4b753d6fc0c8b350adc1edd50e3",
   "batch_plan_path": "data/reports/sec_8k_structural_evaluation_review_batches_v1.csv",
-  "batch_plan_sha256": "2cfd1ce26b2934d39f6346fa197798cec1694a655c1cb99f547e23edb9518ac3"
+  "batch_plan_sha256": "db6bf9d12197689db9112f05819a6a391fedfee371e3e6a84cae04a45ce738d0"
 }

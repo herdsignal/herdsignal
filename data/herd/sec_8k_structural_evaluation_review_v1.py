@@ -227,6 +227,43 @@ def evaluate(protocol: dict[str, Any], labels: list[dict[str, str]]) -> tuple[li
     return plan, report
 
 
+def record_explicit_decisions(
+    protocol: dict[str, Any], decisions: list[dict[str, str]]
+) -> None:
+    """사람이 명시한 판정만 단일 정본 원장에 기록한다."""
+    labels_path = _rooted(protocol["outputs"]["labels"])
+    labels = _read_csv(labels_path)
+    by_id = {row["review_id"]: row for row in labels}
+    if len({item.get("review_id") for item in decisions}) != len(decisions):
+        raise Sec8KStructuralEvaluationReviewError("duplicate explicit review decision")
+    for item in decisions:
+        review_id = item.get("review_id", "")
+        symbol = item.get("approved_symbol", "")
+        note = item.get("review_note", "").strip()
+        row = by_id.get(review_id)
+        if row is None:
+            raise Sec8KStructuralEvaluationReviewError(
+                f"unknown explicit review decision: {review_id}"
+            )
+        if row["decision"] != "PENDING":
+            raise Sec8KStructuralEvaluationReviewError(
+                f"explicit review would overwrite a decision: {review_id}"
+            )
+        if symbol not in set(row["candidate_symbols"].split("|")):
+            raise Sec8KStructuralEvaluationReviewError(
+                f"explicit approved symbol is not a candidate: {review_id}"
+            )
+        if not note:
+            raise Sec8KStructuralEvaluationReviewError(
+                f"explicit review note is required: {review_id}"
+            )
+        row["decision"] = "VALID"
+        row["approved_symbol"] = symbol
+        row["review_note"] = note
+    _validate_labels(protocol, expected_rows(protocol), labels)
+    _write_csv(labels_path, labels, FIELDS)
+
+
 def run() -> dict[str, Any]:
     protocol = json.loads(PROTOCOL.read_text(encoding="utf-8"))
     labels_path = _rooted(protocol["outputs"]["labels"])
@@ -251,7 +288,19 @@ def run() -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--next", action="store_true")
+    parser.add_argument(
+        "--record-json",
+        help="JSON array of explicit human VALID decisions to record before refresh",
+    )
     args = parser.parse_args()
+    if args.record_json:
+        protocol = json.loads(PROTOCOL.read_text(encoding="utf-8"))
+        decisions = json.loads(args.record_json)
+        if not isinstance(decisions, list):
+            raise Sec8KStructuralEvaluationReviewError(
+                "explicit decisions must be a JSON array"
+            )
+        record_explicit_decisions(protocol, decisions)
     report = run()
     if args.next:
         batch_id = report["next_pending_batch"]

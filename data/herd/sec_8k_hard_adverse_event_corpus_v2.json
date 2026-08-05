@@ -1,0 +1,19 @@
+{
+  "protocol_version": "SEC_8K_HARD_ADVERSE_EVENT_CORPUS_V2",
+  "status": "LOCKED_AFTER_TIME_VALID_EVENT_IDENTITY_PROMOTION",
+  "as_of": "2026-08-05",
+  "objective": "Merge exact-filing-date SEC-reviewed identities into the hard-adverse event corpus without changing event labels or opening outcomes.",
+  "locked_inputs": [
+    {"role": "V1_CORPUS", "path": "data/reports/sec_8k_hard_adverse_event_corpus_v1.csv", "sha256": "2d1a9a1570a78df09427cc26448841bf14aa5f0384f44dc8a64873419e392688"},
+    {"role": "PROMOTION_PROTOCOL", "path": "data/herd/sec_8k_time_valid_identity_promotion_v2.json", "sha256": "54c38d736666319ad8c760d9712e10326e573066b50b23e6bc5572c680e46c7f"},
+    {"role": "PROMOTION_REPORT", "path": "data/reports/sec_8k_time_valid_identity_promotion_v2.json", "sha256": "a120b8b663b1b0229d85ae13a23dfb13cddefe71d64b98dfa90943201ee2e092"},
+    {"role": "PROMOTION_LEDGER", "path": "data/reports/sec_8k_time_valid_identity_promotion_v2.csv", "sha256": "0bc6797ae35a157a978195cfd622560a28577654905c0633116dd72bfb7879b9"}
+  ],
+  "expected": {"events": 947, "existing_mapped": 185, "new_promotions": 115, "mapped_after_merge": 300},
+  "outputs": {
+    "ledger": "data/reports/sec_8k_hard_adverse_event_corpus_v2.csv",
+    "report": "data/reports/sec_8k_hard_adverse_event_corpus_v2.json"
+  },
+  "next_stage": "AUDIT_REMAINING_SEC_8K_IDENTITY_COVERAGE_V2",
+  "authority": {"price_outcomes_opened": false, "direction_hypothesis_allowed": false, "blind_holdout_access": false, "operational_action_ratio": 0.0}
+}

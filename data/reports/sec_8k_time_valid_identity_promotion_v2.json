@@ -1,0 +1,20 @@
+{
+  "report_version": "SEC_8K_TIME_VALID_IDENTITY_PROMOTION_V2",
+  "status": "TIME_VALID_EVENT_IDENTITY_PROMOTION_COMPLETE",
+  "promoted_rows": 115,
+  "promoted_issuers": 73,
+  "review_source_counts": {
+    "V1_SOURCE_REVIEW": 100,
+    "V2_CORRECTION_REVIEW": 10,
+    "V2_UNSEEN_REVIEW": 5
+  },
+  "identity_scope": "EXACT_FILING_DATE_EVENT_ONLY",
+  "open_ended_intervals_inferred": 0,
+  "price_outcomes_opened": false,
+  "direction_hypothesis_allowed": false,
+  "blind_holdout_access": false,
+  "operational_action_ratio": 0.0,
+  "next_stage": "REBUILD_SEC_8K_HARD_ADVERSE_EVENT_CORPUS_V2",
+  "ledger_path": "data/reports/sec_8k_time_valid_identity_promotion_v2.csv",
+  "ledger_sha256": "0bc6797ae35a157a978195cfd622560a28577654905c0633116dd72bfb7879b9"
+}

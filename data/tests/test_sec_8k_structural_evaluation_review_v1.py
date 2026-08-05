@@ -8,6 +8,7 @@ from herd.sec_8k_structural_evaluation_review_v1 import (
     Sec8KStructuralEvaluationReviewError,
     evaluate,
     expected_rows,
+    record_explicit_decisions,
 )
 
 
@@ -32,3 +33,16 @@ def test_review_rejects_known_identity_authority(tmp_path) -> None:
 
     with pytest.raises(Sec8KStructuralEvaluationReviewError, match="fail-closed"):
         evaluate(changed, expected_rows(protocol))
+
+
+def test_explicit_review_rejects_overwrite() -> None:
+    protocol = json.loads(PROTOCOL.read_text(encoding="utf-8"))
+    rows = expected_rows(protocol)
+    with pytest.raises(
+        Sec8KStructuralEvaluationReviewError, match="overwrite"
+    ):
+        record_explicit_decisions(protocol, [{
+            "review_id": rows[10]["review_id"],
+            "approved_symbol": "NOPE",
+            "review_note": "source checked",
+        }])
